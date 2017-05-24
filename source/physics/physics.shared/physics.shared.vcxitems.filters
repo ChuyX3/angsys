@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="header files">
+      <UniqueIdentifier>{ab4ee73e-8f27-4065-9c5e-339eb4d237a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files">
+      <UniqueIdentifier>{b94bf90d-a0ff-4025-bf5e-ff966d26eeea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang">
+      <UniqueIdentifier>{19bdb982-55e7-4b9f-b87a-fd2b115573b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang\maths">
+      <UniqueIdentifier>{a9dea1fa-e35d-48bf-8611-b62d36e0adf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang\physics">
+      <UniqueIdentifier>{b2f3b495-f02d-4ceb-b11b-85554d2f4408}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include">
+      <UniqueIdentifier>{f51c42bf-e319-4ebe-a800-9bcb64d33e5c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\maths.h">
+      <Filter>header files\ang\maths</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\vectors.h">
+      <Filter>header files\ang\maths</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float2.h">
+      <Filter>header files\ang\maths</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float3.h">
+      <Filter>header files\ang\maths</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float4.h">
+      <Filter>header files\ang\maths</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float4x4.h">
+      <Filter>header files\ang\maths</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\quaternions.h">
+      <Filter>header files\ang\maths</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\physics.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

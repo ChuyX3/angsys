@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="header files">
+      <UniqueIdentifier>{72ac3241-5e9f-4421-8bbf-c4e9a9cdb0c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files">
+      <UniqueIdentifier>{5f1f1e3e-5277-4d88-a674-5f91b99d5b28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include">
+      <UniqueIdentifier>{890098c8-5178-47ee-9021-88e66d351b0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang">
+      <UniqueIdentifier>{6edd5292-5762-4691-b81e-c4155691e0e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang\graphics">
+      <UniqueIdentifier>{27837a58-8bae-4da2-8b27-7a42543b3f87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang\media">
+      <UniqueIdentifier>{77ce47fd-f5b6-4ccd-a1a6-ecbfbd572294}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debug info">
+      <UniqueIdentifier>{06ab3994-3382-4c12-b338-da9e360c97bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include\media">
+      <UniqueIdentifier>{6d69bd7d-b457-4526-acb9-5653faec13a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\media">
+      <UniqueIdentifier>{6c10f77c-8035-4a8a-ba17-16d185d2cc46}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\angraph.h">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\reflect.h">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_inlines.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\vector_specialization.hpp">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\media\media.h">
+      <Filter>header files\ang\media</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\media\file_streamer.h">
+      <Filter>header files\include\media</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\media\media_streamer.h">
+      <Filter>header files\include\media</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\effects.h">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\textures.h">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\buffers.h">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\angraph.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\reflect.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variable.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\textures.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)angraph.natvis">
+      <Filter>debug info</Filter>
+    </Natvis>
+  </ItemGroup>
+</Project>
