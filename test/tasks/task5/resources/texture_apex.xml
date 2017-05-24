@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<texture_library>
+  <sources>
+    <file sid="_ea80e0f_dds">C:\Users\jesus.rocha\Desktop\Girl\Texture\3ea80e0f.tga</file>
+    <file sid="abbec2ad_dds">C:\Users\jesus.rocha\Desktop\Girl\Texture\abbec2ad.tga</file>
+    <file sid="cc5a76c0_dds">C:\Users\jesus.rocha\Desktop\Girl\Texture\cc5a76c0.tga</file>
+    <file sid="_919bbeb_dds">C:\Users\jesus.rocha\Desktop\Girl\Texture\3919bbeb.tga</file>
+    <file sid="_8be34e5_dds">C:\Users\jesus.rocha\Desktop\Girl\Texture\38be34e5.tga</file>
+    <file sid="c5b56029_dds">C:\Users\jesus.rocha\Desktop\Girl\Texture\c5b56029.tga</file>
+    <file sid="_7ed3ecb_dds">C:\Users\jesus.rocha\Desktop\Girl\Texture\67ed3ecb.tga</file>
+    <file sid="_c203d00_dds">C:\Users\jesus.rocha\Desktop\Girl\Texture\5c203d00.tga</file>
+    <file sid="_376b488_dds">C:\Users\jesus.rocha\Desktop\Girl\Texture\1376b488.tga</file>
+    <file sid="d117864b_dds">C:\Users\jesus.rocha\Desktop\Girl\Texture\d117864b.tga</file>
+
+    <file sid="body">C:\Users\Jesus Angel\Desktop\Blonde_nude\Texture\Body.tga</file>
+    <file sid="boots">C:\Users\Jesus Angel\Desktop\Blonde_nude\Texture\Boots.tga</file>
+    <file sid="eyeball_l">C:\Users\Jesus Angel\Desktop\Blonde_nude\Texture\eyeball_l.tga</file>
+    <file sid="eyeball_r">C:\Users\Jesus Angel\Desktop\Blonde_nude\Texture\eyeball_r.tga</file>
+    <file sid="eyes_eyes.tga">C:\Users\Jesus Angel\Desktop\Blonde_nude\Texture\eyes.tga</file>
+    <file sid="face">C:\Users\Jesus Angel\Desktop\Blonde_nude\Texture\Face.tga</file>
+    <file sid="hair">C:\Users\Jesus Angel\Desktop\Blonde_nude\Texture\Hair.tga</file>
+    <file sid="mouth">C:\Users\Jesus Angel\Desktop\Blonde_nude\Texture\mouth.tga</file>
+  </sources>
+  <texture name="_ea80e0f_dds" type="tex2D" >_ea80e0f_dds</texture>
+  <texture name="abbec2ad_dds" type="tex2D" >abbec2ad_dds</texture>
+  <texture name="cc5a76c0_dds" type="tex2D" >cc5a76c0_dds</texture>
+  <texture name="_919bbeb_dds" type="tex2D" >_919bbeb_dds</texture>
+  <texture name="_8be34e5_dds" type="tex2D" >_8be34e5_dds</texture>
+  <texture name="c5b56029_dds" type="tex2D" >c5b56029_dds</texture>
+  <texture name="_7ed3ecb_dds" type="tex2D" >_7ed3ecb_dds</texture>
+  <texture name="_c203d00_dds" type="tex2D" >_c203d00_dds</texture>
+  <texture name="_376b488_dds" type="tex2D" >_376b488_dds</texture>
+  <texture name="d117864b_dds" type="tex2D" >d117864b_dds</texture>
+
+  <texture name="body" type="tex2D" >body</texture>
+  <texture name="boots" type="tex2D" >boots</texture>
+  <texture name="eyeball_l" type="tex2D" >eyeball_l</texture>
+  <texture name="eyeball_r" type="tex2D" >eyeball_r</texture>
+  <texture name="eyes_eyes.tga" type="tex2D" >eyes_eyes.tga</texture>
+  <texture name="face" type="tex2D" >face</texture>
+  <texture name="hair" type="tex2D" >hair</texture>
+  <texture name="mouth" type="tex2D" >mouth</texture>
+</texture_library>

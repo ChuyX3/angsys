@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="include\engine.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resource.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaders.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\d3d11\buffers.h">
+      <Filter>include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="include\d3d11\driver.h">
+      <Filter>include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="include\d3d11\shaders.h">
+      <Filter>include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="include\d3d11\textures.h">
+      <Filter>include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scenes\scenes.h">
+      <Filter>include\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scenes\model_loader.h">
+      <Filter>include\scenes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="source\main.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\d3d11\d3d11_buffers.cpp">
+      <Filter>source\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="source\d3d11\d3d11_driver.cpp">
+      <Filter>source\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="source\d3d11\d3d11_frame_buffer.cpp">
+      <Filter>source\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="source\d3d11\d3d11_shaders.cpp">
+      <Filter>source\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="source\d3d11\d3d11_surface.cpp">
+      <Filter>source\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="source\d3d11\d3d11_texture.cpp">
+      <Filter>source\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="source\d3d11\d3d11_texture_loader.cpp">
+      <Filter>source\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scenes\scenes.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scenes\camera.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scenes\ordered_model.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scenes\model.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scenes\indexed_model.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{445e4ace-42db-4233-bce3-011f134b3dce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{4f6bc199-96de-45e7-8793-9f526af1b795}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\d3d11">
+      <UniqueIdentifier>{b2a20e71-220a-4beb-a56e-bcf9ab797cd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\d3d11">
+      <UniqueIdentifier>{bdba1ab2-af81-4caf-b270-94ab6c8beb26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\scenes">
+      <UniqueIdentifier>{8dc3aa4d-b697-4765-9db2-eaa4aec2407b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\scenes">
+      <UniqueIdentifier>{140ee615-58ef-40d7-a32d-a6c0260db839}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{c5337190-f9c1-4b78-84cc-5b85fddd2c45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\shaders">
+      <UniqueIdentifier>{09655081-f6df-41bc-ac23-996eb2ea4054}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="resources\fx_library.xml">
+      <Filter>resources</Filter>
+    </Xml>
+    <Xml Include="resources\texture_apex.xml">
+      <Filter>resources</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\basic_shader.hlsl">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="resources\shaders\character.hlsl">
+      <Filter>resources\shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>
