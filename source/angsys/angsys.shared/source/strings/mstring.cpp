@@ -92,7 +92,7 @@ bool mstring_buffer::is_local_data()const
 
 bool mstring_buffer::realloc(uint new_size, bool save)
 {
-	if (capacity() >= new_size)
+	if (capacity() > new_size)
 		return true;
 	
 	uint size = 32;

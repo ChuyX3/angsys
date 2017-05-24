@@ -94,7 +94,7 @@ bool wstring_buffer::is_local_data()const
 
 bool wstring_buffer::realloc(uint new_size, bool save)
 {
-	if (capacity() >= new_size)
+	if (capacity() > new_size)
 	{
 		//if (new_size < 29U && !is_local_data())
 		//{
