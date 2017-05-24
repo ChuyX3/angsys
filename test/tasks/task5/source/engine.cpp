@@ -36,8 +36,7 @@ void engine::init()
 	texture_loader->load_library(doc->xml_root().get());
 
 	core::files::ifile_system* fs = core::files::ifile_system::get_file_system();
-	fs->register_paths(L"C:\\Users\\Jesus Angel\\Desktop\\"_s);
-	fs->register_paths(L"C:\\Users\\jesus.rocha\\Desktop\\"_s);
+	fs->register_paths(L"..\\..\\..\\third_party\\resources\\"_s);
 
 	core::files::input_text_file_t model_file = new core::files::input_text_file(L"Girl\\girl.obj"_s);
 	//core::files::input_text_file_t model_file = new core::files::input_text_file(L"Blonde_nude\\Blonde_nude.obj"_s);
