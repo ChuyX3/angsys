@@ -740,7 +740,6 @@ bool FillInitDataFromDDS(ang::ibuffer_t in_data, tex_file_info_t const* header, 
 	return (idx > 0) ? true : false;
 }
 
-
 void LoadCompressedTGAImage(byte* pDest, byte * pSrc, TGA_HEADER * pHeader)
 {
 	int w = pHeader->width;
@@ -825,6 +824,7 @@ void LoadUncompressedTGAImage(byte* pDest, byte * pSrc, TGA_HEADER * pHeader)
 		}
 	}
 }
+
 pointer ExtractFaceFromBMP(byte* bmp, byte* temp, uint width, uint offsetX, uint offsetY)
 {
 	int w = width / 4;
@@ -836,7 +836,6 @@ pointer ExtractFaceFromBMP(byte* bmp, byte* temp, uint width, uint offsetX, uint
 	}
 	return temp;
 }
-
 
 bool FillInitDataFromTGA(ang::ibuffer_t in_data, d3d11::tex_file_info_t const* header, ang::array<D3D11_SUBRESOURCE_DATA>& init_data, ang::array<ang::ibuffer_t>& out_data)
 {
@@ -1150,25 +1149,6 @@ bool d3d11_texture_loader::create_texture(d3d11_driver_t driver, d3d11::tex_file
 
 	return true;
 }
-
-//if (info->fileType == ' SDD')
-//{ //TODO:
-//  //wsize skipMip = 0;
-//  //wsize twidth = 0;
-//  //wsize theight = 0;
-//  //wsize tdepth = 0;
-//  //FillInitDataFromDDS(buffer, info, twidth, theight, tdepth, skipMip, init_data);
-//}
-//else
-//{
-//	init_data = ang::array<D3D11_SUBRESOURCE_DATA>(info->arraySize);
-//	for (auto i = 0U; i < info->arraySize; ++i)
-//	{
-//		init_data[i].pSysMem = buffers[i]->buffer_ptr();
-//		init_data[i].SysMemPitch = info->width * 4;
-//		init_data[i].SysMemSlicePitch = 0;
-//	}
-//}
 
 bool d3d11_texture_loader::create_array_texture(d3d11_driver_t driver, tex_file_info_t const* info, ang::collections::vector<ang::ibuffer_t>const& buffers, ID3D11Resource** resource, ID3D11ShaderResourceView** resourceView)
 {

@@ -270,6 +270,7 @@ namespace d3d11
 
 		void init();
 		void update(StepTimer const&);
+		void update_controller(float delta);
 		void draw();
 		void exit();
 

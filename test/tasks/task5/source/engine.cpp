@@ -21,6 +21,9 @@ struct vertex_data_t
 
 void engine::init()
 {
+	core::files::ifile_system* fs = core::files::ifile_system::get_file_system();
+	fs->register_paths(L"../../../third_party/"_s);
+
 	effect_library = d3d_driver->create_effect_library();
 	texture_loader = d3d_driver->create_texture_loader();
 	
@@ -35,11 +38,7 @@ void engine::init()
 	file->close();
 	texture_loader->load_library(doc->xml_root().get());
 
-	core::files::ifile_system* fs = core::files::ifile_system::get_file_system();
-	fs->register_paths(L"..\\..\\..\\third_party\\resources\\"_s);
-
-	core::files::input_text_file_t model_file = new core::files::input_text_file(L"Girl\\girl.obj"_s);
-	//core::files::input_text_file_t model_file = new core::files::input_text_file(L"Blonde_nude\\Blonde_nude.obj"_s);
+	core::files::input_text_file_t model_file = new core::files::input_text_file(L"resources/Girl/girl.obj"_s);
 
 	model = new graphics::scenes::model();
 
@@ -47,13 +46,10 @@ void engine::init()
 
 }
 
-inline float XMConvertToRadians(float fDegrees) { return fDegrees * (3.141592f / 180.0f); }
-inline float XMConvertToDegrees(float fRadians) { return fRadians * (180.0f / 3.141592f); }
-
-static maths::matrix4 world;
-
 void engine::update(StepTimer const& timer)
 {
+	update_controller(timer.GetElapsedSeconds() * 1000.0f);
+
 	model->update(timer.GetTotalSeconds(), timer.GetElapsedSeconds());
 }
 
@@ -195,4 +191,82 @@ void engine::close_driver()
 	_is_running = false;
 	d3d_surface = null;
 	d3d_driver = null;
+}
+
+
+
+#define INPUT_DEADZONE 10000
+
+void engine::update_controller(float delta)
+{
+	if (camera.is_empty())
+		return;
+
+	XINPUT_STATE state;
+	ZeroMemory(&state, sizeof(XINPUT_STATE));
+
+	if (XInputGetState(0, &state) == ERROR_SUCCESS)
+	{
+
+		float LX = state.Gamepad.sThumbLX;
+		float LY = state.Gamepad.sThumbLY;
+
+		//determine how far the controller is pushed
+		float magnitude = sqrt(LX*LX + LY*LY);
+
+		//determine the direction the controller is pushed
+		float normalizedLX = LX / magnitude;
+		float normalizedLY = LY / magnitude;
+
+		float normalizedMagnitude = 0;
+
+		//check if the controller is outside a circular dead zone
+		if (magnitude > INPUT_DEADZONE)
+		{
+			//clip the magnitude at its expected maximum value
+			if (magnitude > 32767) magnitude = 32767;
+
+			//adjust magnitude relative to the end of the dead zone
+			magnitude -= INPUT_DEADZONE;
+
+			//optionally normalize the magnitude with respect to its expected range
+			//giving a magnitude value of 0.0 to 1.0
+			normalizedMagnitude = magnitude / (32767 - INPUT_DEADZONE);
+		}
+		else //if the controller is in the deadzone zero out the magnitude
+		{
+			magnitude = 0.0;
+			normalizedMagnitude = 0.0;
+		}
+
+
+		if (normalizedMagnitude > 0)
+		{
+			camera->rotate_left(delta / 3.0f * normalizedMagnitude * normalizedLX);
+			camera->rotate_up(-delta / 3.0f * normalizedMagnitude * normalizedLY);
+		}
+
+		float speed = (25.5f + float(state.Gamepad.bRightTrigger))
+			/ (25.5f + float(state.Gamepad.bLeftTrigger));
+
+		if ((state.Gamepad.wButtons & 0x4000) == 0x4000)
+		{
+			camera->move_forward(delta * speed);
+		}
+
+		if ((state.Gamepad.wButtons & 0x1000) == 0x1000)
+		{
+			camera->move_backward(delta * speed);
+		}
+
+		if ((state.Gamepad.wButtons & 0x100) == 0x100)
+		{
+			camera->move_left(delta * speed);
+		}
+
+		if ((state.Gamepad.wButtons & 0x200) == 0x200)
+		{
+			camera->move_right(delta * speed);
+		}
+	}
 }

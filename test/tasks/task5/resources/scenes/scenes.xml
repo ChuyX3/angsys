@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<scene>
+  <sources>
+    <file sid="GIRL_MODEL_OBJ">resources/Girl/girl.obj</file>
+  </sources>
+  <lights>
+    <ambient>
+      <color>1,1,1</color>
+    </ambient>
+    <light>
+      <color>0.9,0.9,0.9</color>
+      <position>1.75,0.0,0.0</position>
+    </light>
+  </lights>
+  <cammera>
+    <position>0,0.0,-3.0</position>
+    <rotation>0,0.0,0.0</rotation>
+    <near_plane>0.01</near_plane>
+    <far_plane>10000.0</far_plane>
+    <fvo>0.8</fvo>
+  </cammera>
+  <object>
+    <position>0,0.0,-3.0</position>
+    <rotation>0,0.0,0.0</rotation>
+    <scale>0.3,0.3,0.3</scale>
+    <model>GIRL_MODEL_OBJ</model>
+  </object>
+</scene>

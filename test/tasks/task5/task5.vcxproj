@@ -197,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\fx_library.xml" />
+    <Xml Include="resources\scenes\scenes.xml" />
     <Xml Include="resources\texture_apex.xml" />
   </ItemGroup>
   <ItemGroup>

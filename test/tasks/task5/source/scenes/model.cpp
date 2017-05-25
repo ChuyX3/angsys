@@ -145,22 +145,22 @@ void model::draw(idriver_t driver, camera_t cam) {
 			if (shaders.get() != _element.technique.get())
 			{
 				shaders = _element.technique;
-				auto uniform = shaders->map_vs_uniform(driver, "wvp");
-				uniform["world"].cast<maths::float4x4>() = ang::maths::matrix::transpose(world_matrix());
-				uniform["view"].cast<maths::float4x4>() = ang::maths::matrix::transpose(cam->view_matrix());
-				uniform["proj"].cast<maths::float4x4>() = ang::maths::matrix::transpose(cam->projection_matrix());
+				auto uniform = shaders->map_vs_uniform(driver, 0 /*"wvp"*/);
+				uniform[0 /*"world"*/].cast<maths::float4x4>() = ang::maths::matrix::transpose(world_matrix());
+				uniform[1 /*"view"*/].cast<maths::float4x4>() = ang::maths::matrix::transpose(cam->view_matrix());
+				uniform[2 /*"proj"*/].cast<maths::float4x4>() = ang::maths::matrix::transpose(cam->projection_matrix());
 				shaders->unmap_vs_uniform(driver, uniform);
 
-				auto lights_info = shaders->map_ps_uniform(driver, "lights");
+				auto lights_info = shaders->map_ps_uniform(driver, 0 /*"lights"*/);
 				if (lights_info.raw_data().get() != null)
 				{
-					lights_info["ambient"].cast<maths::float4>() = { 1,1,1,.8f };
-					lights_info["lights_count"].cast<uint>() = 1;
-					lights_info["specular_power"].cast<float>() = 0.99;
-					auto lights = lights_info["lights"].cast<static_array<reflect::variable>>();
-					lights[0]["color"].cast<maths::float4>() = { .5f,.5f,.5f,1 };
-					lights[0]["position"].cast<maths::unaligned_float3>() = { 1.75f,0,0 };
-					lights[0]["type"].cast<uint>() = 0;
+					lights_info[0 /*"ambient"*/].cast<maths::float4>() = { 1,1,1,.8f };
+					lights_info[1 /*"lights_count"*/].cast<uint>() = 1;
+					lights_info[2 /*"specular_power"*/].cast<float>() = 0.8;
+					auto lights = lights_info[3 /*"lights"*/].cast<static_array<reflect::variable>>();
+					lights[0][0 /*"color"*/].cast<maths::float4>() = { .9f,.9f,.9f,1 };
+					lights[0][1 /*"position"*/].cast<maths::unaligned_float3>() = { 21.75f, 5,10 };
+					lights[0][2 /*"type"*/].cast<uint>() = 0;
 					shaders->unmap_ps_uniform(driver, lights_info);
 				}
 

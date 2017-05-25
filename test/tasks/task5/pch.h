@@ -33,4 +33,7 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
 
+#include <Xinput.h>
+#pragma comment(lib,"xinput.lib")
+
 ANG_DECLARE_MEMORYMANAGER()

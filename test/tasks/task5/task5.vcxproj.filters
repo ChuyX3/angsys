@@ -101,6 +101,9 @@
     <Filter Include="resources\shaders">
       <UniqueIdentifier>{09655081-f6df-41bc-ac23-996eb2ea4054}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\scenes">
+      <UniqueIdentifier>{f81c5b96-ff2e-43f0-ae83-20b9c77a6040}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\fx_library.xml">
@@ -108,6 +111,9 @@
     </Xml>
     <Xml Include="resources\texture_apex.xml">
       <Filter>resources</Filter>
+    </Xml>
+    <Xml Include="resources\scenes\scenes.xml">
+      <Filter>resources\scenes</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>
