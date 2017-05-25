@@ -38,11 +38,12 @@ void engine::init()
 	file->close();
 	texture_loader->load_library(doc->xml_root().get());
 
-	core::files::input_text_file_t model_file = new core::files::input_text_file(L"resources/Girl/girl.obj"_s);
 
-	model = new graphics::scenes::model();
-
-	model->load(d3d_driver.get(), effect_library, texture_loader, model_file);
+	file->open(L"resources/scenes/scenes.xml"_s);
+	doc = new xml::xml_document(file);
+	file->close();
+	scene = new graphics::scenes::scene();
+	scene->load(d3d_driver.get(), effect_library, texture_loader, doc->xml_root().get());
 
 }
 
@@ -50,16 +51,12 @@ void engine::update(StepTimer const& timer)
 {
 	update_controller(timer.GetElapsedSeconds() * 1000.0f);
 
-	model->update(timer.GetTotalSeconds(), timer.GetElapsedSeconds());
+	scene->update(timer.GetTotalSeconds(), timer.GetElapsedSeconds());
 }
 
 void engine::draw()
 {
-	float color[4] = { 0.1f,0.2f,.4f,1.0f };
-	
-	d3d_driver->clear(maths::float4{ 0.1f,0.2f,.4f,1.0f });
-
-	model->draw(d3d_driver.get(), camera);
+	scene->draw(d3d_driver.get(), d3d_surface->frame_buffer());
 
 	d3d_surface->swap_buffers();
 }
@@ -86,7 +83,6 @@ void engine::on_size_changed_event(objptr sender, platform::events::idisplay_inf
 	camera->projection(0.8f, size.width / size.height, 0.01f, 10000.0f);
 }
 
-bool pressed = false;
 void engine::on_pointer_moved_event(objptr sender, platform::events::ipointer_event_args_t args)
 {
 

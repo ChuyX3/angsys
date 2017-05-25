@@ -54,7 +54,7 @@ namespace ang
 
 				virtual bool load(scene_t, xml::xml_node_t) = 0;
 				virtual void update(float, float) = 0;
-				virtual void draw(idriver_t, camera_t) = 0;
+				virtual void draw(scene_t) = 0;
 				virtual void close() = 0;
 
 				virtual maths::matrix4 world_matrix()const;
@@ -85,7 +85,7 @@ namespace ang
 				bool load(scene_t, xml::xml_node_t)override;
 				bool load(maths::float3 const& position, maths::float3 const& rotation, maths::float4 const& projection);
 				void update(float, float)override;
-				void draw(idriver_t, camera_t)override;
+				void draw(scene_t)override;
 				void close()override;
 
 				maths::matrix4 view_matrix()const;
@@ -110,15 +110,35 @@ namespace ang
 				virtual~camera();
 			};
 
-			class scene : public object
+
+			ANG_BEGIN_ENUM(, light_type, uint)
+				directional,
+				spot,
+			ANG_END_ENUM(light_type);
+
+			struct light_info
+			{
+				maths::float3 color;
+				maths::float3 pos_dir;
+				light_type_t type;
+
+				bool operator == (const light_info& other) { return false; }
+				bool operator != (const light_info& other) { return false; }
+			};
+
+			class scene 
+				: public aligned_object
 			{
 			protected:
+				maths::float3 _ambient_color;
+				collections::vector<light_info> _lights;
 				idriver_t _driver;
 				effects::ieffect_library_t _effect_library;
 				textures::itexture_loader_t _texture_loader;
 				camera_t _camera;
-				collections::vector<scene_object_t> objects;
-
+				collections::vector<scene_object_t> _objects;
+				collections::map<string, wstring> _source_map;
+				core::async::mutex_t main_mutex;
 			public:
 				scene();
 
@@ -132,15 +152,36 @@ namespace ang
 				);
 
 				void update(float, float);
-				void draw(idriver_t, camera_t);
+				void draw(idriver_t, iframe_buffer_t);
 				void close();
+
+			protected:
+				bool load_sources(xml::xml_node_t);
+				bool load_lights(xml::xml_node_t);
+				bool load_object(xml::xml_node_t);
 	
 			public: //inlines
 				inline idriver* driver()const { return _driver.get(); }
 				inline effects::ieffect_library* effect_library()const { return _effect_library.get(); }
 				inline textures::itexture_loader* texture_loader()const { return _texture_loader.get(); }
 				inline camera* camera()const { return _camera.get(); }
+				inline wstring find_file(cstr_t sid)const {
+					core::async::scope_locker lock = main_mutex;
+					if (_source_map.is_empty())
+						return "";
+					auto it = _source_map->find(sid);
+					return it.is_valid() ? it->value() : L"";
+				}
+				inline wstring find_file(cwstr_t sid)const {
+					core::async::scope_locker lock = main_mutex;
+					if (_source_map.is_empty())
+						return "";
+					auto it = _source_map->find(sid);
+					return it.is_valid() ? it->value() : L"";
+				}
 
+				inline maths::float3 ambient_color()const { return _ambient_color; }
+				static_array<light_info> ligths()const { return _lights; }
 			protected:
 				virtual~scene();
 			};
@@ -177,7 +218,7 @@ namespace ang
 
 				virtual bool load(scene_t, xml::xml_node_t) override;
 				virtual void update(float, float) override;
-				virtual void draw(idriver_t, camera_t) override;
+				virtual void draw(scene_t) override;
 				virtual void close() override;
 
 				virtual bool load(idriver_t driver,
@@ -212,4 +253,5 @@ namespace ang
 	}
 }
 
+ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::scenes::light_info);
 ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::scenes::model::model_element);

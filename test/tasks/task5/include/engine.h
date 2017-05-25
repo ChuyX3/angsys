@@ -250,7 +250,7 @@ namespace d3d11
 
 		graphics::scenes::camera_t camera;
 
-		graphics::scenes::model_t model;
+		graphics::scenes::scene_t scene;
 
 	public:
 		engine();

@@ -5,6 +5,37 @@ using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::scenes;
 
+template<> inline ang::maths::float2 ang::xml::xml_value::as<ang::maths::float2>()const
+{
+	if (get() == null)
+		return{ 0,0 };
+	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(get());
+	float temp[2];
+	stream >> "[" >> temp[0] >> "," >> temp[1];
+	return{ temp[0], temp[1] };
+}
+
+template<> inline ang::maths::float3 ang::xml::xml_value::as<ang::maths::float3>()const
+{
+	if (get() == null)
+		return{ 0,0,0 };
+	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(get());
+	float temp[3];
+	stream >> "[" >> temp[0] >> "," >> temp[1] >> "," >> temp[2];
+	return{ temp[0], temp[1], temp[2] };
+}
+
+template<> inline ang::maths::float4 ang::xml::xml_value::as<ang::maths::float4>()const
+{
+	if (get() == null)
+		return{ 0,0,0,0 };
+	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(get());
+	float temp[4];
+	stream >> "[" >> temp[0] >> "," >> temp[1] >> "," >> temp[2] >> "," >> temp[2];
+	return{ temp[0], temp[1], temp[2], temp[3] };
+}
+
+
 #define M_PI 3.141592f
 
 camera::camera()
@@ -25,7 +56,7 @@ bool camera::load(scene_t scene, xml::xml_node_t node)
 	auto pos = node["position"];
 	if (pos.is_empty())
 		_position = { 0, 0, 0, 1 };
-	else
+	else 
 		_position = { pos->xml_value().as<maths::float3>() , 1 };
 
 	auto rot = node["rotation"];
@@ -60,7 +91,7 @@ void camera::update(float total, float delta)
 
 }
 
-void camera::draw(idriver_t, camera_t) { }
+void camera::draw(scene_t) { }
 
 void camera::close() {}
 

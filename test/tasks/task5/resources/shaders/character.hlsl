@@ -77,14 +77,24 @@ Texture2D difusse_tex : register(t0);
 SamplerState sam_linear : register(s0);
 
 #ifdef LIGHTING
+
+float3 get_light_direction(float3 world_pos, float3 dir, uint type)
+{
+    if(type == 0)
+        return normalize(dir);
+    else
+        return normalize(world_pos - dir);
+}
+
 float3 get_light_difusse(float3 normal, float3 world_pos)
 {
 	float3 difusse = { 0,0,0 };
 	for (uint i = 0; i < light_count; ++i)
 	{
-		float3 light_dir = normalize(world_pos - light_data[i].position);
-		difusse += light_data[i].color.xyz * max(dot(light_dir, normal), 0.0);
-	}
+		float3 light_dir = get_light_direction(world_pos, light_data[i].position, light_data[i].type);
+        float3 reflection = reflect(light_dir, normal);
+        difusse += light_data[i].color.xyz * max(dot(reflection, normal), 0.0);
+    }
 	return difusse;
 }
 
@@ -93,7 +103,7 @@ float3 get_light_specular(float3 normal, float3 world_pos)
 	float3 total = { 0,0,0 };
 	for (uint i = 0; i < light_count; ++i)
 	{
-		float3 light_dir = normalize(world_pos - light_data[i].position);
+        float3 light_dir = get_light_direction(world_pos, light_data[i].position, light_data[i].type);
 		float3 specular = light_data[i].color.xyz;
 		float3 reflection = reflect(light_dir, normal);
 		total += specular * pow(max(dot(reflection, normal), 0.0), specular_power);
@@ -111,6 +121,8 @@ float4 main_ps(ps_input input ) : SV_Target
 #endif
 
     float4 color = difusse_tex.Sample(sam_linear, input.vtexcoord);
+   //color.xyz = float3(.5,.5,.5);
+    color.xyz = lerp(color.xyz, float3(1,1,1), .5) * 1.5;
 #ifdef LIGHTING
     float3 total = (ambient_color.xyz * ambient_color.w + difusse * (1.0 - ambient_color.w)) * color.xyz;
     if (specular_power > 0)

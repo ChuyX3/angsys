@@ -528,7 +528,7 @@ bool wstring_buffer::realloc_buffer(uint size) { return realloc(size, true); };
 
 text::encoding_t wstring_buffer::encoding()const
 {
-	return text::encoding::ascii;
+	return text::encoding::unicode;
 }
 
 wchar& wstring_buffer::at(const collections::iterator<wchar>& it)const

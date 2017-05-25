@@ -8,21 +8,21 @@
       <color>1,1,1</color>
     </ambient>
     <light>
-      <color>0.9,0.9,0.9</color>
-      <position>1.75,0.0,0.0</position>
+      <color>1,1,0</color>
+      <position>0.0, 100.0,100.0</position>
     </light>
   </lights>
-  <cammera>
-    <position>0,0.0,-3.0</position>
-    <rotation>0,0.0,0.0</rotation>
+  <camera>
+    <position>0.0,1.75,0.0</position>
+    <rotation>0.2,0.0,0.0</rotation>
     <near_plane>0.01</near_plane>
     <far_plane>10000.0</far_plane>
     <fvo>0.8</fvo>
-  </cammera>
+  </camera>
   <object>
-    <position>0,0.0,-3.0</position>
-    <rotation>0,0.0,0.0</rotation>
+    <position>0.0,0.0,-3.0</position>
+    <rotation>0.0,0.0,0.0</rotation>
     <scale>0.3,0.3,0.3</scale>
-    <model>GIRL_MODEL_OBJ</model>
+    <source>GIRL_MODEL_OBJ</source>
   </object>
 </scene>
