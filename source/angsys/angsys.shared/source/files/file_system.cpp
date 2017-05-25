@@ -20,7 +20,7 @@ using namespace ang;
 using namespace ang::core;
 using namespace ang::core::files;
 
-bool_t ifile_system::register_file_system(ifile_system* fs, file_system_priority_t prio)
+bool ifile_system::register_file_system(ifile_system* fs, file_system_priority_t prio)
 {
 	return file_system::instance()->register_file_system(fs, prio);
 }
@@ -41,21 +41,21 @@ file_system::~file_system()
 ANG_IMPLEMENT_CLASSNAME(ang::core::files::file_system);
 ANG_IMPLEMENT_OBJECTNAME(ang::core::files::file_system);
 
-bool_t file_system::is_child_of(type_name_t name)
+bool file_system::is_child_of(type_name_t name)
 {
 	return name == type_name<file_impl>()
 		|| object::is_child_of(name)
 		|| name == type_name<ifile_system>();
 }
 
-bool_t file_system::is_kind_of(type_name_t name)const
+bool file_system::is_kind_of(type_name_t name)const
 {
 	return name == type_name<file_impl>()
 		|| object::is_kind_of(name)
 		|| name == type_name<ifile_system>();
 }
 
-bool_t file_system::query_object(type_name_t name, unknown_ptr_t out)
+bool file_system::query_object(type_name_t name, unknown_ptr_t out)
 {
 	if (out == null)
 		return false;
@@ -77,7 +77,7 @@ bool_t file_system::query_object(type_name_t name, unknown_ptr_t out)
 	return false;
 }
 
-bool_t file_system::register_file_system(ifile_system* fs, file_system_priority_t prio)
+bool file_system::register_file_system(ifile_system* fs, file_system_priority_t prio)
 {
 	if (fs == null)
 		return false;
@@ -101,7 +101,7 @@ array<wstring> file_system::paths()const
 	return static_cast<collections::ienum<wstring> const*>(_paths.get());
 }
 
-bool_t file_system::register_paths(cwstr_t path)
+bool file_system::register_paths(cwstr_t path)
 {
 	auto it = _paths->find(path);
 	if (it.is_valid())
@@ -110,7 +110,7 @@ bool_t file_system::register_paths(cwstr_t path)
 	return true;
 }
 
-bool_t file_system::create_file_handle(cwstr_t path, open_flags_t flags, ifile_ptr_t out)
+bool file_system::create_file_handle(cwstr_t path, open_flags_t flags, ifile_ptr_t out)
 {
 	if (out.is_empty())
 		return false;
@@ -155,7 +155,7 @@ bool_t file_system::create_file_handle(cwstr_t path, open_flags_t flags, ifile_p
 	return false;
 }
 
-bool_t file_system::open(cwstr_t path, input_text_file_t& out)
+bool file_system::open(cwstr_t path, input_text_file_t& out)
 {
 	ifile_t _hfile;
 	if (!create_file_handle(path, open_flags::access_in + open_flags::type_text + open_flags::open_exist, &_hfile))
@@ -165,44 +165,32 @@ bool_t file_system::open(cwstr_t path, input_text_file_t& out)
 	return true;
 }
 
-bool_t file_system::open(cwstr_t, output_text_file_t&)
+bool file_system::open(cwstr_t path, output_text_file_t& out)
 {
-	return false;
+	ifile_t _hfile;
+	if (!create_file_handle(path, open_flags::access_out + open_flags::type_text + open_flags::open_alway, &_hfile))
+		return false;
+	out = new output_text_file();
+	out->attach(_hfile);
+	return true;
 }
 
-bool_t file_system::open(cwstr_t, input_binary_file_t&)
+bool file_system::open(cwstr_t path, input_binary_file_t& out)
 {
-	return false;
+	ifile_t _hfile;
+	if (!create_file_handle(path, open_flags::access_in + open_flags::type_binary + open_flags::open_exist, &_hfile))
+		return false;
+	out = new input_binary_file();
+	out->attach(_hfile);
+	return true;
 }
 
-bool_t file_system::open(cwstr_t, output_binary_file_t&)
+bool file_system::open(cwstr_t path, output_binary_file_t& out)
 {
-	return false;
+	ifile_t _hfile;
+	if (!create_file_handle(path, open_flags::access_out + open_flags::type_binary + open_flags::open_alway, &_hfile))
+		return false;
+	out = new output_binary_file();
+	out->attach(_hfile);
+	return true;
 }
-
-//bool_t file_system::OpenFile(Path path, OpenFlags flags, IFile** out)
-//{
-//	if (out == null)
-//		return false;
-//	_FileArgs args = { path, flags };
-//	File* file = new File(&args);
-//	file->AddRef();
-//	if (!file->IsValid())
-//	{
-//		for (auto it = paths.Begin(); it.IsValid(); ++it)
-//		{
-//			args.pathName = (*it) / path;
-//			file->Open(&args);
-//			if (file->IsValid())
-//			{
-//				*out = file;
-//				return true;
-//			}
-//		}
-//
-//		file->Release();
-//		return false;
-//	}
-//	*out = file;
-//	return true;
-//}

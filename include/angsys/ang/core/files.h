@@ -46,6 +46,7 @@ namespace ang
 			class file;
 			class pack_file;
 			typedef object_wrapper<file> file_t;
+			typedef object_wrapper<pack_file> pack_file_t;
 
 			typedef streams::stream_size_t file_size_t;
 			typedef streams::stream_index_t file_cursor_t;
@@ -138,13 +139,13 @@ namespace ang
 
 			typedef struct LINK pack_file_info
 			{
-				wstring path;
+				//wstring path;
 				file_size_t size;
 				file_cursor_t offset;
 			}pack_file_info_t;
 
-			inline bool operator == (pack_file_info_t const& a1, pack_file_info_t const& a2) { return a1.path == a2.path; }
-			inline bool operator != (pack_file_info_t const& a1, pack_file_info_t const& a2) { return a1.path != a2.path; }
+			//inline bool operator == (pack_file_info_t const& a1, pack_file_info_t const& a2) { return a1.path == a2.path; }
+			//inline bool operator != (pack_file_info_t const& a1, pack_file_info_t const& a2) { return a1.path != a2.path; }
 
 
 			ANG_BEGIN_INTERFACE(LINK, ifile)
@@ -185,7 +186,7 @@ namespace ang
 }
 
 ANG_REGISTER_RUNTIME_TYPENAME(ang::core::files::pack_file_info_t);
-ANG_DECLARE_ARRAY_DATA_SPECIALIZATION(LINK, ang::core::files::pack_file_info);
+//ANG_DECLARE_ARRAY_DATA_SPECIALIZATION(LINK, ang::core::files::pack_file_info);
 
 namespace ang
 {
@@ -223,9 +224,12 @@ namespace ang
 				: public file
 				, public ifile_system
 			{
+			public:
+				static bool create_pack_from_folder(cwstr_t in_path, cwstr_t out_path);
+
 			private:
 				core::async::mutex_t mutex;
-				array<pack_file_info> files;
+				array<collections::pair<wstring, pack_file_info>> files;
 						
 			public:
 				pack_file();
@@ -235,9 +239,9 @@ namespace ang
 
 				bool create(cwstr_t path, open_flags_t flags);
 
-				array<wstring> paths()const pure;
-				bool register_paths(cwstr_t) pure;
-				bool create_file_handle(cwstr_t, open_flags_t, ifile_ptr_t) pure;
+				array<wstring> paths()const override;
+				bool register_paths(cwstr_t) override;
+				bool create_file_handle(cwstr_t, open_flags_t, ifile_ptr_t) override;
 
 				bool open(cwstr_t path, input_text_file_t&);
 				bool open(cwstr_t path, output_text_file_t&);
