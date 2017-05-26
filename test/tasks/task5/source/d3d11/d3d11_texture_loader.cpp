@@ -893,7 +893,7 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 
 	ang::ibuffer_t outData = null;
 	wsize dataSize = (wsize)file->file_size();
-	int offset = sizeof(DDS_HEADER);
+	int offset = sizeof(DDS_HEADER) + sizeof(ang_uint32_t);
 	if (dataSize < (wsize)offset)
 		return null;
 
@@ -986,7 +986,6 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 
 		outData = new(dataSize - offset) ang::buffer();
 		stream->read(outData->buffer_ptr(), outData->buffer_size());
-
 		return true;
 	});
 
@@ -1273,6 +1272,7 @@ bool d3d11_texture_loader::create_array_texture(d3d11_driver_t driver, tex_file_
 	return true;
 }
 
+
 bool d3d11_texture_loader::load_texture(d3d11_driver_t driver, ang::core::files::input_binary_file_t file, tex_file_info_t& info, ID3D11Resource** resource, ID3D11ShaderResourceView** resourceView, bool isCube)
 {
 	if (resource == null && resourceView == null)
@@ -1283,6 +1283,7 @@ bool d3d11_texture_loader::load_texture(d3d11_driver_t driver, ang::core::files:
 	file->read(&info.fileType, sizeof(info.fileType));
 	if (info.fileType == ' SDD')
 	{
+		file->cursor(0);
 		data = d3d11_texture_loader::load_dds(file, info);
 	}
 	else
