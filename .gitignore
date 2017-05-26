@@ -1,0 +1,8 @@
+
+*.pdb
+*.exp
+*.ilk
+*.tlog
+*.idb
+*.pch
+*.log
