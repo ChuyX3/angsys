@@ -1,6 +1,6 @@
 
 //#define VERTEX_SHADER
-#define PIXEL_SHADER
+//#define PIXEL_SHADER
 //#define LIGHTING
 //#define USE_NORMAL_MAP
 
@@ -121,17 +121,14 @@ float4 main_ps(ps_input input ) : SV_Target
 #endif
 
     float4 color = difusse_tex.Sample(sam_linear, input.vtexcoord);
-   //color.xyz = float3(.5,.5,.5);
-   // color.xyz = lerp(color.xyz, float3(1,1,1), .5) * 1.5;
+
 #ifdef LIGHTING
     float3 total = (ambient_color.xyz * ambient_color.w + difusse * (1.0 - ambient_color.w)) * color.xyz;
     if (specular_power > 0)
         total = total + get_light_specular(normal, input.vpos_world.xyz);
     color.xyz = total;
 #endif
-   // color.xyz = lerp(color.xyz, float3(normalize(input.vtexcoord)/2, normal.z/2), 0.3);
-    float alpha = lerp(color.a, 1, 0.5);
-    return float4(color.xyz, alpha);
+    return color;
 }
 
 #endif

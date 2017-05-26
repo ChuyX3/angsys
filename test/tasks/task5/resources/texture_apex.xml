@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <texture_library>
   <sources>
-    <file sid="_ea80e0f_dds">resources\Girl\Texture\3ea80e0f.tga</file>
-    <file sid="abbec2ad_dds">resources\Girl\Texture\abbec2ad.tga</file>
-    <file sid="cc5a76c0_dds">resources\Girl\Texture\cc5a76c0.tga</file>
-    <file sid="_919bbeb_dds">resources\Girl\Texture\3919bbeb.tga</file>
-    <file sid="_8be34e5_dds">resources\Girl\Texture\38be34e5.tga</file>
-    <file sid="c5b56029_dds">resources\Girl\Texture\c5b56029.tga</file>
-    <file sid="_7ed3ecb_dds">resources\Girl\Texture\67ed3ecb.tga</file>
-    <file sid="_c203d00_dds">resources\Girl\Texture\5c203d00.tga</file>
-    <file sid="_376b488_dds">resources\Girl\Texture\1376b488.tga</file>
-    <file sid="d117864b_dds">resources\Girl\Texture\d117864b.tga</file>
+    <file sid="_ea80e0f_dds">resources\Girl\Texture\5c203d00.dds</file>
+    <file sid="abbec2ad_dds">resources\Girl\Texture\abbec2ad.dds</file>
+    <file sid="cc5a76c0_dds">resources\Girl\Texture\cc5a76c0.dds</file>
+    <file sid="_919bbeb_dds">resources\Girl\Texture\3919bbeb.dds</file>
+    <file sid="_8be34e5_dds">resources\Girl\Texture\38be34e5.dds</file>
+    <file sid="c5b56029_dds">resources\Girl\Texture\c5b56029.dds</file>
+    <file sid="_7ed3ecb_dds">resources\Girl\Texture\67ed3ecb.dds</file>
+    <file sid="_c203d00_dds">resources\Girl\Texture\5c203d00.dds</file>
+    <file sid="_376b488_dds">resources\Girl\Texture\1376b488.dds</file>
+    <file sid="d117864b_dds">resources\Girl\Texture\d117864b.dds</file>
     <file sid="textures_woman_tga">resources\models\textures\woman.tga</file>
     <file sid="textures_woman_dds">resources\models\textures\woman.dds</file>
     <file sid="textures_seafloor_dds">resources\models\textures\seafloor.tga</file>
@@ -26,4 +26,5 @@
   <texture name="_c203d00_dds" type="tex2D" >_c203d00_dds</texture>
   <texture name="_376b488_dds" type="tex2D" >_376b488_dds</texture>
   <texture name="d117864b_dds" type="tex2D" >d117864b_dds</texture>
+  <texture name="textures_seafloor_dds" type="tex2D" >textures_seafloor_dds</texture>
 </texture_library>

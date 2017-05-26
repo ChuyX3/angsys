@@ -2,6 +2,10 @@
 #include "engine.h"
 #include <ang/core/time.h>
 
+//#include "d3d11\textures.h"
+
+#include "DDSTextureLoader.h"
+
 using namespace d3d11;
 
 #if defined _DEBUG
@@ -9,13 +13,6 @@ using namespace d3d11;
 #endif
 
 using namespace d3d11;
-
-
-struct vertex_data_t
-{
-	ang::maths::float3 position;
-	ang::maths::float4 color;
-};
 
 //////////////////////////////////////////////////////////
 
@@ -38,36 +35,36 @@ void engine::init()
 	file->close();
 	texture_loader->load_library(doc->xml_root().get());
 
-
 	file->open(L"resources/scenes/scenes.xml"_s);
 	doc = new xml::xml_document(file);
 	file->close();
 	scene = new graphics::scenes::scene();
 	scene->load(d3d_driver.get(), effect_library, texture_loader, doc->xml_root().get());
-
+	camera = scene->camera();
 }
 
 void engine::update(StepTimer const& timer)
 {
 	update_controller(timer.GetElapsedSeconds() * 1000.0f);
-
 	scene->update(timer.GetTotalSeconds(), timer.GetElapsedSeconds());
 }
+
 
 void engine::draw()
 {
 	scene->draw(d3d_driver.get(), d3d_surface->frame_buffer());
-
 	d3d_surface->swap_buffers();
 }
 
 void engine::exit()
 {
+
 	d3d_driver->bind_shaders(null);
 	d3d_driver->bind_frame_buffer(null);
 	d3d_surface = null;
 	effect_library = null;
 	d3d_driver = null;
+
 }
 
 void engine::on_size_changed_event(objptr sender, platform::events::idisplay_info_event_args_t args)
@@ -80,7 +77,8 @@ void engine::on_size_changed_event(objptr sender, platform::events::idisplay_inf
 	size.height = max(size.height, 10.0f);
 	size.width = max(size.width, 10.0f);
 
-	camera->projection(0.8f, size.width / size.height, 0.01f, 10000.0f);
+	if(!camera.is_empty())
+		camera->projection(0.8f, size.width / size.height, 0.01f, 10000.0f);
 }
 
 void engine::on_pointer_moved_event(objptr sender, platform::events::ipointer_event_args_t args)
@@ -106,7 +104,6 @@ engine::engine()
 	_is_running = false;
 	cond = new core::async::cond();
 	mutex = new core::async::mutex();
-	camera = new graphics::scenes::camera();
 }
 
 engine::~engine()
@@ -177,7 +174,7 @@ bool engine::init_driver()
 
 	d3d_driver->bind_frame_buffer(d3d_surface->frame_buffer());
 
-	camera->load({ 0,1.1f,0 }, { 0,0,0 }, { 0.8f, size.width / size.height, 0.01f, 10000.0f });
+	//camera->load({ 0,1.1f,0 }, { 0,0,0 }, { 0.8f, size.width / size.height, 0.01f, 10000.0f });
 
 	return true;
 }

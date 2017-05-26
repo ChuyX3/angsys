@@ -88,4 +88,42 @@
       <compile_config>-DPIXEL_SHADER-DLIGHTING</compile_config>
     </pixel_shader>
   </technique>
+
+  <technique name="character_normal_map_fx">
+    <vertex_shader>
+      <uniforms name="wvp">
+        <var type="f32" class="mat4" name="world"/>
+        <var type="f32" class="mat4" name="view"/>
+        <var type="f32" class="mat4" name="proj"/>
+      </uniforms>
+      <input_layout>
+        <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+        <var type="f32" class="vec3" name="normal" semantic="NORMAL" semantic_idx="0"/>
+        <var type="f32" class="vec3" name="binormal" semantic="BINORMAL" semantic_idx="0"/>
+        <var type="f32" class="vec3" name="tangent" semantic="TANGENT" semantic_idx="0"/>
+        <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
+      </input_layout>
+      <entry>main_vs</entry>
+      <code>CHARACTER_HLSL</code>
+      <compile_config>-DVERTEX_SHADER-DLIGHTING-DUSE_NORMAL_MAP</compile_config>
+    </vertex_shader>
+    <pixel_shader>
+      <uniforms name="lights">
+        <var type="f32" class="vec4" name="ambient" />
+        <var type="u32" class="scalar" name="lights_count" />
+        <var type="f32" class="scalar" name="specular_power" />
+        <block array="10" name="lights" >
+          <var type="f32" class="vec4" name="color" />
+          <var type="f32" class="vec3" name="position" />
+          <var type="u32" class="scalar" name="type" />
+        </block>
+      </uniforms>
+      <samplers>
+        <sampler type="linear" wrap="clamp"/>
+      </samplers>
+      <entry>main_ps</entry>
+      <code>CHARACTER_HLSL</code>
+      <compile_config>-DPIXEL_SHADER-DLIGHTING-DUSE_NORMAL_MAP</compile_config>
+    </pixel_shader>
+  </technique>
 </effect_library>

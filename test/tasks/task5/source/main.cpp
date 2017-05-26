@@ -10,6 +10,30 @@ namespace d3d11
 {
 	class main_app;
 	typedef object_wrapper<main_app> main_app_t;
+
+	class main_wnd : public window
+	{
+	public:
+		main_wnd();
+
+		ANG_DECLARE_INTERFACE();
+
+		virtual void window_proc(events::message_t msg)override {
+			if (msg->msg() == events::win_msg_enum::EraseBkgnd
+				|| msg->msg() == events::win_msg_enum::Draw)
+			{
+				graphics::paint_dc_t dc = new graphics::paint_dc(this);
+			}
+			else
+			{
+				return window::window_proc(msg.get());
+			}
+		}
+		
+	private:
+		virtual~main_wnd();
+	};
+
 	class main_app : public app
 	{
 		engine_t _engine;
@@ -35,6 +59,19 @@ int main(int argc, char* argv[])
 }
 
 
+d3d11::main_wnd::main_wnd()
+{
+}
+
+d3d11::main_wnd::~main_wnd()
+{
+
+}
+
+
+ANG_IMPLEMENT_BASIC_INTERFACE(d3d11::main_wnd, window);
+
+
 d3d11::main_app::main_app()
 {
 	_engine = new engine();
@@ -51,7 +88,7 @@ bool d3d11::main_app::init_app(array<string> cmdl)
 {
 	app::init_app(cmdl);
 
-	window_t wnd = new window();
+	window_t wnd = new d3d11::main_wnd();
 
 	wnd->createdEvent += new events::created_event(_engine.get(), &engine::on_create_event);
 	wnd->destroyedEvent += new events::destroyed_event(_engine.get(), &engine::on_destroy_event);
