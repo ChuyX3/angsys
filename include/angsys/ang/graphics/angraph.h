@@ -157,6 +157,8 @@ namespace ang
 			}
 		ANG_END_INTERFACE();
 
+		LINK idriver_t create_graphic_driver(graph_driver_type_t);
+
 	}
 }
 

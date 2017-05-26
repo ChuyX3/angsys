@@ -23,6 +23,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\media\media.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_inlines.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\buffers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\driver.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\shaders.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\textures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\media\file_streamer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\media\media_streamer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\vector_specialization.hpp" />
@@ -30,6 +34,13 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angraph.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_driver.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_frame_buffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_shaders.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_surface.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture_loader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\reflect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\textures.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\variable.cpp" />

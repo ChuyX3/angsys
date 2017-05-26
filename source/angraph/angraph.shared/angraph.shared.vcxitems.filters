@@ -28,6 +28,12 @@
     <Filter Include="source files\media">
       <UniqueIdentifier>{6c10f77c-8035-4a8a-ba17-16d185d2cc46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="header files\include\d3d11">
+      <UniqueIdentifier>{4df0de67-11ce-4af6-a0a6-1abef92b8dda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\d3d11">
+      <UniqueIdentifier>{122a07e8-8bb2-46c7-a38c-12ed39b58534}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
@@ -63,6 +69,18 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\buffers.h">
       <Filter>header files\ang\graphics</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\buffers.h">
+      <Filter>header files\include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\driver.h">
+      <Filter>header files\include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\shaders.h">
+      <Filter>header files\include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\textures.h">
+      <Filter>header files\include\d3d11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angraph.cpp">
@@ -79,6 +97,27 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp">
       <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_buffers.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_driver.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_frame_buffer.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_shaders.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_surface.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture_loader.cpp">
+      <Filter>source files\d3d11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

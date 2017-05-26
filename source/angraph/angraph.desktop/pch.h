@@ -15,6 +15,10 @@
 #include <ang/collections/vector.h>
 #include <ang/com_wrapper.h>
 
+#include <ang/collections/vector.h>
+#include <ang/collections/map.h>
+
+
 #pragma comment(lib, "angsys.lib")
 #pragma comment(lib, "angsys.platform.lib")
 
@@ -30,5 +34,16 @@ namespace ang
 {
 	inline void throw_if_failed(HRESULT hr) { if (FAILED(hr)) throw new exception((uint)hr, "ang::exception: COM ERROR"); }
 }
+
+
+#include <d3d11.h>
+#include <d3d11_2.h>
+#include <d3dcompiler.h>
+
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "d3dcompiler.lib")
+
+
+ANG_DECLARE_MEMORYMANAGER()
 
 // TODO: reference additional headers your program requires here
