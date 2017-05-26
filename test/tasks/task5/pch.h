@@ -10,6 +10,7 @@
 #include <angsys.h>
 #include <ang/collections/vector.h>
 #include <ang/collections/map.h>
+#include <ang/core/time.h>
 
 #include <ang/platform/platform.h>
 #include <ang/platform/angwin/angwin.h>

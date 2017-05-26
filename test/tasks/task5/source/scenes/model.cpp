@@ -339,7 +339,7 @@ inline float XMConvertToDegrees(float fRadians) { return fRadians * (180.0f / 3.
 void model::update(float total, float delta)
 {
 	float radiansPerSecond = XMConvertToRadians(45);
-	double totalRotation = total * radiansPerSecond;
+	double totalRotation = total * radiansPerSecond / 1000.0f;
 	float radians = static_cast<float>(fmod(totalRotation, 3.141592f * 2));
 
 	_rotation.set<1>(radians);

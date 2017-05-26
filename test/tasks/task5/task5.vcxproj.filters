@@ -12,18 +12,6 @@
     <ClInclude Include="include\shaders.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\d3d11\buffers.h">
-      <Filter>include\d3d11</Filter>
-    </ClInclude>
-    <ClInclude Include="include\d3d11\driver.h">
-      <Filter>include\d3d11</Filter>
-    </ClInclude>
-    <ClInclude Include="include\d3d11\shaders.h">
-      <Filter>include\d3d11</Filter>
-    </ClInclude>
-    <ClInclude Include="include\d3d11\textures.h">
-      <Filter>include\d3d11</Filter>
-    </ClInclude>
     <ClInclude Include="include\scenes\scenes.h">
       <Filter>include\scenes</Filter>
     </ClInclude>
@@ -38,27 +26,6 @@
     </ClCompile>
     <ClCompile Include="source\engine.cpp">
       <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="source\d3d11\d3d11_buffers.cpp">
-      <Filter>source\d3d11</Filter>
-    </ClCompile>
-    <ClCompile Include="source\d3d11\d3d11_driver.cpp">
-      <Filter>source\d3d11</Filter>
-    </ClCompile>
-    <ClCompile Include="source\d3d11\d3d11_frame_buffer.cpp">
-      <Filter>source\d3d11</Filter>
-    </ClCompile>
-    <ClCompile Include="source\d3d11\d3d11_shaders.cpp">
-      <Filter>source\d3d11</Filter>
-    </ClCompile>
-    <ClCompile Include="source\d3d11\d3d11_surface.cpp">
-      <Filter>source\d3d11</Filter>
-    </ClCompile>
-    <ClCompile Include="source\d3d11\d3d11_texture.cpp">
-      <Filter>source\d3d11</Filter>
-    </ClCompile>
-    <ClCompile Include="source\d3d11\d3d11_texture_loader.cpp">
-      <Filter>source\d3d11</Filter>
     </ClCompile>
     <ClCompile Include="source\scenes\scenes.cpp">
       <Filter>source\scenes</Filter>
@@ -82,12 +49,6 @@
     </Filter>
     <Filter Include="source">
       <UniqueIdentifier>{4f6bc199-96de-45e7-8793-9f526af1b795}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\d3d11">
-      <UniqueIdentifier>{b2a20e71-220a-4beb-a56e-bcf9ab797cd7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\d3d11">
-      <UniqueIdentifier>{bdba1ab2-af81-4caf-b270-94ab6c8beb26}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\scenes">
       <UniqueIdentifier>{8dc3aa4d-b697-4765-9db2-eaa4aec2407b}</UniqueIdentifier>

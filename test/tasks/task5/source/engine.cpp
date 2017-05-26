@@ -1,10 +1,5 @@
 #include "pch.h"
 #include "engine.h"
-#include <ang/core/time.h>
-
-//#include "d3d11\textures.h"
-
-#include "DDSTextureLoader.h"
 
 using namespace d3d11;
 
@@ -21,8 +16,8 @@ void engine::init()
 	core::files::ifile_system* fs = core::files::ifile_system::get_file_system();
 	fs->register_paths(L"../../../third_party/"_s);
 
-	effect_library = d3d_driver->create_effect_library();
-	texture_loader = d3d_driver->create_texture_loader();
+	effect_library = driver->create_effect_library();
+	texture_loader = driver->create_texture_loader();
 	
 	core::files::input_text_file_t file = new core::files::input_text_file();
 	file->open(L"resources/fx_library.xml"_s);
@@ -39,31 +34,31 @@ void engine::init()
 	doc = new xml::xml_document(file);
 	file->close();
 	scene = new graphics::scenes::scene();
-	scene->load(d3d_driver.get(), effect_library, texture_loader, doc->xml_root().get());
+	scene->load(driver.get(), effect_library, texture_loader, doc->xml_root().get());
 	camera = scene->camera();
 }
 
-void engine::update(StepTimer const& timer)
+void engine::update(core::time::timer const& timer)
 {
-	update_controller(timer.GetElapsedSeconds() * 1000.0f);
-	scene->update(timer.GetTotalSeconds(), timer.GetElapsedSeconds());
+	update_controller(timer.total());
+	scene->update(timer.total(), timer.delta());
 }
 
 
 void engine::draw()
 {
-	scene->draw(d3d_driver.get(), d3d_surface->frame_buffer());
-	d3d_surface->swap_buffers();
+	scene->draw(driver.get(), surface->frame_buffer());
+	surface->swap_buffers();
 }
 
 void engine::exit()
 {
 
-	d3d_driver->bind_shaders(null);
-	d3d_driver->bind_frame_buffer(null);
-	d3d_surface = null;
+	driver->bind_shaders(null);
+	driver->bind_frame_buffer(null);
+	surface = null;
 	effect_library = null;
-	d3d_driver = null;
+	driver = null;
 
 }
 
@@ -143,14 +138,11 @@ void engine::on_render_operation(objptr, platform::events::icreated_event_args_t
 		}
 
 		init();
-		double last = core::time::get_performance_time();
+		_timer.reset();
 		while (async->status().is_active(core::async::async_action_status::running))
-		{
-			_timer.Tick([&]()
-			{
-				update(_timer);
-			});
-			
+		{		
+			_timer.update();
+			update(_timer);
 			draw();
 		}
 		exit();
@@ -166,24 +158,17 @@ void engine::on_render_operation(objptr, platform::events::icreated_event_args_t
 
 bool engine::init_driver()
 {
-	d3d_driver = new graphics::d3d11::d3d11_driver();
+	driver = graphics::create_graphic_driver(graphics::graph_driver_type::DirectX11);
 	foundation::size<float> size = core_view->get_core_view_size();
-
-	auto _surface = d3d_driver->create_surface(core_view);
-	d3d_surface = interface_cast<graphics::d3d11::d3d11_surface>(_surface.get());
-
-	d3d_driver->bind_frame_buffer(d3d_surface->frame_buffer());
-
-	//camera->load({ 0,1.1f,0 }, { 0,0,0 }, { 0.8f, size.width / size.height, 0.01f, 10000.0f });
-
+	surface = driver->create_surface(core_view);
 	return true;
 }
 
 void engine::close_driver()
 {
 	_is_running = false;
-	d3d_surface = null;
-	d3d_driver = null;
+	surface = null;
+	driver = null;
 }
 
 
