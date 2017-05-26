@@ -161,10 +161,13 @@ void d3d11_index_buffer::use_buffer(d3d11_driver_t driver)
 	{
 	case reflect::var_type::s16:
 		format = DXGI_FORMAT_R16_SINT;
+		break;
 	case reflect::var_type::u16:
 		format = DXGI_FORMAT_R16_UINT;
+		break;
 	case reflect::var_type::s32:
 		format = DXGI_FORMAT_R32_SINT;
+		break;
 	case reflect::var_type::u32:
 		format = DXGI_FORMAT_R32_UINT;
 		break;

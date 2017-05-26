@@ -27,7 +27,7 @@ collections::vector<indexed_model::model_element> indexed_model::load(xml::xml_n
 	{
 		auto name = node->xml_name().as<cwstr_t>();
 		indexed_model::model_element element;
-		if (name == "element"_s || load_element(node, element))
+		if (name == "element"_s && load_element(node, element))
 			_elements += element;
 	});
 	return _elements.get();
@@ -88,7 +88,7 @@ bool indexed_model::load_index_buffer(xml::xml_node_t indices, indexed_model::mo
 	auto data_node = indices["data"];
 
 	reflect::var_type_t  type = type_node ? type_node["type"]->xml_value().as<reflect::var_type_t>() : reflect::var_type::u32;
-	uint count = data_node["count"]->xml_value().as<uint_t>();
+	uint count = data_node["count"]->xml_value().as<uint>();
 	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(data_node->xml_value().get());
 
 	switch (type.get())
@@ -144,15 +144,58 @@ bool indexed_model::load_vertex_buffer(xml::xml_node_t vertices, indexed_model::
 	{
 		wsize count = data_node["vertex_count"]->xml_value().as<uint>() * stride / sizeof(float);
 		streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(data_node->xml_value().get());
-		array<float> data = new collections::array_buffer<float>(count);
-
+		array<float> data = new collections::array_buffer<float>();
+		data->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
+		data->size(count);
+		out.vertex_data = data.get();
 		for (auto i = 0U; i < count; ++i)
 		{
 			stream >> data[i] >> ",";
 		}
 	}
+	else
+	{
+		wsize count = data_node["vertex_count"]->xml_value().as<uint>() * stride / sizeof(float);
+		streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(data_node->xml_value().get());
+		array<float> data = new collections::array_buffer<float>();
+		data->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
+		data->size(count);
 
+		wsize in_size = stride4 / sizeof(float);
+		wsize out_size = stride / sizeof(float);
+
+		wsize aligment = 16u;
+		out.vertex_data = data.get();
+		for (index i = 0U; i < count; )
+		{
+			wsize total = 0;
+			wsize size = 0;
+			wsize temp = 0;
+			wsize res = 0;
 	
-
+			for(index j = 0u, c = out.vertex_desc->counter(); j < c; j++)
+			{		
+				reflect::attribute_desc const& desc = out.vertex_desc[j];
+				size = desc.get_size_in_bytes();
+				if (size == 0)continue;//next item
+				temp = (total % aligment);
+				res = aligment - temp;
+				if (res < aligment)
+				{
+					if (res > size)
+						total += reflect::get_memory_size_aligned(temp, size) - temp;
+					else if (res < size)
+						total += res;
+				}
+				for (index k = 0U, d = size / sizeof(float); k < d; ++k)
+				{
+					stream >> data[i + total / sizeof(float) + k] >> ",";
+				}
+				total += size;		
+			}
+			i += reflect::get_memory_size_aligned(total, aligment) / sizeof(float);
+		}
+	}
+	
 	return true;
 }

@@ -1,7 +1,8 @@
 
 //#define VERTEX_SHADER
-//#define PIXEL_SHADER
+#define PIXEL_SHADER
 //#define LIGHTING
+//#define USE_NORMAL_MAP
 
 //#undef LIGHTING
 
@@ -14,7 +15,6 @@ struct ps_input
     float4 vtangent : TANGET0;
 #endif
     float2 vtexcoord : TEXCOORD0;
-
 #ifdef LIGHTING
     float4 vpos_world : TEXCOORD1;
 #endif
@@ -35,7 +35,7 @@ struct vs_input
     float4 anormal : NORMAL0;
 #ifdef USE_NORMAL_MAP
     float4 abinormal : BINORMAL0;
-    float4 atangent : TANGET0;
+    float4 atangent : TANGENT0;
 #endif
     float2 atexcoord : TEXCOORD0;
 };
@@ -47,7 +47,7 @@ ps_input main_vs(vs_input input)
     output.vnormal = mul(float4(input.anormal.xyz ,0), world);
 #ifdef USE_NORMAL_MAP
     output.vbinormal = mul(float4(input.abinormal.xyz, 0), world);
-     output.vtangent = mul(float4(input.atanget.xyz, 0), world);
+     output.vtangent = mul(float4(input.atangent.xyz, 0), world);
 #endif
     output.vtexcoord = input.atexcoord;
 #ifdef LIGHTING
@@ -122,15 +122,16 @@ float4 main_ps(ps_input input ) : SV_Target
 
     float4 color = difusse_tex.Sample(sam_linear, input.vtexcoord);
    //color.xyz = float3(.5,.5,.5);
-    color.xyz = lerp(color.xyz, float3(1,1,1), .5) * 1.5;
+   // color.xyz = lerp(color.xyz, float3(1,1,1), .5) * 1.5;
 #ifdef LIGHTING
     float3 total = (ambient_color.xyz * ambient_color.w + difusse * (1.0 - ambient_color.w)) * color.xyz;
     if (specular_power > 0)
         total = total + get_light_specular(normal, input.vpos_world.xyz);
     color.xyz = total;
 #endif
-    color.xyz = lerp(color.xyz, float3(normalize(input.vtexcoord)/2, normal.z/2), 0.3);
-    return float4(color.xyz, 1);
+   // color.xyz = lerp(color.xyz, float3(normalize(input.vtexcoord)/2, normal.z/2), 0.3);
+    float alpha = lerp(color.a, 1, 0.5);
+    return float4(color.xyz, alpha);
 }
 
 #endif

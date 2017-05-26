@@ -74,7 +74,7 @@ bool d3d11_texture::load(d3d11_texture_loader_t loader, xml::xml_node_t node)
 
 		foreach(node->xml_children(), [&](xml::xml_node_t tex_node)
 		{
-			if ((cwstr_t)tex_node->xml_name() != "d3d11_texture"_s)
+			if ((cwstr_t)tex_node->xml_name() != "texture"_s)
 				return;
 			wstring filename = tex_node->xml_value();
 			auto _filename = loader->find_file(filename);
@@ -219,6 +219,7 @@ bool d3d11_texture_loader::load_library(xml::xml_node_t library)
 		else if (name == "texture"_s) {
 			main_mutex->lock();
 			_texture_info_map += {node->xml_attributes()["name"], node };
+			//load_texture(node);
 			main_mutex->unlock();
 		}
 	});

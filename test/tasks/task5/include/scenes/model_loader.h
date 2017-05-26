@@ -9,7 +9,9 @@ namespace ang
 		{
 
 			class ordered_model;
+			class indexed_model;
 			typedef object_wrapper<ordered_model> ordered_model_t;
+			typedef object_wrapper<indexed_model> indexed_model_t;
 
 			class ordered_model
 				: public object

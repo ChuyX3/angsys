@@ -96,20 +96,20 @@ struct DDS_HEADER_DXT10
 
 struct TGA_HEADER
 {
-	unsigned char  identsize;			// size of ID field that follows 18 byte header (0 usually)
-	unsigned char  colourmaptype;		// type of colour map 0=none, 1=has palette
-	unsigned char  imagetype;			// type of image 2=rgb uncompressed, 10 - rgb rle compressed
+	ang_uint8_t  identsize;			// size of ID field that follows 18 byte header (0 usually)
+	ang_uint8_t  colourmaptype;		// type of colour map 0=none, 1=has palette
+	ang_uint8_t  imagetype;			// type of image 2=rgb uncompressed, 10 - rgb rle compressed
 
-	short colourmapstart;				// first colour map entry in palette
-	short colourmaplength;				// number of colours in palette
-	unsigned char  colourmapbits;		// number of bits per palette entry 15,16,24,32
+	ang_uint16_t colourmapstart;				// first colour map entry in palette
+	ang_uint16_t colourmaplength;				// number of colours in palette
+	ang_uint8_t  colourmapbits;		// number of bits per palette entry 15,16,24,32
 
-	short xstart;						// image x origin
-	short ystart;						// image y origin
-	short width;						// image width in pixels
-	short height;						// image height in pixels
-	unsigned char  bits;				// image bits per pixel 24,32
-	unsigned char  descriptor;			// image descriptor bits (vh flip bits)
+	ang_uint16_t xstart;						// image x origin
+	ang_uint16_t ystart;						// image y origin
+	ang_uint16_t width;						// image width in pixels
+	ang_uint16_t height;						// image height in pixels
+	ang_uint8_t  bits;				// image bits per pixel 24,32
+	ang_uint8_t  descriptor;			// image descriptor bits (vh flip bits)
 										// pixel data follows header
 };
 
@@ -1130,13 +1130,15 @@ bool d3d11_texture_loader::create_texture(d3d11_driver_t driver, d3d11::tex_file
 				texture->Release();
 				return false;
 			}
-
-			for (uint item = 0; item < info->arraySize; ++item)
+			driver->execute_on_thread_safe([&]()
 			{
-				uint res = D3D11CalcSubresource(0, item, mipLevels);
-				driver->D3D11Context()->UpdateSubresource(texture, res, nullptr, init_data[item].pSysMem, init_data[item].SysMemPitch, 0);
-			}
-			driver->D3D11Context()->GenerateMips(*resourceView);
+				for (uint item = 0; item < info->arraySize; ++item)
+				{
+					uint res = D3D11CalcSubresource(0, item, mipLevels);
+					driver->D3D11Context()->UpdateSubresource(texture, res, nullptr, init_data[item].pSysMem, init_data[item].SysMemPitch, 0);
+				}
+				driver->D3D11Context()->GenerateMips(*resourceView);
+			});
 		}
 	}
 

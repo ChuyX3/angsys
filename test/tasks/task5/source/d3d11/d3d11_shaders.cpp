@@ -429,17 +429,17 @@ bool d3d11_shaders::use_shaders(d3d11_driver_t driver)
 	driver->D3D11Context()->VSSetShader(d3d_vertex_shader, NULL, 0);
 	driver->D3D11Context()->PSSetShader(d3d_pixel_shader, NULL, 0);
 	if (!d3d_vs_const_buffers.is_empty())	
-		driver->D3D11Context()->VSSetConstantBuffers(0, d3d_vs_const_buffers->counter(),d3d_vs_const_buffers[0].addres_of());	
+		driver->D3D11Context()->VSSetConstantBuffers(0, d3d_vs_const_buffers->counter(), (ID3D11Buffer**)d3d_vs_const_buffers->data());
 	else
 		driver->D3D11Context()->VSSetConstantBuffers(0, 0, null);
 	
 	if (!d3d_ps_const_buffers.is_empty())
-		driver->D3D11Context()->PSSetConstantBuffers(0, d3d_ps_const_buffers->counter(), d3d_ps_const_buffers[0].addres_of());
+		driver->D3D11Context()->PSSetConstantBuffers(0, d3d_ps_const_buffers->counter(), (ID3D11Buffer**)d3d_ps_const_buffers->data());
 	else
 		driver->D3D11Context()->PSSetConstantBuffers(0, 0, null);
 
 	if (!d3d_ps_samplers.is_empty())	
-		driver->D3D11Context()->PSSetSamplers(0, d3d_ps_samplers->counter(), d3d_ps_samplers[0].addres_of());
+		driver->D3D11Context()->PSSetSamplers(0, d3d_ps_samplers->counter(), (ID3D11SamplerState**)d3d_ps_samplers->data());
 	else 
 		driver->D3D11Context()->PSSetSamplers(0, 0, null);
 	

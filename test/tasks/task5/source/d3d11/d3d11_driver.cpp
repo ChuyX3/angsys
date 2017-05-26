@@ -143,6 +143,26 @@ bool d3d11_driver::init_driver()
 	D3D11Context()->RSSetState(rasterizerState);
 	rasterizerState->Release();
 
+
+	D3D11_BLEND_DESC bl;
+
+	ZeroMemory(&bl, sizeof(bl));
+
+	bl.AlphaToCoverageEnable = TRUE;
+	bl.IndependentBlendEnable = TRUE;
+
+	bl.RenderTarget[0].BlendEnable = TRUE;
+	bl.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	bl.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	bl.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	bl.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	bl.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	bl.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	bl.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+	ID3D11BlendState* blstate;
+	d3d_device->CreateBlendState(&bl, &blstate);
+	d3d_context->OMSetBlendState(blstate, NULL, -1);
+	blstate->Release();
 	return true;
 }
 

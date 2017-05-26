@@ -2,8 +2,8 @@
 <model name="WOMAN_MODEL">
   <element>
     <material>
-      <fx>CHARACTER_FX</fx>
-      <texture>WOMAN_TEXTURE_TGA</texture>
+      <fx>character_normal_map_fx</fx>
+      <texture>textures_woman_tga</texture>
     </material>
     <index_buffer>
       <data_type type="u16" />
