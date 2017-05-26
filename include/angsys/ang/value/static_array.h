@@ -25,7 +25,7 @@ namespace ang
 			static_array(static_array && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
 			template<wsize N>
 			static_array(T(&ar)[N])
-				: _value(ar), _size(N - 1U) { }
+				: _value(ar), _size(N) { }
 			~static_array() {}
 
 		public: /*getters and setters*/
@@ -40,7 +40,7 @@ namespace ang
 			static_array& operator = (value<T*> const& val) { set(val.get(), 1u); return*this; }
 			static_array& operator = (static_array const& val) { set(val._value, val._size); return*this; }
 			static_array& operator = (static_array && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
-			template<wsize N> static_array& operator = (T(&ar)[N]) { set(ar, N - 1U); return*this; }
+			template<wsize N> static_array& operator = (T(&ar)[N]) { set(ar, N); return*this; }
 
 			operator type& () { return get(); }
 			operator type ()const { return get(); }
@@ -71,7 +71,7 @@ namespace ang
 			static_const_array(static_const_array && other) : _value(ang::move(other._value)), _value(ang::move(other._size)) {}
 			template<wsize N>
 			static_const_array(const T(&ar)[N])
-				: _value(ar), _size(N - 1U) { }
+				: _value(ar), _size(N) { }
 			~static_const_array() {}
 
 		public: /*getters and setters*/
@@ -86,7 +86,7 @@ namespace ang
 			static_const_array& operator = (value<T const*> const& val) { set(val.get(), 1); return*this; }
 			static_const_array& operator = (static_const_array const& val) { set(val._value, al._size); return*this; }
 			static_const_array& operator = (static_const_array && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
-			template<wsize N> static_const_array& operator = (const T(&ar)[N]) { set(ar, N - 1U); return*this; }
+			template<wsize N> static_const_array& operator = (const T(&ar)[N]) { set(ar, N); return*this; }
 
 			operator type& () { return get(); }
 			operator type ()const { return get(); }
