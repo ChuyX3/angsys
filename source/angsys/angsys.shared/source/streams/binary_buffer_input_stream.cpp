@@ -108,7 +108,7 @@ bool binary_buffer_input_stream::move_to(stream_index_t size, stream_reference_t
 	if (curSize == 0)
 		return false;
 
-	stream_index_t maxPos = curSize - 1;
+	stream_index_t maxPos = curSize;
 
 	switch (ref)
 	{
@@ -131,7 +131,7 @@ bool binary_buffer_input_stream::move_to(stream_index_t size, stream_reference_t
 bool binary_buffer_input_stream::forward(stream_index_t size)
 {
 	auto curSize = stream_size();
-	stream_index_t maxPos = curSize - 1L;
+	stream_index_t maxPos = curSize;
 
 	_cursor = min(_cursor + size, maxPos);
 	return true;
@@ -140,7 +140,7 @@ bool binary_buffer_input_stream::forward(stream_index_t size)
 bool binary_buffer_input_stream::backward(stream_index_t size)
 {
 	auto curSize = stream_size();
-	stream_index_t maxPos = curSize - 1L;
+	stream_index_t maxPos = curSize;
 
 	if ((_cursor - size) <= 0)
 		_cursor = 0;
@@ -168,7 +168,7 @@ bool binary_buffer_input_stream::can_move_to(stream_index_t size, stream_referen
 	auto curSize = stream_size();
 	if (curSize == 0)
 		return false;
-	stream_index_t maxPos = curSize - 1;
+	stream_index_t maxPos = curSize;
 
 	switch (ref)
 	{
@@ -214,7 +214,7 @@ bool binary_buffer_input_stream::can_move_to(stream_index_t size, stream_referen
 
 bool binary_buffer_input_stream::can_forward(stream_index_t size)
 {
-	stream_index_t maxPos = stream_size() - 1;
+	stream_index_t maxPos = stream_size();
 	if ((_cursor + size) > maxPos)
 		return false;
 	else
@@ -224,7 +224,7 @@ bool binary_buffer_input_stream::can_forward(stream_index_t size)
 
 bool binary_buffer_input_stream::can_backward(stream_index_t size)
 {
-	stream_index_t maxPos = stream_size() - 1;
+	stream_index_t maxPos = stream_size();
 	if ((_cursor - size) <= 0)
 		return false;
 	else
