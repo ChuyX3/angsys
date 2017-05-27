@@ -27,6 +27,63 @@ namespace ang
 					bool operator != (const vertex&) { return false; }//dummy
 				};
 
+				/*See more: http://paulbourke.net/dataformats/mtl/ */
+				struct material
+				{
+					/*"illum" statement specifies the illumination model to use in the material.
+					    It can be a number from 0 to 10:
+					 0	Color on and Ambient off
+					 1	Color on and Ambient on
+					 2	Highlight on
+					 3	Reflection on and Ray trace on
+					 4	Transparency: Glass on
+ 						Reflection: Ray trace on
+					 5	Reflection: Fresnel on and Ray trace on
+					 6	Transparency: Refraction on
+ 						Reflection: Fresnel off and Ray trace on
+					 7	Transparency: Refraction on
+ 						Reflection: Fresnel on and Ray trace on
+					 8	Reflection on and Ray trace off
+					 9	Transparency: Glass on
+ 						Reflection: Ray trace off
+					 10	Casts shadows onto invisible surfaces  */
+					uint illum;
+
+					/*"d factor" specifies the dissolve for the current material
+					"factor" is the amount this material dissolves into the background.  A 
+					factor of 1.0 is fully opaque.  This is the default when a new material 
+					is created.  A factor of 0.0 is fully dissolved (completely 
+					transparent)
+					"d -halo factor" specifies that a dissolve is dependent on the surface orientation 
+					relative to the viewer.  For example, a sphere with the following dissolve,
+					d -halo 0.0, will be fully dissolved at its center and will 
+					appear gradually more opaque toward its edge.*/
+					float d;
+
+					/*"Ns" exponent specifies the specular exponent for the current material.  This defines 
+					the focus of the specular highlight.*/
+					float Ns;
+
+					/*"Ka" statement specifies the ambient reflectivity of the current material*/
+					maths::unaligned_float3 Ka;
+
+					/*"Kd" statement specifies the diffuse reflectivity of the current material*/
+					maths::unaligned_float3 Kd;
+
+					/*"Kd" statement specifies the specular reflectivity of the current material*/
+					maths::unaligned_float3 Ks;
+
+					/*"Tf" statement specifies the transmission filter of the current material.
+					Any light passing through the object is filtered by the transmission
+					filter, which only allows the specifiec colors to pass through*/
+					maths::unaligned_float3 Tf;
+
+					string map_Ka;
+					string map_Kd;
+					string map_Ks;
+					string map_d; //alpha channel texture
+				};
+
 				struct model_element
 				{
 					string material;
@@ -97,5 +154,6 @@ namespace ang
 }
 
 ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::scenes::ordered_model::vertex);
+ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::scenes::ordered_model::material);
 ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::scenes::ordered_model::model_element);
 ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::scenes::indexed_model::model_element);

@@ -3,6 +3,7 @@
   <sources>
     <file sid="BASIC_SHADER_HLSL">resources/shaders/basic_shader.hlsl</file>
     <file sid="CHARACTER_HLSL">resources/shaders/character.hlsl</file>
+    <file sid="SKYBOX_HLSL">resources/shaders/sky_box.hlsl</file>
   </sources>
  
   <technique name="basic_shader_fx">  
@@ -23,6 +24,30 @@
     <pixel_shader>
       <entry>main_ps</entry>
       <code>BASIC_SHADER_HLSL</code>
+      <compile_config>-DPIXEL_SHADER</compile_config>
+    </pixel_shader>
+  </technique>
+
+  <technique name="sky_box_fx">
+    <vertex_shader>
+      <uniforms name="wvp">
+        <var type="f32" class="mat4" name="world"/>
+        <var type="f32" class="mat4" name="view"/>
+        <var type="f32" class="mat4" name="proj"/>
+      </uniforms>
+      <input_layout>
+        <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+      </input_layout>
+      <entry>main_vs</entry>
+      <code>SKYBOX_HLSL</code>
+      <compile_config>-DVERTEX_SHADER</compile_config>
+    </vertex_shader>
+    <pixel_shader>
+      <samplers>
+        <sampler type="linear" wrap="clamp"/>
+      </samplers>
+      <entry>main_ps</entry>
+      <code>SKYBOX_HLSL</code>
       <compile_config>-DPIXEL_SHADER</compile_config>
     </pixel_shader>
   </technique>

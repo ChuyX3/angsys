@@ -185,6 +185,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="resources\character_fx_library.xml" />
     <Xml Include="resources\fx_library.xml" />
     <Xml Include="resources\scenes\scenes.xml" />
     <Xml Include="resources\texture_apex.xml" />
@@ -194,6 +195,16 @@
       <FileType>Document</FileType>
     </None>
     <None Include="resources\shaders\character.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\sky_box.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\character2.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

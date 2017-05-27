@@ -106,6 +106,7 @@ scene::scene()
 {
 	main_mutex = new core::async::mutex();
 	_camera = new scenes::camera();
+	_current_size = { 800,600 };
 }
 
 scene::~scene()
@@ -245,9 +246,11 @@ void scene::update(float total, float delta)
 
 void scene::draw(idriver_t driver, iframe_buffer_t frame)
 {
+	_current_size = frame->dimentions();
 	maths::float4 clear_color = maths::float4(_ambient_color / 5.0f, 1);
 	driver->bind_frame_buffer(frame);
 	driver->clear(clear_color);
+	_camera->draw(this);
 	foreach(_objects, [&](scene_object_t& node)
 	{
 		node->draw(this);

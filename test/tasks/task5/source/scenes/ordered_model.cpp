@@ -201,6 +201,7 @@ core::async::iasync_t<collections::vector<ordered_model::model_element>> ordered
 			cstr_t usemtl_s = "usemtl ";
 
 			string material;
+			collections::vector<string> material_lib;
 			model_element model;
 			model.vertices = new collections::vector_buffer<vertex>();
 			model.vertices->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
@@ -327,6 +328,14 @@ core::async::iasync_t<collections::vector<ordered_model::model_element>> ordered
 						break; //error
 
 					data.sub_string(material, idx + usemtl_s.size(), end - idx - usemtl_s.size() - 1);
+				}
+				else if (data.find(mtllib_s, idx, idx + mtllib_s.size()) == idx)
+				{
+					auto end = data.find('\n', idx);
+					if (end == invalid_index)
+						break; //error
+					material_lib += ""_s;
+					data.sub_string(*material_lib->end(), idx + mtllib_s.size(), end - idx - usemtl_s.size() - 1);
 				}
 
 				idx = data.find('\n', idx);

@@ -342,7 +342,7 @@ void model::update(float total, float delta)
 	double totalRotation = total * radiansPerSecond / 1000.0f;
 	float radians = static_cast<float>(fmod(totalRotation, 3.141592f * 2));
 
-	_rotation.set<1>(radians);
+//	_rotation.set<1>(radians);
 
 }
 
@@ -416,6 +416,9 @@ void model::draw(scene_t scene) {
 				driver->bind_index_buffer(_element.index_buffer);
 				driver->draw_indexed(_element.index_buffer->counter(), primitive::triangle);
 			}
+
+			for(index i = 0, c = _element.textures.is_empty()? 1 : _element.textures->counter(); i < c; ++i)
+				driver->bind_texture(null, i);
 		});
 		driver->bind_vertex_buffer(null);
 		driver->bind_shaders(null);

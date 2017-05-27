@@ -64,16 +64,16 @@ bool camera::load(scene_t scene, xml::xml_node_t node)
 		_rotation = { 0, 0, 0, 1 };
 	else
 		_rotation = { rot->xml_value().as<maths::float3>() , 1 };
-	auto proj = node["projection"];
 
-	//auto size = scene->driver()->bound();
+	auto near_plane_node = node["near_plane"];
+	auto far_plane_node = node["far_plane"];
+	auto fvo_node = node["fvo"];
 
-	if (proj.is_empty())
-		projection(0.8f, 800.0f / 600.0f, 0.01f, 1000.0f);
-	else {
-		auto att = proj->xml_attributes();
-		projection(att["fvo"].as<float>(), 800.0f / 600.0f, att["near"].as<float>(), att["far"].as<float>());
-	}
+	float near_plane = near_plane_node.is_empty() ? 0.001f : near_plane_node->xml_value().as<float>();
+	float far_plane = far_plane_node.is_empty() ? 0.001f : far_plane_node->xml_value().as<float>();
+	float fvo = fvo_node.is_empty() ? 0.001f : fvo_node->xml_value().as<float>();
+	auto size = scene->current_size();
+	projection(fvo, size.width / size.height , near_plane, far_plane);
 
 	return true;
 }
@@ -91,7 +91,16 @@ void camera::update(float total, float delta)
 
 }
 
-void camera::draw(scene_t) { }
+void camera::draw(scene_t scene)
+{
+	auto size = scene->current_size();
+	float aspect = size.width / size.height;
+	if (_proj_info.get<1>() != aspect)
+	{
+		_proj_info.set<1>(aspect);
+		_projection = maths::matrix::perspective(_proj_info.get<0>(), _proj_info.get<1>(), _proj_info.get<2>(), _proj_info.get<3>());
+	}
+}
 
 void camera::close() {}
 
@@ -100,6 +109,18 @@ void camera::projection(float fov, float aspect, float near_plane, float far_pla
 	_proj_info = {fov, aspect, near_plane , far_plane };
 	_projection = maths::matrix::perspective(fov, aspect, near_plane, far_plane);
 }
+
+void camera::projection(maths::float4 const& proj)
+{
+	_proj_info = proj;
+	_projection = maths::matrix::perspective(proj.get<0>(), proj.get<1>(), proj.get<2>(), proj.get<3>());
+}
+
+maths::float4 camera::projection()const
+{
+	return _proj_info;
+}
+
 
 maths::matrix4 camera::view_matrix()const
 {

@@ -70,10 +70,7 @@ void engine::on_size_changed_event(objptr sender, platform::events::idisplay_inf
 		info.display_resolution->width * info.display_scale_factor->width ,
 		info.display_resolution->height * info.display_scale_factor->height };
 	size.height = max(size.height, 10.0f);
-	size.width = max(size.width, 10.0f);
-
-	if(!camera.is_empty())
-		camera->projection(0.8f, size.width / size.height, 0.01f, 10000.0f);
+	size.width = max(size.width, 10.0f);		
 }
 
 void engine::on_pointer_moved_event(objptr sender, platform::events::ipointer_event_args_t args)
@@ -177,6 +174,8 @@ void engine::close_driver()
 
 void engine::update_controller(float delta)
 {
+	delta /= 1000.0f;
+
 	if (camera.is_empty())
 		return;
 

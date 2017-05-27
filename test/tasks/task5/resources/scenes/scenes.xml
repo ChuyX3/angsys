@@ -2,37 +2,43 @@
 <scene>
   <sources>
     <file sid="GIRL_MODEL_OBJ">resources/Girl/girl.obj</file>
-    <file sid="WOMAN_MODEL_XML">resources/models/woman.xml</file>
-    <file sid="CUBE_MODEL_XML">resources/models/cube.xml</file>
+    <file sid="BEAUTIFULGIRL_MODEL_OBJ">resources/BeautifulGirl/Beautiful Girl.obj</file>
+    <file sid="SKYBOX_XML">resources/models/skybox.xml</file>
   </sources>
   <lights>
     <ambient>
-      <color>1,1,1</color>
+      <color>1.2,1.2,1.2</color>
     </ambient>
     <light>
-      <color>1,1,0.5</color>
-      <position>50.0, 100.0,-50.0</position>
+      <color>1.3362,0.8351,0.3340</color>
+      <position>100.0, 50.0,10.0</position>
     </light>
-    <light>
-      <color>0.5,1,1</color>
-      <position>-50.0, 100.0,-50.0</position>
-    </light>
-    <light>
-      <color>1,0.5,1</color>
-      <position>0.0, 100.0,50.0</position>
-    </light>
-  </lights>
+   </lights>
   <camera>
     <position>0.0,1.75,0.0</position>
     <rotation>0.2,0.0,0.0</rotation>
     <near_plane>0.01</near_plane>
     <far_plane>10000.0</far_plane>
-    <fvo>0.8</fvo>
+    <fvo>0.99</fvo>
   </camera>
   <object>
-    <position>0.0,0.0,-3.0</position>
+    <position>2.0,0.0,-3.0</position>
     <rotation>0.0,0.0,0.0</rotation>
     <scale>0.254,0.254,0.254</scale>
     <source type="ordered">GIRL_MODEL_OBJ</source>
+  </object>
+
+  <object>
+    <position>0.0,0.0,-3.0</position>
+    <rotation>0.0,3.14,0.0</rotation>
+    <scale>1,1,1</scale>
+    <source type="ordered">BEAUTIFULGIRL_MODEL_OBJ</source>
+  </object>
+
+  <object>
+    <position>0.0,0.0,0.0</position>
+    <rotation>0.0,0.0,0.0</rotation>
+    <scale>10,10,10</scale>
+    <source type="indexed">SKYBOX_XML</source>
   </object>
 </scene>

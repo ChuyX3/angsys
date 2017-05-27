@@ -76,12 +76,21 @@
     <Xml Include="resources\scenes\scenes.xml">
       <Filter>resources\scenes</Filter>
     </Xml>
+    <Xml Include="resources\character_fx_library.xml">
+      <Filter>resources</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\basic_shader.hlsl">
       <Filter>resources\shaders</Filter>
     </None>
     <None Include="resources\shaders\character.hlsl">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="resources\shaders\sky_box.hlsl">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="resources\shaders\character2.hlsl">
       <Filter>resources\shaders</Filter>
     </None>
   </ItemGroup>

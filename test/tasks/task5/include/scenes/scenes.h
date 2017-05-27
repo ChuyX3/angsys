@@ -93,6 +93,8 @@ namespace ang
 				maths::matrix4 world_matrix()const override;
 
 				void projection(float fov, float aspect, float near_plane, float far_plane);
+				void projection(const maths::float4&);
+				maths::float4 projection()const;
 
 				void move_up(float deltaTime);
 				void move_down(float deltaTime);
@@ -139,6 +141,8 @@ namespace ang
 				collections::vector<scene_object_t> _objects;
 				collections::map<string, wstring> _source_map;
 				core::async::mutex_t main_mutex;
+				foundation::size<float> _current_size;
+
 			public:
 				scene();
 
@@ -165,6 +169,7 @@ namespace ang
 				inline effects::ieffect_library* effect_library()const { return _effect_library.get(); }
 				inline textures::itexture_loader* texture_loader()const { return _texture_loader.get(); }
 				inline camera* camera()const { return _camera.get(); }
+				inline foundation::size<float>const& current_size()const { return _current_size; }
 				inline wstring find_file(cstr_t sid)const {
 					core::async::scope_locker lock = main_mutex;
 					if (_source_map.is_empty())
