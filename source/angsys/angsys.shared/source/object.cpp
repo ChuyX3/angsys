@@ -45,9 +45,9 @@ safe_pointer::safe_pointer(safe_pointer&& other)
 }
 
 safe_pointer::safe_pointer(safe_pointer const& other)
-	: _info(const_cast<safe_pointer&>(other).lock<object>())
+	: _info(null)
 {
-
+	set(const_cast<safe_pointer&>(other).lock<object>());
 }
 
 
@@ -212,7 +212,7 @@ void object::operator delete(ang_void_ptr_t ptr, char const* file, int line)
 #endif
 
 object::object(bool inc_ref)
-	: ref_count(smart_ptr_info_ptr_t((wsize)this - sizeof(smart_ptr_info_t))->_ref_counter)
+	: ref_count(GET_SMART_PTR_INFO(this)->_ref_counter)
 {
 	ref_count = inc_ref ? 1 : 0;
 }
