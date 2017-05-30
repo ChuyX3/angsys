@@ -93,7 +93,7 @@ namespace ang
 				core::async::dispatcher_thread_t _work_thead;
 				collections::map<string, wstring> _source_map;
 				collections::map<string, xml::xml_node_t> _texture_info_map;
-				collections::map<string, d3d11_texture_t> _textures;
+				collections::map<string, safe_pointer> _textures;
 			public:
 				d3d11_texture_loader(d3d11_driver_t parent);
 

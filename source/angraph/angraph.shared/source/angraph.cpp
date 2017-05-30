@@ -15,6 +15,9 @@ ANG_IMPLEMENT_INTERFACE(ang::graphics::effects, ishaders)
 ANG_IMPLEMENT_INTERFACE(ang::graphics::effects, ieffect)
 ANG_IMPLEMENT_INTERFACE(ang::graphics::effects, ieffect_library)
 
+ANG_IMPLEMENT_ENUM(ang::graphics, cull_mode, uint, cull_mode::none);
+ANG_IMPLEMENT_ENUM(ang::graphics, front_face, uint, front_face::def);
+ANG_IMPLEMENT_ENUM(ang::graphics, blend_mode, uint, blend_mode::disable);
 
 
 idriver_t graphics::create_graphic_driver(graph_driver_type_t type)

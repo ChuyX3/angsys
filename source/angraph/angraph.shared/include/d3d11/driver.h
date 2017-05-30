@@ -121,9 +121,14 @@ namespace ang
 				com_wrapper<IDXGIFactory2> dxgi_factory;
 				com_wrapper<ID3D11Device2> d3d_device;
 				com_wrapper<ID3D11DeviceContext2> d3d_context;
+				com_wrapper<ID3D11BlendState> d3d_blend_state;
 				d3d11_frame_buffer_t _current_frame_buffer;
 				d3d11_shaders_t _current_shaders;	
 				primitive_t _primitive;
+
+				graphics::cull_mode_t _cull_mode;
+				graphics::front_face_t _front_face;
+				graphics::blend_mode_t _blend_mode;
 
 				core::async::mutex_t main_mutex;
 
@@ -141,6 +146,15 @@ namespace ang
 				textures::itexture_loader_t create_texture_loader()const override;
 				buffers::ivertex_buffer_t create_vertex_buffer(buffers::buffer_usage_t usage, static_array<reflect::attribute_desc> vertex_desc, wsize vertex_count, static_array<byte> init_data)const override;
 				buffers::iindex_buffer_t create_index_buffer(buffers::buffer_usage_t usage,	reflect::var_type_t index_type,	wsize index_count, static_array<byte> init_data)const override;
+
+				void cull_mode(cull_mode_t) override;
+				cull_mode_t cull_mode()const override;
+
+				void front_face(front_face_t) override;
+				front_face_t front_face()const override;
+
+				void blend_mode(blend_mode_t) override;
+				blend_mode_t blend_mode()const override;
 
 				void bind_frame_buffer(iframe_buffer_t) override;
 				void bind_shaders(effects::ishaders_t) override;

@@ -12,6 +12,9 @@ using namespace ang::graphics::d3d11;
 d3d11_driver::d3d11_driver()
 {
 	main_mutex = new core::async::mutex();
+	_cull_mode = graphics::cull_mode::back;
+	_front_face = graphics::front_face::def;
+	_blend_mode = graphics::blend_mode::disable;
 	init_driver();
 }
 
@@ -159,10 +162,10 @@ bool d3d11_driver::init_driver()
 	bl.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 	bl.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	bl.RenderTarget[0].RenderTargetWriteMask = 0x0f;
-	ID3D11BlendState* blstate;
-	d3d_device->CreateBlendState(&bl, &blstate);
-	d3d_context->OMSetBlendState(blstate, NULL, -1);
-	blstate->Release();
+
+	d3d_device->CreateBlendState(&bl, &d3d_blend_state);
+	//d3d_context->OMSetBlendState(d3d_blend_state, NULL, -1);
+
 	return true;
 }
 
@@ -220,6 +223,66 @@ buffers::iindex_buffer_t d3d11_driver::create_index_buffer(buffers::buffer_usage
 		return null;
 	return buffer.get();
 }
+
+
+void d3d11_driver::cull_mode(cull_mode_t value)
+{
+	if (_cull_mode != value)
+	{
+		_cull_mode = value;
+		D3D11_RASTERIZER_DESC rs;
+		ZeroMemory(&rs, sizeof(rs));
+		rs.FillMode = D3D11_FILL_SOLID;
+		rs.CullMode = D3D11_CULL_MODE(_cull_mode.get() + 1);
+		rs.FrontCounterClockwise = _front_face == front_face::counter_clockwise;
+		ID3D11RasterizerState* rasterizerState;
+		D3D11Device()->CreateRasterizerState(&rs, &rasterizerState);
+		D3D11Context()->RSSetState(rasterizerState);
+		rasterizerState->Release();
+	}
+}
+
+cull_mode_t d3d11_driver::cull_mode()const
+{
+	return _cull_mode;
+}
+
+void d3d11_driver::front_face(front_face_t value)
+{
+	if (_front_face != value)
+	{
+		_front_face = value;
+		D3D11_RASTERIZER_DESC rs;
+		ZeroMemory(&rs, sizeof(rs));
+		rs.FillMode = D3D11_FILL_SOLID;
+		rs.CullMode = D3D11_CULL_MODE(_cull_mode.get() + 1);
+		rs.FrontCounterClockwise = _front_face == front_face::counter_clockwise;
+		ID3D11RasterizerState* rasterizerState;
+		D3D11Device()->CreateRasterizerState(&rs, &rasterizerState);
+		D3D11Context()->RSSetState(rasterizerState);
+		rasterizerState->Release();
+	}
+}
+
+front_face_t d3d11_driver::front_face()const
+{
+	return _front_face;
+}
+
+void d3d11_driver::blend_mode(blend_mode_t value)
+{
+	_blend_mode = value;
+	if (value == blend_mode::enable)	
+		d3d_context->OMSetBlendState(d3d_blend_state, NULL, -1);
+	else
+		d3d_context->OMSetBlendState(NULL, NULL, -1);
+}
+
+blend_mode_t d3d11_driver::blend_mode()const
+{
+	return _blend_mode;
+}
+
 
 void d3d11_driver::clear(color_t color)
 {

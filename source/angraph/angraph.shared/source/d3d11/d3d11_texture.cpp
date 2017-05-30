@@ -165,6 +165,11 @@ d3d11_texture_loader::~d3d11_texture_loader()
 	_work_thead->cancel();
 	_work_thead->wait(core::async::async_action_status::completed, -1);
 	_work_thead = null;
+	main_mutex->lock();
+	_textures.clean();
+	_texture_info_map.clean();
+	_source_map.clean();
+	main_mutex->unlock();
 }
 
 ANG_IMPLEMENT_CLASSNAME(ang::graphics::d3d11::d3d11_texture_loader);
@@ -219,7 +224,6 @@ bool d3d11_texture_loader::load_library(xml::xml_node_t library)
 		else if (name == "texture"_s) {
 			main_mutex->lock();
 			_texture_info_map += {node->xml_attributes()["name"], node };
-			//load_texture(node);
 			main_mutex->unlock();
 		}
 	});
@@ -289,7 +293,11 @@ textures::itexture_t d3d11_texture_loader::load_texture(string name)
 		{
 			auto it = _textures->find(name);
 			if (it.is_valid())
-				return it->value().get(); // return it->value().lock<d3d11_texture>().get();
+			{
+				d3d11_texture_t tex = it->value().lock<d3d11_texture>();
+				if (!tex.is_empty())
+					return tex.get();
+			}
 		}
 	}
 	xml::xml_node_t node;
@@ -334,7 +342,11 @@ core::async::iasync_t<textures::itexture_t>  d3d11_texture_loader::load_texture_
 			{
 				auto it = _textures->find(name);
 				if (it.is_valid())
-					return it->value().get();// return it->value().lock<d3d11_texture>().get();
+				{
+					d3d11_texture_t tex = it->value().lock<d3d11_texture>();
+					if (!tex.is_empty())
+						return tex.get();
+				}
 			}
 		}
 		xml::xml_node_t node;
@@ -359,7 +371,7 @@ textures::itexture_t d3d11_texture_loader::find_texture(cstr_t name)const
 	if (_textures.is_empty())
 		return null;
 	auto it = _textures->find(name);
-	return it.is_valid() ? it->value().get() : null; //return it.is_valid() ? it->value().lock<d3d11_texture>().get() : null;
+	return it.is_valid() ? it->value().lock<d3d11_texture>().get() : null; //return it.is_valid() ? it->value().lock<d3d11_texture>().get() : null;
 }
 
 textures::itexture_t d3d11_texture_loader::find_texture(cwstr_t name)const
@@ -368,6 +380,6 @@ textures::itexture_t d3d11_texture_loader::find_texture(cwstr_t name)const
 	if (_textures.is_empty())
 		return null;
 	auto it = _textures->find(name);
-	return it.is_valid() ? it->value().get() : null; //return it.is_valid() ? it->value().lock<d3d11_texture>().get() : null;
+	return it.is_valid() ? it->value().lock<d3d11_texture>().get() : null; //return it.is_valid() ? it->value().lock<d3d11_texture>().get() : null;
 }
 

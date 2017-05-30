@@ -111,6 +111,23 @@ namespace ang
 	namespace graphics
 	{
 
+		ANG_BEGIN_ENUM(LINK, cull_mode, uint)
+			none = 0,
+			front,
+			back,
+		ANG_END_ENUM(cull_mode);
+
+		ANG_BEGIN_ENUM(LINK, front_face, uint)
+			def,
+			clockwise,
+			counter_clockwise = def,
+		ANG_END_ENUM(front_face);
+
+		ANG_BEGIN_ENUM(LINK, blend_mode, uint)
+			disable,
+			enable,
+		ANG_END_ENUM(blend_mode);
+
 		ANG_BEGIN_INTERFACE(LINK, iframe_buffer)
 			visible vcall foundation::size<float> dimentions()const pure;
 			visible vcall uint color_buffer_count()const pure;
@@ -121,6 +138,7 @@ namespace ang
 			visible vcall void swap_buffers() pure;
 			visible vcall iframe_buffer_t frame_buffer()const pure;
 		ANG_END_INTERFACE();
+
 
 		ANG_BEGIN_INTERFACE(LINK, idriver)
 			visible vcall isurface_t create_surface(platform::icore_view_t)const pure;
@@ -138,6 +156,15 @@ namespace ang
 				wsize index_count,
 				static_array<byte> init_data
 			)const pure;
+
+			visible vcall void cull_mode(cull_mode_t) pure;
+			visible vcall cull_mode_t cull_mode()const pure;
+
+			visible vcall void front_face(front_face_t) pure;
+			visible vcall front_face_t front_face()const pure;
+
+			visible vcall void blend_mode(blend_mode_t) pure;
+			visible vcall blend_mode_t blend_mode()const pure;
 
 			visible vcall void bind_frame_buffer(iframe_buffer_t) pure;
 			visible vcall void bind_shaders(effects::ishaders_t) pure;
