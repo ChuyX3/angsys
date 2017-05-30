@@ -329,7 +329,7 @@ ang::core::async::iasync_t<T> ang::core::async::async_task<T>::run_async(ang::co
 
 
 template<typename T>
-ang::core::async::iasync_t<T> ang::core::async::async_task<T>::run_async(ang::core::async::async_task_result<T>* _async,ang::core::delegates::function<T(iasync<T>*, var_args_t)> _func, ang::var_args_t _args, ang::core::async::thread_priority_t priority)
+ang::core::async::iasync_t<T> ang::core::async::async_task<T>::run_async(ang::core::async::async_task_result<T>* task,ang::core::delegates::function<T(iasync<T>*, var_args_t)> _func, ang::var_args_t _args, ang::core::async::thread_priority_t priority)
 {
 	if (_func.is_empty())
 		return null;
@@ -340,43 +340,44 @@ ang::core::async::iasync_t<T> ang::core::async::async_task<T>::run_async(ang::co
 	auto func = _func.get();
 	func->add_ref();
 
-	_async->add_ref();
+	async_task_result_t<T> _task = task;
+	task->add_ref();
 
 	auto terminate = [=]()->dword {
 		func->release();
 		if (args)args->release();
-		_async->release();
+		task->release();
 		return 0U;
 	};
 
-	if (!_async->_thread->start([=](pointer)->dword {
-		_async->_status = async_action_status::running;
-		_async->_cond->signal();
-		_async->complete(func->invoke(_async, args));
+	if (!task->_thread->start([=](pointer)->dword {
+		task->_status = async_action_status::running;
+		task->_cond->signal();
+		task->complete(func->invoke(task, args));
 		return terminate();
 
 	}, null, priority))
 		return (iasync<T>*)(wsize)terminate();
-	return _async;
+	return _task.get();
 }
 
 
 template<typename T>
-ang::core::async::iasync_t<T> ang::core::async::async_task<T>::run_sync(ang::core::async::async_task_result<T>* async, ang::core::delegates::function<T(iasync<T>*, var_args_t)> func, ang::var_args_t args)
+ang::core::async::iasync_t<T> ang::core::async::async_task<T>::run_sync(ang::core::async::async_task_result<T>* task, ang::core::delegates::function<T(iasync<T>*, var_args_t)> func, ang::var_args_t args)
 {
 	if (func.is_empty())
 		return null;
-	async_task_result_t<T> _async = async;
+	async_task_result_t<T> _task = task;
 
-	async->_mutex->lock();
-	async->_thread = thread::current_thread();
-	async->_mutex->unlock();
+	task->_mutex->lock();
+	task->_thread = thread::current_thread();
+	task->_mutex->unlock();
 
-	async->_status = async_action_status::running;
-	async->_cond->signal();
-	async->complete(func(async, args));
+	task->_status = async_action_status::running;
+	task->_cond->signal();
+	task->complete(func(task, args));
 
-	return async;
+	return _task.get();
 }
 
 
@@ -392,35 +393,35 @@ ang::core::async::iasync_t<T> ang::core::async::dispatcher_thread::run_async(ang
 	auto func = _func.get();
 	func->add_ref();
 
-	async_task_result<T>* _async = NEW async_task_result<T>();
-	_async->add_ref();
-	async_task_result_t<T>guard_async = _async;
-	_async->_thread = this;
-	thread_callback_t callback = [this, _async, func, args](pointer)->dword {
-		if (_async->_status == async_action_status::canceled)
+	async_task_result_t<T> _task = NEW async_task_result<T>();
+	async_task_result<T>* task = _task.get();
+	task->add_ref();
+	task->_thread = this;
+	thread_callback_t callback = [=](pointer)->dword {
+		if (task->_status == async_action_status::canceled)
 		{
-			_async->complete();
+			task->complete();
 			func->release();
 			if (args)args->release();
-			_async->release();
+			task->release();
 			return -1;
 		}
 		else
 		{
-			_async->_status = async_action_status::running;
-			_async->_cond->signal();
+			task->_status = async_action_status::running;
+			task->_cond->signal();
 
-			_async->complete(func->invoke(_async, args));
+			task->complete(func->invoke(task, args));
 
 			func->release();
 			if (args)args->release();
-			_async->release();
+			task->release();
 			return 0U;
 		}
 	};
 
 	post_task(callback);
-	return guard_async;
+	return _task.get();
 }
 
 
@@ -570,7 +571,8 @@ ang::core::async::iasync_t<then_result_t> ang::intf_wrapper<ang::core::async::ia
 {
 	if (_ptr == null)
 		return null;
-	ang::core::async::async_task_result<then_result_t>* then_task = NEW ang::core::async::async_task_result<then_result_t>();
+	ang::core::async::async_task_result_t<then_result_t> _then_task = NEW ang::core::async::async_task_result<then_result_t>();
+	ang::core::async::async_task_result<then_result_t> *then_task = _then_task.get();
 	then_task->add_ref();
 	try {
 		_ptr->then([=](ang::core::async::iasync<result_t>* async)
@@ -587,7 +589,7 @@ ang::core::async::iasync_t<then_result_t> ang::intf_wrapper<ang::core::async::ia
 		return null;
 	}
 	
-	return then_task;
+	return ang::move(_then_task);
 }
 
 
