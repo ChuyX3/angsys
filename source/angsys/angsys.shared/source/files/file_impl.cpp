@@ -32,7 +32,7 @@ mapped_file_buffer::mapped_file_buffer(system_file_t file, file_flags_t access, 
 
 mapped_file_buffer::~mapped_file_buffer()
 {
-	unmap();
+	_original_source->unmap(this);
 }
 
 ANG_IMPLEMENT_CLASSNAME(ang::core::files::mapped_file_buffer);
@@ -329,6 +329,7 @@ file_impl::file_impl()
 	, _flags()
 	, _size(0)
 	, _cursor(0)
+	, _map_counter(0)
 {
 
 }
@@ -623,6 +624,27 @@ file_size_t file_impl::file_size()const
 	return _size;
 }
 
+bool file_impl::file_size(file_size_t size)
+{
+	core::async::scope_locker lock = _mutex;
+	if (_size == size)
+		return true;
+	if (!_flags.is_active(open_flags::access_out))
+		return false;
+#ifdef WINDOWS_PLATFORM
+	LARGE_INTEGER lint;
+	_cursor = max(0, min<long64>(size, _cursor));
+	lint.QuadPart = size;
+	SetFilePointerEx(_hfile, lint, null, 0);
+	auto res = SetEndOfFile(_hfile);
+	lint.QuadPart = _cursor;
+	SetFilePointerEx(_hfile, lint, null, 0);
+	return res ? true : false;
+#elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
+	::lseek(_hfile, cur, 0);
+#endif
+}
+
 text::encoding_t file_impl::encoding()const
 {
 	return _flags.is_active(open_flags::encoding_unicode) ? text::encoding::iso_10646
@@ -756,6 +778,7 @@ ibuffer_t file_impl::map(wsize size, file_cursor_t offset)
 
 	if (map_handle(size + offset) == 0)
 		return null;
+	_map_counter++;
 	return new mapped_file_buffer(this, _flags, size, offset);
 }
 
@@ -765,7 +788,40 @@ bool file_impl::unmap(ibuffer_t buffer)
 	mapped_file_buffer_t mapped_buffer = interface_cast<mapped_file_buffer>(buffer.get());
 	if (mapped_buffer == null || mapped_buffer->original_source().get() != this)
 		return false;
-	mapped_buffer->unmap();
+	if (mapped_buffer->unmap())
+	{
+		_map_counter--;
+		if (_map_counter <= 0)
+		{
+#ifdef WINDOWS_PLATFORM
+			CloseHandle(_hmap);
+			_hmap = NULL;
+#elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
+			_hmap = NULL;
+#endif
+		}
+	}
+	return true;
+}
+
+bool file_impl::unmap(mapped_file_buffer* mapped_buffer)
+{
+	core::async::scope_locker lock = _mutex;
+	if (mapped_buffer == null || mapped_buffer->original_source().get() != this)
+		return false;
+	if (mapped_buffer->unmap())
+	{
+		_map_counter--;
+		if (_map_counter <= 0)
+		{
+#ifdef WINDOWS_PLATFORM
+			CloseHandle(_hmap);
+			_hmap = NULL;
+#elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
+			_hmap = NULL;
+#endif
+		}
+	}
 	return true;
 }
 

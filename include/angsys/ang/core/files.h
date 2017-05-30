@@ -152,6 +152,7 @@ namespace ang
 				visible vcall streams::stream_mode_t mode()const pure;
 				visible vcall wstring file_path()const pure;
 				visible vcall file_size_t file_size()const pure;
+				visible vcall bool file_size(file_size_t) pure;
 				visible vcall void encoding(text::encoding_t) pure;
 				visible vcall text::encoding_t encoding()const pure;
 				visible vcall void cursor(file_reference_t, file_cursor_t) pure;
@@ -215,7 +216,8 @@ namespace ang
 				bool file_size(file_size_t);
 				streams::stream_mode_t mode()const;
 				bool set_mutex(core::async::mutex_t);
-				virtual bool close();				
+				virtual bool close();		
+
 
 				friend pack_file;
 			};

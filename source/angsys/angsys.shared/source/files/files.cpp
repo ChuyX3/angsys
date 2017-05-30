@@ -229,7 +229,7 @@ bool file::file_size(file_size_t size)
 		return false;
 
 	if (hfile->file_size() > size)
-		return true;
+		return hfile->file_size(size);
 	file_size_t pos = hfile->cursor();
 	switch (hfile->mode().get())
 	{

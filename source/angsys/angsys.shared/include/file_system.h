@@ -69,6 +69,7 @@ namespace ang
 				long64 _size;
 				long64 _cursor;
 				core::async::mutex_t _mutex;
+				wsize _map_counter;
 
 			public:
 				file_impl();
@@ -92,6 +93,7 @@ namespace ang
 				virtual streams::stream_mode_t mode()const override;
 				virtual wstring file_path()const override;
 				virtual file_size_t file_size()const override;
+				virtual bool file_size(file_size_t) override;
 				virtual void encoding(text::encoding_t)override;
 				virtual text::encoding_t encoding()const override;
 				virtual void cursor(file_reference_t, file_cursor_t) override;
@@ -106,7 +108,7 @@ namespace ang
 				virtual bool set_mutex(core::async::mutex_t)override;
 			//	virtual core::async::iasync_t<ibuffer_t> read_async(uint size)override;
 			//	virtual core::async::iasync_t<uint> write_async(uint size, pointer buffer)override;
-
+				bool unmap(mapped_file_buffer*);
 			private:
 				static file_size_t get_file_size(file_handle_t h);
 				static text::encoding_t get_file_encoding(file_handle_t h);

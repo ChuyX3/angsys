@@ -105,7 +105,7 @@ bool binary_buffer_output_stream::move_to(stream_index_t size, stream_reference_
 	if (curSize == 0)
 		return false;
 
-	stream_index_t maxPos = curSize - 1;
+	stream_index_t maxPos = curSize;
 
 	switch (ref)
 	{
@@ -157,7 +157,7 @@ bool binary_buffer_output_stream::move_to(stream_index_t size, stream_reference_
 bool binary_buffer_output_stream::forward(stream_index_t size)
 {
 	auto curSize = stream_size();
-	stream_index_t maxPos = curSize - 1L;
+	stream_index_t maxPos = curSize;
 
 	if ((_cursor + size) > maxPos)
 		_cursor = maxPos;
@@ -170,7 +170,7 @@ bool binary_buffer_output_stream::forward(stream_index_t size)
 bool binary_buffer_output_stream::backward(stream_index_t size)
 {
 	auto curSize = stream_size();
-	stream_index_t maxPos = curSize - 1L;
+	stream_index_t maxPos = curSize;
 
 	if ((_cursor - size) <= 0)
 		_cursor = 0;
@@ -200,7 +200,7 @@ bool binary_buffer_output_stream::can_move_to(stream_index_t size, stream_refere
 	auto curSize = stream_size();
 	if (curSize == 0)
 		return false;
-	stream_index_t maxPos = curSize - 1;
+	stream_index_t maxPos = curSize;
 
 	switch (ref)
 	{
@@ -246,7 +246,7 @@ bool binary_buffer_output_stream::can_move_to(stream_index_t size, stream_refere
 
 bool binary_buffer_output_stream::can_forward(stream_index_t size)
 {
-	stream_index_t maxPos = stream_size() - 1;
+	stream_index_t maxPos = stream_size();
 	if ((_cursor + size) > maxPos)
 		return _buffer->realloc_buffer((wsize)(_cursor + size));
 	else
@@ -256,7 +256,7 @@ bool binary_buffer_output_stream::can_forward(stream_index_t size)
 
 bool binary_buffer_output_stream::can_backward(stream_index_t size)
 {
-	stream_index_t maxPos = stream_size() - 1;
+	stream_index_t maxPos = stream_size();
 	if ((_cursor - size) <= 0)
 		return false;
 	else
@@ -276,7 +276,7 @@ pointer binary_buffer_output_stream::pointer_at(stream_index_t idx)
 
 wsize binary_buffer_output_stream::write(pointer ptr, wsize sz)
 {
-	if (!can_forward(sizeof(sz)))
+	if (!can_forward(sz))
 		return 0;
 	memcpy(pointer_at(position()), ptr, sz);
 	forward(sz);
@@ -312,8 +312,8 @@ bool binary_buffer_output_stream::write(double value) { return write(&value, siz
 bool binary_buffer_output_stream::write(string value) 
 {
 	cstr_t cstr = value;
-	auto sz = cstr.size() * sizeof(wchar) + 8;
-	if (!can_forward(sizeof(sz)))
+	auto sz = cstr.size() * sizeof(char) + 8;
+	if (!can_forward(sz))
 		return false;
 
 	struct
@@ -338,7 +338,7 @@ bool binary_buffer_output_stream::write(wstring value)
 {
 	cwstr_t cstr = value;
 	auto sz = cstr.size() * sizeof(wchar) + 8;
-	if (!can_forward(sizeof(sz)))
+	if (!can_forward(sz))
 		return false;
 
 	struct
