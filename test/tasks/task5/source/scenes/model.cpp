@@ -83,100 +83,117 @@ bool model::load(scene_t scene, xml::xml_node_t node)
 	{
 		wstring filename = source->xml_value();
 		auto _filename = scene->find_file(filename);
-		core::files::input_text_file_t file;
-		if (_filename.is_empty()) file = new core::files::input_text_file(filename);
-		else file = new core::files::input_text_file(_filename);
-		if (!file->is_valid())
-			return false;
+		core::files::input_text_file_t _txt_file;
+		core::files::input_binary_file_t _bin_file;
+		if (_filename.is_empty())
+		{
+			_txt_file = new core::files::input_text_file(filename);
+			_bin_file = new core::files::input_binary_file(filename);
+		}
+		else
+		{
+			_txt_file = new core::files::input_text_file(_filename);
+			_bin_file = new core::files::input_binary_file(_filename);
+		}
+
 
 		auto type = source->xml_attributes()["type"].as<cwstr_t>();
 
 		if (type == "indexed")
 		{
+			if (_bin_file->is_valid())
+			{
+				//TODO
+			}
 			try {
-				indexed_model_t _loader = new indexed_model();
-				xml::xml_document_t doc = new xml::xml_document(file);
-				_loader->load_async(doc->xml_root().get()).then<bool>([this, _loader, scene, file](core::async::iasync<collections::vector<indexed_model::model_element>>* task)->bool
-				{
-					textures::itexture_loader_t texloader = scene->texture_loader();
-					effects::ieffect_library_t fxlibrary = scene->effect_library();
-					idriver_t driver = scene->driver();
-
-					collections::vector<indexed_model::model_element> data;
-					try
-					{
-						data = ang::move(task->result());
-					}
-					catch (exception_t)
-					{
-						return false;
-					}
-
-					model_element element;
-					reflect::attribute_desc desc[3] =
-					{
-						{ reflect::var_type::f32, reflect::var_class::vec4, "position"_s, reflect::var_semantic::position, 0 },
-						{ reflect::var_type::f32, reflect::var_class::vec4, "normal"_s, reflect::var_semantic::normal, 0 },
-						{ reflect::var_type::f32, reflect::var_class::vec2, "texcoord"_s, reflect::var_semantic::tex_coord, 0 }
-					};
-
-					foreach(data, [&](indexed_model::model_element& _element)
-					{
-						if (_element.vertex_data.is_empty() || _element.vertex_data->buffer_size() == 0)
-							return;
-						//if (_element.material == "_ea80e0f_dds"_s)
-						//	return;
-						auto stride = reflect::attribute_desc::get_size_in_bytes(_element.vertex_desc);
-						element.vertex_buffer = driver->create_vertex_buffer(
-							graphics::buffers::buffer_usage::dynamic,
-							_element.vertex_desc,
-							_element.vertex_data->buffer_size() / stride,
-							static_array<byte>((byte*)_element.vertex_data->buffer_ptr(), _element.vertex_data->buffer_size()));
-
-						element.index_buffer = driver->create_index_buffer(
-							graphics::buffers::buffer_usage::dynamic,
-							_element.index_type,
-							_element.index_data->buffer_size() / reflect::variable_desc(_element.index_type, reflect::var_class::scalar).get_size_in_bytes(),
-							static_array<byte>((byte*)_element.index_data->buffer_ptr(), _element.index_data->buffer_size()));
-
-						element.technique = fxlibrary->find_technique(_element.technique_name);
-
-						foreach(_element.textures, [&](string& texture)
-						{
-							auto res = texloader->load_texture(texture);
-							driver->execute_on_thread_safe([&]()
-							{
-								if (!res.is_empty()) element.textures += res;
-							});
-
-						});
 				
-						driver->execute_on_thread_safe([&]()
-						{
-							model_elements += element;
-						});
+				if (_txt_file->is_valid())
+				{
+					indexed_model_t _loader = new indexed_model();
+					xml::xml_document_t doc = new xml::xml_document(_txt_file);
+					_loader->load_async(doc->xml_root().get()).then<bool>([this, _loader, scene](core::async::iasync<collections::vector<indexed_model::model_element>>* task)->bool
+					{
+						textures::itexture_loader_t texloader = scene->texture_loader();
+						effects::ieffect_library_t fxlibrary = scene->effect_library();
+						idriver_t driver = scene->driver();
 
-						//index idx = model_elements->counter() - 1;
-						/*texloader->load_texture_async(_element.material).then<bool>([=](core::async::iasync<graphics::textures::itexture_t>* result)
+						collections::vector<indexed_model::model_element> data;
+						try
 						{
-						driver->execute_on_thread_safe([&]()
-						{
-						try {
-						auto res = result->result();
-						if (!res.is_empty())
-						model_elements[idx].textures += res;
+							data = ang::move(task->result());
 						}
 						catch (exception_t)
 						{
-
+							return false;
 						}
+
+						model_element element;
+						reflect::attribute_desc desc[3] =
+						{
+							{ reflect::var_type::f32, reflect::var_class::vec4, "position"_s, reflect::var_semantic::position, 0 },
+							{ reflect::var_type::f32, reflect::var_class::vec4, "normal"_s, reflect::var_semantic::normal, 0 },
+							{ reflect::var_type::f32, reflect::var_class::vec2, "texcoord"_s, reflect::var_semantic::tex_coord, 0 }
+						};
+
+						foreach(data, [&](indexed_model::model_element& _element)
+						{
+							if (_element.vertex_data.is_empty() || _element.vertex_data->buffer_size() == 0)
+								return;
+							//if (_element.material == "_ea80e0f_dds"_s)
+							//	return;
+							auto stride = reflect::attribute_desc::get_size_in_bytes(_element.vertex_desc);
+							element.vertex_buffer = driver->create_vertex_buffer(
+								graphics::buffers::buffer_usage::dynamic,
+								_element.vertex_desc,
+								_element.vertex_data->buffer_size() / stride,
+								static_array<byte>((byte*)_element.vertex_data->buffer_ptr(), _element.vertex_data->buffer_size()));
+
+							element.index_buffer = driver->create_index_buffer(
+								graphics::buffers::buffer_usage::dynamic,
+								_element.index_type,
+								_element.index_data->buffer_size() / reflect::variable_desc(_element.index_type, reflect::var_class::scalar).get_size_in_bytes(),
+								static_array<byte>((byte*)_element.index_data->buffer_ptr(), _element.index_data->buffer_size()));
+
+							element.technique = fxlibrary->find_technique(_element.technique_name);
+
+							foreach(_element.textures, [&](string& texture)
+							{
+								auto res = texloader->load_texture(texture);
+								driver->execute_on_thread_safe([&]()
+								{
+									if (!res.is_empty()) element.textures += res;
+								});
+
+							});
+
+							driver->execute_on_thread_safe([&]()
+							{
+								model_elements += element;
+							});
+
+							//index idx = model_elements->counter() - 1;
+							/*texloader->load_texture_async(_element.material).then<bool>([=](core::async::iasync<graphics::textures::itexture_t>* result)
+							{
+							driver->execute_on_thread_safe([&]()
+							{
+							try {
+							auto res = result->result();
+							if (!res.is_empty())
+							model_elements[idx].textures += res;
+							}
+							catch (exception_t)
+							{
+
+							}
+							});
+							return true;
+							});*/
 						});
 						return true;
-						});*/
 					});
 					return true;
-				});
-				return true;
+				}
+
 			}
 			catch (exception_t e)
 			{
@@ -185,70 +202,140 @@ bool model::load(scene_t scene, xml::xml_node_t node)
 		}
 		
 		ordered_model_t _loader = new ordered_model();
-		_loader->load_async(file).then<bool>([this, _loader, scene, file](core::async::iasync<collections::vector<ordered_model::model_element>>* task)->bool
-		{
-			textures::itexture_loader_t texloader = scene->texture_loader();
-			effects::ieffect_library_t fxlibrary = scene->effect_library();
-			idriver_t driver = scene->driver();
 
-			collections::vector<ordered_model::model_element> data;
-			try
+		if (_bin_file->is_valid() && null != _loader->load_async(_bin_file).then<bool>([this, _loader, scene, _bin_file, _txt_file](core::async::iasync<collections::vector<ordered_model::model_element>>* task)->bool
 			{
-				data = ang::move(task->result());
-			}
-			catch (exception_t)
-			{
-				return false;
-			}
+				textures::itexture_loader_t texloader = scene->texture_loader();
+				effects::ieffect_library_t fxlibrary = scene->effect_library();
+				idriver_t driver = scene->driver();
 
-			model_element element;
-			reflect::attribute_desc desc[3] =
-			{
-				{ reflect::var_type::f32, reflect::var_class::vec4, "position"_s, reflect::var_semantic::position, 0 },
-				{ reflect::var_type::f32, reflect::var_class::vec4, "normal"_s, reflect::var_semantic::normal, 0 },
-				{ reflect::var_type::f32, reflect::var_class::vec2, "texcoord"_s, reflect::var_semantic::tex_coord, 0 }
-			};
-
-			foreach(data, [&](ordered_model::model_element& _element)
-			{
-				if (_element.vertices.is_empty() || _element.vertices->counter() == 0)
-					return;
-
-				element.vertex_buffer = driver->create_vertex_buffer(
-					graphics::buffers::buffer_usage::dynamic,
-					static_array<reflect::attribute_desc>(desc, 3),
-					_element.vertices->counter(),
-					static_array<byte>((byte*)_element.vertices->data(), _element.vertices->counter() * sizeof(ordered_model::vertex)));
-
-				element.technique = fxlibrary->find_technique("character_lighting_fx"_s);
-
-				driver->execute_on_thread_safe([&]()
+				collections::vector<ordered_model::model_element> data;
+				try
 				{
-					model_elements += element;
-				});
-
-				index idx = model_elements->counter() - 1;
-				texloader->load_texture_async(_element.material).then<bool>([=](core::async::iasync<graphics::textures::itexture_t>* result)
+					data = ang::move(task->result());
+				}
+				catch (exception_t)
 				{
-					driver->execute_on_thread_safe([&]()
+					data = null;
+				}
+
+				if (data.get() == null)
+				{
+					if (_txt_file->is_valid() && null != _loader.get()->load_async(_txt_file).then<bool>([this, _loader, scene, _bin_file, _txt_file](core::async::iasync<collections::vector<ordered_model::model_element>>* task)->bool
 					{
-						try {
-							auto res = result->result();
-							if (!res.is_empty())
-								model_elements[idx].textures = { res };
+						textures::itexture_loader_t texloader = scene->texture_loader();
+						effects::ieffect_library_t fxlibrary = scene->effect_library();
+						idriver_t driver = scene->driver();
+
+						collections::vector<ordered_model::model_element> data;
+						try
+						{
+							data = ang::move(task->result());
 						}
 						catch (exception_t)
 						{
-
+							return false;
 						}
+
+						model_element element;
+						reflect::attribute_desc desc[3] =
+						{
+							{ reflect::var_type::f32, reflect::var_class::vec4, "position"_s, reflect::var_semantic::position, 0 },
+							{ reflect::var_type::f32, reflect::var_class::vec4, "normal"_s, reflect::var_semantic::normal, 0 },
+							{ reflect::var_type::f32, reflect::var_class::vec2, "texcoord"_s, reflect::var_semantic::tex_coord, 0 }
+						};
+
+						foreach(data, [&](ordered_model::model_element& _element)
+						{
+							if (_element.vertices.is_empty() || _element.vertices->counter() == 0)
+								return;
+
+							element.vertex_buffer = driver->create_vertex_buffer(
+								graphics::buffers::buffer_usage::dynamic,
+								static_array<reflect::attribute_desc>(desc, 3),
+								_element.vertices->counter(),
+								static_array<byte>((byte*)_element.vertices->data(), _element.vertices->counter() * sizeof(ordered_model::vertex)));
+
+							element.technique = fxlibrary->find_technique("character_lighting_fx"_s);
+
+							driver->execute_on_thread_safe([&]()
+							{
+								model_elements += element;
+							});
+
+							index idx = model_elements->counter() - 1;
+							texloader->load_texture_async(_element.material).then<bool>([=](core::async::iasync<graphics::textures::itexture_t>* result)
+							{
+								driver->execute_on_thread_safe([&]()
+								{
+									try {
+										auto res = result->result();
+										if (!res.is_empty())
+											model_elements[idx].textures = { res };
+									}
+									catch (exception_t)
+									{
+
+									}
+								});
+								return true;
+							});
+						});
+						return true;
+					}))
+						return true;
+					return false;
+				}
+				else
+				{
+					model_element element;
+					reflect::attribute_desc desc[3] =
+					{
+						{ reflect::var_type::f32, reflect::var_class::vec4, "position"_s, reflect::var_semantic::position, 0 },
+						{ reflect::var_type::f32, reflect::var_class::vec4, "normal"_s, reflect::var_semantic::normal, 0 },
+						{ reflect::var_type::f32, reflect::var_class::vec2, "texcoord"_s, reflect::var_semantic::tex_coord, 0 }
+					};
+
+					foreach(data, [&](ordered_model::model_element& _element)
+					{
+						if (_element.vertices.is_empty() || _element.vertices->counter() == 0)
+							return;
+
+						element.vertex_buffer = driver->create_vertex_buffer(
+							graphics::buffers::buffer_usage::dynamic,
+							static_array<reflect::attribute_desc>(desc, 3),
+							_element.vertices->counter(),
+							static_array<byte>((byte*)_element.vertices->data(), _element.vertices->counter() * sizeof(ordered_model::vertex)));
+
+						element.technique = fxlibrary->find_technique("character_lighting_fx"_s);
+
+						driver->execute_on_thread_safe([&]()
+						{
+							model_elements += element;
+						});
+
+						index idx = model_elements->counter() - 1;
+						texloader->load_texture_async(_element.material).then<bool>([=](core::async::iasync<graphics::textures::itexture_t>* result)
+						{
+							driver->execute_on_thread_safe([&]()
+							{
+								try {
+									auto res = result->result();
+									if (!res.is_empty())
+										model_elements[idx].textures = { res };
+								}
+								catch (exception_t)
+								{
+
+								}
+							});
+							return true;
+						});
 					});
 					return true;
-				});
-			});
+				}
+			}))
 			return true;
-		});
-
-		
 	}
 	return true;
 }

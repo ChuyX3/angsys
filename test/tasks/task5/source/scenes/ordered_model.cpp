@@ -393,7 +393,52 @@ collections::vector<ordered_model::model_element> ordered_model::load(core::file
 		}
 	});
 
-	return _elements;
+	return _elements.get();
+}
+
+core::async::iasync_t<collections::vector<ordered_model::model_element>> ordered_model::load_async(core::files::input_binary_file_t file)
+{
+	_elements = null;
+	try
+	{
+		return file->read_async<collections::vector<ordered_model::model_element>>([&](streams::ibinary_input_stream_t stream)->collections::vector<ordered_model::model_element>
+		{
+			uint info;
+			_elements = null;
+
+			stream >> info;
+			if (info != _magic_word)
+			{
+				return null;
+			}
+				
+			uint element_count = 0;
+			stream >> element_count;
+			model_element element;
+			for (index i = 0; i < element_count; ++i)
+			{
+				vertex _v;
+				uint vertex_count = 0;
+				stream >> element.material;
+				stream >> vertex_count;
+				element.vertices = new collections::vector_buffer<vertex>();
+				element.vertices->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
+				for (index j = 0; j < vertex_count; ++j)
+				{
+					stream->read(&_v, sizeof(vertex));
+					element.vertices += _v;
+				}
+				_elements += element;
+				element.material = null;
+				element.vertices = null;
+			}
+			return _elements.get();
+		});
+	}
+	catch (exception_t)
+	{
+		return null;
+	}
 }
 
 
