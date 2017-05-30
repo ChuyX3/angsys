@@ -163,7 +163,7 @@ str_t string_buffer::str()
 
 cstr_t string_buffer::cstr() const
 {
-	return is_local_data() ? cstr_t(_data._local_buffer, 30) : cstr_t(_data._buffer_ptr, _data._buffer_size_used);
+	return is_local_data() ? cstr_t(_data._local_buffer, _data._local_size) : cstr_t(_data._buffer_ptr, _data._buffer_size_used);
 }
 
 uint string_buffer::length() const
@@ -519,8 +519,7 @@ void string_buffer::unmap_buffer(pointer ptr, wsize used)
 		&& (length() + used) <= capacity())
 	{
 		length(length() + used);
-		auto _str = str();
-		_str[_str.size()] = 0;
+		str()[length()] = 0;
 	}
 }
 

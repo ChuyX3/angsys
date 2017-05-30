@@ -148,7 +148,7 @@ mstr_t mstring_buffer::str()
 
 cmstr_t mstring_buffer::cstr() const
 {
-	return is_local_data() ? cmstr_t(_data._local_buffer, 30) : cmstr_t(_data._buffer_ptr, _data._buffer_size_used);
+	return is_local_data() ? cmstr_t(_data._local_buffer, _data._local_size) : cmstr_t(_data._buffer_ptr, _data._buffer_size_used);
 }
 
 uint mstring_buffer::length() const

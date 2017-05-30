@@ -163,7 +163,7 @@ wstr_t wstring_buffer::str()
 
 cwstr_t wstring_buffer::cstr() const
 {
-	return is_local_data() ? cwstr_t(_data._local_buffer, 30) : cwstr_t(_data._buffer_ptr, _data._buffer_size_used);
+	return is_local_data() ? cwstr_t(_data._local_buffer, _data._local_size) : cwstr_t(_data._buffer_ptr, _data._buffer_size_used);
 }
 
 uint wstring_buffer::length() const
