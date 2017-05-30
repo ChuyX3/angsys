@@ -10,6 +10,8 @@ using namespace ang::graphics;
 using namespace ang::graphics::scenes;
 
 
+static const uint _magic_word = 'MDLO';
+
 
 ordered_model::ordered_model()
 {
@@ -358,3 +360,70 @@ core::async::iasync_t<collections::vector<ordered_model::model_element>> ordered
 }
 
 
+collections::vector<ordered_model::model_element> ordered_model::load(core::files::input_binary_file_t file)
+{
+	ulong64 _size = 0;
+	file->read([&](streams::ibinary_input_stream_t stream) 
+	{
+		uint info;
+		_elements = null;
+
+		stream >> info;
+		if (info != _magic_word)
+			return false;
+		uint element_count = 0;
+		stream >> element_count;
+		model_element element;
+		for (index i = 0; i < element_count; ++i)
+		{
+			vertex _v;
+			uint vertex_count = 0;
+			stream >> element.material;
+			stream >> vertex_count;
+			element.vertices = new collections::vector_buffer<vertex>();
+			element.vertices->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
+			for (index j = 0; j < vertex_count; ++j)
+			{
+				stream->read(&_v, sizeof(vertex));
+				element.vertices += _v;
+			}
+			_elements += element;
+			element.material = null;
+			element.vertices = null;
+		}
+	});
+
+	return _elements;
+}
+
+
+bool ordered_model::save(core::files::output_binary_file_t file)
+{
+	ulong64 _size = 0;
+	if (!file->write([&](streams::ibinary_output_stream_t stream)
+	{
+		if (_elements.is_empty())
+			return false;
+		stream << _magic_word << _elements->counter();
+
+		foreach(_elements, [&](model_element& element)
+		{
+			stream << element.material;
+			if (element.vertices.is_empty())
+				stream << 0U;
+			else {
+				stream << element.vertices->counter();
+				foreach(element.vertices, [&](vertex& v)
+				{
+					stream->write(&v, sizeof(vertex));
+				});
+			}
+		});
+		_size = (ulong64)stream->position();
+		return true;
+	}, 0, 8)) return false;
+
+	file->file_size(_size);
+
+	return true;
+}

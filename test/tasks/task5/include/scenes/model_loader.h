@@ -102,12 +102,15 @@ namespace ang
 				ANG_DECLARE_INTERFACE();
 
 				collections::vector<model_element> load(core::files::input_text_file_t);
+				collections::vector<model_element> load(core::files::input_binary_file_t);
 				core::async::iasync_t<collections::vector<model_element>> load_async(core::files::input_text_file_t);
+				core::async::iasync_t<collections::vector<model_element>> load_async(core::files::input_binary_file_t);
+
+				bool save(core::files::output_binary_file_t);
 
 			private:
 				virtual~ordered_model();
 			};
-
 
 			class indexed_model
 				: public object
