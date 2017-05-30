@@ -424,13 +424,6 @@ namespace ang
 			, public itext_input_stream
 		{
 		private:
-#if defined ANG_DEVELOPPER
-			union
-			{
-				char const* astrDebugView;
-				wchar const* wstrDebugView;
-			};
-#endif
 			ibuffer_t _buffer;
 			stream_index_t _cursor;
 			text::encoding_t _format;
@@ -497,13 +490,6 @@ namespace ang
 			, public itext_output_stream
 		{
 		private:
-#if defined ANG_DEVELOPPER
-			union
-			{
-				char const* astrDebugView;
-				wchar const* wstrDebugView;
-			};
-#endif
 			ibuffer_t _buffer;
 			stream_index_t _cursor;
 			text::encoding_t _format;

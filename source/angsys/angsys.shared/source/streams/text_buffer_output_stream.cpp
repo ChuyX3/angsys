@@ -24,9 +24,6 @@ text_buffer_output_stream::text_buffer_output_stream()
 	, unsigned_format("{unsigned:}")
 	, floating_format("{floating:n.4}")
 {
-#ifdef  ANG_DEVELOPPER
-	astrDebugView = NULL;
-#endif //  ANG_DEVELOPPER
 }
 
 text_buffer_output_stream::text_buffer_output_stream(text_buffer_output_stream* stream)
@@ -58,9 +55,6 @@ text_buffer_output_stream::~text_buffer_output_stream()
 	_buffer = null;
 	_cursor = 0;
 	_format = text::encoding::unknown;
-#ifdef  ANG_DEVELOPPER
-	astrDebugView = NULL;
-#endif //  ANG_DEVELOPPER
 }
 
 ANG_IMPLEMENT_CLASSNAME(ang::streams::text_buffer_output_stream);
@@ -289,9 +283,6 @@ bool text_buffer_output_stream::attach(text::itext_buffer* buff)
 	_buffer = buff;
 	_format = buff ? buff->encoding().get() : text::encoding::unknown;
 	_cursor = 0;
-#if defined ANG_DEVELOPPER
-	astrDebugView = buff ? (char*)pointer_at(0) : NULL;
-#endif
 	return true;
 }
 

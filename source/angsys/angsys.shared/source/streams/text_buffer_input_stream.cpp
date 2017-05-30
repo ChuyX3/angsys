@@ -18,9 +18,6 @@ text_buffer_input_stream::text_buffer_input_stream()
 	, _cursor(0)
 	, _format(text::encoding::unknown)
 {
-#ifdef  ANG_DEVELOPPER
-	astrDebugView = NULL;
-#endif //  ANG_DEVELOPPER
 }
 
 text_buffer_input_stream::text_buffer_input_stream(text_buffer_input_stream* stream)
@@ -49,9 +46,6 @@ text_buffer_input_stream::~text_buffer_input_stream()
 	_buffer = null;
 	_cursor = 0;
 	_format = text::encoding::unknown;
-#ifdef  ANG_DEVELOPPER
-	astrDebugView = NULL;
-#endif //  ANG_DEVELOPPER
 }
 
 ANG_IMPLEMENT_CLASSNAME(ang::streams::text_buffer_input_stream);
@@ -139,10 +133,6 @@ bool text_buffer_input_stream::move_to(stream_index_t size, stream_reference_t r
 		break;
 	}
 
-#if defined ANG_DEVELOPPER
-	astrDebugView = (char*)pointer_at(position());
-#endif
-
 	return true;
 }
 
@@ -153,9 +143,6 @@ bool text_buffer_input_stream::forward(stream_index_t size)
 
 	_cursor = min(_cursor + size, maxPos);
 
-#if defined ANG_DEVELOPPER
-	astrDebugView = (char*)pointer_at(position());
-#endif
 	return true;
 }
 
@@ -169,9 +156,6 @@ bool text_buffer_input_stream::backward(stream_index_t size)
 	else
 		_cursor -= size;
 
-#if defined ANG_DEVELOPPER
-	astrDebugView = (char*)pointer_at(position());
-#endif
 	return true;
 }
 
@@ -210,9 +194,7 @@ bool text_buffer_input_stream::attach(text::itext_buffer* buff)
 			break;
 		}
 	}
-#if defined ANG_DEVELOPPER
-	astrDebugView = buff ? (char*)pointer_at(position()) : NULL;
-#endif
+
 	return true;
 }
 
@@ -239,9 +221,7 @@ bool text_buffer_input_stream::attach(ibuffer* buff, text::encoding_t format)
 			break;
 		}
 	}
-#if defined ANG_DEVELOPPER
-	astrDebugView = buff ? (char*)pointer_at(position()) : NULL;
-#endif
+
 	return true;
 }
 
