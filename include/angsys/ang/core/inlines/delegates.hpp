@@ -5,45 +5,45 @@
 
 
 template<typename return_t, typename... args_t>
-inline ang::type_name_t ang::core::delegates::ifunction<return_t, args_t...>::class_name()
+inline ang::type_name_t ang::core::delegates::ifunction<return_t(args_t...)>::class_name()
 {
-	static string className = string("ang::core::delegates::ifunction<") + args_list_type_name<return_t, args_t...>() + ">";
-	return className->cstr();
+	static string _class_name = string("ang::core::delegates::ifunction<") + type_name<return_t(args_t...)>() + ")>";
+	return _class_name;
 }
 
 template<typename... args_t>
-inline ang::type_name_t ang::core::delegates::ifunction<void, args_t...>::class_name()
+inline ang::type_name_t ang::core::delegates::ifunction<void(args_t...)>::class_name()
 {
-	static string className = string("ang::core::delegates::ifunction<void,") + args_list_type_name<args_t...>() + ">";
-	return className->cstr();
+	static string _class_name = string("ang::core::delegates::ifunction<") + type_name<void(args_t...)>() + ")>";
+	return _class_name;
 }
 
 template<typename return_t, typename... args_t>
-inline ang::type_name_t ang::core::delegates::ifunction<return_t, args_t...>::object_name()const
+inline ang::type_name_t ang::core::delegates::ifunction<return_t(args_t...)>::object_name()const
 {
 	return class_name();
 }
 
 template<typename... args_t>
-inline ang::type_name_t ang::core::delegates::ifunction<void, args_t...>::object_name()const
+inline ang::type_name_t ang::core::delegates::ifunction<void(args_t...)>::object_name()const
 {
 	return class_name();
 }
 
 template<typename return_t, typename... args_t>
-inline ang::bool_t ang::core::delegates::ifunction<return_t, args_t...>::is_kind_of(ang::type_name_t name)const
+inline bool ang::core::delegates::ifunction<return_t(args_t...)>::is_kind_of(ang::type_name_t name)const
 {
 	return name == class_name();
 }
 
 template<typename... args_t>
-inline ang::bool_t ang::core::delegates::ifunction<void, args_t...>::is_kind_of(ang::type_name_t name)const
+inline bool ang::core::delegates::ifunction<void(args_t...)>::is_kind_of(ang::type_name_t name)const
 {
 	return name == class_name();
 }
 
 template<typename return_t, typename... args_t>
-inline ang::bool_t ang::core::delegates::ifunction<return_t, args_t...>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+inline bool ang::core::delegates::ifunction<return_t(args_t...)>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
 {
 	if (name == class_name())
 	{
@@ -54,7 +54,7 @@ inline ang::bool_t ang::core::delegates::ifunction<return_t, args_t...>::query_o
 }
 
 template<typename... args_t>
-inline ang::bool_t ang::core::delegates::ifunction<void, args_t...>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+inline bool ang::core::delegates::ifunction<void(args_t...)>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
 {
 	if (name == class_name())
 	{
@@ -67,15 +67,15 @@ inline ang::bool_t ang::core::delegates::ifunction<void, args_t...>::query_objec
 template<typename return_t, typename... args_t>
 inline ang::type_name_t ang::core::delegates::function_data<return_t(args_t...)>::class_name()
 {
-	static string className = string("ang::core::delegates::function<") + type_name<return_t>() + "(" + args_list_type_name<args_t...>() + ")>";
-	return className->cstr();
+	static string _class_name = string("ang::core::delegates::function<") + type_name<return_t(args_t...)>() + ")>";
+	return _class_name;
 }
 
 template<typename... args_t>
 inline ang::type_name_t ang::core::delegates::function_data<void(args_t...)>::class_name()
 {
-	static string className = string("ang::core::delegates::function<void(") + args_list_type_name<args_t...>() + ")>";
-	return className->cstr();
+	static string _class_name = string("ang::core::delegates::function<") + type_name<void(args_t...)>() + ")>";
+	return _class_name;
 }
 
 template<typename return_t, typename... args_t>
@@ -91,44 +91,44 @@ inline ang::type_name_t ang::core::delegates::function_data<void(args_t...)>::ob
 }
 
 template<typename return_t, typename... args_t>
-inline ang::bool_t ang::core::delegates::function_data<return_t(args_t...)>::is_kind_of(ang::type_name_t name)const
+inline bool ang::core::delegates::function_data<return_t(args_t...)>::is_kind_of(ang::type_name_t name)const
 {
 	return (name == class_name()
-		|| ifunction<return_t, args_t...>::is_kind_of(name));
+		|| ifunction<return_t(args_t...)>::is_kind_of(name));
 }
 
 
 template<typename... args_t>
-inline ang::bool_t ang::core::delegates::function_data<void(args_t...)>::is_kind_of(ang::type_name_t name)const
+inline bool ang::core::delegates::function_data<void(args_t...)>::is_kind_of(ang::type_name_t name)const
 {
 	return (name == class_name()
-		|| ifunction<void, args_t...>::is_kind_of(name));
+		|| ifunction<void(args_t...)>::is_kind_of(name));
 }
 
 
 template<typename return_t, typename... args_t>
-inline ang::bool_t ang::core::delegates::function_data<return_t(args_t...)>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+inline bool ang::core::delegates::function_data<return_t(args_t...)>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
 {
 	if (name == class_name())
 	{
 		*out = this;
 		return true;
 	}
-	else if (ifunction<return_t, args_t...>::query_object(name, out))
+	else if (ifunction<return_t(args_t...)>::query_object(name, out))
 		return true;
 	
 	return false;
 }
 
 template<typename... args_t>
-inline ang::bool_t ang::core::delegates::function_data<void(args_t...)>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+inline bool ang::core::delegates::function_data<void(args_t...)>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
 {
 	if (name == class_name())
 	{
 		*out = this;
 		return true;
 	}
-	else if (ifunction<void, args_t...>::query_object(name, out))
+	else if (ifunction<void(args_t...)>::query_object(name, out))
 		return true;
 
 	return false;
@@ -185,7 +185,7 @@ inline void ang::object_wrapper<ang::core::delegates::function_data<return_t(arg
 }
 
 template<typename return_t, typename... args_t>
-inline ang::bool_t ang::object_wrapper<ang::core::delegates::function_data<return_t(args_t...)>>::is_empty()const
+inline bool ang::object_wrapper<ang::core::delegates::function_data<return_t(args_t...)>>::is_empty()const
 {
 	return _ptr == null;
 }
@@ -291,7 +291,7 @@ inline void ang::object_wrapper<ang::core::delegates::function_data<void(args_t.
 }
 
 template<typename... args_t>
-inline ang::bool_t ang::object_wrapper<ang::core::delegates::function_data<void(args_t...)>>::is_empty()const
+inline bool ang::object_wrapper<ang::core::delegates::function_data<void(args_t...)>>::is_empty()const
 {
 	return _ptr == null;
 }
@@ -377,7 +377,7 @@ void ang::core::delegates::listener<return_t(args_t...)>::empty()
 }
 
 template<typename return_t, typename... args_t>
-ang::bool_t ang::core::delegates::listener<return_t(args_t...)>::is_empty()const
+bool ang::core::delegates::listener<return_t(args_t...)>::is_empty()const
 {
 	return functions.is_empty() || functions->is_empty();
 }
@@ -486,7 +486,7 @@ void ang::core::delegates::listener<void(args_t...)>::empty()
 }
 
 template<typename... args_t>
-ang::bool_t ang::core::delegates::listener<void(args_t...)>::is_empty()const
+bool ang::core::delegates::listener<void(args_t...)>::is_empty()const
 {
 	return functions.is_empty() || functions->is_empty();
 }
@@ -541,6 +541,140 @@ void ang::core::delegates::listener<void(args_t...)>::operator() (args_t... args
 		});
 	}
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::intf_wrapper() : _ptr(null) {
+
+}
+
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::intf_wrapper(ang::nullptr_t const&) : _ptr(null) {
+
+}
+
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::intf_wrapper(ang::core::delegates::ifunction<return_t(args_t...)>* ptr) : _ptr(null) {
+	set(ptr);
+}
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
+	ang::core::delegates::ifunction<return_t(args_t...)> * temp = other._ptr;
+	other._ptr = null;
+	_ptr = temp;
+}
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
+	set(other._ptr);
+}
+
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::~intf_wrapper() {
+	clean();
+}
+
+template<typename return_t, typename... args_t>
+inline void ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::clean()
+{
+	iobject * _obj = interface_cast<iobject>(_ptr);
+	if (_obj)_obj->release();
+	_ptr = null;
+}
+
+template<typename return_t, typename... args_t>
+inline bool ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::is_empty()const
+{
+	return _ptr == null;
+}
+
+template<typename return_t, typename... args_t>
+inline ang::core::delegates::ifunction<return_t(args_t...)>* ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::get(void)const
+{
+	return _ptr;
+}
+
+template<typename return_t, typename... args_t>
+inline void ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::set(ang::core::delegates::ifunction<return_t(args_t...)>* ptr)
+{
+	if (ptr == _ptr) return;
+	iobject * _old = interface_cast<iobject>(_ptr);
+	iobject * _new = interface_cast<iobject>(ptr);
+	_ptr = ptr;
+	if (_new)_new->add_ref();
+	if (_old)_old->release();
+}
+
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>& ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::operator = (ang::core::delegates::ifunction<return_t(args_t...)>* ptr)
+{
+	set(ptr);
+	return*this;
+}
+
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>& ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::operator = (ang::nullptr_t const&)
+{
+	clean();
+	return*this;
+}
+
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>& ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::operator = (ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>> && other)
+{
+	if (this == &other)
+		return *this;
+	clean();
+	_ptr = other._ptr;
+	other._ptr = null;
+	return*this;
+}
+
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>& ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::operator = (ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>> const& other)
+{
+	set(other._ptr);
+	return*this;
+}
+
+template<typename return_t, typename... args_t>
+inline ang::core::delegates::ifunction<return_t(args_t...)> ** ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::addres_of(void)
+{
+	return &_ptr;
+}
+
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper_ptr<ang::core::delegates::ifunction<return_t(args_t...)>> ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::operator & (void)
+{
+	return this;
+}
+
+template<typename return_t, typename... args_t>
+inline ang::core::delegates::ifunction<return_t(args_t...)> * ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::operator -> (void)
+{
+	return get();
+}
+
+template<typename return_t, typename... args_t>
+inline ang::core::delegates::ifunction<return_t(args_t...)> const* ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::operator -> (void)const
+{
+	return get();
+}
+
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::operator ang::core::delegates::ifunction<return_t(args_t...)> * (void)
+{
+	return get();
+}
+
+template<typename return_t, typename... args_t>
+inline ang::intf_wrapper<ang::core::delegates::ifunction<return_t(args_t...)>>::operator ang::core::delegates::ifunction<return_t(args_t...)> const* (void)const
+{
+	return get();
+}
+
 
 
 

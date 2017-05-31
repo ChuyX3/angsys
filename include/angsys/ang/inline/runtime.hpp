@@ -43,6 +43,69 @@ namespace ang
 			}
 		};
 
+		template<class T>
+		struct runtime_type_builder<const T>
+		{
+			typedef void type;
+			static inline type_name_t type_name() {
+				static string out = "const "_o + runtime_type_builder<type>::type_name();
+				return out->cstr();
+			}
+
+			static inline bool is_type_of(type_name_t name) {
+				return name == type_name();
+			}
+
+			template<typename new_t>
+			static inline auto interface_cast(void* _old) {
+				if (is_type_of(runtime::type_name<new_t>()))
+					return (new_t*)_old;
+				return null;
+			}
+		};
+
+		template<class T>
+		struct runtime_type_builder<T&>
+		{
+			typedef void type;
+			static inline type_name_t type_name() {
+				static string out = runtime_type_builder<type>::type_name() + "&"_o;
+				return out->cstr();
+			}
+
+			static inline bool is_type_of(type_name_t name) {
+				return name == type_name();
+			}
+
+			template<typename new_t>
+			static inline auto interface_cast(void* _old) {
+				if (is_type_of(runtime::type_name<new_t>()))
+					return (new_t*)_old;
+				return null;
+			}
+		};
+
+		template<class T>
+		struct runtime_type_builder<T&&>
+		{
+			typedef void type;
+			static inline type_name_t type_name() {
+				static string out = runtime_type_builder<type>::type_name() + "&&"_o;
+				return out->cstr();
+			}
+
+			static inline bool is_type_of(type_name_t name) {
+				return name == type_name();
+			}
+
+			template<typename new_t>
+			static inline auto interface_cast(void* _old) {
+				if (is_type_of(runtime::type_name<new_t>()))
+					return (new_t*)_old;
+				return null;
+			}
+		};
+
 		template<>
 		struct runtime_type_builder<void>
 		{
@@ -62,6 +125,71 @@ namespace ang
 				return null;
 			}
 		};
+
+		template<class T, class... Ts>
+		struct runtime_type_builder<T(Ts...)>
+		{
+			typedef void type;
+			static inline type_name_t type_name() {
+				static string _class_name = string(runtime::type_name<T>()) + "("_s + runtime::args_list_type_name<Ts...>() + ")";
+				return _class_name;
+			}
+
+			static inline bool is_type_of(type_name_t name) {
+				return name == type_name();
+			}
+
+			template<typename new_t>
+			static inline auto interface_cast(void* _old) {
+				if (is_type_of(runtime::type_name<new_t>()))
+					return (new_t*)_old;
+				return null;
+			}
+		};
+
+		template<class T, class... Ts>
+		struct runtime_type_builder<T(*)(Ts...)>
+		{
+			typedef void type;
+			static inline type_name_t type_name() {
+				static string _class_name = string(runtime::type_name<T>()) + "(*)("_s + runtime::args_list_type_name<Ts...>() + ")";
+				return _class_name;
+			}
+
+			static inline bool is_type_of(type_name_t name) {
+				return name == type_name();
+			}
+
+			template<typename new_t>
+			static inline auto interface_cast(void* _old) {
+				if (is_type_of(runtime::type_name<new_t>()))
+					return (new_t*)_old;
+				return null;
+			}
+		};
+
+#ifdef WINDOWS_PLATFORM
+		template<class T, class... Ts>
+		struct runtime_type_builder<T(__stdcall*)(Ts...)>
+		{
+			typedef void type;
+			static inline type_name_t type_name() {
+				static string _class_name = string(runtime::type_name<T>()) + "(__stdcall*)("_s + runtime::args_list_type_name<Ts...>() + ")";
+				return _class_name;
+			}
+
+			static inline bool is_type_of(type_name_t name) {
+				return name == type_name();
+			}
+
+			template<typename new_t>
+			static inline auto interface_cast(void* _old) {
+				if (is_type_of(runtime::type_name<new_t>()))
+					return (new_t*)_old;
+				return null;
+			}
+		};
+#endif
 
 		template<typename T>
 		struct runtime_type_builder<object_wrapper<T>>

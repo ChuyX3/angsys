@@ -121,7 +121,7 @@ namespace ang
 				user_msg = 0x0450,
 			ANG_END_ENUM(core_msg_enum);
 
-			typedef core::delegates::ifunction<void, object*, imsg_event_args*> ievent;
+			typedef core::delegates::ifunction<void(object*, imsg_event_args*)> ievent;
 			typedef core::delegates::function_data <void(object*, imsg_event_args*)> event;
 			typedef core::delegates::function <void(object*, imsg_event_args*)> event_t;
 			typedef core::delegates::listener <void(object*, imsg_event_args*)> event_listener;

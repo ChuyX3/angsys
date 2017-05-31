@@ -100,7 +100,7 @@ namespace ang
 		namespace delegates
 		{
 			template<>
-			ANG_BEGIN_INTERFACE_FULL_SPECIALIZATION(LINK, ifunction, void, object*, platform::events::imsg_event_args*)
+			ANG_BEGIN_INTERFACE_FULL_SPECIALIZATION(LINK, ifunction, void(object*, platform::events::imsg_event_args*))
 				visible vcall void invoke(objptr, platform::events::imsg_event_args_t)const pure;
 				visible vcall ifunction* clone()const pure;
 			ANG_END_INTERFACE();
@@ -108,7 +108,7 @@ namespace ang
 			template<>
 			class LINK function_data <void(object*, platform::events::imsg_event_args*)>
 				: public object
-				, public ifunction<void, object*, platform::events::imsg_event_args*>
+				, public ifunction<void(object*, platform::events::imsg_event_args*)>
 			{
 			protected:
 				platform::events::core_msg_t _msg;

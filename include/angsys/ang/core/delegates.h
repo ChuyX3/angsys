@@ -39,18 +39,20 @@ namespace ang
 			template<typename T> class listener;
 			template<typename T> class function_data;
 			template<typename T> using function = object_wrapper<function_data<T>>;
+			template<typename T> struct ifunction;
+			template<typename T> using method = intf_wrapper<ifunction<T>>;
 
 			using var_args_t = collections::vector<objptr>;
 			using var_args = collections::vector_buffer<objptr>;
 			
 			template<typename return_t, typename... args_t>
-			ANG_BEGIN_INLINE_INTERFACE(ifunction)
+			ANG_BEGIN_INLINE_INTERFACE(ifunction<return_t(args_t...)>)
 				visible vcall return_t invoke(args_t...)const pure;
 				visible vcall ifunction* clone()const pure;
 			ANG_END_INTERFACE();
 
 			template<typename... args_t>
-			ANG_BEGIN_INTERFACE_SPECIALIZATION(ifunction, void, args_t...)
+			ANG_BEGIN_INLINE_INTERFACE(ifunction<void(args_t...)>)
 				visible vcall void invoke(args_t...)const pure;
 				visible vcall ifunction* clone()const pure;
 			ANG_END_INTERFACE();
@@ -78,7 +80,7 @@ namespace ang
 			template<typename return_t, typename... args_t>
 			class function_data<return_t(args_t...)>
 				: public object
-				, public ifunction<return_t, args_t...>
+				, public ifunction<return_t(args_t...)>
 			{
 			public:
 				function_data() {}
@@ -91,7 +93,7 @@ namespace ang
 			template<typename... args_t>
 			class function_data<void(args_t...)>
 				: public object
-				, public ifunction<void, args_t...>
+				, public ifunction<void(args_t...)>
 			{
 			public:
 				function_data() {}
@@ -119,7 +121,7 @@ namespace ang
 					return _function(ang::move(args)...);
 				}
 
-				inline ifunction<return_t, args_t...>* clone()const override {
+				inline ifunction<return_t(args_t...)>* clone()const override {
 					return new static_function(_function);
 				}
 
@@ -144,7 +146,7 @@ namespace ang
 				inline return_t invoke(args_t... args)const override {
 					return (_obj->*_function)(ang::move(args)...);
 				}
-				inline ifunction<return_t, args_t...>* clone()const override {
+				inline ifunction<return_t(args_t...)>* clone()const override {
 					return new member_function(_obj, _function);
 				}
 
@@ -169,7 +171,7 @@ namespace ang
 				inline return_t invoke(args_t... args)const override {
 					return _function(_obj, ang::move(args)...);
 				}
-				inline ifunction<return_t, args_t...>* clone()const override {
+				inline ifunction<return_t(args_t...)>* clone()const override {
 					return new pseudo_member_function(_obj, _function);
 				}
 
@@ -198,7 +200,7 @@ namespace ang
 					object_wrapper<obj_t> lock = _obj.lock<obj_t>();
 					return (lock->*_function)(ang::move(args)...);
 				}
-				inline ifunction<return_t, args_t...>* clone()const override {
+				inline ifunction<return_t(args_t...)>* clone()const override {
 					return new object_member_function(_obj.lock<object>(), _function);
 				}
 
@@ -493,7 +495,54 @@ namespace ang
 		}
 	}
 
+	template<typename return_t, typename... args_t>
+	class intf_wrapper<core::delegates::ifunction<return_t(args_t...)>>
+	{
+	public:
+		typedef core::delegates::ifunction<return_t(args_t...)> type;
 
+	protected:
+		type* _ptr;
+
+	public:
+		intf_wrapper();
+		intf_wrapper(type*);
+		intf_wrapper(ang::nullptr_t const&);
+		intf_wrapper(intf_wrapper &&);
+		intf_wrapper(intf_wrapper const&);
+		~intf_wrapper();
+
+	public:
+		void clean();
+		bool is_empty()const;
+		type* get(void)const;
+		void set(type*);
+		type ** addres_of(void);
+
+		return_t invoke(args_t ... args)const {
+			if (is_empty())
+				return return_t();
+			return get()->invoke(ang::move(args)...);
+		}
+
+	public:
+		intf_wrapper& operator = (type*);
+		intf_wrapper& operator = (ang::nullptr_t const&);
+		intf_wrapper& operator = (intf_wrapper &&);
+		intf_wrapper& operator = (intf_wrapper const&);
+
+		intf_wrapper_ptr<type> operator & (void);
+		type * operator -> (void);
+		type const* operator -> (void)const;
+		operator type * (void);
+		operator type const* (void)const;
+
+		return_t operator() (args_t ... args)const {
+			if (is_empty())
+				return return_t();
+			return get()->invoke(ang::move(args)...);
+		}
+	};
 }
 
 
