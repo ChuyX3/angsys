@@ -136,7 +136,9 @@ namespace ang
 			, m_object_allocator()
 			, m_buffer_allocator()
 			, m_aligned_allocator()
-		//	, logger("ang_debugger"_s)
+#if defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
+			, logger("ang_debugger"_s)
+#endif
 		{
 		//	logger.print(debug::log_level::info, "ang console: \n");
 			core::async::thread_manager::instance();
@@ -153,8 +155,9 @@ namespace ang
 		memory::default_allocator m_object_allocator;
 		memory::default_allocator m_buffer_allocator;
 		memory::aligned_allocator m_aligned_allocator;
-
-	//	debug::console_logger logger;
+#if defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
+		debug::console_logger logger;
+#endif
 	};
 }
 
@@ -226,14 +229,15 @@ extern "C" void ang_debug_output_info(const char* format, ...)
 	va_end(argList);
 
 	char logger[50];
-	sprintf(logger, "ang_debug_output_info:[thread:%u]:", 0);// (uint)core::async::thread::current_thread_id());
+	sprintf(logger, "info:[thread:%#06x]:", (uint)core::async::thread::current_thread_id());
 
 #if defined ANDROID_PLATFORM
 	__android_log_print(ANDROID_LOG_INFO, (const char*)logger, "%s", buffer);
+#elif defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
+	ang_library_initializer::instance()->logger.print(debug::log_level::info, "%s %s\n", logger, buffer);
 #else
-	printf("%s: %s\n", logger, buffer);
+	printf("%s %s\n", logger, buffer);
 	OutputDebugStringA(logger);
-	OutputDebugStringA(": ");
 	OutputDebugStringA(buffer);
 	OutputDebugStringA("\n");
 #endif
@@ -255,15 +259,16 @@ extern "C" void ang_debug_output_warning(const char* format, ...)
 	va_end(argList);
 
 	char logger[50];
-	sprintf(logger, "ang_debug_output_info:[thread:%u]:", 0);//(uint)core::async::thread::current_thread_id());
+	sprintf(logger, "warning:[thread:%#06x]:", (uint)core::async::thread::current_thread_id());
 
 
 #if defined ANDROID_PLATFORM
 	__android_log_print(ANDROID_LOG_WARN, (const char*)logger, "%s", buffer);
+#elif defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
+	ang_library_initializer::instance()->logger.print(debug::log_level::warning, "%s %s\n", logger, buffer);
 #else
-	printf("%s: %s\n", logger, buffer);
+	printf("%s %s\n", logger, buffer);
 	OutputDebugStringA(logger);
-	OutputDebugStringA(": ");
 	OutputDebugStringA(buffer);
 	OutputDebugStringA("\n");
 #endif
@@ -286,15 +291,16 @@ extern "C" void ang_debug_output_error(const char* format, ...)
 
 	char logger[50];
 
-	sprintf(logger, "ang_debug_output_info:[thread:%u]:", 0);//(uint)core::async::thread::current_thread_id());
+	sprintf(logger, "error:[thread:%#06x]:", (uint)core::async::thread::current_thread_id());
 
 
 #if defined ANDROID_PLATFORM
 	__android_log_print(ANDROID_LOG_ERROR, (const char*)logger, "%s", buffer);
+#elif defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
+	ang_library_initializer::instance()->logger.print(debug::log_level::error, "%s %s\n", logger, buffer);
 #else
-	printf("%s: %s\n", logger, buffer);
+	printf("%s %s\n", logger, buffer);
 	OutputDebugStringA(logger);
-	OutputDebugStringA(": ");
 	OutputDebugStringA(buffer);
 	OutputDebugStringA("\n");
 #endif

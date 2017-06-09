@@ -107,7 +107,7 @@ namespace ang
 			{
 				static VkInstance Instance();
 				static VkInstance Initialize();
-				static void Terminate();
+				static void Release();
 
 #define VK_EXPORTED_FUNCTION(_FUNC_NAME) static typename _vk_callback_type<VulkanSDK, PFN_##_FUNC_NAME>::type _FUNC_NAME
 #define VK_GLOBAL_FUNCTION(_FUNC_NAME) static typename _vk_callback_type<VulkanSDK, PFN_##_FUNC_NAME>::type _FUNC_NAME

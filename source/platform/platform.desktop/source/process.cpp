@@ -201,8 +201,15 @@ dword process::run(array<string> args)
 
 bool process::update()
 {
-	dispatch_msg();
-	update_app();
+	try {
+		dispatch_msg();
+		update_app();
+	}
+	catch (exception_t e)
+	{
+		ang_debug_output_error((cstr_t)e->what());
+		hprocess_t(_process)->close_request = true;
+	}
 	return !hprocess_t(_process)->close_request;
 }
 

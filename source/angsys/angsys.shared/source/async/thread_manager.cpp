@@ -44,7 +44,16 @@ unsigned long STDCALL thread_manager::thread_callback_procedure(pointer args)
 	}
 	///////////////////////////////////////////////////////////////
 
-	dword result = _thread->_callback(_thread->_args);
+	dword result = 0;
+	try
+	{
+		result = _thread->_callback(_thread->_args);
+	}
+	catch (exception_t const& e)
+	{
+		ang_debug_output_error((cstr_t)e->what());
+		result = -1;
+	}
 
 	///////////////////////////////////////////////////////////////
 	{

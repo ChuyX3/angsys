@@ -28,6 +28,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\shaders.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\textures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\vector_specialization.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\driver.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\VulkanSDK.h" />
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +45,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\textures.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\variable.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\VulkanSDK.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\vulkan_driver.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\vulkan_surface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)angraph.natvis" />

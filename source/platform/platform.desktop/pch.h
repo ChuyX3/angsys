@@ -16,4 +16,6 @@
 
 ANG_DECLARE_MEMORYMANAGER()
 
-// TODO: reference additional headers your program requires here
+extern "C" void __declspec(dllimport) ang_debug_output_info(const char* format, ...);
+extern "C" void __declspec(dllimport) ang_debug_output_warning(const char* format, ...);
+extern "C" void __declspec(dllimport) ang_debug_output_error(const char* format, ...);

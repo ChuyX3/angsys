@@ -137,7 +137,7 @@ vulkan_sdk_internal::vulkan_sdk_internal()
 #endif
 
 	if (_library == null)
-		throw new exception(except_code::unsupported);
+		throw exception_t(except_code::unsupported);
 }
 
 vulkan_sdk_internal::~vulkan_sdk_internal()
@@ -183,14 +183,14 @@ VkInstance VulkanSDK::Initialize()
 
 		uint extensions_count = 0;
 		if ((VulkanSDK::vkEnumerateInstanceExtensionProperties(nullptr, &extensions_count, nullptr) != VK_SUCCESS) || (extensions_count == 0))
-			throw new exception(except_code::unsupported);
+			throw exception_t(except_code::unsupported);
 
 		static_array<VkExtensionProperties> available_extensions = static_array<VkExtensionProperties>::new_array(extensions_count);
 
 		if (VulkanSDK::vkEnumerateInstanceExtensionProperties(nullptr, &extensions_count, &available_extensions[0]) != VK_SUCCESS)\
 		{
 			static_array<VkExtensionProperties>::delete_array(available_extensions);
-			throw new exception(except_code::unsupported);
+			throw exception_t(except_code::unsupported);
 		}
 
 		const char* extensions[] = {
@@ -217,7 +217,7 @@ VkInstance VulkanSDK::Initialize()
 			if (!CheckExtensionAvailability(extensions[i]))
 			{
 				static_array<VkExtensionProperties>::delete_array(available_extensions);
-				throw new exception(except_code::unsupported);
+				throw exception_t(except_code::unsupported);
 			}
 		}
 
@@ -245,7 +245,7 @@ VkInstance VulkanSDK::Initialize()
 		};
 
 		if (vkCreateInstance(&instance_create_info, null, &_vk_instance) != VK_SUCCESS)
-			throw new exception(except_code::unsupported);
+			throw exception_t(except_code::unsupported);
 
 		sdk->vk_instance(_vk_instance);
 
@@ -265,12 +265,12 @@ VkInstance VulkanSDK::Initialize()
 	}
 	catch (exception_t)
 	{
-		Terminate();
+		Release();
 		return null;
 	}
 }
 
-void VulkanSDK::Terminate()
+void VulkanSDK::Release()
 {
 	vulkan_sdk_internal::release_instance();
 }
@@ -468,8 +468,8 @@ value<graphics::vulkan::_VKDevice>::value()
 	VkPhysicalDevice physical_device = null;
 	uint queue_family_index = 0;
 	if (!GetPhysicalDevice(instance, physical_device, queue_family_index)) {
-		VulkanSDK::Terminate();
-		throw new exception(except_code::unsupported);
+		VulkanSDK::Release();
+		throw exception_t(except_code::unsupported);
 	}
 
 	collections::vector<float> queue_priorities = { 1.0f };
@@ -507,8 +507,8 @@ value<graphics::vulkan::_VKDevice>::value()
 
 	if (VulkanSDK::vkCreateDevice(physical_device, &device_create_info, &allocation_callbacks, &_value._device) != VK_SUCCESS)
 	{
-		VulkanSDK::Terminate();
-		throw new exception(except_code::unsupported);
+		VulkanSDK::Release();
+		throw exception_t(except_code::unsupported);
 	}
 	_value._graphics_queue_family_index = queue_family_index;
 
@@ -543,8 +543,8 @@ value<graphics::vulkan::_VKDevice>::value(VkSurfaceKHR surface)
 	uint graphics_queue_family_index = 0;
 	uint present_queue_family_index = 0;
 	if (!GetPhysicalDevice(instance, surface, physical_device, graphics_queue_family_index, present_queue_family_index)) {
-		VulkanSDK::Terminate();
-		throw new exception(except_code::unsupported);
+		VulkanSDK::Release();
+		throw exception_t(except_code::unsupported);
 	}
 
 	collections::vector<float> queue_priorities = { 1.0f };
@@ -599,8 +599,8 @@ value<graphics::vulkan::_VKDevice>::value(VkSurfaceKHR surface)
 
 	if (VulkanSDK::vkCreateDevice(physical_device, &device_create_info, &allocation_callbacks, &_value._device) != VK_SUCCESS)
 	{
-		VulkanSDK::Terminate();
-		throw new exception(except_code::unsupported);
+		VulkanSDK::Release();
+		throw exception_t(except_code::unsupported);
 	}
 
 	_value._graphics_queue_family_index = graphics_queue_family_index;
@@ -642,7 +642,7 @@ value<graphics::vulkan::_VKDevice>::~value()
 
 	VK_DEVICE_FUNCTION(vkGetDeviceProcAddr);
 #undef VK_DEVICE_FUNCTION
-	VulkanSDK::Terminate();
+	VulkanSDK::Release();
 }
 
 value_wrapper<graphics::vulkan::_VKDevice>::value_wrapper() {}

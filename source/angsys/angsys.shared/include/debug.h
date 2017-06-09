@@ -71,6 +71,7 @@ namespace ang
 		{
 		private:
 			HANDLE _handle;
+			HANDLE _error_handle;
 		public:
 			console_logger(cstr_t name);
 

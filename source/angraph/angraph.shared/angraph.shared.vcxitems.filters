@@ -78,6 +78,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\VulkanSDK.h">
       <Filter>header files\include\vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\driver.h">
+      <Filter>header files\include\vulkan</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angraph.cpp">
@@ -117,6 +120,12 @@
       <Filter>source files\d3d11</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\VulkanSDK.cpp">
+      <Filter>source files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\vulkan_driver.cpp">
+      <Filter>source files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\vulkan_surface.cpp">
       <Filter>source files\vulkan</Filter>
     </ClCompile>
   </ItemGroup>

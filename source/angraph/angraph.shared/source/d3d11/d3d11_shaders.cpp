@@ -251,7 +251,7 @@ bool d3d11_shaders::load_vertex_shader(d3d11_effect_library_t library, xml::xml_
 			, NULL, macros.is_empty() ? NULL : macros->data(), NULL, (cstr_t)entry
 			, "vs_4_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &compiled_code, &error);
 		if (FAILED(hr)) {
-			d3d11_debug_print("%s\n", error->GetBufferPointer());
+			d3d11_debug_print(2, "%s\n", error->GetBufferPointer());
 			error->Release();
 			return false;
 		}
@@ -328,7 +328,7 @@ bool d3d11_shaders::load_pixel_shader(d3d11_effect_library_t library, xml::xml_n
 			, NULL, macros.is_empty() ? NULL : macros->data(), NULL, (cstr_t)entry
 			, "ps_4_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &compiled_code, &error);
 		if (FAILED(hr)) {
-			d3d11_debug_print("%s\n", error->GetBufferPointer());
+			d3d11_debug_print(2, "%s\n", error->GetBufferPointer());
 			error->Release();
 			return false;
 		}

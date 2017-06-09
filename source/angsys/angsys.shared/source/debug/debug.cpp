@@ -54,19 +54,19 @@ console_logger::console_logger(cstr_t name)
 	: _handle(INVALID_HANDLE_VALUE)
 {
 	auto AllocConsole = kernel_proc<BOOL(void)>::get("AllocConsole");
+	auto GetStdHandle = kernel_proc<HANDLE(DWORD)>::get("GetStdHandle");
 
 	if (AllocConsole && AllocConsole())
 	{
-		auto GetStdHandle = kernel_proc<HANDLE(DWORD)>::get("GetStdHandle");
-		_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-		if (_handle != INVALID_HANDLE_VALUE)
+		auto handle = GetStdHandle(STD_OUTPUT_HANDLE);
+		if (handle != INVALID_HANDLE_VALUE)
 		{
 			auto SetConsoleScreenBufferSize = kernel_proc<BOOL(HANDLE, COORD)>::get("SetConsoleScreenBufferSize");
 			auto SetConsoleTitleA = kernel_proc<BOOL(LPCSTR)>::get("SetConsoleTitleA");
 			if (SetConsoleScreenBufferSize != NULL)
 			{
 				COORD newSize = { 200, 500 };
-				SetConsoleScreenBufferSize(_handle, newSize);
+				SetConsoleScreenBufferSize(handle, newSize);
 			}
 			if (name.cstr() && SetConsoleTitleA != NULL)
 			{
@@ -75,9 +75,15 @@ console_logger::console_logger(cstr_t name)
 			auto AttachConsole = kernel_proc<BOOL(DWORD)>::get("AttachConsole");
 			AttachConsole(GetCurrentProcessId());
 			freopen("CON", "w", stdout);
+			freopen("CON", "w", stderr);
 			freopen("CON", "r", stdin);
 		}
 	}
+
+	_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	_error_handle = GetStdHandle(STD_ERROR_HANDLE);
+	if (_error_handle == INVALID_HANDLE_VALUE)
+		_error_handle = _handle;
 }
 
 console_logger::~console_logger()
@@ -85,6 +91,7 @@ console_logger::~console_logger()
 	auto FreeConsole = kernel_proc<BOOL(void)>::get("FreeConsole");
 	if (FreeConsole)FreeConsole();
 	_handle = INVALID_HANDLE_VALUE;
+	_error_handle = INVALID_HANDLE_VALUE;
 }
 
 void console_logger::print(log_level_t level, cstr_t format, ...)const
@@ -98,7 +105,7 @@ void console_logger::print(log_level_t level, cstr_t format, ...)const
 	if (SetConsoleTextAttribute)
 	{
 		console_property prop;
-
+		
 		switch (level)
 		{
 		case log_level::info:
@@ -130,7 +137,8 @@ void console_logger::print(log_level_t level, cstr_t format, ...)const
 		char *buffer = new char[size + 1];
 		vsprintf_s(buffer, size + 1, format, args);
 		DWORD written;
-		WriteFile(_handle, buffer, size, &written, NULL);
+		WriteFile(level.get() >1? _error_handle: _handle, buffer, size, &written, NULL);
+		OutputDebugStringA(buffer);
 		delete[]buffer;
 	}
 	else
@@ -138,7 +146,8 @@ void console_logger::print(log_level_t level, cstr_t format, ...)const
 		char buffer[300];
 		vsprintf_s(buffer, 300, format, args);
 		DWORD written;
-		WriteFile(_handle, buffer, size, &written, NULL);
+		WriteFile(level.get() >1 ? _error_handle : _handle, buffer, size, &written, NULL);
+		OutputDebugStringA(buffer);
 	}
 	va_end(args);
 

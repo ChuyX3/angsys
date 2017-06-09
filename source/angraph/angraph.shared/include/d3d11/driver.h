@@ -8,8 +8,6 @@ namespace ang
 	{
 		namespace d3d11
 		{
-			class d3d11_object;
-
 			class d3d11_driver;
 			class d3d11_surface;
 			class d3d11_frame_buffer;
@@ -24,11 +22,20 @@ namespace ang
 			typedef object_wrapper<d3d11_frame_buffer> d3d11_frame_buffer_t;
 
 			template<typename... Ts>
-			void d3d11_debug_print(cstr_t format, Ts... args)
+			void d3d11_debug_print(int level, cstr_t format, Ts... args)
 			{
-				string text = "";
-				text->format(format, args...);
-				OutputDebugStringA(text->cstr());
+				switch (level)
+				{
+				case 2:
+					ang_debug_output_error(format, args...);
+					break;
+				case 1:
+					ang_debug_output_warning(format, args...);
+					break;
+				default: //0
+					ang_debug_output_info(format, args...);
+					break;
+				}
 			}
 		}
 	}
