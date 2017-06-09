@@ -27,9 +27,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\driver.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\shaders.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\textures.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\media\file_streamer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\media\media_streamer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\vector_specialization.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\VulkanSDK.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angraph.cpp" />
@@ -44,8 +43,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\reflect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\textures.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\variable.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\VulkanSDK.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)angraph.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)include\vulkan\VulkanSDK.inl" />
   </ItemGroup>
 </Project>

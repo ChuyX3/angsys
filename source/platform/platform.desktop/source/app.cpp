@@ -35,6 +35,11 @@ app_t app::current_app()
 	return _current_process->as<app>();
 }
 
+icore_app_t icore_app::get_core_app()
+{
+	return app::current_app().get();
+}
+
 app::app()
 	: _main_wnd(null)
 	, mainWndCreatedEvent(this, [](events::core_msg_t code) { return events::win_msg_enum::Created == code; })

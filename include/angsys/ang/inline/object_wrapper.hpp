@@ -256,13 +256,13 @@ inline ang::object_wrapper_ptr<T> ang::object_wrapper<ang::value_wrapper<T>>::op
 template<typename T>
 inline T * ang::object_wrapper<ang::value_wrapper<T>>::operator -> (void)
 {
-	return get();
+	return &get()->get();
 }
 
 template<typename T>
 inline T const* ang::object_wrapper<ang::value_wrapper<T>>::operator -> (void)const
 {
-	return get();
+	return &get()->get();
 }
 
 template<typename T>

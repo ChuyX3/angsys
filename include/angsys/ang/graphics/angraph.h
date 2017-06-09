@@ -41,6 +41,10 @@ namespace ang
 		typedef intf_wrapper<isurface> isurface_t;
 		typedef intf_wrapper<iframe_buffer> iframe_buffer_t;
 
+		typedef intf_wrapper_ptr<idriver> idriver_ptr_t;
+		typedef intf_wrapper_ptr<isurface> isurface_ptr_t;
+		typedef intf_wrapper_ptr<iframe_buffer> iframe_buffer_ptr_t;
+
 		namespace reflect
 		{
 			typedef struct variable_desc variable_desc_t;
@@ -184,7 +188,7 @@ namespace ang
 			}
 		ANG_END_INTERFACE();
 
-		LINK idriver_t create_graphic_driver(graph_driver_type_t);
+		LINK idriver_t create_graphic_driver(graph_driver_type_t, platform::icore_view_t = null, isurface_ptr_t = null);
 
 	}
 }

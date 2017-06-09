@@ -441,6 +441,9 @@ namespace ang
 
 	template<typename T>
 	using wrapper = object_wrapper<value_wrapper<T>>;
+
+	template<class T> 
+	using shared_ptr = object_wrapper<value_wrapper<T>>;
 }
 
 #include <ang/buffers.h>

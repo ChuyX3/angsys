@@ -22,17 +22,17 @@
     <Filter Include="debug info">
       <UniqueIdentifier>{06ab3994-3382-4c12-b338-da9e360c97bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="header files\include\media">
-      <UniqueIdentifier>{6d69bd7d-b457-4526-acb9-5653faec13a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source files\media">
-      <UniqueIdentifier>{6c10f77c-8035-4a8a-ba17-16d185d2cc46}</UniqueIdentifier>
-    </Filter>
     <Filter Include="header files\include\d3d11">
       <UniqueIdentifier>{4df0de67-11ce-4af6-a0a6-1abef92b8dda}</UniqueIdentifier>
     </Filter>
     <Filter Include="source files\d3d11">
       <UniqueIdentifier>{122a07e8-8bb2-46c7-a38c-12ed39b58534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\vulkan">
+      <UniqueIdentifier>{ec07d75e-8899-477b-802b-ae4325335f32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include\vulkan">
+      <UniqueIdentifier>{e4aa9f22-2807-44cd-bad8-7c537e77065e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,12 +54,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\media\media.h">
       <Filter>header files\ang\media</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\media\file_streamer.h">
-      <Filter>header files\include\media</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\media\media_streamer.h">
-      <Filter>header files\include\media</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\effects.h">
       <Filter>header files\ang\graphics</Filter>
     </ClInclude>
@@ -80,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\textures.h">
       <Filter>header files\include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\VulkanSDK.h">
+      <Filter>header files\include\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -119,10 +116,18 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture_loader.cpp">
       <Filter>source files\d3d11</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\VulkanSDK.cpp">
+      <Filter>source files\vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)angraph.natvis">
       <Filter>debug info</Filter>
     </Natvis>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)include\vulkan\VulkanSDK.inl">
+      <Filter>header files\include\vulkan</Filter>
+    </None>
   </ItemGroup>
 </Project>

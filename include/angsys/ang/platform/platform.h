@@ -186,6 +186,7 @@ namespace ang
 		ANG_END_INTERFACE();
 
 		ANG_BEGIN_INTERFACE(LINK, icore_app)
+			visible static icore_app_t get_core_app();
 			visible vcall pointer get_core_app_handle()const pure;
 			visible vcall icore_view_t get_main_core_view() pure;
 			visible vcall input::ikeyboard_t get_keyboard()pure;

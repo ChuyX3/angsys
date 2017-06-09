@@ -271,13 +271,13 @@ inline ang::collections::iterator<T> ang::collections::vector_buffer<T>::find(T 
 	{
 		if (invert)for (iterator_t it = nextTo.is_valid() ? nextTo : begin(); it.is_valid(); ++it)
 		{
-			if (*it == datum)
+			if ((T const&)*it == datum)
 				return it;
 		}
 
 		else for (iterator_t it = nextTo.is_valid() ? nextTo : end(); it.is_valid(); --it)
 		{
-			if (*it == datum)
+			if ((T const&)*it == datum)
 				return it;
 		}
 	}
