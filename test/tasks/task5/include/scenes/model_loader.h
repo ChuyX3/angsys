@@ -23,8 +23,8 @@ namespace ang
 					maths::float4 normal;
 					maths::float2 texcoord;
 
-					bool operator == (const vertex&) { return false; }//dummy
-					bool operator != (const vertex&) { return false; }//dummy
+					bool operator == (const vertex&)const { return false; }//dummy
+					bool operator != (const vertex&)const { return false; }//dummy
 				};
 
 				/*See more: http://paulbourke.net/dataformats/mtl/ */
@@ -89,8 +89,8 @@ namespace ang
 					string material;
 					collections::vector<vertex> vertices;
 
-					bool operator == (const model_element&) { return false; }//dummy
-					bool operator != (const model_element&) { return false; }//dummy
+					bool operator == (const model_element&)const { return false; }//dummy
+					bool operator != (const model_element&)const { return false; }//dummy
 				};
 
 			private:
@@ -126,8 +126,8 @@ namespace ang
 					reflect::var_type_t index_type;
 					collections::vector<reflect::attribute_desc> vertex_desc;
 
-					bool operator == (const model_element&) { return false; }//dummy
-					bool operator != (const model_element&) { return false; }//dummy
+					bool operator == (const model_element&)const { return false; }//dummy
+					bool operator != (const model_element&)const { return false; }//dummy
 				};
 
 			private:

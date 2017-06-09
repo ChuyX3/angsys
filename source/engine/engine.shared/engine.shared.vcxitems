@@ -14,4 +14,11 @@
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\engine.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\model_loader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\engine.cpp" />
+  </ItemGroup>
 </Project>

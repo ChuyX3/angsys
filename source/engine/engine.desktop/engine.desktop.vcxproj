@@ -29,7 +29,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{98636352-624F-417F-A468-DB44CB77E520}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>engine.desktop</RootNamespace>
+    <RootNamespace>engine</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

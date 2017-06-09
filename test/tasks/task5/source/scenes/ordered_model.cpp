@@ -391,6 +391,7 @@ collections::vector<ordered_model::model_element> ordered_model::load(core::file
 			element.material = null;
 			element.vertices = null;
 		}
+		return true;
 	});
 
 	return _elements.get();

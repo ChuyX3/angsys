@@ -124,8 +124,8 @@ namespace ang
 				maths::float3 pos_dir;
 				light_type_t type;
 
-				bool operator == (const light_info& other) { return false; }
-				bool operator != (const light_info& other) { return false; }
+				bool operator == (const light_info& other)const { return false; }
+				bool operator != (const light_info& other)const { return false; }
 			};
 
 			class scene 
@@ -208,8 +208,8 @@ namespace ang
 					buffers::ivertex_buffer_t vertex_buffer;
 					collections::vector<textures::itexture_t> textures;
 
-					bool operator == (const model_element&) { return false; }//dummy
-					bool operator != (const model_element&) { return false; }//dummy
+					bool operator == (const model_element&)const { return false; }//dummy
+					bool operator != (const model_element&)const { return false; }//dummy
 				};
 
 			protected:

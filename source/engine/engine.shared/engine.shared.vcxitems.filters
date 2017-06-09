@@ -11,4 +11,17 @@
       <UniqueIdentifier>{06ab3994-3382-4c12-b338-da9e360c97bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\engine.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\model_loader.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\engine.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>
