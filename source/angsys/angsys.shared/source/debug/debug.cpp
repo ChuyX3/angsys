@@ -129,17 +129,17 @@ void console_logger::print(log_level_t level, cstr_t format, ...)const
 		SetConsoleTextAttribute(_handle, prop.flags);
 	}
 
-	size_t size = _vscprintf(format, args);
+	wsize size = _vscprintf(format, args);
 	if (size <= 0)
 		return;
 	if (size >= 300)
 	{
-		char *buffer = new char[size + 1];
+		char *buffer = (char*)ang_alloc_unmanaged_memory(size + 1);
 		vsprintf_s(buffer, size + 1, format, args);
 		DWORD written;
 		WriteFile(level.get() >1? _error_handle: _handle, buffer, size, &written, NULL);
 		OutputDebugStringA(buffer);
-		delete[]buffer;
+		ang_free_unmanaged_memory(buffer);
 	}
 	else
 	{

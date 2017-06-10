@@ -122,13 +122,11 @@ bool file_system::create_file_handle(cwstr_t path, open_flags_t flags, ifile_ptr
 			return true;
 	}
 
-	file_impl* file = new file_impl();
-	file->add_ref();
+	system_file_t file = new file_impl();
 	file->create(path, flags);
 	if (file->is_created())
 	{
 		*out = file;
-		file->release();
 		return true;
 	}
 	else
@@ -140,11 +138,9 @@ bool file_system::create_file_handle(cwstr_t path, open_flags_t flags, ifile_ptr
 			if (file->is_created())
 			{
 				*out = static_cast<ifile*>(file);
-				file->release();
 				return true;
 			}
 		}
-		file->release();
 	}
 
 	for (auto it = lowest_priority->begin(); it.is_valid(); ++it)
@@ -277,13 +273,11 @@ bool folder_file_system::create_file_handle(cwstr_t path, open_flags_t flags, if
 
 	wstring _path = _root_path + "\\" + path;
 
-	file_impl* file = new file_impl();
-	file->add_ref();
+	system_file_t file = new file_impl();
 	file->create(_path, flags);
 	if (file->is_created())
 	{
 		*out = file;
-		file->release();
 		return true;
 	}
 	else
@@ -295,11 +289,9 @@ bool folder_file_system::create_file_handle(cwstr_t path, open_flags_t flags, if
 			if (file->is_created())
 			{
 				*out = static_cast<ifile*>(file);
-				file->release();
 				return true;
 			}
 		}
-		file->release();
 	}
 	return false;
 }

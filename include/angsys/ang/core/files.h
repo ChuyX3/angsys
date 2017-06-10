@@ -83,7 +83,7 @@ namespace ang
 		intf_wrapper(core::files::ifile*);
 		intf_wrapper(intf_wrapper &&);
 		intf_wrapper(intf_wrapper const&);
-
+		~intf_wrapper();
 	public:
 		void clean();
 		bool is_empty()const;

@@ -41,6 +41,10 @@ inline ang::intf_wrapper<ifile>::intf_wrapper() : _ptr(null) {
 
 }
 
+inline ang::intf_wrapper<ifile>::~intf_wrapper() {
+	clean();
+}
+
 inline ang::intf_wrapper<ifile>::intf_wrapper(ifile* ptr) : _ptr(null) {
 	set(ptr);
 }

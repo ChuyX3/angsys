@@ -27,13 +27,14 @@ namespace ang
 			//, public singleton<default_allocator>	
 		{
 		private:
+			uint _allocator_type;
 #ifdef _MEMORY_PROFILING
 			HANDLE hMutex;
 			debug::ilogger_t logger;
 			ang_hash_table<pointer, memory_block_t> memory_map;
 #endif
 		public:
-			default_allocator();
+			default_allocator(uint);
 			virtual~default_allocator();
 
 			ANG_DECLARE_INTERFACE();

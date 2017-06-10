@@ -132,9 +132,9 @@ namespace ang
 		friend singleton<ang_library_initializer>;
 	public:
 		ang_library_initializer()
-			: m_default_allocator()
-			, m_object_allocator()
-			, m_buffer_allocator()
+			: m_default_allocator(memory::allocator_manager::default_allocator)
+			, m_object_allocator(memory::allocator_manager::object_allocator)
+			, m_buffer_allocator(memory::allocator_manager::buffer_allocator)
 			, m_aligned_allocator()
 #if defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
 			, logger("ang_debugger"_s)
@@ -150,13 +150,13 @@ namespace ang
 			core::files::file_system::release_instance();
 			core::async::thread_manager::release_instance();		
 		}
-
+		debug::console_logger logger;
 		memory::default_allocator m_default_allocator;
 		memory::default_allocator m_object_allocator;
 		memory::default_allocator m_buffer_allocator;
 		memory::aligned_allocator m_aligned_allocator;
 #if defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
-		debug::console_logger logger;
+	
 #endif
 	};
 }

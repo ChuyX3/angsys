@@ -64,9 +64,10 @@ void base_allocator::operator delete(pointer ptr)
 	ang_free_unmanaged_memory(ptr);
 }
 
-default_allocator::default_allocator()
+default_allocator::default_allocator(uint type)
+	: _allocator_type(type)
 #ifdef _MEMORY_PROFILING
-	: hMutex(CreateMutexW(NULL,FALSE,NULL))
+	, hMutex(CreateMutexW(NULL,FALSE,NULL))
 	, memory_map()
 #endif
 {
