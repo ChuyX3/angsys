@@ -20,6 +20,7 @@ using namespace ang;
 using namespace ang::core;
 using namespace ang::core::files;
 
+
 bool ifile_system::register_file_system(ifile_system* fs, file_system_priority_t prio)
 {
 	return file_system::instance()->register_file_system(fs, prio);
@@ -194,3 +195,152 @@ bool file_system::open(cwstr_t path, output_binary_file_t& out)
 	out->attach(_hfile);
 	return true;
 }
+
+
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+ifile_system_t ifile_system::create_file_system(wstring root)
+{
+	return new folder_file_system(root);
+}
+
+folder_file_system::folder_file_system(wstring root)
+{
+	_root_path = root;
+	_paths = new collections::vector_buffer<wstring>();
+}
+
+folder_file_system::~folder_file_system()
+{
+
+}
+
+ANG_IMPLEMENT_CLASSNAME(ang::core::files::folder_file_system);
+ANG_IMPLEMENT_OBJECTNAME(ang::core::files::folder_file_system);
+
+bool folder_file_system::is_child_of(type_name_t name)
+{
+	return name == type_name<file_impl>()
+		|| object::is_child_of(name)
+		|| name == type_name<ifile_system>();
+}
+
+bool folder_file_system::is_kind_of(type_name_t name)const
+{
+	return name == type_name<file_impl>()
+		|| object::is_kind_of(name)
+		|| name == type_name<ifile_system>();
+}
+
+bool folder_file_system::query_object(type_name_t name, unknown_ptr_t out)
+{
+	if (out == null)
+		return false;
+
+	if (name == type_name<folder_file_system>())
+	{
+		*out = static_cast<folder_file_system*>(this);
+		return true;
+	}
+	else if (ang::object::query_object(name, out))
+	{
+		return true;
+	}
+	else if (name == type_name<ifile_system>())
+	{
+		*out = static_cast<ifile_system*>(this);
+		return true;
+	}
+	return false;
+}
+
+array<wstring> folder_file_system::paths()const
+{
+	return static_cast<collections::ienum<wstring> const*>(_paths.get());
+}
+
+bool folder_file_system::register_paths(cwstr_t path)
+{
+	auto it = _paths->find(path);
+	if (it.is_valid())
+		return false;
+	_paths += path;
+	return true;
+}
+
+bool folder_file_system::create_file_handle(cwstr_t path, open_flags_t flags, ifile_ptr_t out)
+{
+	if (out.is_empty())
+		return false;
+
+	wstring _path = _root_path + "\\" + path;
+
+	file_impl* file = new file_impl();
+	file->add_ref();
+	file->create(_path, flags);
+	if (file->is_created())
+	{
+		*out = file;
+		file->release();
+		return true;
+	}
+	else
+	{
+		for (auto it = _paths->begin(); it.is_valid(); ++it)
+		{
+			_path = _root_path + "\\" + (*it) + "\\" + path;
+			file->create(_path, flags);
+			if (file->is_created())
+			{
+				*out = static_cast<ifile*>(file);
+				file->release();
+				return true;
+			}
+		}
+		file->release();
+	}
+	return false;
+}
+
+bool folder_file_system::open(cwstr_t path, input_text_file_t& out)
+{
+	ifile_t _hfile;
+	if (!create_file_handle(path, open_flags::access_in + open_flags::type_text + open_flags::open_exist, &_hfile))
+		return false;
+	out = new input_text_file();
+	out->attach(_hfile);
+	return true;
+}
+
+bool folder_file_system::open(cwstr_t path, output_text_file_t& out)
+{
+	ifile_t _hfile;
+	if (!create_file_handle(path, open_flags::access_out + open_flags::type_text + open_flags::open_alway, &_hfile))
+		return false;
+	out = new output_text_file();
+	out->attach(_hfile);
+	return true;
+}
+
+bool folder_file_system::open(cwstr_t path, input_binary_file_t& out)
+{
+	ifile_t _hfile;
+	if (!create_file_handle(path, open_flags::access_in + open_flags::type_binary + open_flags::open_exist, &_hfile))
+		return false;
+	out = new input_binary_file();
+	out->attach(_hfile);
+	return true;
+}
+
+bool folder_file_system::open(cwstr_t path, output_binary_file_t& out)
+{
+	ifile_t _hfile;
+	if (!create_file_handle(path, open_flags::access_out + open_flags::type_binary + open_flags::open_alway, &_hfile))
+		return false;
+	out = new output_binary_file();
+	out->attach(_hfile);
+	return true;
+}
+

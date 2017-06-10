@@ -170,7 +170,8 @@ namespace ang
 
 
 			ANG_BEGIN_INTERFACE(LINK, ifile_system)
-				visible static ifile_system* get_file_system();
+				visible static ifile_system_t get_file_system();
+				visible static ifile_system_t create_file_system(wstring root);
 				visible static bool register_file_system(ifile_system*, file_system_priority_t);
 				visible vcall array<wstring> paths()const pure;
 				visible vcall bool register_paths(cwstr_t) pure;

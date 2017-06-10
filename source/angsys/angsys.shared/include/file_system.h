@@ -12,6 +12,7 @@ namespace ang
 		{
 			class file_impl;
 			class file_system;
+			class folder_file_system;
 			
 			typedef object_wrapper<file_impl> system_file_t;
 			typedef object_wrapper<file_system> file_system_t;
@@ -138,6 +139,33 @@ namespace ang
 
 			public:
 				bool register_file_system(ifile_system*, file_system_priority_t);
+				virtual array<wstring> paths()const override;
+				virtual bool register_paths(cwstr_t)override;
+				virtual bool create_file_handle(cwstr_t, open_flags_t, ifile_ptr_t)override;
+
+				virtual bool open(cwstr_t, input_text_file_t&)override;
+				virtual bool open(cwstr_t, output_text_file_t&)override;
+				virtual bool open(cwstr_t, input_binary_file_t&)override;
+				virtual bool open(cwstr_t, output_binary_file_t&)override;
+			};
+
+
+			class folder_file_system
+				: public object
+				, public ifile_system
+			{
+			private:
+				wstring _root_path;
+				collections::vector<wstring> _paths;
+
+			public:
+				folder_file_system(wstring);
+				virtual~folder_file_system();
+
+			public:
+				ANG_DECLARE_INTERFACE();
+
+			public:
 				virtual array<wstring> paths()const override;
 				virtual bool register_paths(cwstr_t)override;
 				virtual bool create_file_handle(cwstr_t, open_flags_t, ifile_ptr_t)override;

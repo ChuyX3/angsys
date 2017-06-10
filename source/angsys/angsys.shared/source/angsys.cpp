@@ -190,7 +190,7 @@ template<> bool ang::singleton<core::files::file_system_t>::release_instance() {
 	_instance = null;
 	return true;
 }
-core::files::ifile_system* core::files::ifile_system::get_file_system() {
+core::files::ifile_system_t core::files::ifile_system::get_file_system() {
 	return ang::singleton<core::files::file_system_t>::instance();
 }
 
