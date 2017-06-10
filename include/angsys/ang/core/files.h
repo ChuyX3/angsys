@@ -294,11 +294,11 @@ namespace ang
 			{
 			public:
 				output_text_file();
-				output_text_file(cwstr_t path);
+				output_text_file(cwstr_t path, text::encoding_t = text::encoding::ascii);
 
 				ANG_DECLARE_INTERFACE();
 
-				bool open(cwstr_t path);
+				bool open(cwstr_t path, text::encoding_t = text::encoding::ascii);
 				text::encoding_t format()const;
 				void format(text::encoding_t);
 				file_cursor_t cursor()const;

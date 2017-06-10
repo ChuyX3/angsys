@@ -863,7 +863,6 @@ namespace ang
 			void xml_tail(xml_node_t);
 		};
 
-
 		class LINK xml_builder final
 			: public xml_tree
 		{

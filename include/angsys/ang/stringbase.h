@@ -59,6 +59,18 @@ namespace ang
 			static int string_compare(ang_cmstr_t first, ang_cstr_t second);
 			static int string_compare(ang_cmstr_t first, ang_cwstr_t second);
 
+			static index string_compare_until(ang_cstr_t first, ang_cstr_t second);
+			static index string_compare_until(ang_cstr_t first, ang_cwstr_t second);
+			static index string_compare_until(ang_cstr_t first, ang_cmstr_t second);
+
+			static index string_compare_until(ang_cwstr_t first, ang_cwstr_t second);
+			static index string_compare_until(ang_cwstr_t first, ang_cstr_t second);
+			static index string_compare_until(ang_cwstr_t first, ang_cmstr_t second);
+
+			static index string_compare_until(ang_cmstr_t first, ang_cmstr_t second);
+			static index string_compare_until(ang_cmstr_t first, ang_cstr_t second);
+			static index string_compare_until(ang_cmstr_t first, ang_cwstr_t second);
+
 		};
 	}
 }

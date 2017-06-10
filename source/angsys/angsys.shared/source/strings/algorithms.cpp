@@ -558,18 +558,18 @@ int algorithms::string_compare(const char* first, const mchar* second)
 		return 1;
 	else if (second == null)
 		return -1;
-	uint c = 0;
+	uint c = 0, c2 = 0;
 	mbyte datum1, datum2;
 	while (true) {
-		datum1.convert(first[c]);
+		datum1.convert(first[c++]);
 		if (datum1.size() == 1)
-			datum2[0] = second[c];
+			datum2[0] = second[c2++];
 		else
 		{
-			datum2[0] = second[c++];
-			if (second[c] == 0)
+			datum2[0] = second[c2++];
+			if (second[c2] == 0)
 				return 1;
-			datum2[1] = second[c];
+			datum2[1] = second[c2++];
 		}
 
 		if ((datum1 == 0) && (datum2 == 0))
@@ -578,9 +578,8 @@ int algorithms::string_compare(const char* first, const mchar* second)
 			return 1;
 		else if (datum1 < datum2)
 			return -1;
-		else
-			c++;
 	}
+	return 0;
 }
 
 int algorithms::string_compare(const wchar* first, const wchar* second)
@@ -635,42 +634,42 @@ int algorithms::string_compare(const wchar* first, const mchar* second)
 		return 1;
 	else if (second == null)
 		return -1;
-	uint c = 0;
+	uint c = 0, c2 = 0;
 	mbyte datum1, datum2;
 	while (true) {
-		datum1.convert(first[c]);
+		datum1.convert(first[c++]);
 		int s = datum1.size();
 		if (s == 1)
-			datum2[0] = second[c];
+			datum2[0] = second[c2++];
 		else if (s == 2)
 		{
-			datum2[0] = second[c++];
-			if (second[c] == 0)
+			datum2[0] = second[c2++];
+			if (second[c2] == 0)
 				return 1;
-			datum2[1] = second[c];
+			datum2[1] = second[c2++];
 		}
 		else if (s == 3)
 		{
-			datum2[0] = second[c++];
-			if (second[c] == 0)
+			datum2[0] = second[c2++];
+			if (second[c2] == 0)
 				return 1;
-			datum2[1] = second[c++];
-			if (second[c] == 0)
+			datum2[1] = second[c2++];
+			if (second[c2] == 0)
 				return 1;
-			datum2[2] = second[c];
+			datum2[2] = second[c2++];
 		}
 		else if (s == 4)
 		{
-			datum2[0] = second[c++];
-			if (second[c] == 0)
+			datum2[0] = second[c2++];
+			if (second[c2] == 0)
 				return 1;
-			datum2[1] = second[c++];
-			if (second[c] == 0)
+			datum2[1] = second[c2++];
+			if (second[c2] == 0)
 				return 1;
-			datum2[2] = second[c++];
-			if (second[c] == 0)
+			datum2[2] = second[c2++];
+			if (second[c2] == 0)
 				return 1;
-			datum2[3] = second[c];
+			datum2[3] = second[c2++];
 		}
 
 		if ((datum1 == 0) && (datum2 == 0))
@@ -679,9 +678,8 @@ int algorithms::string_compare(const wchar* first, const mchar* second)
 			return 1;
 		else if (datum1 < datum2)
 			return -1;
-		else
-			c++;
 	}
+	return 0;
 }
 
 
@@ -714,18 +712,18 @@ int algorithms::string_compare(const mchar* first, const char* second)
 		return 1;
 	else if (second == null)
 		return -1;
-	uint c = 0;
+	uint c = 0, c2 = 0;
 	mbyte datum1, datum2;
 	while (true) {
-		datum2.convert(second[c]);
+		datum2.convert(second[c++]);
 		if (datum2.size() == 1)
-			datum1[0] = first[c];
+			datum1[0] = first[c2++];
 		else
 		{
-			datum1[0] = first[c++];
-			if (first[c] == 0)
+			datum1[0] = first[c2++];
+			if (first[c2] == 0)
 				return -1;
-			datum1[1] = first[c];
+			datum1[1] = first[c2++];
 		}
 
 		if ((datum1 == 0) && (datum2 == 0))
@@ -734,9 +732,8 @@ int algorithms::string_compare(const mchar* first, const char* second)
 			return 1;
 		else if (datum1 < datum2)
 			return -1;
-		else
-			c++;
 	}
+	return 0;
 }
 
 int algorithms::string_compare(const mchar* first, const wchar* second)
@@ -748,42 +745,42 @@ int algorithms::string_compare(const mchar* first, const wchar* second)
 	else if (second == null)
 		return -1;
 
-	uint c = 0;
+	uint c = 0, c2 = 0;
 	mbyte datum1, datum2;
 	while (true) {
-		datum2.convert(second[c]);
+		datum2.convert(second[c++]);
 		int s = datum2.size();
 		if (s == 1)
-			datum1[0] = first[c];
+			datum1[0] = first[c2++];
 		else if (s == 2)
 		{
-			datum1[0] = first[c++];
-			if (first[c] == 0)
+			datum1[0] = first[c2++];
+			if (first[c2] == 0)
 				return -1;
-			datum1[1] = first[c];
+			datum1[1] = first[c2++];
 		}
 		else if (s == 3)
 		{
-			datum1[0] = first[c++];
-			if (first[c] == 0)
+			datum1[0] = first[c2++];
+			if (first[c2] == 0)
 				return -1;
-			datum1[1] = first[c++];
-			if (first[c] == 0)
+			datum1[1] = first[c2++];
+			if (first[c2] == 0)
 				return -1;
-			datum1[2] = first[c];
+			datum1[2] = first[c2++];
 		}
 		else
 		{
-			datum1[0] = first[c++];
-			if (first[c] == 0)
+			datum1[0] = first[c2++];
+			if (first[c2] == 0)
 				return -1;
-			datum1[1] = first[c++];
-			if (first[c] == 0)
+			datum1[1] = first[c2++];
+			if (first[c2] == 0)
 				return -1;
-			datum1[2] = first[c++];
-			if (first[c] == 0)
+			datum1[2] = first[c2++];
+			if (first[c2] == 0)
 				return -1;
-			datum1[3] = first[c];
+			datum1[3] = first[c2++];
 		}
 
 		if ((datum1 == 0) && (datum2 == 0))
@@ -792,11 +789,217 @@ int algorithms::string_compare(const mchar* first, const wchar* second)
 			return 1;
 		else if (datum1 < datum2)
 			return -1;
-		else
-			c++;
 	}
+	return 0;
 }
 
+
+index algorithms::string_compare_until(const char* first, const char* second)
+{
+	if (first == second)
+		return string_length(first);
+	if ((first == null) || (second == null))
+		return 0;
+	
+	index c = 0;
+	while (first[c] != 0 && second[c] != 0 && first[c] == second[c])
+		c++;
+	return c;
+}
+
+index algorithms::string_compare_until(const char* first, const wchar* second)
+{
+	if ((first == null) || (second == null))
+		return 0;
+	index c = 0;
+	while (first[c] != 0 && second[c] != 0 && first[c] == second[c])
+		c++;
+	return c;
+}
+
+index algorithms::string_compare_until(const char* first, const mchar* second)
+{
+	if ((first == null) || (second == null))
+		return 0;
+	
+	index c = 0, c2 = 0;
+	mbyte datum1, datum2;
+	while (true) {
+		datum1.convert(first[c++]);
+		if (datum1.size() == 1)
+			datum2[0] = second[c2++];
+		else
+		{
+			datum2[0] = second[c2++];
+			if (second[c2] == 0)
+				return c;
+			datum2[1] = second[c2++];
+		}
+
+		if (datum1 == 0 || datum2 == 0 || datum1 != datum2)
+			return c;
+	}
+	return -1;
+}
+
+index algorithms::string_compare_until(const wchar* first, const wchar* second)
+{
+	if (first == second)
+		return string_length(first);
+	if ((first == null) || (second == null))
+		return 0;
+
+	index c = 0;
+	while (first[c] != 0 && second[c] != 0 && first[c] == second[c])
+		c++;
+	return c;
+}
+
+index algorithms::string_compare_until(const wchar* first, const char* second)
+{
+	if ((first == null) || (second == null))
+		return 0;
+
+	index c = 0;
+	while (first[c] != 0 && second[c] != 0 && first[c] == second[c])
+		c++;
+	return c;
+}
+
+index algorithms::string_compare_until(const wchar* first, const mchar* second)
+{
+	if ((first == null) || (second == null))
+		return 0;
+	
+	index c = 0, c2 = 0;
+	mbyte datum1, datum2;
+	while (true) {
+		datum1.convert(first[c++]);
+		if (datum1.size() == 1)
+			datum2[0] = second[c2++];
+		else if (datum1.size() == 2)
+		{
+			datum2[0] = second[c2++];
+			if (second[c2] == 0)
+				return c;
+			datum2[1] = second[c2++];
+		}
+		else if (datum1.size() == 3)
+		{
+			datum2[0] = second[c2++];
+			if (second[c2] == 0)
+				return c;
+			datum2[1] = second[c2++];
+			if (second[c2] == 0)
+				return c;
+			datum2[2] = second[c2++];
+		}
+		else if (datum1.size() == 4)
+		{
+			datum2[0] = second[c2++];
+			if (second[c2] == 0)
+				return c;
+			datum2[1] = second[c2++];
+			if (second[c2] == 0)
+				return c;
+			datum2[2] = second[c2++];
+			if (second[c2] == 0)
+				return c;
+			datum2[3] = second[c2++];
+		}
+
+		if (datum1 == 0 || datum2 == 0 || datum1 != datum2)
+			return c;
+	}
+	return -1;
+}
+
+
+index algorithms::string_compare_until(const mchar* first, const mchar* second)
+{
+	if (first == second)
+		return string_length(first);
+	if ((first == null) || (second == null))
+		return 0;
+
+	index c = 0;
+	while (first[c] != 0 && second[c] != 0 && first[c] == second[c])
+		c++;
+	return c;
+}
+
+index algorithms::string_compare_until(const mchar* first, const char* second)
+{
+	if ((first == null) || (second == null))
+		return 0;
+
+	index c = 0, c2 = 0;
+	mbyte datum1, datum2;
+	while (true) {
+		datum2.convert(second[c2++]);
+		if (datum2.size() == 1)
+			datum1[0] = first[c++];
+		else
+		{
+			datum1[0] = first[c++];
+			if (first[c] == 0)
+				return c;
+			datum1[1] = first[c++];
+		}
+
+		if (datum1 == 0 || datum2 == 0 || datum1 != datum2)
+			return c;
+	}
+	return -1;
+}
+
+index algorithms::string_compare_until(const mchar* first, const wchar* second)
+{
+	if ((first == null) || (second == null))
+		return 0;
+
+	index c = 0, c2 = 0;
+	mbyte datum1, datum2;
+	while (true) {
+		datum2.convert(second[c2++]);
+		if (datum2.size() == 1)
+			datum1[0] = first[c++];
+		else if (datum2.size() == 2)
+		{
+			datum1[0] = first[c++];
+			if (first[c] == 0)
+				return c;
+			datum1[1] = first[c++];
+		}
+		else if (datum2.size() == 3)
+		{
+			datum1[0] = first[c++];
+			if (first[c] == 0)
+				return c;
+			datum1[1] = first[c++];
+			if (first[c] == 0)
+				return c;
+			datum1[2] = first[c++];
+		}
+		else if (datum2.size() == 4)
+		{
+			datum1[0] = first[c++];
+			if (first[c] == 0)
+				return c;
+			datum1[1] = first[c++];
+			if (first[c] == 0)
+				return c;
+			datum1[2] = first[c++];
+			if (first[c] == 0)
+				return c;
+			datum1[3] = first[c++];
+		}
+
+		if (datum1 == 0 || datum2 == 0 || datum1 != datum2)
+			return c;
+	}
+	return -1;
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 

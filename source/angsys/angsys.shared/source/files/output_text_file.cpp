@@ -19,10 +19,10 @@ output_text_file::output_text_file()
 {
 }
 
-output_text_file::output_text_file(cwstr_t path)
+output_text_file::output_text_file(cwstr_t path, text::encoding_t encoding)
 	: output_text_file()
 {
-	open(path);
+	open(path, encoding);
 }
 
 output_text_file::~output_text_file()
@@ -32,12 +32,17 @@ output_text_file::~output_text_file()
 
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::files::output_text_file, file);
 
-bool output_text_file::open(cwstr_t path)
+bool output_text_file::open(cwstr_t path, text::encoding_t encoding)
 {
 	if (is_valid())
 		return false;
+	auto flags = open_flags::access_out + open_flags::open_alway + open_flags::type_text;
 
-	if (!create(path, open_flags::access_out + open_flags::open_alway + open_flags::type_text))
+	flags += encoding == text::encoding::utf_8 ? open_flags::encoding_mbyte
+		: encoding == text::encoding::unicode ? open_flags::encoding_unicode
+		: open_flags::encoding_ascii;
+
+	if (!create(path, flags))
 		return false;
 	return true;
 }

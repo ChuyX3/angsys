@@ -142,7 +142,7 @@ bool vulkan_driver::query_object(type_name_t name, unknown_ptr_t out)
 
 bool vulkan_driver::init_driver()
 {
-
+	return false;
 }
 
 void vulkan_driver::close_driver()
