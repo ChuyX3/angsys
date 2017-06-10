@@ -53,6 +53,33 @@ namespace ang
 			friend inline float4 operator / (const float4&, float);
 		};
 
+		template<> inline float float4::get<0u>()const;
+		template<> inline float float4::get<1u>()const;
+		template<> inline float float4::get<2u>()const;
+		template<> inline float float4::get<3u>()const;
+		template<> inline void float4::set<0u>(float value);
+		template<> inline void float4::set<1u>(float value);
+		template<> inline void float4::set<2u>(float value);
+		template<> inline void float4::set<3u>(float value);
+
+		inline auto asin(float4 const& _V) { return float4(asin(_V[0]), asin(_V[1]), asin(_V[2]), asin(_V[3])); }
+		inline auto acos(float4 const& _V) { return float4(acos(_V[0]), acos(_V[1]), acos(_V[2]), acos(_V[3])); }
+		inline auto atan(float4 const& _V) { return float4(atan(_V[0]), atan(_V[1]), atan(_V[2]), atan(_V[3])); }
+
+		inline auto asinh(float4 const& _V) { return float4(asinh(_V[0]), asinh(_V[1]), asinh(_V[2]), asinh(_V[3])); }
+		inline auto acosh(float4 const& _V) { return float4(acosh(_V[0]), acosh(_V[1]), acosh(_V[2]), acosh(_V[3])); }
+		inline auto atanh(float4 const& _V) { return float4(atanh(_V[0]), atanh(_V[1]), atanh(_V[2]), atanh(_V[3])); }
+
+		inline auto sin(float4 const& _V) { return float4(sin(_V[0]), sin(_V[1]), sin(_V[2]), sin(_V[3])); }
+		inline auto cos(float4 const& _V) { return float4(cos(_V[0]), cos(_V[1]), cos(_V[2]), cos(_V[3])); }
+		inline auto tan(float4 const& _V) { return float4(tan(_V[0]), tan(_V[1]), tan(_V[2]), tan(_V[3])); }
+
+		inline auto sinh(float4 const& _V) { return float4(sinh(_V[0]), sinh(_V[1]), sinh(_V[2]), sinh(_V[3])); }
+		inline auto cosh(float4 const& _V) { return float4(cosh(_V[0]), cosh(_V[1]), cosh(_V[2]), cosh(_V[3])); }
+		inline auto tanh(float4 const& _V) { return float4(tanh(_V[0]), tanh(_V[1]), tanh(_V[2]), tanh(_V[3])); }
+
+		inline auto hypot(float4 const& vec) { return (float)vec; }
+		inline float4 norm(float4 const& vec) { return  vec / (float)vec; }
 
 		/********************************************************/
 		/*                  double4 definition                   */
@@ -97,24 +124,14 @@ namespace ang
 			friend inline double4 operator / (const double4&, double);
 		};
 
-
-
-		inline auto asin(float4 const& _V) { return float4(asin(_V[0]), asin(_V[1]), asin(_V[2]), asin(_V[3])); }
-		inline auto acos(float4 const& _V) { return float4(acos(_V[0]), acos(_V[1]), acos(_V[2]), acos(_V[3])); }
-		inline auto atan(float4 const& _V) { return float4(atan(_V[0]), atan(_V[1]), atan(_V[2]), atan(_V[3])); }
-
-		inline auto asinh(float4 const& _V) { return float4(asinh(_V[0]), asinh(_V[1]), asinh(_V[2]), asinh(_V[3])); }
-		inline auto acosh(float4 const& _V) { return float4(acosh(_V[0]), acosh(_V[1]), acosh(_V[2]), acosh(_V[3])); }
-		inline auto atanh(float4 const& _V) { return float4(atanh(_V[0]), atanh(_V[1]), atanh(_V[2]), atanh(_V[3])); }
-
-		inline auto sin(float4 const& _V) { return float4(sin(_V[0]), sin(_V[1]), sin(_V[2]), sin(_V[3])); }
-		inline auto cos(float4 const& _V) { return float4(cos(_V[0]), cos(_V[1]), cos(_V[2]), cos(_V[3])); }
-		inline auto tan(float4 const& _V) { return float4(tan(_V[0]), tan(_V[1]), tan(_V[2]), tan(_V[3])); }
-
-		inline auto sinh(float4 const& _V) { return float4(sinh(_V[0]), sinh(_V[1]), sinh(_V[2]), sinh(_V[3])); }
-		inline auto cosh(float4 const& _V) { return float4(cosh(_V[0]), cosh(_V[1]), cosh(_V[2]), cosh(_V[3])); }
-		inline auto tanh(float4 const& _V) { return float4(tanh(_V[0]), tanh(_V[1]), tanh(_V[2]), tanh(_V[3])); }
-
+		template<> inline double double4::get<0u>()const;
+		template<> inline double double4::get<1u>()const;
+		template<> inline double double4::get<2u>()const;
+		template<> inline double double4::get<3u>()const;
+		template<> inline void double4::set<0u>(double value);
+		template<> inline void double4::set<1u>(double value);
+		template<> inline void double4::set<2u>(double value);
+		template<> inline void double4::set<3u>(double value);
 
 		inline auto asin(double4 const& _V) { return double4(asin(_V[0]), asin(_V[1]), asin(_V[2]), asin(_V[3])); }
 		inline auto acos(double4 const& _V) { return double4(acos(_V[0]), acos(_V[1]), acos(_V[2]), acos(_V[3])); }
@@ -132,8 +149,8 @@ namespace ang
 		inline auto cosh(double4 const& _V) { return double4(cosh(_V[0]), cosh(_V[1]), cosh(_V[2]), cosh(_V[3])); }
 		inline auto tanh(double4 const& _V) { return double4(tanh(_V[0]), tanh(_V[1]), tanh(_V[2]), tanh(_V[3])); }
 
-		inline auto hypot(float4 const& vec) { return (float)vec; }
 		inline auto hypot(double4 const& vec) { return (double)vec; }
+		inline double4 norm(double4 const& vec) { return  vec / (double)vec; }
 
 	}
 }

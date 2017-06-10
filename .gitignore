@@ -6,3 +6,5 @@
 *.idb
 *.pch
 *.log
+test/tasks/tasks.VC.VC.opendb
+test/tasks/tasks.VC.db

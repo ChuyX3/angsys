@@ -50,6 +50,33 @@ namespace ang
 			friend inline float3 operator / (const float3&, float);
 		};
 
+		template<> inline float float3::get<0u>()const;
+		template<> inline float float3::get<1u>()const;
+		template<> inline float float3::get<2u>()const;
+
+		template<> inline void float3::set<0u>(float value);
+		template<> inline void float3::set<1u>(float value);
+		template<> inline void float3::set<2u>(float value);
+
+		inline auto asin(float3 const& _V) { return float3(asin(_V[0]), asin(_V[1]), asin(_V[2])); }
+		inline auto acos(float3 const& _V) { return float3(acos(_V[0]), acos(_V[1]), acos(_V[2])); }
+		inline auto atan(float3 const& _V) { return float3(atan(_V[0]), atan(_V[1]), atan(_V[2])); }
+
+		inline auto asinh(float3 const& _V) { return float3(asinh(_V[0]), asinh(_V[1]), asinh(_V[2])); }
+		inline auto acosh(float3 const& _V) { return float3(acosh(_V[0]), acosh(_V[1]), acosh(_V[2])); }
+		inline auto atanh(float3 const& _V) { return float3(atanh(_V[0]), atanh(_V[1]), atanh(_V[2])); }
+
+		inline auto sin(float3 const& _V) { return float3(sin(_V[0]), sin(_V[1]), sin(_V[2])); }
+		inline auto cos(float3 const& _V) { return float3(cos(_V[0]), cos(_V[1]), cos(_V[2])); }
+		inline auto tan(float3 const& _V) { return float3(tan(_V[0]), tan(_V[1]), tan(_V[2])); }
+
+		inline auto sinh(float3 const& _V) { return float3(sinh(_V[0]), sinh(_V[1]), sinh(_V[2])); }
+		inline auto cosh(float3 const& _V) { return float3(cosh(_V[0]), cosh(_V[1]), cosh(_V[2])); }
+		inline auto tanh(float3 const& _V) { return float3(tanh(_V[0]), tanh(_V[1]), tanh(_V[2])); }
+
+		inline auto hypot(float3 const& vec) { return (float)vec; }
+		inline float3 norm(float3 const& vec) { return  vec / (float)vec; }
+		inline float3 cross(float3 const&, float3 const&);
 
 		/********************************************************/
 		/*                  double3 definition                   */
@@ -93,22 +120,14 @@ namespace ang
 			friend inline double3 operator / (const double3&, double);
 		};
 
+		template<> inline double double3::get<0u>()const;
+		template<> inline double double3::get<1u>()const;
+		template<> inline double double3::get<2u>()const;
 
-		inline auto asin(float3 const& _V) { return float3(asin(_V[0]), asin(_V[1]), asin(_V[2])); }
-		inline auto acos(float3 const& _V) { return float3(acos(_V[0]), acos(_V[1]), acos(_V[2])); }
-		inline auto atan(float3 const& _V) { return float3(atan(_V[0]), atan(_V[1]), atan(_V[2])); }
+		template<> inline void double3::set<0u>(double value);
+		template<> inline void double3::set<1u>(double value);
+		template<> inline void double3::set<2u>(double value);
 
-		inline auto asinh(float3 const& _V) { return float3(asinh(_V[0]), asinh(_V[1]), asinh(_V[2])); }
-		inline auto acosh(float3 const& _V) { return float3(acosh(_V[0]), acosh(_V[1]), acosh(_V[2])); }
-		inline auto atanh(float3 const& _V) { return float3(atanh(_V[0]), atanh(_V[1]), atanh(_V[2])); }
-
-		inline auto sin(float3 const& _V) { return float3(sin(_V[0]), sin(_V[1]), sin(_V[2])); }
-		inline auto cos(float3 const& _V) { return float3(cos(_V[0]), cos(_V[1]), cos(_V[2])); }
-		inline auto tan(float3 const& _V) { return float3(tan(_V[0]), tan(_V[1]), tan(_V[2])); }
-
-		inline auto sinh(float3 const& _V) { return float3(sinh(_V[0]), sinh(_V[1]), sinh(_V[2])); }
-		inline auto cosh(float3 const& _V) { return float3(cosh(_V[0]), cosh(_V[1]), cosh(_V[2])); }
-		inline auto tanh(float3 const& _V) { return float3(tanh(_V[0]), tanh(_V[1]), tanh(_V[2])); }
 
 		inline auto asin(double3 const& _V) { return double3(asin(_V[0]), asin(_V[1]), asin(_V[2])); }
 		inline auto acos(double3 const& _V) { return double3(acos(_V[0]), acos(_V[1]), acos(_V[2])); }
@@ -126,8 +145,9 @@ namespace ang
 		inline auto cosh(double3 const& _V) { return double3(cosh(_V[0]), cosh(_V[1]), cosh(_V[2])); }
 		inline auto tanh(double3 const& _V) { return double3(tanh(_V[0]), tanh(_V[1]), tanh(_V[2])); }
 
-		inline auto hypot(float3 const& vec) { return (float)vec; }
 		inline auto hypot(double3 const& vec) { return (double)vec; }
+		inline double3 norm(double3 const& vec) { return  vec / (double)vec; }
+		inline double3 cross(double3 const&, double3 const&);
 	}
 }
 

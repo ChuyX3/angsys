@@ -3,6 +3,15 @@
 #elif !defined __ANG_VECTOR_MATHS_FLOAT3_HPP__
 #define __ANG_VECTOR_MATHS_FLOAT3_HPP__
 
+inline ang::maths::float3 cross(ang::maths::float3 const& vec1, ang::maths::float3 const& vec2)
+{
+	return{
+		vec1.get<1>() * vec2.get<2>() - vec1.get<2>() * vec2.get<1>(),
+		vec1.get<2>() * vec2.get<0>() - vec1.get<0>() * vec2.get<2>(),
+		vec1.get<0>() * vec2.get<1>() - vec1.get<1>() * vec2.get<0>()
+	};
+}
+
 inline ang::maths::float3::float3() {
 	_vector.x = 0;
 	_vector.y = 0;
@@ -81,7 +90,7 @@ template<> inline float ang::maths::float3::get<2u>()const { return _vector.z; }
 
 template<> inline void ang::maths::float3::set<0u>(float value) { _vector.x = value; }
 template<> inline void ang::maths::float3::set<1u>(float value) { _vector.y = value; }
-template<> inline void ang::maths::float3::set<3u>(float value) { _vector.z = value; }
+template<> inline void ang::maths::float3::set<2u>(float value) { _vector.z = value; }
 
 inline float ang::maths::float3::operator [](uint idx)const {
 	return _vector.xyz[idx];

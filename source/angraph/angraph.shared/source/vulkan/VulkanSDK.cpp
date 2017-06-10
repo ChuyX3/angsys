@@ -50,7 +50,7 @@ ANG_EXTERN void* VKAPI_PTR ang_graphics_vulkan_vkAllocationFunction(void* pUserD
 
 	switch (allocationScope)
 	{
-#ifdef ANG_DEVELOPPER
+#ifdef _DEBUG
 	case VK_SYSTEM_ALLOCATION_SCOPE_COMMAND:
 		return allocator->aligned_memory_alloc(size, alignment, "VK_SYSTEM_ALLOCATION_SCOPE_COMMAND", VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
 	case VK_SYSTEM_ALLOCATION_SCOPE_OBJECT:
@@ -65,7 +65,7 @@ ANG_EXTERN void* VKAPI_PTR ang_graphics_vulkan_vkAllocationFunction(void* pUserD
 		return allocator->aligned_memory_alloc(size, alignment, "VK_SYSTEM_ALLOCATION_SCOPE_RANGE_SIZE", VK_SYSTEM_ALLOCATION_SCOPE_RANGE_SIZE);
 	case VK_SYSTEM_ALLOCATION_SCOPE_MAX_ENUM:
 		return allocator->aligned_memory_alloc(size, alignment, "VK_SYSTEM_ALLOCATION_SCOPE_MAX_ENUM", VK_SYSTEM_ALLOCATION_SCOPE_MAX_ENUM);
-#endif//ANG_DEVELOPPER
+#endif//_DEBUG
 	default:
 		return allocator->aligned_memory_alloc(size, alignment);
 	}

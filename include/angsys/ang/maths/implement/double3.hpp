@@ -3,6 +3,15 @@
 #elif !defined __ANG_VECTOR_MATHS_DOUBLE3_HPP__
 #define __ANG_VECTOR_MATHS_DOUBLE3_HPP__
 
+inline ang::maths::double3 cross(ang::maths::double3 const& vec1, ang::maths::double3 const& vec2)
+{
+	return{
+		vec1.get<1>() * vec2.get<2>() - vec1.get<2>() * vec2.get<1>(),
+		vec1.get<2>() * vec2.get<0>() - vec1.get<0>() * vec2.get<2>(),
+		vec1.get<0>() * vec2.get<1>() - vec1.get<1>() * vec2.get<0>()
+	};
+}
+
 inline ang::maths::double3::double3() {
 	_vector.x = 0;
 	_vector.y = 0;

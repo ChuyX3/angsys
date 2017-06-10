@@ -58,6 +58,9 @@
     <Filter Include="header files\angsys\ang\platform">
       <UniqueIdentifier>{04019f53-cba9-4577-a940-e19a3aa36c7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="header files\angsys\ang\maths">
+      <UniqueIdentifier>{558555f2-045d-478c-af3d-df9f88dc462c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis">
@@ -190,6 +193,24 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\boolean.h">
       <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float2.h">
+      <Filter>header files\angsys\ang\maths</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float3.h">
+      <Filter>header files\angsys\ang\maths</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float4.h">
+      <Filter>header files\angsys\ang\maths</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float4x4.h">
+      <Filter>header files\angsys\ang\maths</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\maths.h">
+      <Filter>header files\angsys\ang\maths</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\vectors.h">
+      <Filter>header files\angsys\ang\maths</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

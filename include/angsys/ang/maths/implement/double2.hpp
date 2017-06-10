@@ -3,6 +3,7 @@
 #elif !defined __ANG_VECTOR_MATHS_DOUBLE2_HPP__
 #define __ANG_VECTOR_MATHS_DOUBLE2_HPP__
 
+
 inline ang::maths::double2::double2() {
 	_vector.x = 0;
 	_vector.y = 0;

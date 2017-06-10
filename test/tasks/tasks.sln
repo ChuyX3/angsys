@@ -25,13 +25,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tasks", "tasks", "{7786EFB2
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "task5", "task5\task5.vcxproj", "{E418DA3F-8349-414C-BFC1-944901ED20FD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "engine", "engine", "{5F188C05-9F18-4877-BBFA-6BCEFE78DF20}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "angine.shared", "..\..\source\engine\engine.shared\engine.shared.vcxitems", "{BDC58ECC-966E-4AED-AAB4-359528FF3D7E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "engine.desktop", "..\..\source\engine\engine.desktop\engine.desktop.vcxproj", "{98636352-624F-417F-A468-DB44CB77E520}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\..\source\angsys\angsys.shared\angsys.shared.vcxitems*{4d105416-0867-47f0-8320-3f0e6b233d73}*SharedItemsImports = 9
 		..\..\source\angraph\angraph.shared\angraph.Shared.vcxitems*{4d356a4c-688c-4e90-9ea0-872336db7c27}*SharedItemsImports = 4
 		..\..\source\platform\platform.shared\platform.shared.vcxitems*{4fb1207c-a338-4fce-bd5f-43c85ef1173b}*SharedItemsImports = 9
 		..\..\source\angsys\angsys.shared\angsys.shared.vcxitems*{7b54374a-9002-4d03-8af5-1db4cb88d60a}*SharedItemsImports = 4
+		..\..\source\engine\engine.shared\engine.shared.vcxitems*{98636352-624f-417f-a468-db44cb77e520}*SharedItemsImports = 4
 		..\..\source\angraph\angraph.shared\angraph.Shared.vcxitems*{bdbb14fa-4e36-4404-9d51-a5f8c879c650}*SharedItemsImports = 9
+		..\..\source\engine\engine.shared\engine.shared.vcxitems*{bdc58ecc-966e-4aed-aab4-359528ff3d7e}*SharedItemsImports = 9
 		..\..\source\platform\platform.shared\platform.shared.vcxitems*{ccd7293a-0ab3-4987-a9c9-d6202df87def}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -127,6 +135,24 @@ Global
 		{E418DA3F-8349-414C-BFC1-944901ED20FD}.Release|x64.Build.0 = Release|x64
 		{E418DA3F-8349-414C-BFC1-944901ED20FD}.Release|x86.ActiveCfg = Release|Win32
 		{E418DA3F-8349-414C-BFC1-944901ED20FD}.Release|x86.Build.0 = Release|Win32
+		{98636352-624F-417F-A468-DB44CB77E520}.Debug|ARM.ActiveCfg = Debug|Win32
+		{98636352-624F-417F-A468-DB44CB77E520}.Debug|ARM64.ActiveCfg = Debug|Win32
+		{98636352-624F-417F-A468-DB44CB77E520}.Debug|x64.ActiveCfg = Debug|x64
+		{98636352-624F-417F-A468-DB44CB77E520}.Debug|x64.Build.0 = Debug|x64
+		{98636352-624F-417F-A468-DB44CB77E520}.Debug|x86.ActiveCfg = Debug|Win32
+		{98636352-624F-417F-A468-DB44CB77E520}.Debug|x86.Build.0 = Debug|Win32
+		{98636352-624F-417F-A468-DB44CB77E520}.Develop|ARM.ActiveCfg = Develop|Win32
+		{98636352-624F-417F-A468-DB44CB77E520}.Develop|ARM64.ActiveCfg = Develop|Win32
+		{98636352-624F-417F-A468-DB44CB77E520}.Develop|x64.ActiveCfg = Develop|x64
+		{98636352-624F-417F-A468-DB44CB77E520}.Develop|x64.Build.0 = Develop|x64
+		{98636352-624F-417F-A468-DB44CB77E520}.Develop|x86.ActiveCfg = Develop|Win32
+		{98636352-624F-417F-A468-DB44CB77E520}.Develop|x86.Build.0 = Develop|Win32
+		{98636352-624F-417F-A468-DB44CB77E520}.Release|ARM.ActiveCfg = Release|Win32
+		{98636352-624F-417F-A468-DB44CB77E520}.Release|ARM64.ActiveCfg = Release|Win32
+		{98636352-624F-417F-A468-DB44CB77E520}.Release|x64.ActiveCfg = Release|x64
+		{98636352-624F-417F-A468-DB44CB77E520}.Release|x64.Build.0 = Release|x64
+		{98636352-624F-417F-A468-DB44CB77E520}.Release|x86.ActiveCfg = Release|Win32
+		{98636352-624F-417F-A468-DB44CB77E520}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,5 +165,7 @@ Global
 		{BDBB14FA-4E36-4404-9D51-A5F8C879C650} = {68A05312-B1D7-487C-A8F3-F5D0AFECE09F}
 		{4D356A4C-688C-4E90-9EA0-872336DB7C27} = {68A05312-B1D7-487C-A8F3-F5D0AFECE09F}
 		{E418DA3F-8349-414C-BFC1-944901ED20FD} = {7786EFB2-7594-4824-834E-017DE9C7433A}
+		{BDC58ECC-966E-4AED-AAB4-359528FF3D7E} = {5F188C05-9F18-4877-BBFA-6BCEFE78DF20}
+		{98636352-624F-417F-A468-DB44CB77E520} = {5F188C05-9F18-4877-BBFA-6BCEFE78DF20}
 	EndGlobalSection
 EndGlobal

@@ -49,6 +49,29 @@ namespace ang
 			friend inline float2 operator / (const float2&, float);
 		};
 
+		template<> inline float float2::get<0u>()const;
+		template<> inline float float2::get<1u>()const;
+		template<> inline void float2::set<0u>(float value);
+		template<> inline void float2::set<1u>(float value);
+
+		inline auto asin(float2 const& _V) { return float2(asin(_V[0]), asin(_V[1])); }
+		inline auto acos(float2 const& _V) { return float2(acos(_V[0]), acos(_V[1])); }
+		inline auto atan(float2 const& _V) { return float2(atan(_V[0]), atan(_V[1])); }
+
+		inline auto asinh(float2 const& _V) { return float2(asinh(_V[0]), asinh(_V[1])); }
+		inline auto acosh(float2 const& _V) { return float2(acosh(_V[0]), acosh(_V[1])); }
+		inline auto atanh(float2 const& _V) { return float2(atanh(_V[0]), atanh(_V[1])); }
+
+		inline auto sin(float2 const& _V) { return float2(sin(_V[0]), sin(_V[1])); }
+		inline auto cos(float2 const& _V) { return float2(cos(_V[0]), cos(_V[1])); }
+		inline auto tan(float2 const& _V) { return float2(tan(_V[0]), tan(_V[1])); }
+
+		inline auto sinh(float2 const& _V) { return float2(sinh(_V[0]), sinh(_V[1])); }
+		inline auto cosh(float2 const& _V) { return float2(cosh(_V[0]), cosh(_V[1])); }
+		inline auto tanh(float2 const& _V) { return float2(tanh(_V[0]), tanh(_V[1])); }
+
+		inline auto hypot(float2 const& vec) { return (float)vec; }
+		inline float2 norm(float2 const& vec) { return  vec / (float)vec; }
 
 		/********************************************************/
 		/*                  double2 definition                   */
@@ -91,22 +114,6 @@ namespace ang
 			friend inline double2 operator % (const double2&, const double2&);
 			friend inline double2 operator / (const double2&, double);
 		};
-	
-		inline auto asin(float2 const& _V) { return float2(asin(_V[0]), asin(_V[1])); }
-		inline auto acos(float2 const& _V) { return float2(acos(_V[0]), acos(_V[1])); }
-		inline auto atan(float2 const& _V) { return float2(atan(_V[0]), atan(_V[1])); }
-
-		inline auto asinh(float2 const& _V) { return float2(asinh(_V[0]), asinh(_V[1])); }
-		inline auto acosh(float2 const& _V) { return float2(acosh(_V[0]), acosh(_V[1])); }
-		inline auto atanh(float2 const& _V) { return float2(atanh(_V[0]), atanh(_V[1])); }
-
-		inline auto sin(float2 const& _V) { return float2(sin(_V[0]), sin(_V[1])); }
-		inline auto cos(float2 const& _V) { return float2(cos(_V[0]), cos(_V[1])); }
-		inline auto tan(float2 const& _V) { return float2(tan(_V[0]), tan(_V[1])); }
-
-		inline auto sinh(float2 const& _V) { return float2(sinh(_V[0]), sinh(_V[1])); }
-		inline auto cosh(float2 const& _V) { return float2(cosh(_V[0]), cosh(_V[1])); }
-		inline auto tanh(float2 const& _V) { return float2(tanh(_V[0]), tanh(_V[1])); }
 
 		inline auto asin(double2 const& _V) { return double2(asin(_V[0]), asin(_V[1])); }
 		inline auto acos(double2 const& _V) { return double2(acos(_V[0]), acos(_V[1])); }
@@ -124,8 +131,8 @@ namespace ang
 		inline auto cosh(double2 const& _V) { return double2(cosh(_V[0]), cosh(_V[1])); }
 		inline auto tanh(double2 const& _V) { return double2(tanh(_V[0]), tanh(_V[1])); }
 
-		inline auto hypot(float2 const& vec) { return (float)vec; }
 		inline auto hypot(double2 const& vec) { return (double)vec; }
+		inline double2 norm(double2 const& vec) { return  vec / (double)vec; }
 	}
 }
 
