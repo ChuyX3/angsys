@@ -3,7 +3,7 @@
 #elif !defined __ANG_VECTOR_MATHS_FLOAT3_HPP__
 #define __ANG_VECTOR_MATHS_FLOAT3_HPP__
 
-inline ang::maths::float3 cross(ang::maths::float3 const& vec1, ang::maths::float3 const& vec2)
+inline ang::maths::float3  ang::maths::cross(ang::maths::float3 const& vec1, ang::maths::float3 const& vec2)
 {
 	return{
 		vec1.get<1>() * vec2.get<2>() - vec1.get<2>() * vec2.get<1>(),

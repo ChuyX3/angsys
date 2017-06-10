@@ -1188,6 +1188,38 @@ uint cwstr_t::find(wchar c, index beg, index end)const {
 	return string_find(cstr(), min(size(), end), str, 1U, beg, false);
 }
 
+uint cwstr_t::find_rev(cwstr_t str, uint beg)const
+{
+	return string_find(cstr(), size(), str.cstr(), str.size(), beg, true);
+}
+
+uint cwstr_t::find_rev(cwstr_t str, uint beg, uint end)const
+{
+	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, true);
+}
+
+uint cwstr_t::find_rev(cstr_t str, uint beg)const
+{
+	return string_find(cstr(), size(), str.cstr(), str.size(), beg, true);
+}
+
+uint cwstr_t::find_rev(cstr_t str, uint beg, uint end)const
+{
+	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, true);
+}
+
+uint cwstr_t::find_rev(char c, uint beg)const {
+	char str[] = { c,0 };
+	return string_find(cstr(), size(), str, 1U, beg, true);
+}
+
+uint cwstr_t::find_rev(char c, uint beg, uint end)const {
+	char str[] = { c,0 };
+	return string_find(cstr(), min(size(), end), str, 1U, beg, true);
+}
+
+
+
 uint cwstr_t::sub_string(string& out, uint start, uint count)const
 {
 	if (cstr() == null || size() == 0)
@@ -1263,6 +1295,38 @@ uint cstr_t::find(char c, uint beg, uint end)const{
 	char str[] = { c,0 };
 	return string_find(cstr(), min(size(), end), str, 1U, beg, false);
 }
+
+
+uint cstr_t::find_rev(cwstr_t str, uint beg)const
+{
+	return string_find(cstr(), size(), str.cstr(), str.size(), beg, true);
+}
+
+uint cstr_t::find_rev(cwstr_t str, uint beg, uint end)const
+{
+	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, true);
+}
+
+uint cstr_t::find_rev(cstr_t str, uint beg)const
+{
+	return string_find(cstr(), size(), str.cstr(), str.size(), beg, true);
+}
+
+uint cstr_t::find_rev(cstr_t str, uint beg, uint end)const
+{
+	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, true);
+}
+
+uint cstr_t::find_rev(char c, uint beg)const {
+	char str[] = { c,0 };
+	return string_find(cstr(), size(), str, 1U, beg, true);
+}
+
+uint cstr_t::find_rev(char c, uint beg, uint end)const {
+	char str[] = { c,0 };
+	return string_find(cstr(), min(size(), end), str, 1U, beg, true);
+}
+
 
 uint cstr_t::sub_string(string& out, uint start, uint count)const
 {

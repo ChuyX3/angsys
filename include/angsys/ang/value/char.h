@@ -183,9 +183,15 @@ namespace ang
 		uint find(cstr_t cstr, uint start, uint end)const;
 		uint find(cwstr_t cstr, uint start)const;
 		uint find(cwstr_t cstr, uint start, uint end)const;
-
 		uint find(char c, uint start)const;
 		uint find(char c, uint start, uint end)const;
+
+		uint find_rev(cstr_t cstr, uint start)const;
+		uint find_rev(cstr_t cstr, uint start, uint end)const;
+		uint find_rev(cwstr_t cstr, uint start)const;
+		uint find_rev(cwstr_t cstr, uint start, uint end)const;
+		uint find_rev(char c, uint start)const;
+		uint find_rev(char c, uint start, uint end)const;
 
 		uint sub_string(string& out, uint start, uint count)const;
 		uint sub_string(char* out, uint start, uint count)const;
@@ -394,9 +400,15 @@ namespace ang
 		uint find(cstr_t str, uint start, uint end)const;
 		uint find(cwstr_t str, uint start)const;
 		uint find(cwstr_t str, uint start, uint end)const;
-
 		uint find(wchar c, uint start)const;
 		uint find(wchar c, uint start, uint end)const;
+
+		uint find_rev(cstr_t cstr, uint start)const;
+		uint find_rev(cstr_t cstr, uint start, uint end)const;
+		uint find_rev(cwstr_t cstr, uint start)const;
+		uint find_rev(cwstr_t cstr, uint start, uint end)const;
+		uint find_rev(char c, uint start)const;
+		uint find_rev(char c, uint start, uint end)const;
 
 		uint sub_string(wstring& out, uint start, uint count)const;
 		uint sub_string(wchar* out, uint start, uint count)const;
