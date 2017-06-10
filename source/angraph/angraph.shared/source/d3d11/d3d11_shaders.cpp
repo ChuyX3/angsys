@@ -226,8 +226,8 @@ bool d3d11_shaders::load_vertex_shader(d3d11_effect_library_t library, xml::xml_
 
 	auto _filename = library->find_file(filename);
 	core::files::input_text_file_t file;
-	if (_filename.is_empty()) file = new core::files::input_text_file(filename);
-	else file = new core::files::input_text_file(_filename);
+	if (_filename.is_empty()) library->get_file_system()->open(filename, file); //file = new core::files::input_text_file(filename);
+	else library->get_file_system()->open(_filename, file); //file = new core::files::input_text_file(_filename);
 	if (!file->is_valid())
 		return false;
 
@@ -306,8 +306,8 @@ bool d3d11_shaders::load_pixel_shader(d3d11_effect_library_t library, xml::xml_n
 
 	auto _filename = library->find_file(filename);
 	core::files::input_text_file_t file;
-	if (_filename.is_empty()) file = new core::files::input_text_file(filename);
-	else file = new core::files::input_text_file(_filename);
+	if (_filename.is_empty()) library->get_file_system()->open(filename, file); //file = new core::files::input_text_file(filename);
+	else library->get_file_system()->open(_filename, file); //file = new core::files::input_text_file(_filename);
 	if (!file->is_valid())
 		return false;
 

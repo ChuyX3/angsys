@@ -54,16 +54,6 @@ namespace d3d11
 
 int main(int argc, char* argv[])
 {
-	core::files::ifile_system_t fs = core::files::ifile_system::get_file_system();
-	core::files::input_text_file_t file;
-
-	fs->open(L"C:\\Projects\\angsys\\third_party\\resources\\Girl\\girl.obj"_s, file);
-	//file = new core::files::input_text_file(L"C:\\Projects\\angsys\\third_party\\resources\\Girl\\girl.obj"_s);
-
-	file = null;
-	fs = null;
-
-	return 0;
 	d3d11::main_app_t app = new d3d11::main_app();
 	return (int)app->run();
 }

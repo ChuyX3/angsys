@@ -79,8 +79,8 @@ bool d3d11_texture::load(d3d11_texture_loader_t loader, xml::xml_node_t node)
 			wstring filename = tex_node->xml_value();
 			auto _filename = loader->find_file(filename);
 			core::files::input_binary_file_t file;
-			if (_filename.is_empty()) file = new core::files::input_binary_file(filename);
-			else file = new core::files::input_binary_file(_filename);
+			if (_filename.is_empty())  loader->get_file_system()->open(filename, file); // file = new core::files::input_binary_file(filename);
+			else loader->get_file_system()->open(_filename, file); //file = new core::files::input_binary_file(_filename);
 			if (!file->is_valid())
 				return;
 			files += file;
@@ -114,8 +114,8 @@ bool d3d11_texture::load(d3d11_texture_loader_t loader, xml::xml_node_t node)
 
 		auto _filename = loader->find_file(filename);
 		core::files::input_binary_file_t file;
-		if (_filename.is_empty()) file = new core::files::input_binary_file(filename);
-		else file = new core::files::input_binary_file(_filename);
+		if (_filename.is_empty())loader->get_file_system()->open(filename, file); // file = new core::files::input_binary_file(filename);
+		else loader->get_file_system()->open(_filename, file); //file = new core::files::input_binary_file(_filename);
 
 		tex_file_info_t info;
 
