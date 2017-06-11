@@ -1228,7 +1228,7 @@ uint cwstr_t::sub_string(string& out, uint start, uint count)const
 	if (out.is_empty())
 		out = new string_buffer();
 
-	if (!out->realloc(count, false))
+	if (!out->realloc(min(size(), count), false))
 		return 0;
 	string_buffer* buffer = out.get();
 	buffer->length(string_substr(cstr(), size(), buffer->str().str(), start, count));
@@ -1250,7 +1250,7 @@ uint cwstr_t::sub_string(wstring& out, uint start, uint count)const
 	if (out.is_empty())
 		out = new wstring_buffer();
 
-	if (!out->realloc(count, false))
+	if (!out->realloc(min(size(), count), false))
 		return 0;
 	wstring_buffer* buffer = out.get();
 	buffer->length(string_substr(cstr(), size(), buffer->str().str(), start, count));
@@ -1336,7 +1336,7 @@ uint cstr_t::sub_string(string& out, uint start, uint count)const
 	if (out.is_empty())
 		out = new string_buffer();
 
-	if (!out->realloc(count, false))
+	if (!out->realloc(min(size(), count), false))
 		return 0;
 	string_buffer* buffer = out.get();
 	buffer->length(string_substr(cstr(), size(), buffer->str().str(), start, count));
@@ -1358,7 +1358,7 @@ uint cstr_t::sub_string(wstring& out, uint start, uint count)const
 	if (out.is_empty())
 		out = new wstring_buffer();
 
-	if (!out->realloc(count, false))
+	if (!out->realloc(min(size(), count), false))
 		return 0;
 	wstring_buffer* buffer = out.get();
 	buffer->length(string_substr(cstr(), size(), buffer->str().str(), start, count));
@@ -1409,11 +1409,10 @@ uint cmstr_t::sub_string(string& out, uint start, uint count)const
 {
 	if (cstr() == null || size() == 0)
 		return 0;
-
-	if (out.is_empty())
+		if (out.is_empty())
 		out = new string_buffer();
 
-	if (!out->realloc(count, false))
+	if (!out->realloc(min(size(), count), false))
 		return 0;
 	string_buffer* buffer = out.get();
 	buffer->length(string_substr(cstr(), size(), buffer->str().str(), start, count));
@@ -1435,7 +1434,7 @@ uint cmstr_t::sub_string(wstring& out, uint start, uint count)const
 	if (out.is_empty())
 		out = new wstring_buffer();
 
-	if (!out->realloc(count, false))
+	if (!out->realloc(min(size(), count), false))
 		return 0;
 	wstring_buffer* buffer = out.get();
 	buffer->length(string_substr(cstr(), size(), buffer->str().str(), start, count));

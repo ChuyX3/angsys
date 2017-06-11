@@ -191,13 +191,13 @@ namespace ang
 
 		public:
 			inline vector_buffer();
-			inline vector_buffer(uint);
 			inline vector_buffer(ang::initializer_list_t<object_wrapper<T>> list);
 			inline vector_buffer(const ang::nullptr_t&);
 			inline vector_buffer(vector_buffer&& ar);
 			inline vector_buffer(const vector_buffer& ar);
 			inline vector_buffer(const vector_buffer* ar);
 			inline vector_buffer(const ienum_t* store);
+			inline vector_buffer(uint, object_wrapper<T>* ar = null);
 
 		private:
 			virtual ~vector_buffer();
@@ -308,13 +308,13 @@ namespace ang
 
 		public:
 			inline vector_buffer();
-			inline vector_buffer(uint);
 			inline vector_buffer(ang::initializer_list_t<intf_wrapper<T>> list);
 			inline vector_buffer(const ang::nullptr_t&);
 			inline vector_buffer(vector_buffer&& ar);
 			inline vector_buffer(const vector_buffer& ar);
 			inline vector_buffer(const vector_buffer* ar);
 			inline vector_buffer(const ienum_t* store);
+			inline vector_buffer(uint, intf_wrapper<T>* ar = null);
 
 		private:
 			virtual ~vector_buffer();
@@ -421,6 +421,7 @@ namespace ang
 		object_wrapper(collections::vector_buffer<T>*);
 		object_wrapper(ang::initializer_list_t<data_type> list);
 		object_wrapper(const collections::ienum<data_type>* store);
+		object_wrapper(static_array<data_type> store);
 		explicit object_wrapper(uint size, data_type const* ar = null);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
@@ -476,6 +477,7 @@ namespace ang
 		object_wrapper(collections::vector_buffer<object_wrapper<T>>*);
 		object_wrapper(ang::initializer_list_t<object_wrapper<T>> list);
 		object_wrapper(const collections::ienum<object_wrapper<T>>* store);
+		object_wrapper(static_array<object_wrapper<T>> store);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
 		object_wrapper(ang::nullptr_t const&);

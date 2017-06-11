@@ -662,10 +662,12 @@ inline ang::collections::vector_buffer<ang::object_wrapper<T>>::vector_buffer()
 }
 
 template<typename T>
-inline ang::collections::vector_buffer<ang::object_wrapper<T>>::vector_buffer(uint sz)
+inline ang::collections::vector_buffer<ang::object_wrapper<T>>::vector_buffer(uint sz, ang::object_wrapper<T>* ar)
 	: vector_buffer()
 {
 	capacity(sz);
+	if(ar != null) for (index i = 0; i < sz; ++i)
+		append(ar[i]);
 }
 
 
@@ -1293,10 +1295,12 @@ inline ang::collections::vector_buffer<ang::intf_wrapper<T>>::vector_buffer()
 }
 
 template<typename T>
-inline ang::collections::vector_buffer<ang::intf_wrapper<T>>::vector_buffer(uint sz)
+inline ang::collections::vector_buffer<ang::intf_wrapper<T>>::vector_buffer(uint sz, ang::intf_wrapper<T>* ar)
 	: vector_buffer()
 {
 	capacity(sz);
+	if (ar != null) for (index i = 0; i < sz; ++i)
+		append(ar[i]);
 }
 
 
@@ -1945,6 +1949,13 @@ inline ang::object_wrapper<ang::collections::vector_buffer<T>>::object_wrapper(c
 }
 
 template<typename T>
+inline ang::object_wrapper<ang::collections::vector_buffer<T>>::object_wrapper(ang::static_array<data_type> arr)
+	: object_wrapper<ang::collections::vector_buffer<T>>()
+{
+	set(new collections::vector_buffer<T>(arr.size(), arr.data()));
+}
+
+template<typename T>
 inline ang::object_wrapper<ang::collections::vector_buffer<T>>::object_wrapper(uint size, data_type const* ar)
 	: object_wrapper<ang::collections::vector_buffer<T>>()
 {
@@ -2151,6 +2162,13 @@ inline ang::object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<T
 	: object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<T>>>()
 {
 	set(new collections::vector_buffer<ang::object_wrapper<T>>(store));
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<T>>>::object_wrapper(ang::static_array<ang::object_wrapper<T>> arr)
+	: object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<T>>>()
+{
+	set(new collections::vector_buffer<ang::object_wrapper<T>>(arr.size(), arr.data()));
 }
 
 template<typename T>

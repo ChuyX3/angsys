@@ -26,6 +26,7 @@ namespace ang
 		object_wrapper(collections::vector_buffer<objptr>*);
 		object_wrapper(ang::initializer_list_t<objptr> list);
 		object_wrapper(const collections::ienum<objptr>* store);
+		object_wrapper(static_array<objptr> store);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
 		object_wrapper(ang::nullptr_t const&);
@@ -82,6 +83,7 @@ namespace ang
 		object_wrapper(ang::initializer_list_t<cstr_t> list);
 		object_wrapper(ang::initializer_list_t<cwstr_t> list);
 		object_wrapper(const collections::ienum<string>* store);
+		object_wrapper(static_array<string> store);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
 		object_wrapper(ang::nullptr_t const&);
@@ -134,6 +136,7 @@ namespace ang
 		object_wrapper(ang::initializer_list_t<cwstr_t> list);
 		object_wrapper(ang::initializer_list_t<cstr_t> list);
 		object_wrapper(const collections::ienum<wstring>* store);
+		object_wrapper(static_array<wstring> store);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
 		object_wrapper(ang::nullptr_t const&);
@@ -184,6 +187,7 @@ public: \
 	object_wrapper(collections::vector_buffer<object_wrapper<_TYPE>>*); \
 	object_wrapper(ang::initializer_list_t<object_wrapper<_TYPE>> list); \
 	object_wrapper(const collections::ienum<object_wrapper<_TYPE>>* store); \
+	object_wrapper(static_array<object_wrapper<_TYPE>> store);\
 	object_wrapper(object_wrapper &&); \
 	object_wrapper(object_wrapper const&); \
 	object_wrapper(ang::nullptr_t const&); \
@@ -227,6 +231,7 @@ public: \
 	object_wrapper(collections::vector_buffer<intf_wrapper<_TYPE>>*); \
 	object_wrapper(ang::initializer_list_t<intf_wrapper<_TYPE>> list); \
 	object_wrapper(const collections::ienum<intf_wrapper<_TYPE>>* store); \
+	object_wrapper(static_array<intf_wrapper<_TYPE>> store);\
 	object_wrapper(object_wrapper &&); \
 	object_wrapper(object_wrapper const&); \
 	object_wrapper(ang::nullptr_t const&); \
@@ -369,6 +374,7 @@ public: \
 	object_wrapper(ang::initializer_list_t<data_type> list); \
 	object_wrapper(const collections::ienum<data_type>* store); \
 	explicit object_wrapper(uint size, data_type const* ar = null); \
+	object_wrapper(static_array<_TYPE> store);\
 	object_wrapper(object_wrapper &&); \
 	object_wrapper(object_wrapper const&); \
 	object_wrapper(ang::nullptr_t const&); \

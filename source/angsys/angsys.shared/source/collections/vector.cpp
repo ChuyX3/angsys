@@ -659,10 +659,3 @@ ANG_IMPLEMENT_OBJECT_VECTOR_SPECIALIZATION(ang::core::delegates::function_data<d
 
 
 
-
-
-
-
-
-
-

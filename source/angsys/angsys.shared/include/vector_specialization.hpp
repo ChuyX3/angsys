@@ -7,6 +7,8 @@ ang::object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<_TYPE>>>
 	: object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<_TYPE>>>() { set(ptr); } \
 ang::object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<_TYPE>>>::object_wrapper(ang::initializer_list_t<ang::object_wrapper<_TYPE>> list) \
 	: object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<_TYPE>>>() { set(new collections::vector_buffer<ang::object_wrapper<_TYPE>>(ang::move(list))); } \
+ang::object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<_TYPE>>>::object_wrapper(ang::static_array<ang::object_wrapper<_TYPE>> list) \
+	: object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<_TYPE>>>() { set(new collections::vector_buffer<ang::object_wrapper<_TYPE>>(list.size(), list.data())); } \
 ang::object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<_TYPE>>>::object_wrapper(const ang::collections::ienum<ang::object_wrapper<_TYPE>>* store) \
 	: object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<_TYPE>>>() { set(new collections::vector_buffer<ang::object_wrapper<_TYPE>>(store)); } \
 ang::object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<_TYPE>>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<ang::object_wrapper<_TYPE>>> && other) \
@@ -80,6 +82,8 @@ ang::object_wrapper<ang::collections::vector_buffer<ang::intf_wrapper<_TYPE>>>::
 	: object_wrapper<ang::collections::vector_buffer<ang::intf_wrapper<_TYPE>>>() { set(ptr); } \
 ang::object_wrapper<ang::collections::vector_buffer<ang::intf_wrapper<_TYPE>>>::object_wrapper(ang::initializer_list_t<ang::intf_wrapper<_TYPE>> list) \
 	: object_wrapper<ang::collections::vector_buffer<ang::intf_wrapper<_TYPE>>>() { set(new collections::vector_buffer<ang::intf_wrapper<_TYPE>>(ang::move(list))); } \
+ang::object_wrapper<ang::collections::vector_buffer<ang::intf_wrapper<_TYPE>>>::object_wrapper(ang::static_array<ang::intf_wrapper<_TYPE>> list) \
+	: object_wrapper<ang::collections::vector_buffer<ang::intf_wrapper<_TYPE>>>() { set(new collections::vector_buffer<ang::intf_wrapper<_TYPE>>(list.size(), list.data())); } \
 ang::object_wrapper<ang::collections::vector_buffer<ang::intf_wrapper<_TYPE>>>::object_wrapper(const ang::collections::ienum<ang::intf_wrapper<_TYPE>>* store) \
 	: object_wrapper<ang::collections::vector_buffer<ang::intf_wrapper<_TYPE>>>() { set(new collections::vector_buffer<ang::intf_wrapper<_TYPE>>(store)); } \
 ang::object_wrapper<ang::collections::vector_buffer<ang::intf_wrapper<_TYPE>>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<ang::intf_wrapper<_TYPE>>> && other) \
@@ -454,6 +458,8 @@ ang::object_wrapper<ang::collections::vector_buffer<_TYPE>>::object_wrapper(ang:
 	: object_wrapper<ang::collections::vector_buffer<_TYPE>>() { set(ptr); } \
 ang::object_wrapper<ang::collections::vector_buffer<_TYPE>>::object_wrapper(ang::initializer_list_t<data_type> list) \
 	: object_wrapper<ang::collections::vector_buffer<_TYPE>>() { set(new collections::vector_buffer<_TYPE>(ang::move(list))); } \
+ang::object_wrapper<ang::collections::vector_buffer<_TYPE>>::object_wrapper(ang::static_array<_TYPE> list) \
+	: object_wrapper<ang::collections::vector_buffer<_TYPE>>() { set(new collections::vector_buffer<_TYPE>(list.size(), list.data())); } \
 ang::object_wrapper<ang::collections::vector_buffer<_TYPE>>::object_wrapper(const ang::collections::ienum<data_type>* store) \
 	: object_wrapper<ang::collections::vector_buffer<_TYPE>>() { set(new collections::vector_buffer<_TYPE>(store)); } \
 ang::object_wrapper<ang::collections::vector_buffer<_TYPE>>::object_wrapper(uint size, data_type const* ar) \
@@ -837,6 +843,8 @@ ang::object_wrapper<ang::collections::vector_buffer<_TYPE>>::object_wrapper(ang:
 	: object_wrapper<ang::collections::vector_buffer<_TYPE>>() { set(ptr); } \
 ang::object_wrapper<ang::collections::vector_buffer<_TYPE>>::object_wrapper(ang::initializer_list_t<data_type> list) \
 	: object_wrapper<ang::collections::vector_buffer<_TYPE>>() { set(new collections::vector_buffer<_TYPE>(ang::move(list))); } \
+ang::object_wrapper<ang::collections::vector_buffer<_TYPE>>::object_wrapper(ang::static_array<_TYPE> list) \
+	: object_wrapper<ang::collections::vector_buffer<_TYPE>>() { set(new collections::vector_buffer<_TYPE>(list.size(), list.data())); } \
 ang::object_wrapper<ang::collections::vector_buffer<_TYPE>>::object_wrapper(const ang::collections::ienum<data_type>* store) \
 	: object_wrapper<ang::collections::vector_buffer<_TYPE>>() { set(new collections::vector_buffer<_TYPE>(store)); } \
 ang::object_wrapper<ang::collections::vector_buffer<_TYPE>>::object_wrapper(uint size, data_type const* ar) \
