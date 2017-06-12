@@ -332,6 +332,17 @@ xml_tree::xml_tree(xml_type_t type)
 
 }
 
+xml_tree::xml_tree(xml_node_t node)
+	: _xml_type(xml_type::finder)
+	, _count(0)
+	, _xml_head(node)
+	, _xml_root(node)
+	, _xml_tail(node)
+{
+
+}
+
+
 xml_tree::~xml_tree()
 {
 	clean();

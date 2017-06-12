@@ -375,6 +375,31 @@ namespace ang
 	template<> objptr LINK safe_pointer::lock<object>();
 
 
+	template<class T>
+	class weak_ptr : public safe_pointer
+	{
+	public:
+		weak_ptr() : safe_pointer() {}
+		weak_ptr(weak_ptr&& other) : safe_pointer((safe_pointer&&)other) {}
+		weak_ptr(weak_ptr const& other) : safe_pointer((safe_pointer const&)other) {}
+		weak_ptr(ang::nullptr_t const&) : safe_pointer(null) {}
+		weak_ptr(T* obj) : safe_pointer(obj) {}
+		weak_ptr(object_wrapper<T> obj) : safe_pointer(obj.get()) {}
+		~weak_ptr() {}
+
+	public: //properties
+		object_wrapper<T> lock() {
+			_obj = safe_pointer::lock<object>();
+			return static_cast<T*>(_obj.get());
+		}
+
+		weak_ptr& operator = (object_wrapper<T> obj) { return safe_pointer::operator=(obj.get()); }
+		weak_ptr& operator = (T* obj) { return safe_pointer::operator=(obj); }
+		weak_ptr& operator = (weak_ptr&& other) { return safe_pointer::operator=(other); }
+		weak_ptr& operator = (weak_ptr const& other) { return safe_pointer::operator=(other); }
+		weak_ptr& operator = (ang::nullptr_t const&) { return safe_pointer::operator=(null); }
+	};
+
 
 	template<typename T>
 	class value_wrapper

@@ -806,6 +806,8 @@ namespace ang
 			virtual~xml_tree();
 
 		public:
+			xml_tree(xml_node_t);
+
 			ANG_DECLARE_INTERFACE();
 			virtual void clean();
 

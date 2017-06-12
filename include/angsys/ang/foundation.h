@@ -753,6 +753,13 @@ namespace ang
 			color& operator = (const color&);
 			color& operator = (enum_t);
 			color& operator = (dword);
+
+			bool operator == (const color& other)const { return code == other.code; }
+			bool operator != (const color& other)const { return code != other.code; }
+			bool operator >= (const color& other)const { return code >= other.code; }
+			bool operator <= (const color& other)const { return code <= other.code; }
+			bool operator > (const color& other)const { return code > other.code; }
+			bool operator < (const color& other)const { return code < other.code; }
 		};
 
 		typedef color::enum_t colors, colors_t;

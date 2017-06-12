@@ -76,7 +76,7 @@ inline ang::collections::vector_buffer<T>::vector_buffer(uint sz, T const* ar)
 	if (ar != null)
 		copy(sz, ar);
 	else
-		size(sz);
+		capacity(sz);
 }
 
 template<typename T>
