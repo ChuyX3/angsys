@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine>
+	<window>
+		<display_name>Angine Editor - 3DView</display_name>
+		<class_name>AngineEditor3DView</class_name>
+		<layout>
+			<x>100</x>
+			<y>100</y>
+			<width>800</width>
+			<height>600</height>
+		</layout>
+		<styles>
+			<add>OverlappedWindow</add>
+			<sub>MaximizeBox</sub>
+			<sub>MinimizeBox</sub>
+			<sub>ThickFrame</sub>
+		</styles>
+	</window>
+	<driver>
+		<target>DirectX</target>
+	</driver>
+	<resource_manager>
+		<import>./resources/resource_manager.xml</import>
+	</resource_manager>
+</engine>

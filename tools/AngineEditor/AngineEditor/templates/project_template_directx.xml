@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+  <config>
+	<driver_target>DirectX</driver_target>
+  </config>
+  <include>
+    <file sid="SID_VERTEX_SHADER_01" type="shader">shaders\vertex_shader.hlsl</file>
+    <file sid="SID_PIXEL_SHADER_01" type="shader">shaders\pixel_shader.hlsl</file>
+  </include>
+  <filters>
+    <folder name="res">
+      <folder name="shaders">
+        <file>SID_VERTEX_SHADER_01</file>
+	    <file>SID_PIXEL_SHADER_01</file>
+      </folder>
+    </folder>
+  </filters>
+</project>

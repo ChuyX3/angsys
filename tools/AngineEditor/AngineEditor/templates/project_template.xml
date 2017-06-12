@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+  <config>
+    <project_name>name</project_name>
+	<project_dir>path</project_dir>
+    <out_dir>$(project_dir)out</out_dir>	
+  </config>
+  <filters>
+    <folder name="scenes" path="$(project_dir)scenes\" >
+      <file sid="SID_CUBE_SCENE_XML" path="$(project_dir)scenes\cube_scene.xml" >cube_scene.xml</file>
+    </folder>
+    <folder name="res" path="$(project_dir)res\" >
+	  <folder name="effects" path="$(project_dir)res\effects\" >
+        <file sid="SID_DEFAULT_EFFECTS_XML" type="effect_library" path="$(project_dir)res\effects\default_effects.xml" >default_effects.xml</file>
+      </folder>
+      <folder name="meshes" path="$(project_dir)res\meshes\" >
+        <file sid="SID_CUBE_MODEL_XML" type="mesh_file" path="$(project_dir)res\meshes\cube_model.xml" >cube_model.xml</file>
+      </folder>
+	  <folder name="shaders" path="$(project_dir)res\shaders\" >
+        <file sid="SID_CUBE_SHADER_FX" type="shader_file" path="$(project_dir)res\shaders\cube_shader.fx" >cube_shader.fx</file>
+      </folder>
+	  <folder name="textures" path="$(project_dir)res\textures\" >
+      </folder>
+    </folder>
+  </filters>
+</project>

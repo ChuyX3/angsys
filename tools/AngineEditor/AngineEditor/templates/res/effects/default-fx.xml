@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<effect_library>
+  <effect name="default-fx">
+    <profile type="HLSL" count="1">
+      <!--technique solid-object-->
+      <technique name="solid-object" count="1">
+        <pass idx="0">
+          <shader type="vs" file="SID_SOLID_OBJECT_FX">
+            <entry_point>main</entry_point>
+            <compile_config>-DHLSL-DVSHADER</compile_config>
+            <const_buffer>
+              <var name="wvpMatrix" type="buffer" class="scalar">
+                <var name="uWorldMatrix" type="f32" class="mat4"></var>
+                <var name="uViewMatrix" type="f32" class="mat4"></var>
+                <var name="uProjMatrix" type="f32" class="mat4"></var>
+              </var>
+            </const_buffer>
+            <vertex_inputs>
+              <var name="position" semantic="POSITION" type="f32" class="vec4"></var>
+              <var name="color" semantic="COLOR" type="f32" class="vec4"></var>
+            </vertex_inputs>
+          </shader>
+          <shader type ="ps" file="SID_SOLID_OBJECT_FX">
+            <entry_point>main</entry_point>
+            <compile_config>-DHLSL-DPSHADER</compile_config>
+          </shader>
+        </pass>
+      </technique>
+    </profile>
+    <profile type="GLSL" count="1">
+      <!--technique solid-object-->
+      <technique name="solid-object" count="1">
+        <pass idx="0">
+          <shader type="vs" file="SID_SOLID_OBJECT_FX">
+            <entry_point>main</entry_point>
+            <compile_config>-DGLSL-DVSHADER</compile_config>
+            <const_buffer>
+              <var name="wvpMatrix" type="buffer" class="scalar">
+                <var name="uWorldMatrix" type="f32" class="mat4"></var>
+                <var name="uViewMatrix" type="f32" class="mat4"></var>
+                <var name="uProjMatrix" type="f32" class="mat4"></var>
+              </var>
+            </const_buffer>
+            <vertex_inputs>
+              <var name="position" semantic="POSITION" type="f32" class="vec4"></var>
+              <var name="color" semantic=" COLOR" type="f32" class="vec4"></var>
+            </vertex_inputs>
+          </shader>
+          <shader type ="fs" file="SID_SOLID_OBJECT_FX">
+            <entry_point>main</entry_point>
+            <compile_config>-DGLSL-DPSHADER</compile_config>
+          </shader>
+        </pass>
+      </technique>
+    </profile>
+  </effect>
+</effect_library>
