@@ -94,6 +94,11 @@ file::file(cwstr_t path, cwstr_t name, cwstr_t ext)
 	_full_path << ext;
 }
 
+file::~file()
+{
+
+}
+
 wstring file::full_path()const
 {
 	return _full_path;
@@ -133,6 +138,17 @@ wstring file::ext()const
 	return move(out);
 }
 
+wstring file::name_ext()const
+{
+	wstring out;
+	if (_name == invalid_index)
+		return null;
+	else
+		_full_path->sub_string(out, _full_path->at(_name), _full_path->end());
+	return move(out);
+}
+
+
 void file::path(cwstr_t)
 {
 
@@ -162,34 +178,29 @@ folder::~folder()
 
 }
 
-bool folder::load(xml::xml_node_t node)
-{
-
-}
-
 bool folder::load(xml::xml_node_t, cwstr_t root)
 {
-
+	return false;
 }
 
 bool folder::load(xml::xml_node_t, cwstr_t root, folder_t)
 {
-
+	return false;
 }
 
 bool folder::save(xml::xml_builder_t)const
 {
-
+	return false;
 }
 
 wstring folder::path()const
 {
-
+	return null;
 }
 
 wstring folder::full_path()const
 {
-
+	return null;
 }
 
 static_array<file_t> folder::files()const { return _files; }

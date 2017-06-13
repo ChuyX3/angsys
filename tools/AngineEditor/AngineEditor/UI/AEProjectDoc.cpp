@@ -10,6 +10,7 @@
 #define new DEBUG_NEW
 #endif
 
+using namespace ang;
 
 // CAEProjectDoc
 
@@ -17,7 +18,7 @@ IMPLEMENT_DYNCREATE(CAEProjectDoc, CDocument)
 
 CAEProjectDoc::CAEProjectDoc()
 {
-	AngineEditor::CProjectManager::Instance();
+	AngineEditor::CProjectManager::instance();
 }
 
 BOOL CAEProjectDoc::OnNewDocument()
@@ -29,7 +30,7 @@ BOOL CAEProjectDoc::OnNewDocument()
 
 CAEProjectDoc::~CAEProjectDoc()
 {
-	AngineEditor::CProjectManager::ReleaseInstance();
+	AngineEditor::CProjectManager::release_instance();
 }
 
 
@@ -58,30 +59,32 @@ void CAEProjectDoc::Dump(CDumpContext& dc) const
 
 void CAEProjectDoc::Serialize(CArchive& ar)
 {
-	auto pm = AngineEditor::CProjectManager::Instance();
+	auto pm = AngineEditor::CProjectManager::instance();
 	if (ar.IsLoading())
 	{
 		// loading code
-		ang::IntfPtr<ang::IBuffer> buffer = ang::Buffer::NewBuffer((ang::WSizeT)ar.GetFile()->GetLength() + 1);
-		ar.GetFile()->Read(buffer->BufferPtr(), buffer->BufferSize() - 1);
-		ang::MString code;
-		code.Set(buffer.Get());
-		pm->LoadDocument(code);
+		ang::mstring code = ""_s;
+		wsize size = ar.GetFile()->GetLength();
+		code->realloc(size + 1, false);
+		auto ptr = code->map_buffer(0, size);
+		code->unmap_buffer(ptr, ar.GetFile()->Read(ptr, size));
+		pm->LoadDocument((ang::cmstr_t)code);
 	
 	}
 	else
 	{
 		//storing code here
-		ang::String text;
-		ang::MString mtext;
+		ang::wstring text;
+		ang::mstring mtext;
 		try {
 			pm->SaveDocument(text);
 			mtext = text;
-			ar.Write(mtext.Data(), mtext.Length());
+			ar.Write(mtext->cstr(), mtext->length());
 		}
-		catch (ang::Exception const& e)
+		catch (ang::exception_t e)
 		{
-			TRACE(e.What());
+			auto w = ang::move(e->what());
+			TRACE(w->cstr().get());
 		}
 	}
 }

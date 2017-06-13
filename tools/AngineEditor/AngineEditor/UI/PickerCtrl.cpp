@@ -10,6 +10,7 @@
 #define new DEBUG_NEW
 #endif
 
+using namespace ang;
 
 #define IDC_ADD_BUTTON		1001
 #define IDC_SUB_BUTTON		1002
@@ -191,17 +192,19 @@ void CPickerCtrl::OnPickerControlSelchange()
 	// TODO: Add your control notification handler code here
 	UpdateData();
 	CString text = L"";
-	ang::String str;
-	ang::Signed32 idx;
-	ang::VarArgs args = { &idx, &str };
+	ang::wstring str;
+	ang::uinterger_t idx = 0_ui;
+
+	ang::var_args_t args = { idx, str };
 	idx = m_wndCombobox.GetCurSel();
 	if (idx >= 0)
 	{
-		m_wndCombobox.GetLBText(idx, text);
-		str = text;
+		
+		m_wndCombobox.GetLBText(*idx, text);
+		str = ang::cwstr_t(text.GetBuffer(), text.GetLength());
 	}
 		
-	pickerControlSelChangeEvent(this, &args);
+	pickerControlSelChangeEvent(this, args);
 	//m_wndOKButton.SetFocus();
 }
 
@@ -211,19 +214,19 @@ void CPickerCtrl::OnPickerControlEditchange()
 	// TODO: Add your control notification handler code here
 	UpdateData();
 	CString text;
-	ang::String str;
-	ang::VarArgs args = { &str };
+	ang::wstring str;
+	ang::var_args_t args = { str };
 	m_wndCombobox.GetWindowTextW(text);
-	str.Copy(text);
-	pickerControlTextChangeEvent(this, &args);
+	str = ang::cwstr_t(text.GetBuffer(), text.GetLength());
+	pickerControlTextChangeEvent(this, args);
 }
 
 void CPickerCtrl::OnButtonClicked(UINT id)
 {
 	CString text;
-	ang::Signed32 idx = id - IDC_ADD_BUTTON;
-	ang::VarArgs args = {&idx};
-	buttonClickedEvent(this, &args);
+	ang::interger_t idx = int_t(id - IDC_ADD_BUTTON);
+	ang::var_args_t args = { idx };
+	buttonClickedEvent(this, args);
 }
 
 HBRUSH CPickerCtrl::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

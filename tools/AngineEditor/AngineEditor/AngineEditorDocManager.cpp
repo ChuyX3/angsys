@@ -138,7 +138,7 @@ void CAngineEditorDocManager::OnProjectNew()
 		ASSERT(pTemplate != NULL);
 		ASSERT_KINDOF(CDocTemplate, pTemplate);
 
-		if (CreatingProjectTemplate(dlg.GetProjectFolder() + dlg.GetProjectName(), dlg.GetProjectName()) == FALSE)
+		if (CreatingProjectTemplate(dlg.GetProjectFolder() + _T("\\") + dlg.GetProjectName(), dlg.GetProjectName()) == FALSE)
 		{
 			return;
 		}
@@ -180,6 +180,9 @@ BOOL CAngineEditorDocManager::CreatingProjectTemplate(CString path, CString name
 		//builder->move_to(builder->find_first("project_dir"));
 		//builder->value(cwstr_t(path.GetBuffer(), path.GetLength()));
 		auto it = builder->find_first("filters");
+
+		//AngineEditor::filesystem::folder_t folders = new AngineEditor::filesystem::folder();
+		//folders->load((xml_node*)it, ang::interop::string_cast<ang::cwstr_t>(path));
 
 		if (it.is_valid())
 		{

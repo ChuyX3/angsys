@@ -41,7 +41,7 @@ CMainFrame::CMainFrame()
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_WINDOWS_7);
-	m_wndOutput = COutputWnd::Instance();
+	m_wndOutput = COutputWnd::instance();
 
 //	OnCloseMiniFrame;
 }
@@ -49,7 +49,7 @@ CMainFrame::CMainFrame()
 CMainFrame::~CMainFrame()
 {
 	m_wndOutput = NULL;
-	COutputWnd::ReleaseInstance();
+	COutputWnd::release_instance();
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)

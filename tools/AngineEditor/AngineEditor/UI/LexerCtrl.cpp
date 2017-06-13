@@ -100,7 +100,7 @@ int GetFormatFromExtension(cwstr_t szExtension)
 {
 	int i = 0;
 	ang::wstring extension = szExtensions[i];
-	while (szExtensions[i] != NULL)
+	while (szExtensions[i].get() != nullptr)
 	{
 		auto ext = extension->split('|');
 		for(index j = 0, c = ext->size(); j < c; ++j)
@@ -168,7 +168,7 @@ BOOL CLexerCtrl::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT 
 
 BOOL CLexerCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID)
 {
-	if (!CWnd::CreateEx(dwExStyle, L"Scintilla", NULL, dwStyle, rect, pParentWnd, nID, NULL))
+	if (!CWnd::CreateEx(dwExStyle, L"Scintilla", nullptr, dwStyle, rect, pParentWnd, nID, nullptr))
 	{
 		return FALSE;
 	}
@@ -180,7 +180,7 @@ void CLexerCtrl::SetText(cstr_t szText)
 {
 	LRESULT lResult = 0;
 	mstring text = szText;
-	if (szText != NULL)
+	if (szText != nullptr)
 		lResult = SendMessage(SCI_SETTEXT, 0, (LPARAM)text->buffer_ptr());
 	GotoPosition(0);
 	SetFocus();
@@ -190,7 +190,7 @@ void CLexerCtrl::SetText(cwstr_t szText)
 {
 	LRESULT lResult = 0;
 	mstring text = szText;
-	if (szText != NULL)
+	if (szText != nullptr)
 		lResult = SendMessage(SCI_SETTEXT, 0, (LPARAM)text->buffer_ptr());
 	GotoPosition(0);
 	SetFocus();
@@ -199,7 +199,7 @@ void CLexerCtrl::SetText(cwstr_t szText)
 void CLexerCtrl::SetText(cmstr_t szText)
 {
 	LRESULT lResult = 0;
-	if (szText != NULL)
+	if (szText != nullptr)
 		lResult = SendMessage(SCI_SETTEXT, 0, (LPARAM)szText.cstr());
 	GotoPosition(0);
 	SetFocus();
@@ -428,9 +428,9 @@ DWORD CLexerCtrl::GetCurrentFoldinglevel()
 	return level - 1024;
 }
 
-void CLexerCtrl::SetFontName(int nStyle, cstr_t szFontname)
+void CLexerCtrl::SetFontName(int nStyle, cwstr_t szFontname)
 {
-	SendMessageA(GetSafeHwnd(),SCI_STYLESETFONT, nStyle, (LPARAM)szFontname.get());
+	SendMessage(SCI_STYLESETFONT, nStyle, (LPARAM)szFontname.get());
 }
 
 void CLexerCtrl::SetFontHeight(int nStyle, int nHeight)
@@ -681,7 +681,7 @@ void CLexerCtrl::GotoLine(LPARAM lLine)
 
 BOOL CLexerCtrl::SearchForward(cwstr_t szText)
 {
-	if (szText == NULL)
+	if (szText == nullptr)
 		return FALSE;
 	mstring text = szText;
 
@@ -704,7 +704,7 @@ BOOL CLexerCtrl::SearchForward(cwstr_t szText)
 
 BOOL CLexerCtrl::SearchBackward(cwstr_t szText)
 {
-	if (szText == NULL)
+	if (szText == nullptr)
 		return FALSE;
 	mstring text = szText;
 
@@ -731,7 +731,7 @@ BOOL CLexerCtrl::SearchBackward(cwstr_t szText)
 
 void CLexerCtrl::ReplaceSearchedText(cwstr_t szText)
 {
-	if (szText == NULL)
+	if (szText == nullptr)
 		return;
 	mstring text = szText;
 	SendMessage(SCI_TARGETFROMSELECTION, 0, 0);
@@ -775,7 +775,7 @@ CString CLexerCtrl::GetSelectedText()
 	if (lLen > 0)
 	{
 		TCHAR *p = new TCHAR[lLen + 1];
-		if (p != NULL)
+		if (p != nullptr)
 		{
 			*p = '\0';
 			SendMessage(SCI_GETSELTEXT, 0, (long)p);

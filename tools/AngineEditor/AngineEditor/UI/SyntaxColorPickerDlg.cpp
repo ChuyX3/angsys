@@ -39,21 +39,17 @@ END_MESSAGE_MAP()
 
 void CSyntaxColorPickerDlg::OnCategorySelChange()
 {
-	auto it = m_colorInfo.FindIndex(m_wndCategoryList.GetCurSel());
-	if (it.IsValid())
-	{
-		m_wndColorButton.SetColor(it->Datum().ColorRef());
-	}
+	auto idx = m_wndCategoryList.GetCurSel();
+	if (!m_colorInfo.is_empty() && m_colorInfo->counter() > idx)
+		m_wndColorButton.SetColor(m_colorInfo[idx].value().code);
 }
 
 
 void CSyntaxColorPickerDlg::OnColorPickerChangeColor()
 {
-	auto it = m_colorInfo.FindIndex(m_wndCategoryList.GetCurSel());
-	if (it.IsValid())
-	{
-		it->Datum().ColorRef(m_wndColorButton.GetColor());
-	}
+	auto idx = m_wndCategoryList.GetCurSel();
+	if (!m_colorInfo.is_empty() && m_colorInfo->counter() > idx)
+		m_colorInfo[idx].value().code = m_wndColorButton.GetColor();
 }
 
 BOOL CSyntaxColorPickerDlg::OnInitDialog()
@@ -61,18 +57,16 @@ BOOL CSyntaxColorPickerDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	m_wndCategoryList.ResetContent();
+	ang::static_array<ang::collections::pair<ang::string, ang::graphics::color>> view = m_colorInfo;
 
-	if (m_colorInfo.Counter() != 0)
+	int i = 0;
+	for (auto& pair : view)
 	{
-		int i = 0;
-		for (auto it = m_colorInfo.Begin(); it.IsValid(); ++it, ++i)
-		{
-			m_wndCategoryList.InsertString(i, it->KeyValue());
-		}
-		m_wndCategoryList.SetCurSel(0);
-
-		m_wndColorButton.SetColor(m_colorInfo[0].Datum().ColorRef());
+		auto text = ang::interop::string_cast<CString>(pair.key_value());
+		m_wndCategoryList.InsertString(i++, text);
 	}
+	m_wndCategoryList.SetCurSel(0);
+	m_wndColorButton.SetColor(m_colorInfo.get() ? m_colorInfo[0].value().code : 0);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE

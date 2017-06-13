@@ -328,13 +328,13 @@ void CEffectView::FillProperties()
 		}
 	}
 
-	SetCurrentEffect((ang::xml::xml_node_t)current);
+	//SetCurrentEffect((ang::xml::xml_node_t)current);
 }
 
 
 void CEffectView::SetCurrentEffect(ang::xml::xml_node_t node, bool enable)
 {
-	CMFCPropertyGridProperty* effectProp = m_propMap[EffectProp];
+	/*CMFCPropertyGridProperty* effectProp = m_propMap[EffectProp];
 	CMFCPropertyGridProperty* profileProp = m_propMap[ProfileProp];
 
 	CPropertyInfo* info = (CPropertyInfo*)effectProp->GetData();
@@ -378,149 +378,149 @@ void CEffectView::SetCurrentEffect(ang::xml::xml_node_t node, bool enable)
 		}
 	}
 	
-	SetCurrentProfile(current);
+	SetCurrentProfile(current);*/
 }
-
-void CEffectView::SetCurrentProfile(ang::xml::xml_node_t node, bool enable)
-{
-	CMFCPropertyGridProperty* profileProp = m_propMap[ProfileProp];
-	CMFCPropertyGridProperty* techniqueProp = m_propMap[TechniqueProp];
-
-	CPropertyInfo* info = (CPropertyInfo*)profileProp->GetData();
-	if (info->Data() == node)
-		return;
-
-	info->Data(node);
-
-	techniqueProp->RemoveAllOptions();
-	techniqueProp->ResetOriginalValue();
-
-	if (node)
-	{
-		profileProp->Enable(TRUE);
-		if (!node->xml_has_children())
-		{
-			SetCurrentTechnique(nullptr, true);
-			return;
-		}
-	}
-	else
-	{
-		profileProp->Enable(enable ? TRUE : FALSE);
-		SetCurrentTechnique(nullptr, false);
-		return;
-	}
-
-	ang::xml::xml_node_t current = nullptr;
-
-	for (auto technique = node->xml_children()->begin(); technique.is_valid(); ++technique)
-	{
-		if (ang::StringOperation::CompareWA(technique->xml_name().as<cwstr_t>(), "technique") == 0)
-		{
-			auto value = technique->xml_attributes()["name"];
-			techniqueProp->AddOption(value.as<cwstr_t>());
-			if (current.get() == nullptr)
-			{
-				current = (ang::xml::xml_node_t)technique;
-				techniqueProp->SetValue(value.as<cwstr_t>());
-			}
-		}
-	}
-
-	SetCurrentTechnique(current);
-}
-
-void CEffectView::SetCurrentTechnique(ang::xml::xml_node_t node, bool enable)
-{
-	CMFCPropertyGridProperty* techniqueProp = m_propMap[TechniqueProp];
-	CMFCPropertyGridProperty* passProp = m_propMap[PassProp];
-
-	CPropertyInfo* info = (CPropertyInfo*)techniqueProp->GetData();
-	if (info->Data() == node)
-		return;
-
-	info->Data(node);
-
-	passProp->RemoveAllOptions();
-	passProp->ResetOriginalValue();
-
-	if (node)
-	{
-		techniqueProp->Enable(TRUE);
-		if (!node->xml_has_children())
-		{
-			SetCurrentPass(nullptr, true);
-			return;
-		}
-	}
-	else
-	{
-		techniqueProp->Enable(enable ? TRUE : FALSE);
-		SetCurrentPass(nullptr, false);
-		return;
-	}
-
-	ang::xml::xml_node_t current = nullptr;
-
-	for (auto pass = node->xml_children()->begin(); pass.is_valid(); ++pass)
-	{
-		if (ang::StringOperation::CompareWA(pass->xml_name().as<cwstr_t>(), "pass") == 0)
-		{
-			auto value = pass->xml_attributes()["idx"];
-			passProp->AddOption(value.as<cwstr_t>());
-			if (current.get() == nullptr)
-			{
-				current = (ang::xml::xml_node_t)pass;
-				passProp->SetValue(value.as<cwstr_t>());
-			}
-		}
-	}
-
-	SetCurrentPass(current);
-}
-
-void CEffectView::SetCurrentPass(ang::xml::xml_node_t node, bool enable)
-{
-	CMFCPropertyGridProperty* passProp = m_propMap[PassProp];
-	CMFCPropertyGridProperty* vertexProp = m_propMap[VertexShaderGroup];
-	CMFCPropertyGridProperty* pixelProp = m_propMap[PixelShaderGroup];
-
-
-	CPropertyInfo* info = (CPropertyInfo*)passProp->GetData();
-	if (info->Data() == node)
-		return;
-
-	info->Data(node);
-
-	if (node)
-	{
-		passProp->Enable(TRUE);
-		if (!node->xml_has_children())
-		{
-			SetCurrentVS(nullptr, true);
-			return;
-		}
-	}
-	else
-	{
-		passProp->Enable(enable ? TRUE : FALSE);
-		SetCurrentPS(nullptr, false);
-		return;
-	}
-
-
-}
-
-
-void CEffectView::SetCurrentVS(ang::xml::xml_node_t pass, bool enable)
-{
-
-}
-
-void CEffectView::SetCurrentPS(ang::xml::xml_node_t pass, bool enable)
-{
-
-}
+//
+//void CEffectView::SetCurrentProfile(ang::xml::xml_node_t node, bool enable)
+//{
+//	CMFCPropertyGridProperty* profileProp = m_propMap[ProfileProp];
+//	CMFCPropertyGridProperty* techniqueProp = m_propMap[TechniqueProp];
+//
+//	CPropertyInfo* info = (CPropertyInfo*)profileProp->GetData();
+//	if (info->Data() == node)
+//		return;
+//
+//	info->Data(node);
+//
+//	techniqueProp->RemoveAllOptions();
+//	techniqueProp->ResetOriginalValue();
+//
+//	if (node)
+//	{
+//		profileProp->Enable(TRUE);
+//		if (!node->xml_has_children())
+//		{
+//			SetCurrentTechnique(nullptr, true);
+//			return;
+//		}
+//	}
+//	else
+//	{
+//		profileProp->Enable(enable ? TRUE : FALSE);
+//		SetCurrentTechnique(nullptr, false);
+//		return;
+//	}
+//
+//	ang::xml::xml_node_t current = nullptr;
+//
+//	for (auto technique = node->xml_children()->begin(); technique.is_valid(); ++technique)
+//	{
+//		if (ang::StringOperation::CompareWA(technique->xml_name().as<cwstr_t>(), "technique") == 0)
+//		{
+//			auto value = technique->xml_attributes()["name"];
+//			techniqueProp->AddOption(value.as<cwstr_t>());
+//			if (current.get() == nullptr)
+//			{
+//				current = (ang::xml::xml_node_t)technique;
+//				techniqueProp->SetValue(value.as<cwstr_t>());
+//			}
+//		}
+//	}
+//
+//	SetCurrentTechnique(current);
+//}
+//
+//void CEffectView::SetCurrentTechnique(ang::xml::xml_node_t node, bool enable)
+//{
+//	CMFCPropertyGridProperty* techniqueProp = m_propMap[TechniqueProp];
+//	CMFCPropertyGridProperty* passProp = m_propMap[PassProp];
+//
+//	CPropertyInfo* info = (CPropertyInfo*)techniqueProp->GetData();
+//	if (info->Data() == node)
+//		return;
+//
+//	info->Data(node);
+//
+//	passProp->RemoveAllOptions();
+//	passProp->ResetOriginalValue();
+//
+//	if (node)
+//	{
+//		techniqueProp->Enable(TRUE);
+//		if (!node->xml_has_children())
+//		{
+//			SetCurrentPass(nullptr, true);
+//			return;
+//		}
+//	}
+//	else
+//	{
+//		techniqueProp->Enable(enable ? TRUE : FALSE);
+//		SetCurrentPass(nullptr, false);
+//		return;
+//	}
+//
+//	ang::xml::xml_node_t current = nullptr;
+//
+//	for (auto pass = node->xml_children()->begin(); pass.is_valid(); ++pass)
+//	{
+//		if (ang::StringOperation::CompareWA(pass->xml_name().as<cwstr_t>(), "pass") == 0)
+//		{
+//			auto value = pass->xml_attributes()["idx"];
+//			passProp->AddOption(value.as<cwstr_t>());
+//			if (current.get() == nullptr)
+//			{
+//				current = (ang::xml::xml_node_t)pass;
+//				passProp->SetValue(value.as<cwstr_t>());
+//			}
+//		}
+//	}
+//
+//	SetCurrentPass(current);
+//}
+//
+//void CEffectView::SetCurrentPass(ang::xml::xml_node_t node, bool enable)
+//{
+//	CMFCPropertyGridProperty* passProp = m_propMap[PassProp];
+//	CMFCPropertyGridProperty* vertexProp = m_propMap[VertexShaderGroup];
+//	CMFCPropertyGridProperty* pixelProp = m_propMap[PixelShaderGroup];
+//
+//
+//	CPropertyInfo* info = (CPropertyInfo*)passProp->GetData();
+//	if (info->Data() == node)
+//		return;
+//
+//	info->Data(node);
+//
+//	if (node)
+//	{
+//		passProp->Enable(TRUE);
+//		if (!node->xml_has_children())
+//		{
+//			SetCurrentVS(nullptr, true);
+//			return;
+//		}
+//	}
+//	else
+//	{
+//		passProp->Enable(enable ? TRUE : FALSE);
+//		SetCurrentPS(nullptr, false);
+//		return;
+//	}
+//
+//
+//}
+//
+//
+//void CEffectView::SetCurrentVS(ang::xml::xml_node_t pass, bool enable)
+//{
+//
+//}
+//
+//void CEffectView::SetCurrentPS(ang::xml::xml_node_t pass, bool enable)
+//{
+//
+//}
 
 
 void CEffectView::OnSize(UINT nType, int cx, int cy)
@@ -591,64 +591,64 @@ void CEffectView::OnEffectviewAddnew()
 	if (info == NULL)
 		return;
 
-	ang::xml::XmlBuilder* builder = ((CXmlFileDoc*)GetDocument())->GetXmlBuilder();
+	//ang::xml::XmlBuilder* builder = ((CXmlFileDoc*)GetDocument())->GetXmlBuilder();
 
-	switch (info->PropertyType())
-	{
-	case EffectProp: {		
-		CMFCToolBarEditBoxButtonEx* button = (CMFCToolBarEditBoxButtonEx*)m_wndToolBar.GetButton(0);
-		CString text = button->GetContent();
-		if (text.IsEmpty())
-			return;
+	//switch (info->PropertyType())
+	//{
+	//case EffectProp: {		
+	//	CMFCToolBarEditBoxButtonEx* button = (CMFCToolBarEditBoxButtonEx*)m_wndToolBar.GetButton(0);
+	//	CString text = button->GetContent();
+	//	if (text.IsEmpty())
+	//		return;
 
-		auto find_it = m_pEffectLibrary->xml_children()->FindFirst("effect");
-		while (find_it.is_valid())
-		{
-			if (ang::StringOperation::CompareW(find_it->xml_attributes()["name"].as<cwstr_t>(), text) == 0)
-				return;
-			find_it = m_pEffectLibrary->xml_children()->FindNext("effect", find_it);
-		}
+	//	auto find_it = m_pEffectLibrary->xml_children()->FindFirst("effect");
+	//	while (find_it.is_valid())
+	//	{
+	//		if (ang::StringOperation::CompareW(find_it->xml_attributes()["name"].as<cwstr_t>(), text) == 0)
+	//			return;
+	//		find_it = m_pEffectLibrary->xml_children()->FindNext("effect", find_it);
+	//	}
 
-		ang::TinyString* value = NEW_ARGS(text) ang::TinyString();
+	//	ang::TinyString* value = NEW_ARGS(text) ang::TinyString();
 
-		auto it = builder->Find(*m_pEffectLibrary);
-		builder->MoveTo(it);
+	//	auto it = builder->Find(*m_pEffectLibrary);
+	//	builder->MoveTo(it);
 
-		builder->beginElement("effect");
-		builder->Attribute("name", value);
-		auto current = builder->XmlCurrent();
-		builder->EndElement();
+	//	builder->beginElement("effect");
+	//	builder->Attribute("name", value);
+	//	auto current = builder->XmlCurrent();
+	//	builder->EndElement();
 
-		GetDocument()->SetModifiedFlag();
+	//	GetDocument()->SetModifiedFlag();
 
-		m_pSelectedProperty->AddOption(text);
-		m_pSelectedProperty->SetValue(text);
+	//	m_pSelectedProperty->AddOption(text);
+	//	m_pSelectedProperty->SetValue(text);
 
-		SetCurrentEffect(current);
+	//	SetCurrentEffect(current);
 
-	} break;
-	case ProfileProp:break;
-	case TechniqueProp:break;
-	case PassProp:break;
+	//} break;
+	//case ProfileProp:break;
+	//case TechniqueProp:break;
+	//case PassProp:break;
 
-	case VSFileProp:break;
-	case VSEntryProp:break;
+	//case VSFileProp:break;
+	//case VSEntryProp:break;
 
-	case VSConfigProp:break;
+	//case VSConfigProp:break;
 
-	case VSConstBufferProp:break;
+	//case VSConstBufferProp:break;
 
-	case VSInputProp:break;
+	//case VSInputProp:break;
 
-	case PSFileProp:break;
-	case PSEntryProp:break;
+	//case PSFileProp:break;
+	//case PSEntryProp:break;
 
-	case PSConfigProp:break;
+	//case PSConfigProp:break;
 
-	case PSConstBufferProp:break;
+	//case PSConstBufferProp:break;
 
-	case PSSamplerProp:break;
-	}
+	//case PSSamplerProp:break;
+	//}
 
 }
 
@@ -686,38 +686,38 @@ void CEffectView::OnUpdateFileSave(CCmdUI *pCmdUI)
 
 void CEffectView::OnUpdateEffectviewEditctrl(CCmdUI *pCmdUI)
 {
-	pCmdUI->Enable(m_bitsEnableControls.Bit0);
+	//pCmdUI->Enable(m_bitsEnableControls.Bit0);
 }
 
 void CEffectView::OnUpdateEffectviewAddnew(CCmdUI *pCmdUI)
 {
-	pCmdUI->Enable(m_bitsEnableControls.Bit1);
+	//pCmdUI->Enable(m_bitsEnableControls.Bit1);
 }
 
 void CEffectView::OnUpdateEffectviewRemove(CCmdUI *pCmdUI)
 {
-	pCmdUI->Enable(m_bitsEnableControls.Bit2);
+	//pCmdUI->Enable(m_bitsEnableControls.Bit2);
 }
 
 void CEffectView::OnUpdateEffectviewModify(CCmdUI *pCmdUI)
 {
-	pCmdUI->Enable(m_bitsEnableControls.Bit3);
+	//pCmdUI->Enable(m_bitsEnableControls.Bit3);
 }
 
 void CEffectView::OnUpdateEffectviewUp(CCmdUI *pCmdUI)
 {
-	pCmdUI->Enable(m_bitsEnableControls.Bit4);
+	//pCmdUI->Enable(m_bitsEnableControls.Bit4);
 }
 
 void CEffectView::OnUpdateEffectviewDown(CCmdUI *pCmdUI)
 {
-	pCmdUI->Enable(m_bitsEnableControls.Bit5);
+	//pCmdUI->Enable(m_bitsEnableControls.Bit5);
 }
 
 
 void CEffectView::OnDestroy()
 {
-	for (ang::Index i = 0; i < MaxSize; ++i)
+	for (index i = 0; i < MaxSize; ++i)
 	{
 		auto prop = m_propMap[i];
 		if (prop && prop->GetData())
@@ -730,9 +730,9 @@ void CEffectView::OnDestroy()
 	CView::OnDestroy();
 }
 
-void CEffectView::OnCurrentEffectChangeEvent(CObject* caller, ang::VoidPtr args)
+void CEffectView::OnCurrentEffectChangeEvent(CObject* caller, CPropertyInfo* args)
 {
-	CPropertyInfo* info = reinterpret_cast<CPropertyInfo*>(args);
+	/*CPropertyInfo* info = reinterpret_cast<CPropertyInfo*>(args);
 	if (info == nullptr)
 		return;
 
@@ -754,6 +754,6 @@ void CEffectView::OnCurrentEffectChangeEvent(CObject* caller, ang::VoidPtr args)
 			SetCurrentEffect((ang::xml::xml_node_t)find_it);
 
 	}
-
+*/
 	
 }

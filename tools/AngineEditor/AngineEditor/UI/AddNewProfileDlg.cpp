@@ -55,9 +55,9 @@ void CAddNewProfileDlg::OnBnClickedOk()
 	CDialogEx::OnOK();
 }
 
-INT_PTR CAddNewProfileDlg::DoModalArgs(ang::Storage::List<ang::String> targetList, ang::Storage::List<ang::String> sourceList) {
-	this->targetList.Move(targetList);
-	this->sourceList.Move(sourceList);
+INT_PTR CAddNewProfileDlg::DoModalArgs(ang::static_array<ang::wstring> target, ang::static_array<ang::wstring> source) {
+	targetList = target;
+	sourceList = source;
 	return DoModal();
 }
 
@@ -65,13 +65,14 @@ INT_PTR CAddNewProfileDlg::DoModalArgs(ang::Storage::List<ang::String> targetLis
 BOOL CAddNewProfileDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-
-	for (auto it = targetList.Begin(); it.IsValid(); ++it) {
-		m_wndTargetProfileCombo.AddString(it->Data());
+	ang::static_array<ang::wstring> target_view = targetList;
+	for (ang::wstring& value : target_view) {
+		m_wndTargetProfileCombo.AddString((ang::cwstr_t)value);
 	}
 
-	for (auto it = sourceList.Begin(); it.IsValid(); ++it) {
-		m_wndCopyFromProfileCombo.AddString(it->Data());
+	ang::static_array<ang::wstring> source_view = sourceList;
+	for (ang::wstring& value : source_view) {
+		m_wndCopyFromProfileCombo.AddString((ang::cwstr_t)value);
 	}
 
 	m_wndTargetProfileCombo.SetCurSel(0);

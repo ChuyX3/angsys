@@ -41,12 +41,18 @@ public:
 	bool DestroyDriver();
 
 protected:
+	ang::core::time::timer m_timer;
+	void on_draw_event(ang::objptr, ang::platform::events::idraw_event_args_t);
+
+protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
+
+ANG_REGISTER_RUNTIME_TYPENAME(CRenderTargetWnd);
 
 class C3DView : public CView
 {

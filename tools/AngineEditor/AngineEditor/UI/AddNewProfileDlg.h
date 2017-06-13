@@ -18,17 +18,17 @@ public:
 #endif
 
 protected:
-	ang::String m_strTargetSelected;
-	ang::String m_strSourceSelected;
-	ang::Storage::List<ang::String> targetList, sourceList;
+	ang::wstring m_strTargetSelected;
+	ang::wstring m_strSourceSelected;
+	ang::collections::vector<ang::wstring> targetList, sourceList;
 
 	CComboBox m_wndTargetProfileCombo;
 	CComboBox m_wndCopyFromProfileCombo;
 
 public:
-	INT_PTR DoModalArgs(ang::Storage::List<ang::String > targetList, ang::Storage::List<ang::String> sourceList);
-	ang::String GetTargetSelected()const { return m_strTargetSelected; }
-	ang::String GetSourceSelected()const { return m_strSourceSelected; }
+	INT_PTR DoModalArgs(ang::static_array<ang::wstring > targetList, ang::static_array<ang::wstring> sourceList);
+	ang::wstring GetTargetSelected()const { return m_strTargetSelected; }
+	ang::wstring GetSourceSelected()const { return m_strSourceSelected; }
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

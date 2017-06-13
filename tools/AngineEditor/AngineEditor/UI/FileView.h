@@ -2,6 +2,7 @@
 #pragma once
 
 #include "ViewTree.h"
+#include "ProjectManager.h"
 
 class CFileViewToolBar : public CMFCToolBar
 {
@@ -30,10 +31,11 @@ protected:
 	CFileViewToolBar m_wndToolBar;
 
 public:
-	void FillFileView(ang::xml::xml_document_t xmlDoc);
+	void FillFileView(AngineEditor::filesystem::folder_t folder);
 
 private:
-	void AddElement(ang::xml::xml_node_t element , HTREEITEM parent);
+	void AddElement(AngineEditor::filesystem::folder_t element , HTREEITEM parent);
+	void AddElement(AngineEditor::filesystem::file_t element, HTREEITEM parent);
 
 // Implementation
 public:

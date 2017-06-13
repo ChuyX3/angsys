@@ -51,8 +51,7 @@ private:
 	ang::xml::xml_node_t m_xmlData;
 };
 
-
-ANG_REGISTER_RUNTIME_TYPENAME(CMFCPropertyGridProperty);
+ANG_REGISTER_RUNTIME_TYPENAME(CPropertyInfo)
 
 class CEffectView : 
 	public CView

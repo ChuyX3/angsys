@@ -11,7 +11,7 @@
 
 struct FontStyle
 {
-	ang::string strFontName;
+	ang::wstring strFontName;
 	ang::graphics::color nForegroundColor;
 	ang::graphics::color nBackgroundColor;
 	int nFontSize;
@@ -108,7 +108,7 @@ public:
 	BOOL CanPaste();
 	void SelectAll();
 
-	void SetFontName(int nStyle, ang::cstr_t szFontname);
+	void SetFontName(int nStyle, ang::cwstr_t szFontname);
 	void SetFontHeight(int nStyle, int nHeight);
 	void SetForeground(int nStyle, COLORREF crForeground);
 	void SetBackground(int nStyle, COLORREF crBackground);

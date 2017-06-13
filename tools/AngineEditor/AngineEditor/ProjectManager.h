@@ -42,7 +42,8 @@ namespace AngineEditor
 			wstring path()const;
 			wstring name()const;
 			wstring ext()const;
-			
+			wstring name_ext()const;
+
 			void path(cwstr_t);
 			void name(cwstr_t);
 			void ext(cwstr_t);
@@ -102,10 +103,11 @@ namespace AngineEditor
 		xml::xml_document_t xmlResourcesDoc;
 		
 		wstring strProjectPath;
+		filesystem::folder_t filters;
 		collections::map<string, wstring> files;
 		//ChildProcess childProcess;
 
-		//graphics::idriver_t driver;
+		graphics::idriver_t driver;
 		//ang::IntfPtr<Drawing::ISurface> surface;
 		
 		//ang::SharedProperty<Engine::Resources::ResourceManager, CProjectManager> resourceManager;
@@ -124,12 +126,14 @@ namespace AngineEditor
 
 		ANG_DECLARE_INTERFACE();
 
-		bool LoadDocument(wstring xmlCode);
+		bool LoadDocument(cstr_t xmlCode);
+		bool LoadDocument(cwstr_t xmlCode);
+		bool LoadDocument(cmstr_t xmlCode);
 		bool SaveDocument(wstring& xmlCode)const;
 
 		xml::xml_document_t XmlDocument();
 		inline const wstring& ProjectPath()const { return strProjectPath; }
-
+		inline graphics::idriver_t GraphicDriver()const { return driver; }
 
 		//bool LoadEffectData(xml::xml_node_t, EffectData& out)const;
 		//bool SaveEffectData(xml::XmlBuilder*, EffectData const& data)const;

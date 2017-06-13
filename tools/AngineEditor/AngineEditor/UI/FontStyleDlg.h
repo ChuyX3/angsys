@@ -48,13 +48,13 @@ public:
 
 	FontStyle GetFontInfo() {
 		if(m_bInitialized)UpdateData(TRUE);
-		return{ m_strFontName,m_nForegroundColor,m_nBackgroundColor,m_nFontSize,(bool)m_bBold,(bool)m_bItalic,(bool)m_bStrikeout,(bool)m_bUnderline };
+		return{ ang::cwstr_t(m_strFontName.GetBuffer(), m_strFontName.GetLength()),m_nForegroundColor,m_nBackgroundColor,m_nFontSize,(bool)m_bBold,(bool)m_bItalic,(bool)m_bStrikeout,(bool)m_bUnderline };
 	}
 
 	void SetFontInfo(FontStyle style) {
-		m_strFontName = style.strFontName.Data();
-		m_nForegroundColor = style.nForegroundColor.ColorRef();
-		m_nBackgroundColor = style.nBackgroundColor.ColorRef();
+		m_strFontName = (ang::cwstr_t)style.strFontName;
+		m_nForegroundColor = style.nForegroundColor.code;
+		m_nBackgroundColor = style.nBackgroundColor.code;
 		m_nFontSize = style.nFontSize;
 		m_bBold = style.bBold;
 		m_bItalic = style.bItalic;

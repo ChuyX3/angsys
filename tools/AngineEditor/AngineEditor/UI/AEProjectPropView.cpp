@@ -47,15 +47,16 @@ void CAEProjectPropView::OnInitialUpdate()
 	m_wndFileList.InsertColumn(1, TEXT("File Name"), LVCFMT_LEFT, 200);
 	m_wndFileList.InsertColumn(2, TEXT("Full File Name"), LVCFMT_LEFT, 200);
 
-	ang::Storage::BTree<ang::AString, ang::String> &fileMap = AngineEditor::CProjectManager::Instance()->FileMap();
+	ang::collections::map<ang::string, ang::wstring> &fileMap = AngineEditor::CProjectManager::instance()->FileMap();
 
 	int i = 0;
-	for (auto it = fileMap.Begin(); it.IsValid(); ++it, ++i)
+	for (auto it = fileMap->begin(); it.is_valid(); ++it, ++i)
 	{
-		ang::String key = it->KeyValue();
+		ang::wstring key = it->key_value();
+		ang::wstring value = it->value().get();
 		m_wndFileList.InsertItem(i, TEXT(""));
-		m_wndFileList.SetItemText(i, 1, key.Data());
-		m_wndFileList.SetItemText(i, 2, it->Datum().Data());
+		m_wndFileList.SetItemText(i, 1, key->cstr().get());
+		m_wndFileList.SetItemText(i, 2, value->cstr().get());
 	}
 
 	m_bCreated = TRUE;

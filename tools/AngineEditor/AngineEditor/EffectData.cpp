@@ -243,7 +243,7 @@ bool CEffectLibrary::Load(xml::xml_node_t library)
 
 bool CEffectLibrary::Save(xml::xml_builder_t builder)
 {
-
+	return true;
 }
 
 bool CEffectLibrary::LoadSources(xml::xml_node_t node)

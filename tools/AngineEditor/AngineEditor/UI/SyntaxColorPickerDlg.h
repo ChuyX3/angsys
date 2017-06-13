@@ -21,14 +21,18 @@ public:
 protected:
 	CListBox m_wndCategoryList;
 	CMFCColorButton m_wndColorButton;
-	ang::Array<ang::Storage::Pair<ang::String, ang::Drawing::Color>> m_colorInfo;
+	ang::collections::vector<ang::collections::pair<ang::string, ang::graphics::color>> m_colorInfo;
 
 public:
-	void SetColorInfo(ang::Array<ang::Storage::Pair<ang::String, ang::Drawing::Color>> color) {
-		m_colorInfo = ang::Move(color);
+	void SetColorInfo(ang::static_array<ang::collections::pair<ang::string, ang::graphics::color>> colors) {
+		m_colorInfo = nullptr;
+		for (ang::collections::pair<ang::string, ang::graphics::color>& pair : colors)
+		{
+			m_colorInfo += pair;
+		}
 	}
 
-	ang::Array<ang::Storage::Pair<ang::String, ang::Drawing::Color >> GetColorInfo()const {
+	ang::static_array<ang::collections::pair<ang::string, ang::graphics::color>> GetColorInfo()const {
 		return m_colorInfo;
 	}
 

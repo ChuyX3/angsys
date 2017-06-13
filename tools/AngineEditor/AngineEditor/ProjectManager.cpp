@@ -103,220 +103,226 @@ CProjectManager::CProjectManager()
 CProjectManager::~CProjectManager()
 {
 	xmlDoc = nullptr;
-	files.Clean();
+	files.clean();
 }
 
-_IMPLEMENT_BASIC_INTERFACE(AngineEditor::CProjectManager, ang::Object);
+ANG_IMPLEMENT_BASIC_INTERFACE(AngineEditor::CProjectManager, ang::object);
 
-Bool CProjectManager::LoadDocument(String xmlCode)
+bool CProjectManager::LoadDocument(cstr_t xmlCode)
 {
 	try
 	{
-		xmlDoc->Load(xmlCode);
+		xmlDoc->parse(xmlCode);
 		LoadFiles();
 	}
-	catch (const ang::Exception& )
+	catch (exception_t)
 	{
 		return false;
 	}
 	return true;
 }
 
-Bool CProjectManager::SaveDocument(String& xmlCode)const
+bool CProjectManager::LoadDocument(cwstr_t xmlCode)
 {
-	xmlDoc->Save(xmlCode);
+	try
+	{
+		xmlDoc->parse(xmlCode);
+		LoadFiles();
+	}
+	catch (exception_t)
+	{
+		return false;
+	}
+	return true;
+}
+
+bool CProjectManager::LoadDocument(cmstr_t xmlCode)
+{
+	try
+	{
+		xmlDoc->parse(xmlCode);
+		LoadFiles();
+	}
+	catch (exception_t)
+	{
+		return false;
+	}
+	return true;
+}
+
+
+bool CProjectManager::SaveDocument(wstring& xmlCode)const
+{
+	xmlDoc->xml_tree()->xml_print(xmlCode, xml::xml_format::fix_entity + xml::xml_format::wrap_text_space);
 	return true;
 }
 
 xml::xml_document_t CProjectManager::XmlDocument()
 {
-	return xmlDoc.Data();
+	return xmlDoc;
 }
 
-Bool CProjectManager::LoadFiles()
+bool CProjectManager::LoadFiles()
 {
-	strProjectPath = xmlDoc->XmlTree()->FindFirst("project_dir")->XmlValue().As<CWStr>();
-	auto it = xmlDoc->XmlTree()->FindFirst("filters");
-	if (it.IsValid())
+	strProjectPath = xmlDoc->xml_tree()->find_first("project_dir")->xml_value().as<cwstr_t>();
+	auto it = xmlDoc->xml_tree()->find_first("filters");
+	if (it.is_valid())
 	{
-		IntfPtr<xml::XmlFinder> finder = new xml::XmlFinder(it->XmlAsElement());
-		for (auto element = finder->Begin(); element.IsValid(); ++element)
-		{
-			if (StringOperation::CompareWA(element->XmlName().As<CWStr>(), "file") == 0)
-			{
-				xml::XmlValue pathTemplate = element->XmlAttributeFinder()["path"];
-				xml::XmlValue name = element->XmlValue();
-				if (!pathTemplate.IsEmpty())
-				{
-					String newPath;
-					
-					if (strProjectPath.size() <= 14)//$(project_dir)
-					{
-						newPath = pathTemplate->Data();
-					}
-					else
-					{
-						newPath.Set(pathTemplate.Value);
-					}
-					Index pos = newPath.Find("$(project_dir)");
-					if (pos != Index(-1))
-					{
-						newPath.Replace(strProjectPath, pos, pos + 14);
-					}
+		filesystem::folder_t folder = new filesystem::folder();
 
-					files[name.As<CWStr>()] = ang::Move(newPath);
-				}
-			}
+		if (!folder->load((xml::xml_node*)it, strProjectPath))
+			return false;
+		filters = folder;
+
+		auto  mainFrm = CMainFrame::GetMainFrame();
+		if (mainFrm != NULL)
+		{
+			mainFrm->GetFileViewPanel()->FillFileView(filters);
 		}
+		return true;
 	}
 
-	auto  mainFrm = CMainFrame::GetMainFrame();
-	if (mainFrm != NULL)
-	{
-		mainFrm->GetFileViewPanel()->FillFileView(xmlDoc.Data());
-	}
-
-	return true;
+	return false;
 }
 
-Bool CProjectManager::LoadEffectData(xml::xml_node_t element, EffectData& out)const
-{
-	if (element == nullptr || !element->XmlHasChildren() || ang::StringOperation::CompareWA(element->XmlName().As<CWStr>(), "effect") != 0)
-		return false;
-
-	out.Profiles.Size(3);
-	out.Name = element->XmlAttributeFinder()["name"].As<ang::CWStr>();
-
-	for (auto profile = element->XmlChildren()->Begin(); profile.IsValid(); ++profile)
-	{
-		if (ang::StringOperation::CompareWA(profile->XmlName().As<CWStr>(), "profile") != 0)
-			continue;
-
-		auto idx = (int)profile->XmlAttributeFinder()["type"].As<Drawing::GraphDriverType>() - 1;
-		if (idx < 0 || idx > 2)
-			continue;
-
-		EffectProfileData& profileData = out.Profiles[idx];	
-		profileData.DriverType = Drawing::GraphDriverType((int)Drawing::GraphDriverType::OpenGL + idx);
-		profileData.IsValid = true;
-
-		for (auto technique = profile->XmlChildren()->Begin(); technique.IsValid(); ++technique)
-		{
-			if (ang::StringOperation::CompareWA(technique->XmlName().As<CWStr>(), "technique") != 0)
-				continue;
-			
-			profileData.Techniques += TechniqueData();
-			TechniqueData& techniqueData = *profileData.Techniques.End();
-			techniqueData.Name = technique->XmlAttributeFinder()["name"].As<ang::CWStr>();
-
-			for (auto pass = technique->XmlChildren()->Begin(); pass.IsValid(); ++pass)
-			{
-				if (ang::StringOperation::CompareWA(pass->XmlName().As<CWStr>(), "pass") != 0)
-					continue;
-
-				techniqueData.Passes += PassData();
-				PassData& passData = *techniqueData.Passes.End();
-
-				for (auto shader = pass->XmlChildren()->Begin(); shader.IsValid(); ++shader)
-				{
-					if (ang::StringOperation::CompareWA(shader->XmlName().As<CWStr>(), "shader") != 0)
-						continue;
-		
-					ShaderData* shaderData = nullptr;
-					auto st = shader->XmlAttributeFinder()["type"].As<Drawing::ShaderType>();
-					if (st == Drawing::ShaderType::Vertex)
-						shaderData = &passData.VertexShader;
-					else if (st == Drawing::ShaderType::Fragment)
-						shaderData = &passData.FragmentShader;
-					else
-						continue;
-
-					shaderData->FileID = shader->XmlAttributeFinder()["file"].As<CWStr>();
-
-					for (auto shader_element = shader->XmlChildren()->Begin(); shader_element.IsValid(); ++shader_element)
-					{
-						if (StringOperation::CompareWA(shader_element->XmlName().As<CWStr>(), "entry_point") == 0)
-						{
-							auto value = shader_element->XmlValue();
-							shaderData->EntryPoint = value.Value.get()? value.As<CWStr>() : L"main";
-						}
-						else if (StringOperation::CompareWA(shader_element->XmlName().As<CWStr>(), "compile_config") == 0)
-						{
-							AString compileConfig = shader_element->XmlValue().As<CWStr>();
-							auto configlist = compileConfig.Split("-D");
-							for (auto i = configlist.Begin(); i.IsValid(); ++i)
-							{
-								Storage::Pair<AString, AString> pair;
-								auto config = i->Split('=');
-								if (config.Size() > 0)
-								{
-									pair.KeyValue() = config[0];
-									if (config.Size() > 1)
-									{
-										pair.Datum() = config[1];
-									}
-									shaderData->CompileConfigs += pair;
-								}
-							}
-						}
-						else if (StringOperation::CompareWA(shader_element->XmlName().As<CWStr>(), "vertex_inputs") == 0)
-						{
-							
-						}
-						else if (StringOperation::CompareWA(shader_element->XmlName().As<CWStr>(), "const_buffer") == 0)
-						{
-
-						}
-						else if (StringOperation::CompareWA(shader_element->XmlName().As<CWStr>(), "samplers") == 0)
-						{
-
-						}
-					}//end shader configs iteration
-				}//end shader iteration
-			}//end pass iteration
-		}//end technique iteration
-	}//end profile iteration
-
-	return true;
-}
-
-
-Bool CProjectManager::SaveEffectData(xml::XmlBuilder* builer, EffectData const& data)const
-{
-	if (builer == nullptr)
-		return false;
-	builer->BeginElement("effect");
-	{
-		builer->Attribute("name", data.Name);
-	
-		for (auto i = 0; i < 3; ++i)
-		{
-			EffectProfileData const& profile = data.Profiles[i];
-			if (profile.IsValid)
-			{
-				builer->BeginElement("profile");
-				{
-		
-					builer->Attribute("count"
-						, profile.DriverType == Drawing::GraphDriverType::OpenGL ? "GLSL"
-						: profile.DriverType == Drawing::GraphDriverType::OpenGLES ? "GLES"
-						: profile.DriverType == Drawing::GraphDriverType::DirectX ? "HLSL"
-						: "NULL");
-
-					builer->Attribute("count", Unsigned32(profile.Techniques.Counter()).ToAString());
-					
-			
-
-				}builer->EndElement();
-			}
-		}
-
-		
-	}builer->EndElement();
-	return true;
-}
+//bool CProjectManager::LoadEffectData(xml::xml_node_t element, EffectData& out)const
+//{
+//	if (element == nullptr || !element->XmlHasChildren() || ang::StringOperation::CompareWA(element->xml_name().as<cwstr_t>(), "effect") != 0)
+//		return false;
 //
-//Bool CProjectManager::RunChildProcess()
+//	out.Profiles.Size(3);
+//	out.Name = element->XmlAttributeFinder()["name"].as<ang::cwstr_t>();
+//
+//	for (auto profile = element->XmlChildren()->Begin(); profile.is_valid(); ++profile)
+//	{
+//		if (ang::StringOperation::CompareWA(profile->xml_name().as<cwstr_t>(), "profile") != 0)
+//			continue;
+//
+//		auto idx = (int)profile->XmlAttributeFinder()["type"].as<Drawing::GraphDriverType>() - 1;
+//		if (idx < 0 || idx > 2)
+//			continue;
+//
+//		EffectProfileData& profileData = out.Profiles[idx];	
+//		profileData.DriverType = Drawing::GraphDriverType((int)Drawing::GraphDriverType::OpenGL + idx);
+//		profileData.is_valid = true;
+//
+//		for (auto technique = profile->XmlChildren()->Begin(); technique.is_valid(); ++technique)
+//		{
+//			if (ang::StringOperation::CompareWA(technique->xml_name().as<cwstr_t>(), "technique") != 0)
+//				continue;
+//			
+//			profileData.Techniques += TechniqueData();
+//			TechniqueData& techniqueData = *profileData.Techniques.End();
+//			techniqueData.Name = technique->XmlAttributeFinder()["name"].as<ang::cwstr_t>();
+//
+//			for (auto pass = technique->XmlChildren()->Begin(); pass.is_valid(); ++pass)
+//			{
+//				if (ang::StringOperation::CompareWA(pass->xml_name().as<cwstr_t>(), "pass") != 0)
+//					continue;
+//
+//				techniqueData.Passes += PassData();
+//				PassData& passData = *techniqueData.Passes.End();
+//
+//				for (auto shader = pass->XmlChildren()->Begin(); shader.is_valid(); ++shader)
+//				{
+//					if (ang::StringOperation::CompareWA(shader->xml_name().as<cwstr_t>(), "shader") != 0)
+//						continue;
+//		
+//					ShaderData* shaderData = nullptr;
+//					auto st = shader->XmlAttributeFinder()["type"].as<Drawing::ShaderType>();
+//					if (st == Drawing::ShaderType::Vertex)
+//						shaderData = &passData.VertexShader;
+//					else if (st == Drawing::ShaderType::Fragment)
+//						shaderData = &passData.FragmentShader;
+//					else
+//						continue;
+//
+//					shaderData->FileID = shader->XmlAttributeFinder()["file"].as<cwstr_t>();
+//
+//					for (auto shader_element = shader->XmlChildren()->Begin(); shader_element.is_valid(); ++shader_element)
+//					{
+//						if (StringOperation::CompareWA(shader_element->xml_name().as<cwstr_t>(), "entry_point") == 0)
+//						{
+//							auto value = shader_element->xml_value();
+//							shaderData->EntryPoint = value.Value.get()? value.as<cwstr_t>() : L"main";
+//						}
+//						else if (StringOperation::CompareWA(shader_element->xml_name().as<cwstr_t>(), "compile_config") == 0)
+//						{
+//							AString compileConfig = shader_element->xml_value().as<cwstr_t>();
+//							auto configlist = compileConfig.Split("-D");
+//							for (auto i = configlist.Begin(); i.is_valid(); ++i)
+//							{
+//								Storage::Pair<AString, AString> pair;
+//								auto config = i->Split('=');
+//								if (config.Size() > 0)
+//								{
+//									pair.KeyValue() = config[0];
+//									if (config.Size() > 1)
+//									{
+//										pair.Datum() = config[1];
+//									}
+//									shaderData->CompileConfigs += pair;
+//								}
+//							}
+//						}
+//						else if (StringOperation::CompareWA(shader_element->xml_name().as<cwstr_t>(), "vertex_inputs") == 0)
+//						{
+//							
+//						}
+//						else if (StringOperation::CompareWA(shader_element->xml_name().as<cwstr_t>(), "const_buffer") == 0)
+//						{
+//
+//						}
+//						else if (StringOperation::CompareWA(shader_element->xml_name().as<cwstr_t>(), "samplers") == 0)
+//						{
+//
+//						}
+//					}//end shader configs iteration
+//				}//end shader iteration
+//			}//end pass iteration
+//		}//end technique iteration
+//	}//end profile iteration
+//
+//	return true;
+//}
+//
+//
+//bool CProjectManager::SaveEffectData(xml::xml_builder_t builer, EffectData const& data)const
+//{
+//	if (builer == nullptr)
+//		return false;
+//	builer->BeginElement("effect");
+//	{
+//		builer->Attribute("name", data.Name);
+//	
+//		for (auto i = 0; i < 3; ++i)
+//		{
+//			EffectProfileData const& profile = data.Profiles[i];
+//			if (profile.is_valid)
+//			{
+//				builer->BeginElement("profile");
+//				{
+//		
+//					builer->Attribute("count"
+//						, profile.DriverType == Drawing::GraphDriverType::OpenGL ? "GLSL"
+//						: profile.DriverType == Drawing::GraphDriverType::OpenGLES ? "GLES"
+//						: profile.DriverType == Drawing::GraphDriverType::DirectX ? "HLSL"
+//						: "NULL");
+//
+//					builer->Attribute("count", Unsigned32(profile.Techniques.Counter()).ToAString());
+//					
+//			
+//
+//				}builer->EndElement();
+//			}
+//		}
+//
+//		
+//	}builer->EndElement();
+//	return true;
+//}
+////
+//bool CProjectManager::RunChildProcess()
 //{
 //	if (childProcess.IsCreated())
 //		return false;
@@ -330,12 +336,12 @@ Bool CProjectManager::SaveEffectData(xml::XmlBuilder* builer, EffectData const& 
 //	return childProcess.Create(&args);;
 //}
 //
-//Bool CProjectManager::IsChildProcessRunning()
+//bool CProjectManager::IsChildProcessRunning()
 //{
 //	return childProcess.IsRunning();
 //}
 //
-//Bool CProjectManager::StopChildProcess()
+//bool CProjectManager::StopChildProcess()
 //{
 //	if (!childProcess.IsCreated())
 //		return false;
@@ -343,126 +349,126 @@ Bool CProjectManager::SaveEffectData(xml::XmlBuilder* builer, EffectData const& 
 //	return childProcess.Close();
 //}
 
-
-ang::Bool CProjectManager::BeginRendering(Platform::ICoreView* view)
-{
-	ang::Core::Threading::ScopeLocker locker(mutex);
-
-	if (!renderAsyncAction.IsPointerEmpty())
-		return false;
-
-	if (!InitDriver(view))
-		return false;
-
-	ang::Core::Threading::AsyncTask<void>::RunAsync(ang::Core::Threading::ThreadPriority::High, nullptr, this, &CProjectManager::RenderProc);
-	cond.While(mutex, [&]()->ang::Bool { return renderAsyncAction.Get() == nullptr; });
-	return true;
-
-}
-
-ang::Bool CProjectManager::StopRendering()
-{
-	ang::Core::Threading::ScopeLocker locker(mutex);
-	if (renderAsyncAction.IsPointerEmpty())
-		return false;
-	renderAsyncAction->Cancel();
-	cond.While(mutex, [&]()->ang::Bool { return !renderAsyncAction.IsPointerEmpty(); });
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void CProjectManager::RenderProc(ang::Core::Threading::IAsyncAction<void>* task, ang::Core::Events::ArgsList*)
-{
-	renderThread = ang::Core::Threading::Thread::CurrentThread();
-	{ang::Core::Threading::ScopeLocker locker(mutex);
-	renderAsyncAction = task;
-	cond.Signal(mutex);
-	}
-
-	LoadResources();
-
-	ang::Core::Tempus::DeltaTime delta;
-	delta.Reset();
-	while (task->Status() == ang::Core::Threading::AsyncActionStatus::Running)
-	{
-		ang::Core::Threading::ScopeLocker locker(mutex);
-		delta.Update();
-		Update(delta.Delta());
-		Draw();
-	}
-
-	ReleaseResources();
-
-	{ang::Core::Threading::ScopeLocker locker(mutex);
-	renderAsyncAction = nullptr;
-	cond.Signal(mutex);
-	}
-}
-
-ang::Bool CProjectManager::InitDriver(Platform::ICoreView* view)
-{
-	using namespace ang;
-
-	if (driver.IsPointerEmpty())
-	{
-		if (!Drawing::DriverFactory::CreateGraphDriver(Drawing::GraphDriverType::DirectX, view, &driver))
-			return false;
-		context = driver->Context();
-		surface = driver->Surface();
-		context->BindRenderTarget(surface->RenderTarget());
-		resourceManager = new Engine::Resources::ResourceManager(driver);
-	}
-	else
-	{
-		context = driver->Context();
-		surface = nullptr;
-		if (!driver->CreateSurface(view, &surface))
-			return false;
-		driver->MakeCurrent(surface);
-		context->BindRenderTarget(surface->RenderTarget());
-	}
-
-	return true;
-}
-
-ang::Bool CProjectManager::DestroyDriver()
-{
-	using namespace ang;
-	Core::Threading::ScopeLocker locker(mutex);
-	camera = nullptr;
-
-	surface = nullptr;
-	context = nullptr;
-	driver = nullptr;
-	return true;
-}
-
-void CProjectManager::Update(ang::Float delta)
-{
-	using namespace ang;
-
-}
-
-void CProjectManager::Draw()
-{
-	using namespace ang;
-	context->BindToCurrentThread();
-
-	context->BindRenderTarget(surface->RenderTarget());
-	context->ClearRenderTarget({ 0.0f,0.2f,0.4f,1 });
-
-
-	surface->SwapBuffers();
-}
-
-void CProjectManager::LoadResources()
-{
-	//resourceManager->Load();
-
-}
-
-void CProjectManager::ReleaseResources()
-{
-
-}
+//
+//bool CProjectManager::BeginRendering(Platform::ICoreView* view)
+//{
+//	ang::Core::Threading::ScopeLocker locker(mutex);
+//
+//	if (!renderAsyncAction.IsPointerEmpty())
+//		return false;
+//
+//	if (!InitDriver(view))
+//		return false;
+//
+//	ang::Core::Threading::AsyncTask<void>::RunAsync(ang::Core::Threading::ThreadPriority::High, nullptr, this, &CProjectManager::RenderProc);
+//	cond.While(mutex, [&]()->bool { return renderAsyncAction.Get() == nullptr; });
+//	return true;
+//
+//}
+//
+//bool CProjectManager::StopRendering()
+//{
+//	ang::Core::Threading::ScopeLocker locker(mutex);
+//	if (renderAsyncAction.IsPointerEmpty())
+//		return false;
+//	renderAsyncAction->Cancel();
+//	cond.While(mutex, [&]()->bool { return !renderAsyncAction.IsPointerEmpty(); });
+//	return true;
+//}
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//void CProjectManager::RenderProc(ang::Core::Threading::IAsyncAction<void>* task, ang::Core::Events::ArgsList*)
+//{
+//	renderThread = ang::Core::Threading::Thread::CurrentThread();
+//	{ang::Core::Threading::ScopeLocker locker(mutex);
+//	renderAsyncAction = task;
+//	cond.Signal(mutex);
+//	}
+//
+//	LoadResources();
+//
+//	ang::Core::Tempus::DeltaTime delta;
+//	delta.Reset();
+//	while (task->Status() == ang::Core::Threading::AsyncActionStatus::Running)
+//	{
+//		ang::Core::Threading::ScopeLocker locker(mutex);
+//		delta.Update();
+//		Update(delta.Delta());
+//		Draw();
+//	}
+//
+//	ReleaseResources();
+//
+//	{ang::Core::Threading::ScopeLocker locker(mutex);
+//	renderAsyncAction = nullptr;
+//	cond.Signal(mutex);
+//	}
+//}
+//
+//bool CProjectManager::InitDriver(Platform::ICoreView* view)
+//{
+//	using namespace ang;
+//
+//	if (driver.IsPointerEmpty())
+//	{
+//		if (!Drawing::DriverFactory::CreateGraphDriver(Drawing::GraphDriverType::DirectX, view, &driver))
+//			return false;
+//		context = driver->Context();
+//		surface = driver->Surface();
+//		context->BindRenderTarget(surface->RenderTarget());
+//		resourceManager = new Engine::Resources::ResourceManager(driver);
+//	}
+//	else
+//	{
+//		context = driver->Context();
+//		surface = nullptr;
+//		if (!driver->CreateSurface(view, &surface))
+//			return false;
+//		driver->MakeCurrent(surface);
+//		context->BindRenderTarget(surface->RenderTarget());
+//	}
+//
+//	return true;
+//}
+//
+//bool CProjectManager::DestroyDriver()
+//{
+//	using namespace ang;
+//	Core::Threading::ScopeLocker locker(mutex);
+//	camera = nullptr;
+//
+//	surface = nullptr;
+//	context = nullptr;
+//	driver = nullptr;
+//	return true;
+//}
+//
+//void CProjectManager::Update(ang::Float delta)
+//{
+//	using namespace ang;
+//
+//}
+//
+//void CProjectManager::Draw()
+//{
+//	using namespace ang;
+//	context->BindToCurrentThread();
+//
+//	context->BindRenderTarget(surface->RenderTarget());
+//	context->ClearRenderTarget({ 0.0f,0.2f,0.4f,1 });
+//
+//
+//	surface->SwapBuffers();
+//}
+//
+//void CProjectManager::LoadResources()
+//{
+//	//resourceManager->Load();
+//
+//}
+//
+//void CProjectManager::ReleaseResources()
+//{
+//
+//}

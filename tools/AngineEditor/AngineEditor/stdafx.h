@@ -75,4 +75,47 @@ using ang::max;
 #endif
 #endif
 
+ANG_REGISTER_RUNTIME_TYPENAME(CObject)
+ANG_REGISTER_RUNTIME_TYPENAME(CMFCPropertyGridProperty);
 
+namespace ang
+{
+	namespace interop
+	{
+#ifdef UNICODE
+		template<> inline ang::cwstr_t string_cast<ang::cwstr_t, CString>(CString text) {
+			return ang::cwstr_t(text.GetBuffer(), text.GetLength());
+		}
+#else
+		template<> inline ang::cstr_t string_cast<ang::cstr_t, CString>(CString text) {
+			return ang::cstr_t(text.GetBuffer(), text.GetLength());
+		}
+#endif
+
+		template<> inline ang::string string_cast<ang::string>(CString text) {
+			return ang::cwstr_t(text.GetBuffer(), text.GetLength());
+		}
+
+		template<> inline ang::wstring string_cast<ang::wstring>(CString text) {
+			return ang::cwstr_t(text.GetBuffer(), text.GetLength());
+		}
+
+		template<> inline CString string_cast<CString>(ang::cstr_t cstr) {
+			return CString(cstr.cstr(), cstr.size());
+		}
+
+		template<> inline CString string_cast<CString>(ang::cwstr_t cstr) {
+			return CString(cstr.cstr(), cstr.size());
+		}
+
+		template<> inline CString string_cast<CString>(ang::string text) {
+			auto cstr = (ang::cstr_t)text;
+			return CString(cstr.cstr(), cstr.size());
+		}
+
+		template<> inline CString string_cast<CString>(ang::wstring text) {
+			auto cstr = (ang::cwstr_t)text;
+			return CString(cstr.cstr(), cstr.size());
+		}
+	}
+}

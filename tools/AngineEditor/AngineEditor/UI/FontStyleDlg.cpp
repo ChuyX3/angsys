@@ -114,7 +114,7 @@ void CFontStyleDlg::UpdateSampleTextFont()
 		lf.lfItalic = m_bItalic;
 		lf.lfCharSet = ANSI_CHARSET;
 		lf.lfQuality = ANTIALIASED_QUALITY;
-		ang::StringOperation::CopyW(lf.lfFaceName, 32, m_strFontName.GetBuffer());
+		ang::strings::algorithms::string_copy(lf.lfFaceName, m_strFontName.GetBuffer(), 32);
 
 		m_sampleTextFont.CreateFontIndirectW(&lf);
 

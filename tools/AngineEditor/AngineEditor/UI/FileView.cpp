@@ -93,67 +93,44 @@ void CFileView::OnSize(UINT nType, int cx, int cy)
 	AdjustLayout();
 }
 
-void CFileView::FillFileView(ang::xml::xml_document_t xmlDoc)
+void CFileView::FillFileView(AngineEditor::filesystem::folder_t folder)
 {
 	using namespace ang;
-	using namespace ang::xml;
 
-	if (xmlDoc == nullptr)
+	if (folder.is_empty())
 		return;
-	IntfPtr<XmlFinder> finder = new XmlFinder(xmlDoc->XmlRoot());
-
-	auto project_name_pos = finder->FindFirst("project_name");
-
+	auto path = folder->path();
 	HTREEITEM hRoot = m_wndFileView.InsertItem(TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM,
-		project_name_pos->XmlValue().As<CWStr>(), 0, 0, 0U, 0U, (LPARAM)(xml_node_t)project_name_pos, nullptr, nullptr);
+		path->cstr(), 0, 0, 0U, 0U, (LPARAM)folder.get(), nullptr, nullptr);
 
-	auto files_iterator = finder->FindFirst("filters");
-	if (files_iterator->XmlChildren() != nullptr)
-	{
-		for (auto files_element = files_iterator->XmlChildren()->Begin(); files_element.IsValid(); ++files_element)
-		{
-			if (files_element->XmlIsTypeOf(ang::xml::XmlType::Element))
-			{
-				AddElement((xml::xml_node_t)files_element, hRoot);
-			}
-		}
-	}
+	for (auto item : folder->folders())
+		AddElement(item, hRoot);
+
+	for (auto item : folder->files())
+		AddElement(item, hRoot);	
 }
 
-void CFileView::AddElement(ang::xml::xml_node_t node, HTREEITEM parent)
+void CFileView::AddElement(AngineEditor::filesystem::folder_t folder, HTREEITEM parent)
 {
 	using namespace ang;
-	using namespace ang::xml;
+	auto path = folder->path();
+	HTREEITEM thisItme = m_wndFileView.InsertItem(TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM,
+		path->cstr(), 0, 0, 0U, 0U, (LPARAM)path.get(), parent, nullptr);
 
-	if (StringOperation::CompareW(node->XmlName().As<CWStr>(), L"folder") == 0)
-	{
-		xml::XmlValue name = node->XmlAttributeFinder()["name"];
-		if (!name.IsEmpty())
-		{
-			HTREEITEM thisItme = m_wndFileView.InsertItem(TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM,
-				name.As<CWStr>(), 0, 0, 0U, 0U, (LPARAM)node, parent, nullptr);
+	for (auto item : folder->folders())
+		AddElement(item, thisItme);
 
-			if (node->XmlChildren() != nullptr)
-			{
-				for (auto element = node->XmlChildren()->Begin(); element.IsValid(); ++element)
-				{
-					if (element->XmlIsTypeOf(XmlType::Element))
-					{
-						AddElement((ang::xml::xml_node_t)element, thisItme);
-					}
-				}
-			}
-			
-		}
-	}
-	else if (StringOperation::CompareW(node->XmlName().As<CWStr>(), L"file") == 0)
-	{
-		xml::XmlValue name = node->XmlValue();
-		if (!name.IsEmpty())
-			m_wndFileView.InsertItem(TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM,
-				name.As<CWStr>(), 2, 2, 0U, 0U, (LPARAM)node, parent, nullptr);
-	}
-		
+	for (auto item : folder->files())
+		AddElement(item, thisItme);
+}
+
+
+void CFileView::AddElement(AngineEditor::filesystem::file_t file, HTREEITEM parent)
+{
+	using namespace ang;
+	auto path = ang::move(file->name_ext());
+	HTREEITEM thisItme = m_wndFileView.InsertItem(TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM,
+		path->cstr(), 0, 0, 0U, 0U, (LPARAM)path.get(), parent, nullptr);
 }
 
 void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
@@ -190,9 +167,9 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 	tvItem.mask = TVIF_PARAM;
 	tvItem.hItem = hSelectedItem;
 	pWndTree->GetItem(&tvItem);
-	auto node = reinterpret_cast<ang::xml::xml_node_t>(tvItem.lParam);
-
-	if (node != nullptr && ang::StringOperation::CompareW(node->XmlName().As<ang::CWStr>(), L"file") == 0)
+	ang::objptr node = reinterpret_cast<ang::object*>(tvItem.lParam);
+	AngineEditor::filesystem::file_t file;
+	if (!node.is_empty() && ang::interface_cast<AngineEditor::filesystem::file>(node.get(), file))
 	{
 		theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
 		return;
@@ -266,7 +243,8 @@ void CFileView::OnFileOpen()
 	tvItem.mask = TVIF_PARAM;
 	tvItem.hItem = hSelectedItem;
 	m_wndFileView.GetItem(&tvItem);
-	auto node = reinterpret_cast<ang::xml::xml_node_t>(tvItem.lParam);
+	MessageBoxW(TEXT("TODO:"));
+	/*auto node = reinterpret_cast<ang::xml::xml_node_t>(tvItem.lParam);
 
 	if (node != nullptr && ang::StringOperation::CompareW(node->XmlName().As<ang::CWStr>(), L"file") == 0)
 	{
@@ -279,7 +257,7 @@ void CFileView::OnFileOpen()
 			
 		}
 		CAngineEditorApp::Instance()->OpenDocumentFileEx(path, type);
-	}	
+	}	*/
 }
 
 void CFileView::OnFileOpenWith()

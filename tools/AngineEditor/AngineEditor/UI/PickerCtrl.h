@@ -44,9 +44,9 @@ public:
 	BOOL Enable(BOOL bEnable = TRUE);
 
 public:
-	AngineEditor::mfc_event<CPickerCtrl> buttonClickedEvent;
-	AngineEditor::mfc_event<CPickerCtrl> pickerControlSelChangeEvent;
-	AngineEditor::mfc_event<CPickerCtrl> pickerControlTextChangeEvent;
+	ang::core::delegates::listener<void(CObject*, ang::var_args_t)> buttonClickedEvent;
+	ang::core::delegates::listener<void(CObject*, ang::var_args_t)> pickerControlSelChangeEvent;
+	ang::core::delegates::listener<void(CObject*, ang::var_args_t)> pickerControlTextChangeEvent;
 
 	virtual void AdjustLayout();
 

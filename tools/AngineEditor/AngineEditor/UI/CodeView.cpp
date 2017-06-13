@@ -88,7 +88,7 @@ void CCodeView::OnInitialUpdate()
 
 	m_wndLexerCtrl.Init();
 	CString path = GetDocument()->GetPathName();
-	m_wndLexerCtrl.LoadFile(path);
+	m_wndLexerCtrl.LoadFile(ang::interop::string_cast<ang::cwstr_t>(path));
 
 
 	//m_wndLexerCtrl.SetFontName(STYLE_DEFAULT, L"Consoles");
@@ -387,12 +387,12 @@ void CCodeView::OnFileSave()
 	if (dlg.DoModal() == IDOK)
 	{
 		auto style = dlg.GetFontInfo();
-		m_wndLexerCtrl.SetFontName(styleIdx, style.strFontName.Data());	
+		m_wndLexerCtrl.SetFontName(styleIdx, style.strFontName);	
 		m_wndLexerCtrl.SetFontHeight(styleIdx, style.nFontSize);
 		m_wndLexerCtrl.SetBold(styleIdx, style.bBold);
 		m_wndLexerCtrl.SetItalic(styleIdx, style.bItalic);
-		m_wndLexerCtrl.SetForeground(styleIdx, style.nForegroundColor.ColorRef());
-		m_wndLexerCtrl.SetBackground(styleIdx, style.nBackgroundColor.ColorRef());
+		m_wndLexerCtrl.SetForeground(styleIdx, style.nForegroundColor.code);
+		m_wndLexerCtrl.SetBackground(styleIdx, style.nBackgroundColor.code);
 		//m_wndLexerCtrl.SetUnderline(styleIdx, style.bUnderline);
 	}
 

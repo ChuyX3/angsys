@@ -4,13 +4,14 @@
 #include "stdafx.h"
 #include "AngineEditor.h"
 #include "UI/XmlFileDoc.h"
-#include <Tempus.h>
-#include <StreamBuffer.h>
+//#include <Tempus.h>
+//#include <StreamBuffer.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
+using namespace ang;
 
 // CXmlFileDoc
 
@@ -18,7 +19,7 @@ IMPLEMENT_DYNCREATE(CXmlFileDoc, CDocument)
 
 CXmlFileDoc::CXmlFileDoc()
 {
-	xmlDoc = new ang::xml::XmlDocument();
+	xmlDoc = new ang::xml::xml_document();
 }
 
 BOOL CXmlFileDoc::OnNewDocument()
@@ -67,37 +68,32 @@ void CXmlFileDoc::Serialize(CArchive& ar)
 	if (ar.IsLoading())
 	{
 		//loading code here
+		wsize size = ar.GetFile()->GetLength();
+		ang::mstring code = ""_sm;
+		code->realloc(size, false);
+		auto ptr = code->map_buffer(0, size);
+		code->unmap_buffer(ptr, ar.GetFile()->Read(ptr, size));
 
-		ang::IntfPtr<ang::IBuffer> buffer = ang::Buffer::NewBuffer((ang::WSizeT)ar.GetFile()->GetLength() + 1);
-		ar.GetFile()->Read(buffer->BufferPtr(), buffer->BufferSize() - 1);
-		ang::MString code;
-		code.Set(buffer.Get());
 		try {
-			xmlDoc->Load(code);
+			xmlDoc->parse(code);
 		}
-		catch (ang::Exception const& e)
+		catch (ang::exception_t e)
 		{
-			TRACE(e.What());
+			//TRACE(e.What());
 		}
 	}
 	else
 	{
 		//storing code here
-		ang::Streams::TextBufferOutputStream stream;
-		stream.IsAutoAllocable(true);
-		stream.EnableTextFormating(false);
-		stream.TextEncoding(ang::Text::TextEncoding::Utf8);
+		ang::wstring code;
 		try {
-			ang::Core::Tempus::DeltaTime delta;
-			delta.Reset();
-			xmlDoc->Save(stream);
-			//mtext = text;
-			delta.Update();
-			ar.Write(stream.BufferInterface()->BufferPtr(), stream.Position());
+			xmlDoc->xml_tree()->xml_print(code, xml::xml_format::fix_entity + xml::xml_format::wrap_text_space);
+			mstring mtext = code;
+			ar.Write(mtext->cstr().get(), mtext->size());
 		}
-		catch (ang::Exception const& e)
+		catch (ang::exception_t e)
 		{
-			TRACE(e.What());
+			//TRACE(e.What());
 		}
 	}
 }
