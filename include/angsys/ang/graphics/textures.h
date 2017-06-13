@@ -73,5 +73,8 @@ template<> inline ang::graphics::textures::tex_type_t ang::xml::xml_value::as<an
 template<> inline ang::graphics::textures::tex_format_t ang::xml::xml_value::as<ang::graphics::textures::tex_format_t>()const { return ang::graphics::textures::tex_format_t::parse(as<cwstr_t>()); }
 template<> inline ang::graphics::textures::tex_wrap_mode_t ang::xml::xml_value::as<ang::graphics::textures::tex_wrap_mode_t>()const { return ang::graphics::textures::tex_wrap_mode_t::parse(as<cwstr_t>()); }
 
+ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::textures::tex_type_t)
+ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::textures::tex_format_t)
+ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::textures::tex_wrap_mode_t)
 
 #endif//__ANGRAPH_TEXTURES_H__

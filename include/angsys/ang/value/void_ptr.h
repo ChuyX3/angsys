@@ -193,6 +193,8 @@ namespace ang
 		inline operator type ()const;
 		inline pointer operator * ()const;
 	};
+
+	inline value<void*> operator ""_ptr(unsigned long long val) { return value<void*>(reinterpret_cast<void*>(val)); }
 }
 
 #include<ang/value/inline/void_ptr.hpp>

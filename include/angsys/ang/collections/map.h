@@ -165,10 +165,10 @@ namespace ang
 			inline iterator<pair<K, T>> find(const K&)const override;
 
 		private:
-			inline iterator<pair<K, T>> find_index(index idx)const override { return iterator_t(this, null); }
+			inline iterator<pair<K, T>> find_index(index idx)const override { return iterator_t(const_cast<map_data<K, T>*>(this), null); }
 			inline index index_of(iterator<pair<K, T>> it)const override { return -1; }
-			inline iterator<pair<K, T>> find(const pair<K, T>&, bool)const override { return iterator_t(this, null); }
-			inline iterator<pair<K, T>> find(const pair<K, T>&, iterator<pair<K, T>>, bool)const override { return iterator_t(this, null); }
+			inline iterator<pair<K, T>> find(const pair<K, T>&, bool)const override { return iterator_t(const_cast<map_data<K, T>*>(this), null); }
+			inline iterator<pair<K, T>> find(const pair<K, T>&, iterator<pair<K, T>>, bool)const override { return iterator_t(const_cast<map_data<K,T>*>(this), null); }
 
 		public: //overrides
 			inline static type_name_t class_name();

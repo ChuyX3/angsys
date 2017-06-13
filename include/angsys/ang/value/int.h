@@ -197,6 +197,8 @@ namespace ang
 		inline value<int const> const& operator * ()const;
 		inline explicit operator pointer()const { return (void*)get(); }
 	};
+
+	inline value<int> operator ""_i (unsigned long long val) { return value<int>(static_cast<int>(val)); }
 }
 
 #include<ang/value/inline/int.hpp>

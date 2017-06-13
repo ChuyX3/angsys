@@ -197,6 +197,9 @@ namespace ang
 		inline value<ushort const> const& operator * ()const;
 		inline explicit operator pointer()const { return (void*)get(); }
 	};
+
+	inline value<ushort> operator ""_us(unsigned long long val) { return value<ushort>(static_cast<ushort>(val)); }
+	inline value<ushort> operator ""_usi(unsigned long long val) { return value<ushort>(static_cast<ushort>(val)); }
 }
 
 #include<ang/value/inline/ushort.hpp>

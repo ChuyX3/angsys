@@ -394,6 +394,12 @@ namespace ang
 		inline value<long64 const> const& operator * ()const;
 		inline explicit operator pointer()const { return (void*)get(); }
 	};
+
+
+	inline value<long> operator ""_l(unsigned long long val) { return value<long>(static_cast<long>(val)); }
+	inline value<long> operator ""_li(unsigned long long val) { return value<long>(static_cast<long>(val)); }
+	inline value<long64> operator ""_ll(unsigned long long val) { return value<long64>(static_cast<long64>(val)); }
+	inline value<long64> operator ""_lli(unsigned long long val) { return value<long64>(static_cast<long64>(val)); }
 }
 
 #include<ang/value/inline/long.hpp>

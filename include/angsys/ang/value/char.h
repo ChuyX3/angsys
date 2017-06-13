@@ -654,6 +654,11 @@ namespace ang
 	inline cwstr_t operator "" _s(const wchar* str, unsigned int sz) { return cwstr_t(str, sz); }
 	inline cmstr_t operator "" _sm(const char* str, unsigned int sz) { return cmstr_t((mchar const*)str, sz); }
 
+	inline value<char> operator ""_ac(unsigned long long val) { return value<char>(static_cast<char>(val)); }
+	inline value<byte> operator ""_mc(unsigned long long val) { return value<byte>(static_cast<byte>(val)); }
+	inline value<mchar> operator ""_b(unsigned long long val) { return value<mchar>(static_cast<mchar>(val)); }
+	inline value<wchar> operator ""_wc(unsigned long long val) { return value<wchar>(static_cast<wchar>(val)); }
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 

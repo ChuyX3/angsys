@@ -67,6 +67,12 @@ namespace ang
 			public: //Methods
 				void update();
 				void reset();
+
+				template<class F>
+				inline void tick(F f) {
+					update();
+					f(delta(), total());
+				}
 			};
 
 		}

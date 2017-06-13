@@ -341,6 +341,18 @@ namespace ang
 		}
 
 		template<typename new_t, typename old_t>
+		inline bool interface_cast(old_t* _old, object_wrapper<new_t>& _new) {
+			_new = runtime_type_builder<old_t>::template interface_cast<new_t>(_old);
+			return _new != null;
+		}
+
+		template<typename new_t, typename old_t>
+		inline bool interface_cast(old_t* _old, intf_wrapper<new_t>& _new) {
+			_new = runtime_type_builder<old_t>::template interface_cast<new_t>(_old);
+			return _new != null;
+		}
+
+		template<typename new_t, typename old_t>
 		inline bool interface_cast(const old_t* _old, const new_t*& _new) {
 			_new = runtime_type_builder<old_t>::template interface_cast<new_t>(const_cast<old_t*>(_old));
 			return _new != null;

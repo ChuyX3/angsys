@@ -391,6 +391,11 @@ namespace ang
 		inline value<ulong64 const> const& operator * ()const;
 		inline explicit operator pointer()const { return (void*)get(); }
 	};
+
+	inline value<ulong> operator ""_ul(unsigned long long val) { return value<ulong>(static_cast<ulong>(val)); }
+	inline value<ulong> operator ""_uli(unsigned long long val) { return value<ulong>(static_cast<ulong>(val)); }
+	inline value<ulong64> operator ""_ull(unsigned long long val) { return value<ulong64>(static_cast<ulong>(val)); }
+	inline value<ulong64> operator ""_ulli(unsigned long long val) { return value<ulong64>(static_cast<ulong>(val)); }
 }
 
 #include<ang/value/inline/ulong.hpp>

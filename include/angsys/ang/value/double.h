@@ -197,6 +197,9 @@ namespace ang
 		inline value<double const> const& operator * ()const;
 		inline explicit operator pointer()const { return (void*)get(); }
 	};
+
+	inline value<double> operator ""_lf(long double val) { return value<double>(static_cast<double>(val)); }
+	inline value<double> operator ""_lf(unsigned long long val) { return value<double>(static_cast<double>(val)); }
 }
 
 #include <ang/value/inline/double.hpp>

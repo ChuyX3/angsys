@@ -17,7 +17,7 @@ namespace ang
 			float4& operator = (float4&&) = default;
 
 			inline float4();
-			inline float4(float val);
+			inline explicit float4(float val);
 			inline float4(float3 const& xyz, float w =  0);
 			inline float4(float x, float y, float z, float w);
 			inline float4(const float4&);

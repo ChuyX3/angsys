@@ -197,6 +197,9 @@ namespace ang
 		inline value<float const> const& operator * ()const;
 		inline explicit operator pointer()const { return (void*)get(); }
 	};
+
+	inline value<float> operator ""_f(long double val) { return value<float>(static_cast<float>(val)); }
+	inline value<float> operator ""_f(unsigned long long val) { return value<float>(static_cast<float>(val)); }
 }
 
 #include <ang/value/inline/float.hpp>

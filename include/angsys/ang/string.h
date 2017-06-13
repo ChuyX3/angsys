@@ -978,12 +978,18 @@ namespace ang
 
 	template<wsize N>inline string& string::operator=(const wchar(&ar)[N]) { return string::operator=(cwstr_t(ar, N - 1)); }
 	template<wsize N>inline string& string::operator=(const char(&ar)[N]) { return string::operator=(cstr_t(ar, N - 1)); }
+	template<wsize N>inline string& string::operator+=(const wchar(&ar)[N]) { return string::operator+=(cwstr_t(ar, N - 1)); }
+	template<wsize N>inline string& string::operator+=(const char(&ar)[N]) { return string::operator+=(cstr_t(ar, N - 1)); }
 
 	template<wsize N>inline wstring& wstring::operator=(const wchar(&ar)[N]) { return wstring::operator=(cwstr_t(ar, N - 1)); }
 	template<wsize N>inline wstring& wstring::operator=(const char(&ar)[N]) { return wstring::operator=(cstr_t(ar, N - 1)); }
+	template<wsize N>inline wstring& wstring::operator+=(const wchar(&ar)[N]) { return wstring::operator+=(cwstr_t(ar, N - 1)); }
+	template<wsize N>inline wstring& wstring::operator+=(const char(&ar)[N]) { return wstring::operator+=(cstr_t(ar, N - 1)); }
 
 	template<wsize N>inline mstring& mstring::operator=(const wchar(&ar)[N]) { return mstring::operator=(cwstr_t(ar, N - 1)); }
 	template<wsize N>inline mstring& mstring::operator=(const char(&ar)[N]) { return mstring::operator=(cstr_t(ar, N - 1)); }
+	template<wsize N>inline mstring& mstring::operator+=(const wchar(&ar)[N]) { return mstring::operator+=(cwstr_t(ar, N - 1)); }
+	template<wsize N>inline mstring& mstring::operator+=(const char(&ar)[N]) { return mstring::operator+=(cstr_t(ar, N - 1)); }
 
 
 	template<wsize N>

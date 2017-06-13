@@ -58,7 +58,7 @@ template<typename T>
 inline ang::collections::vector_buffer<T>::vector_buffer(const ang::collections::vector_buffer<T>* ar)
 	: vector_buffer()
 {
-	if (ar) copy(*static_cast<const ienum_t*>(ar));
+	if (ar) copy(static_cast<const ienum_t*>(ar));
 }
 
 template<typename T>

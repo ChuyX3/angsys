@@ -494,7 +494,7 @@ namespace ang
 
 ANG_REGISTER_RUNTIME_TYPENAME(ang::safe_pointer);
 
-#ifdef _MANAGED //Microsoft CLR
+
 namespace ang
 {
 	namespace interop
@@ -502,6 +502,7 @@ namespace ang
 		template<class To, class From>
 		To string_cast(From);
 
+#ifdef _MANAGED //Microsoft CLR
 		template<> inline ang::string string_cast<ang::string>(System::String^ text) {
 			// convert .NET System::String to std::string
 			const char* cstr = (const char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(text)).ToPointer();
@@ -535,10 +536,10 @@ namespace ang
 			auto cstr = (ang::cwstr_t)text;
 			return gcnew System::String(cstr.cstr(), 0, cstr.size());
 		}
-
+#endif
 	}
 }
-#endif
+
 
 
 #endif //__ANGSYS_H__

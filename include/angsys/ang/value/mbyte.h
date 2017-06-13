@@ -100,7 +100,7 @@ namespace ang
 		byte const& operator [] (int idx)const { return _value.bytes[idx]; }
 	};
 
-
+	inline value<mbyte> operator ""_mb(unsigned long long val) { return value<mbyte>(static_cast<wchar>(val)); }
 }
 
 #include <ang/value/inline/mbyte.hpp>
