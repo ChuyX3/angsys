@@ -1003,7 +1003,7 @@ uint wstring_buffer::sub_string(wstr_t out, collections::iterator<wchar> start, 
 
 uint wstring_buffer::sub_string(wstring& out, collections::iterator<wchar> start, collections::iterator<wchar> end)const
 {
-	if (is_empty() || end.is_valid() || start.is_valid() || end.offset() <= start.offset())
+	if (is_empty() || !end.is_valid() || !start.is_valid() || end.offset() <= start.offset())
 		return 0;
 
 	if (out.is_empty())
@@ -1022,7 +1022,7 @@ uint wstring_buffer::sub_string(wstring& out, collections::iterator<wchar> start
 
 uint wstring_buffer::sub_string(wstr_t out, collections::iterator<wchar> start, collections::iterator<wchar> end)const
 {
-	if (is_empty() || end.is_valid() || start.is_valid() || end.offset() <= start.offset())
+	if (is_empty() || !end.is_valid() || !start.is_valid() || end.offset() <= start.offset())
 		return 0;
 	return string_substr<wchar, wchar>(cstr(), length(), out, start.offset(), end.offset() - start.offset());
 }
@@ -1055,7 +1055,7 @@ uint wstring_buffer::sub_string(str_t out, collections::iterator<wchar> start, u
 
 uint wstring_buffer::sub_string(string& out, collections::iterator<wchar> start, collections::iterator<wchar> end)const
 {
-	if (is_empty() || end.is_valid() || start.is_valid() || end.offset() <= start.offset())
+	if (is_empty() || !end.is_valid() || !start.is_valid() || end.offset() <= start.offset())
 		return 0;
 
 	if (out.is_empty())
@@ -1074,7 +1074,7 @@ uint wstring_buffer::sub_string(string& out, collections::iterator<wchar> start,
 
 uint wstring_buffer::sub_string(str_t out, collections::iterator<wchar> start, collections::iterator<wchar> end)const
 {
-	if (is_empty() || end.is_valid() || start.is_valid() || end.offset() <= start.offset())
+	if (is_empty() || !end.is_valid() || !start.is_valid() || end.offset() <= start.offset())
 		return 0;
 	return string_substr<wchar, char>(cstr(), length(), out, start.offset(), end.offset() - start.offset());
 }
