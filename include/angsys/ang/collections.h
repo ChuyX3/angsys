@@ -36,6 +36,7 @@ namespace ang
 		public:
 			iterator(iterator&&);
 			iterator(const iterator&);
+			iterator(uint offset); //from index
 			iterator(ienum<T>* = null, position_t cur = null, uint offset = 0U);
 			~iterator();
 

@@ -732,8 +732,6 @@ uint string_buffer::replace(cstr_t cstr, collections::iterator<char> beg, collec
 
 	uint l1 = length();
 	uint l2 = cstr.size();
-	if (l2 == 0)
-		return 0;
 
 	if (end.offset() > l1)
 		end.offset(l1);
@@ -849,8 +847,6 @@ uint string_buffer::replace(cwstr_t cstr, collections::iterator<char> beg, colle
 
 	uint l1 = length();
 	uint l2 = cstr.size();
-	if (l2 == 0)
-		return 0;
 
 	if (end.offset() > l1)
 		end.offset(l1);
@@ -984,15 +980,19 @@ uint string_buffer::sub_string(string& out, collections::iterator<char> start, u
 	if (out.is_empty())
 		out = new string_buffer();
 
+	auto l1 = length();
+	if (count > l1 || (count + start.offset()) > l1)
+		count = l1 - start.offset();
+
 	if (!out->realloc(count, false))
 		return 0;
 
 	string_buffer* buffer = out.get();
 
 	if (buffer->is_local_data())
-		return (buffer->_data._local_size = (ushort)string_substr<char, char>(cstr(), length(), buffer->str(), start.offset(), count));
+		return (buffer->_data._local_size = (ushort)string_substr<char, char>(cstr(), l1, buffer->str(), start.offset(), count));
 	else
-		return (buffer->_data._buffer_size_used = string_substr<char, char>(cstr(), length(), buffer->str(), start.offset(), count));
+		return (buffer->_data._buffer_size_used = string_substr<char, char>(cstr(), l1, buffer->str(), start.offset(), count));
 }
 
 uint string_buffer::sub_string(str_t out, collections::iterator<char> start, uint count)const
@@ -1004,11 +1004,15 @@ uint string_buffer::sub_string(str_t out, collections::iterator<char> start, uin
 
 uint string_buffer::sub_string(string& out, collections::iterator<char> start, collections::iterator<char> end)const
 {
-	if (is_empty() || !end.is_valid() || !start.is_valid() || end.offset() <= start.offset())
+	auto l1 = length();
+	if (is_empty() || end.offset() <= start.offset() || start.offset() >= l1)
 		return 0;
 
 	if (out.is_empty())
 		out = new string_buffer();
+
+	if (end.offset() > l1)
+		end.offset(l1);
 
 	if (!out->realloc(end.offset() - start.offset(), false))
 		return 0;
@@ -1016,16 +1020,17 @@ uint string_buffer::sub_string(string& out, collections::iterator<char> start, c
 	string_buffer* buffer = out.get();
 
 	if (buffer->is_local_data())
-		return (buffer->_data._local_size = (ushort)string_substr<char, char>(cstr(), length(), buffer->str(), start.offset(), end.offset() - start.offset()));
+		return (buffer->_data._local_size = (ushort)string_substr<char, char>(cstr(), l1, buffer->str(), start.offset(), end.offset() - start.offset()));
 	else
-		return (buffer->_data._buffer_size_used = string_substr<char, char>(cstr(), length(), buffer->str(), start.offset(), end.offset() - start.offset()));
+		return (buffer->_data._buffer_size_used = string_substr<char, char>(cstr(), l1, buffer->str(), start.offset(), end.offset() - start.offset()));
 }
 
 uint string_buffer::sub_string(str_t out, collections::iterator<char> start, collections::iterator<char> end)const
 {
-	if (is_empty() || !end.is_valid() || !start.is_valid() || end.offset() <= start.offset())
+	auto l1 = length();
+	if (is_empty() || end.offset() <= start.offset() || start.offset() >= l1)
 		return 0;
-	return string_substr<char, char>(cstr(), length(), out, start.offset(), end.offset() - start.offset());
+	return string_substr<char, char>(cstr(), l1, out, start.offset(), end.offset() - start.offset());
 }
 
 uint string_buffer::sub_string(wstring& out, collections::iterator<char> start, uint count)const
@@ -1134,7 +1139,7 @@ void string_buffer::invert()
 
 void string_buffer::invert(collections::iterator<char> b, collections::iterator<char> e)
 {
-	if (is_empty() || !e.is_valid() || !b.is_valid() 
+	if (is_empty() || !e.is_valid() || !b.is_valid()
 		|| (length() <= e.offset()) || (e.offset() <= b.offset()))
 		return;
 
@@ -1193,13 +1198,13 @@ array<string> string_buffer::split(char val)const
 	if (end == invalid_index)
 		return array<string>({cstr()});
 	
-	do {	
+	do {
 		if (_word.is_empty()) _word = new string_buffer();
 		_word->realloc(end - beg, false);
 		string_substr<char, char>(cstr(), l, _word->str(), beg, end - beg);
 		if (_word->length() > 0)
 		{
-			list->append(_word.get() , true);
+			list->append(_word.get(), true);
 			_word = null;
 		}
 		beg = end + 1;

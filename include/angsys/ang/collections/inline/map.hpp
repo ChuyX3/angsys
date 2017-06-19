@@ -2581,26 +2581,18 @@ inline ang::object_wrapper<ang::collections::map_data<K, T>>::operator ang::coll
 template<typename K, typename T>
 inline T& ang::object_wrapper<ang::collections::map_data<K, T>>::operator [] (K const& key)
 {
-#ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-#endif
 	auto it = get()->find(key);
-#ifdef DEBUG_SAFE_CODE
 	if (!it.is_valid()) throw(exception_t(except_code::array_overflow));
-#endif
 	return it->value();
 }
 
 template<typename K, typename T>
 inline T ang::object_wrapper<ang::collections::map_data<K, T>>::operator [] (K const& key)const
 {
-#ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-#endif
 	auto it = get()->find(key);
-#ifdef DEBUG_SAFE_CODE
 	if (!it.is_valid()) throw(exception_t(except_code::array_overflow));
-#endif
 	return it->value();
 }
 
@@ -2783,52 +2775,36 @@ inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator
 template<typename T>
 inline T& ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator [] (ang::cstr_t key)
 {
-#ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-#endif
 	auto it = get()->find(key);
-#ifdef DEBUG_SAFE_CODE
 	if (!it.is_valid()) throw(exception_t(except_code::array_overflow));
-#endif
 	return it->value();
 }
 
 template<typename T>
 inline T& ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator [] (ang::cwstr_t key)
 {
-#ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-#endif
 	auto it = get()->find(key);
-#ifdef DEBUG_SAFE_CODE
 	if (!it.is_valid()) throw(exception_t(except_code::array_overflow));
-#endif
 	return it->value();
 }
 
 template<typename T>
 inline T ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator [] (ang::cstr_t key)const
 {
-#ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-#endif
 	auto it = get()->find(key);
-#ifdef DEBUG_SAFE_CODE
 	if (!it.is_valid()) throw(exception_t(except_code::array_overflow));
-#endif
 	return it->value();
 }
 
 template<typename T>
 inline T ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator [] (ang::cwstr_t key)const
 {
-#ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-#endif
 	auto it = get()->find(key);
-#ifdef DEBUG_SAFE_CODE
 	if (!it.is_valid()) throw(exception_t(except_code::array_overflow));
-#endif
 	return it->value();
 }
 
@@ -3011,52 +2987,36 @@ inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operato
 template<typename T>
 inline T& ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator [] (ang::cstr_t key)
 {
-#ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-#endif
 	auto it = get()->find(key);
-#ifdef DEBUG_SAFE_CODE
 	if (!it.is_valid()) throw(exception_t(except_code::array_overflow));
-#endif
 	return it->value();
 }
 
 template<typename T>
 inline T& ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator [] (ang::cwstr_t key)
 {
-#ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-#endif
 	auto it = get()->find(key);
-#ifdef DEBUG_SAFE_CODE
 	if (!it.is_valid()) throw(exception_t(except_code::array_overflow));
-#endif
 	return it->value();
 }
 
 template<typename T>
 inline T ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator [] (ang::cstr_t key)const
 {
-#ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-#endif
 	auto it = get()->find(key);
-#ifdef DEBUG_SAFE_CODE
 	if (!it.is_valid()) throw(exception_t(except_code::array_overflow));
-#endif
 	return it->value();
 }
 
 template<typename T>
 inline T ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator [] (ang::cwstr_t key)const
 {
-#ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-#endif
 	auto it = get()->find(key);
-#ifdef DEBUG_SAFE_CODE
 	if (!it.is_valid()) throw(exception_t(except_code::array_overflow));
-#endif
 	return it->value();
 }
 

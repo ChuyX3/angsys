@@ -389,15 +389,15 @@ namespace ang
 
 	public: //properties
 		object_wrapper<T> lock() {
-			_obj = safe_pointer::lock<object>();
+			auto _obj = safe_pointer::lock<object>();
 			return static_cast<T*>(_obj.get());
 		}
 
-		weak_ptr& operator = (object_wrapper<T> obj) { return safe_pointer::operator=(obj.get()); }
-		weak_ptr& operator = (T* obj) { return safe_pointer::operator=(obj); }
-		weak_ptr& operator = (weak_ptr&& other) { return safe_pointer::operator=(other); }
-		weak_ptr& operator = (weak_ptr const& other) { return safe_pointer::operator=(other); }
-		weak_ptr& operator = (ang::nullptr_t const&) { return safe_pointer::operator=(null); }
+		weak_ptr& operator = (object_wrapper<T> obj) { safe_pointer::operator=(obj.get()); return *this; }
+		weak_ptr& operator = (T* obj) { safe_pointer::operator=(obj);  return *this; }
+		weak_ptr& operator = (weak_ptr&& other) { safe_pointer::operator=(other); return *this; }
+		weak_ptr& operator = (weak_ptr const& other) { safe_pointer::operator=(other);  return *this; }
+		weak_ptr& operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }
 	};
 
 
@@ -500,10 +500,10 @@ namespace ang
 	namespace interop
 	{
 		template<class To, class From>
-		To string_cast(From);
+		To string_cast(From const&);
 
 #ifdef _MANAGED //Microsoft CLR
-		template<> inline ang::string string_cast<ang::string>(System::String^ text) {
+		template<> inline ang::string string_cast<ang::string>(System::String^ const& text) {
 			// convert .NET System::String to std::string
 			const char* cstr = (const char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(text)).ToPointer();
 			ang::string sstr = ang::cstr_t(cstr, text->Length);
@@ -511,7 +511,7 @@ namespace ang
 			return ang::move(sstr);
 		}
 
-		template<> inline ang::wstring string_cast<ang::wstring>(System::String^ text) {
+		template<> inline ang::wstring string_cast<ang::wstring>(System::String^ const& text) {
 			// convert .NET System::String to std::string
 			const wchar_t* cstr = (const wchar_t*)(System::Runtime::InteropServices::Marshal::StringToHGlobalUni(text)).ToPointer();
 			ang::wstring sstr = ang::cwstr_t(cstr, text->Length);
@@ -519,20 +519,20 @@ namespace ang
 			return ang::move(sstr);
 		}
 
-		template<> inline System::String^ string_cast<System::String^>(ang::cstr_t cstr) {
+		template<> inline System::String^ string_cast<System::String^>(ang::cstr_t const& cstr) {
 			return gcnew System::String(cstr.cstr(), 0, cstr.size());
 		}
 
-		template<> inline System::String^ string_cast<System::String^>(ang::cwstr_t cstr) {
+		template<> inline System::String^ string_cast<System::String^>(ang::cwstr_t const& cstr) {
 			return gcnew System::String(cstr.cstr(), 0, cstr.size());
 		}
 
-		template<> inline System::String^ string_cast<System::String^>(ang::string text) {
+		template<> inline System::String^ string_cast<System::String^>(ang::string const& text) {
 			auto cstr = (ang::cstr_t)text;
 			return gcnew System::String(cstr.cstr(), 0, cstr.size());
 		}
 
-		template<> inline System::String^ string_cast<System::String^>(ang::wstring text) {
+		template<> inline System::String^ string_cast<System::String^>(ang::wstring const& text) {
 			auto cstr = (ang::cwstr_t)text;
 			return gcnew System::String(cstr.cstr(), 0, cstr.size());
 		}

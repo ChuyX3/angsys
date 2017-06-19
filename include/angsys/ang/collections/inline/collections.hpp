@@ -358,6 +358,15 @@ ang::collections::iterator<T>::iterator(const ang::collections::iterator<T>& it)
 }
 
 template<class T>
+ang::collections::iterator<T>::iterator(uint off)
+	: _parent(ang::null)
+	, _current(ang::null)
+	, _offset(off)
+	, _unused(0)
+{
+}
+
+template<class T>
 ang::collections::iterator<T>::iterator(ang::collections::ienum<T>* par, ang::collections::position_t cur, uint off)
 	: _parent(par)
 	, _current(cur)

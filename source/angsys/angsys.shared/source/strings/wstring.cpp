@@ -721,7 +721,6 @@ uint wstring_buffer::insert(char c, collections::iterator<wchar> _pos)
 	return l2;
 }
 
-
 uint wstring_buffer::replace(cwstr_t cstr, collections::iterator<wchar> beg, collections::iterator<wchar> end)
 {
 	if (is_empty() || cstr == null)
@@ -732,8 +731,6 @@ uint wstring_buffer::replace(cwstr_t cstr, collections::iterator<wchar> beg, col
 
 	uint l1 = length();
 	uint l2 = cstr.size();
-	if (l2 == 0)
-		return 0;
 
 	if (end.offset() > l1)
 		end.offset(l1);
@@ -849,8 +846,6 @@ uint wstring_buffer::replace(cstr_t cstr, collections::iterator<wchar> beg, coll
 
 	uint l1 = length();
 	uint l2 = cstr.size();
-	if (l2 == 0)
-		return 0;
 
 	if (end.offset() > l1)
 		end.offset(l1);
@@ -983,15 +978,19 @@ uint wstring_buffer::sub_string(wstring& out, collections::iterator<wchar> start
 	if (out.is_empty())
 		out = new wstring_buffer();
 
+	auto l1 = length();
+	if (count > l1 || (count + start.offset()) > l1)
+		count = l1 - start.offset();
+
 	if (!out->realloc(count, false))
 		return 0;
 
 	wstring_buffer* buffer = out.get();
 
 	if (buffer->is_local_data())
-		return (buffer->_data._local_size = (ushort)string_substr<wchar, wchar>(cstr(), length(), buffer->str(), start.offset(), count));
+		return (buffer->_data._local_size = (ushort)string_substr<wchar, wchar>(cstr(), l1, buffer->str(), start.offset(), count));
 	else
-		return (buffer->_data._buffer_size_used = string_substr<wchar, wchar>(cstr(), length(), buffer->str(), start.offset(), count));
+		return (buffer->_data._buffer_size_used = string_substr<wchar, wchar>(cstr(), l1, buffer->str(), start.offset(), count));
 }
 
 uint wstring_buffer::sub_string(wstr_t out, collections::iterator<wchar> start, uint count)const
@@ -1003,11 +1002,15 @@ uint wstring_buffer::sub_string(wstr_t out, collections::iterator<wchar> start, 
 
 uint wstring_buffer::sub_string(wstring& out, collections::iterator<wchar> start, collections::iterator<wchar> end)const
 {
-	if (is_empty() || !end.is_valid() || !start.is_valid() || end.offset() <= start.offset())
+	auto l1 = length();
+	if (is_empty() || end.offset() <= start.offset() || start.offset() >= l1)
 		return 0;
 
 	if (out.is_empty())
 		out = new wstring_buffer();
+
+	if (end.offset() > l1)
+		end.offset(l1);
 
 	if (!out->realloc(end.offset() - start.offset(), false))
 		return 0;
@@ -1015,16 +1018,17 @@ uint wstring_buffer::sub_string(wstring& out, collections::iterator<wchar> start
 	wstring_buffer* buffer = out.get();
 
 	if (buffer->is_local_data())
-		return (buffer->_data._local_size = (ushort)string_substr<wchar, wchar>(cstr(), length(), buffer->str(), start.offset(), end.offset() - start.offset()));
+		return (buffer->_data._local_size = (ushort)string_substr<wchar, wchar>(cstr(), l1, buffer->str(), start.offset(), end.offset() - start.offset()));
 	else
-		return (buffer->_data._buffer_size_used = string_substr<wchar, wchar>(cstr(), length(), buffer->str(), start.offset(), end.offset() - start.offset()));
+		return (buffer->_data._buffer_size_used = string_substr<wchar, wchar>(cstr(), l1, buffer->str(), start.offset(), end.offset() - start.offset()));
 }
 
 uint wstring_buffer::sub_string(wstr_t out, collections::iterator<wchar> start, collections::iterator<wchar> end)const
 {
-	if (is_empty() || !end.is_valid() || !start.is_valid() || end.offset() <= start.offset())
+	auto l1 = length();
+	if (is_empty() || end.offset() <= start.offset() || start.offset() >= l1)
 		return 0;
-	return string_substr<wchar, wchar>(cstr(), length(), out, start.offset(), end.offset() - start.offset());
+	return string_substr<wchar, wchar>(cstr(), l1, out, start.offset(), end.offset() - start.offset());
 }
 
 uint wstring_buffer::sub_string(string& out, collections::iterator<wchar> start, uint count)const
@@ -1078,7 +1082,6 @@ uint wstring_buffer::sub_string(str_t out, collections::iterator<wchar> start, c
 		return 0;
 	return string_substr<wchar, char>(cstr(), length(), out, start.offset(), end.offset() - start.offset());
 }
-
 
 void wstring_buffer::format(cwstr_t format, ...)
 {
@@ -1183,7 +1186,7 @@ array<wstring> wstring_buffer::split(wchar val)const
 
 	const wchar str_val[] = { val, 0 };
 
-
+	
 	index beg = 0, end = 0;
 	wstring _word;
 	cwstr_t data = cstr();
@@ -1192,7 +1195,7 @@ array<wstring> wstring_buffer::split(wchar val)const
 	end = string_find<wchar>(data, l, str_val, 1, 0, false);
 	if (end == invalid_index)
 		return array<wstring>({ cstr() });
-
+	
 	do {
 		if (_word.is_empty()) _word = new wstring_buffer();
 		_word->realloc(end - beg, false);
@@ -1253,7 +1256,7 @@ array<wstring> wstring_buffer::split(cwstr_t val)const
 		end = string_find<wchar>(data, l, val.cstr(), val.size(), beg, false);//Find(strVal, beg);
 	} while (end != invalid_index);
 
-
+	
 	if (l - beg > 0)
 	{
 		_word = new wstring_buffer();
