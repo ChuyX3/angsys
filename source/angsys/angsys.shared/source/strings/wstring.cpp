@@ -1197,12 +1197,10 @@ array<wstring> wstring_buffer::split(wchar val)const
 		return array<wstring>({ cstr() });
 	
 	do {
-		if (_word.is_empty()) _word = new wstring_buffer();
-		_word->realloc(end - beg, false);
-		string_substr<wchar, wchar>(cstr(), l, _word->str(), beg, end - beg);
+		cstr().sub_string(_word, beg, end - beg);
 		if (_word->length() > 0)
 		{
-			list->append(_word.get(), true);
+			list += _word.get();
 			_word = null;
 		}
 		beg = end + 1;
@@ -1214,7 +1212,7 @@ array<wstring> wstring_buffer::split(wchar val)const
 	string_substr<wchar, wchar>(cstr(), l, _word->str(), beg, l - beg);
 	if (_word->length() > 0)
 	{
-		list->append(_word.get(), true);
+		list += _word.get();
 		_word = null;
 	}
 
@@ -1245,11 +1243,10 @@ array<wstring> wstring_buffer::split(cwstr_t val)const
 	do {
 		if (end - beg > 0)
 		{
-			_word = new wstring_buffer();
-			_word->realloc(end - beg, false);
-			string_substr<wchar, wchar>(cstr(), l, _word->str(), beg, end - beg);
+			cstr().sub_string(_word, beg, end - beg);
 			_word->length(end - beg);
-			list += _word.get();
+			list += null;// ->append(_word.get(), true);
+			list[list->size() - 1] = _word.get();
 			_word = null;
 		}
 		beg = end + val.size();
@@ -1263,7 +1260,8 @@ array<wstring> wstring_buffer::split(cwstr_t val)const
 		_word->realloc(l - beg, false);
 		string_substr<wchar, wchar>(cstr(), l, _word->str(), beg, l - beg);
 		_word->length(l - beg);
-		list += _word.get();
+		list += null;// ->append(_word.get(), true);
+		list[list->size() - 1] = _word.get();
 		_word = null;
 	}
 

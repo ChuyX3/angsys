@@ -670,7 +670,7 @@ template<typename K, typename T>
 inline ang::collections::iterator<ang::collections::pair<K, T>> ang::collections::map_data<K, T>::find(const K& key)const
 {
 	if (_table == null)
-		return false;
+		return iterator_t(const_cast<map_data*>(this));
 
 	uint idx = hash_index(key);
 	node_ptr_t temp = _table[idx];
@@ -1512,7 +1512,7 @@ template<typename T>
 inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::map_data<ang::string, T>::find(ang::cstr_t key)const
 {
 	if (_table == null)
-		return false;
+		return iterator_t(const_cast<map_data*>(this));
 
 	uint idx = hash_index(key);
 	node_ptr_t temp = _table[idx];
@@ -1529,7 +1529,7 @@ template<typename T>
 inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::map_data<ang::string, T>::find(ang::cwstr_t key)const
 {
 	if (_table == null)
-		return false;
+		return iterator_t(const_cast<map_data*>(this));
 
 	uint idx = hash_index(key);
 	node_ptr_t temp = _table[idx];

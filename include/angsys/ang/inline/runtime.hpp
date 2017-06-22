@@ -248,10 +248,10 @@ namespace ang
 				return runtime_type_info_t{ type_name(), &dynamic_constructor,dynamic_destructor };
 			}
 			static unknown_t dynamic_constructor() {
-				return new type*();
+				return ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator)->object_alloc<type>(1);
 			}
 			static void dynamic_destructor(unknown_t uknown) {
-				delete reinterpret_cast<type**>(uknown);
+				ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator)->memory_release(uknown.get());
 			}
 			template<typename new_t>
 			static inline auto interface_cast(T* _old) {

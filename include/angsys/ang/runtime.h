@@ -20,16 +20,24 @@
 template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
 	static inline ang::type_name_t type_name() { return #_TYPE; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
-	static inline ang::unknown_t dynamic_constructor() { return new _TYPE();	} \
-	static inline void dynamic_destructor(ang::unknown_t uknown) { delete reinterpret_cast<_TYPE::type*>(uknown.get()); } \
+	template<class...Ts> static inline ang::unknown_t dynamic_constructor(Ts... args) { \
+		auto alloc = ang::memory::allocator_manager::get_allocator(ang::memory::allocator_manager::default_allocator); \
+		return alloc->construct<_TYPE, Ts...>(alloc->object_alloc<_TYPE>(1), args...); } \
+	static inline void dynamic_destructor(ang::unknown_t uknown) {	\
+		auto alloc = ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator); \
+		alloc->destruct(reinterpret_cast<_TYPE*>(uknown.get())); alloc->memory_release(uknown.get()); } \
 	static inline ang::runtime_type_info_t runtime_type() { static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true); return runtime_type_info; } \
 	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
 }; \
 template<> struct ang::runtime::runtime_type_builder<typename _TYPE::type> { \
 	static inline ang::type_name_t type_name() { return #_TYPE; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
-	static inline ang::unknown_t dynamic_constructor() { return new _TYPE();	} \
-	static inline void dynamic_destructor(ang::unknown_t uknown) { delete reinterpret_cast<_TYPE::type*>(uknown.get()); } \
+	template<class...Ts> static inline ang::unknown_t dynamic_constructor(Ts... args) { 	\
+		auto alloc = ang::memory::allocator_manager::get_allocator(ang::memory::allocator_manager::default_allocator); \
+		return alloc->construct<typename _TYPE::type, Ts...>(alloc->object_alloc<typename _TYPE::type>(1), args...); } \
+	static inline void dynamic_destructor(ang::unknown_t uknown)  {	\
+		auto alloc = ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator); \
+		alloc->destruct(reinterpret_cast<typename _TYPE::type*>(uknown.get())); alloc->memory_release(uknown.get()); } \
 	static inline ang::runtime_type_info_t runtime_type() { static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true); return runtime_type_info; } \
 	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
 };
@@ -38,8 +46,12 @@ template<> struct ang::runtime::runtime_type_builder<typename _TYPE::type> { \
 template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
 	static inline ang::type_name_t type_name() { return #_TYPE##_s; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
-	static inline ang::unknown_t dynamic_constructor() { return new _TYPE();	} \
-	static inline void dynamic_destructor(ang::unknown_t uknown) { delete reinterpret_cast<_TYPE*>(uknown.get()); } \
+	template<class...Ts> static inline ang::unknown_t dynamic_constructor(Ts... args) { \
+		auto alloc = ang::memory::allocator_manager::get_allocator(ang::memory::allocator_manager::default_allocator); \
+		return alloc->construct<_TYPE, Ts...>(alloc->object_alloc<_TYPE>(1), args...); } \
+	static inline void dynamic_destructor(ang::unknown_t uknown) {	\
+		auto alloc = ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator); \
+		alloc->destruct(reinterpret_cast<_TYPE*>(uknown.get())); alloc->memory_release(uknown.get()); } \
 	static inline ang::runtime_type_info_t runtime_type() { static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true); return runtime_type_info; } \
 	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
 };
@@ -58,55 +70,7 @@ template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
 	static inline ang::type_name_t type_name() { return type::class_name(); } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
 	static inline ang::type_name_t runtime_type_name(const type& var) { return var.object_name(); } \
-	static ang::unknown_t dynamic_constructor() { return type::dynamic_constructor(); } \
-	static void dynamic_destructor(ang::unknown_t uknown) { type::dynamic_destructor(reinterpret_cast<ang::interface_t*>(uknown.get())); } \
-	static inline ang::runtime_type_info_t runtime_type() { static runtime_type_info_t runtime_type_info(type_name(), (ang::dynamic_type_constructor_t)&dynamic_constructor, &dynamic_destructor, true); return runtime_type_info; } \
-	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
-};
-
-#define ANG_REGISTER_RUNTIME_DYNAMICOBJECT_INFORMATION_ARGS1(_TYPE, _ARGS0) \
-template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
-	typedef _TYPE type; \
-	static inline ang::type_name_t type_name() { return type::class_name(); } \
-	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
-	static inline ang::type_name_t runtime_type_name(const type& var) { return var.object_name(); } \
-	static ang::unknown_t dynamic_constructor(_ARGS0 _args0) { return type::dynamic_constructor(_args0); } \
-	static void dynamic_destructor(ang::unknown_t uknown) { type::dynamic_destructor(reinterpret_cast<ang::interface_t*>(uknown.get())); } \
-	static inline ang::runtime_type_info_t runtime_type() { static runtime_type_info_t runtime_type_info(type_name(), (ang::dynamic_type_constructor_t)&dynamic_constructor, &dynamic_destructor, true); return runtime_type_info; } \
-	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
-};
-
-#define ANG_REGISTER_RUNTIME_DYNAMICOBJECT_INFORMATION_ARGS2(_TYPE, _ARGS0, _ARGS1) \
-template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
-	typedef _TYPE type; \
-	static inline ang::type_name_t type_name() { return type::class_name(); } \
-	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
-	static inline ang::type_name_t runtime_type_name(const type& var) { return var.object_name(); } \
-	static ang::unknown_t dynamic_constructor(_ARGS0 _args0, _ARGS1 _args1) { return type::dynamic_constructor(_args0, _args1); } \
-	static void dynamic_destructor(ang::unknown_t uknown) { type::dynamic_destructor(reinterpret_cast<ang::interface_t*>(uknown.get())); } \
-	static inline ang::runtime_type_info_t runtime_type() { static runtime_type_info_t runtime_type_info(type_name(), (ang::dynamic_type_constructor_t)&dynamic_constructor, &dynamic_destructor, true); return runtime_type_info; } \
-	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
-};
-
-#define ANG_REGISTER_RUNTIME_DYNAMICOBJECT_INFORMATION_ARGS3(_TYPE, _ARGS0, _ARGS1, _ARGS2) \
-template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
-	typedef _TYPE type; \
-	static inline ang::type_name_t type_name() { return type::class_name(); } \
-	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
-	static inline ang::type_name_t runtime_type_name(const type& var) { return var.object_name(); } \
-	static ang::unknown_t dynamic_constructor(_ARGS0 _args0, _ARGS1 _args1, _ARGS2 _args2) { return type::dynamic_constructor(_args0, _args1, _args2); } \
-	static void dynamic_destructor(ang::unknown_t uknown) { type::dynamic_destructor(reinterpret_cast<ang::interface_t*>(uknown.get())); } \
-	static inline ang::runtime_type_info_t runtime_type() { static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true); return runtime_type_info; } \
-	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
-};
-
-#define ANG_REGISTER_RUNTIME_DYNAMICOBJECT_INFORMATION_ARGS4(_TYPE, _ARGS0,  _ARGS1, _ARGS2, _ARGS3) \
-template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
-	typedef _TYPE type; \
-	static inline ang::type_name_t type_name() { return type::class_name(); } \
-	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
-	static inline ang::type_name_t runtime_type_name(const type& var) { return var.object_name(); } \
-	static ang::unknown_t dynamic_constructor(_ARGS0 _args0, _ARGS1 _args1, _ARGS2 _args2, _ARGS3 _args3) { return type::dynamic_constructor(_args0, _args1, _args2, _args3); } \
+	template<class...Ts> static ang::unknown_t dynamic_constructor(Ts... args) { return type::dynamic_constructor(args...); } \
 	static void dynamic_destructor(ang::unknown_t uknown) { type::dynamic_destructor(reinterpret_cast<ang::interface_t*>(uknown.get())); } \
 	static inline ang::runtime_type_info_t runtime_type() { static runtime_type_info_t runtime_type_info(type_name(), (ang::dynamic_type_constructor_t)&dynamic_constructor, &dynamic_destructor, true); return runtime_type_info; } \
 	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
@@ -172,7 +136,17 @@ namespace ang
 
 			static runtime_type_info_t find_runtime_type_info(type_name_t);
 			static unknown_t contruct_dynamic_object(type_name_t);
+			static bool contruct_dynamic_object(type_name_t, intfptr&);
 			static bool destruct_dynamic_object(type_name_t, unknown_t);
+
+			template<class T>
+			static bool contruct_dynamic_object(object_wrapper<T>& out) {
+				intfptr _intf;
+				if (!contruct_dynamic_object(type_name<T>(), _intf))
+					return false;
+				out = reinterpret_cast<T*>(_intf.get());
+				return true;
+			}
 
 			template <typename... args_t>
 			static unknown_t contruct_dynamic_object(type_name_t _type_name, args_t... args);

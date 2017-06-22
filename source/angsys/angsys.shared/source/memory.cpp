@@ -76,14 +76,14 @@ default_allocator::default_allocator(uint type)
 
 default_allocator::~default_allocator() {
 #ifdef _MEMORY_PROFILING
-	static bool error = false;
+	bool error = false;
 	if (!memory_map.is_empty())
-		memory_map.print([](memory_block_t value)
+		memory_map.print([&](memory_block_t value)
 	{
 		if (value)
 		{
 			error = true;
-			ang_debug_output_warning("Memory leak at %X: size: %d; file: %s: %d;\n", (wsize)value->ptr, value->size, value->file, value->line);
+			ang_debug_output_warning("Alocator[%d]: Memory leak at %X: size: %d; file: %s: %d;\n", _allocator_type,(wsize)value->ptr, value->size, value->file, value->line);
 		}
 	});
 	if (error)

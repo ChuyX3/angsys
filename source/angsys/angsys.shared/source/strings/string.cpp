@@ -1199,12 +1199,11 @@ array<string> string_buffer::split(char val)const
 		return array<string>({cstr()});
 	
 	do {
-		if (_word.is_empty()) _word = new string_buffer();
-		_word->realloc(end - beg, false);
-		string_substr<char, char>(cstr(), l, _word->str(), beg, end - beg);
+		cstr().sub_string(_word, beg, end - beg);
 		if (_word->length() > 0)
 		{
-			list->append(_word.get(), true);
+			list += null;// ->append(_word.get(), true);
+			list[list->size() -1] = _word.get();
 			_word = null;
 		}
 		beg = end + 1;
@@ -1216,7 +1215,8 @@ array<string> string_buffer::split(char val)const
 	string_substr<char, char>(cstr(), l, _word->str(), beg, l - beg);
 	if (_word->length() > 0)
 	{
-		list->append(_word.get(), true);
+		list += null;// ->append(_word.get(), true);
+		list[list->size() - 1] = _word.get();
 		_word = null;
 	}
 
@@ -1247,9 +1247,7 @@ array<string> string_buffer::split(cstr_t val)const
 	do {
 		if (end - beg > 0)
 		{
-			_word = new string_buffer();
-			_word->realloc(end - beg, false);
-			string_substr<char, char>(cstr(), l, _word->str(), beg, end - beg);
+			cstr().sub_string(_word->str(), beg, end - beg);
 			_word->length(end - beg);
 			list += _word.get();
 			_word = null;
