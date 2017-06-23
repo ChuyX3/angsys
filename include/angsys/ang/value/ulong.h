@@ -398,7 +398,7 @@ namespace ang
 	inline value<ulong64> operator ""_ulli(unsigned long long val) { return value<ulong64>(static_cast<ulong>(val)); }
 }
 
-#include<ang/value/inline/ulong.hpp>
+#include<ang/value/inline/ulong.inl>
 
 #endif//__ANG_ULONG_H__
 

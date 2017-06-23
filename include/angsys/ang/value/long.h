@@ -402,6 +402,6 @@ namespace ang
 	inline value<long64> operator ""_lli(unsigned long long val) { return value<long64>(static_cast<long64>(val)); }
 }
 
-#include<ang/value/inline/long.hpp>
+#include<ang/value/inline/long.inl>
 
 #endif//__ANG_LONG_H__

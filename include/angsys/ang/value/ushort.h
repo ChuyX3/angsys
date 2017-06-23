@@ -202,7 +202,7 @@ namespace ang
 	inline value<ushort> operator ""_usi(unsigned long long val) { return value<ushort>(static_cast<ushort>(val)); }
 }
 
-#include<ang/value/inline/ushort.hpp>
+#include<ang/value/inline/ushort.inl>
 
 #endif//__ANG_USHORT_H__
 

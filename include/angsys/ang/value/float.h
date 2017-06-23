@@ -202,6 +202,6 @@ namespace ang
 	inline value<float> operator ""_f(unsigned long long val) { return value<float>(static_cast<float>(val)); }
 }
 
-#include <ang/value/inline/float.hpp>
+#include <ang/value/inline/float.inl>
 
 #endif//__ANG_FLOAT_H__

@@ -201,6 +201,6 @@ namespace ang
 	inline value<int> operator ""_i (unsigned long long val) { return value<int>(static_cast<int>(val)); }
 }
 
-#include<ang/value/inline/int.hpp>
+#include<ang/value/inline/int.inl>
 
 #endif//__ANG_INT_H__

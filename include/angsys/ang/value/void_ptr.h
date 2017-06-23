@@ -197,7 +197,7 @@ namespace ang
 	inline value<void*> operator ""_ptr(unsigned long long val) { return value<void*>(reinterpret_cast<void*>(val)); }
 }
 
-#include<ang/value/inline/void_ptr.hpp>
+#include<ang/value/inline/void_ptr.inl>
 
 #endif//__ANG_VOID_PTR_H__
 

@@ -26,9 +26,9 @@
 
 #define ANG_DECLARE_CLASSNAME() static ang::type_name_t class_name();
 #define ANG_DECLARE_ISCHILDOF() static bool is_child_of(ang::type_name_t);
-#define ANG_DECLARE_DYNAMICTYPE() static ang::interface_t* dynamic_constructor(); static bool dynamic_destructor(ang::interface_t*);
-#define ANG_DECLARE_DYNAMICTYPE_ARGS(...) static ang::interface_t* dynamic_constructor(__VA_ARGS__); static bool dynamic_destructor(ang::interface_t*);
-#define ANG_DECLARE_INLINE_DYNAMICTYPE() inline static ang::interface_t* dynamic_constructor(); inline static bool dynamic_destructor(ang::interface_t*);
+#define ANG_DECLARE_DYNAMICTYPE() static ang::intfptr dynamic_constructor(); static bool dynamic_destructor(ang::intfptr&);
+#define ANG_DECLARE_DYNAMICTYPE_ARGS(...) static ang::intfptr dynamic_constructor(__VA_ARGS__); static bool dynamic_destructor(ang::intfptr&);
+#define ANG_DECLARE_INLINE_DYNAMICTYPE() inline static ang::intfptr dynamic_constructor(); inline static bool dynamic_destructor(ang::intfptr&);
 
 #define ANG_DECLARE_OBJECTNAME() virtual ang::type_name_t object_name()const;
 #define ANG_DECLARE_ISKINDOF() virtual bool is_kind_of(ang::type_name_t)const;
@@ -37,9 +37,9 @@
 
 #define ANG_OVERRIDE_CLASSNAME() static ang::type_name_t class_name();
 #define ANG_OVERRIDE_ISCHILDOF() static bool is_child_of(ang::type_name_t);
-#define ANG_OVERRIDE_DYNAMICTYPE() static ang::interface_t* dynamic_constructor(); static bool dynamic_destructor(ang::interface_t*);
-#define ANG_OVERRIDE_DYNAMICTYPE_ARGS(...) static ang::interface_t* dynamic_constructor(__VA_ARGS__); static bool dynamic_destructor(ang::interface_t*);
-#define ANG_OVERRIDE_INLINE_DYNAMICTYPE() inline static ang::interface_t* dynamic_constructor(); inline static bool dynamic_destructor(ang::interface_t*);
+#define ANG_OVERRIDE_DYNAMICTYPE() static ang::intfptr dynamic_constructor(); static bool dynamic_destructor(ang::intfptr&);
+#define ANG_OVERRIDE_DYNAMICTYPE_ARGS(...) static ang::intfptr dynamic_constructor(__VA_ARGS__); static bool dynamic_destructor(ang::intfptr&);
+#define ANG_OVERRIDE_INLINE_DYNAMICTYPE() inline static ang::intfptr dynamic_constructor(); inline static bool dynamic_destructor(ang::intfptr&);
 
 #define ANG_OVERRIDE_OBJECTNAME() virtual ang::type_name_t object_name()const override;
 #define ANG_OVERRIDE_ISKINDOF() virtual bool is_kind_of(ang::type_name_t)const override;
@@ -132,7 +132,8 @@
 #define ANG_IMPLEMENT_CLASSNAME(_CLASS) ang::type_name_t _CLASS::class_name(){ return #_CLASS; }
 #define ANG_IMPLEMENT_ISCHILDOF(_CLASS) bool _CLASS::is_child_of(ang::type_name_t name) { if (name == ang::type_name<_CLASS>())return true; return false; }
 #define ANG_IMPLEMENT_ISCHILDOF_BASE(_CLASS, _BASE) bool _CLASS::is_child_of(ang::type_name_t name) { if (name == ang::type_name<_CLASS>())return true; return _BASE::is_child_of(name); }
-									   bool _CLASS::dynamic_destructor(ang::interface_t*intf){ _CLASS* obj; if(!interface_cast<_CLASS>(intf, obj))return false; obj->release(); return true; }
+#define ANG_IMPLEMENT_DYNAMICTYPE(_CLASS) ang::intfptr _CLASS::dynamic_constructor() { return reinterpret_cast<ang::interface_t*>(new _CLASS()); } \
+									   bool _CLASS::dynamic_destructor(ang::intfptr& intf){ if(!intf->is_kind_of(type_name<_CLASS>()))return false; intf = null; return true; }
 #define ANG_IMPLEMENT_OBJECTNAME(_CLASS) ang::type_name_t _CLASS::object_name()const{ return class_name(); }
 #define ANG_IMPLEMENT_ISKINDOF(_CLASS) bool _CLASS::is_kind_of(ang::type_name_t name)const{ if (name == ang::type_name<_CLASS>())return true; return false; }
 #define ANG_IMPLEMENT_ISKINDOF_BASE(_CLASS, _BASE) bool _CLASS::is_kind_of(ang::type_name_t name)const{ if (name == ang::type_name<_CLASS>())return true; return _BASE::is_kind_of(name); }
@@ -144,7 +145,7 @@
 		if(name == ang::type_name<_CLASS>()){ *out = static_cast<_CLASS*>(this); return true; }\
 		else if(_BASE::query_object(name, out)) return true; return false; }
 
-#define ANG_IMPLEMENT_DYNAMICTYPE_INTERFACE(_CLASS) ang::interface_t* _CLASS::dynamic_constructor(){ return null; } bool _CLASS::dynamic_destructor(ang::interface_t*){ return false; }
+#define ANG_IMPLEMENT_DYNAMICTYPE_INTERFACE(_CLASS) ang::intfptr _CLASS::dynamic_constructor(){ return null; } bool _CLASS::dynamic_destructor(ang::intfptr &){ return false; }
 
 #define ANG_IMPLEMENT_TEMPLATE_CLASSNAME(_CLASS) template<> inline ANG_IMPLEMENT_CLASSNAME(_CLASS)
 #define ANG_IMPLEMENT_TEMPLATE_CLASSNAME_ARGS(_CLASS, ...) template<> inline ANG_IMPLEMENT_CLASSNAME(_CLASS<__VA_ARGS__>)

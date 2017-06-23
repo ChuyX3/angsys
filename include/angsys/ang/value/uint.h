@@ -202,6 +202,6 @@ namespace ang
 	inline value<uint> operator ""_ui(unsigned long long val) { return value<uint>(static_cast<uint>(val)); }
 }
 
-#include<ang/value/inline/uint.hpp>
+#include<ang/value/inline/uint.inl>
 
 #endif//__ANG_UINT_H__

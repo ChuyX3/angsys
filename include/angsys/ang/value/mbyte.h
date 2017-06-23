@@ -103,6 +103,6 @@ namespace ang
 	inline value<mbyte> operator ""_mb(unsigned long long val) { return value<mbyte>(static_cast<wchar>(val)); }
 }
 
-#include <ang/value/inline/mbyte.hpp>
+#include <ang/value/inline/mbyte.inl>
 
 #endif//__ANG_MBYTE_H__

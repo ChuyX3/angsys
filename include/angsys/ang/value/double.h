@@ -202,6 +202,6 @@ namespace ang
 	inline value<double> operator ""_lf(unsigned long long val) { return value<double>(static_cast<double>(val)); }
 }
 
-#include <ang/value/inline/double.hpp>
+#include <ang/value/inline/double.inl>
 
 #endif//__ANG_DOUBLE_H__

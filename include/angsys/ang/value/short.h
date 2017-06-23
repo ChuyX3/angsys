@@ -202,7 +202,7 @@ namespace ang
 	inline value<short> operator ""_si(unsigned long long val) { return value<short>(static_cast<short>(val)); }
 }
 
-#include<ang/value/inline/short.hpp>
+#include<ang/value/inline/short.inl>
 
 #endif//__ANG_SHORT_H__
 
