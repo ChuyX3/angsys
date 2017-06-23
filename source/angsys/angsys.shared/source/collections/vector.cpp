@@ -656,7 +656,7 @@ objptr & ang::object_wrapper<ang::collections::vector_buffer<objptr>>::operator[
 	return _ptr->data()[idx];
 }
 
-#include "vector_specialization.hpp"
+#include "vector_specialization.inl"
 
 ANG_IMPLEMENT_VECTOR_DATA_SPECIALIZATION(short)
 ANG_IMPLEMENT_VECTOR_DATA_SPECIALIZATION(ushort)

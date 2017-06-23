@@ -550,6 +550,6 @@ namespace ang
 #undef  LINK
 #endif//LINK
 
-#include<ang/core/inlines/delegates.hpp>
+#include<ang/core/inlines/delegates.inl>
 
 #endif//__ANG_DELEGATES_H__

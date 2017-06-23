@@ -485,12 +485,12 @@ namespace ang
 #undef  LINK
 #endif//LINK
 
-#include <ang/inline/object_wrapper.hpp>
-#include <ang/inline/intf_wrapper.hpp>
-#include <ang/inline/convertible.hpp>
-#include <ang/inline/runtime.hpp>
-#include <ang/collections/inline/collections.hpp>
-#include <ang/collections/inline/array.hpp>
+#include <ang/inline/object_wrapper.inl>
+#include <ang/inline/intf_wrapper.inl>
+#include <ang/inline/convertible.inl>
+#include <ang/inline/runtime.inl>
+#include <ang/collections/inline/collections.inl>
+#include <ang/collections/inline/array.inl>
 
 ANG_REGISTER_RUNTIME_TYPENAME(ang::safe_pointer);
 

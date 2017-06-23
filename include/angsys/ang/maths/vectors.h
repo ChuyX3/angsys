@@ -266,29 +266,29 @@ namespace ang
 #include <ang/maths/float4x4.h>
 
 
-#include <ang/maths/implement/float2.hpp>
-#include <ang/maths/implement/float3.hpp>
-#include <ang/maths/implement/double3.hpp>
+#include <ang/maths/implement/float2.inl>
+#include <ang/maths/implement/float3.inl>
+#include <ang/maths/implement/double3.inl>
 
 #ifdef ANG_USE_SIMD_TECHNOLOGY
 #if defined WINDOWS_PLATFORM && defined _ARM_
-#include <ang/maths/implement/double2_arm.hpp>
-#include <ang/maths/implement/float4_arm.hpp>
-#include <ang/maths/implement/double4_arm.hpp>
-#include <ang/maths/implement/float4x4_arm.hpp>
+#include <ang/maths/implement/double2_arm.inl>
+#include <ang/maths/implement/float4_arm.inl>
+#include <ang/maths/implement/double4_arm.inl>
+#include <ang/maths/implement/float4x4_arm.inl>
 #else 
-#include <ang/maths/implement/double2_simd.hpp>
-#include <ang/maths/implement/float4_simd.hpp>
-#include <ang/maths/implement/double4_simd.hpp>
-#include <ang/maths/implement/float4x4_simd.hpp>
-#include <ang/maths/implement/maths_matrix_simd.hpp>
+#include <ang/maths/implement/double2_simd.inl>
+#include <ang/maths/implement/float4_simd.inl>
+#include <ang/maths/implement/double4_simd.inl>
+#include <ang/maths/implement/float4x4_simd.inl>
+#include <ang/maths/implement/maths_matrix_simd.inl>
 #endif
 #else
-#include <ang/maths/implement/double2.hpp>
-#include <ang/maths/implement/float4.hpp>
-#include <ang/maths/implement/double4.hpp>
-#include <ang/maths/implement/float4x4.hpp>
-#include <ang/maths/implement/maths_matrix.hpp>
+#include <ang/maths/implement/double2.inl>
+#include <ang/maths/implement/float4.inl>
+#include <ang/maths/implement/double4.inl>
+#include <ang/maths/implement/float4x4.inl>
+#include <ang/maths/implement/maths_matrix.inl>
 #endif
 
 
@@ -398,25 +398,25 @@ namespace ang
 }
 
 #undef __ANG_VECTOR_MATHS_FLOAT2_HPP__
-#include <ang/maths/implement/float2.hpp>
+#include <ang/maths/implement/float2.inl>
 #undef __ANG_VECTOR_MATHS_FLOAT3_HPP__
-#include <ang/maths/implement/float3.hpp>
+#include <ang/maths/implement/float3.inl>
 #undef __ANG_VECTOR_MATHS_FLOAT4_HPP__
-#include <ang/maths/implement/float4.hpp>
+#include <ang/maths/implement/float4.inl>
 #undef __ANG_VECTOR_MATHS_FLOAT4X4_HPP__
-#include <ang/maths/implement/float4x4.hpp>
+#include <ang/maths/implement/float4x4.inl>
 
 #undef __ANG_VECTOR_MATHS_DOUBLE2_HPP__
-#include <ang/maths/implement/double2.hpp>
+#include <ang/maths/implement/double2.inl>
 #undef __ANG_VECTOR_MATHS_DOUBLE3_HPP__
-#include <ang/maths/implement/double3.hpp>
+#include <ang/maths/implement/double3.inl>
 #undef __ANG_VECTOR_MATHS_DOUBLE4_HPP__
-#include <ang/maths/implement/double4.hpp>
+#include <ang/maths/implement/double4.inl>
 //#undef __ANG_VECTOR_MATHS_DOUBLE4X4_HPP__
-//#include <ang/maths/implement/double4x4.hpp>
+//#include <ang/maths/implement/double4x4.inl>
 
 #undef __ANG_MATHS_MATRIX_HPP__
-#include <ang/maths/implement/maths_matrix.hpp>
+#include <ang/maths/implement/maths_matrix.inl>
 
 ANG_REGISTER_RUNTIME_TYPENAME(ang::maths::float2);
 ANG_REGISTER_RUNTIME_TYPENAME(ang::maths::float3);

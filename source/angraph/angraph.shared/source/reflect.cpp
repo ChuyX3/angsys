@@ -1,7 +1,7 @@
 #include "pch.h"
 #include <ang/graphics/angraph.h>
 #include "ang_inlines.h"
-#include "vector_specialization.hpp"
+#include "vector_specialization.inl"
 
 #if defined _DEBUG
 #define new ANG_DEBUG_NEW()

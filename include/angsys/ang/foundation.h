@@ -776,6 +776,6 @@ ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ang::graphics::primitive_t)
 #undef LINK
 #endif//LINK
 
-#include <ang/inline/foundation.hpp>
+#include <ang/inline/foundation.inl>
 
 #endif//__ANG_FOUNDATION_H__

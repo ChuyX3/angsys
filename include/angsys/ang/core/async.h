@@ -816,6 +816,6 @@ namespace ang
 #undef LINK
 #endif
 
-#include<ang/core/inlines/async.hpp>
+#include<ang/core/inlines/async.inl>
 
 #endif//__ANG_ASYNC_H__

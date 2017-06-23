@@ -168,6 +168,6 @@ ang_uint32_t ang_create_hash_index(ang_cwstr_t, ang_uint32_t);
 
 ang_uint32_t ang_hash_table_get_next_size(ang_uint32_t);
 
-#include "ang_core/ang_hash_table.hpp"
+#include "ang_core/ang_hash_table.inl"
 
 #endif//__ANG_INLINES_H__

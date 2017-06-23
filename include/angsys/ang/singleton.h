@@ -62,6 +62,6 @@ namespace ang
 	
 }//ang
 
-#include <ang/inline/singleton.hpp>
+#include <ang/inline/singleton.inl>
 
 #endif//__ANG_SINGLETON_H__
