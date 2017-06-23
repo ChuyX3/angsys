@@ -576,7 +576,7 @@ namespace ang
 			virtual~wstring_buffer();
 
 		public:
-			ANG_DECLARE_INTERFACE();
+			ANG_DECLARE_DYNAMIC_INTERFACE();
 
 			bool is_local_data()const;
 			bool realloc(uint new_size, bool save = true);
@@ -740,7 +740,7 @@ namespace ang
 			virtual~string_buffer();
 
 		public:
-			ANG_DECLARE_INTERFACE();
+			ANG_DECLARE_DYNAMIC_INTERFACE();
 
 			bool is_local_data()const;
 			bool realloc(uint new_size, bool save = true);
@@ -895,7 +895,7 @@ namespace ang
 			virtual~mstring_buffer();
 
 		public:
-			ANG_DECLARE_INTERFACE();
+			ANG_DECLARE_DYNAMIC_INTERFACE();
 
 			bool is_local_data()const;
 			bool realloc(uint new_size, bool save = true);

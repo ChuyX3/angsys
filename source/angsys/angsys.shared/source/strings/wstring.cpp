@@ -81,6 +81,7 @@ type_name_t wstring_buffer::class_name() { return "ang::wstring"; }
 type_name_t wstring_buffer::object_name()const { return class_name(); }
 ANG_IMPLEMENT_ISKINDOF_BASE(ang::strings::wstring_buffer, ang::object);
 ANG_IMPLEMENT_QUERYOBJECT_BASE(ang::strings::wstring_buffer, ang::object);
+ANG_IMPLEMENT_DYNAMICTYPE(ang::strings::wstring_buffer);
 
 string wstring_buffer::to_string()const
 {

@@ -79,6 +79,7 @@ type_name_t mstring_buffer::class_name() { return "ang::mstring"; }
 type_name_t mstring_buffer::object_name()const { return class_name(); }
 ANG_IMPLEMENT_ISKINDOF_BASE(ang::strings::mstring_buffer, ang::object);
 ANG_IMPLEMENT_QUERYOBJECT_BASE(ang::strings::mstring_buffer, ang::object);
+ANG_IMPLEMENT_DYNAMICTYPE(ang::strings::mstring_buffer);
 
 string_t mstring_buffer::to_string()const
 {

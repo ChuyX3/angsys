@@ -132,7 +132,6 @@
 #define ANG_IMPLEMENT_CLASSNAME(_CLASS) ang::type_name_t _CLASS::class_name(){ return #_CLASS; }
 #define ANG_IMPLEMENT_ISCHILDOF(_CLASS) bool _CLASS::is_child_of(ang::type_name_t name) { if (name == ang::type_name<_CLASS>())return true; return false; }
 #define ANG_IMPLEMENT_ISCHILDOF_BASE(_CLASS, _BASE) bool _CLASS::is_child_of(ang::type_name_t name) { if (name == ang::type_name<_CLASS>())return true; return _BASE::is_child_of(name); }
-#define ANG_IMPLEMENT_DYNAMICTYPE(_CLASS) ang::interface_t* _CLASS::dynamic_constructor(){ _CLASS* obj = new _CLASS(); obj->add_ref();  return reinterpret_cast<ang::interface_t*>(obj); } \
 									   bool _CLASS::dynamic_destructor(ang::interface_t*intf){ _CLASS* obj; if(!interface_cast<_CLASS>(intf, obj))return false; obj->release(); return true; }
 #define ANG_IMPLEMENT_OBJECTNAME(_CLASS) ang::type_name_t _CLASS::object_name()const{ return class_name(); }
 #define ANG_IMPLEMENT_ISKINDOF(_CLASS) bool _CLASS::is_kind_of(ang::type_name_t name)const{ if (name == ang::type_name<_CLASS>())return true; return false; }
