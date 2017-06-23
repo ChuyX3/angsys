@@ -259,6 +259,6 @@ namespace ang
 #undef  LINK
 #endif//LINK
 
-#include<ang/collections/inline/map.hpp>
+#include<ang/collections/inline/map.inl>
 
 #endif//__ANG_MAP_H__

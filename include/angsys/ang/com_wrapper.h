@@ -261,6 +261,6 @@ namespace ang
 	}
 }
 
-#include <ang/inline/com_wrapper.hpp>
+#include <ang/inline/com_wrapper.inl>
 
 #endif//__COM_WRAPPER_H__
