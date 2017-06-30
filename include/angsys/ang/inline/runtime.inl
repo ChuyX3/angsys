@@ -168,13 +168,34 @@ namespace ang
 			}
 		};
 
+		template<class T,class O, class... Ts>
+		struct runtime_type_builder<T(O::*)(Ts...)>
+		{
+			typedef void type;
+			static inline type_name_t type_name() {
+				static string _class_name = string(runtime::type_name<T>()) + "("_s + runtime::type_name<O>() + "::*)("_s + runtime::args_list_type_name<Ts...>() + ")";
+				return _class_name;
+			}
+
+			static inline bool is_type_of(type_name_t name) {
+				return name == type_name();
+			}
+
+			template<typename new_t>
+			static inline auto interface_cast(void* _old) {
+				if (is_type_of(runtime::type_name<new_t>()))
+					return (new_t*)_old;
+				return null;
+			}
+		};
+
 #ifdef WINDOWS_PLATFORM
 		template<class T, class... Ts>
 		struct runtime_type_builder<T(__stdcall*)(Ts...)>
 		{
 			typedef void type;
 			static inline type_name_t type_name() {
-				static string _class_name = string(runtime::type_name<T>()) + "(__stdcall*)("_s + runtime::args_list_type_name<Ts...>() + ")";
+				static string _class_name = string(runtime::type_name<T>()) + "(stdcall*)("_s + runtime::args_list_type_name<Ts...>() + ")";
 				return _class_name;
 			}
 
@@ -247,11 +268,18 @@ namespace ang
 			static inline runtime_type_info_t runtime_type() {
 				return runtime_type_info_t{ type_name(), &dynamic_constructor,dynamic_destructor };
 			}
-			static unknown_t dynamic_constructor() {
-				return ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator)->object_alloc<type>(1);
+			static bool dynamic_constructor(unknown_ptr_t out) {
+				if (out.get() == null)
+					return false;
+				*out = (pointer)ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator)->object_alloc<type>(1);
+				return true;
 			}
-			static void dynamic_destructor(unknown_t uknown) {
-				ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator)->memory_release(uknown.get());
+			static bool dynamic_destructor(unknown_ptr_t uknown) {
+				if (uknown.get() == null)
+					return false;
+				ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator)->memory_release(*uknown);
+				*uknown = null;
+				return true;
 			}
 			template<typename new_t>
 			static inline auto interface_cast(T* _old) {
@@ -358,57 +386,58 @@ namespace ang
 			return _new != null;
 		}
 
-		template <typename... args_t>
-		inline unknown_t runtime_type_info_database::contruct_dynamic_object(type_name_t _type_name, args_t ... args)
-		{
-			typedef unknown_t(*dynamic_type_constructor_t)(args_t...);
-			const runtime_type_info_t& info = find_runtime_type_info(_type_name);
-			if (strings::algorithms::string_compare(info.type_name, _type_name) != 0)
-				return null;
-			return ((dynamic_type_constructor_t)info.constructor)(args...);
+		template<class T> inline static bool runtime_type_info_database::contruct_dynamic_object(object_wrapper<T>& out) {
+			if (!contruct_dynamic_object(type_name<T>(), &out)) return false;
+			return true;
+		}
+
+		template<class T> inline static bool runtime_type_info_database::contruct_dynamic_object(intf_wrapper<T>& out) {
+			if (!contruct_dynamic_object(type_name<T>(), &out))	return false;
+			return true;
 		}
 
 	}//Runtime
 }//ang
 
- //ANG_REGISTER_RUNTIME_TYPE_INFORMATION(void);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(bool);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(char);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(wchar);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ang::mbyte);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(byte);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(short);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ushort);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(int);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(uint);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(long);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ulong);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(long64);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ulong64);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(float);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(double);
-
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(pointer);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(const char*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(char*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(const wchar*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(wchar*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(mchar*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(const mchar*);
 
 
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(bool*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(short*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ushort*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(int*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(uint*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(long*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ulong*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(long64*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ulong64*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(float*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(double*);
-ANG_REGISTER_RUNTIME_TYPE_INFORMATION(pointer*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(bool);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(char);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(wchar);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(ang::mbyte);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(byte);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(short);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(ushort);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(int);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(uint);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(long);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(ulong);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(long64);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(ulong64);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(float);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(double);
+
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(pointer);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(const char*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(char*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(const wchar*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(wchar*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(mchar*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(const mchar*);
+
+
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(bool*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(short*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(ushort*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(int*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(uint*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(long*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(ulong*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(long64*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(ulong64*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(float*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(double*);
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(pointer*);
 
 
 //ANG_REGISTER_RUNTIME_TYPE_INFORMATION(Ang::ExcepType);

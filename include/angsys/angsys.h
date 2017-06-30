@@ -116,6 +116,7 @@ namespace ang
 		object_wrapper<T>& operator *()const { return *_ptr; }
 		object_wrapper<T>* operator ->()const { return _ptr; }
 		operator object_wrapper<T>*()const { return _ptr; }
+		operator unknown_ptr_t()const { return _ptr->addres_of(); }
 		operator T**()const { return _ptr->addres_of(); }
 	};
 
@@ -178,6 +179,7 @@ namespace ang
 		intf_wrapper<T>* operator ->()const { return _ptr; }
 		operator intf_wrapper<T>*()const { return _ptr; }
 		operator T**()const { return _ptr->addres_of(); }
+		operator unknown_ptr_t()const {	return _ptr->addres_of(); }
 		intf_wrapper<T>& operator *() { return *_ptr; }
 	};
 
@@ -469,6 +471,16 @@ namespace ang
 
 	template<class T> 
 	using shared_ptr = object_wrapper<value_wrapper<T>>;
+
+	template<typename T>
+	void swap(object_wrapper<T>& a, object_wrapper<T>&b) {
+		swap<wsize>(*reinterpret_cast<wsize*>(a.addres_of()), *reinterpret_cast<wsize*>(b.addres_of()));
+	}
+
+	template<typename T>
+	void swap(intf_wrapper<T>& a, intf_wrapper<T>&b) {
+		swap<wsize>(*reinterpret_cast<wsize*>(a.addres_of()), *reinterpret_cast<wsize*>(b.addres_of()));
+	}
 }
 
 #include <ang/buffers.h>

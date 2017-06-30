@@ -17,27 +17,31 @@
 #define __ANG_RUNTIME_H__
 
 #define ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(_TYPE) \
-template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
+template<> struct ang::runtime::runtime_type_builder<ang::value<_TYPE>> { \
 	static inline ang::type_name_t type_name() { return #_TYPE; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
-	template<class...Ts> static inline ang::unknown_t dynamic_constructor(Ts... args) { \
+	static inline bool dynamic_constructor(ang::unknown_ptr_t out) { \
 		auto alloc = ang::memory::allocator_manager::get_allocator(ang::memory::allocator_manager::default_allocator); \
-		return alloc->construct<_TYPE, Ts...>(alloc->object_alloc<_TYPE>(1), args...); } \
-	static inline void dynamic_destructor(ang::unknown_t uknown) {	\
-		auto alloc = ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator); \
-		alloc->destruct(reinterpret_cast<_TYPE*>(uknown.get())); alloc->memory_release(uknown.get()); } \
+		if (out.get() == null) return false; \
+		*out = (pointer)alloc->construct<ang::value<_TYPE>>(alloc->object_alloc<ang::value<_TYPE>>(1)); return true; } \
+	static inline bool dynamic_destructor(ang::unknown_ptr_t uknown) {	\
+		if (uknown.get() == null) return false; \
+		ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator)->memory_release(*uknown); \
+		*uknown = null; return true; } \
 	static inline ang::runtime_type_info_t runtime_type() { static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true); return runtime_type_info; } \
 	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
 }; \
-template<> struct ang::runtime::runtime_type_builder<typename _TYPE::type> { \
+template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
 	static inline ang::type_name_t type_name() { return #_TYPE; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
-	template<class...Ts> static inline ang::unknown_t dynamic_constructor(Ts... args) { 	\
+	static inline bool dynamic_constructor(ang::unknown_ptr_t out) { \
 		auto alloc = ang::memory::allocator_manager::get_allocator(ang::memory::allocator_manager::default_allocator); \
-		return alloc->construct<typename _TYPE::type, Ts...>(alloc->object_alloc<typename _TYPE::type>(1), args...); } \
-	static inline void dynamic_destructor(ang::unknown_t uknown)  {	\
-		auto alloc = ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator); \
-		alloc->destruct(reinterpret_cast<typename _TYPE::type*>(uknown.get())); alloc->memory_release(uknown.get()); } \
+		if (out.get() == null) return false; \
+		*out = (pointer)alloc->construct<_TYPE>(alloc->object_alloc<_TYPE>(1)); return true; } \
+	static inline bool dynamic_destructor(ang::unknown_ptr_t uknown) {	\
+		if (uknown.get() == null) return false; \
+		ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator)->memory_release(*uknown); \
+		*uknown = null; return true; } \
 	static inline ang::runtime_type_info_t runtime_type() { static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true); return runtime_type_info; } \
 	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
 };
@@ -46,12 +50,14 @@ template<> struct ang::runtime::runtime_type_builder<typename _TYPE::type> { \
 template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
 	static inline ang::type_name_t type_name() { return #_TYPE##_s; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
-	template<class...Ts> static inline ang::unknown_t dynamic_constructor(Ts... args) { \
+	static inline bool dynamic_constructor(ang::unknown_ptr_t out) { \
 		auto alloc = ang::memory::allocator_manager::get_allocator(ang::memory::allocator_manager::default_allocator); \
-		return alloc->construct<_TYPE, Ts...>(alloc->object_alloc<_TYPE>(1), args...); } \
-	static inline void dynamic_destructor(ang::unknown_t uknown) {	\
-		auto alloc = ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator); \
-		alloc->destruct(reinterpret_cast<_TYPE*>(uknown.get())); alloc->memory_release(uknown.get()); } \
+		if (out.get() == null) return false; \
+		*out = (pointer)alloc->construct<_TYPE>(alloc->object_alloc<_TYPE>(1)); return true; } \
+	static inline bool dynamic_destructor(ang::unknown_ptr_t uknown) {	\
+		if (uknown.get() == null) return false; \
+		ang::memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator)->memory_release(*uknown); \
+		*uknown = null; return true; } \
 	static inline ang::runtime_type_info_t runtime_type() { static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true); return runtime_type_info; } \
 	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
 };
@@ -80,8 +86,8 @@ namespace ang
 {
 	namespace runtime
 	{
-		typedef unknown_t(*dynamic_type_constructor_t)();
-		typedef void(*dynamic_type_destructor_t)(unknown_t);
+		typedef bool (*dynamic_type_constructor_t)(unknown_ptr_t);
+		typedef bool (*dynamic_type_destructor_t)(unknown_ptr_t);
 		template<typename T>struct runtime_type_builder;
 
 		struct runtime_type_info_t
@@ -135,21 +141,12 @@ namespace ang
 			static bool regist_runtime_type_info(const runtime_type_info_t&);
 
 			static runtime_type_info_t find_runtime_type_info(type_name_t);
-			static unknown_t contruct_dynamic_object(type_name_t);
-			static bool contruct_dynamic_object(type_name_t, intfptr&);
-			static bool destruct_dynamic_object(type_name_t, unknown_t);
+			static bool contruct_dynamic_object(type_name_t, unknown_ptr_t);
+			static bool destruct_dynamic_object(type_name_t, unknown_ptr_t);
 
-			template<class T>
-			static bool contruct_dynamic_object(object_wrapper<T>& out) {
-				intfptr _intf;
-				if (!contruct_dynamic_object(type_name<T>(), _intf))
-					return false;
-				out = reinterpret_cast<T*>(_intf.get());
-				return true;
-			}
+			template<class T> static bool contruct_dynamic_object(object_wrapper<T>& out);
+			template<class T> static bool contruct_dynamic_object(intf_wrapper<T>& out);
 
-			template <typename... args_t>
-			static unknown_t contruct_dynamic_object(type_name_t _type_name, args_t... args);
 		};
 
 		inline runtime_type_info_t::runtime_type_info_t(type_name_t name, dynamic_type_constructor_t cons, dynamic_type_destructor_t dest, bool regist) {

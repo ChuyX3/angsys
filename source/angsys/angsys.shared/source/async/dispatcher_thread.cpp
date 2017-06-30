@@ -148,14 +148,14 @@ ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::async::dispatcher_thread, ang::core::as
 
 bool dispatcher_thread::dispatch()
 {
-	scope_locker lock = _mutex;
-	while (!_tasks.is_empty() && _tasks->has_items())
+	_mutex->lock();
+	ang::swap(_tasks, _tasks_backup);
+	_mutex->unlock();
+	while (!_tasks_backup.is_empty() && _tasks_backup->has_items())
 	{
 		thread_callback_t task;
-		_tasks->pop(task, false);
-		_mutex->unlock();
+		_tasks_backup->pop(task, false);
 		task(nullptr);
-		_mutex->lock();
 	}
 	return true;
 }
@@ -178,21 +178,23 @@ bool dispatcher_thread::start(thread_callback_t callback, void_args_t args
 				_cond->waitfor(_mutex, [&]() {return _thread->_status == async_action_status::suspended; });
 			}
 			_mutex->lock();
-			while (!_tasks.is_empty() && _tasks->has_items())
+			ang::swap(_tasks, _tasks_backup);
+			_mutex->unlock();
+
+			while (!_tasks_backup.is_empty() && _tasks_backup->has_items())
 			{
 				thread_callback_t task;
-				_tasks->pop(task, false);
-				_mutex->unlock();
+				_tasks_backup->pop(task, false);	
 				task(nullptr);
-				_mutex->lock();
 			}
+
 			if (!callback.is_empty())
-			{
-				_mutex->unlock();
+			{	
 				callback(args);			
 			}
 			else
 			{
+				_mutex->lock();
 				_thread->_status = async_action_status::suspended;
 				_cond->waitfor(_mutex, [&]()
 				{

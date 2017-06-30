@@ -775,6 +775,7 @@ namespace ang
 				mutex_t _mutex;
 	
 				collections::vector<thread_callback_t> _tasks;
+				collections::vector<thread_callback_t> _tasks_backup;
 			public:
 				dispatcher_thread();
 
@@ -784,6 +785,7 @@ namespace ang
 			public:
 				bool dispatch();
 				bool start(thread_callback_t , void_args_t, thread_priority_t = thread_priority::normal);
+
 			private:
 				virtual bool start(thread_callback_t, void_args_t
 					, thread_priority_t, detach_state_t) override;

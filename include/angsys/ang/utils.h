@@ -122,6 +122,16 @@ namespace ang
 	template<class T1, class T2>
 	inline typename operation_result<T1, T2>::type max(T1 a, T2 b) { typedef typename operation_result<T1, T2>::type r_t; return move(a > b ? r_t(a) : r_t(b)); }
 
+	template<class T>
+	inline void swap(T& a, T&b) {
+		//&a != &b ? (a ^= b, b ^= a, a ^= b) : a;
+		T c(move(a)); a = move(b); b = move(c);
+	}
+
+	template<> inline void swap<pointer>(pointer& a, pointer&b) { 
+		swap<ang_size_t>(reinterpret_cast<ang_size_t&>(a), reinterpret_cast<ang_size_t&>(b));
+	}
+
 	template<class T, wsize N>
 	wsize array_size(const T(&ar)[N]) {
 		return N;
