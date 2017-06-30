@@ -56,6 +56,57 @@ bool d3d11_texture::query_object(type_name_t name, unknown_ptr_t out)
 	return false;
 }
 
+bool d3d11_texture::attach(com_wrapper<ID3D11ShaderResourceView> view)
+{
+	_texture_name = nullptr;
+	_tex_format = DXGI_FORMAT_UNKNOWN;
+	_tex_type = textures::tex_type::null;
+	_tex_dimentions = { 0,0 };
+	_tex_dimentions_depth = 0;
+	d3d_raw_resource = nullptr;
+	d3d_shader_view = view;
+	if (!view.is_empty())
+	{
+		D3D11_RESOURCE_DIMENSION dim;
+		view->GetResource(&d3d_raw_resource);
+		d3d_raw_resource->GetType(&dim);
+		switch (dim)
+		{
+		case D3D11_RESOURCE_DIMENSION_TEXTURE1D: {
+				_tex_type = textures::tex_type::tex1D;
+				D3D11_TEXTURE1D_DESC tex_desc;
+				static_cast<ID3D11Texture1D*>(d3d_raw_resource.get())->GetDesc(&tex_desc);
+				_tex_format = tex_desc.Format;
+				_tex_dimentions = { float(tex_desc.Width), float(1) };
+				_tex_dimentions_depth = 1;
+			}
+			break;
+		case D3D11_RESOURCE_DIMENSION_TEXTURE2D: {
+				_tex_type = textures::tex_type::tex2D;
+				D3D11_TEXTURE2D_DESC tex_desc;
+				static_cast<ID3D11Texture2D*>(d3d_raw_resource.get())->GetDesc(&tex_desc);
+				_tex_format = tex_desc.Format;
+				_tex_dimentions = { float(tex_desc.Width), float(tex_desc.Height) };
+				_tex_dimentions_depth = 1;
+			}
+			break;
+		case D3D11_RESOURCE_DIMENSION_TEXTURE3D: {
+				_tex_type = textures::tex_type::tex3D;
+				D3D11_TEXTURE3D_DESC tex_desc;
+				static_cast<ID3D11Texture3D*>(d3d_raw_resource.get())->GetDesc(&tex_desc);
+				_tex_format = tex_desc.Format;
+				_tex_dimentions = { float(tex_desc.Width), float(tex_desc.Height) };
+				_tex_dimentions_depth = tex_desc.Depth;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	return true;
+}
+
 bool d3d11_texture::load(d3d11_texture_loader_t loader, xml::xml_node_t node)
 {
 	if (node.is_empty())
@@ -69,7 +120,7 @@ bool d3d11_texture::load(d3d11_texture_loader_t loader, xml::xml_node_t node)
 		d3d11_driver_t driver = loader->driver();
 		auto att = node->xml_attributes();
 		_tex_type = att["type"].as<textures::tex_type_t>();
-
+		_tex_dimentions_depth = 1;
 		collections::vector<core::files::input_binary_file_t> files;
 
 		foreach(node->xml_children(), [&](xml::xml_node_t tex_node)

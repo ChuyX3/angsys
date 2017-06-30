@@ -60,7 +60,7 @@ bool d3d11_surface::query_object(type_name_t name, unknown_ptr_t out)
 bool d3d11_surface::create(platform::icore_view_t view)
 {
 	HRESULT hr = S_OK;
-	d3d11_driver_t driver = _parent_driver.lock<d3d11_driver>();
+	d3d11_driver_t driver = _parent_driver.lock();
 	if (driver.is_empty())
 		return false;
 
@@ -105,7 +105,7 @@ bool d3d11_surface::update(platform::icore_view_t view, foundation::size<float> 
 	HRESULT hr = S_OK;
 	bool bind = false;
 
-	d3d11_driver_t driver = _parent_driver.lock<d3d11_driver>();
+	d3d11_driver_t driver = _parent_driver.lock();
 	if (driver.is_empty())
 		return false;
 

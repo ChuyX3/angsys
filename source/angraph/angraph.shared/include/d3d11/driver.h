@@ -56,16 +56,16 @@ namespace ang
 				: public object
 				, public iframe_buffer
 			{
-				safe_pointer _parent_driver;
+				weak_ptr<d3d11_driver> _parent_driver;
 				foundation::size<float> _dimentions;
 				collections::vector<com_wrapper<ID3D11RenderTargetView>> d3d_render_target;
-				collections::vector<com_wrapper<ID3D11ShaderResourceView>> d3d_texture2D;
+				collections::vector<d3d11_texture_t> d3d_texture2D;
 				com_wrapper<ID3D11DepthStencilView> d3d_depth_stencil;
 				com_wrapper<ID3D11DepthStencilState> d3d_depth_stencil_state;
 
 			public: //internal
-				inline ID3D11RenderTargetView* D3DRenderTargetView(index idx)const { return d3d_render_target[idx].get(); }
-				inline ID3D11ShaderResourceView* D3D11ShaderResourceView(index idx)const { return d3d_texture2D[idx].get(); }
+				inline ID3D11RenderTargetView* D3DRenderTargetView(index idx)const { return d3d_render_target.is_empty() ? null : d3d_render_target[idx].get(); }
+				inline ID3D11ShaderResourceView* D3D11ShaderResourceView(index idx)const { return d3d_texture2D.is_empty()? null : d3d_texture2D[idx]->D3D11ShaderResourceView(); }
 				inline ID3D11DepthStencilView* D3DDepthStencilView()const { return d3d_depth_stencil.get(); }
 				inline ID3D11DepthStencilState* D3DDepthStencilState()const { return d3d_depth_stencil_state.get(); }
 
@@ -75,12 +75,13 @@ namespace ang
 				ANG_DECLARE_INTERFACE();
 
 				bool create(d3d11_surface_t);
-			//	bool create(frame_buffer_create_args_t);
+				bool create(static_array<textures::tex_format_t> color_format, textures::tex_format_t depth_stencil_format, foundation::size<float> dimentions);
 				bool close();
 
 			public: //overrides
 				foundation::size<float> dimentions()const override;
 				uint color_buffer_count()const override;
+				textures::itexture_t color_buffer(index)const;
 				bool has_depth_stencil_buffer()const override;
 
 			private:
@@ -92,7 +93,7 @@ namespace ang
 				, public isurface
 			{
 				foundation::size<float> _current_size;
-				safe_pointer _parent_driver;			
+				weak_ptr<d3d11_driver> _parent_driver;
 				com_wrapper<IDXGISwapChain1> dxgi_swap_chain;
 				d3d11_frame_buffer_t d3d_frame_buffer;
 
@@ -153,6 +154,7 @@ namespace ang
 				textures::itexture_loader_t create_texture_loader()const override;
 				buffers::ivertex_buffer_t create_vertex_buffer(buffers::buffer_usage_t usage, static_array<reflect::attribute_desc> vertex_desc, wsize vertex_count, static_array<byte> init_data)const override;
 				buffers::iindex_buffer_t create_index_buffer(buffers::buffer_usage_t usage,	reflect::var_type_t index_type,	wsize index_count, static_array<byte> init_data)const override;
+				iframe_buffer_t create_frame_buffer(static_array<textures::tex_format_t> color_format, textures::tex_format_t depth_stencil_format, foundation::size<float> dimentions)const override;
 
 				void cull_mode(cull_mode_t) override;
 				cull_mode_t cull_mode()const override;

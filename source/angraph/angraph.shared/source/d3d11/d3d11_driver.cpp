@@ -224,6 +224,17 @@ buffers::iindex_buffer_t d3d11_driver::create_index_buffer(buffers::buffer_usage
 	return buffer.get();
 }
 
+iframe_buffer_t d3d11_driver::create_frame_buffer(static_array<textures::tex_format_t> color_format, textures::tex_format_t depth_stencil_format, foundation::size<float> dimentions)const
+{ 
+	d3d11_frame_buffer_t buffer = new d3d11_frame_buffer(const_cast<d3d11_driver*>(this));
+	if (!buffer->create(
+		color_format, 
+		depth_stencil_format,
+		dimentions
+	))
+		return null;
+	return buffer.get();
+}
 
 void d3d11_driver::cull_mode(cull_mode_t value)
 {

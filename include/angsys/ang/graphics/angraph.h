@@ -132,9 +132,18 @@ namespace ang
 			enable,
 		ANG_END_ENUM(blend_mode);
 
+		typedef struct frame_buffer_desc
+		{
+			uint color_buffer_count;
+			textures::tex_format_t color_format[4];
+			textures::tex_format_t depth_stencil_format;
+			foundation::size<float> dimentions;
+		}frame_buffer_desc_t, *frame_buffer_desc_ptr_t;
+
 		ANG_BEGIN_INTERFACE(LINK, iframe_buffer)
 			visible vcall foundation::size<float> dimentions()const pure;
 			visible vcall uint color_buffer_count()const pure;
+			visible vcall textures::itexture_t color_buffer(index)const pure;
 			visible vcall bool has_depth_stencil_buffer()const pure;
 		ANG_END_INTERFACE();
 
@@ -159,6 +168,11 @@ namespace ang
 				reflect::var_type_t index_type,
 				wsize index_count,
 				static_array<byte> init_data
+			)const pure;
+			visible vcall iframe_buffer_t create_frame_buffer(
+				static_array<textures::tex_format_t> color_format,
+				textures::tex_format_t depth_stencil_format,
+				foundation::size<float> dimentions
 			)const pure;
 
 			visible vcall void cull_mode(cull_mode_t) pure;

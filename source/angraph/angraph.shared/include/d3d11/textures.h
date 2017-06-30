@@ -45,6 +45,7 @@ namespace ang
 				DXGI_FORMAT _tex_format;
 				textures::tex_type_t _tex_type;
 				foundation::size<float> _tex_dimentions;
+				float _tex_dimentions_depth;
 				com_wrapper<ID3D11Resource> d3d_raw_resource;
 				com_wrapper<ID3D11ShaderResourceView> d3d_shader_view;
 
@@ -62,6 +63,8 @@ namespace ang
 			public: //internal
 				bool load(d3d11_texture_loader_t, xml::xml_node_t);
 				bool use_texture(d3d11_driver_t, index idx)const;
+
+				bool attach(com_wrapper<ID3D11ShaderResourceView> _view);
 
 				inline ID3D11Texture1D* D3D11Texture1D()const { return static_cast<ID3D11Texture1D*>(d3d_raw_resource.get()); }
 				inline ID3D11Texture2D* D3D11Texture2D()const { return static_cast<ID3D11Texture2D*>(d3d_raw_resource.get()); }
