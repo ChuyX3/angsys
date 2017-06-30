@@ -64,7 +64,7 @@ namespace ang
 					ANG_DECLARE_INTERFACE();
 
 					virtual bool load(scene_t, xml::xml_node_t) pure;
-					virtual void update(core::time::timer const&) pure;
+					virtual void update(float, float) pure;
 					virtual void draw(scene_t) pure;
 					virtual void close() pure;
 
@@ -95,7 +95,7 @@ namespace ang
 					ANG_DECLARE_INTERFACE();
 					bool load(scene_t, xml::xml_node_t)override;
 					bool load(maths::float3 const& position, maths::float3 const& rotation, maths::float4 const& projection);
-					void update(core::time::timer const&)override;
+					void update(float, float)override;
 					void draw(scene_t)override;
 					void close()override;
 
@@ -135,8 +135,8 @@ namespace ang
 					maths::float3 pos_dir;
 					light_type_t type;
 
-					bool operator == (const light_info& other) { return false; }
-					bool operator != (const light_info& other) { return false; }
+					bool operator == (const light_info& other)const { return false; }
+					bool operator != (const light_info& other)const { return false; }
 				};
 
 				class scene
@@ -204,9 +204,6 @@ namespace ang
 					virtual~scene();
 				};
 
-
-
-
 				class model;
 				typedef object_wrapper<model> model_t;
 
@@ -221,8 +218,8 @@ namespace ang
 						buffers::ivertex_buffer_t vertex_buffer;
 						collections::vector<textures::itexture_t> textures;
 
-						bool operator == (const model_element&) { return false; }//dummy
-						bool operator != (const model_element&) { return false; }//dummy
+						bool operator == (const model_element&)const { return false; }//dummy
+						bool operator != (const model_element&)const { return false; }//dummy
 					};
 
 				protected:
@@ -235,7 +232,7 @@ namespace ang
 					ANG_DECLARE_INTERFACE();
 
 					virtual bool load(scene_t, xml::xml_node_t) override;
-					virtual void update(core::time::timer const&) override;
+					virtual void update(float, float) override;
 					virtual void draw(scene_t) override;
 					virtual void close() override;
 
@@ -268,5 +265,8 @@ namespace ang
 		}
 	}
 }
+
+ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::engine::scenes::light_info)
+ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::engine::scenes::model::model_element)
 
 #endif//__ANG_ENGINE_H__

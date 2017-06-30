@@ -19,6 +19,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\model_loader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\engine.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\camera.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\indexed_model.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\model.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\ordered_model.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes.cpp" />
   </ItemGroup>
 </Project>
