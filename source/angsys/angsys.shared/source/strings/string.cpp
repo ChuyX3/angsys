@@ -1248,8 +1248,8 @@ array<string> string_buffer::split(cstr_t val)const
 	do {
 		if (end - beg > 0)
 		{
-			cstr().sub_string(_word->str(), beg, end - beg);
-			_word->length(end - beg);
+			cstr().sub_string(_word, beg, end - beg);
+			//_word->length(end - beg);
 			list += _word.get();
 			_word = null;
 		}
