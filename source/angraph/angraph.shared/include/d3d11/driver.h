@@ -125,6 +125,15 @@ namespace ang
 				: public object
 				, public idriver
 			{
+
+				com_wrapper<ID2D1Factory2> d2d_factory;
+				com_wrapper<ID2D1Device1> d2d_device;
+				com_wrapper<ID2D1DeviceContext1> d2d_context;
+				com_wrapper<ID2D1Bitmap1> d2d_target_bitmap;
+				com_wrapper<IDWriteFactory2> dwrite_factory;
+				//com_wrapper<IWICImagingFactory> wic_factory;
+				D2D1::Matrix3x2F orientation_transform2D;
+
 				D3D_FEATURE_LEVEL _feature_level;
 				com_wrapper<IDXGIFactory2> dxgi_factory;
 				com_wrapper<ID3D11Device2> d3d_device;

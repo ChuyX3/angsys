@@ -81,7 +81,9 @@ bool d3d11_driver::init_driver()
 {
 	HRESULT hr = S_OK;
 
-	uint createDeviceFlags = 0;
+	// This flag adds support for surfaces with a different color channel ordering
+	// than the API default. It is required for compatibility with Direct2D.
+	uint createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #ifdef _DEBUG
 	if (SdkLayersAvailable())
 		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -92,6 +94,9 @@ bool d3d11_driver::init_driver()
 		D3D_FEATURE_LEVEL_11_0,
 		D3D_FEATURE_LEVEL_10_1,
 		D3D_FEATURE_LEVEL_10_0,
+		D3D_FEATURE_LEVEL_9_3,
+		D3D_FEATURE_LEVEL_9_2,
+		D3D_FEATURE_LEVEL_9_1
 	};
 	uint numFeatureLevels = ARRAYSIZE(featureLevels);
 
@@ -110,14 +115,16 @@ bool d3d11_driver::init_driver()
 	device->Release();
 	context->Release();
 
+	com_wrapper<IDXGIDevice3> dxgiDevice = nullptr;
+
 	if (D3D11Device() == null || D3D11Context() == null)
 	{
 		return false;
 	}
 
 	{
-		IDXGIDevice1* dxgiDevice = nullptr;
-		hr = d3d_device->QueryInterface(__uuidof(IDXGIDevice1), reinterpret_cast<void**>(&dxgiDevice));
+		
+		hr = d3d_device->QueryInterface(__uuidof(IDXGIDevice3), reinterpret_cast<void**>(dxgiDevice.addres_of()));
 		if (SUCCEEDED(hr))
 		{
 			IDXGIAdapter* adapter = nullptr;
@@ -166,11 +173,75 @@ bool d3d11_driver::init_driver()
 	d3d_device->CreateBlendState(&bl, &d3d_blend_state);
 	//d3d_context->OMSetBlendState(d3d_blend_state, NULL, -1);
 
+
+	/*com_wrapper<ID2D1Factory2> d2d_factory;
+	com_wrapper<ID2D1Device1> d2d_device;
+	com_wrapper<ID2D1DeviceContext1> d2d_context;
+	com_wrapper<ID2D1Bitmap1> d2d_target_bitmap;
+	com_wrapper<IDWriteFactory2> dwrite_factory;
+	com_wrapper<IWICImagingFactory> wic_factory;
+	D2D1::Matrix3x2F orientation_transform2D;*/
+
+	D2D1_FACTORY_OPTIONS options;
+	ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));
+#if defined(_DEBUG)
+	// If the project is in a debug build, enable Direct2D debugging via SDK Layers.
+	options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+#endif
+
+	// Initialize the Direct2D Factory.
+	
+	hr = D2D1CreateFactory(
+		D2D1_FACTORY_TYPE_SINGLE_THREADED,
+		__uuidof(ID2D1Factory2),
+		&options,
+		(void**)d2d_factory.addres_of()
+	);
+
+	if (FAILED(hr))
+	{
+		close_driver();
+		return false;
+	}
+
+	hr = DWriteCreateFactory(
+		DWRITE_FACTORY_TYPE_SHARED,
+		__uuidof(IDWriteFactory2),
+		(IUnknown**)dwrite_factory.addres_of()
+	);
+
+	if (FAILED(hr))
+	{
+		close_driver();
+		return false;
+	}
+
+	hr = d2d_factory->CreateDevice(dxgiDevice, &d2d_device);
+	if (FAILED(hr))
+	{
+		close_driver();
+		return false;
+	}
+	hr = d2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &d2d_context);
+	if (FAILED(hr))
+	{
+		close_driver();
+		return false;
+	}
+
 	return true;
 }
 
 void d3d11_driver::close_driver()
 {
+	d3d_blend_state = null;
+	_current_frame_buffer = null;
+	_current_shaders = null;
+
+	d2d_context = null;
+	d2d_device = null;
+	d2d_factory = null;
+
 	_current_frame_buffer = null;
 	d3d_context = null;
 	d3d_device = null;
