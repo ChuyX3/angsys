@@ -48,9 +48,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_inlines.h">
       <Filter>header files\include</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\vector_specialization.hpp">
-      <Filter>header files\include</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\media\media.h">
       <Filter>header files\ang\media</Filter>
     </ClInclude>

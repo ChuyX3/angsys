@@ -3,8 +3,7 @@
 
 using namespace ang;
 using namespace ang::graphics;
-using namespace ang::graphics::engine;
-using namespace ang::graphics::engine::scenes;
+using namespace ang::graphics::scenes;
 
 
 indexed_model::indexed_model()
@@ -17,7 +16,7 @@ indexed_model::~indexed_model()
 
 }
 
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::engine::scenes::indexed_model, object)
+ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::scenes::indexed_model, object)
 
 collections::vector<indexed_model::model_element> indexed_model::load(xml::xml_node_t material_info)
 {

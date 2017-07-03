@@ -67,7 +67,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\file_system.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\memory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\thread_manager.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\vector_specialization.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\xml_entity_values.h" />
   </ItemGroup>
   <ItemGroup>

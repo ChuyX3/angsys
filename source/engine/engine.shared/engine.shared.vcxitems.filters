@@ -12,10 +12,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\engine.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\model_loader.h">
       <Filter>header files</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\model_loader.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\scenes.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\framework.h">
       <Filter>header files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -33,6 +36,9 @@
       <Filter>source files</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\framework.cpp">
       <Filter>source files</Filter>
     </ClCompile>
   </ItemGroup>

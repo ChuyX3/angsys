@@ -27,7 +27,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\driver.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\shaders.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\textures.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\vector_specialization.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\driver.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\VulkanSDK.h" />
   </ItemGroup>

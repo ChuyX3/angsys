@@ -40,8 +40,16 @@ namespace ang
 #include <d3d11_2.h>
 #include <d3dcompiler.h>
 
+#include <d2d1_2.h>
+#include <d2d1effects_1.h>
+#include <dwrite_2.h>
+
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
+
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "dwrite.lib")
 
 
 ANG_DECLARE_MEMORYMANAGER()

@@ -510,6 +510,16 @@ bool window::listen_to(event_t event)
 		return true;
 	case win_msg_enum::Size:
 		sizeEvent += event;
+		return true;
+	case win_msg_enum::PointerMoved:
+		pointerMovedEvent += event;
+		return true;
+	case win_msg_enum::PointerPressed:
+		pointerPressedEvent += event;
+		return true;
+	case win_msg_enum::PointerReleased:
+		pointerReleasedEvent += event;
+		return true;
 	default:
 		return false;
 	}

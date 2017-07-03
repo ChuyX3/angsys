@@ -4,7 +4,7 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
     <ItemsProjectGuid>{BDC58ECC-966E-4AED-AAB4-359528FF3D7E}</ItemsProjectGuid>
-    <ItemsProjectName>angine.shared</ItemsProjectName>
+    <ItemsProjectName>engine.shared</ItemsProjectName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -15,11 +15,13 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\engine.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\framework.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\model_loader.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\scenes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\camera.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\framework.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\indexed_model.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\model.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\ordered_model.cpp" />

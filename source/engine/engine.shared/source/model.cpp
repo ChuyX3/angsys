@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "engine.h"
+#include "framework.h"
 #include "model_loader.h"
 
 #if defined _DEBUG
@@ -8,8 +8,7 @@
 
 using namespace ang;
 using namespace ang::graphics;
-using namespace ang::graphics::engine;
-using namespace ang::graphics::engine::scenes;
+using namespace ang::graphics::scenes;
 
 template<> inline ang::maths::float2 ang::xml::xml_value::as<ang::maths::float2>()const
 {
@@ -55,7 +54,7 @@ model::~model()
 
 }
 
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::engine::scenes::model, scene_object);
+ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::scenes::model, scene_object);
 
 bool model::load(scene_t scene, xml::xml_node_t node)
 {
