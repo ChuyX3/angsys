@@ -19,6 +19,15 @@ namespace ang
 				return arr;
 			}
 
+			static static_array<T> new_array(ang::initializer_list_t<T> const& list) {
+				auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator);
+				static_array<T> arr = { alloc->object_alloc<T>(list.size()), list.size() };
+				index i = 0;
+				for (auto it = list.begin(), end = list.end(); it < end; ++it, ++i)
+					alloc->construct(arr._value[i], *it);
+				return arr;
+			}
+
 			static void delete_array(static_array<T>& arr)
 			{
 				auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator);
@@ -102,6 +111,8 @@ namespace ang
 			void set(type val, uint size) { _value = ang::move(val); _size = ang::move(size); }
 			type data()const { return _value; }
 			uint size()const { return _size; }
+			type begin()const { return _value; }
+			type end()const { return _value + _size; }
 
 		public: /*operators*/
 			static_const_array& operator = (type val) { set(ang::move(val), 1); return*this; }
@@ -144,6 +155,8 @@ namespace ang
 			void set(type val, uint size);
 			type data()const;
 			uint size()const;
+			inline type begin()const { return _value; }
+			inline type end()const { return _value + _size; }
 
 		public: /*operators*/
 			static_array& operator = (type val);
@@ -187,6 +200,8 @@ namespace ang
 			void set(type val, uint size);
 			type data()const;
 			uint size()const;
+			inline type begin()const { return _value; }
+			inline type end()const { return _value + _size; }
 
 		public: /*operators*/
 			static_const_array& operator = (type val);
@@ -228,6 +243,8 @@ namespace ang
 			void set(type val, uint size);
 			type data()const;
 			uint size()const;
+			inline type begin()const { return _value; }
+			inline type end()const { return _value + _size; }
 
 		public: /*operators*/
 			static_array& operator = (type val);
@@ -271,6 +288,8 @@ namespace ang
 			void set(type val, uint size);
 			type data()const;
 			uint size()const;
+			inline type begin()const { return _value; }
+			inline type end()const { return _value + _size; }
 
 		public: /*operators*/
 			static_const_array& operator = (type val);
@@ -312,6 +331,8 @@ namespace ang
 			void set(type val, uint size);
 			type data()const;
 			uint size()const;
+			inline type begin()const { return _value; }
+			inline type end()const { return _value + _size; }
 
 		public: /*operators*/
 			static_array& operator = (type val);
@@ -355,6 +376,8 @@ namespace ang
 			void set(type val, uint size);
 			type data()const;
 			uint size()const;
+			inline type begin()const { return _value; }
+			inline type end()const { return _value + _size; }
 
 		public: /*operators*/
 			static_const_array& operator = (type val);
