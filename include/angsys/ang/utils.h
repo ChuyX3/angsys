@@ -38,6 +38,24 @@ namespace ang
 	};
 
 	template<class T>
+	struct remove_constant<const T&>
+	{
+		typedef T& type;
+	};
+
+	template<class T>
+	struct remove_constant<const T*>
+	{
+		typedef T* type;
+	};
+
+	template<class T>
+	struct remove_constant<T* const>
+	{
+		typedef T* type;
+	};
+
+	template<class T>
 	struct remove_reference
 	{
 		typedef T type;
