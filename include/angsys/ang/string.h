@@ -951,8 +951,8 @@ namespace ang
 	
 	}
 
-	inline string operator "" _o(const char* str, unsigned int sz) { return string(cstr_t(str, sz)); }
-	inline wstring operator "" _o(const wchar* str, unsigned int sz) { return wstring(cwstr_t(str, sz)); }
+	inline string operator "" _o(const char* str, wsize sz) { return string(cstr_t(str, sz)); }
+	inline wstring operator "" _o(const wchar* str, wsize sz) { return wstring(cwstr_t(str, sz)); }
 
 	template<wsize N>inline string::object_wrapper(const wchar(&ar)[N])
 		: object_wrapper(cwstr_t(ar, N-1)){

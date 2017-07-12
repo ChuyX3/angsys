@@ -207,7 +207,7 @@ void ang::collections::vector_buffer<_TYPE>::set_allocator(memory::iallocator* a
 ang::memory::iallocator* ang::collections::vector_buffer<_TYPE>::get_allocator()const { return allocator; } \
 pointer ang::collections::vector_buffer<_TYPE>::buffer_ptr()const { return (pointer)_data; } \
 wsize ang::collections::vector_buffer<_TYPE>::buffer_size()const { 	return _capacity * sizeof(_TYPE); } \
-uint ang::collections::vector_buffer<_TYPE>::mem_copy(wsize _s, pointer _p) { \
+wsize ang::collections::vector_buffer<_TYPE>::mem_copy(wsize _s, pointer _p) { \
 	auto s = min((_s / sizeof(_TYPE)) * sizeof(_TYPE), (_capacity - 1) * sizeof(_TYPE)); \
 	memcpy(_data, _p, s); \
 	return s; \
@@ -578,7 +578,7 @@ void ang::collections::vector_buffer<_TYPE>::set_allocator(memory::iallocator* a
 ang::memory::iallocator* ang::collections::vector_buffer<_TYPE>::get_allocator()const { return allocator; } \
 pointer ang::collections::vector_buffer<_TYPE>::buffer_ptr()const { return (pointer)_data; } \
 wsize ang::collections::vector_buffer<_TYPE>::buffer_size()const { 	return _capacity * sizeof(_TYPE); } \
-uint ang::collections::vector_buffer<_TYPE>::mem_copy(wsize _s, pointer _p) { \
+wsize ang::collections::vector_buffer<_TYPE>::mem_copy(wsize _s, pointer _p) { \
 	auto s = min((_s / sizeof(_TYPE)) * sizeof(_TYPE), (_capacity - 1) * sizeof(_TYPE)); \
 	memcpy(_data, _p, s); \
 	return s; \

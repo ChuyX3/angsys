@@ -61,8 +61,8 @@ namespace ang
 				, public buffers::ivertex_buffer
 			{
 			private:
-				wsize _vertex_count;
-				wsize _stride;
+				uint _vertex_count;
+				uint _stride;
 				buffers::buffer_usage_t _usage;
 				collections::vector <reflect::attribute_desc> _vertex_desc;
 				com_wrapper<ID3D11Buffer> d3d_vertex_buffer;

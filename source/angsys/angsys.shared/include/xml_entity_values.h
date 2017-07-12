@@ -23,18 +23,18 @@ namespace ang
 
 		//////////////////////////////////////////////////////////////////////////////////////////////
 
-		template<class _char_t, class _string>
-		inline int xml_skip_space(const _string& code, collections::iterator<_char_t> const& begin)
-		{
-			int c = 0;
-			_char_t at;
-			while (((at = code->at(begin + c)) == ' ')
-				|| (at == '\n')
-				|| (at == '\t')
-				|| (at == '\r')
-				)c++;
-			return c;
-		}
+		//template<class _char_t, class _string>
+		//inline int xml_skip_space(const _string& code, collections::iterator<_char_t> const& begin)
+		//{
+		//	int c = 0;
+		//	_char_t at;
+		//	while (((at = code->at(begin + c)) == ' ')
+		//		|| (at == '\n')
+		//		|| (at == '\t')
+		//		|| (at == '\r')
+		//		)c++;
+		//	return c;
+		//}
 
 		template<class _char_t>
 		inline int xml_skip_space(const _char_t* code, index begin)
@@ -49,20 +49,20 @@ namespace ang
 			return c;
 		}
 
-		template<class _char_t, class _string>
-		inline int xml_get_element_name(const _string& code, collections::iterator<_char_t> const& begin)
-		{
-			int c = 0;
-			_char_t at;
-			while (((at = code->at(begin + c)) != ' ')
-				&& (at != '\n')
-				&& (at != '\t')
-				&& (at != '\r')
-				&& (at != '/')
-				&& (at != '>'))
-				c++;
-			return c;
-		}
+		//template<class _char_t, class _string>
+		//inline int xml_get_element_name(const _string& code, collections::iterator<_char_t> const& begin)
+		//{
+		//	int c = 0;
+		//	_char_t at;
+		//	while (((at = code->at(begin + c)) != ' ')
+		//		&& (at != '\n')
+		//		&& (at != '\t')
+		//		&& (at != '\r')
+		//		&& (at != '/')
+		//		&& (at != '>'))
+		//		c++;
+		//	return c;
+		//}
 
 		template<class _char_t>
 		inline int xml_get_element_name(const _char_t* code, index begin)
@@ -79,19 +79,19 @@ namespace ang
 			return c;
 		}
 
-		template<class _char_t, class _string>
-		inline int xml_get_attibute_name(const _string& code, collections::iterator<_char_t> const& begin)
-		{
-			int c = 0;
-			_char_t at;
-			while (((at = code->at(begin + c)) != ' ')
-				&& (at != '\n')
-				&& (at != '\t')
-				&& (at != '\r')
-				&& (at != '='))
-				c++;
-			return c;
-		}
+		//template<class _char_t, class _string>
+		//inline int xml_get_attibute_name(const _string& code, collections::iterator<_char_t> const& begin)
+		//{
+		//	int c = 0;
+		//	_char_t at;
+		//	while (((at = code->at(begin + c)) != ' ')
+		//		&& (at != '\n')
+		//		&& (at != '\t')
+		//		&& (at != '\r')
+		//		&& (at != '='))
+		//		c++;
+		//	return c;
+		//}
 
 		template<class _char_t>
 		inline int xml_get_attibute_name(const _char_t* code, index begin)

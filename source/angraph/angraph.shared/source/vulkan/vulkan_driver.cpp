@@ -2,6 +2,8 @@
 #include "pch.h"
 #include "vulkan/driver.h"
 
+#if VULKAN_SUPPORT
+
 using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::vulkan;
@@ -277,3 +279,5 @@ core::async::mutex_t vulkan_driver::driver_guard()const
 {
 	return main_mutex;
 }
+
+#endif
