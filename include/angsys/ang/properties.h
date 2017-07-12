@@ -12,9 +12,7 @@
 
 namespace ang
 {
-
-	template<typename T, class P>
-	class property final
+	template<typename T, class P> class property
 	{
 	private:
 		T _value;
@@ -123,7 +121,7 @@ namespace ang
 	};
 
 	template<typename T, class P>
-	class property<const T, P> final
+	class property<const T, P>
 	{
 	private:
 		T _value;
@@ -221,7 +219,7 @@ namespace ang
 	};
 
 	template<typename T, class P>
-	class property<T*, P> final
+	class property<T*, P>
 	{
 	private:
 		T* _value;
@@ -326,7 +324,7 @@ namespace ang
 	};
 
 	template<typename T, class P>
-	class property<T const *, P> final
+	class property<T const *, P>
 	{
 	private:
 		T* _value;
@@ -425,7 +423,7 @@ namespace ang
 	};
 
 	template<typename T, class P>
-	class property<const object_wrapper<T>, P> final
+	class property<const object_wrapper<T>, P>
 	{
 	private:
 		object_wrapper<T> _value;
@@ -525,7 +523,7 @@ namespace ang
 
 
 	template<typename T, class P>
-	class property<const intf_wrapper<T>, P> final
+	class property<const intf_wrapper<T>, P>
 	{
 	private:
 		intf_wrapper<T> _value;
@@ -622,6 +620,81 @@ namespace ang
 			_value = value;
 		}
 	};
+
+
+	const uint PROPERTY_TYPE_DEFAULT = 0u;
+	const uint PROPERTY_TYPE_ALERTABLE = 1u;
+	const uint PROPERTY_TYPE_NOSTORAGE = 2u;
+
+	template<typename D, typename T, uint TYPE = PROPERTY_TYPE_DEFAULT> struct base_property;
+
+	template<typename D, typename T>
+	struct base_property<D, T, PROPERTY_TYPE_DEFAULT>
+	{
+		typedef T type;
+		typedef base_property<D, T, PROPERTY_TYPE_DEFAULT> base;
+		typedef D self;
+
+	protected:
+		type _value;
+		type get_value()const { return _value; }
+		type set_value(type& value) { _value = ang::move(value); return _value; }
+	};
+
+	template<typename D, typename T>
+	struct base_property<D, T, PROPERTY_TYPE_NOSTORAGE>
+	{
+		typedef T type;
+		typedef base_property<D, T, PROPERTY_TYPE_NOSTORAGE> base;
+		typedef D self;
+
+	protected:
+		inline type get_value()const { return D::get_property_value(this); }
+		inline type set_value(type& value) { return D::set_property_value(this, value); }
+	};
+
+	template<typename D, typename T>
+	struct base_property<D, T, PROPERTY_TYPE_ALERTABLE>
+	{
+		typedef T type;
+		typedef base_property<D, T, PROPERTY_TYPE_ALERTABLE> base;
+		typedef D self;
+
+	protected:
+		type _value;
+		inline type get_value()const { return _value; }
+		inline type set_value(type& value) { return D::set_property_value(this, value); }
+	};
+
+#define DECLARE_PROPERTY(_LINK, _PARENT, _NAME, _TYPE, ...) \
+private : class _LINK _NAME##_property_t : public base_property<_NAME##_property_t, __VA_ARGS__> {  \
+	friend _PARENT; \
+	friend base; \
+	static _TYPE get_property_value(_PARENT*); \
+	static _TYPE set_property_value(_PARENT*, _TYPE&); \
+	static inline _TYPE get_property_value(base* _base){ return ang::move(get_property_value(static_cast<self*>(_base)->get_parent())); } \
+	static inline _TYPE set_property_value(base* _base, _TYPE& value){ return ang::move(set_property_value(static_cast<self*>(_base)->get_parent(), value)); } \
+	_PARENT* get_parent()const{ return (_PARENT*)wsize(wsize(this) - offsetof(_PARENT,_NAME));  } \
+	public : operator _TYPE ()const{ return ang::move(get_value()); } \
+	public : _TYPE operator = (_TYPE value){ return ang::move(set_value(value)); } \
+}; \
+public: _NAME##_property_t _NAME;
+
+#define DECLARE_READONLY_PROPERTY(_LINK, _PARENT, _NAME, _TYPE, ...) \
+private : class _LINK _NAME##_property_t : public base_property<_NAME##_property_t, __VA_ARGS__> {  \
+	friend _PARENT; \
+	friend base; \
+	static _TYPE get_property_value(_PARENT*); \
+	static _TYPE set_property_value(_PARENT*, _TYPE&); \
+	static inline _TYPE get_property_value(base* _base){ return ang::move(get_property_value(static_cast<self*>(_base)->get_parent())); } \
+	static inline _TYPE set_property_value(base* _base, _TYPE& value){ return ang::move(set_property_value(static_cast<self*>(_base)->get_parent(), value)); } \
+	_PARENT* get_parent()const{ return (_PARENT*)wsize(wsize(this) - offsetof(_PARENT,_NAME));  } \
+	public : operator _TYPE ()const{ return ang::move(get_value()); } \
+}; \
+public: _NAME##_property_t _NAME;
+
+#define ang_property(_LINK, _PARENT, _TYPE, _NAME, ...) DECLARE_PROPERTY(_LINK, _PARENT, _NAME, _TYPE, _TYPE, __VA_ARGS__)
+#define ang_readonly_property(_LINK, _PARENT, _TYPE, _NAME, ...) DECLARE_READONLY_PROPERTY(_LINK, _PARENT, _NAME, _TYPE, _TYPE, __VA_ARGS__)
 
 }
 
