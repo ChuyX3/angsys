@@ -78,9 +78,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\driver.h">
       <Filter>header files\include\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\drawing.h">
-      <Filter>header files\ang\graphics</Filter>
-    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\angdraw.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angraph.cpp">
