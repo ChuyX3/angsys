@@ -23,6 +23,8 @@
 #define pure = 0
 #define vcall virtual
 #define scall static
+#define ang_interface struct
+#define ANG_INTERFACE(_NAME) ang_interface _NAME; typedef ang::intf_wrapper<_NAME> _NAME##_t
 
 #define ANG_DECLARE_CLASSNAME() static ang::type_name_t class_name();
 #define ANG_DECLARE_ISCHILDOF() static bool is_child_of(ang::type_name_t);
@@ -49,7 +51,7 @@
 #define ANG_END()	};
 
 #define ANG_BEGIN_INTERFACE(_LINK, _CLASS) \
-	struct _LINK _CLASS ANG_BEGIN() \
+	ang_interface _LINK _CLASS ANG_BEGIN() \
 		ANG_DECLARE_CLASSNAME() \
 		ANG_DECLARE_ISCHILDOF() \
 		ANG_DECLARE_OBJECTNAME() \
@@ -57,7 +59,7 @@
 		ANG_DECLARE_QUERYOBJECT()
 
 #define ANG_BEGIN_INLINE_INTERFACE(_CLASS) \
-	struct _CLASS ANG_BEGIN() \
+	ang_interface _CLASS ANG_BEGIN() \
 		inline ANG_DECLARE_CLASSNAME() \
 		inline ANG_DECLARE_ISCHILDOF() \
 		inline ANG_DECLARE_OBJECTNAME() \
@@ -65,7 +67,7 @@
 		inline ANG_DECLARE_QUERYOBJECT()
 
 #define ANG_BEGIN_INTERFACE_SPECIALIZATION(_CLASS, ...) \
-	struct _CLASS<__VA_ARGS__> ANG_BEGIN() \
+	ang_interface _CLASS<__VA_ARGS__> ANG_BEGIN() \
 		inline ANG_DECLARE_CLASSNAME() \
 		inline ANG_DECLARE_ISCHILDOF() \
 		inline ANG_DECLARE_OBJECTNAME() \
@@ -73,7 +75,7 @@
 		inline ANG_DECLARE_QUERYOBJECT()
 
 #define ANG_BEGIN_INTERFACE_FULL_SPECIALIZATION(_LINK, _CLASS, ...) \
-	struct _LINK _CLASS<__VA_ARGS__> ANG_BEGIN() \
+	ang_interface _LINK _CLASS<__VA_ARGS__> ANG_BEGIN() \
 		ANG_DECLARE_CLASSNAME() \
 		ANG_DECLARE_ISCHILDOF() \
 		ANG_DECLARE_OBJECTNAME() \
@@ -81,7 +83,7 @@
 		ANG_DECLARE_QUERYOBJECT()
 
 #define ANG_BEGIN_INTERFACE_WITH_BASE(_LINK, _CLASS, ...) \
-	struct _LINK _CLASS : __VA_ARGS__ ANG_BEGIN() \
+	ang_interface _LINK _CLASS : __VA_ARGS__ ANG_BEGIN() \
 		ANG_DECLARE_CLASSNAME() \
 		ANG_DECLARE_ISCHILDOF() \
 		ANG_DECLARE_OBJECTNAME() \
@@ -89,7 +91,7 @@
 		ANG_DECLARE_QUERYOBJECT()
 
 #define ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(_CLASS, ...) \
-	struct _CLASS : __VA_ARGS__ ANG_BEGIN() \
+	ang_interface _CLASS : __VA_ARGS__ ANG_BEGIN() \
 		inline ANG_DECLARE_CLASSNAME() \
 		inline ANG_DECLARE_ISCHILDOF() \
 		inline ANG_DECLARE_OBJECTNAME() \
