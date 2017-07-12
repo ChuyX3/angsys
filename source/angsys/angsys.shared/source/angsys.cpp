@@ -137,7 +137,9 @@ namespace ang
 			, m_buffer_allocator(memory::allocator_manager::buffer_allocator)
 			, m_aligned_allocator()
 #if defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
+#if defined _DEBUG || defined _DEVELOPPER
 			, logger("ang_debugger"_s)
+#endif
 #endif
 		{
 		//	logger.print(debug::log_level::info, "ang console: \n");
@@ -150,7 +152,9 @@ namespace ang
 			core::files::file_system::release_instance();
 			core::async::thread_manager::release_instance();		
 		}
+#if defined _DEBUG || defined _DEVELOPPER
 		debug::console_logger logger;
+#endif
 		memory::default_allocator m_default_allocator;
 		memory::default_allocator m_object_allocator;
 		memory::default_allocator m_buffer_allocator;
@@ -234,7 +238,9 @@ extern "C" void ang_debug_output_info(const char* format, ...)
 #if defined ANDROID_PLATFORM
 	__android_log_print(ANDROID_LOG_INFO, (const char*)logger, "%s", buffer);
 #elif defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
+#if defined _DEBUG || defined _DEVELOPPER
 	ang_library_initializer::instance()->logger.print(debug::log_level::info, "%s %s\n", logger, buffer);
+#endif
 #else
 	printf("%s %s\n", logger, buffer);
 	OutputDebugStringA(logger);
@@ -265,7 +271,9 @@ extern "C" void ang_debug_output_warning(const char* format, ...)
 #if defined ANDROID_PLATFORM
 	__android_log_print(ANDROID_LOG_WARN, (const char*)logger, "%s", buffer);
 #elif defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
+#if defined _DEBUG || defined _DEVELOPPER
 	ang_library_initializer::instance()->logger.print(debug::log_level::warning, "%s %s\n", logger, buffer);
+#endif
 #else
 	printf("%s %s\n", logger, buffer);
 	OutputDebugStringA(logger);
@@ -297,7 +305,9 @@ extern "C" void ang_debug_output_error(const char* format, ...)
 #if defined ANDROID_PLATFORM
 	__android_log_print(ANDROID_LOG_ERROR, (const char*)logger, "%s", buffer);
 #elif defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
+#if defined _DEBUG || defined _DEVELOPPER
 	ang_library_initializer::instance()->logger.print(debug::log_level::error, "%s %s\n", logger, buffer);
+#endif
 #else
 	printf("%s %s\n", logger, buffer);
 	OutputDebugStringA(logger);

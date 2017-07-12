@@ -3,6 +3,8 @@
 #include <ang/graphics/angraph.h>
 #include "vulkan/VulkanSDK.h"
 
+#if VULKAN_SUPPORT
+
 namespace ang
 {
 	namespace graphics
@@ -190,3 +192,5 @@ namespace ang
 		}
 	}
 }
+
+#endif

@@ -234,7 +234,7 @@ public: /*iallocator_client overrides*/ \
 public: /*ibuffer overrides*/ \
 	pointer buffer_ptr()const override; \
 	wsize buffer_size()const override; \
-	uint mem_copy(wsize, pointer) override; \
+	wsize mem_copy(wsize, pointer) override; \
 	pointer map_buffer(windex, wsize) override; \
 	void unmap_buffer(pointer, wsize) override; \
 	bool can_realloc_buffer()const override; \

@@ -16,12 +16,12 @@ namespace ang
 
 			struct tex_file_info_t
 			{
-				wsize width;
-				wsize height;
-				wsize depth;
+				uint width;
+				uint height;
+				uint depth;
 				uint resDim;
-				wsize arraySize;
-				wsize mipCount;
+				uint arraySize;
+				uint mipCount;
 				uint format;
 				uint fileType;
 				bool isCubeMap;

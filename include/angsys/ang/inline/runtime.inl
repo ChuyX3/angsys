@@ -189,7 +189,7 @@ namespace ang
 			}
 		};
 
-#ifdef WINDOWS_PLATFORM
+#if defined WINDOWS_PLATFORM && !defined _WIN64
 		template<class T, class... Ts>
 		struct runtime_type_builder<T(__stdcall*)(Ts...)>
 		{

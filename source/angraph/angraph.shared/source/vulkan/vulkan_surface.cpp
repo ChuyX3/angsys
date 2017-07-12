@@ -2,6 +2,8 @@
 #include "pch.h"
 #include "vulkan/driver.h"
 
+#if VULKAN_SUPPORT
+
 using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::vulkan;
@@ -100,3 +102,4 @@ void vulkan_surface::on_display_size_changed_event(objptr, ang::platform::events
 
 }
 
+#endif

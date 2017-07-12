@@ -74,7 +74,7 @@ bool mapped_file_buffer::query_object(type_name_t name, unknown_ptr_t out)
 	return false;
 }
 
-bool mapped_file_buffer::map(file_flags_t access, uint size, ulong64 offset)
+bool mapped_file_buffer::map(file_flags_t access, wsize size, ulong64 offset)
 {
 	_access_flag = access.is_active(file_flags::access_out) ? file_flags::access_out : file_flags::access_in;
 #ifdef WINDOWS_PLATFORM

@@ -525,7 +525,7 @@ void wstring_buffer::unmap_buffer(pointer ptr, wsize used)
 
 bool wstring_buffer::can_realloc_buffer()const { return true; };
 
-bool wstring_buffer::realloc_buffer(uint size) { return realloc(size, true); };
+bool wstring_buffer::realloc_buffer(wsize size) { return realloc(size, true); };
 
 text::encoding_t wstring_buffer::encoding()const
 {

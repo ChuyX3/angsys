@@ -158,7 +158,7 @@ inline wsize ang::collections::vector_buffer<T>::buffer_size()const
 }
 
 template<typename T>
-inline uint ang::collections::vector_buffer<T>::mem_copy(wsize _s, pointer _p)
+inline wsize ang::collections::vector_buffer<T>::mem_copy(wsize _s, pointer _p)
 {
 	throw(exception_t(except_code::unsupported));
 	return 0;
