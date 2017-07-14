@@ -5,6 +5,8 @@
 #define new ANG_DEBUG_NEW()
 #endif
 
+#if DIRECTX_SUPPORT
+
 using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
@@ -434,3 +436,4 @@ textures::itexture_t d3d11_texture_loader::find_texture(cwstr_t name)const
 	return it.is_valid() ? it->value().lock<d3d11_texture>().get() : null; //return it.is_valid() ? it->value().lock<d3d11_texture>().get() : null;
 }
 
+#endif

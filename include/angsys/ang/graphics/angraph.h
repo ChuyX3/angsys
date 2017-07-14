@@ -154,6 +154,7 @@ namespace ang
 
 
 		ANG_BEGIN_INTERFACE(LINK, idriver)
+			visible vcall graph_driver_type_t graph_driver_type()const pure;
 			visible vcall isurface_t create_surface(platform::icore_view_t)const pure;
 			visible vcall effects::ieffect_library_t create_effect_library()const pure;
 			visible vcall textures::itexture_loader_t create_texture_loader()const pure;

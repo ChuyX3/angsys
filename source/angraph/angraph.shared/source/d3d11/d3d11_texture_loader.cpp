@@ -7,6 +7,8 @@
 #define NEW new
 #endif
 
+#if DIRECTX_SUPPORT
+
 using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
@@ -1362,3 +1364,5 @@ bool d3d11_texture_loader::load_texture(d3d11_driver_t driver,
 
 	return create_array_texture(driver, &info, data, resource, resourceView);
 }
+
+#endif

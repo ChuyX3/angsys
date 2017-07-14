@@ -2,6 +2,8 @@
 
 #include <ang/graphics/angraph.h>
 
+#if DIRECTX_SUPPORT
+
 namespace ang
 {
 	namespace graphics
@@ -199,7 +201,6 @@ inline D3D11_SRV_DIMENSION ang::graphics::d3d11::traslate_type_dx1(ang::graphics
 	return D3D11_SRV_DIMENSION_UNKNOWN;
 }
 
-
 inline ang::graphics::textures::tex_type_t ang::graphics::d3d11::traslate_type_dx1(D3D11_SRV_DIMENSION type)
 {
 	switch (type)
@@ -219,7 +220,6 @@ inline ang::graphics::textures::tex_type_t ang::graphics::d3d11::traslate_type_d
 	}
 	return textures::tex_type::null;
 }
-
 
 inline D3D11_RESOURCE_DIMENSION ang::graphics::d3d11::traslate_type_dx2(ang::graphics::textures::tex_type_t type)
 {
@@ -254,3 +254,5 @@ inline ang::graphics::textures::tex_type_t ang::graphics::d3d11::traslate_type_d
 	}
 	return textures::tex_type::null;
 }
+
+#endif

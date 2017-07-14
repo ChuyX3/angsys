@@ -5,6 +5,8 @@
 #define new ANG_DEBUG_NEW()
 #endif
 
+#if DIRECTX_SUPPORT
+
 using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
@@ -201,6 +203,7 @@ bool d3d11_shaders::load_vertex_shader(d3d11_effect_library_t library, xml::xml_
 	string entry = "main";
 	wstring filename;
 	string config;
+	string code;
 	array<string> configs;
 	ID3DBlob* compiled_code;
 
@@ -215,29 +218,56 @@ bool d3d11_shaders::load_vertex_shader(d3d11_effect_library_t library, xml::xml_
 			graphics::reflect::attribute_desc::load(node, _input_layout);
 		else if (name == "entry"_s)
 			entry = node->xml_value();
-		else if (name == "code"_s)
+		else if (name == "file"_s)
 			filename = node->xml_value();
+		else if (name == "code"_s)
+			code = node->xml_value();
 		else if (name == "compile_config"_s)
 			config = node->xml_value();
 	});
 
-	if (filename.is_empty())
-		return false;
+	if (code.is_empty())
+	{
+		if (filename.is_empty())
+			return false;
 
-	auto _filename = library->find_file(filename);
-	core::files::input_text_file_t file;
-	if (_filename.is_empty()) library->get_file_system()->open(filename, file); //file = new core::files::input_text_file(filename);
-	else library->get_file_system()->open(_filename, file); //file = new core::files::input_text_file(_filename);
-	if (!file->is_valid())
-		return false;
+		auto _filename = library->find_file(filename);
+		core::files::input_text_file_t file;
+		if (_filename.is_empty()) library->get_file_system()->open(filename, file); //file = new core::files::input_text_file(filename);
+		else library->get_file_system()->open(_filename, file); //file = new core::files::input_text_file(_filename);
+		if (!file->is_valid())
+			return false;
 
-	if (!file->is_valid())
-		return false;
+		if (!file->is_valid())
+			return false;
 
-	if (!file->read([&](streams::itext_input_stream_t stream)
+		if (!file->read([&](streams::itext_input_stream_t stream)
+		{
+			collections::vector<D3D_SHADER_MACRO> macros;
+			ibuffer_t code = static_cast<streams::text_buffer_input_stream*>(stream.get())->buffer();
+			if (!config.is_empty())
+			{
+				configs = ang::move(config->split("-D"));
+				foreach(configs, [&](string& value) {
+					macros += {(cstr_t)value, null};
+				});
+				macros += {null, null};
+			}
+			ID3DBlob* error;
+			HRESULT hr = D3DCompile(code->buffer_ptr(), code->buffer_size()
+				, NULL, macros.is_empty() ? NULL : macros->data(), NULL, (cstr_t)entry
+				, "vs_4_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &compiled_code, &error);
+			if (FAILED(hr)) {
+				d3d11_debug_print(2, "%s\n", error->GetBufferPointer());
+				error->Release();
+				return false;
+			}
+			return true;
+		}))return false;
+	}
+	else
 	{
 		collections::vector<D3D_SHADER_MACRO> macros;
-		ibuffer_t code = static_cast<streams::text_buffer_input_stream*>(stream.get())->buffer();
 		if (!config.is_empty())
 		{
 			configs = ang::move(config->split("-D"));
@@ -255,8 +285,7 @@ bool d3d11_shaders::load_vertex_shader(d3d11_effect_library_t library, xml::xml_
 			error->Release();
 			return false;
 		}
-		return true;
-	}))return false;
+	}
 
 	d3d_load_shader_input(_input_layout, desc_list);
 
@@ -283,6 +312,7 @@ bool d3d11_shaders::load_pixel_shader(d3d11_effect_library_t library, xml::xml_n
 	string entry = "main";
 	wstring filename;
 	string config;
+	string code;
 	array<string> configs;
 	ID3DBlob* compiled_code;
 
@@ -295,26 +325,53 @@ bool d3d11_shaders::load_pixel_shader(d3d11_effect_library_t library, xml::xml_n
 			load_ps_samplers(library, node);
 		else if (name == "entry")
 			entry = node->xml_value();
-		else if (name == "code")
+		else if (name == "file")
 			filename = node->xml_value();
+		else if (name == "code")
+			code = node->xml_value();
 		else if (name == "compile_config")
 			config = node->xml_value();
 	});
 
-	if (filename.is_empty())
-		return false;
+	if (code.is_empty())
+	{
+		if (filename.is_empty())
+			return false;
 
-	auto _filename = library->find_file(filename);
-	core::files::input_text_file_t file;
-	if (_filename.is_empty()) library->get_file_system()->open(filename, file); //file = new core::files::input_text_file(filename);
-	else library->get_file_system()->open(_filename, file); //file = new core::files::input_text_file(_filename);
-	if (!file->is_valid())
-		return false;
+		auto _filename = library->find_file(filename);
+		core::files::input_text_file_t file;
+		if (_filename.is_empty()) library->get_file_system()->open(filename, file); //file = new core::files::input_text_file(filename);
+		else library->get_file_system()->open(_filename, file); //file = new core::files::input_text_file(_filename);
+		if (!file->is_valid())
+			return false;
 
-	if (!file->read([&](streams::itext_input_stream_t stream)
+		if (!file->read([&](streams::itext_input_stream_t stream)
+		{
+			collections::vector<D3D_SHADER_MACRO> macros;
+			ibuffer_t code = static_cast<streams::text_buffer_input_stream*>(stream.get())->buffer();
+			if (!config.is_empty())
+			{
+				configs = ang::move(config->split("-D"));
+				foreach(configs, [&](string& value) {
+					macros += {(cstr_t)value, null};
+				});
+				macros += {null, null};
+			}
+			ID3DBlob* error;
+			HRESULT hr = D3DCompile(code->buffer_ptr(), code->buffer_size()
+				, NULL, macros.is_empty() ? NULL : macros->data(), NULL, (cstr_t)entry
+				, "ps_4_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &compiled_code, &error);
+			if (FAILED(hr)) {
+				d3d11_debug_print(2, "%s\n", error->GetBufferPointer());
+				error->Release();
+				return false;
+			}
+			return true;
+		}))return false;
+	}
+	else
 	{
 		collections::vector<D3D_SHADER_MACRO> macros;
-		ibuffer_t code = static_cast<streams::text_buffer_input_stream*>(stream.get())->buffer();
 		if (!config.is_empty())
 		{
 			configs = ang::move(config->split("-D"));
@@ -332,8 +389,7 @@ bool d3d11_shaders::load_pixel_shader(d3d11_effect_library_t library, xml::xml_n
 			error->Release();
 			return false;
 		}
-		return true;
-	}))return false;
+	}
 
 	library->driver()->D3D11Device()->CreatePixelShader(compiled_code->GetBufferPointer(), compiled_code->GetBufferSize(), NULL, &d3d_pixel_shader);
 	compiled_code->Release();
@@ -819,3 +875,4 @@ effects::ishaders_t d3d11_effect_library::find_technique(cwstr_t name)const
 	return it.is_valid() ? it->value().get() : null;
 }
 
+#endif

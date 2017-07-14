@@ -34,6 +34,9 @@
     <Filter Include="header files\include\vulkan">
       <UniqueIdentifier>{e4aa9f22-2807-44cd-bad8-7c537e77065e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="header files\include\d3d11\drawing">
+      <UniqueIdentifier>{5f773b96-491d-4a3f-9376-592678b38bec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
@@ -78,7 +81,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\driver.h">
       <Filter>header files\include\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\angdraw.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\drawing.h">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\drawing\draw_context.h">
+      <Filter>header files\include\d3d11\drawing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angraph.cpp">

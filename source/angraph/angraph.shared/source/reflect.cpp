@@ -578,18 +578,18 @@ bool variable_desc::operator != (const variable_desc& value)const
 
 ////////////////////////////////////////////////////////////////
 
-wsize attribute_desc::calculate_positions(collections::vector<attribute_desc>& attributes)
+wsize attribute_desc::calculate_positions(static_array<attribute_desc>& attributes)
 {
 	static const wsize aligment = 16U;
 	wsize total = 0;
 	wsize size = 0;
 	wsize temp = 0;
 	wsize res = 0;
-
-	foreach(attributes, [&](attribute_desc& desc)
+	
+	for(attribute_desc& desc : attributes)
 	{
 		size = desc.get_size_in_bytes();
-		if (size == 0)return;//next item
+		if (size == 0)continue;//next item
 		temp = (total % aligment);
 		res = aligment - temp;
 		if (res < aligment)
@@ -601,20 +601,20 @@ wsize attribute_desc::calculate_positions(collections::vector<attribute_desc>& a
 		}
 		desc.position(total);
 		total += size;
-	});
+	}
 	return get_memory_size_aligned(total, aligment);
 }
 
-wsize attribute_desc::get_size_in_bytes(collections::vector<attribute_desc> const& attributes, wsize aligment, uint from, uint to)
+wsize attribute_desc::get_size_in_bytes(static_array<attribute_desc> attributes, wsize aligment, uint from, uint to)
 {
-	if (attributes.is_empty() || attributes->counter() <= from || from >= to)
+	if (attributes.size() <= from || from >= to)
 		return 0;
 
 	wsize total = 0;
 	wsize size = 0;
 	wsize temp = 0;
 	wsize res = 0;
-	to = min(attributes->counter(), to);
+	to = min(attributes.size(), to);
 	for (index i = from; i < to; ++i)
 	{
 		attribute_desc const& desc = attributes[i];

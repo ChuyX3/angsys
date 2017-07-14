@@ -25,6 +25,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_inlines.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\buffers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\drawing\draw_context.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\driver.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\shaders.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\textures.h" />

@@ -5,6 +5,8 @@
 #define new ANG_DEBUG_NEW()
 #endif
 
+#if DIRECTX_SUPPORT
+
 using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
@@ -167,3 +169,5 @@ iframe_buffer_t d3d11_surface::frame_buffer()const
 {
 	return d3d_frame_buffer.get();
 }
+
+#endif

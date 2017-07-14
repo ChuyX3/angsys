@@ -5,6 +5,8 @@
 #define new ANG_DEBUG_NEW()
 #endif
 
+#if DIRECTX_SUPPORT
+
 using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
@@ -248,6 +250,7 @@ void d3d11_driver::close_driver()
 	dxgi_factory = null;
 }
 
+graph_driver_type_t d3d11_driver::graph_driver_type()const { return graphics::graph_driver_type::DirectX11; }
 
 isurface_t d3d11_driver::create_surface(platform::icore_view_t view)const
 {
@@ -546,3 +549,5 @@ core::async::mutex_t d3d11_driver::driver_guard()const
 {
 	return main_mutex;
 }
+
+#endif

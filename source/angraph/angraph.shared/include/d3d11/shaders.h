@@ -2,6 +2,8 @@
 
 #include <ang/graphics/angraph.h>
 
+#if DIRECTX_SUPPORT
+
 namespace ang
 {
 	namespace graphics
@@ -151,3 +153,5 @@ inline bool operator == (D3D11_INPUT_ELEMENT_DESC const&, D3D11_INPUT_ELEMENT_DE
 
 ANG_REGISTER_RUNTIME_TYPENAME(D3D_SHADER_MACRO);
 ANG_REGISTER_RUNTIME_TYPENAME(D3D11_INPUT_ELEMENT_DESC);
+
+#endif

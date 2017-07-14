@@ -81,8 +81,8 @@ namespace ang
 				uint _position;
 
 			public:
-				static wsize calculate_positions(collections::vector<attribute_desc>&);
-				static wsize get_size_in_bytes(collections::vector<attribute_desc> const&, wsize aligment = 16, uint from = 0, uint to = -1);
+				static wsize calculate_positions(static_array<attribute_desc>&);
+				static wsize get_size_in_bytes(static_array<attribute_desc>, wsize aligment = 16, uint from = 0, uint to = -1);
 				static bool load(xml::xml_node_t, collections::vector<attribute_desc>&);
 
 				attribute_desc(

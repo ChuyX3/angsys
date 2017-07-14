@@ -5,6 +5,8 @@
 #define new ANG_DEBUG_NEW()
 #endif
 
+#if DIRECTX_SUPPORT
+
 using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
@@ -317,3 +319,5 @@ bool d3d11_frame_buffer::has_depth_stencil_buffer()const
 {
 	return !d3d_depth_stencil.is_empty();
 }
+
+#endif

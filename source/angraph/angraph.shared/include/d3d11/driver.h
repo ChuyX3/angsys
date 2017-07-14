@@ -2,6 +2,8 @@
 
 #include <ang/graphics/angraph.h>
 
+#if DIRECTX_SUPPORT
+
 namespace ang
 {
 	namespace graphics
@@ -158,6 +160,7 @@ namespace ang
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
 
+				graph_driver_type_t graph_driver_type()const override;
 				isurface_t create_surface(platform::icore_view_t)const override;
 				effects::ieffect_library_t create_effect_library()const override;
 				textures::itexture_loader_t create_texture_loader()const override;
@@ -207,3 +210,5 @@ ANG_REGISTER_RUNTIME_TYPENAME(ID3D11Buffer);
 ANG_REGISTER_RUNTIME_TYPENAME(ID3D11SamplerState);
 ANG_REGISTER_RUNTIME_TYPENAME(ID3D11RenderTargetView);
 ANG_REGISTER_RUNTIME_TYPENAME(ID3D11ShaderResourceView);
+
+#endif

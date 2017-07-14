@@ -2,6 +2,8 @@
 
 #include <ang/graphics/angraph.h>
 
+#if DIRECTX_SUPPORT
+
 namespace ang
 {
 	namespace graphics
@@ -100,3 +102,5 @@ namespace ang
 		}
 	}
 }
+
+#endif

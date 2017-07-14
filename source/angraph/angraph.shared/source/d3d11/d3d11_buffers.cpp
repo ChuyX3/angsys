@@ -5,6 +5,8 @@
 #define new ANG_DEBUG_NEW()
 #endif
 
+#if DIRECTX_SUPPORT
+
 using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
@@ -269,12 +271,10 @@ bool d3d11_vertex_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t 
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 
-	_vertex_desc = new collections::vector_buffer<reflect::attribute_desc>(vertex_desc.size(), vertex_desc.data());
-
 	_vertex_count = count;
 	_usage = usage;// buffers::buffer_usage::dynamic;
 
-	_stride = reflect::attribute_desc::get_size_in_bytes(_vertex_desc);
+	_stride = reflect::attribute_desc::get_size_in_bytes(vertex_desc);
 
 	if (_stride == 0)
 		return false;
@@ -332,3 +332,5 @@ void d3d11_vertex_buffer::use_buffer(d3d11_driver_t driver)
 	uint offset = 0;
 	driver->D3D11Context()->IASetVertexBuffers(0, 1, &d3d_vertex_buffer, &_stride, &offset);
 }
+
+#endif
