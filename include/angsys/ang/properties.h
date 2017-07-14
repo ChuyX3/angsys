@@ -439,7 +439,7 @@ namespace ang
 		typedef property<const object_wrapper<T>, P, D, PROPERTY_TYPE_DEFAULT> self_t;
 		typedef T type;
 		typedef T* ptr_t;
-		typedef T const* cptr_t;
+		typedef T* cptr_t;
 
 		property(property&& value) : _value(value._value) { value._value = null; }
 		property(property const& value) : _value(value._value) {}
@@ -452,7 +452,7 @@ namespace ang
 		}
 
 		cptr_t operator ->()const {
-			return get();
+			return get().get();
 		}
 
 		const object_wrapper<T>& get()const {
@@ -539,7 +539,7 @@ namespace ang
 		typedef property<const intf_wrapper<T>, P, D, PROPERTY_TYPE_DEFAULT> self_t;
 		typedef T type;
 		typedef T* ptr_t;
-		typedef T const* cptr_t;
+		typedef T* cptr_t;
 
 		property(property&& value) : _value(value._value) { value._value = null; }
 		property(property const& value) : _value(value._value) {}
@@ -552,7 +552,7 @@ namespace ang
 		}
 
 		cptr_t operator ->()const {
-			return get();
+			return get().get();
 		}
 
 		const intf_wrapper<T>& get()const {
