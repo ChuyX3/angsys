@@ -68,6 +68,11 @@ aligned_object::~aligned_object()
 
 }
 
+bool aligned_object::auto_release()
+{
+	return object::auto_release(16U);
+}
+
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::scenes::aligned_object, object);
 
 

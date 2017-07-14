@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "engine.h"
 
+#include "binary_tree.h"
 
 using namespace ang;
 using namespace ang::platform;
@@ -52,10 +53,125 @@ namespace d3d11
 
 }
 
+
+union color_bgra_t
+{
+	uint code;
+	struct
+	{
+		byte blue;
+		byte green;
+		byte red;
+		byte alpha;
+
+	}components;
+	color_bgra_t& operator = (color_bgra_t const& color) {
+		code = color.code;
+		return*this;
+	}
+};
+
+union color_rgba_t
+{
+	uint code;
+	struct
+	{
+		byte red;
+		byte green;
+		byte blue;
+		byte alpha;
+	}components;
+
+	color_rgba_t& operator = (color_bgra_t const& color) {
+		components.red = color.components.red;
+		components.green = color.components.green;
+		components.blue = color.components.blue;
+		components.alpha = color.components.alpha;
+		return*this;
+	}
+	color_rgba_t& operator = (color_rgba_t const& color) {
+		code = color.code;
+		return*this;
+	}
+};
+
+
+
+template<class K, class T>
+class binary_tree_node
+{
+
+};
+
+template<class K, class T>
+class binary_tree
+{
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 int main(int argc, char* argv[])
 {
-	d3d11::main_app_t app = new d3d11::main_app();
-	return (int)app->run();
+//	d3d11::main_app_t app = new d3d11::main_app();
+//	return (int)app->run();
+	FILE* file = fopen("C:\\Users\\jesus.rocha\\Desktop\\colors.txt", "r");
+	if (file)
+	{
+		char buff[200];
+		string name;
+		color_bgra_t bgra;
+		color_rgba_t rgba;
+		bgra.code = 0;
+		collections::map<uint, string> data;
+		collections::map<string, uint> data2;
+		while (fscanf(file, "%s : #%X\n", buff, &bgra) != 0 && !feof(file))
+		{
+			rgba = bgra;
+			data2 += { cstr_t(buff, -1), rgba.code };
+		}
+		fclose(file);
+		file = fopen("C:\\Users\\jesus.rocha\\Desktop\\colors.txt", "w");
+
+		foreach(data2, [&](collections::pair<string, uint>& pair)
+		{
+			for (index i = 0; i < pair.key_value()->length(); ++i)
+			{
+				char c = pair.key_value()[i];
+				if (c >= 'A' && c <= 'Z')
+				{
+					pair.key_value()[i] = c - 'A' + 'a';
+					if (i > 0)
+						pair.key_value()->insert('_', pair.key_value()->at(i));
+				}
+			}
+			data += { pair.value(), pair.key_value().get()};
+			printf("%s = %#.8X,\n", pair.key_value()->cstr().cstr(), pair.value());
+			fprintf(file, "%s = %#.8X,\n", pair.key_value()->cstr().cstr(), pair.value());
+		});
+		fclose(file);
+
+		file = fopen("C:\\Users\\jesus.rocha\\Desktop\\colors_vaule_order.txt", "w");
+		foreach(data, [&](collections::pair<uint, string>& pair)
+		{
+			printf("{ graphics::colors::%s, \"%s\"_s },\n", pair.value()->cstr().cstr(), pair.value()->cstr().cstr());
+			fprintf(file, "{ graphics::colors::%s, \"%s\"_s },\n", pair.value()->cstr().cstr(), pair.value()->cstr().cstr());
+		});
+		fclose(file);
+	}
+
+	getchar();
+	return true;
 }
 
 

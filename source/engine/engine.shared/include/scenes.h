@@ -36,6 +36,7 @@ namespace ang
 			protected:
 				aligned_object();
 				virtual~aligned_object();
+				virtual bool auto_release() override;
 			};
 
 

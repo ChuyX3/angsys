@@ -18,6 +18,9 @@
     <ClInclude Include="include\scenes\model_loader.h">
       <Filter>include\scenes</Filter>
     </ClInclude>
+    <ClInclude Include="include\binary_tree.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
