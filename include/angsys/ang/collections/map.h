@@ -250,7 +250,11 @@ namespace ang
 		T operator [] (K const&)const;
 	};
 
-
+	template<class K, class T, typename F>
+	static void foreach(collections::map<K,T> const& store, F func) {
+		if (!store.is_empty())for (auto it = store->begin(); it.is_valid(); ++it)
+			func((collections::pair<K,T>&)*it);
+	}
 }
 
 #include<ang/collections/map_specialization.h>
