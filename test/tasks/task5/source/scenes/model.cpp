@@ -128,12 +128,6 @@ bool model::load(scene_t scene, xml::xml_node_t node)
 						}
 
 						model_element element;
-						reflect::attribute_desc desc[3] =
-						{
-							{ reflect::var_type::f32, reflect::var_class::vec4, "position"_s, reflect::var_semantic::position, 0 },
-							{ reflect::var_type::f32, reflect::var_class::vec4, "normal"_s, reflect::var_semantic::normal, 0 },
-							{ reflect::var_type::f32, reflect::var_class::vec2, "texcoord"_s, reflect::var_semantic::tex_coord, 0 }
-						};
 
 						foreach(data, [&](indexed_model::model_element& _element)
 						{

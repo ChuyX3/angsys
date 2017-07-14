@@ -21,6 +21,7 @@
     <file sid="13932ef0_dds">resources\BeautifulGirl\Texture\13932ef0.dds</file>
   </sources>
 
+  <texture name="textures_seafloor_dds" type="tex2D" >resources\models\textures\seafloor.dds</texture>
   <texture name="_ea80e0f_dds" type="tex2D" >_ea80e0f_dds</texture>
   <texture name="abbec2ad_dds" type="tex2D" >abbec2ad_dds</texture>
   <texture name="cc5a76c0_dds" type="tex2D" >cc5a76c0_dds</texture>

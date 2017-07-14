@@ -1,11 +1,207 @@
-<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <effect_library>
   <sources>
     <file sid="BASIC_SHADER_HLSL">resources/shaders/basic_shader.hlsl</file>
     <file sid="CHARACTER_HLSL">resources/shaders/character.hlsl</file>
     <file sid="SKYBOX_HLSL">resources/shaders/sky_box.hlsl</file>
   </sources>
- 
+
+  <technique name="solid_color_fx">  
+    <vertex_shader>
+      <uniforms name="constants">
+        <var type="f32" class="mat4" name="world"/>
+      </uniforms>
+      <input_layout>
+        <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+        <var type="f32" class="vec4" name="color" semantic="COLOR" semantic_idx="0"/>
+        <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
+      </input_layout>
+      <code min="">
+cbuffer light_data : register(b0) {
+    float4x4 world;
+}
+struct vs_output {
+    float4 position : POSITION;
+    float4 color : COLOR0;
+    float2 texcoord : TEXCOORD0;
+};
+vs_output main(float4 position : POSITION, float4 color : COLOR0, float2 texcoord : TEXCOORD0) {
+    vs_output output;
+    output.position = mul(float4(position.xyz, 1), world);
+    output.color = color;
+    output.texcoord = texcoord;
+    return output;
+}
+		</code>
+    </vertex_shader>
+    <pixel_shader>
+      <uniforms name="colors">
+        <var type="f32" class="vec4" name="additive_color"/>
+        <var type="f32" class="vec4" name="diffuse_color"/>
+      </uniforms>
+      <code>
+cbuffer light_data : register(b0) { 
+	float4 additive_color;
+	float4 diffuse_color;
+}
+float4 main(float4 position : POSITION, float4 color : COLOR0, float2 texcoord : TEXCOORD0) : SV_TARGET {
+	return (diffuse_color * color) + additive_color;
+}
+	  </code>
+    </pixel_shader>
+  </technique>
+  
+  <technique name="texturing_fx">  
+    <vertex_shader>
+      <uniforms name="constants">
+        <var type="f32" class="mat4" name="world"/>
+      </uniforms>
+      <input_layout>
+        <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+      </input_layout>
+      <code>
+cbuffer light_data : register(b0) {
+    float4x4 world;
+}
+struct vs_output {
+    float4 position : POSITION;
+    float4 color : COLOR0;
+    float2 texcoord : TEXCOORD0;
+};
+vs_output main(float4 position : POSITION, float4 color : COLOR0, float2 texcoord : TEXCOORD0) {
+    vs_output output;
+    output.position = mul(float4(position.xyz, 1), world);
+    output.color = color;
+    output.texcoord = texcoord;
+    return output;
+}
+		</code>
+    </vertex_shader>
+    <pixel_shader>
+      <code>
+cbuffer light_data : register(b0) {
+	float4 additive_color;
+	float4 diffuse_color;
+}
+Texture2D difusse_tex : register(t0);
+SamplerState sam_linear : register(s0);
+float4 main(float4 position : POSITION, float4 color : COLOR0, float2 texcoord : TEXCOORD0) : SV_TARGET {
+	return ((difusse_tex.Sample(sam_linear, texcoord)  + diffuse_color) * color) + additive_color;
+}
+	  </code>
+    </pixel_shader>
+  </technique>
+  
+  <technique name="linear_gradient_fx">  
+    <vertex_shader>
+      <uniforms name="constants">
+        <var type="f32" class="mat4" name="world"/>
+      </uniforms>
+      <input_layout>
+        <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+      </input_layout>
+      <code>
+cbuffer light_data : register(b0) {
+    float4x4 world;
+}
+struct vs_output {
+    float4 position : POSITION;
+    float4 color : COLOR0;
+    float2 texcoord : TEXCOORD0;
+};
+vs_output main(float4 position : POSITION, float4 color : COLOR0, float2 texcoord : TEXCOORD0) {
+    vs_output output;
+    output.position = mul(float4(position.xyz, 1), world);
+    output.color = color;
+    output.texcoord = texcoord;
+    return output;
+}
+		</code>
+    </vertex_shader>
+    <pixel_shader>
+      <code>
+cbuffer light_data : register(b0) {
+    float4 additive_color;
+    float4 diffuse_color1;
+    float4 diffuse_position1;
+    float4 diffuse_color2;
+    float4 diffuse_position2;
+}
+float calc_pos(float2 A, float2 B, float2 C) {
+    float2 M = B - A;
+    float m = M.y / M.x;
+    float m1 = M.x / M.y;
+    float2 D;
+    D.x = (m * A.x - m1 * B.x + A.y - B.y) / (m - m1);
+    D.y = m * D.x - m * A.x - A.y;
+    float l = length(M);
+    float l1 = length(D - A);
+    return l1 / 1;
+}
+float4 main(float4 position : POSITION, float4 color : COLOR0, float2 texcoord : TEXCOORD0) : SV_TARGET {
+    float pos = calc_pos(diffuse_position1.xy, diffuse_position2.xy, position.xy);
+    return lerp(diffuse_color1, diffuse_color2, max(0,min(pos,1))) * color + additive_color;
+}
+	  </code>
+    </pixel_shader>
+  </technique>
+  
+  <technique name="linear_gradient_texturing_fx">  
+    <vertex_shader>
+      <uniforms name="constants">
+        <var type="f32" class="mat4" name="world"/>
+      </uniforms>
+      <input_layout>
+        <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+      </input_layout>
+      <code>
+cbuffer light_data : register(b0) {
+    float4x4 world;
+}
+struct vs_output {
+    float4 position : POSITION;
+    float4 color : COLOR0;
+    float2 texcoord : TEXCOORD0;
+};
+vs_output main(float4 position : POSITION, float4 color : COLOR0, float2 texcoord : TEXCOORD0) {
+    vs_output output;
+    output.position = mul(float4(position.xyz, 1), world);
+    output.color = color;
+    output.texcoord = texcoord;
+    return output;
+}
+		</code>
+    </vertex_shader>
+    <pixel_shader>
+      <code>
+cbuffer light_data : register(b0) {
+    float4 additive_color;
+    float4 diffuse_color1;
+    float4 diffuse_position1;
+    float4 diffuse_color2;
+    float4 diffuse_position2;
+}
+Texture2D difusse_tex : register(t0);
+SamplerState sam_linear : register(s0);
+float calc_pos(float2 A, float2 B, float2 C) {
+    float2 M = B - A;
+    float m = M.y / M.x;
+    float m1 = M.x / M.y;
+    float2 D;
+    D.x = (m * A.x - m1 * B.x + A.y - B.y) / (m - m1);
+    D.y = m * D.x - m * A.x - A.y;
+    float l = length(M);
+    float l1 = length(D - A);
+    return l1 / 1;
+}
+float4 main(float4 position : POSITION, float4 color : COLOR0, float2 texcoord : TEXCOORD0) : SV_TARGET {
+    float pos = calc_pos(diffuse_position1.xy, diffuse_position2.xy, position.xy);
+    return (difusse_tex.Sample(sam_linear, texcoord) + lerp(diffuse_color1, diffuse_color2, max(0,min(pos,1)))) * color + additive_color;
+}
+	  </code>
+    </pixel_shader>
+  </technique>
+  
   <technique name="basic_shader_fx">  
     <vertex_shader>
       <uniforms name="wvp_matrix">
@@ -18,12 +214,12 @@
         <var type="f32" class="vec3" name="color" semantic="COLOR" semantic_idx="0"/>
       </input_layout>
       <entry>main_vs</entry>
-      <code>BASIC_SHADER_HLSL</code>
+      <file>BASIC_SHADER_HLSL</file>
       <compile_config>-DVERTEX_SHADER</compile_config>
     </vertex_shader>
     <pixel_shader>
       <entry>main_ps</entry>
-      <code>BASIC_SHADER_HLSL</code>
+      <file>BASIC_SHADER_HLSL</file>
       <compile_config>-DPIXEL_SHADER</compile_config>
     </pixel_shader>
   </technique>
@@ -39,7 +235,7 @@
         <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
       </input_layout>
       <entry>main_vs</entry>
-      <code>SKYBOX_HLSL</code>
+      <file>SKYBOX_HLSL</file>
       <compile_config>-DVERTEX_SHADER</compile_config>
     </vertex_shader>
     <pixel_shader>
@@ -47,7 +243,7 @@
         <sampler type="linear" wrap="clamp"/>
       </samplers>
       <entry>main_ps</entry>
-      <code>SKYBOX_HLSL</code>
+      <file>SKYBOX_HLSL</file>
       <compile_config>-DPIXEL_SHADER</compile_config>
     </pixel_shader>
   </technique>
@@ -65,7 +261,7 @@
         <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
       </input_layout>
       <entry>main_vs</entry>
-      <code>CHARACTER_HLSL</code>
+      <file>CHARACTER_HLSL</file>
       <compile_config>-DVERTEX_SHADER</compile_config>
     </vertex_shader>
     <pixel_shader>
@@ -73,7 +269,7 @@
         <sampler type="linear" wrap="clamp"/>
       </samplers>
       <entry>main_ps</entry>
-      <code>CHARACTER_HLSL</code>
+      <file>CHARACTER_HLSL</file>
       <compile_config>-DPIXEL_SHADER</compile_config>
     </pixel_shader>
   </technique>
@@ -91,7 +287,7 @@
         <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
       </input_layout>
       <entry>main_vs</entry>
-      <code>CHARACTER_HLSL</code>
+      <file>CHARACTER_HLSL</file>
       <compile_config>-DVERTEX_SHADER-DLIGHTING</compile_config>
     </vertex_shader>
     <pixel_shader>
@@ -109,7 +305,7 @@
         <sampler type="linear" wrap="clamp"/>
       </samplers>
       <entry>main_ps</entry>
-      <code>CHARACTER_HLSL</code>
+      <file>CHARACTER_HLSL</file>
       <compile_config>-DPIXEL_SHADER-DLIGHTING</compile_config>
     </pixel_shader>
   </technique>
@@ -129,7 +325,7 @@
         <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
       </input_layout>
       <entry>main_vs</entry>
-      <code>CHARACTER_HLSL</code>
+      <file>CHARACTER_HLSL</file>
       <compile_config>-DVERTEX_SHADER-DLIGHTING-DUSE_NORMAL_MAP</compile_config>
     </vertex_shader>
     <pixel_shader>
@@ -147,7 +343,7 @@
         <sampler type="linear" wrap="clamp"/>
       </samplers>
       <entry>main_ps</entry>
-      <code>CHARACTER_HLSL</code>
+      <file>CHARACTER_HLSL</file>
       <compile_config>-DPIXEL_SHADER-DLIGHTING-DUSE_NORMAL_MAP</compile_config>
     </pixel_shader>
   </technique>
