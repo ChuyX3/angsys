@@ -96,6 +96,16 @@ namespace ang
 
 			inline bool move(vector_buffer&);
 			inline bool copy(uint size, T const* ar);
+			inline bool copy(const static_array<T> items) {
+				clean();
+				if (items.size() != 0)
+				{
+					capacity(items.size(), false);
+					for (auto it = items.begin(); it != items.end(); ++it)
+						append(*it);
+				}
+				return true;
+			}
 			template<class U> inline bool copy_from(const collections::ienum<U>* items) {
 				if (!items) return false;
 				if (items->counter() > counter())
@@ -213,6 +223,16 @@ namespace ang
 			inline void empty();
 
 			inline bool move(vector_buffer&);
+			inline bool copy(const static_array<type> items) {
+				clean();
+				if (items.size() != 0)
+				{
+					capacity(items.size(), false);
+					for(auto it = items.begin(); it != items.end(); ++it)
+						append(*it);
+				}
+				return true;
+			}
 			template<class U> inline bool copy_from(const collections::ienum<U>* items) {
 				if (!items) return false;
 				if (items->counter() > counter())
@@ -330,6 +350,16 @@ namespace ang
 			inline void empty();
 
 			inline bool move(vector_buffer&);
+			inline bool copy(const static_array<type> items) {
+				clean();
+				if (items.size() != 0)
+				{
+					capacity(items.size(), false);
+					for (auto it = items.begin(); it != items.end(); ++it)
+						append(*it);
+				}
+				return true;
+			}
 			template<class U> inline bool copy_from(const collections::ienum<U>* items) {
 				if (!items) return false;
 				if (items->counter() > counter())
