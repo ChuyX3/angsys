@@ -68,6 +68,11 @@ aligned_object::~aligned_object()
 
 }
 
+bool aligned_object::auto_release()
+{
+	return object::auto_release(16U);
+}
+
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::scenes::aligned_object, object);
 
 
@@ -249,7 +254,7 @@ void scene::draw(idriver_t driver, iframe_buffer_t frame)
 	_current_size = frame->dimentions();
 	maths::float4 clear_color = maths::float4(_ambient_color / 5.0f, 1);
 	driver->bind_frame_buffer(frame);
-	driver->clear(clear_color);
+	driver->clear(graphics::colors::blue);
 	_camera->draw(this);
 	foreach(_objects, [&](scene_object_t& node)
 	{
