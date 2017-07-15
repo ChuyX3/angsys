@@ -447,7 +447,7 @@ void model::draw(scene_t scene) {
 	driver->execute_on_thread_safe([&]()
 	{
 		effects::ishaders_t shaders = null;
-		foreach(model_elements, [&](model_element& _element)
+		for(model_element& _element : (static_array<model_element>)model_elements)
 		{
 			if (shaders.get() != _element.technique.get())
 			{
@@ -474,18 +474,16 @@ void model::draw(scene_t scene) {
 						lights[i][2 /*"type"*/].cast<uint>() = scene_lights[i].type.get();
 					}
 					shaders->unmap_ps_uniform(driver, lights_info);
-
 				}
-
 				driver->bind_shaders(shaders);
 			}
 
-			index i = 0;
-			foreach(_element.textures, [&](textures::itexture_t& tex) 
+			index c = 0;
+			for (textures::itexture_t& tex : (static_array<textures::itexture_t>)_element.textures)
 			{
-				driver->bind_texture(tex, i++);
-			});
-
+				driver->bind_texture(tex, c++);
+			}
+		
 			driver->bind_vertex_buffer(_element.vertex_buffer);
 			if (_element.index_buffer.is_empty())
 			{
@@ -498,9 +496,9 @@ void model::draw(scene_t scene) {
 				driver->draw_indexed(_element.index_buffer->counter(), primitive::triangle);
 			}
 
-			for(index i = 0, c = _element.textures.is_empty()? 1 : _element.textures->counter(); i < c; ++i)
+			for(index i = 0; i < c; ++i)
 				driver->bind_texture(null, i);
-		});
+		}
 		driver->bind_vertex_buffer(null);
 		driver->bind_shaders(null);
 	});

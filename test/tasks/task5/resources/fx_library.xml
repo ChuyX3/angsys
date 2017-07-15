@@ -17,7 +17,7 @@
         <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
       </input_layout>
       <code min="">
-cbuffer light_data : register(b0) {
+cbuffer constants : register(b0) {
     float4x4 world;
 }
 struct vs_output {
@@ -40,7 +40,7 @@ vs_output main(float4 position : POSITION, float4 color : COLOR0, float2 texcoor
         <var type="f32" class="vec4" name="diffuse_color"/>
       </uniforms>
       <code>
-cbuffer light_data : register(b0) { 
+cbuffer colors : register(b0) { 
 	float4 additive_color;
 	float4 diffuse_color;
 }
@@ -58,9 +58,11 @@ float4 main(float4 position : POSITION, float4 color : COLOR0, float2 texcoord :
       </uniforms>
       <input_layout>
         <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+        <var type="f32" class="vec4" name="position" semantic="COLOR" semantic_idx="0"/>
+        <var type="f32" class="vec2" name="position" semantic="TEXCOORD" semantic_idx="0"/>
       </input_layout>
       <code>
-cbuffer light_data : register(b0) {
+cbuffer constants : register(b0) {
     float4x4 world;
 }
 struct vs_output {
@@ -78,8 +80,15 @@ vs_output main(float4 position : POSITION, float4 color : COLOR0, float2 texcoor
 		</code>
     </vertex_shader>
     <pixel_shader>
+      <uniforms name="colors">
+        <var type="f32" class="vec4" name="additive_color"/>
+        <var type="f32" class="vec4" name="diffuse_color"/>
+      </uniforms>
+      <samplers>
+        <sampler type="linear" wrap="clamp"/>
+      </samplers>
       <code>
-cbuffer light_data : register(b0) {
+cbuffer colors : register(b0) {
 	float4 additive_color;
 	float4 diffuse_color;
 }
@@ -99,9 +108,11 @@ float4 main(float4 position : POSITION, float4 color : COLOR0, float2 texcoord :
       </uniforms>
       <input_layout>
         <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+        <var type="f32" class="vec4" name="position" semantic="COLOR" semantic_idx="0"/>
+        <var type="f32" class="vec2" name="position" semantic="TEXCOORD" semantic_idx="0"/>
       </input_layout>
       <code>
-cbuffer light_data : register(b0) {
+cbuffer constants : register(b0) {
     float4x4 world;
 }
 struct vs_output {
@@ -119,8 +130,15 @@ vs_output main(float4 position : POSITION, float4 color : COLOR0, float2 texcoor
 		</code>
     </vertex_shader>
     <pixel_shader>
+      <uniforms name="colors">
+        <var type="f32" class="vec4" name="additive_color"/>
+        <var type="f32" class="vec4" name="diffuse_color"/>
+      </uniforms>
+      <samplers>
+        <sampler type="linear" wrap="clamp"/>
+      </samplers>
       <code>
-cbuffer light_data : register(b0) {
+cbuffer colors : register(b0) {
     float4 additive_color;
     float4 diffuse_color1;
     float4 diffuse_position1;
@@ -153,9 +171,11 @@ float4 main(float4 position : POSITION, float4 color : COLOR0, float2 texcoord :
       </uniforms>
       <input_layout>
         <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+        <var type="f32" class="vec4" name="position" semantic="COLOR" semantic_idx="0"/>
+        <var type="f32" class="vec2" name="position" semantic="TEXCOORD" semantic_idx="0"/>
       </input_layout>
       <code>
-cbuffer light_data : register(b0) {
+cbuffer constants : register(b0) {
     float4x4 world;
 }
 struct vs_output {
@@ -173,8 +193,15 @@ vs_output main(float4 position : POSITION, float4 color : COLOR0, float2 texcoor
 		</code>
     </vertex_shader>
     <pixel_shader>
+      <uniforms name="colors">
+        <var type="f32" class="vec4" name="additive_color"/>
+        <var type="f32" class="vec4" name="diffuse_color"/>
+      </uniforms>
+      <samplers>
+        <sampler type="linear" wrap="clamp"/>
+      </samplers>
       <code>
-cbuffer light_data : register(b0) {
+cbuffer colors : register(b0) {
     float4 additive_color;
     float4 diffuse_color1;
     float4 diffuse_position1;

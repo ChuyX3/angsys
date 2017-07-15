@@ -132,7 +132,7 @@ bool scene::load(idriver_t driver, effects::ieffect_library_t fxlibrary, texture
 	_effect_library = fxlibrary;
 	_texture_loader = texloader;
 
-	xml::foreach(scene_info->xml_children(), [&](xml::xml_node_t node)
+	foreach(scene_info->xml_children(), [&](xml::xml_node_t node)
 	{
 		auto name = node->xml_name().as<cwstr_t>();
 		if (name.cstr() == null)
@@ -256,10 +256,10 @@ void scene::draw(idriver_t driver, iframe_buffer_t frame)
 	driver->bind_frame_buffer(frame);
 	driver->clear(graphics::colors::blue);
 	_camera->draw(this);
-	foreach(_objects, [&](scene_object_t& node)
+	for(scene_object_t& node : (static_array<scene_object_t>)_objects)
 	{
 		node->draw(this);
-	});
+	}
 }
 
 void scene::close()
