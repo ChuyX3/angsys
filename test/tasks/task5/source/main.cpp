@@ -1,14 +1,16 @@
 #include "pch.h"
 #include "engine.h"
 
-#include "binary_tree.h"
+//#include "binary_tree.h"
 
-using namespace ang;
-using namespace ang::platform;
-using namespace ang::platform::windows;
+
 
 namespace d3d11
 {
+	using namespace ang;
+	using namespace ang::platform;
+	using namespace ang::platform::windows;
+
 	class main_app;
 	typedef object_wrapper<main_app> main_app_t;
 
@@ -95,55 +97,37 @@ union color_rgba_t
 	}
 };
 
+#include <algorithm>
 
+using std::swap;
 
-template<class K, class T>
-class binary_tree_node
-{
-
-};
-
-template<class K, class T>
-class binary_tree
-{
-
-};
-
-
-
-
-
-
-
-
-
-
-
-
+//using namespace ang;
 
 int main(int argc, char* argv[])
 {
-//	d3d11::main_app_t app = new d3d11::main_app();
-//	return (int)app->run();
-	FILE* file = fopen("C:\\Users\\jesus.rocha\\Desktop\\colors.txt", "r");
+	d3d11::main_app_t app = new d3d11::main_app();
+	return (int)app->run();
+
+	/*FILE* file = fopen("C:\\Users\\jesus.rocha\\Desktop\\colors.txt", "r");
 	if (file)
 	{
 		char buff[200];
-		string name;
+		ang::string name;
 		color_bgra_t bgra;
 		color_rgba_t rgba;
 		bgra.code = 0;
-		collections::map<uint, string> data;
-		collections::map<string, uint> data2;
+
+		ang::collections::vector<ang::collections::pair<ang::string, uint>> data;
+		ang::collections::vector<ang::collections::pair<uint, ang::string>> data2;
 		while (fscanf(file, "%s : #%X\n", buff, &bgra) != 0 && !feof(file))
 		{
 			rgba = bgra;
-			data2 += { cstr_t(buff, -1), rgba.code };
+			data += { ang::cstr_t(buff, -1), rgba.code };
 		}
 		fclose(file);
 		file = fopen("C:\\Users\\jesus.rocha\\Desktop\\colors.txt", "w");
 
-		foreach(data2, [&](collections::pair<string, uint>& pair)
+		ang::foreach(data, [&](ang::collections::pair<ang::string, uint>& pair)
 		{
 			for (index i = 0; i < pair.key_value()->length(); ++i)
 			{
@@ -155,14 +139,28 @@ int main(int argc, char* argv[])
 						pair.key_value()->insert('_', pair.key_value()->at(i));
 				}
 			}
-			data += { pair.value(), pair.key_value().get()};
+			data2 += { pair.value(), pair.key_value().get()};
 			printf("%s = %#.8X,\n", pair.key_value()->cstr().cstr(), pair.value());
 			fprintf(file, "%s = %#.8X,\n", pair.key_value()->cstr().cstr(), pair.value());
 		});
 		fclose(file);
+		printf("\n\n");
+
+
+		file = fopen("C:\\Users\\jesus.rocha\\Desktop\\colors_name_order.txt", "w");
+		ang::foreach(data2, [&](ang::collections::pair<uint, ang::string>& pair)
+		{
+			printf("{ \"%s\"_s, graphics::colors::%s },\n", pair.value()->cstr().cstr(), pair.value()->cstr().cstr());
+			fprintf(file, "{ \"%s\"_s, graphics::colors::%s },\n", pair.value()->cstr().cstr(), pair.value()->cstr().cstr());
+		});
+		fclose(file);
+		printf("\n\n");
+
+		ang::static_array<ang::collections::pair<uint, ang::string>> arr = data2;
+		std::sort(arr.begin(), arr.end());
 
 		file = fopen("C:\\Users\\jesus.rocha\\Desktop\\colors_vaule_order.txt", "w");
-		foreach(data, [&](collections::pair<uint, string>& pair)
+		ang::foreach(data2, [&](ang::collections::pair<uint, ang::string>& pair)
 		{
 			printf("{ graphics::colors::%s, \"%s\"_s },\n", pair.value()->cstr().cstr(), pair.value()->cstr().cstr());
 			fprintf(file, "{ graphics::colors::%s, \"%s\"_s },\n", pair.value()->cstr().cstr(), pair.value()->cstr().cstr());
@@ -171,7 +169,7 @@ int main(int argc, char* argv[])
 	}
 
 	getchar();
-	return true;
+	return true;*/
 }
 
 
@@ -200,7 +198,7 @@ d3d11::main_app::~main_app()
 
 ANG_IMPLEMENT_BASIC_INTERFACE(d3d11::main_app, app);
 
-bool d3d11::main_app::init_app(array<string> cmdl)
+bool d3d11::main_app::init_app(ang::array<ang::string> cmdl)
 {
 	app::init_app(cmdl);
 
