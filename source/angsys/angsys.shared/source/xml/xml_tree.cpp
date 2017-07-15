@@ -158,6 +158,9 @@ ang::object_wrapper<xml_tree>::operator xml_tree const* (void)const
 //	return _ptr ? (xml_node*)_ptr->find_first(value) : null;
 //}
 
+
+ANG_IMPLEMENT_WEAK_PTR(xml_tree);
+
 ////////////////////////////////////////////////////////////////////////////////
 
 xml_tree_iterator::xml_tree_iterator()
@@ -221,7 +224,7 @@ void xml_tree_iterator::xml_parent(xml_tree_t store)
 
 xml_tree_t xml_tree_iterator::xml_parent()const
 {
-	return _xml_tree.lock<xml_tree>();
+	return _xml_tree.lock();
 }
 
 xml_iterator_t xml_tree_iterator::current()const
@@ -549,7 +552,6 @@ index xml_tree::index_of(xml_iterator_t it)const
 {
 	if (!it.is_valid() || it.parent() != this)
 		return invalid_index;
-	auto node = reinterpret_cast<node_ptr_t>(it.current());
 	index i = 0;
 	--it;
 	while (it.is_valid()) {

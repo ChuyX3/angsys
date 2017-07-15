@@ -173,6 +173,8 @@ xml_node_t ang::object_wrapper<xml_node>::operator[](cwstr_t value)const
 	return it.is_valid() ? (xml_node*)it : null;
 }
 
+ANG_IMPLEMENT_WEAK_PTR(xml_node);
+
 ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -366,6 +368,7 @@ wstring& xml_node::xml_print(wstring& stream, xml_format_t const& flag, ushort l
 			}
 		}
 		break;
+	default:break;
 	}
 	return stream;
 }
@@ -377,7 +380,7 @@ bool xml_node::xml_has_attributes()const { return false; }
 
 xml_node* xml_node::xml_parent()const
 {
-	return const_cast<safe_pointer&>(_xml_parent).lock<xml_node>();
+	return _xml_parent.lock().get();
 }
 
 xml_node* xml_node::xml_prev()const
@@ -392,7 +395,7 @@ xml_node* xml_node::xml_next()const
 
 void xml_node::xml_parent(xml_node* node)
 {
-	_xml_parent = object_t(node);
+	_xml_parent = node;
 }
 
 void xml_node::xml_prev(xml_node* node)

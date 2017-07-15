@@ -25,9 +25,10 @@
 #define STDCALL __stdcall
 #endif
 
-#ifdef _DEVELOPPER
-#define ANG_DEVELOPPER //for developper
-#endif//ANG_DEVELOPPER
+#if !defined ANG_FORCE_NDEBUG && !defined NDEBUG && (defined _DEVELOPPER || defined _DEBUG)
+#define ANG_DEVELOPPER
+#endif
+
 
 #if defined _DEBUG || defined _DEVELOPPER
 #define DEBUG_SAFE_CODE

@@ -249,7 +249,7 @@ bool file::file_size(file_size_t size)
 
 streams::stream_mode_t file::mode()const
 {
-	return is_valid() ? hfile->mode() : streams::stream_mode::unknow;
+	return is_valid() ? hfile->mode().get() : streams::stream_mode::unknow;
 }
 
 bool file::set_mutex(core::async::mutex_t mutex)

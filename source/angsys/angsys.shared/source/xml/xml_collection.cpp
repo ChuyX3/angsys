@@ -259,6 +259,7 @@ wstring& xml_collection::xml_print(wstring& stream, const xml_format_t& flag, us
 			it->xml_print(stream, flag, level);
 		}
 		break;
+	default:break;
 	}
 	return stream;
 }
@@ -287,7 +288,7 @@ bool xml_collection::append(xml_node_t node, bool last)
 {
 	if (node.is_empty())
 		return false;
-	node->xml_parent(_xml_parent.lock<xml_node>());
+	node->xml_parent(_xml_parent.lock());
 	if (last)
 	{
 		if (_xml_first == null)
@@ -336,7 +337,7 @@ bool xml_collection::insert(xml_node_t node, xml_iterator_t at, bool nextTo)
 	if (!nextTo && (xml_node*)at == xml_first())
 		return append(node, false);
 
-	node->xml_parent(_xml_parent.lock<xml_node>());
+	node->xml_parent(_xml_parent.lock());
 	if (nextTo)
 	{
 		at->xml_next(node);
@@ -789,7 +790,7 @@ bool xml_collection::xml_parent(xml_node_t element)
 {
 	if (element.is_empty())
 		return false;
-	_xml_parent = object_t(element.get());
+	_xml_parent = element;
 	for (auto it = begin(); it.is_valid(); ++it)
 	{
 		it->xml_parent(element);

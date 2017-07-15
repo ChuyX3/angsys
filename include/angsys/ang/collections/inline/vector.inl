@@ -2318,7 +2318,7 @@ inline ang::object_wrapper<T> const& ang::object_wrapper<ang::collections::vecto
 {
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-	if ((idx >= _ptr->size()) || (idx < 0U)) throw(exception_t(except_code::array_overflow));
+	if ((idx >= (int)_ptr->size()) || (idx < 0U)) throw(exception_t(except_code::array_overflow));
 #endif
 	return _ptr->data()[idx];
 }

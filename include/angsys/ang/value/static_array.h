@@ -11,7 +11,7 @@ namespace ang
 		{
 		public: 
 			static static_array<T> new_array(wsize count) {
-				auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator);
+				auto alloc = ang::memory::allocator_manager::get_allocator(ang::memory::allocator_manager::default_allocator);
 				static_array<T> arr = { alloc->object_alloc<T>(count), count };
 			
 				for (auto it = arr.begin(), end = arr.end(); it < end; ++it)
@@ -20,7 +20,7 @@ namespace ang
 			}
 
 			static static_array<T> new_array(ang::initializer_list_t<T> const& list) {
-				auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator);
+				auto alloc = ang::memory::allocator_manager::get_allocator(ang::memory::allocator_manager::default_allocator);
 				static_array<T> arr = { alloc->object_alloc<T>(list.size()), list.size() };
 				index i = 0;
 				for (auto it = list.begin(), end = list.end(); it < end; ++it, ++i)
@@ -30,7 +30,7 @@ namespace ang
 
 			static void delete_array(static_array<T>& arr)
 			{
-				auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator);
+				auto alloc = ang::memory::allocator_manager::get_allocator(ang::memory::allocator_manager::default_allocator);
 				for (auto it = arr.begin(), end = arr.end(); it < end; it++)
 					alloc->destruct(it);
 				alloc->memory_release(arr.data());
@@ -99,7 +99,7 @@ namespace ang
 			static_const_array(value<T const*> val, uint size) : _value(val.get()), _size(size) {}
 			static_const_array(static_const_array<T> const* val, uint size) : _value(&val->get()), _size(size) {}
 			static_const_array(static_const_array const& other) : _value(other._value), _size(other._size) {}
-			static_const_array(static_const_array && other) : _value(ang::move(other._value)), _value(ang::move(other._size)) {}
+			static_const_array(static_const_array && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
 			template<wsize N>
 			static_const_array(const T(&ar)[N])
 				: _value(ar), _size(N) { }
@@ -117,7 +117,7 @@ namespace ang
 		public: /*operators*/
 			static_const_array& operator = (type val) { set(ang::move(val), 1); return*this; }
 			static_const_array& operator = (value<T const*> const& val) { set(val.get(), 1); return*this; }
-			static_const_array& operator = (static_const_array const& val) { set(val._value, al._size); return*this; }
+			static_const_array& operator = (static_const_array const& val) { set(val._value, val._size); return*this; }
 			static_const_array& operator = (static_const_array && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
 			template<wsize N> static_const_array& operator = (const T(&ar)[N]) { set(ar, N); return*this; }
 

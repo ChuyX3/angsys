@@ -246,10 +246,10 @@ namespace ang
 				bool register_paths(cwstr_t) override;
 				bool create_file_handle(cwstr_t, open_flags_t, ifile_ptr_t) override;
 
-				bool open(cwstr_t path, input_text_file_t&);
-				bool open(cwstr_t path, output_text_file_t&);
-				bool open(cwstr_t path, input_binary_file_t&);
-				bool open(cwstr_t path, output_binary_file_t&);
+				bool open(cwstr_t path, input_text_file_t&) override;
+				bool open(cwstr_t path, output_text_file_t&) override;
+				bool open(cwstr_t path, input_binary_file_t&) override;
+				bool open(cwstr_t path, output_binary_file_t&) override;
 
 			protected:
 				virtual~pack_file();

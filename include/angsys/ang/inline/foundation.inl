@@ -19,11 +19,17 @@ namespace ang
 			static inline bool is_type_of(ang::type_name_t name) {
 				return name == type_name();
 			}
-			static inline ang::unknown_t dynamic_constructor() {
-				return new type();
+			static inline bool dynamic_constructor(ang::unknown_ptr_t uknown) {
+				if (uknown.get() == null)
+					return false;
+				*uknown = new type();
+				return true;
 			}
-			static inline void dynamic_destructor(ang::unknown_t uknown) {
+			static inline bool dynamic_destructor(ang::unknown_ptr_t uknown) {
+				if (uknown.get() == null)
+					return false;
 				delete reinterpret_cast<type*>(uknown.get());
+				return true;
 			}
 			static inline ang::runtime_type_info_t runtime_type() {
 				static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true);
@@ -47,11 +53,17 @@ namespace ang
 			static inline bool is_type_of(ang::type_name_t name) {
 				return name == type_name();
 			}
-			static inline ang::unknown_t dynamic_constructor() {
-				return new type();
+			static inline bool dynamic_constructor(ang::unknown_ptr_t uknown) {
+				if (uknown.get() == null)
+					return false;
+				*uknown = new type();
+				return true;
 			}
-			static inline void dynamic_destructor(ang::unknown_t uknown) {
+			static inline bool dynamic_destructor(ang::unknown_ptr_t uknown) {
+				if (uknown.get() == null)
+					return false;
 				delete reinterpret_cast<type*>(uknown.get());
+				return true;
 			}
 			static inline ang::runtime_type_info_t runtime_type() {
 				static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true);
@@ -75,11 +87,17 @@ namespace ang
 			static inline bool is_type_of(ang::type_name_t name) {
 				return name == type_name();
 			}
-			static inline ang::unknown_t dynamic_constructor() {
-				return new type();
+			static inline bool dynamic_constructor(ang::unknown_ptr_t uknown) {
+				if (uknown.get() == null)
+					return false;
+				*uknown = new type();
+				return true;
 			}
-			static inline void dynamic_destructor(ang::unknown_t uknown) {
+			static inline bool dynamic_destructor(ang::unknown_ptr_t uknown) {
+				if (uknown.get() == null)
+					return false;
 				delete reinterpret_cast<type*>(uknown.get());
+				return true;
 			}
 			static inline ang::runtime_type_info_t runtime_type() {
 				static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true);

@@ -171,7 +171,7 @@ namespace ang
 
 	public: /*operators*/
 		value& operator = (type val) { set(ang::move(val), 1); return*this; }
-		value& operator = (value const& val) { set(val._value, al._size); return*this; }
+		value& operator = (value const& val) { set(val._value, val._size); return*this; }
 		value& operator = (value && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
 		template<wsize N> value& operator = (T(&ar)[N]) { set(ar, N - 1U); return*this; }
 
@@ -203,7 +203,7 @@ namespace ang
 		value(ang::nullptr_t) : _value(null), _size(0) {}
 		value(value<T> const* val, uint size) : _value(&val->get()), _size(size) {}
 		value(value const& other) : _value(other._value), _size(other._size) {}
-		value(value && other) : _value(ang::move(other._value)), _value(ang::move(other._size)) {}
+		value(value && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
 		template<wsize N>
 		value(const T(&ar)[N])
 			: _value(ar), _size(N - 1U) { }
@@ -218,7 +218,7 @@ namespace ang
 
 	public: /*operators*/
 		value& operator = (type val) { set(ang::move(val), 1); return*this; }
-		value& operator = (value const& val) { set(val._value, al._size); return*this; }
+		value& operator = (value const& val) { set(val._value, val._size); return*this; }
 		value& operator = (value && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
 		template<wsize N> value& operator = (const T(&ar)[N]) { set(ar, N - 1U); return*this; }
 

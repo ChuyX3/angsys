@@ -224,10 +224,10 @@ namespace ang
 		pointer operator new(wsize);
 		void operator delete(pointer);
 
-#ifdef _DEBUG
+#ifdef ANG_DEVELOPPER
 		pointer operator new(wsize, const char*, int);
 		void operator delete(pointer, const char*, int);
-#endif//_DEBUG
+#endif//ANG_DEVELOPPER
 
 	protected: //for aligned objects
 		pointer operator new(wsize, ushort alignment);
@@ -402,6 +402,39 @@ namespace ang
 		weak_ptr& operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }
 	};
 
+#define ANG_DECLARE_WEAK_PTR(_LINK, _TYPE) \
+	template<> class _LINK weak_ptr<_TYPE> : public safe_pointer { \
+	public: \
+		weak_ptr(); \
+		weak_ptr(weak_ptr&& other); \
+		weak_ptr(weak_ptr const& other); \
+		weak_ptr(ang::nullptr_t const&); \
+		weak_ptr(_TYPE* obj); \
+		weak_ptr(object_wrapper<_TYPE> obj); \
+		~weak_ptr(); \
+	public: /*properties*/ \
+		object_wrapper<_TYPE> lock(); \
+		weak_ptr& operator = (object_wrapper<_TYPE> obj); \
+		weak_ptr& operator = (_TYPE* obj); \
+		weak_ptr& operator = (weak_ptr&& other); \
+		weak_ptr& operator = (weak_ptr const& other); \
+		weak_ptr& operator = (ang::nullptr_t const&); \
+	};
+
+#define ANG_IMPLEMENT_WEAK_PTR(_TYPE) \
+	ang::weak_ptr<_TYPE>::weak_ptr() : safe_pointer() {} \
+	ang::weak_ptr<_TYPE>::weak_ptr(weak_ptr&& other) : safe_pointer((safe_pointer&&)other) {} \
+	ang::weak_ptr<_TYPE>::weak_ptr(weak_ptr const& other) : safe_pointer((safe_pointer const&)other) {} \
+	ang::weak_ptr<_TYPE>::weak_ptr(ang::nullptr_t const&) : safe_pointer(null) {} \
+	ang::weak_ptr<_TYPE>::weak_ptr(_TYPE* obj) : safe_pointer(obj) {} \
+	ang::weak_ptr<_TYPE>::weak_ptr(object_wrapper<_TYPE> obj) : safe_pointer(obj.get()) {} \
+	ang::weak_ptr<_TYPE>::~weak_ptr() {} \
+	ang::object_wrapper<_TYPE> ang::weak_ptr<_TYPE>::lock() { auto _obj = safe_pointer::lock<object>();return static_cast<_TYPE*>(_obj.get()); } \
+	ang::weak_ptr<_TYPE>& ang::weak_ptr<_TYPE>::operator = (object_wrapper<_TYPE> obj) { safe_pointer::operator=(obj.get()); return *this; } \
+	ang::weak_ptr<_TYPE>& ang::weak_ptr<_TYPE>::operator = (_TYPE* obj) { safe_pointer::operator=(obj);  return *this; } \
+	ang::weak_ptr<_TYPE>& ang::weak_ptr<_TYPE>::operator = (ang::weak_ptr<_TYPE>&& other) { safe_pointer::operator=(other); return *this; } \
+	ang::weak_ptr<_TYPE>& ang::weak_ptr<_TYPE>::operator = (ang::weak_ptr<_TYPE> const& other) { safe_pointer::operator=(other);  return *this; } \
+	ang::weak_ptr<_TYPE>& ang::weak_ptr<_TYPE>::operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }
 
 	template<typename T>
 	class value_wrapper

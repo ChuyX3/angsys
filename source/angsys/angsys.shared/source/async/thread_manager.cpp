@@ -158,8 +158,8 @@ thread_t thread::current_thread(thread_t _thread)
 }
 
 thread_manager::thread_manager()
-	: main_mutex(null)
-	, _thread_map()
+	: _thread_map()
+	, main_mutex(null)
 {
 	main_cond = new cond();
 	main_mutex = new mutex();

@@ -181,7 +181,6 @@ namespace ang
 #include <ang/value/ulong.h>
 #include <ang/value/float.h>
 #include <ang/value/double.h>
-#include <ang/value/static_array.h>
 
 namespace ang
 {
@@ -419,11 +418,8 @@ namespace ang
 			visible vcall bool can_delete_from(iallocator*)const pure;
 			visible vcall pointer memory_alloc(wsize)pure;
 			visible vcall void memory_release(pointer)pure;
-#ifdef _DEBUG
+#ifdef ANG_DEVELOPPER
 			visible vcall pointer memory_alloc(wsize, ang_cstr_t file, int line)pure;
-#endif	
-
-#if defined _DEBUG || defined _DEVELOPPER
 			visible vcall void set_logger(debug::ilogger_t)pure;
 #endif
 
@@ -449,7 +445,7 @@ namespace ang
 		/******************************************************************/
 		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, ialigned_allocator, public iallocator)
 			visible vcall pointer aligned_memory_alloc(wsize, wsize)pure;
-#ifdef _DEBUG
+#ifdef ANG_DEVELOPPER
 			visible vcall pointer aligned_memory_alloc(wsize, wsize, ang_cstr_t file, int line)pure;
 #endif			
 			template<class obj_t, wsize ALIGNMENT = 4> obj_t* aligned_object_alloc(wsize count) {
@@ -490,7 +486,7 @@ namespace ang
 	}
 }
 
-//
+#include <ang/value/static_array.h>
 
 
 #ifndef __PLACEMENT_NEW_INLINE
@@ -507,7 +503,7 @@ inline void operator delete(pointer, pointer) throw()
 #endif
 
 
-#if defined _DEBUG
+#if defined ANG_DEVELOPPER
 #define ANG_NEW_ARGS(...) new(__VA_ARGS__)
 #define ANG_DEBUG_NEW() new(__FILE__, __LINE__)
 #define ANG_IMPLEMENT_MEMORYMANAGER()	\

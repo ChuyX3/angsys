@@ -71,6 +71,7 @@ namespace ang
 
 bool load_directory_recursive(wstring const& root_path, wstring const& subpath, file_cursor_t& header_size, file_cursor_t& offset, collections::vector<collections::pair<wstring, pack_file_info>>& files)
 {
+#if defined WINDOWS_PLATFORM
 	WIN32_FIND_DATAW ffd;
 	LARGE_INTEGER filesize;
 
@@ -118,6 +119,8 @@ bool load_directory_recursive(wstring const& root_path, wstring const& subpath, 
 		}
 	} while (FindNextFileW(hFind, &ffd) != 0);
 	FindClose(hFind);
+#elif defined ANDROID_PLATFORM
+#endif
 	return true;
 }
 
@@ -167,6 +170,8 @@ bool pack_file::create_pack_from_folder(cwstr_t in_path, cwstr_t out_path)
 		return true;
 	}, 0, offset + header_size + sizeof(ulong64));
 	
+#elif defined ANDROID_PLATFORM
+
 #endif
 	return true;
 }

@@ -229,8 +229,8 @@ file_size_t file_impl::get_file_size(file_handle_t h)
 text::encoding_t file_impl::get_file_encoding(file_handle_t handle)
 {
 	mbyte bom;
-	dword out;
 #ifdef WINDOWS_PLATFORM
+	dword out;
 	LARGE_INTEGER lint;
 	lint.QuadPart = 0;
 	SetFilePointerEx(handle, lint, 0, FILE_BEGIN);
@@ -279,8 +279,8 @@ void file_impl::set_file_encoding(file_handle_t handle, text::encoding_t encodin
 	if (text::encoding::iso_10646 == encoding)
 	{
 		uint bom = mbyte::ubom;
-		dword overlapped = { 0 };
 #ifdef WINDOWS_PLATFORM
+		dword overlapped = { 0 };
 		LARGE_INTEGER lint;
 		LARGE_INTEGER cur;
 		lint.QuadPart = 2;
@@ -295,8 +295,8 @@ void file_impl::set_file_encoding(file_handle_t handle, text::encoding_t encodin
 	else if (text::encoding::utf_8 == encoding)
 	{
 		uint bom = mbyte::inv_mbom;
-		dword overlapped = { 0 };
 #ifdef WINDOWS_PLATFORM
+		dword overlapped = { 0 };
 		LARGE_INTEGER lint;
 		LARGE_INTEGER cur;
 		lint.QuadPart = 3;
@@ -323,8 +323,8 @@ void file_impl::set_file_encoding(file_handle_t handle, text::encoding_t encodin
 
 file_impl::file_impl()
 	: _hfile(0)
-	, _hmap(0)
 	, _hmap_size(0)
+	, _hmap(0)
 	, _path("")
 	, _flags()
 	, _size(0)
@@ -457,8 +457,9 @@ bool file_impl::create(cwstr_t path, open_flags_t flags)
 		_flags += open_flags::type_text;
 		if (_size > 0) 
 		{
-			switch (get_file_encoding(_hfile).get())
+			switch (get_file_encoding(_hfile))
 			{
+			case text::encoding::utf_16://TODO
 			case text::encoding::iso_10646:
 				_flags += open_flags::encoding_unicode;
 				break;
@@ -468,6 +469,7 @@ bool file_impl::create(cwstr_t path, open_flags_t flags)
 			case text::encoding::iso_8859_1:
 				_flags += open_flags::encoding_ascii;
 				break;
+			default:break;
 			}
 		}
 		else //new file
@@ -641,7 +643,9 @@ bool file_impl::file_size(file_size_t size)
 	SetFilePointerEx(_hfile, lint, null, 0);
 	return res ? true : false;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-	::lseek(_hfile, cur, 0);
+	_cursor = max(0, min<long64>(size, _cursor));
+	::lseek(_hfile, _cursor, 0);
+	return true;
 #endif
 }
 

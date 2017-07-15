@@ -342,6 +342,8 @@ namespace ang
 		xml::xml_value_t operator[](cmstr_t)const;
 	};
 
+	ANG_DECLARE_WEAK_PTR(LINK, xml::xml_node)
+
 	namespace xml
 	{
 		class LINK xml_node
@@ -350,7 +352,7 @@ namespace ang
 		{
 		private:
 			const xml_type_t _xml_type;
-			safe_pointer _xml_parent;
+			mutable weak_ptr<xml_node> _xml_parent;
 			xml_node_t _xml_prev;
 			xml_node_t _xml_next;
 
@@ -419,9 +421,9 @@ namespace ang
 		protected:
 			const xml_type_t _xml_type;
 			uint _count;
+			mutable weak_ptr<xml_node> _xml_parent;
 			xml_node_t _xml_first;
 			xml_node_t _xml_last;
-			safe_pointer _xml_parent;
 
 		public:
 			typedef xml_node*								node_ptr_t;
@@ -497,18 +499,11 @@ namespace ang
 		template<> xml_attributes_t LINK xml_collection::xml_as<xml_attribute_list>();
 		template<> xml_element_list_t LINK xml_collection::xml_as<xml_element_list>();
 
-		template<class F>
-		inline void foreach(xml_collection_t const& store, F func) {
-			if (!store.is_empty())for (xml_iterator_t it = store->begin(); it.is_valid(); ++it)
-				func((xml_node*)it);
-		}
-
-		template<class F>
-		inline void foreach(xml_attributes_t const& store, F func) {
-			if(!store.is_empty())for (xml_iterator_t it = store->begin(); it.is_valid(); ++it)
-				func((xml_attribute*)(xml_node*)it);
-		}
-
+	}
+	template<class F>
+	inline void foreach(xml::xml_collection_t const& store, F func) {
+		if (!store.is_empty())for (xml::xml_iterator_t it = store->begin(); it.is_valid(); ++it)
+			func((xml::xml_node*)it);
 	}
 }
 
@@ -693,6 +688,12 @@ namespace ang
 			virtual~xml_element_list();
 		};
 	}
+
+	template<class F>
+	inline void foreach(xml::xml_attributes_t const& store, F func) {
+		if (!store.is_empty())for (xml::xml_iterator_t it = store->begin(); it.is_valid(); ++it)
+			func((xml::xml_attribute*)(xml::xml_node*)it);
+	}
 }
 
 
@@ -740,12 +741,14 @@ namespace ang
 		//xml::xml_node_t operator[](cwstr_t)const;
 	};
 
+	ANG_DECLARE_WEAK_PTR(LINK, xml::xml_tree)
+
 	namespace xml
 	{
 		class LINK xml_tree_iterator
 		{
 		protected:
-			mutable safe_pointer _xml_tree;
+			mutable weak_ptr<xml_tree> _xml_tree;
 			xml_node_t	_xml_current;
 			xml_node_t	_xml_child;
 

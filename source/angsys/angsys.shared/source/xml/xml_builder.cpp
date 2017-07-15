@@ -27,19 +27,19 @@ using namespace ang::collections;
 xml_builder::xml_builder()
 	: xml_tree(xml_type::builder)
 {
-	_current._xml_tree = (object*)this;
+	_current._xml_tree = this;
 }
 
 xml_builder::xml_builder(const xml_builder&)
 	: xml_tree(xml_type::builder)
 {
-	_current._xml_tree = object_t(this);
+	_current._xml_tree = this;
 }
 
 xml_builder::xml_builder(const xml_builder*)
 	: xml_tree(xml_type::builder)
 {
-	_current._xml_tree = object_t(this);
+	_current._xml_tree = this;
 }
 
 xml_builder::~xml_builder()

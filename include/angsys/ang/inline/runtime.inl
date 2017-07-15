@@ -43,6 +43,26 @@ namespace ang
 			}
 		};
 
+		template<>
+		struct runtime_type_builder<void>
+		{
+			typedef void type;
+			static inline type_name_t type_name() {
+				return "void";
+			}
+
+			static inline bool is_type_of(type_name_t name) {
+				return name == type_name();
+			}
+
+			template<typename new_t>
+			static inline auto interface_cast(void* _old) {
+				if (is_type_of(runtime::type_name<new_t>()))
+					return (new_t*)_old;
+				return null;
+			}
+		};
+
 		template<class T>
 		struct runtime_type_builder<const T>
 		{
@@ -92,26 +112,6 @@ namespace ang
 			static inline type_name_t type_name() {
 				static string out = runtime_type_builder<type>::type_name() + "&&"_o;
 				return out->cstr();
-			}
-
-			static inline bool is_type_of(type_name_t name) {
-				return name == type_name();
-			}
-
-			template<typename new_t>
-			static inline auto interface_cast(void* _old) {
-				if (is_type_of(runtime::type_name<new_t>()))
-					return (new_t*)_old;
-				return null;
-			}
-		};
-
-		template<>
-		struct runtime_type_builder<void>
-		{
-			typedef void type;
-			static inline type_name_t type_name() {
-				return "void";
 			}
 
 			static inline bool is_type_of(type_name_t name) {
@@ -386,12 +386,12 @@ namespace ang
 			return _new != null;
 		}
 
-		template<class T> inline static bool runtime_type_info_database::contruct_dynamic_object(object_wrapper<T>& out) {
+		template<class T> inline bool runtime_type_info_database::contruct_dynamic_object(object_wrapper<T>& out) {
 			if (!contruct_dynamic_object(type_name<T>(), &out)) return false;
 			return true;
 		}
 
-		template<class T> inline static bool runtime_type_info_database::contruct_dynamic_object(intf_wrapper<T>& out) {
+		template<class T> inline bool runtime_type_info_database::contruct_dynamic_object(intf_wrapper<T>& out) {
 			if (!contruct_dynamic_object(type_name<T>(), &out))	return false;
 			return true;
 		}
