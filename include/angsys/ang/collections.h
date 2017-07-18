@@ -250,6 +250,44 @@ namespace ang
 			friend inline bool operator < (const key& value1, const self_t& value2) { return value1 < value2._key; }
 		};
 
+		namespace algorithms
+		{
+			template<class _node>
+			class iteration_algorithm
+			{
+			public:
+				typedef _node* node_ptr_t;
+				typedef node_ptr_t(*iteration_callback_t)(node_ptr_t, index&);
+
+			public: //overrides
+				iteration_callback_t begin;
+				iteration_callback_t end;
+				iteration_callback_t next;
+				iteration_callback_t prev;
+				iteration_callback_t most_left;
+				iteration_callback_t most_right;
+
+				iteration_algorithm(iteration_algorithm const& algorithm) {
+					begin = algorithm.begin;
+					end = algorithm.end;
+					next = algorithm.next;
+					prev = algorithm.prev;
+					most_left = algorithm.most_left;
+					most_right = algorithm.most_right;
+				}
+
+			protected:
+				iteration_algorithm() {
+					begin = null;
+					end = null;
+					next = null;
+					prev = null;
+					most_left = null;
+					most_right = null;
+				}
+			};
+		}
+
 	}//collections
 
 	template<class T, typename F>

@@ -44,7 +44,6 @@ inline ang::collections::vector_buffer<T>::vector_buffer(ang::collections::vecto
 	ar._size = 0;
 	ar._capacity = 0;
 	ar._data = null;
-	ar.allocator = 0;
 }
 
 template<typename T>
@@ -200,7 +199,6 @@ inline bool ang::collections::vector_buffer<T>::move(ang::collections::vector_bu
 	allocator = ar.allocator;
 	ar._data = null;
 	ar._size = 0;
-	ar.allocator = 0;
 	return true;
 }
 
@@ -698,7 +696,6 @@ inline ang::collections::vector_buffer<ang::object_wrapper<T>>::vector_buffer(an
 	ar._size = 0;
 	ar._capacity = 0;
 	ar._data = null;
-	ar.allocator = 0;
 }
 
 template<typename T>
@@ -831,7 +828,6 @@ inline bool ang::collections::vector_buffer<ang::object_wrapper<T>>::move(ang::c
 	allocator = ar.allocator;
 	ar._data = null;
 	ar._size = 0;
-	ar.allocator = 0;
 	return true;
 }
 
@@ -1331,7 +1327,6 @@ inline ang::collections::vector_buffer<ang::intf_wrapper<T>>::vector_buffer(ang:
 	ar._size = 0;
 	ar._capacity = 0;
 	ar._data = null;
-	ar.allocator = 0;
 }
 
 template<typename T>
@@ -1464,7 +1459,6 @@ inline bool ang::collections::vector_buffer<ang::intf_wrapper<T>>::move(ang::col
 	allocator = ar.allocator;
 	ar._data = null;
 	ar._size = 0;
-	ar.allocator = 0;
 	return true;
 }
 

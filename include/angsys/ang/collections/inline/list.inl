@@ -11,14 +11,14 @@ template<typename T>
 inline ang::collections::list_data<T>::list_data()
 	: object()
 	, _count(0)
-	, _first(null)
-	, _last(null)
+	, _head(null)
+	, _tail(null)
 {
 	allocator = memory::allocator_manager::get_allocator(0);
 }
 
 template<typename T>
-inline ang::collections::list_data<T>::list_data(std::initializer_list<T> list)
+inline ang::collections::list_data<T>::list_data(ang::initializer_list_t<T> list)
 	: list_data()
 {
 	for (auto it = list.begin(); it != list.end(); ++it)
@@ -26,9 +26,10 @@ inline ang::collections::list_data<T>::list_data(std::initializer_list<T> list)
 }
 
 template<typename T>
-inline ang::collections::list_data<T>::list_data(const std::nullptr_t&)
+inline ang::collections::list_data<T>::list_data(const ang::nullptr_t&)
 	: list_data()
 {
+
 }
 
 template<typename T>
@@ -36,20 +37,19 @@ inline ang::collections::list_data<T>::list_data(ang::collections::list_data<T>&
 	: list_data()
 {
 	_count = ar._count;
-	_first = ar._first;
-	_last = ar._last;
+	_head = ar._head;
+	_tail = ar._tail;
 	allocator = ar.allocator;
 	ar._count = 0;
-	ar._first = null;
-	ar._last = null;
-	ar.allocator = null;
+	ar._head = null;
+	ar._tail = null;
 }
 
 template<typename T>
 inline ang::collections::list_data<T>::list_data(const ang::collections::list_data<T>& ar)
 	: list_data()
 {
-	copy(static_cast<const ienum_t*>(&ar));
+	copy(static_cast<const ienum_t&>(ar));
 }
 
 template<typename T>
@@ -66,18 +66,6 @@ inline ang::collections::list_data<T>::list_data(const ang::collections::ienum<T
 	copy(store);
 }
 
-
-template<typename T>
-inline ang::collections::list_data<T>::list_data(ang::uint_t sz, T const* ar)
-	: list_data()
-{
-	if (ar != null)
-	{
-		for (auto i = 0U; i < sz; ++i)
-			append(ar[i]);
-	}
-}
-
 template<typename T>
 inline ang::collections::list_data<T>::~list_data()
 {
@@ -85,22 +73,15 @@ inline ang::collections::list_data<T>::~list_data()
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::is_empty()const
+inline bool ang::collections::list_data<T>::is_empty()const
 {
-	return 0 == _count;
+	return size() == 0;
 }
 
-
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::copy(ang::uint_t s, T const* ar)
+inline uint ang::collections::list_data<T>::size()const
 {
-	clean();
-	if (ar != null)
-	{
-		for (auto i = 0U; i < sz; ++i)
-			append(ar[i]);
-	}
-	return true;
+	return _count;
 }
 
 template<typename T>
@@ -108,10 +89,8 @@ inline void ang::collections::list_data<T>::set_allocator(memory::iallocator* al
 {
 	if (alloc == null && alloc == allocator)
 		return;
-
 	if (!alloc->can_delete_from(allocator))
 		realloc(alloc);
-
 	allocator = alloc;
 }
 
@@ -122,31 +101,31 @@ inline ang::memory::iallocator* ang::collections::list_data<T>::get_allocator()c
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::has_items()const
+inline bool ang::collections::list_data<T>::has_items()const
 {
-	return bool_t(_count != 0);
+	return bool(size() != 0);
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::move(ang::collections::list_data<T>& ar)
+inline bool ang::collections::list_data<T>::move(ang::collections::list_data<T>& ar)
 {
 	if (&ar == this)
 		return false;
 	clean();
 	_count = ar._count;
-	_first = ar._first;
-	_last = ar._last;
+	_head = ar._head;
+	_tail = ar._tail;
 	allocator = ar.allocator;
-	ar._count = 0;
-	ar._first = null;
-	ar._last = null;
-	ar.allocator = null;
+	ar._head = null;
+	ar._tail = null;
 	return true;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::copy(const ang::collections::ienum<T>* _items)
+inline bool ang::collections::list_data<T>::copy(const ang::collections::ienum<T>* _items)
 {
+	if (!_items)
+		return false;
 	for (auto it = _items->begin(); it.is_valid(); ++it)
 		append(const_cast<T&>(*it));	
 	return true;
@@ -156,85 +135,68 @@ template<typename T>
 inline T& ang::collections::list_data<T>::at(const ang::collections::iterator<T>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
-	if (is_empty() || it.current() == null)
-		throw(exception_t(except_code::invalid_memory));
-	if (this != it.parent())
+	if (it.parent() != this || it.current() == null)
 		throw(exception_t(except_code::invalid_param));
 #endif
-	auto node = reinterpret_cast<node_ptr_t>(it.current());
-	return node->value();
+	return reinterpret_cast<node_ptr_t>(it.current())->value();
 }
 
 template<typename T>
-inline ang::collections::iterator<T> ang::collections::list_data<T>::find_index(ang::index_t index)const
+inline ang::collections::iterator<T> ang::collections::list_data<T>::find_index(index idx)const
 {
-	if (index >= _count)
+	if (idx >= _count)
 		return  iterator_t(const_cast<self_t*>(this), null, 0);
-	node_ptr_t node = null;
-	if (index <= _count / 2)
-	{
-		node = _first;
-		for (auto i = 0U; i < index; ++i)
-			node = node->next();
-	}
-	else
-	{
-		node = _last;
-		for (auto i = _count - 1; i > index; --i)
-			node = node->prev();
-	}
-	return iterator_t(const_cast<self_t*>(this), (void_ptr_t)node, 0);
+
+	node_ptr_t node = _head;
+	for (index i = 0; node != null && i < idx; node = node->next(), ++i);
+	return iterator_t(const_cast<self_t*>(this), (pointer)node, 0);
 }
 
 template<typename T>
-inline ang::index_t ang::collections::list_data<T>::index_of(ang::collections::iterator<T> it)const
+inline index ang::collections::list_data<T>::index_of(ang::collections::iterator<T> it)const
 {
 	if (!it.is_valid() || it.parent() != this)
 		return invalid_index;
-	auto node = reinterpret_cast<node_ptr_t>(it.current());
-	index_t i = 0;
-	while (node) {
-		node = node->prev();
-		++i;
-	}
+	node_ptr_t node = reinterpret_cast<node_ptr_t>(it.current());
+	index i = 0;
+	while (node) { node->prev(); i++; };
 	return i;
 }
 
 template<typename T>
-inline ang::collections::iterator<T> ang::collections::list_data<T>::find(T const& datum, bool_t invert)const
+inline ang::collections::iterator<T> ang::collections::list_data<T>::find(T const& datum, bool invert)const
 {
 	if (!is_empty())
 	{
-		
-		if (invert) for (node_ptr_t node = _first; node != null; node = node->next())
+		if (invert) for (iterator_t it = begin(); it.is_valid(); ++it)
 		{
-			if (node->value() == datum)
-				return iterator_t(const_cast<self_t*>(this), (void_ptr_t)node, 0);
+			if (*it == datum)
+				return it;
 		}
-		else for (node_ptr_t node = _last; node != null; node = node->prev())
+		else for (iterator_t it = end(); it.is_valid(); --it)
 		{
-			if (node->value() == datum)
-				return iterator_t(const_cast<self_t*>(this), (void_ptr_t)node, 0);
+			if (*it == datum)
+				return it;
 		}
 	}
 	return iterator_t(const_cast<self_t*>(this), 0);
 }
 
 template<typename T>
-inline ang::collections::iterator<T> ang::collections::list_data<T>::find(T const& datum, ang::collections::iterator<T> nextTo, bool_t invert)const
+inline ang::collections::iterator<T> ang::collections::list_data<T>::find(T const& datum, ang::collections::iterator<T> nextTo, bool invert)const
 {
 	if (!is_empty() && nextTo.parent() == this)
 	{
-		if (invert)for (node_ptr_t node = nextTo.is_valid()? node_ptr_t(nextTo.current())->next() : _first; node != null; node = node->next())
+		if (invert)for (iterator_t it = nextTo.is_valid() ? nextTo : begin(); it.is_valid(); ++it)
 		{
-			if (node->value() == datum)
-				return iterator_t(const_cast<self_t*>(this), (void_ptr_t)node, 0);
+			if ((T const&)*it == datum)
+				return it;
 		}
 
-		else for (node_ptr_t node = nextTo.is_valid() ? node_ptr_t(nextTo.current())->prev() : _last; node != null; node = node->prev())
+		else for (iterator_t it = nextTo.is_valid() ? nextTo : end(); it.is_valid(); --it)
 		{
-			if (node->value() == datum)
-				return iterator_t(const_cast<self_t*>(this), (void_ptr_t)node, 0);
+			if ((T const&)*it == datum)
+				return it;
 		}
 	}
 	return iterator_t(const_cast<list_data*>(this), 0);
@@ -243,79 +205,67 @@ inline ang::collections::iterator<T> ang::collections::list_data<T>::find(T cons
 template<typename T>
 inline ang::collections::iterator<T> ang::collections::list_data<T>::begin()const
 {
-	return iterator_t(const_cast<list_data*>(this), position_t(_first));
+	return iterator_t(const_cast<list_data*>(this), _head);
 }
 
 template<typename T>
 inline ang::collections::iterator<T> ang::collections::list_data<T>::end()const
 {
-	return iterator_t(const_cast<list_data*>(this), position_t(_last));
+	return iterator_t(const_cast<list_data*>(this), _tail);
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::next(ang::collections::iterator<T>& it)const
+inline bool ang::collections::list_data<T>::next(ang::collections::iterator<T>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
 		throw(exception_t(except_code::invalid_param));
 #endif
-	auto node = reinterpret_cast<node_ptr_t>(it.current());
-	node = node->next();
+	node_ptr_t node = reinterpret_cast<node_ptr_t>(it.current())->next();
 	it.current(node);
-	return true;
+	return node != null;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::next(ang::collections::iterator<T>& it, ang::int_t val)const
+inline bool ang::collections::list_data<T>::next(ang::collections::iterator<T>& it, int val)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
 		throw(exception_t(except_code::invalid_param));
 #endif
-	
-	auto node = reinterpret_cast<node_ptr_t>(it.current());
-	int i = 0;
-	while (node && i < val) {
-		node = node->next();
-		++i;
-	}
+	node_ptr_t node = reinterpret_cast<node_ptr_t>(it.current());
+	for (int i = 0; i < val && node != null; node = node->next());
 	it.current(node);
-	return true;
+	return node != null;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::prev(ang::collections::iterator<T>& it)const
+inline bool ang::collections::list_data<T>::prev(ang::collections::iterator<T>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
 		throw(exception_t(except_code::invalid_param));
 #endif
-	auto node = reinterpret_cast<node_ptr_t>(it.current());
-	node = node->prev();
+	node_ptr_t node = reinterpret_cast<node_ptr_t>(it.current())->prev();
 	it.current(node);
-	return true;
+	return node != null;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::prev(ang::collections::iterator<T>& it, ang::int_t val)const
+inline bool ang::collections::list_data<T>::prev(ang::collections::iterator<T>& it, int val)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
 		throw(exception_t(except_code::invalid_param));
 #endif
-
-	auto node = reinterpret_cast<node_ptr_t>(it.current());
-	int i = 0;
-	while (node && i < val) {
-		node = node->prev();
-		++i;
-	}
+	node_ptr_t node = reinterpret_cast<node_ptr_t>(it.current());
+	for (int i = 0; i < val && node != null; node = node->prev());
 	it.current(node);
-	return true;
+	return node != null;
 }
 
 template<typename T>
-inline ang::uint_t ang::collections::list_data<T>::counter()const
+inline uint ang::collections::list_data<T>::counter()const
 {
 	return _count;
 }
@@ -329,272 +279,256 @@ inline void ang::collections::list_data<T>::extend(const ang::collections::ienum
 }
 
 template<typename T>
-inline void ang::collections::list_data<T>::append(T value, ang::bool_t last)
+inline void ang::collections::list_data<T>::append(T const& value, bool last)
 {
-	memory::iallocator* alloc = get_allocator();
-	node_ptr_t node = alloc->object_alloc<node_t>(1);
-	alloc->construct<node_t>(node, ang::move(value));
+	node_ptr_t _new_node = allocator->object_alloc<node_t>(1);
+	allocator->construct(_new_node, value);
 	if (last)
-	{
-		if (_last) _last->next(node);
-		else _first = node;
-		node->prev(_last);
-		_last = node;
+	{	
+		node_ptr_t _old_node = _tail;
+		_tail = _new_node;
+		if (_old_node) {
+			_tail->prev(_old_node);
+			_old_node->next(_tail);
+		}
+		else
+			_head = _new_node;
 	}
 	else
 	{
-		if(_first)_first->prev(node);
-		else _last = node;
-		node->next(_first);
-		_first = node;
+		node_ptr_t _old_node = _head;
+		_head = _new_node;
+		if (_old_node) {
+			_head->next(_old_node);
+			_old_node->prev(_head);
+		}
+		else
+			_tail = _new_node;
+	
 	}
 	_count++;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::insert(ang::index_t idx, T value)
+inline bool ang::collections::list_data<T>::insert(index idx, T const& value)
 {
 	if (idx == 0U)
 	{
-		append(ang::move(value), false);
+		append(value, false);
 		return true;
 	}
 	else if (idx >= _count)
 	{
-		append(ang::move(value), true);
+		append(value, true);
 		return true;
 	}
-
-	memory::iallocator* alloc = get_allocator();
-	node_ptr_t node, new_node = alloc->object_alloc<node_t>(1);
-	alloc->construct<node_t>(new_node, ang::move(value));
-
-	if (idx <= _count / 2)
+	else if (idx <= (_count / 2))
 	{
-		node = _first;
-		for (auto i = 0U; i < idx; ++i)
+		node_ptr_t _new_node = allocator->object_alloc<node_t>(1);
+		allocator->construct(_new_node, value);
+		node_ptr_t node = _head;
+		for (index i = 0; i < idx; ++i)
 			node = node->next();
+		_new_node->next(node->next());
+		_new_node->prev(node);
+		node->next()->prev(_new_node);
+		node->next(_new_node);
 	}
 	else
 	{
-		node = _last;
-		for (auto i = _count - 1; i > idx; --i)
+		idx = _count - idx;
+
+		node_ptr_t _new_node = allocator->object_alloc<node_t>(1);
+		allocator->construct(_new_node, value);
+		node_ptr_t node = _tail;
+		for (index i = 0; i <= idx; ++i)
 			node = node->prev();
+		_new_node->next(node->next());
+		_new_node->prev(node);
+		node->next()->prev(_new_node);
+		node->next(_new_node);
 	}
-
-	if (node->prev()) node->prev()->next(new_node);
-	else _first = new_node;
-	new_node->prev(node->prev());
-	new_node->next(node);
-	node->prev(new_node);
-
 	_count++;
 	return true;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::insert(ang::collections::iterator<T> it, T value)
+inline bool ang::collections::list_data<T>::insert(ang::collections::iterator<T> it, T const& value)
 {
 	if (it.parent() != this || it.current() == null)
 		return false;
-	memory::iallocator* alloc = get_allocator();
-	node_ptr_t node, new_node = alloc->object_alloc<node_t>(1);
-	alloc->construct<node_t>(new_node, ang::move(value));
-	node = reinterpret_cast<node_ptr_t>(it.current());
-
-	if (node->prev())
-		node->prev()->next(new_node);
-	else _first = new_node;
-	new_node->prev(node->prev());
-	new_node->next(node);
-	node->prev(new_node);
-
+	node_ptr_t node = reinterpret_cast<node_ptr_t>(it.current());
+	node_ptr_t _new_node = allocator->object_alloc<node_t>(1);
+	allocator->construct(_new_node, value);
+	_new_node->next(node);
+	_new_node->prev(node->prev());
+	if (node->prev() == null)
+		_head = _new_node;
+	else
+		node->prev()->next(_new_node);
+	node->prev(_new_node);
 	_count++;
 	return true;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::pop(ang::bool_t last)
+inline bool ang::collections::list_data<T>::pop(bool last)
 {
 	if (_count == 0)
 		return false;
-	node_ptr_t node;
-
-	if (last)
-	{
-		node = _last;
-		_last = _last->prev();
-		if (_last)_last->next(null);
-		else _first = null;
+	if (!last) {
+		node_ptr_t node = _tail;
+		_tail = node->prev();
+		if (_tail) _tail->next(null);
+		else _head = null;
+		allocator->destruct(node);
+		allocator->memory_release(node);
 	}
 	else
 	{
-		node = _first;
-		_first = _first->next();
-		if (_first)_first->prev(null);
-		else _last = null;
+		node_ptr_t node = _head;
+		_head = node->next();
+		if (_head) _head->prev(null);
+		else _tail = null;
+		allocator->destruct(node);
+		allocator->memory_release(node);
 	}
-
-	get_allocator()->destruct(node);
-	get_allocator()->memory_release(node);
 	_count--;
 	return true;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::pop(T& value, ang::bool_t last)
+inline bool ang::collections::list_data<T>::pop(T& value, bool last)
 {
 	if (_count == 0)
 		return false;
-	node_ptr_t node;
-
-	if (last)
-	{
-		node = _last;
-		_last = _last->prev();
-		if (_last)_last->next(null);
-		else _first = null;
+	if (!last) {
+		node_ptr_t node = _tail;
+		_tail = node->prev();
+		if (_tail) _tail->next(null);
+		else _head = null;
+		value = ang::move(node->value());
+		allocator->destruct(node);
+		allocator->memory_release(node);
 	}
 	else
 	{
-		node = _first;
-		_first = _first->next();
-		if (_first)_first->prev(null);
-		else _last = null;
+		node_ptr_t node = _head;
+		_head = node->next();
+		if (_head) _head->prev(null);
+		else _tail = null;
+		value = ang::move(node->value());
+		allocator->destruct(node);
+		allocator->memory_release(node);
 	}
-	value = ang::move(node->value());
-	get_allocator()->destruct(node);
-	get_allocator()->memory_release(node);
 	_count--;
 	return true;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::pop_at(ang::index_t idx)
+inline bool ang::collections::list_data<T>::pop_at(index idx)
 {
-	if (idx == 0U)
+	if (idx >= _count)
+		return false;
+	else if (idx <= (_count / 2))
 	{
-		pop(false);
-		return true;
-	}
-	else if (idx >= _count)
-	{
-		pop(true);
-		return true;
-	}
-
-	memory::iallocator* alloc = get_allocator();
-	node_ptr_t node;
-	if (idx <= _count / 2)
-	{
-		node = _first;
-		for (auto i = 0U; i < idx; ++i)
+		node_ptr_t node = _head;
+		for (index i = 0; i < idx; ++i)
 			node = node->next();
+		if(node->prev()) node->prev()->next(node->next());
+		else _head = node->next();
+		if (node->next()) node->next()->prev(node->prev());
+		else _tail = node->prev();
+		allocator->destruct(node);
+		allocator->memory_release(node);
 	}
 	else
 	{
-		node = _last;
-		for (auto i = _count - 1; i > idx; --i)
+		idx = _count - idx;
+		node_ptr_t node = _tail;
+		for (index i = 0; i <= idx; ++i)
 			node = node->prev();
+		if (node->prev()) node->prev()->next(node->next());
+		else _head = node->next();
+		if (node->next()) node->next()->prev(node->prev());
+		else _tail = node->prev();
+		allocator->destruct(node);
+		allocator->memory_release(node);
 	}
-
-
-	if (node->next()) node->next()->prev(node->prev());
-	else _last = node->prev();
-	node->prev()->next(node->next());
-
-	alloc->destruct(node);
-	alloc->memory_release(node);
 	_count--;
-	return true;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::pop_at(ang::collections::iterator<T> it)
+inline bool ang::collections::list_data<T>::pop_at(ang::collections::iterator<T> it)
 {
-	if (!it.is_valid() || it.parent() != this)
+	if (it.parent() != this || it.current() == null)
 		return false;
 	node_ptr_t node = reinterpret_cast<node_ptr_t>(it.current());
-	node_ptr_t _next = node->next();
-	node_ptr_t _prev = node->prev();
-	if (_prev) _prev->next(_next);
-	else _first = _next;
-	if (_next) _next->prev(_prev);
-	else _last = _prev;
-	get_allocator()->destruct(node);
-	get_allocator()->memory_release(node);
-	_count--;
+	if (node->prev()) node->prev()->next(node->next());
+	else _head = node->next();
+	if (node->next()) node->next()->prev(node->prev());
+	else _tail = node->prev();
+	allocator->destruct(node);
+	allocator->memory_release(node);
 	return true;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::pop_at(ang::index_t idx, T& value)
+inline bool ang::collections::list_data<T>::pop_at(index idx, T& value)
 {
-	if (idx == 0U)
+	if (idx >= _count)
+		return false;
+	else if (idx <= (_count / 2))
 	{
-		pop(false);
-		return true;
-	}
-	else if (idx >= _count)
-	{
-		pop(true);
-		return true;
-	}
-
-	memory::iallocator* alloc = get_allocator();
-	node_ptr_t node, new_node = alloc->object_alloc<node_t>(1);
-	alloc->construct<node_t>(new_node, ang::move(value));
-
-	if (idx <= _count / 2)
-	{
-		node = _first;
-		for (auto i = 0U; i < idx; ++i)
+		node_ptr_t node = _head;
+		for (index i = 0; i < idx; ++i)
 			node = node->next();
+		if (node->prev()) node->prev()->next(node->next());
+		else _head = node->next();
+		if (node->next()) node->next()->prev(node->prev());
+		else _tail = node->prev();
+		value = ang::move(node->value());
+		allocator->destruct(node);
+		allocator->memory_release(node);
 	}
 	else
 	{
-		node = _last;
-		for (auto i = _count - 1; i > idx; --i)
+		idx = _count - idx;
+		node_ptr_t node = _tail;
+		for (index i = 0; i <= idx; ++i)
 			node = node->prev();
+		if (node->prev()) node->prev()->next(node->next());
+		else _head = node->next();
+		if (node->next()) node->next()->prev(node->prev());
+		else _tail = node->prev();
+		value = ang::move(node->value());
+		allocator->destruct(node);
+		allocator->memory_release(node);
 	}
-
-
-	if (node->next()) node->next()->prev(node->prev());
-	else _last = node->prev();
-	node->prev()->next(node->next());
-
-	value = ang::move(node->value());
-	get_allocator()->destruct(node);
-	get_allocator()->memory_release(node);
 	_count--;
-	return true;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::pop_at(ang::collections::iterator<T> it, T& value)
+inline bool ang::collections::list_data<T>::pop_at(ang::collections::iterator<T> it, T& value)
 {
-	if (!it.is_valid() || it.parent() != this)
+	if (it.parent() != this || it.current() == null)
 		return false;
 	node_ptr_t node = reinterpret_cast<node_ptr_t>(it.current());
-	node_ptr_t _next = node->next();
-	node_ptr_t _prev = node->prev();
-	if (_prev) _prev->next(_next);
-	else _first = _next;
-	if (_next) _next->prev(_prev);
-	else _last = _prev;
+	if (node->prev()) node->prev()->next(node->next());
+	else _head = node->next();
+	if (node->next()) node->next()->prev(node->prev());
+	else _tail = node->prev();
 	value = ang::move(node->value());
-	get_allocator()->destruct(node);
-	get_allocator()->memory_release(node);
-	_count--;
+	allocator->destruct(node);
+	allocator->memory_release(node);
 	return true;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::is_kind_of(ang::type_name_t name)const
+inline bool ang::collections::list_data<T>::is_kind_of(ang::type_name_t name)const
 {
 	if (name == type_name<list_data<T>>()
 		|| ang::object::is_kind_of(name)
-		|| ang::collections::icollection<T>::is_kind_of(name)
 		|| ang::collections::ilist<T>::is_kind_of(name))
 		return true;
 	return false;
@@ -603,7 +537,7 @@ inline ang::bool_t ang::collections::list_data<T>::is_kind_of(ang::type_name_t n
 template<typename T>
 inline ang::type_name_t ang::collections::list_data<T>::class_name()
 {
-	static ang::astring className = ang::astring("ang::collections::list<") + type_name<T>() + ">";
+	static string className = string("ang::collections::list<") + type_name<T>() + ">";
 	return className->cstr();
 }
 
@@ -614,7 +548,7 @@ inline ang::type_name_t ang::collections::list_data<T>::object_name()const
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::query_object(ang::type_name_t className, ang::unknown_ptr_t out)
+inline bool ang::collections::list_data<T>::query_object(ang::type_name_t className, ang::unknown_ptr_t out)
 {
 	if (out == null)
 		return false;
@@ -628,10 +562,6 @@ inline ang::bool_t ang::collections::list_data<T>::query_object(ang::type_name_t
 	{
 		return true;
 	}
-	else if (ang::collections::icollection<T>::query_object(className, out))
-	{
-		return true;
-	}
 	else if (ang::collections::ilist<T>::query_object(className, out))
 	{
 		return true;
@@ -642,84 +572,63 @@ inline ang::bool_t ang::collections::list_data<T>::query_object(ang::type_name_t
 template<typename T>
 inline void ang::collections::list_data<T>::clean()
 {
-	node_ptr_t del, node = _first;
-	auto alloc = get_allocator();
-	while (node) {
-		del = node;
-		node = node->next();
-		alloc->destruct(node);
-		alloc->memory_release(node);
+	if (_head != null)
+	{
+		node_ptr_t node = _head;
+		while (node != null)
+		{
+			node_ptr_t del = node;
+			node = node->next();
+			allocator->destruct(del);
+			allocator->memory_release(del);
+		}
 	}
-	_first = null;
-	_last = null;
+	_head = null;
+	_tail = null;
 	_count = 0;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::operator == (const ang::collections::list_data<T>& ar)
+inline bool ang::collections::list_data<T>::operator == (const ang::collections::list_data<T>& other)
 {
-	if (conuter() != ar.conuter())
+	if (_count != other._count)
 		return false;
-
-	for (node_ptr_t n1 = _first, n2 = ar._first; n1 && n2; n1=n1->next(), n2 = n2->next())
+	for (node_ptr_t n1 = _head, n2 = other._head; n1 != null && n2 != null; n1 = n1->next(), n2 = n2->next())
 		if (n1->value() != n2->value())
 			return false;
 	return true;
 }
 
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::operator != (const ang::collections::list_data<T>& ar)
+inline bool ang::collections::list_data<T>::operator != (const ang::collections::list_data<T>& other)
 {
 	return !operator == (ar);
 }
 
-
 template<typename T>
-inline ang::bool_t ang::collections::list_data<T>::realloc(ang::memory::iallocator* alloc)
+inline bool ang::collections::list_data<T>::realloc(ang::memory::iallocator* alloc)
 {
-	if (counter() == 0U)
-		return true;
-
 	memory::iallocator* this_alloc = get_allocator();
-
-	node_ptr_t node, last, del;
-	del = _first;
-	node = del->next();
-	_first = last = alloc->object_alloc<node_t>(1);
-	alloc->construct(last, ang::move(del->value()));
-	this_alloc->destruct(del);
-	this_alloc->memory_release(del);
-
-	while (node)
+	node_ptr_t _temp, node = _head;
+	_head = null;
+	_tail = null;
+	_count = 0;
+	while(node!= null)
 	{
-		del = node;
+		_temp = alloc->object_alloc<node_t>(1);
+		alloc->construct(_temp, ang::move(node->value()));
+		_temp->prev(_tail);
+		if (_tail) _tail->next(_temp);
+		else _head = _temp;
+		_tail = _temp;
+		_temp = node;
 		node = node->next();
-		last->next(alloc->object_alloc<node_t>(1));
-		alloc->construct(last->next(), ang::move(del->value()));
-		last->next()->prev(last);
-		this_alloc->destruct(del);
-		this_alloc->memory_release(del);
-		last = last->next();
+		this_alloc->destruct(_temp);
+		this_alloc->memory_release(_temp);
+		_count++;
 	}
-
-	_last = last;
 	return true;
 }
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////// list_data<object_wrapper<T>> class implementation //////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////// list_data<intf_wrapper<T>> class implementation //////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -734,6 +643,14 @@ inline ang::object_wrapper<ang::collections::list_data<T>>::object_wrapper()
 }
 
 template<typename T>
+inline ang::object_wrapper<ang::collections::list_data<T>>::object_wrapper(ang::nullptr_t const&)
+	: _ptr(null)
+{
+
+}
+
+
+template<typename T>
 inline ang::object_wrapper<ang::collections::list_data<T>>::object_wrapper(ang::collections::list_data<T>* ptr)
 	: object_wrapper<ang::collections::list_data<T>>()
 {
@@ -741,7 +658,7 @@ inline ang::object_wrapper<ang::collections::list_data<T>>::object_wrapper(ang::
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::list_data<T>>::object_wrapper(std::initializer_list<data_type> list)
+inline ang::object_wrapper<ang::collections::list_data<T>>::object_wrapper(ang::initializer_list_t<data_type> list)
 	: object_wrapper<ang::collections::list_data<T>>()
 {
 	set(new collections::list_data<T>(ang::move(list)));
@@ -755,10 +672,12 @@ inline ang::object_wrapper<ang::collections::list_data<T>>::object_wrapper(const
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::list_data<T>>::object_wrapper(ang::uint_t size, data_type const* ar)
+inline ang::object_wrapper<ang::collections::list_data<T>>::object_wrapper(ang::static_array<data_type> arr)
 	: object_wrapper<ang::collections::list_data<T>>()
 {
-	set(new collections::list_data<T>(size, ar));
+	set(new collections::list_data<T>());
+	for (index i = 0; i < arr->size(); ++i)
+		_ptr->append(arr[i]);
 }
 
 template<typename T>
@@ -797,7 +716,7 @@ inline void ang::object_wrapper<ang::collections::list_data<T>>::clean_unsafe()
 }
 
 template<typename T>
-inline ang::bool_t ang::object_wrapper<ang::collections::list_data<T>>::is_empty()const
+inline bool ang::object_wrapper<ang::collections::list_data<T>>::is_empty()const
 {
 	return _ptr == null;
 }
@@ -832,7 +751,7 @@ inline ang::object_wrapper<ang::collections::list_data<T>>& ang::object_wrapper<
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::list_data<T>>& ang::object_wrapper<ang::collections::list_data<T>>::operator = (const std::nullptr_t&)
+inline ang::object_wrapper<ang::collections::list_data<T>>& ang::object_wrapper<ang::collections::list_data<T>>::operator = (const ang::nullptr_t&)
 {
 	clean();
 	return*this;
@@ -865,11 +784,11 @@ inline ang::object_wrapper<ang::collections::list_data<T>>& ang::object_wrapper<
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::list_data<T>>& ang::object_wrapper<ang::collections::list_data<T>>::operator += (T value)
+inline ang::object_wrapper<ang::collections::list_data<T>>& ang::object_wrapper<ang::collections::list_data<T>>::operator += (T const& value)
 {
 	if (is_empty())
 		set(new ang::collections::list_data<T>());
-	get()->append(ang::move(value));
+	get()->append(value);
 	return*this;
 }
 
@@ -902,31 +821,6 @@ inline ang::object_wrapper<ang::collections::list_data<T>>::operator ang::collec
 {
 	return get();
 }
-
-template<typename T>
-inline typename ang::collections::list_data<T>::type const& ang::object_wrapper<ang::collections::list_data<T>>::operator[](ang::index_t index)const
-{
-#ifdef DEBUG_SAFE_CODE
-	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-	if (index >= _ptr->counter()) throw(exception_t(except_code::array_overflow));
-#endif
-	return  collections::list_node_t<T>(_ptr->find_index(index).current())->value();
-}
-
-template<typename T>
-inline typename ang::collections::list_data<T>::type & ang::object_wrapper<ang::collections::list_data<T>>::operator[](ang::index_t index)
-{
-#ifdef DEBUG_SAFE_CODE
-	if (is_empty()) throw(exception_t(except_code::invalid_memory));
-	if (index >= _ptr->counter()) throw(exception_t(except_code::array_overflow));
-#endif
-	return  collections::list_node_t<T>(_ptr->find_index(index).current())->value();
-}
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 #endif//__ANG_LIST_HPP__

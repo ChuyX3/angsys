@@ -180,7 +180,7 @@
       <Item Name="[Counter]" ExcludeView="simple">_count</Item>
       <LinkedListItems>
         <Size>_count</Size>
-        <HeadPointer>_first</HeadPointer>
+        <HeadPointer>_head</HeadPointer>
         <NextPointer>_next</NextPointer>
         <ValueNode>_value</ValueNode>
       </LinkedListItems>

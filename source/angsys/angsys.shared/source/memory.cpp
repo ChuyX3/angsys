@@ -83,7 +83,7 @@ default_allocator::~default_allocator() {
 		if (value)
 		{
 			error = true;
-			ang_debug_output_warning("Alocator[%d]: Memory leak at %X: size: %d; file: %s: %d;\n", _allocator_type,(wsize)value->ptr, value->size, value->file, value->line);
+			ang_debug_output_warning("Allocator[%d]: Memory leak at %X: size: %d; file: %s: %d;\n", _allocator_type,(wsize)value->ptr, value->size, value->file, value->line);
 		}
 	});
 	if (error)
