@@ -918,4 +918,33 @@ inline ang::collections::iterator<ang::object_wrapper<T>> ang::collections::iter
 
 
 
+template<typename T>
+inline ang::type_name_t ang::collections::linked_node<T>::class_name()
+{
+	static string _type_name = ang::move("ang::collections::linked_node<"_o + type_name<T>() + ">"_s);
+	return (ang::cstr_t)_type_name;
+}
+
+template<typename T>
+inline bool ang::collections::linked_node<T>::is_child_of(ang::type_name_t name)
+{
+	return name == class_name();
+}
+
+
+template<typename T>
+inline ang::type_name_t ang::collections::double_linked_node<T>::class_name()
+{
+	static string _type_name = ang::move("ang::collections::double_linked_node<"_o + type_name<T>() + ">"_s);
+	return (ang::cstr_t)_type_name;
+}
+
+template<typename T>
+inline bool ang::collections::double_linked_node<T>::is_child_of(ang::type_name_t name)
+{
+	return name == class_name();
+}
+
+
+
 #endif//__ANG_COLLECTIONS_HPP__

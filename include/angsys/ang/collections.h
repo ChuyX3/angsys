@@ -250,6 +250,85 @@ namespace ang
 			friend inline bool operator < (const key& value1, const self_t& value2) { return value1 < value2._key; }
 		};
 
+
+		template<typename T>
+		struct linked_node
+		{
+			typedef T type;
+			typedef linked_node<T> self_t;
+
+			static inline type_name_t class_name();
+			static inline bool is_child_of(type_name_t);
+
+			linked_node()
+				: _value()
+				, _next(null) {
+			}
+
+			linked_node(T val)
+				: _value(ang::move(val))
+				, _next(null) {
+			}
+
+			T& value() {
+				return _value;
+			}
+			T const& value()const {
+				return _value;
+			}
+			void value(T val) {
+				_value = ang::move(val);
+			}
+
+			self_t* next()const { return _next; }
+			void next(self_t* val) { _next = val; }
+
+			T _value;
+			self_t* _next;
+		};
+
+
+		template<typename T>
+		struct double_linked_node
+		{
+			typedef T type;
+			typedef double_linked_node<T> self_t;
+
+			static inline type_name_t class_name();
+			static inline bool is_child_of(type_name_t);
+
+			double_linked_node()
+				: _value()
+				, _prev(null)
+				, _next(null) {
+			}
+
+			double_linked_node(T val)
+				: _value(ang::move(val))
+				, _prev(null)
+				, _next(null) {
+			}
+
+			T& value() {
+				return _value;
+			}
+			T const& value()const {
+				return _value;
+			}
+			void value(T val) {
+				_value = ang::move(val);
+			}
+
+			self_t* prev()const { return _prev; }
+			void prev(self_t* val) { _prev = val; }
+			self_t* next()const { return _next; }
+			void next(self_t* val) { _next = val; }
+
+			T _value;
+			self_t* _prev;
+			self_t* _next;
+		};
+
 		namespace algorithms
 		{
 			template<class _node>

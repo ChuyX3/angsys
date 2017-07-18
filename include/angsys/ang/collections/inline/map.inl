@@ -5,6 +5,21 @@
 
 
 template<typename K, typename T>
+inline ang::type_name_t ang::collections::map_node<K,T>::class_name()
+{
+	static string _type_name = ang::move("ang::collections::map_node<"_o + type_name<K>() + ","_s + type_name<T>() + ">"_s);
+	return (ang::cstr_t)_type_name;
+}
+
+template<typename K, typename T>
+inline bool ang::collections::map_node<K,T>::is_child_of(ang::type_name_t name)
+{
+	return name == class_name();
+}
+
+
+
+template<typename K, typename T>
 ang::collections::map_data<K, T>::map_data()
 	: _size(0)
 	, _capacity(0)

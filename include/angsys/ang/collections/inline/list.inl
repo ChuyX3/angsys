@@ -3,6 +3,7 @@
 #elif !defined __ANG_LIST_HPP__
 #define __ANG_LIST_HPP__
 
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////// list_data<T> class implementation //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,7 +160,7 @@ inline index ang::collections::list_data<T>::index_of(ang::collections::iterator
 		return invalid_index;
 	node_ptr_t node = reinterpret_cast<node_ptr_t>(it.current());
 	index i = 0;
-	while (node) { node->prev(); i++; };
+	while (node) { node = node->prev(); i++; };
 	return i;
 }
 
@@ -168,7 +169,7 @@ inline ang::collections::iterator<T> ang::collections::list_data<T>::find(T cons
 {
 	if (!is_empty())
 	{
-		if (invert) for (iterator_t it = begin(); it.is_valid(); ++it)
+		if (!invert) for (iterator_t it = begin(); it.is_valid(); ++it)
 		{
 			if (*it == datum)
 				return it;
@@ -187,7 +188,7 @@ inline ang::collections::iterator<T> ang::collections::list_data<T>::find(T cons
 {
 	if (!is_empty() && nextTo.parent() == this)
 	{
-		if (invert)for (iterator_t it = nextTo.is_valid() ? nextTo : begin(); it.is_valid(); ++it)
+		if (!invert)for (iterator_t it = nextTo.is_valid() ? nextTo : begin(); it.is_valid(); ++it)
 		{
 			if ((T const&)*it == datum)
 				return it;
@@ -376,7 +377,7 @@ inline bool ang::collections::list_data<T>::pop(bool last)
 {
 	if (_count == 0)
 		return false;
-	if (!last) {
+	if (last) {
 		node_ptr_t node = _tail;
 		_tail = node->prev();
 		if (_tail) _tail->next(null);
@@ -402,7 +403,7 @@ inline bool ang::collections::list_data<T>::pop(T& value, bool last)
 {
 	if (_count == 0)
 		return false;
-	if (!last) {
+	if (last) {
 		node_ptr_t node = _tail;
 		_tail = node->prev();
 		if (_tail) _tail->next(null);

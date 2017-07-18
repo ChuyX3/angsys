@@ -187,6 +187,32 @@
     </Expand>
   </Type>
 
+  <Type Name="ang::collections::queue_data&lt;*&gt;">
+    <DisplayString>queue[{_count}]</DisplayString>
+    <Expand>
+      <Item Name="[Counter]" ExcludeView="simple">_count</Item>
+      <LinkedListItems>
+        <Size>_count</Size>
+        <HeadPointer>_head</HeadPointer>
+        <NextPointer>_next</NextPointer>
+        <ValueNode>_value</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::stack_data&lt;*&gt;">
+    <DisplayString>stack[{_count}]</DisplayString>
+    <Expand>
+      <Item Name="[Counter]" ExcludeView="simple">_count</Item>
+      <LinkedListItems>
+        <Size>_count</Size>
+        <HeadPointer>_head</HeadPointer>
+        <NextPointer>_next</NextPointer>
+        <ValueNode>_value</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+
   <Type Name="ang::collections::pair&lt;*&gt;">
     <DisplayString>[{_key}:{_value}]</DisplayString>
     <Expand>

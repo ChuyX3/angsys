@@ -41,7 +41,8 @@ namespace ang
 			typedef collections::pair<K,T> pair_t;
 			typedef map_node<K, T> self_t, *self_ptr_t;
 
-			inline static type_name_t class_name();
+			static inline type_name_t class_name();
+			static inline bool is_child_of(type_name_t);
 
 			map_node(K key) : _pair(key){}
 			map_node(K key, value_t val) : _pair(ang::move(key), ang::move(val)) {}
