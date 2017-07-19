@@ -338,10 +338,10 @@ namespace ang
 			visible vcall bool remove(iterator<pair<K, T>> it, T&) pure;
 			visible vcall bool has_key(const K&)const pure;
 			visible vcall iterator<pair<K, T>> find(const K&)const pure;
-			intern vcall iterator<pair<K, T>> find_index(index idx)const override pure;
-			intern vcall index index_of(iterator<pair<K, T>> it)const override pure;
-			intern vcall iterator<pair<K, T>> find(const pair<K, T>&, bool)const override pure;
-			intern vcall iterator<pair<K, T>> find(const pair<K, T>&, iterator<pair<K, T>>, bool)const override pure;
+			inherit vcall iterator<pair<K, T>> find_index(index idx)const override pure;
+			inherit vcall index index_of(iterator<pair<K, T>> it)const override pure;
+			inherit vcall iterator<pair<K, T>> find(const pair<K, T>&, bool)const override pure;
+			inherit vcall iterator<pair<K, T>> find(const pair<K, T>&, iterator<pair<K, T>>, bool)const override pure;
 		ANG_END_INTERFACE();
 
 		template<typename T>
@@ -369,10 +369,10 @@ namespace ang
 			visible vcall bool has_key(cwstr_t)const pure;
 			visible vcall iterator<pair<string, T>> find(cstr_t)const pure;
 			visible vcall iterator<pair<string, T>> find(cwstr_t)const pure;
-			intern vcall iterator<pair<string, T>> find_index(index idx)const override pure;
-			intern vcall index index_of(iterator<pair<string, T>> it)const override pure;
-			intern vcall iterator<pair<string, T>> find(const pair<string, T>&, bool)const override pure;
-			intern vcall iterator<pair<string, T>> find(const pair<string, T>&, iterator<pair<string, T>>, bool)const override pure;
+			inherit vcall iterator<pair<string, T>> find_index(index idx)const override pure;
+			inherit vcall index index_of(iterator<pair<string, T>> it)const override pure;
+			inherit vcall iterator<pair<string, T>> find(const pair<string, T>&, bool)const override pure;
+			inherit vcall iterator<pair<string, T>> find(const pair<string, T>&, iterator<pair<string, T>>, bool)const override pure;
 		};
 
 		template<typename T>
@@ -400,12 +400,76 @@ namespace ang
 			visible vcall bool has_key(cwstr_t)const pure;
 			visible vcall iterator<pair<wstring, T>> find(cstr_t)const pure;
 			visible vcall iterator<pair<wstring, T>> find(cwstr_t)const pure;
-			intern vcall iterator<pair<wstring, T>> find_index(index idx)const override pure;
-			intern vcall index index_of(iterator<pair<wstring, T>> it)const override pure;
-			intern vcall iterator<pair<wstring, T>> find(const pair<wstring, T>&, bool)const override pure;
-			intern vcall iterator<pair<wstring, T>> find(const pair<wstring, T>&, iterator<pair<wstring, T>>, bool)const override pure;
+			inherit vcall iterator<pair<wstring, T>> find_index(index idx)const override pure;
+			inherit vcall index index_of(iterator<pair<wstring, T>> it)const override pure;
+			inherit vcall iterator<pair<wstring, T>> find(const pair<wstring, T>&, bool)const override pure;
+			inherit vcall iterator<pair<wstring, T>> find(const pair<wstring, T>&, iterator<pair<wstring, T>>, bool)const override pure;
 		};
 
+
+
+		template<typename T>
+		ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(iset, public icollection<T>)
+			visible vcall void extend(const ienum<T>*) pure;
+			visible vcall bool insert(T) pure;
+			visible vcall bool remove(const T&) pure;
+			visible vcall bool remove(iterator<T> it) pure;
+			visible vcall bool has_value(const T&)const pure;
+			visible vcall iterator<T> find(const T&)const pure;
+			inherit vcall iterator<T> find_index(index idx)const override pure;
+			inherit vcall index index_of(iterator<T> it)const override pure;
+			inherit vcall iterator<T> find(const T&, bool)const override pure;
+			inherit vcall iterator<T> find(const T&, iterator<T>, bool)const override pure;
+		ANG_END_INTERFACE();
+
+		template<>
+		struct iset<wstring> : public icollection<wstring>
+		{
+			inline ANG_DECLARE_CLASSNAME();
+			inline ANG_DECLARE_ISCHILDOF();
+			inline ANG_DECLARE_OBJECTNAME();
+			inline ANG_DECLARE_ISKINDOF();
+			inline ANG_DECLARE_QUERYOBJECT();
+			visible vcall void extend(const ienum<wstring>*) pure;
+			visible vcall bool insert(cstr_t) pure;
+			visible vcall bool insert(cwstr_t) pure;
+			visible vcall bool remove(cstr_t) pure;
+			visible vcall bool remove(cwstr_t) pure;
+			visible vcall bool remove(iterator<wstring> it) pure;
+			visible vcall bool has_value(cstr_t)const pure;
+			visible vcall bool has_value(cwstr_t)const pure;
+			visible vcall iterator<wstring> find(cstr_t)const pure;
+			visible vcall iterator<wstring> find(cwstr_t)const pure;
+			inherit vcall iterator<wstring> find_index(index idx)const override pure;
+			inherit vcall index index_of(iterator<wstring> it)const override pure;
+			inherit vcall iterator<wstring> find(const wstring&, bool)const override pure;
+			inherit vcall iterator<wstring> find(const wstring&, iterator<wstring>, bool)const override pure;
+		};
+
+
+		template<>
+		struct iset<string> : public icollection<string>
+		{
+			inline ANG_DECLARE_CLASSNAME();
+			inline ANG_DECLARE_ISCHILDOF();
+			inline ANG_DECLARE_OBJECTNAME();
+			inline ANG_DECLARE_ISKINDOF();
+			inline ANG_DECLARE_QUERYOBJECT();
+			visible vcall void extend(const ienum<string>*) pure;
+			visible vcall bool insert(cstr_t) pure;
+			visible vcall bool insert(cwstr_t) pure;
+			visible vcall bool remove(cstr_t) pure;
+			visible vcall bool remove(cwstr_t) pure;
+			visible vcall bool remove(iterator<string> it) pure;
+			visible vcall bool has_value(cstr_t)const pure;
+			visible vcall bool has_value(cwstr_t)const pure;
+			visible vcall iterator<string> find(cstr_t)const pure;
+			visible vcall iterator<string> find(cwstr_t)const pure;
+			inherit vcall iterator<string> find_index(index idx)const override pure;
+			inherit vcall index index_of(iterator<string> it)const override pure;
+			inherit vcall iterator<string> find(const string&, bool)const override pure;
+			inherit vcall iterator<string> find(const string&, iterator<string>, bool)const override pure;
+		};
 	}
 
 	namespace memory

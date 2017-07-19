@@ -73,7 +73,7 @@ namespace ang
 {
 	namespace collections
 	{
-		uint map_get_next_size(uint size) { return ang_hash_table_get_next_size(size); }
+		uint hash_table_get_next_size(uint size) { return ang_hash_table_get_next_size(size); }
 		uint create_hash_index(int value, uint TS) { return _create_hash_index(value, TS); }
 		uint create_hash_index(uint value, uint TS) { return _create_hash_index(value, TS); }
 		uint create_hash_index(long value, uint TS) { return _create_hash_index(value, TS); }
@@ -144,7 +144,7 @@ namespace ang
 		{
 		//	logger.print(debug::log_level::info, "ang console: \n");
 			core::async::thread_manager::instance();
-			core::files::file_system::instance();
+			core::files::file_system::instance();	
 		}
 
 		~ang_library_initializer()

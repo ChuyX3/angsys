@@ -1,18 +1,18 @@
-#ifndef __ANG_MAP_H__
-#error Can't include array_data.hpp, please include angsys.h inside
-#elif !defined __ANG_MAP_HPP__
-#define __ANG_MAP_HPP__
+#ifndef __ANG_HASH_TABLE_H__
+#error Can't include hash_table.inl, please include hash_table.h inside
+#elif !defined __ANG_HASH_TABLE_HPP__
+#define __ANG_HASH_TABLE_HPP__
 
 
 template<typename K, typename T>
-inline ang::type_name_t ang::collections::map_node<K,T>::class_name()
+inline ang::type_name_t ang::collections::hash_table_node<K,T>::class_name()
 {
-	static string _type_name = ang::move("ang::collections::map_node<"_o + type_name<K>() + ","_s + type_name<T>() + ">"_s);
+	static string _type_name = ang::move("ang::collections::hash_table_node<"_o + type_name<K>() + ","_s + type_name<T>() + ">"_s);
 	return (ang::cstr_t)_type_name;
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_node<K,T>::is_child_of(ang::type_name_t name)
+inline bool ang::collections::hash_table_node<K,T>::is_child_of(ang::type_name_t name)
 {
 	return name == class_name();
 }
@@ -20,7 +20,7 @@ inline bool ang::collections::map_node<K,T>::is_child_of(ang::type_name_t name)
 
 
 template<typename K, typename T>
-ang::collections::map_data<K, T>::map_data()
+ang::collections::hash_table_data<K, T>::hash_table_data()
 	: _size(0)
 	, _capacity(0)
 	, _table(0)
@@ -35,21 +35,21 @@ ang::collections::map_data<K, T>::map_data()
 }
 
 template<typename K, typename T>
-ang::collections::map_data<K, T>::map_data(ang::initializer_list_t<ang::collections::pair<K, T>> list)
-	: map_data()
+ang::collections::hash_table_data<K, T>::hash_table_data(ang::initializer_list_t<ang::collections::pair<K, T>> list)
+	: hash_table_data()
 {
 	for (auto it = list.begin(); it < list.end(); ++it)
 		insert(*it);
 }
 
 template<typename K, typename T>
-ang::collections::map_data<K, T>::map_data(const ang::nullptr_t&)
-	: map_data()
+ang::collections::hash_table_data<K, T>::hash_table_data(const ang::nullptr_t&)
+	: hash_table_data()
 {
 }
 
 template<typename K, typename T>
-ang::collections::map_data<K, T>::map_data(map_data&& other)
+ang::collections::hash_table_data<K, T>::hash_table_data(hash_table_data&& other)
 	: _size(0)
 	, _capacity(0)
 	, _table(0)
@@ -66,36 +66,36 @@ ang::collections::map_data<K, T>::map_data(map_data&& other)
 }
 
 template<typename K, typename T>
-ang::collections::map_data<K, T>::map_data(const map_data& other)
-	: map_data()
+ang::collections::hash_table_data<K, T>::hash_table_data(const hash_table_data& other)
+	: hash_table_data()
 {
 	extend(&other);
 }
 
 template<typename K, typename T>
-ang::collections::map_data<K, T>::map_data(const map_data* other)
-	: map_data()
+ang::collections::hash_table_data<K, T>::hash_table_data(const hash_table_data* other)
+	: hash_table_data()
 {
 	extend(other);
 }
 
 template<typename K, typename T>
-ang::collections::map_data<K, T>::map_data( ang::collections::ienum<ang::collections::pair<K,T>> const* other)
-	: map_data()
+ang::collections::hash_table_data<K, T>::hash_table_data( ang::collections::ienum<ang::collections::pair<K,T>> const* other)
+	: hash_table_data()
 {
 	extend(other);
 }
 
 template<typename K, typename T>
-ang::collections::map_data<K, T>::~map_data()
+ang::collections::hash_table_data<K, T>::~hash_table_data()
 {
 	clean();
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::is_kind_of(ang::type_name_t name)const
+inline bool ang::collections::hash_table_data<K, T>::is_kind_of(ang::type_name_t name)const
 {
-	if (name == type_name<map_data< K, T>>()
+	if (name == type_name<hash_table_data< K, T>>()
 		|| ang::object::is_kind_of(name)
 		|| ang::collections::imap<K,T>::is_kind_of(name))
 		return true;
@@ -103,27 +103,27 @@ inline bool ang::collections::map_data<K, T>::is_kind_of(ang::type_name_t name)c
 }
 
 template<typename K, typename T>
-inline ang::type_name_t ang::collections::map_data<K, T>::class_name()
+inline ang::type_name_t ang::collections::hash_table_data<K, T>::class_name()
 {
-	static string _type_name = ang::move("ang::collections::map_data<"_o + type_name<K>() + ","_s + type_name<T>() + ">"_s);
+	static string _type_name = ang::move("ang::collections::hash_table_data<"_o + type_name<K>() + ","_s + type_name<T>() + ">"_s);
 	return (ang::cstr_t)_type_name;
 }
 
 template<typename K, typename T>
-inline ang::type_name_t ang::collections::map_data<K, T>::object_name()const
+inline ang::type_name_t ang::collections::hash_table_data<K, T>::object_name()const
 {
-	return ang::collections::map_data<K, T>::class_name();
+	return ang::collections::hash_table_data<K, T>::class_name();
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+inline bool ang::collections::hash_table_data<K, T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
 {
 	if (out == null)
 		return false;
 
-	if (name == type_name<map_data<K, T>>())
+	if (name == type_name<hash_table_data<K, T>>())
 	{
-		*out = static_cast<ang::collections::map_data<K, T>*>(this);
+		*out = static_cast<ang::collections::hash_table_data<K, T>*>(this);
 		return true;
 	}
 	else if (ang::object::query_object(name, out))
@@ -139,12 +139,12 @@ inline bool ang::collections::map_data<K, T>::query_object(ang::type_name_t name
 
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::is_empty()const {
+inline bool ang::collections::hash_table_data<K, T>::is_empty()const {
 	return _size == 0;
 }
 
 template<typename K, typename T>
-inline void ang::collections::map_data<K, T>::clean() {
+inline void ang::collections::hash_table_data<K, T>::clean() {
 	if (_table)
 	{
 		for (uint i = 0; i < _capacity && _size > 0; ++i)
@@ -168,7 +168,7 @@ inline void ang::collections::map_data<K, T>::clean() {
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::move(map_data& other)
+inline bool ang::collections::hash_table_data<K, T>::move(hash_table_data& other)
 {
 	if (this == &other)
 		return false;
@@ -185,7 +185,7 @@ inline bool ang::collections::map_data<K, T>::move(map_data& other)
 
 
 template<typename K, typename T>
-inline void ang::collections::map_data<K, T>::set_allocator(memory::iallocator* alloc)
+inline void ang::collections::hash_table_data<K, T>::set_allocator(memory::iallocator* alloc)
 {
 	if (alloc == null && alloc == allocator)
 		return;
@@ -195,22 +195,22 @@ inline void ang::collections::map_data<K, T>::set_allocator(memory::iallocator* 
 }
 
 template<typename K, typename T>
-inline ang::memory::iallocator* ang::collections::map_data<K, T>::get_allocator()const
+inline ang::memory::iallocator* ang::collections::hash_table_data<K, T>::get_allocator()const
 {
 	return allocator;
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::realloc(ang::memory::iallocator* alloc)
+inline bool ang::collections::hash_table_data<K, T>::realloc(ang::memory::iallocator* alloc)
 {
 	throw(exception_t(except_code::unsupported));
 	return false;
 }
 
 template<class K, class T>
-void ang::collections::map_data<K, T>::increase_capacity()
+void ang::collections::hash_table_data<K, T>::increase_capacity()
 {
-	auto new_size = map_get_next_size(_capacity);
+	auto new_size = hash_table_get_next_size(_capacity);
 	node_ptr_t* new_data = allocator->object_alloc<node_ptr_t>(new_size);
 	memset(new_data, 0, sizeof(node_ptr_t) * new_size);
 
@@ -236,13 +236,13 @@ void ang::collections::map_data<K, T>::increase_capacity()
 }
 
 template<typename K, typename T>
-inline uint ang::collections::map_data<K, T>::hash_index(K const& key)const
+inline uint ang::collections::hash_table_data<K, T>::hash_index(K const& key)const
 {
 	return create_hash_index(key, _capacity ? _capacity : 1);
 }
 
 template<typename K, typename T>
-inline ang::collections::map_node<K, T>* ang::collections::map_data<K, T>::find_node(K const& key)const
+inline ang::collections::hash_table_node<K, T>* ang::collections::hash_table_data<K, T>::find_node(K const& key)const
 {
 	if (_capacity == 0)
 		return null;
@@ -259,7 +259,7 @@ inline ang::collections::map_node<K, T>* ang::collections::map_data<K, T>::find_
 }
 
 template<typename K, typename T>
-inline ang::collections::pair<K,T>& ang::collections::map_data<K, T>::at(const ang::collections::iterator<ang::collections::pair<K,T>>& it)const
+inline ang::collections::pair<K,T>& ang::collections::hash_table_data<K, T>::at(const ang::collections::iterator<ang::collections::pair<K,T>>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty())
@@ -273,18 +273,18 @@ inline ang::collections::pair<K,T>& ang::collections::map_data<K, T>::at(const a
 }
 
 template<typename K, typename T>
-inline ang::collections::iterator<ang::collections::pair<K,T>> ang::collections::map_data<K, T>::begin()const
+inline ang::collections::iterator<ang::collections::pair<K,T>> ang::collections::hash_table_data<K, T>::begin()const
 {
 	for (auto i = 0U; i < _capacity; ++i)
 	{
 		if(_table[i] != null)
-			return iterator_t(const_cast<map_data*>(this), _table[i], i);
+			return iterator_t(const_cast<hash_table_data*>(this), _table[i], i);
 	}
-	return iterator_t(const_cast<map_data*>(this), null, 0);
+	return iterator_t(const_cast<hash_table_data*>(this), null, 0);
 }
 
 template<typename K, typename T>
-inline ang::collections::iterator<ang::collections::pair<K,T>> ang::collections::map_data<K, T>::end()const
+inline ang::collections::iterator<ang::collections::pair<K,T>> ang::collections::hash_table_data<K, T>::end()const
 {
 	for (int i = (int)_capacity - 1; i >= 0; --i)
 	{
@@ -293,14 +293,14 @@ inline ang::collections::iterator<ang::collections::pair<K,T>> ang::collections:
 			node_ptr_t node = _table[i];
 			while (node->next() != null)
 				node = node->next();
-			return iterator_t(const_cast<map_data*>(this), node, i);
+			return iterator_t(const_cast<hash_table_data*>(this), node, i);
 		}
 	}
-	return iterator_t(const_cast<map_data*>(this), null, 0);
+	return iterator_t(const_cast<hash_table_data*>(this), null, 0);
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::next(ang::collections::iterator<ang::collections::pair<K, T>>& it)const
+inline bool ang::collections::hash_table_data<K, T>::next(ang::collections::iterator<ang::collections::pair<K, T>>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -328,7 +328,7 @@ inline bool ang::collections::map_data<K, T>::next(ang::collections::iterator<an
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::next(ang::collections::iterator<ang::collections::pair<K,T>>& it, int offset)const
+inline bool ang::collections::hash_table_data<K, T>::next(ang::collections::iterator<ang::collections::pair<K,T>>& it, int offset)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -370,7 +370,7 @@ inline bool ang::collections::map_data<K, T>::next(ang::collections::iterator<an
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::prev(ang::collections::iterator<ang::collections::pair<K,T>>& it)const
+inline bool ang::collections::hash_table_data<K, T>::prev(ang::collections::iterator<ang::collections::pair<K,T>>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -407,7 +407,7 @@ inline bool ang::collections::map_data<K, T>::prev(ang::collections::iterator<an
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::prev(ang::collections::iterator<ang::collections::pair<K,T>>& it, int offset)const
+inline bool ang::collections::hash_table_data<K, T>::prev(ang::collections::iterator<ang::collections::pair<K,T>>& it, int offset)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -451,18 +451,18 @@ inline bool ang::collections::map_data<K, T>::prev(ang::collections::iterator<an
 }
 
 template<typename K, typename T>
-inline uint ang::collections::map_data<K, T>::counter()const
+inline uint ang::collections::hash_table_data<K, T>::counter()const
 {
 	return _size;
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::has_items()const {
+inline bool ang::collections::hash_table_data<K, T>::has_items()const {
 	return _size > 0;
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::copy(ang::collections::ienum<ang::collections::pair<K,T>>const* items) {
+inline bool ang::collections::hash_table_data<K, T>::copy(ang::collections::ienum<ang::collections::pair<K,T>>const* items) {
 
 	if (items == null)
 		return false;
@@ -473,7 +473,7 @@ inline bool ang::collections::map_data<K, T>::copy(ang::collections::ienum<ang::
 }
 
 template<typename K, typename T>
-inline void ang::collections::map_data<K, T>::extend(ang::collections::ienum<ang::collections::pair<K, T>>const* items) {
+inline void ang::collections::hash_table_data<K, T>::extend(ang::collections::ienum<ang::collections::pair<K, T>>const* items) {
 
 	if (items == null)
 		return;
@@ -483,7 +483,7 @@ inline void ang::collections::map_data<K, T>::extend(ang::collections::ienum<ang
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::insert(K key, T value)
+inline bool ang::collections::hash_table_data<K, T>::insert(K key, T value)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -508,7 +508,7 @@ inline bool ang::collections::map_data<K, T>::insert(K key, T value)
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::insert(ang::collections::pair<K,T> pair)
+inline bool ang::collections::hash_table_data<K, T>::insert(ang::collections::pair<K,T> pair)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -531,7 +531,7 @@ inline bool ang::collections::map_data<K, T>::insert(ang::collections::pair<K,T>
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::update(K key, T value)
+inline bool ang::collections::hash_table_data<K, T>::update(K key, T value)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -561,7 +561,7 @@ inline bool ang::collections::map_data<K, T>::update(K key, T value)
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::update(ang::collections::pair<K,T> pair)
+inline bool ang::collections::hash_table_data<K, T>::update(ang::collections::pair<K,T> pair)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -590,7 +590,7 @@ inline bool ang::collections::map_data<K, T>::update(ang::collections::pair<K,T>
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::remove(K const& key)
+inline bool ang::collections::hash_table_data<K, T>::remove(K const& key)
 {
 	if (_table == null)
 		return false;
@@ -625,7 +625,7 @@ inline bool ang::collections::map_data<K, T>::remove(K const& key)
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::remove(K const& key, T& value)
+inline bool ang::collections::hash_table_data<K, T>::remove(K const& key, T& value)
 {
 	if (_table == null)
 		return false;
@@ -662,13 +662,13 @@ inline bool ang::collections::map_data<K, T>::remove(K const& key, T& value)
 
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::remove(ang::collections::iterator<ang::collections::pair<K, T>>)
+inline bool ang::collections::hash_table_data<K, T>::remove(ang::collections::iterator<ang::collections::pair<K, T>>)
 {
 	return false;
 }
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::remove(ang::collections::iterator<ang::collections::pair<K, T>>, T& value)
+inline bool ang::collections::hash_table_data<K, T>::remove(ang::collections::iterator<ang::collections::pair<K, T>>, T& value)
 {
 	
 	return false;
@@ -676,33 +676,33 @@ inline bool ang::collections::map_data<K, T>::remove(ang::collections::iterator<
 
 
 template<typename K, typename T>
-inline bool ang::collections::map_data<K, T>::has_key(const K& key)const
+inline bool ang::collections::hash_table_data<K, T>::has_key(const K& key)const
 {
 	return find_node(key) != null;
 }
 
 template<typename K, typename T>
-inline ang::collections::iterator<ang::collections::pair<K, T>> ang::collections::map_data<K, T>::find(const K& key)const
+inline ang::collections::iterator<ang::collections::pair<K, T>> ang::collections::hash_table_data<K, T>::find(const K& key)const
 {
 	if (_table == null)
-		return iterator_t(const_cast<map_data*>(this));
+		return iterator_t(const_cast<hash_table_data*>(this));
 
 	uint idx = hash_index(key);
 	node_ptr_t temp = _table[idx];
 	while (temp != null)
 	{
 		if (key == temp->key())
-			return iterator_t(const_cast<map_data*>(this), temp, idx);
+			return iterator_t(const_cast<hash_table_data*>(this), temp, idx);
 		temp = temp->next();
 	}	
-	return iterator_t(const_cast<map_data*>(this), null, 0);
+	return iterator_t(const_cast<hash_table_data*>(this), null, 0);
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-ang::collections::map_data<ang::string, T>::map_data()
+ang::collections::hash_table_data<ang::string, T>::hash_table_data()
 	: _size(0)
 	, _capacity(0)
 	, _table(0)
@@ -717,21 +717,21 @@ ang::collections::map_data<ang::string, T>::map_data()
 }
 
 template<typename T>
-ang::collections::map_data<ang::string, T>::map_data(ang::initializer_list_t<ang::collections::pair<ang::string, T>> list)
-	: map_data()
+ang::collections::hash_table_data<ang::string, T>::hash_table_data(ang::initializer_list_t<ang::collections::pair<ang::string, T>> list)
+	: hash_table_data()
 {
 	for (auto it = list.begin(); it < list.end(); ++it)
 		insert(*it);
 }
 
 template<typename T>
-ang::collections::map_data<ang::string, T>::map_data(const ang::nullptr_t&)
-	: map_data()
+ang::collections::hash_table_data<ang::string, T>::hash_table_data(const ang::nullptr_t&)
+	: hash_table_data()
 {
 }
 
 template<typename T>
-ang::collections::map_data<ang::string, T>::map_data(map_data&& other)
+ang::collections::hash_table_data<ang::string, T>::hash_table_data(hash_table_data&& other)
 	: _size(0)
 	, _capacity(0)
 	, _table(0)
@@ -748,36 +748,36 @@ ang::collections::map_data<ang::string, T>::map_data(map_data&& other)
 }
 
 template<typename T>
-ang::collections::map_data<ang::string, T>::map_data(const map_data& other)
-	: map_data()
+ang::collections::hash_table_data<ang::string, T>::hash_table_data(const hash_table_data& other)
+	: hash_table_data()
 {
 	extend(&other);
 }
 
 template<typename T>
-ang::collections::map_data<ang::string, T>::map_data(const map_data* other)
-	: map_data()
+ang::collections::hash_table_data<ang::string, T>::hash_table_data(const hash_table_data* other)
+	: hash_table_data()
 {
 	extend(other);
 }
 
 template<typename T>
-ang::collections::map_data<ang::string, T>::map_data(ang::collections::ienum<ang::collections::pair<ang::string, T>> const* other)
-	: map_data()
+ang::collections::hash_table_data<ang::string, T>::hash_table_data(ang::collections::ienum<ang::collections::pair<ang::string, T>> const* other)
+	: hash_table_data()
 {
 	extend(other);
 }
 
 template<typename T>
-ang::collections::map_data<ang::string, T>::~map_data()
+ang::collections::hash_table_data<ang::string, T>::~hash_table_data()
 {
 	clean();
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::is_kind_of(ang::type_name_t name)const
+inline bool ang::collections::hash_table_data<ang::string, T>::is_kind_of(ang::type_name_t name)const
 {
-	if (name == type_name<map_data< ang::string, T>>()
+	if (name == type_name<hash_table_data< ang::string, T>>()
 		|| ang::object::is_kind_of(name)
 		|| ang::collections::imap<ang::string, T>::is_kind_of(name))
 		return true;
@@ -785,27 +785,27 @@ inline bool ang::collections::map_data<ang::string, T>::is_kind_of(ang::type_nam
 }
 
 template<typename T>
-inline ang::type_name_t ang::collections::map_data<ang::string, T>::class_name()
+inline ang::type_name_t ang::collections::hash_table_data<ang::string, T>::class_name()
 {
-	static string _type_name = ang::move("ang::collections::map_data<"_o + type_name<ang::string>() + ","_s + type_name<T>() + ">"_s);
+	static string _type_name = ang::move("ang::collections::hash_table_data<"_o + type_name<ang::string>() + ","_s + type_name<T>() + ">"_s);
 	return (ang::cstr_t)_type_name;
 }
 
 template<typename T>
-inline ang::type_name_t ang::collections::map_data<ang::string, T>::object_name()const
+inline ang::type_name_t ang::collections::hash_table_data<ang::string, T>::object_name()const
 {
-	return ang::collections::map_data<ang::string, T>::class_name();
+	return ang::collections::hash_table_data<ang::string, T>::class_name();
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+inline bool ang::collections::hash_table_data<ang::string, T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
 {
 	if (out == null)
 		return false;
 
-	if (name == type_name<map_data<ang::string, T>>())
+	if (name == type_name<hash_table_data<ang::string, T>>())
 	{
-		*out = static_cast<ang::collections::map_data<ang::string, T>*>(this);
+		*out = static_cast<ang::collections::hash_table_data<ang::string, T>*>(this);
 		return true;
 	}
 	else if (ang::object::query_object(name, out))
@@ -821,12 +821,12 @@ inline bool ang::collections::map_data<ang::string, T>::query_object(ang::type_n
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::is_empty()const {
+inline bool ang::collections::hash_table_data<ang::string, T>::is_empty()const {
 	return _size == 0;
 }
 
 template<typename T>
-inline void ang::collections::map_data<ang::string, T>::clean() {
+inline void ang::collections::hash_table_data<ang::string, T>::clean() {
 	if (_table)
 	{
 		for (uint i = 0; i < _capacity && _size > 0; ++i)
@@ -850,7 +850,7 @@ inline void ang::collections::map_data<ang::string, T>::clean() {
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::move(map_data& other)
+inline bool ang::collections::hash_table_data<ang::string, T>::move(hash_table_data& other)
 {
 	if (this == &other)
 		return false;
@@ -867,7 +867,7 @@ inline bool ang::collections::map_data<ang::string, T>::move(map_data& other)
 
 
 template<typename T>
-inline void ang::collections::map_data<ang::string, T>::set_allocator(memory::iallocator* alloc)
+inline void ang::collections::hash_table_data<ang::string, T>::set_allocator(memory::iallocator* alloc)
 {
 	if (alloc == null && alloc == allocator)
 		return;
@@ -877,22 +877,22 @@ inline void ang::collections::map_data<ang::string, T>::set_allocator(memory::ia
 }
 
 template<typename T>
-inline ang::memory::iallocator* ang::collections::map_data<ang::string, T>::get_allocator()const
+inline ang::memory::iallocator* ang::collections::hash_table_data<ang::string, T>::get_allocator()const
 {
 	return allocator;
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::realloc(ang::memory::iallocator* alloc)
+inline bool ang::collections::hash_table_data<ang::string, T>::realloc(ang::memory::iallocator* alloc)
 {
 	throw(exception_t(except_code::unsupported));
 	return false;
 }
 
 template<class T>
-void ang::collections::map_data<ang::string, T>::increase_capacity()
+void ang::collections::hash_table_data<ang::string, T>::increase_capacity()
 {
-	auto new_size = map_get_next_size(_capacity);
+	auto new_size = hash_table_get_next_size(_capacity);
 	node_ptr_t* new_data = allocator->object_alloc<node_ptr_t>(new_size);
 	memset(new_data, 0, sizeof(node_ptr_t) * new_size);
 
@@ -918,19 +918,19 @@ void ang::collections::map_data<ang::string, T>::increase_capacity()
 }
 
 template<typename T>
-inline uint ang::collections::map_data<ang::string, T>::hash_index(ang::cstr_t key)const
+inline uint ang::collections::hash_table_data<ang::string, T>::hash_index(ang::cstr_t key)const
 {
 	return create_hash_index(key, _capacity ? _capacity : 1);
 }
 
 template<typename T>
-inline uint ang::collections::map_data<ang::string, T>::hash_index(ang::cwstr_t key)const
+inline uint ang::collections::hash_table_data<ang::string, T>::hash_index(ang::cwstr_t key)const
 {
 	return create_hash_index(key, _capacity ? _capacity : 1);
 }
 
 template<typename T>
-inline ang::collections::map_node<ang::string, T>* ang::collections::map_data<ang::string, T>::find_node(ang::cstr_t key)const
+inline ang::collections::hash_table_node<ang::string, T>* ang::collections::hash_table_data<ang::string, T>::find_node(ang::cstr_t key)const
 {
 	if (_capacity == 0)
 		return null;
@@ -947,7 +947,7 @@ inline ang::collections::map_node<ang::string, T>* ang::collections::map_data<an
 }
 
 template<typename T>
-inline ang::collections::map_node<ang::string, T>* ang::collections::map_data<ang::string, T>::find_node(ang::cwstr_t key)const
+inline ang::collections::hash_table_node<ang::string, T>* ang::collections::hash_table_data<ang::string, T>::find_node(ang::cwstr_t key)const
 {
 	if (_capacity == 0)
 		return null;
@@ -964,7 +964,7 @@ inline ang::collections::map_node<ang::string, T>* ang::collections::map_data<an
 }
 
 template<typename T>
-inline ang::collections::pair<ang::string, T>& ang::collections::map_data<ang::string, T>::at(const ang::collections::iterator<ang::collections::pair<ang::string, T>>& it)const
+inline ang::collections::pair<ang::string, T>& ang::collections::hash_table_data<ang::string, T>::at(const ang::collections::iterator<ang::collections::pair<ang::string, T>>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty())
@@ -978,18 +978,18 @@ inline ang::collections::pair<ang::string, T>& ang::collections::map_data<ang::s
 }
 
 template<typename T>
-inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::map_data<ang::string, T>::begin()const
+inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_table_data<ang::string, T>::begin()const
 {
 	for (auto i = 0U; i < _capacity; ++i)
 	{
 		if (_table[i] != null)
-			return iterator_t(const_cast<map_data*>(this), _table[i], i);
+			return iterator_t(const_cast<hash_table_data*>(this), _table[i], i);
 	}
-	return iterator_t(const_cast<map_data*>(this), null, 0);
+	return iterator_t(const_cast<hash_table_data*>(this), null, 0);
 }
 
 template<typename T>
-inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::map_data<ang::string, T>::end()const
+inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_table_data<ang::string, T>::end()const
 {
 	for (int i = (int)_capacity - 1; i >= 0; --i)
 	{
@@ -998,14 +998,14 @@ inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::c
 			node_ptr_t node = _table[i];
 			while (node->next() != null)
 				node = node->next();
-			return iterator_t(const_cast<map_data*>(this), node, i);
+			return iterator_t(const_cast<hash_table_data*>(this), node, i);
 		}
 	}
-	return iterator_t(const_cast<map_data*>(this), null, 0);
+	return iterator_t(const_cast<hash_table_data*>(this), null, 0);
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::next(ang::collections::iterator<ang::collections::pair<ang::string, T>>& it)const
+inline bool ang::collections::hash_table_data<ang::string, T>::next(ang::collections::iterator<ang::collections::pair<ang::string, T>>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -1033,7 +1033,7 @@ inline bool ang::collections::map_data<ang::string, T>::next(ang::collections::i
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::next(ang::collections::iterator<ang::collections::pair<ang::string, T>>& it, int offset)const
+inline bool ang::collections::hash_table_data<ang::string, T>::next(ang::collections::iterator<ang::collections::pair<ang::string, T>>& it, int offset)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -1075,7 +1075,7 @@ inline bool ang::collections::map_data<ang::string, T>::next(ang::collections::i
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::prev(ang::collections::iterator<ang::collections::pair<ang::string, T>>& it)const
+inline bool ang::collections::hash_table_data<ang::string, T>::prev(ang::collections::iterator<ang::collections::pair<ang::string, T>>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -1112,7 +1112,7 @@ inline bool ang::collections::map_data<ang::string, T>::prev(ang::collections::i
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::prev(ang::collections::iterator<ang::collections::pair<ang::string, T>>& it, int offset)const
+inline bool ang::collections::hash_table_data<ang::string, T>::prev(ang::collections::iterator<ang::collections::pair<ang::string, T>>& it, int offset)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -1156,18 +1156,18 @@ inline bool ang::collections::map_data<ang::string, T>::prev(ang::collections::i
 }
 
 template<typename T>
-inline uint ang::collections::map_data<ang::string, T>::counter()const
+inline uint ang::collections::hash_table_data<ang::string, T>::counter()const
 {
 	return _size;
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::has_items()const {
+inline bool ang::collections::hash_table_data<ang::string, T>::has_items()const {
 	return _size > 0;
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::copy(ang::collections::ienum<ang::collections::pair<ang::string, T>>const* items) {
+inline bool ang::collections::hash_table_data<ang::string, T>::copy(ang::collections::ienum<ang::collections::pair<ang::string, T>>const* items) {
 
 	if (items == null)
 		return false;
@@ -1178,7 +1178,7 @@ inline bool ang::collections::map_data<ang::string, T>::copy(ang::collections::i
 }
 
 template<typename T>
-inline void ang::collections::map_data<ang::string, T>::extend(ang::collections::ienum<ang::collections::pair<ang::string, T>>const* items) {
+inline void ang::collections::hash_table_data<ang::string, T>::extend(ang::collections::ienum<ang::collections::pair<ang::string, T>>const* items) {
 
 	if (items == null)
 		return;
@@ -1188,7 +1188,7 @@ inline void ang::collections::map_data<ang::string, T>::extend(ang::collections:
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::insert(ang::cstr_t key, T value)
+inline bool ang::collections::hash_table_data<ang::string, T>::insert(ang::cstr_t key, T value)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -1212,7 +1212,7 @@ inline bool ang::collections::map_data<ang::string, T>::insert(ang::cstr_t key, 
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::insert(ang::cwstr_t key, T value)
+inline bool ang::collections::hash_table_data<ang::string, T>::insert(ang::cwstr_t key, T value)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -1237,7 +1237,7 @@ inline bool ang::collections::map_data<ang::string, T>::insert(ang::cwstr_t key,
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::insert(ang::collections::pair<ang::string, T> pair)
+inline bool ang::collections::hash_table_data<ang::string, T>::insert(ang::collections::pair<ang::string, T> pair)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -1260,7 +1260,7 @@ inline bool ang::collections::map_data<ang::string, T>::insert(ang::collections:
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::update(ang::cstr_t key, T value)
+inline bool ang::collections::hash_table_data<ang::string, T>::update(ang::cstr_t key, T value)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -1292,7 +1292,7 @@ inline bool ang::collections::map_data<ang::string, T>::update(ang::cstr_t key, 
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::update(ang::cwstr_t key, T value)
+inline bool ang::collections::hash_table_data<ang::string, T>::update(ang::cwstr_t key, T value)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -1324,7 +1324,7 @@ inline bool ang::collections::map_data<ang::string, T>::update(ang::cwstr_t key,
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::update(ang::collections::pair<ang::string, T> pair)
+inline bool ang::collections::hash_table_data<ang::string, T>::update(ang::collections::pair<ang::string, T> pair)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -1353,7 +1353,7 @@ inline bool ang::collections::map_data<ang::string, T>::update(ang::collections:
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::remove(ang::cstr_t key)
+inline bool ang::collections::hash_table_data<ang::string, T>::remove(ang::cstr_t key)
 {
 	if (_table == null)
 		return false;
@@ -1389,7 +1389,7 @@ inline bool ang::collections::map_data<ang::string, T>::remove(ang::cstr_t key)
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::remove(ang::cwstr_t key)
+inline bool ang::collections::hash_table_data<ang::string, T>::remove(ang::cwstr_t key)
 {
 	if (_table == null)
 		return false;
@@ -1424,44 +1424,7 @@ inline bool ang::collections::map_data<ang::string, T>::remove(ang::cwstr_t key)
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::remove(ang::cstr_t key, T& value)
-{
-	if (_table == null)
-		return false;
-
-	uint idx = hash_index(key);
-	node_ptr_t temp = _table[idx];
-
-	while (temp != nullptr)
-	{
-		if (temp->key() == key)
-		{
-			if (temp->prev())
-			{
-				temp->prev()->next(temp->next());
-				if (temp->next())
-					temp->next()->prev(temp->prev());
-			}
-			else
-			{
-				_table[idx] = temp->next();
-				if (temp->next())
-					temp->next()->prev(null);
-			}
-			value = ang::move(temp->value());
-			allocator->destruct(temp);
-			allocator->memory_release(temp);
-			_size--;
-			return true;
-		}
-		temp = temp->next();
-	}
-	return false;
-}
-
-
-template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::remove(ang::cwstr_t key, T& value)
+inline bool ang::collections::hash_table_data<ang::string, T>::remove(ang::cstr_t key, T& value)
 {
 	if (_table == null)
 		return false;
@@ -1498,70 +1461,107 @@ inline bool ang::collections::map_data<ang::string, T>::remove(ang::cwstr_t key,
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::remove(ang::collections::iterator<ang::collections::pair<ang::string, T>>)
-{
-	return false;
-}
-
-template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::remove(ang::collections::iterator<ang::collections::pair<ang::string, T>>, T& value)
-{
-
-	return false;
-}
-
-
-template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::has_key(ang::cstr_t key)const
-{
-	return find_node(key) != null;
-}
-
-template<typename T>
-inline bool ang::collections::map_data<ang::string, T>::has_key(ang::cwstr_t key)const
-{
-	return find_node(key) != null;
-}
-
-template<typename T>
-inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::map_data<ang::string, T>::find(ang::cstr_t key)const
+inline bool ang::collections::hash_table_data<ang::string, T>::remove(ang::cwstr_t key, T& value)
 {
 	if (_table == null)
-		return iterator_t(const_cast<map_data*>(this));
+		return false;
+
+	uint idx = hash_index(key);
+	node_ptr_t temp = _table[idx];
+
+	while (temp != nullptr)
+	{
+		if (temp->key() == key)
+		{
+			if (temp->prev())
+			{
+				temp->prev()->next(temp->next());
+				if (temp->next())
+					temp->next()->prev(temp->prev());
+			}
+			else
+			{
+				_table[idx] = temp->next();
+				if (temp->next())
+					temp->next()->prev(null);
+			}
+			value = ang::move(temp->value());
+			allocator->destruct(temp);
+			allocator->memory_release(temp);
+			_size--;
+			return true;
+		}
+		temp = temp->next();
+	}
+	return false;
+}
+
+
+template<typename T>
+inline bool ang::collections::hash_table_data<ang::string, T>::remove(ang::collections::iterator<ang::collections::pair<ang::string, T>>)
+{
+	return false;
+}
+
+template<typename T>
+inline bool ang::collections::hash_table_data<ang::string, T>::remove(ang::collections::iterator<ang::collections::pair<ang::string, T>>, T& value)
+{
+
+	return false;
+}
+
+
+template<typename T>
+inline bool ang::collections::hash_table_data<ang::string, T>::has_key(ang::cstr_t key)const
+{
+	return find_node(key) != null;
+}
+
+template<typename T>
+inline bool ang::collections::hash_table_data<ang::string, T>::has_key(ang::cwstr_t key)const
+{
+	return find_node(key) != null;
+}
+
+template<typename T>
+inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_table_data<ang::string, T>::find(ang::cstr_t key)const
+{
+	if (_table == null)
+		return iterator_t(const_cast<hash_table_data*>(this));
 
 	uint idx = hash_index(key);
 	node_ptr_t temp = _table[idx];
 	while (temp != null)
 	{
 		if (key == temp->key())
-			return iterator_t(const_cast<map_data*>(this), temp, idx);
+			return iterator_t(const_cast<hash_table_data*>(this), temp, idx);
 		temp = temp->next();
 	}
-	return iterator_t(const_cast<map_data*>(this), null, 0);
+	return iterator_t(const_cast<hash_table_data*>(this), null, 0);
 }
 
 template<typename T>
-inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::map_data<ang::string, T>::find(ang::cwstr_t key)const
+inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_table_data<ang::string, T>::find(ang::cwstr_t key)const
 {
 	if (_table == null)
-		return iterator_t(const_cast<map_data*>(this));
+		return iterator_t(const_cast<hash_table_data*>(this));
 
 	uint idx = hash_index(key);
 	node_ptr_t temp = _table[idx];
 	while (temp != null)
 	{
 		if (key == temp->key())
-			return iterator_t(const_cast<map_data*>(this), temp, idx);
+			return iterator_t(const_cast<hash_table_data*>(this), temp, idx);
 		temp = temp->next();
 	}
-	return iterator_t(const_cast<map_data*>(this), null, 0);
+	return iterator_t(const_cast<hash_table_data*>(this), null, 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 template<typename T>
-ang::collections::map_data<ang::wstring, T>::map_data()
+ang::collections::hash_table_data<ang::wstring, T>::hash_table_data()
 	: _size(0)
 	, _capacity(0)
 	, _table(0)
@@ -1576,21 +1576,21 @@ ang::collections::map_data<ang::wstring, T>::map_data()
 }
 
 template<typename T>
-ang::collections::map_data<ang::wstring, T>::map_data(ang::initializer_list_t<ang::collections::pair<ang::wstring, T>> list)
-	: map_data()
+ang::collections::hash_table_data<ang::wstring, T>::hash_table_data(ang::initializer_list_t<ang::collections::pair<ang::wstring, T>> list)
+	: hash_table_data()
 {
 	for (auto it = list.begin(); it < list.end(); ++it)
 		insert(*it);
 }
 
 template<typename T>
-ang::collections::map_data<ang::wstring, T>::map_data(const ang::nullptr_t&)
-	: map_data()
+ang::collections::hash_table_data<ang::wstring, T>::hash_table_data(const ang::nullptr_t&)
+	: hash_table_data()
 {
 }
 
 template<typename T>
-ang::collections::map_data<ang::wstring, T>::map_data(map_data&& other)
+ang::collections::hash_table_data<ang::wstring, T>::hash_table_data(hash_table_data&& other)
 	: _size(0)
 	, _capacity(0)
 	, _table(0)
@@ -1607,36 +1607,36 @@ ang::collections::map_data<ang::wstring, T>::map_data(map_data&& other)
 }
 
 template<typename T>
-ang::collections::map_data<ang::wstring, T>::map_data(const map_data& other)
-	: map_data()
+ang::collections::hash_table_data<ang::wstring, T>::hash_table_data(const hash_table_data& other)
+	: hash_table_data()
 {
 	extend(&other);
 }
 
 template<typename T>
-ang::collections::map_data<ang::wstring, T>::map_data(const map_data* other)
-	: map_data()
+ang::collections::hash_table_data<ang::wstring, T>::hash_table_data(const hash_table_data* other)
+	: hash_table_data()
 {
 	extend(other);
 }
 
 template<typename T>
-ang::collections::map_data<ang::wstring, T>::map_data(ang::collections::ienum<ang::collections::pair<ang::wstring, T>> const* other)
-	: map_data()
+ang::collections::hash_table_data<ang::wstring, T>::hash_table_data(ang::collections::ienum<ang::collections::pair<ang::wstring, T>> const* other)
+	: hash_table_data()
 {
 	extend(other);
 }
 
 template<typename T>
-ang::collections::map_data<ang::wstring, T>::~map_data()
+ang::collections::hash_table_data<ang::wstring, T>::~hash_table_data()
 {
 	clean();
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::is_kind_of(ang::type_name_t name)const
+inline bool ang::collections::hash_table_data<ang::wstring, T>::is_kind_of(ang::type_name_t name)const
 {
-	if (name == type_name<map_data< ang::wstring, T>>()
+	if (name == type_name<hash_table_data< ang::wstring, T>>()
 		|| ang::object::is_kind_of(name)
 		|| ang::collections::imap<ang::wstring, T>::is_kind_of(name))
 		return true;
@@ -1644,27 +1644,27 @@ inline bool ang::collections::map_data<ang::wstring, T>::is_kind_of(ang::type_na
 }
 
 template<typename T>
-inline ang::type_name_t ang::collections::map_data<ang::wstring, T>::class_name()
+inline ang::type_name_t ang::collections::hash_table_data<ang::wstring, T>::class_name()
 {
-	static string _type_name = ang::move("ang::collections::map_data<"_o + type_name<ang::wstring>() + ","_s + type_name<T>() + ">"_s);
+	static string _type_name = ang::move("ang::collections::hash_table_data<"_o + type_name<ang::wstring>() + ","_s + type_name<T>() + ">"_s);
 	return (ang::cstr_t)_type_name;
 }
 
 template<typename T>
-inline ang::type_name_t ang::collections::map_data<ang::wstring, T>::object_name()const
+inline ang::type_name_t ang::collections::hash_table_data<ang::wstring, T>::object_name()const
 {
-	return ang::collections::map_data<ang::wstring, T>::class_name();
+	return ang::collections::hash_table_data<ang::wstring, T>::class_name();
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
 {
 	if (out == null)
 		return false;
 
-	if (name == type_name<map_data<ang::wstring, T>>())
+	if (name == type_name<hash_table_data<ang::wstring, T>>())
 	{
-		*out = static_cast<ang::collections::map_data<ang::wstring, T>*>(this);
+		*out = static_cast<ang::collections::hash_table_data<ang::wstring, T>*>(this);
 		return true;
 	}
 	else if (ang::object::query_object(name, out))
@@ -1680,12 +1680,12 @@ inline bool ang::collections::map_data<ang::wstring, T>::query_object(ang::type_
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::is_empty()const {
+inline bool ang::collections::hash_table_data<ang::wstring, T>::is_empty()const {
 	return _size == 0;
 }
 
 template<typename T>
-inline void ang::collections::map_data<ang::wstring, T>::clean() {
+inline void ang::collections::hash_table_data<ang::wstring, T>::clean() {
 	if (_table)
 	{
 		for (uint i = 0; i < _capacity && _size > 0; ++i)
@@ -1709,7 +1709,7 @@ inline void ang::collections::map_data<ang::wstring, T>::clean() {
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::move(map_data& other)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::move(hash_table_data& other)
 {
 	if (this == &other)
 		return false;
@@ -1726,7 +1726,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::move(map_data& other)
 
 
 template<typename T>
-inline void ang::collections::map_data<ang::wstring, T>::set_allocator(memory::iallocator* alloc)
+inline void ang::collections::hash_table_data<ang::wstring, T>::set_allocator(memory::iallocator* alloc)
 {
 	if (alloc == null && alloc == allocator)
 		return;
@@ -1736,22 +1736,22 @@ inline void ang::collections::map_data<ang::wstring, T>::set_allocator(memory::i
 }
 
 template<typename T>
-inline ang::memory::iallocator* ang::collections::map_data<ang::wstring, T>::get_allocator()const
+inline ang::memory::iallocator* ang::collections::hash_table_data<ang::wstring, T>::get_allocator()const
 {
 	return allocator;
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::realloc(ang::memory::iallocator* alloc)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::realloc(ang::memory::iallocator* alloc)
 {
 	throw(exception_t(except_code::unsupported));
 	return false;
 }
 
 template<class T>
-void ang::collections::map_data<ang::wstring, T>::increase_capacity()
+void ang::collections::hash_table_data<ang::wstring, T>::increase_capacity()
 {
-	auto new_size = map_get_next_size(_capacity);
+	auto new_size = hash_table_get_next_size(_capacity);
 	node_ptr_t* new_data = allocator->object_alloc<node_ptr_t>(new_size);
 	memset(new_data, 0, sizeof(node_ptr_t) * new_size);
 
@@ -1777,19 +1777,19 @@ void ang::collections::map_data<ang::wstring, T>::increase_capacity()
 }
 
 template<typename T>
-inline uint ang::collections::map_data<ang::wstring, T>::hash_index(ang::cstr_t key)const
+inline uint ang::collections::hash_table_data<ang::wstring, T>::hash_index(ang::cstr_t key)const
 {
 	return create_hash_index(key, _capacity ? _capacity : 1);
 }
 
 template<typename T>
-inline uint ang::collections::map_data<ang::wstring, T>::hash_index(ang::cwstr_t key)const
+inline uint ang::collections::hash_table_data<ang::wstring, T>::hash_index(ang::cwstr_t key)const
 {
 	return create_hash_index(key, _capacity ? _capacity : 1);
 }
 
 template<typename T>
-inline ang::collections::map_node<ang::wstring, T>* ang::collections::map_data<ang::wstring, T>::find_node(ang::cstr_t key)const
+inline ang::collections::hash_table_node<ang::wstring, T>* ang::collections::hash_table_data<ang::wstring, T>::find_node(ang::cstr_t key)const
 {
 	if (_capacity == 0)
 		return null;
@@ -1806,7 +1806,7 @@ inline ang::collections::map_node<ang::wstring, T>* ang::collections::map_data<a
 }
 
 template<typename T>
-inline ang::collections::map_node<ang::wstring, T>* ang::collections::map_data<ang::wstring, T>::find_node(ang::cwstr_t key)const
+inline ang::collections::hash_table_node<ang::wstring, T>* ang::collections::hash_table_data<ang::wstring, T>::find_node(ang::cwstr_t key)const
 {
 	if (_capacity == 0)
 		return null;
@@ -1823,7 +1823,7 @@ inline ang::collections::map_node<ang::wstring, T>* ang::collections::map_data<a
 }
 
 template<typename T>
-inline ang::collections::pair<ang::wstring, T>& ang::collections::map_data<ang::wstring, T>::at(const ang::collections::iterator<ang::collections::pair<ang::wstring, T>>& it)const
+inline ang::collections::pair<ang::wstring, T>& ang::collections::hash_table_data<ang::wstring, T>::at(const ang::collections::iterator<ang::collections::pair<ang::wstring, T>>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty())
@@ -1837,18 +1837,18 @@ inline ang::collections::pair<ang::wstring, T>& ang::collections::map_data<ang::
 }
 
 template<typename T>
-inline ang::collections::iterator<ang::collections::pair<ang::wstring, T>> ang::collections::map_data<ang::wstring, T>::begin()const
+inline ang::collections::iterator<ang::collections::pair<ang::wstring, T>> ang::collections::hash_table_data<ang::wstring, T>::begin()const
 {
 	for (auto i = 0U; i < _capacity; ++i)
 	{
 		if (_table[i] != null)
-			return iterator_t(const_cast<map_data*>(this), _table[i], i);
+			return iterator_t(const_cast<hash_table_data*>(this), _table[i], i);
 	}
-	return iterator_t(const_cast<map_data*>(this), null, 0);
+	return iterator_t(const_cast<hash_table_data*>(this), null, 0);
 }
 
 template<typename T>
-inline ang::collections::iterator<ang::collections::pair<ang::wstring, T>> ang::collections::map_data<ang::wstring, T>::end()const
+inline ang::collections::iterator<ang::collections::pair<ang::wstring, T>> ang::collections::hash_table_data<ang::wstring, T>::end()const
 {
 	for (int i = (int)_capacity - 1; i >= 0; --i)
 	{
@@ -1857,14 +1857,14 @@ inline ang::collections::iterator<ang::collections::pair<ang::wstring, T>> ang::
 			node_ptr_t node = _table[i];
 			while (node->next() != null)
 				node = node->next();
-			return iterator_t(const_cast<map_data*>(this), node, i);
+			return iterator_t(const_cast<hash_table_data*>(this), node, i);
 		}
 	}
-	return iterator_t(const_cast<map_data*>(this), null, 0);
+	return iterator_t(const_cast<hash_table_data*>(this), null, 0);
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::next(ang::collections::iterator<ang::collections::pair<ang::wstring, T>>& it)const
+inline bool ang::collections::hash_table_data<ang::wstring, T>::next(ang::collections::iterator<ang::collections::pair<ang::wstring, T>>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -1892,7 +1892,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::next(ang::collections::
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::next(ang::collections::iterator<ang::collections::pair<ang::wstring, T>>& it, int offset)const
+inline bool ang::collections::hash_table_data<ang::wstring, T>::next(ang::collections::iterator<ang::collections::pair<ang::wstring, T>>& it, int offset)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -1934,7 +1934,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::next(ang::collections::
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::prev(ang::collections::iterator<ang::collections::pair<ang::wstring, T>>& it)const
+inline bool ang::collections::hash_table_data<ang::wstring, T>::prev(ang::collections::iterator<ang::collections::pair<ang::wstring, T>>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -1971,7 +1971,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::prev(ang::collections::
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::prev(ang::collections::iterator<ang::collections::pair<ang::wstring, T>>& it, int offset)const
+inline bool ang::collections::hash_table_data<ang::wstring, T>::prev(ang::collections::iterator<ang::collections::pair<ang::wstring, T>>& it, int offset)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -2015,18 +2015,18 @@ inline bool ang::collections::map_data<ang::wstring, T>::prev(ang::collections::
 }
 
 template<typename T>
-inline uint ang::collections::map_data<ang::wstring, T>::counter()const
+inline uint ang::collections::hash_table_data<ang::wstring, T>::counter()const
 {
 	return _size;
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::has_items()const {
+inline bool ang::collections::hash_table_data<ang::wstring, T>::has_items()const {
 	return _size > 0;
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::copy(ang::collections::ienum<ang::collections::pair<ang::wstring, T>>const* items) {
+inline bool ang::collections::hash_table_data<ang::wstring, T>::copy(ang::collections::ienum<ang::collections::pair<ang::wstring, T>>const* items) {
 
 	if (items == null)
 		return false;
@@ -2037,7 +2037,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::copy(ang::collections::
 }
 
 template<typename T>
-inline void ang::collections::map_data<ang::wstring, T>::extend(ang::collections::ienum<ang::collections::pair<ang::wstring, T>>const* items) {
+inline void ang::collections::hash_table_data<ang::wstring, T>::extend(ang::collections::ienum<ang::collections::pair<ang::wstring, T>>const* items) {
 
 	if (items == null)
 		return;
@@ -2047,7 +2047,7 @@ inline void ang::collections::map_data<ang::wstring, T>::extend(ang::collections
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::insert(ang::cstr_t key, T value)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::insert(ang::cstr_t key, T value)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -2071,7 +2071,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::insert(ang::cstr_t key,
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::insert(ang::cwstr_t key, T value)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::insert(ang::cwstr_t key, T value)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -2096,7 +2096,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::insert(ang::cwstr_t key
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::insert(ang::collections::pair<ang::wstring, T> pair)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::insert(ang::collections::pair<ang::wstring, T> pair)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -2119,7 +2119,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::insert(ang::collections
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::update(ang::cstr_t key, T value)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::update(ang::cstr_t key, T value)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -2151,7 +2151,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::update(ang::cstr_t key,
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::update(ang::cwstr_t key, T value)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::update(ang::cwstr_t key, T value)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -2183,7 +2183,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::update(ang::cwstr_t key
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::update(ang::collections::pair<ang::wstring, T> pair)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::update(ang::collections::pair<ang::wstring, T> pair)
 {
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
@@ -2212,7 +2212,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::update(ang::collections
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::remove(ang::cstr_t key)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::remove(ang::cstr_t key)
 {
 	if (_table == null)
 		return false;
@@ -2248,7 +2248,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::remove(ang::cstr_t key)
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::remove(ang::cwstr_t key)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::remove(ang::cwstr_t key)
 {
 	if (_table == null)
 		return false;
@@ -2283,44 +2283,7 @@ inline bool ang::collections::map_data<ang::wstring, T>::remove(ang::cwstr_t key
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::remove(ang::cstr_t key, T& value)
-{
-	if (_table == null)
-		return false;
-
-	uint idx = hash_index(key);
-	node_ptr_t temp = _table[idx];
-
-	while (temp != nullptr)
-	{
-		if (temp->key() == key)
-		{
-			if (temp->prev())
-			{
-				temp->prev()->next(temp->next());
-				if (temp->next())
-					temp->next()->prev(temp->prev());
-			}
-			else
-			{
-				_table[idx] = temp->next();
-				if (temp->next())
-					temp->next()->prev(null);
-			}
-			value = ang::move(temp->value());
-			allocator->destruct(temp);
-			allocator->memory_release(temp);
-			_size--;
-			return true;
-		}
-		temp = temp->next();
-	}
-	return false;
-}
-
-
-template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::remove(ang::cwstr_t key, T& value)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::remove(ang::cstr_t key, T& value)
 {
 	if (_table == null)
 		return false;
@@ -2357,13 +2320,50 @@ inline bool ang::collections::map_data<ang::wstring, T>::remove(ang::cwstr_t key
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::remove(ang::collections::iterator<ang::collections::pair<ang::wstring, T>>)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::remove(ang::cwstr_t key, T& value)
+{
+	if (_table == null)
+		return false;
+
+	uint idx = hash_index(key);
+	node_ptr_t temp = _table[idx];
+
+	while (temp != nullptr)
+	{
+		if (temp->key() == key)
+		{
+			if (temp->prev())
+			{
+				temp->prev()->next(temp->next());
+				if (temp->next())
+					temp->next()->prev(temp->prev());
+			}
+			else
+			{
+				_table[idx] = temp->next();
+				if (temp->next())
+					temp->next()->prev(null);
+			}
+			value = ang::move(temp->value());
+			allocator->destruct(temp);
+			allocator->memory_release(temp);
+			_size--;
+			return true;
+		}
+		temp = temp->next();
+	}
+	return false;
+}
+
+
+template<typename T>
+inline bool ang::collections::hash_table_data<ang::wstring, T>::remove(ang::collections::iterator<ang::collections::pair<ang::wstring, T>>)
 {
 	return false;
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::remove(ang::collections::iterator<ang::collections::pair<ang::wstring, T>>, T& value)
+inline bool ang::collections::hash_table_data<ang::wstring, T>::remove(ang::collections::iterator<ang::collections::pair<ang::wstring, T>>, T& value)
 {
 
 	return false;
@@ -2371,19 +2371,19 @@ inline bool ang::collections::map_data<ang::wstring, T>::remove(ang::collections
 
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::has_key(ang::cstr_t key)const
+inline bool ang::collections::hash_table_data<ang::wstring, T>::has_key(ang::cstr_t key)const
 {
 	return find_node(key) != null;
 }
 
 template<typename T>
-inline bool ang::collections::map_data<ang::wstring, T>::has_key(ang::cwstr_t key)const
+inline bool ang::collections::hash_table_data<ang::wstring, T>::has_key(ang::cwstr_t key)const
 {
 	return find_node(key) != null;
 }
 
 template<typename T>
-inline ang::collections::iterator<ang::collections::pair<ang::wstring, T>> ang::collections::map_data<ang::wstring, T>::find(ang::cstr_t key)const
+inline ang::collections::iterator<ang::collections::pair<ang::wstring, T>> ang::collections::hash_table_data<ang::wstring, T>::find(ang::cstr_t key)const
 {
 	if (_table == null)
 		return false;
@@ -2393,14 +2393,14 @@ inline ang::collections::iterator<ang::collections::pair<ang::wstring, T>> ang::
 	while (temp != null)
 	{
 		if (key == temp->key())
-			return iterator_t(const_cast<map_data*>(this), temp, idx);
+			return iterator_t(const_cast<hash_table_data*>(this), temp, idx);
 		temp = temp->next();
 	}
-	return iterator_t(const_cast<map_data*>(this), null, 0);
+	return iterator_t(const_cast<hash_table_data*>(this), null, 0);
 }
 
 template<typename T>
-inline ang::collections::iterator<ang::collections::pair<ang::wstring, T>> ang::collections::map_data<ang::wstring, T>::find(ang::cwstr_t key)const
+inline ang::collections::iterator<ang::collections::pair<ang::wstring, T>> ang::collections::hash_table_data<ang::wstring, T>::find(ang::cwstr_t key)const
 {
 	if (_table == null)
 		return false;
@@ -2410,10 +2410,10 @@ inline ang::collections::iterator<ang::collections::pair<ang::wstring, T>> ang::
 	while (temp != null)
 	{
 		if (key == temp->key())
-			return iterator_t(const_cast<map_data*>(this), temp, idx);
+			return iterator_t(const_cast<hash_table_data*>(this), temp, idx);
 		temp = temp->next();
 	}
-	return iterator_t(const_cast<map_data*>(this), null, 0);
+	return iterator_t(const_cast<hash_table_data*>(this), null, 0);
 }
 
 
@@ -2421,82 +2421,82 @@ inline ang::collections::iterator<ang::collections::pair<ang::wstring, T>> ang::
 
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>::object_wrapper()
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>::object_wrapper()
 	: _ptr(null)
 {
 
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>::object_wrapper(ang::nullptr_t const&)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>::object_wrapper(ang::nullptr_t const&)
 	: object_wrapper()
 {
 
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>::object_wrapper(ang::collections::map_data<K, T>* ptr)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>::object_wrapper(ang::collections::hash_table_data<K, T>* ptr)
 	: object_wrapper()
 {
 	set(ptr);
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>::object_wrapper(ang::collections::ienum<ang::collections::pair<K, T>> const* store)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>::object_wrapper(ang::collections::ienum<ang::collections::pair<K, T>> const* store)
 	: object_wrapper()
 {
-	set(new collections::map_data<K, T>(store));
+	set(new collections::hash_table_data<K, T>(store));
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>::object_wrapper(ang::initializer_list_t<ang::collections::pair<K, T>> list)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>::object_wrapper(ang::initializer_list_t<ang::collections::pair<K, T>> list)
 {
-	set(new collections::map_data<K, T>(list));
+	set(new collections::hash_table_data<K, T>(list));
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>::object_wrapper(ang::object_wrapper<ang::collections::map_data<K, T>> && other)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>::object_wrapper(ang::object_wrapper<ang::collections::hash_table_data<K, T>> && other)
 {
-	collections::map_data<K, T> * temp = other._ptr;
+	collections::hash_table_data<K, T> * temp = other._ptr;
 	other._ptr = null;
 	_ptr = temp;
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>::object_wrapper(ang::object_wrapper<ang::collections::map_data<K, T>> const& other)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>::object_wrapper(ang::object_wrapper<ang::collections::hash_table_data<K, T>> const& other)
 {
 	set(other.get());
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>::~object_wrapper()
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>::~object_wrapper()
 {
 	clean();
 }
 
 template<typename K, typename T>
-inline void ang::object_wrapper<ang::collections::map_data<K, T>>::clean()
+inline void ang::object_wrapper<ang::collections::hash_table_data<K, T>>::clean()
 {
 	if (_ptr)_ptr->release();
 	_ptr = null;
 }
 
 template<typename K, typename T>
-inline bool ang::object_wrapper<ang::collections::map_data<K, T>>::is_empty()const
+inline bool ang::object_wrapper<ang::collections::hash_table_data<K, T>>::is_empty()const
 {
 	return _ptr == null;
 }
 
 template<typename K, typename T>
-inline ang::collections::map_data<K, T>* ang::object_wrapper<ang::collections::map_data<K, T>>::get(void)const
+inline ang::collections::hash_table_data<K, T>* ang::object_wrapper<ang::collections::hash_table_data<K, T>>::get(void)const
 {
 	return _ptr;
 }
 
 template<typename K, typename T>
-inline void ang::object_wrapper<ang::collections::map_data<K, T>>::set(ang::collections::map_data<K, T>* ptr)
+inline void ang::object_wrapper<ang::collections::hash_table_data<K, T>>::set(ang::collections::hash_table_data<K, T>* ptr)
 {
-	collections::map_data<K, T> * temp = _ptr;
+	collections::hash_table_data<K, T> * temp = _ptr;
 	if (ptr == _ptr) return;
 	_ptr = ptr;
 	if (_ptr)_ptr->add_ref();
@@ -2504,97 +2504,97 @@ inline void ang::object_wrapper<ang::collections::map_data<K, T>>::set(ang::coll
 }
 
 template<typename K, typename T>
-inline ang::collections::map_data<K, T> ** ang::object_wrapper<ang::collections::map_data<K, T>>::addres_of(void)
+inline ang::collections::hash_table_data<K, T> ** ang::object_wrapper<ang::collections::hash_table_data<K, T>>::addres_of(void)
 {
 	return &_ptr;
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>& ang::object_wrapper<ang::collections::map_data<K, T>>::operator = (ang::object_wrapper<ang::collections::map_data<K, T>> && other)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>& ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator = (ang::object_wrapper<ang::collections::hash_table_data<K, T>> && other)
 {
-	ang::collections::map_data<K, T> * temp = other._ptr;
+	ang::collections::hash_table_data<K, T> * temp = other._ptr;
 	other._ptr = null;
 	_ptr = temp;
 	return*this;
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>& ang::object_wrapper<ang::collections::map_data<K, T>>::operator = (ang::object_wrapper<ang::collections::map_data<K, T>> const& other)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>& ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator = (ang::object_wrapper<ang::collections::hash_table_data<K, T>> const& other)
 {
 	set(other._ptr);
 	return*this;
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>& ang::object_wrapper<ang::collections::map_data<K, T>>::operator = (ang::nullptr_t const&)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>& ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator = (ang::nullptr_t const&)
 {
 	clean();
 	return*this;
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>& ang::object_wrapper<ang::collections::map_data<K, T>>::operator = (ang::collections::map_data<K, T>* ptr)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>& ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator = (ang::collections::hash_table_data<K, T>* ptr)
 {
 	set(ptr);
 	return*this;
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>& ang::object_wrapper<ang::collections::map_data<K, T>>::operator = (ang::collections::ienum<ang::collections::pair<K, T>> const* store)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>& ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator = (ang::collections::ienum<ang::collections::pair<K, T>> const* store)
 {
 	if (is_empty())
-		set(new collections::map_data<K, T>(store));
+		set(new collections::hash_table_data<K, T>(store));
 	else
 		_ptr->copy(store);
 	return*this;
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>& ang::object_wrapper<ang::collections::map_data<K, T>>::operator += (ang::collections::pair<K, T> pair)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>& ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator += (ang::collections::pair<K, T> pair)
 {
 	if (is_empty())
-		set(new collections::map_data<K, T>());
+		set(new collections::hash_table_data<K, T>());
 	_ptr->update(ang::move(pair));
 	return*this;
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>::operator ang::object_t()const {
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator ang::object_t()const {
 	return _ptr;
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper_ptr<ang::collections::map_data<K, T>> ang::object_wrapper<ang::collections::map_data<K, T>>::operator & (void)
+inline ang::object_wrapper_ptr<ang::collections::hash_table_data<K, T>> ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator & (void)
 {
 	return this;
 }
 
 template<typename K, typename T>
-inline ang::collections::map_data<K, T> * ang::object_wrapper<ang::collections::map_data<K, T>>::operator -> (void)
+inline ang::collections::hash_table_data<K, T> * ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator -> (void)
 {
 	return get();
 }
 
 template<typename K, typename T>
-inline ang::collections::map_data<K, T> const* ang::object_wrapper<ang::collections::map_data<K, T>>::operator -> (void)const
+inline ang::collections::hash_table_data<K, T> const* ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator -> (void)const
 {
 	return get();
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>::operator ang::collections::map_data<K, T> * (void)
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator ang::collections::hash_table_data<K, T> * (void)
 {
 	return get();
 }
 
 template<typename K, typename T>
-inline ang::object_wrapper<ang::collections::map_data<K, T>>::operator ang::collections::map_data<K, T> const* (void)const
+inline ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator ang::collections::hash_table_data<K, T> const* (void)const
 {
 	return get();
 }
 
 template<typename K, typename T>
-inline T& ang::object_wrapper<ang::collections::map_data<K, T>>::operator [] (K const& key)
+inline T& ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator [] (K const& key)
 {
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = get()->find(key);
@@ -2603,7 +2603,7 @@ inline T& ang::object_wrapper<ang::collections::map_data<K, T>>::operator [] (K 
 }
 
 template<typename K, typename T>
-inline T ang::object_wrapper<ang::collections::map_data<K, T>>::operator [] (K const& key)const
+inline T ang::object_wrapper<ang::collections::hash_table_data<K, T>>::operator [] (K const& key)const
 {
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = get()->find(key);
@@ -2615,82 +2615,82 @@ inline T ang::object_wrapper<ang::collections::map_data<K, T>>::operator [] (K c
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>::object_wrapper()
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::object_wrapper()
 	: _ptr(null)
 {
 
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>::object_wrapper(ang::nullptr_t const&)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::object_wrapper(ang::nullptr_t const&)
 	: object_wrapper()
 {
 
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>::object_wrapper(ang::collections::map_data<ang::string, T>* ptr)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::object_wrapper(ang::collections::hash_table_data<ang::string, T>* ptr)
 	: object_wrapper()
 {
 	set(ptr);
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>::object_wrapper(ang::collections::ienum<ang::collections::pair<ang::string, T>> const* store)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::object_wrapper(ang::collections::ienum<ang::collections::pair<ang::string, T>> const* store)
 	: object_wrapper()
 {
-	set(new collections::map_data<ang::string, T>(store));
+	set(new collections::hash_table_data<ang::string, T>(store));
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>::object_wrapper(ang::initializer_list_t<ang::collections::pair<ang::string, T>> list)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::object_wrapper(ang::initializer_list_t<ang::collections::pair<ang::string, T>> list)
 {
-	set(new collections::map_data<ang::string, T>(list));
+	set(new collections::hash_table_data<ang::string, T>(list));
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>::object_wrapper(ang::object_wrapper<ang::collections::map_data<ang::string, T>> && other)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::object_wrapper(ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>> && other)
 {
-	collections::map_data<ang::string, T> * temp = other._ptr;
+	collections::hash_table_data<ang::string, T> * temp = other._ptr;
 	other._ptr = null;
 	_ptr = temp;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>::object_wrapper(ang::object_wrapper<ang::collections::map_data<ang::string, T>> const& other)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::object_wrapper(ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>> const& other)
 {
 	set(other.get());
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>::~object_wrapper()
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::~object_wrapper()
 {
 	clean();
 }
 
 template<typename T>
-inline void ang::object_wrapper<ang::collections::map_data<ang::string, T>>::clean()
+inline void ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::clean()
 {
 	if (_ptr)_ptr->release();
 	_ptr = null;
 }
 
 template<typename T>
-inline bool ang::object_wrapper<ang::collections::map_data<ang::string, T>>::is_empty()const
+inline bool ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::is_empty()const
 {
 	return _ptr == null;
 }
 
 template<typename T>
-inline ang::collections::map_data<ang::string, T>* ang::object_wrapper<ang::collections::map_data<ang::string, T>>::get(void)const
+inline ang::collections::hash_table_data<ang::string, T>* ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::get(void)const
 {
 	return _ptr;
 }
 
 template<typename T>
-inline void ang::object_wrapper<ang::collections::map_data<ang::string, T>>::set(ang::collections::map_data<ang::string, T>* ptr)
+inline void ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::set(ang::collections::hash_table_data<ang::string, T>* ptr)
 {
-	collections::map_data<ang::string, T> * temp = _ptr;
+	collections::hash_table_data<ang::string, T> * temp = _ptr;
 	if (ptr == _ptr) return;
 	_ptr = ptr;
 	if (_ptr)_ptr->add_ref();
@@ -2698,97 +2698,97 @@ inline void ang::object_wrapper<ang::collections::map_data<ang::string, T>>::set
 }
 
 template<typename T>
-inline ang::collections::map_data<ang::string, T> ** ang::object_wrapper<ang::collections::map_data<ang::string, T>>::addres_of(void)
+inline ang::collections::hash_table_data<ang::string, T> ** ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::addres_of(void)
 {
 	return &_ptr;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>& ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator = (ang::object_wrapper<ang::collections::map_data<ang::string, T>> && other)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>& ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator = (ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>> && other)
 {
-	ang::collections::map_data<ang::string, T> * temp = other._ptr;
+	ang::collections::hash_table_data<ang::string, T> * temp = other._ptr;
 	other._ptr = null;
 	_ptr = temp;
 	return*this;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>& ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator = (ang::object_wrapper<ang::collections::map_data<ang::string, T>> const& other)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>& ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator = (ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>> const& other)
 {
 	set(other._ptr);
 	return*this;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>& ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator = (ang::nullptr_t const&)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>& ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator = (ang::nullptr_t const&)
 {
 	clean();
 	return*this;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>& ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator = (ang::collections::map_data<ang::string, T>* ptr)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>& ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator = (ang::collections::hash_table_data<ang::string, T>* ptr)
 {
 	set(ptr);
 	return*this;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>& ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator = (ang::collections::ienum<ang::collections::pair<ang::string, T>> const* store)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>& ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator = (ang::collections::ienum<ang::collections::pair<ang::string, T>> const* store)
 {
 	if (is_empty())
-		set(new collections::map_data<ang::string, T>(store));
+		set(new collections::hash_table_data<ang::string, T>(store));
 	else
 		_ptr->copy(store);
 	return*this;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>& ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator += (ang::collections::pair<ang::string, T> pair)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>& ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator += (ang::collections::pair<ang::string, T> pair)
 {
 	if (is_empty())
-		set(new collections::map_data<ang::string, T>());
+		set(new collections::hash_table_data<ang::string, T>());
 	_ptr->update(ang::move(pair));
 	return*this;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator ang::object_t()const {
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator ang::object_t()const {
 	return _ptr;
 }
 
 template<typename T>
-inline ang::object_wrapper_ptr<ang::collections::map_data<ang::string, T>> ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator & (void)
+inline ang::object_wrapper_ptr<ang::collections::hash_table_data<ang::string, T>> ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator & (void)
 {
 	return this;
 }
 
 template<typename T>
-inline ang::collections::map_data<ang::string, T> * ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator -> (void)
+inline ang::collections::hash_table_data<ang::string, T> * ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator -> (void)
 {
 	return get();
 }
 
 template<typename T>
-inline ang::collections::map_data<ang::string, T> const* ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator -> (void)const
+inline ang::collections::hash_table_data<ang::string, T> const* ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator -> (void)const
 {
 	return get();
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator ang::collections::map_data<ang::string, T> * (void)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator ang::collections::hash_table_data<ang::string, T> * (void)
 {
 	return get();
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator ang::collections::map_data<ang::string, T> const* (void)const
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator ang::collections::hash_table_data<ang::string, T> const* (void)const
 {
 	return get();
 }
 
 template<typename T>
-inline T& ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator [] (ang::cstr_t key)
+inline T& ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator [] (ang::cstr_t key)
 {
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = get()->find(key);
@@ -2797,7 +2797,7 @@ inline T& ang::object_wrapper<ang::collections::map_data<ang::string, T>>::opera
 }
 
 template<typename T>
-inline T& ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator [] (ang::cwstr_t key)
+inline T& ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator [] (ang::cwstr_t key)
 {
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = get()->find(key);
@@ -2806,7 +2806,7 @@ inline T& ang::object_wrapper<ang::collections::map_data<ang::string, T>>::opera
 }
 
 template<typename T>
-inline T ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator [] (ang::cstr_t key)const
+inline T ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator [] (ang::cstr_t key)const
 {
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = get()->find(key);
@@ -2815,7 +2815,7 @@ inline T ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operat
 }
 
 template<typename T>
-inline T ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operator [] (ang::cwstr_t key)const
+inline T ang::object_wrapper<ang::collections::hash_table_data<ang::string, T>>::operator [] (ang::cwstr_t key)const
 {
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = get()->find(key);
@@ -2827,82 +2827,82 @@ inline T ang::object_wrapper<ang::collections::map_data<ang::string, T>>::operat
 
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::object_wrapper()
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::object_wrapper()
 	: _ptr(null)
 {
 
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::object_wrapper(ang::nullptr_t const&)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::object_wrapper(ang::nullptr_t const&)
 	: object_wrapper()
 {
 
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::object_wrapper(ang::collections::map_data<ang::wstring, T>* ptr)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::object_wrapper(ang::collections::hash_table_data<ang::wstring, T>* ptr)
 	: object_wrapper()
 {
 	set(ptr);
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::object_wrapper(ang::collections::ienum<ang::collections::pair<ang::wstring, T>> const* store)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::object_wrapper(ang::collections::ienum<ang::collections::pair<ang::wstring, T>> const* store)
 	: object_wrapper()
 {
-	set(new collections::map_data<ang::wstring, T>(store));
+	set(new collections::hash_table_data<ang::wstring, T>(store));
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::object_wrapper(ang::initializer_list_t<ang::collections::pair<ang::wstring, T>> list)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::object_wrapper(ang::initializer_list_t<ang::collections::pair<ang::wstring, T>> list)
 {
-	set(new collections::map_data<ang::wstring, T>(list));
+	set(new collections::hash_table_data<ang::wstring, T>(list));
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::object_wrapper(ang::object_wrapper<ang::collections::map_data<ang::wstring, T>> && other)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::object_wrapper(ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>> && other)
 {
-	collections::map_data<ang::wstring, T> * temp = other._ptr;
+	collections::hash_table_data<ang::wstring, T> * temp = other._ptr;
 	other._ptr = null;
 	_ptr = temp;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::object_wrapper(ang::object_wrapper<ang::collections::map_data<ang::wstring, T>> const& other)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::object_wrapper(ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>> const& other)
 {
 	set(other.get());
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::~object_wrapper()
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::~object_wrapper()
 {
 	clean();
 }
 
 template<typename T>
-inline void ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::clean()
+inline void ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::clean()
 {
 	if (_ptr)_ptr->release();
 	_ptr = null;
 }
 
 template<typename T>
-inline bool ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::is_empty()const
+inline bool ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::is_empty()const
 {
 	return _ptr == null;
 }
 
 template<typename T>
-inline ang::collections::map_data<ang::wstring, T>* ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::get(void)const
+inline ang::collections::hash_table_data<ang::wstring, T>* ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::get(void)const
 {
 	return _ptr;
 }
 
 template<typename T>
-inline void ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::set(ang::collections::map_data<ang::wstring, T>* ptr)
+inline void ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::set(ang::collections::hash_table_data<ang::wstring, T>* ptr)
 {
-	collections::map_data<ang::wstring, T> * temp = _ptr;
+	collections::hash_table_data<ang::wstring, T> * temp = _ptr;
 	if (ptr == _ptr) return;
 	_ptr = ptr;
 	if (_ptr)_ptr->add_ref();
@@ -2910,97 +2910,97 @@ inline void ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::se
 }
 
 template<typename T>
-inline ang::collections::map_data<ang::wstring, T> ** ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::addres_of(void)
+inline ang::collections::hash_table_data<ang::wstring, T> ** ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::addres_of(void)
 {
 	return &_ptr;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>& ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator = (ang::object_wrapper<ang::collections::map_data<ang::wstring, T>> && other)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>& ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator = (ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>> && other)
 {
-	ang::collections::map_data<ang::wstring, T> * temp = other._ptr;
+	ang::collections::hash_table_data<ang::wstring, T> * temp = other._ptr;
 	other._ptr = null;
 	_ptr = temp;
 	return*this;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>& ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator = (ang::object_wrapper<ang::collections::map_data<ang::wstring, T>> const& other)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>& ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator = (ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>> const& other)
 {
 	set(other._ptr);
 	return*this;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>& ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator = (ang::nullptr_t const&)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>& ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator = (ang::nullptr_t const&)
 {
 	clean();
 	return*this;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>& ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator = (ang::collections::map_data<ang::wstring, T>* ptr)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>& ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator = (ang::collections::hash_table_data<ang::wstring, T>* ptr)
 {
 	set(ptr);
 	return*this;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>& ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator = (ang::collections::ienum<ang::collections::pair<ang::wstring, T>> const* store)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>& ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator = (ang::collections::ienum<ang::collections::pair<ang::wstring, T>> const* store)
 {
 	if (is_empty())
-		set(new collections::map_data<ang::wstring, T>(store));
+		set(new collections::hash_table_data<ang::wstring, T>(store));
 	else
 		_ptr->copy(store);
 	return*this;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>& ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator += (ang::collections::pair<ang::wstring, T> pair)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>& ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator += (ang::collections::pair<ang::wstring, T> pair)
 {
 	if (is_empty())
-		set(new collections::map_data<ang::wstring, T>());
+		set(new collections::hash_table_data<ang::wstring, T>());
 	_ptr->update(ang::move(pair));
 	return*this;
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator ang::object_t()const {
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator ang::object_t()const {
 	return _ptr;
 }
 
 template<typename T>
-inline ang::object_wrapper_ptr<ang::collections::map_data<ang::wstring, T>> ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator & (void)
+inline ang::object_wrapper_ptr<ang::collections::hash_table_data<ang::wstring, T>> ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator & (void)
 {
 	return this;
 }
 
 template<typename T>
-inline ang::collections::map_data<ang::wstring, T> * ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator -> (void)
+inline ang::collections::hash_table_data<ang::wstring, T> * ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator -> (void)
 {
 	return get();
 }
 
 template<typename T>
-inline ang::collections::map_data<ang::wstring, T> const* ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator -> (void)const
+inline ang::collections::hash_table_data<ang::wstring, T> const* ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator -> (void)const
 {
 	return get();
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator ang::collections::map_data<ang::wstring, T> * (void)
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator ang::collections::hash_table_data<ang::wstring, T> * (void)
 {
 	return get();
 }
 
 template<typename T>
-inline ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator ang::collections::map_data<ang::wstring, T> const* (void)const
+inline ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator ang::collections::hash_table_data<ang::wstring, T> const* (void)const
 {
 	return get();
 }
 
 template<typename T>
-inline T& ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator [] (ang::cstr_t key)
+inline T& ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator [] (ang::cstr_t key)
 {
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = get()->find(key);
@@ -3009,7 +3009,7 @@ inline T& ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::oper
 }
 
 template<typename T>
-inline T& ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator [] (ang::cwstr_t key)
+inline T& ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator [] (ang::cwstr_t key)
 {
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = get()->find(key);
@@ -3018,7 +3018,7 @@ inline T& ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::oper
 }
 
 template<typename T>
-inline T ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator [] (ang::cstr_t key)const
+inline T ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator [] (ang::cstr_t key)const
 {
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = get()->find(key);
@@ -3027,7 +3027,7 @@ inline T ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::opera
 }
 
 template<typename T>
-inline T ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::operator [] (ang::cwstr_t key)const
+inline T ang::object_wrapper<ang::collections::hash_table_data<ang::wstring, T>>::operator [] (ang::cwstr_t key)const
 {
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = get()->find(key);
@@ -3037,4 +3037,4 @@ inline T ang::object_wrapper<ang::collections::map_data<ang::wstring, T>>::opera
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-#endif//__ANG_MAP_HPP__
+#endif//__ANG_HASH_TABLE_HPP__

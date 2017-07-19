@@ -1,7 +1,7 @@
-#ifndef __ANG_MAP_H__
+#ifndef __ANG_HASH_TABLE_H__
 #error ...
-#elif !defined __ANG_MAP_SPEZIALIZATION_H__
-#define __ANG_MAP_SPEZIALIZATION_H__
+#elif !defined __ANG_HASH_TABLE_SPEZIALIZATION_H__
+#define __ANG_HASH_TABLE_SPEZIALIZATION_H__
 
 namespace ang
 {
@@ -9,7 +9,7 @@ namespace ang
 	namespace collections
 	{
 		template<typename T>
-		class map_data<string, T> final
+		class hash_table_data<string, T> final
 			: public object
 			, public imap<string, T>
 			, public memory::iallocator_client
@@ -18,36 +18,36 @@ namespace ang
 			typedef T							value_t;
 			typedef string						key_t;
 			typedef pair<string, T>				pair_t;
-			typedef map_data<string, T>			self_t;
+			typedef hash_table_data<string, T>			self_t;
 			typedef icollection<pair<string, T>>icollection_t;
 			typedef ienum<pair<string, T>>		ienum_t;
 			typedef imap<string, T>				imap_t;
 			typedef iterator<pair<string, T >>	iterator_t;
 
 		protected:
-			typedef map_node<string, T> node_t;
-			typedef map_node<string, T> *node_ptr_t;
+			typedef hash_table_node<string, T> node_t;
+			typedef hash_table_node<string, T> *node_ptr_t;
 			uint _size;
 			uint _capacity;
 			node_ptr_t* _table;
 			memory::iallocator* allocator;
 
 		public:
-			inline map_data();
-			inline map_data(std::initializer_list<pair<string, T>> list);
-			inline map_data(const std::nullptr_t&);
-			inline map_data(map_data&& ar);
-			inline map_data(const map_data& ar);
-			inline map_data(const map_data* ar);
-			inline map_data(const ienum_t* store);
+			inline hash_table_data();
+			inline hash_table_data(std::initializer_list<pair<string, T>> list);
+			inline hash_table_data(const std::nullptr_t&);
+			inline hash_table_data(hash_table_data&& ar);
+			inline hash_table_data(const hash_table_data& ar);
+			inline hash_table_data(const hash_table_data* ar);
+			inline hash_table_data(const ienum_t* store);
 
 		private:
-			virtual ~map_data();
+			virtual ~hash_table_data();
 
 		public: //methods
 			inline bool is_empty()const;
 			inline void clean();
-			inline bool move(map_data&);
+			inline bool move(hash_table_data&);
 
 		public: //iallocator_client overrides
 			inline void set_allocator(memory::iallocator*)override;
@@ -99,8 +99,8 @@ namespace ang
 			inline bool query_object(type_name_t, unknown_ptr_t) override;
 
 		public: //Operators
-			inline bool operator == (const map_data& ar);
-			inline bool operator != (const map_data& ar);
+			inline bool operator == (const hash_table_data& ar);
+			inline bool operator != (const hash_table_data& ar);
 			inline explicit operator T*()const;
 
 		protected: //Memory Operations
@@ -115,7 +115,7 @@ namespace ang
 
 
 		template<typename T>
-		class map_data<wstring , T> final
+		class hash_table_data<wstring , T> final
 			: public object
 			, public imap<wstring, T>
 			, public memory::iallocator_client
@@ -124,36 +124,36 @@ namespace ang
 			typedef T							value_t;
 			typedef wstring						key_t;
 			typedef pair<wstring, T>				pair_t;
-			typedef map_data<wstring, T>			self_t;
+			typedef hash_table_data<wstring, T>			self_t;
 			typedef icollection<pair<wstring, T>>icollection_t;
 			typedef ienum<pair<wstring, T>>		ienum_t;
 			typedef imap<wstring, T>				imap_t;
 			typedef iterator<pair<wstring, T >>	iterator_t;
 
 		protected:
-			typedef map_node<wstring, T> node_t;
-			typedef map_node<wstring, T> *node_ptr_t;
+			typedef hash_table_node<wstring, T> node_t;
+			typedef hash_table_node<wstring, T> *node_ptr_t;
 			uint _size;
 			uint _capacity;
 			node_ptr_t* _table;
 			memory::iallocator* allocator;
 
 		public:
-			inline map_data();
-			inline map_data(std::initializer_list<pair<wstring, T>> list);
-			inline map_data(const std::nullptr_t&);
-			inline map_data(map_data&& ar);
-			inline map_data(const map_data& ar);
-			inline map_data(const map_data* ar);
-			inline map_data(const ienum_t* store);
+			inline hash_table_data();
+			inline hash_table_data(std::initializer_list<pair<wstring, T>> list);
+			inline hash_table_data(const std::nullptr_t&);
+			inline hash_table_data(hash_table_data&& ar);
+			inline hash_table_data(const hash_table_data& ar);
+			inline hash_table_data(const hash_table_data* ar);
+			inline hash_table_data(const ienum_t* store);
 
 		private:
-			virtual ~map_data();
+			virtual ~hash_table_data();
 
 		public: //methods
 			inline bool is_empty()const;
 			inline void clean();
-			inline bool move(map_data&);
+			inline bool move(hash_table_data&);
 
 		public: //iallocator_client overrides
 			inline void set_allocator(memory::iallocator*)override;
@@ -205,8 +205,8 @@ namespace ang
 			inline bool query_object(type_name_t, unknown_ptr_t) override;
 
 		public: //Operators
-			inline bool operator == (const map_data& ar);
-			inline bool operator != (const map_data& ar);
+			inline bool operator == (const hash_table_data& ar);
+			inline bool operator != (const hash_table_data& ar);
 			inline explicit operator T*()const;
 
 		protected: //Memory Operations
@@ -220,47 +220,47 @@ namespace ang
 	}
 
 	template<typename T>
-	class object_wrapper<collections::map_data<string, T>>
+	class object_wrapper<collections::hash_table_data<string, T>>
 	{
 	public:
-		typedef collections::map_data<string, T> type;
+		typedef collections::hash_table_data<string, T> type;
 
 	private:
-		collections::map_data<string, T>* _ptr;
+		collections::hash_table_data<string, T>* _ptr;
 
 	public:
 		object_wrapper();
 		object_wrapper(std::nullptr_t const&);
-		object_wrapper(collections::map_data<string, T>*);
+		object_wrapper(collections::hash_table_data<string, T>*);
 		object_wrapper(collections::ienum<collections::pair<string, T>> const* store);
 		object_wrapper(std::initializer_list<collections::pair<string, T>>);
-		object_wrapper(object_wrapper<collections::map_data<string, T>> &&);
-		object_wrapper(object_wrapper<collections::map_data<string, T>> const&);
+		object_wrapper(object_wrapper<collections::hash_table_data<string, T>> &&);
+		object_wrapper(object_wrapper<collections::hash_table_data<string, T>> const&);
 		~object_wrapper();
 
 	public:
 		void clean();
 		bool is_empty()const;
-		collections::map_data<string, T>* get(void)const;
-		void set(collections::map_data<string, T>*);
-		collections::map_data<string, T> ** addres_of(void);
+		collections::hash_table_data<string, T>* get(void)const;
+		void set(collections::hash_table_data<string, T>*);
+		collections::hash_table_data<string, T> ** addres_of(void);
 
 	public:
-		object_wrapper& operator = (object_wrapper<collections::map_data<string, T>> &&);
-		object_wrapper& operator = (object_wrapper<collections::map_data<string, T>> const&);
+		object_wrapper& operator = (object_wrapper<collections::hash_table_data<string, T>> &&);
+		object_wrapper& operator = (object_wrapper<collections::hash_table_data<string, T>> const&);
 		object_wrapper& operator = (std::nullptr_t const&);
-		object_wrapper& operator = (collections::map_data<string, T>*);
+		object_wrapper& operator = (collections::hash_table_data<string, T>*);
 		object_wrapper& operator = (collections::ienum<collections::pair<string, T>> const* store);
 
 		object_wrapper& operator += (collections::pair<string, T>);
 
 		inline operator objptr()const;
 
-		object_wrapper_ptr<collections::map_data<string, T>> operator & (void);
-		collections::map_data<string, T> * operator -> (void);
-		collections::map_data<string, T> const* operator -> (void)const;
-		explicit operator collections::map_data<string, T> * (void);
-		explicit operator collections::map_data<string, T> const* (void)const;
+		object_wrapper_ptr<collections::hash_table_data<string, T>> operator & (void);
+		collections::hash_table_data<string, T> * operator -> (void);
+		collections::hash_table_data<string, T> const* operator -> (void)const;
+		explicit operator collections::hash_table_data<string, T> * (void);
+		explicit operator collections::hash_table_data<string, T> const* (void)const;
 
 		T& operator [] (cstr_t);
 		T& operator [] (cwstr_t);
@@ -269,47 +269,47 @@ namespace ang
 	};
 
 	template<typename T>
-	class object_wrapper<collections::map_data<wstring, T>>
+	class object_wrapper<collections::hash_table_data<wstring, T>>
 	{
 	public:
-		typedef collections::map_data<wstring, T> type;
+		typedef collections::hash_table_data<wstring, T> type;
 
 	private:
-		collections::map_data<wstring, T>* _ptr;
+		collections::hash_table_data<wstring, T>* _ptr;
 
 	public:
 		object_wrapper();
 		object_wrapper(std::nullptr_t const&);
-		object_wrapper(collections::map_data<wstring, T>*);
+		object_wrapper(collections::hash_table_data<wstring, T>*);
 		object_wrapper(collections::ienum<collections::pair<wstring, T>> const* store);
 		object_wrapper(std::initializer_list<collections::pair<wstring, T>>);
-		object_wrapper(object_wrapper<collections::map_data<wstring, T>> &&);
-		object_wrapper(object_wrapper<collections::map_data<wstring, T>> const&);
+		object_wrapper(object_wrapper<collections::hash_table_data<wstring, T>> &&);
+		object_wrapper(object_wrapper<collections::hash_table_data<wstring, T>> const&);
 		~object_wrapper();
 
 	public:
 		void clean();
 		bool is_empty()const;
-		collections::map_data<wstring, T>* get(void)const;
-		void set(collections::map_data<wstring, T>*);
-		collections::map_data<wstring, T> ** addres_of(void);
+		collections::hash_table_data<wstring, T>* get(void)const;
+		void set(collections::hash_table_data<wstring, T>*);
+		collections::hash_table_data<wstring, T> ** addres_of(void);
 
 	public:
-		object_wrapper& operator = (object_wrapper<collections::map_data<wstring, T>> &&);
-		object_wrapper& operator = (object_wrapper<collections::map_data<wstring, T>> const&);
+		object_wrapper& operator = (object_wrapper<collections::hash_table_data<wstring, T>> &&);
+		object_wrapper& operator = (object_wrapper<collections::hash_table_data<wstring, T>> const&);
 		object_wrapper& operator = (std::nullptr_t const&);
-		object_wrapper& operator = (collections::map_data<wstring, T>*);
+		object_wrapper& operator = (collections::hash_table_data<wstring, T>*);
 		object_wrapper& operator = (collections::ienum<collections::pair<wstring, T>> const* store);
 
 		object_wrapper& operator += (collections::pair<wstring, T>);
 
 		inline operator objptr()const;
 
-		object_wrapper_ptr<collections::map_data<wstring, T>> operator & (void);
-		collections::map_data<wstring, T> * operator -> (void);
-		collections::map_data<wstring, T> const* operator -> (void)const;
-		explicit operator collections::map_data<wstring, T> * (void);
-		explicit operator collections::map_data<wstring, T> const* (void)const;
+		object_wrapper_ptr<collections::hash_table_data<wstring, T>> operator & (void);
+		collections::hash_table_data<wstring, T> * operator -> (void);
+		collections::hash_table_data<wstring, T> const* operator -> (void)const;
+		explicit operator collections::hash_table_data<wstring, T> * (void);
+		explicit operator collections::hash_table_data<wstring, T> const* (void)const;
 
 		T& operator [] (cstr_t);
 		T& operator [] (cwstr_t);
