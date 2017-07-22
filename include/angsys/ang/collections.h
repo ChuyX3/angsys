@@ -13,13 +13,6 @@ namespace ang
 	namespace collections
 	{
 		typedef pointer position_t;
-
-		//ANG_BEGIN_ENUM(LINK, iteration_method, byte_t)
-		//	by_levels,
-		//	preorder,
-		//	inorder,
-		//	postorder,
-		//ANG_END_ENUM(iteration_method);
 	
 		template<class T> class iterator final
 		{
@@ -331,6 +324,13 @@ namespace ang
 
 		namespace algorithms
 		{
+			ANG_BEGIN_ENUM(LINK, iteration_method, byte)
+				by_levels,
+				preorder,
+				inorder,
+				postorder,
+			ANG_END_ENUM(iteration_method);
+
 			template<class _node>
 			class iteration_algorithm
 			{
@@ -353,6 +353,16 @@ namespace ang
 					prev = algorithm.prev;
 					most_left = algorithm.most_left;
 					most_right = algorithm.most_right;
+				}
+
+				iteration_algorithm& operator = (iteration_algorithm const& algorithm) {
+					begin = algorithm.begin;
+					end = algorithm.end;
+					next = algorithm.next;
+					prev = algorithm.prev;
+					most_left = algorithm.most_left;
+					most_right = algorithm.most_right;
+					return*this;
 				}
 
 			protected:

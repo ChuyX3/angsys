@@ -225,6 +225,15 @@ inline bool ang::collections::binary_tree_data<K, T>::move(binary_tree_data& oth
 	return true;
 }
 
+template<typename K, typename T>
+inline void ang::collections::binary_tree_data<K, T>::iteration_method(ang::collections::algorithms::iteration_method_t method)
+{
+	switch (method)
+	{
+	case algorithms::iteration_method::inorder:
+		algorithm = algorithms::binary_tree_inorder_iteration();
+	}
+}
 
 template<typename K, typename T>
 inline void ang::collections::binary_tree_data<K, T>::set_allocator(memory::iallocator* alloc)

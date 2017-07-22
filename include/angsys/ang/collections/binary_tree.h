@@ -149,6 +149,48 @@ namespace ang
 				inline static binary_tree_node<K, T>* most_left(binary_tree_node<K, T>*, index&);
 				inline static binary_tree_node<K, T>* most_right(binary_tree_node<K, T>*, index&);
 			};
+
+			template<typename K, typename T>
+			class binary_tree_preorder_iteration : public iteration_algorithm<binary_tree_node<K, T>>
+			{
+			public:
+				binary_tree_preorder_iteration() {
+					iteration_algorithm<binary_tree_node<K, T>>::begin = &begin;
+					iteration_algorithm<binary_tree_node<K, T>>::end = &end;
+					iteration_algorithm<binary_tree_node<K, T>>::next = &next;
+					iteration_algorithm<binary_tree_node<K, T>>::prev = &prev;
+					iteration_algorithm<binary_tree_node<K, T>>::most_left = &most_left;
+					iteration_algorithm<binary_tree_node<K, T>>::most_right = &most_right;
+				}
+
+				inline static binary_tree_node<K, T>* begin(binary_tree_node<K, T>*, index&);
+				inline static binary_tree_node<K, T>* end(binary_tree_node<K, T>*, index&);
+				inline static binary_tree_node<K, T>* next(binary_tree_node<K, T>*, index&);
+				inline static binary_tree_node<K, T>* prev(binary_tree_node<K, T>*, index&);
+				inline static binary_tree_node<K, T>* most_left(binary_tree_node<K, T>*, index&);
+				inline static binary_tree_node<K, T>* most_right(binary_tree_node<K, T>*, index&);
+			};
+
+			template<typename K, typename T>
+			class binary_tree_postorder_iteration : public iteration_algorithm<binary_tree_node<K, T>>
+			{
+			public:
+				binary_tree_postorder_iteration() {
+					iteration_algorithm<binary_tree_node<K, T>>::begin = &begin;
+					iteration_algorithm<binary_tree_node<K, T>>::end = &end;
+					iteration_algorithm<binary_tree_node<K, T>>::next = &next;
+					iteration_algorithm<binary_tree_node<K, T>>::prev = &prev;
+					iteration_algorithm<binary_tree_node<K, T>>::most_left = &most_left;
+					iteration_algorithm<binary_tree_node<K, T>>::most_right = &most_right;
+				}
+
+				inline static binary_tree_node<K, T>* begin(binary_tree_node<K, T>*, index&);
+				inline static binary_tree_node<K, T>* end(binary_tree_node<K, T>*, index&);
+				inline static binary_tree_node<K, T>* next(binary_tree_node<K, T>*, index&);
+				inline static binary_tree_node<K, T>* prev(binary_tree_node<K, T>*, index&);
+				inline static binary_tree_node<K, T>* most_left(binary_tree_node<K, T>*, index&);
+				inline static binary_tree_node<K, T>* most_right(binary_tree_node<K, T>*, index&);
+			};
 		}
 
 
@@ -196,6 +238,7 @@ namespace ang
 			inline bool is_empty()const;
 			inline void clean();
 			inline bool move(binary_tree_data&);
+			inline void iteration_method(algorithms::iteration_method_t);
 
 		public: //iallocator_client overrides
 			inline void set_allocator(memory::iallocator*)override;
