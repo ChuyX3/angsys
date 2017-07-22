@@ -320,7 +320,7 @@ namespace ang
 				void client_to_screen(foundation::rect<float>&);
 				void position(foundation::point<float>);
 				void size(foundation::size<float>);
-
+				void redraw();
 				void show(showing_flag_t flag);
 				void update_wnd()const;
 

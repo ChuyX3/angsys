@@ -638,6 +638,11 @@ void window::size(foundation::size<float> s)
 		::SetWindowPos(handle, NULL, 0, 0, (int)s.width, (int)s.height, SWP_NOACTIVATE | SWP_NOMOVE);
 }
 
+void window::redraw()
+{
+	InvalidateRect((HWND)get_core_view_handle(), NULL, FALSE);
+}
+
 //Message handler
 
 LRESULT WINAPI window_procedure(HWND hWnd, UINT m, WPARAM wprm, LPARAM lprm)
