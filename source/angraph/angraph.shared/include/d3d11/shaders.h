@@ -95,9 +95,9 @@ namespace ang
 				core::async::mutex_t main_mutex;
 				d3d11_driver_t _driver;
 				core::files::ifile_system_t _fs;
-				collections::map<string, wstring> _source_map;
-				collections::map<string, d3d11_shaders_t> _shaders;
-				collections::map<string, d3d11_effect_t> _effects;
+				collections::unordered_map<string, wstring> _source_map;
+				collections::unordered_map<string, d3d11_shaders_t> _shaders;
+				collections::unordered_map<string, d3d11_effect_t> _effects;
 
 			public:
 				d3d11_effect_library(d3d11_driver_t parent);

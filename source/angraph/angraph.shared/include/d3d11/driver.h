@@ -17,8 +17,6 @@ namespace ang
 			
 			class d3d11_texture;
 
-			
-
 			typedef object_wrapper<d3d11_driver> d3d11_driver_t;
 			typedef object_wrapper<d3d11_surface> d3d11_surface_t;
 			typedef object_wrapper<d3d11_frame_buffer> d3d11_frame_buffer_t;
@@ -141,6 +139,7 @@ namespace ang
 				com_wrapper<ID3D11Device2> d3d_device;
 				com_wrapper<ID3D11DeviceContext2> d3d_context;
 				com_wrapper<ID3D11BlendState> d3d_blend_state;
+
 				d3d11_frame_buffer_t _current_frame_buffer;
 				d3d11_shaders_t _current_shaders;	
 				primitive_t _primitive;
@@ -194,7 +193,8 @@ namespace ang
 
 			public: //intenal
 				inline ID3D11Device2* D3D11Device()const { return d3d_device.get(); }
-				inline safe_thread_wrapper<ID3D11DeviceContext2> D3D11Context()const { return{ d3d_context.get(), main_mutex }; }
+				inline ID3D11DeviceContext2* D3D11Context()const { return d3d_context.get(); }
+				//	inline safe_thread_wrapper<ID3D11DeviceContext2> D3D11Context()const { return{ d3d_context.get(), main_mutex }; }
 				inline IDXGIFactory2* DXGIFactory()const { return dxgi_factory.get(); }
 				inline d3d11_frame_buffer_t current_frame_buffer()const { return _current_frame_buffer.get(); }
 

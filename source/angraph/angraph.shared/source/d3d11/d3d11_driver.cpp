@@ -123,22 +123,19 @@ bool d3d11_driver::init_driver()
 	{
 		return false;
 	}
-
+	
+	hr = d3d_device->QueryInterface(__uuidof(IDXGIDevice3), reinterpret_cast<void**>(dxgiDevice.addres_of()));
+	if (SUCCEEDED(hr))
 	{
-		
-		hr = d3d_device->QueryInterface(__uuidof(IDXGIDevice3), reinterpret_cast<void**>(dxgiDevice.addres_of()));
+		IDXGIAdapter* adapter = nullptr;
+		hr = dxgiDevice->GetAdapter(&adapter);
 		if (SUCCEEDED(hr))
 		{
-			IDXGIAdapter* adapter = nullptr;
-			hr = dxgiDevice->GetAdapter(&adapter);
-			if (SUCCEEDED(hr))
-			{
-				hr = adapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(dxgi_factory.addres_of()));
-				adapter->Release();
-			}
-			dxgiDevice->Release();
+			hr = adapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(dxgi_factory.addres_of()));
+			adapter->Release();
 		}
 	}
+	
 	if (FAILED(hr))
 	{
 		close_driver();
@@ -174,15 +171,6 @@ bool d3d11_driver::init_driver()
 
 	d3d_device->CreateBlendState(&bl, &d3d_blend_state);
 	//d3d_context->OMSetBlendState(d3d_blend_state, NULL, -1);
-
-
-	/*com_wrapper<ID2D1Factory2> d2d_factory;
-	com_wrapper<ID2D1Device1> d2d_device;
-	com_wrapper<ID2D1DeviceContext1> d2d_context;
-	com_wrapper<ID2D1Bitmap1> d2d_target_bitmap;
-	com_wrapper<IDWriteFactory2> dwrite_factory;
-	com_wrapper<IWICImagingFactory> wic_factory;
-	D2D1::Matrix3x2F orientation_transform2D;*/
 
 	D2D1_FACTORY_OPTIONS options;
 	ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));

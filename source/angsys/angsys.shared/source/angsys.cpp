@@ -307,6 +307,8 @@ extern "C" void ang_debug_output_error(const char* format, ...)
 #elif defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
 #if defined _DEBUG || defined _DEVELOPPER
 	ang_library_initializer::instance()->logger.print(debug::log_level::error, "%s %s\n", logger, buffer);
+#else
+	printf("%s %s\n", logger, buffer);
 #endif
 #else
 	printf("%s %s\n", logger, buffer);

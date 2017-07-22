@@ -212,9 +212,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\map.h">
       <Filter>header files\angsys\ang\collections</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\map_specialization.h">
-      <Filter>header files\angsys\ang\collections</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\list.h">
       <Filter>header files\angsys\ang\collections</Filter>
     </ClInclude>

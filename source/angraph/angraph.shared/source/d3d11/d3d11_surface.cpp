@@ -81,12 +81,18 @@ bool d3d11_surface::create(platform::icore_view_t view)
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.BufferCount = 1;
 
+	DXGI_SWAP_CHAIN_FULLSCREEN_DESC fsd;
+	ZeroMemory(&fsd, sizeof(fsd));
+	fsd.RefreshRate = { 60,1 };
+	fsd.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_PROGRESSIVE;
+	fsd.Scaling = DXGI_MODE_SCALING_CENTERED;
+	fsd.Windowed = TRUE;
 	hr = driver->DXGIFactory()->CreateSwapChainForHwnd
 	(
 		driver->D3D11Device(),
 		(HWND)view->get_core_view_handle(),
 		&sd,
-		nullptr,
+		&fsd,
 		nullptr,
 		&dxgi_swap_chain
 	);
@@ -94,7 +100,7 @@ bool d3d11_surface::create(platform::icore_view_t view)
 	platform::icore_context_t context = view->get_core_context();
 	context->bind_graphic_native_surface(dxgi_swap_chain.get());
 
-	driver->DXGIFactory()->MakeWindowAssociation((HWND)view->get_core_view_handle(), DXGI_MWA_NO_ALT_ENTER);
+//	driver->DXGIFactory()->MakeWindowAssociation((HWND)view->get_core_view_handle(), DXGI_MWA_NO_ALT_ENTER);
 
 	d3d_frame_buffer = new d3d11_frame_buffer(driver.get());
 	d3d_frame_buffer->create(this);

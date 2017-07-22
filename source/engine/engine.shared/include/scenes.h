@@ -144,7 +144,7 @@ namespace ang
 				camera_t _camera;
 				collections::vector<light_info> _lights;
 				collections::vector<scene_object_t> _objects;
-				collections::map<string, wstring> _source_map;
+				collections::unordered_map<string, wstring> _source_map;
 				core::async::mutex_t main_mutex;
 				foundation::size<float> _current_size;
 
