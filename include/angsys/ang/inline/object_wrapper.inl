@@ -289,6 +289,18 @@ inline ang::object_wrapper<ang::value_wrapper<T>>::operator T const& (void)const
 	return _ptr->get();
 }
 
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::operator T* (void)
+{
+	return &_ptr->get();
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::operator T const* (void)const
+{
+	return &_ptr->get();
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 

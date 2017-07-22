@@ -460,6 +460,8 @@ namespace ang
 		T const* operator -> (void)const;
 		explicit operator T& (void);
 		explicit operator T const& (void)const;
+		operator T* (void);
+		operator T const* (void)const;
 		operator type * (void);
 		operator type const* (void)const;
 
