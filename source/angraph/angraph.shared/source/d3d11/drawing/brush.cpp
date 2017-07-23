@@ -148,11 +148,10 @@ L"	float4 additive_color;\n"
 L"	float4 diffuse_color;\n"
 L"}\n"
 L"cbuffer gradient_info : register(b1) {\n"
-L"	int gradients_count : packoffset(c0.x);\n"
-L"	struct {\n"
-L"		float4 color;\n"
-L"		float4 position;\n"
-L"	} gradients[10] : packoffset(c1);\n"
+L"	float2 gradient_start_point : packoffset(c0.x);\n"
+L"	float2 gradient_end_point : packoffset(c0.z);\n"
+L"	int gradient_colors_count : packoffset(c1.x);\n"
+L"	float4 color_factor[10] : packoffset(c2);\n"
 L"}\n"
 L"float calc_factor(float2 A, float2 B, float2 C)\n"
 L"{\n"
@@ -177,10 +176,15 @@ L"		return D.x < A.x ? -factor : factor;\n"
 L"	}\n"
 L"}\n"
 L"float4 main(float4 position : SV_Position, float2 screencoord : TEXCOORD9) : SV_Target {\n"
-L"	 float3 diffuse = diffuse_color.rgb;\n"
-L"	 float factor = calc_factor(gradients[0].position.xy, gradients[1].position.xy, screencoord);\n"
-L"	 diffuse += lerp(gradients[0].color.rgb, gradients[1].color.rgb, factor);\n"
-L"	 return float4(diffuse + additive_color.rgb * additive_color.a, diffuse_color.a);\n"
+L"	float3 diffuse = diffuse_color.rgb;\n"
+L"	float factor = calc_factor(gradient_start_point, gradient_end_point, screencoord);\n"
+L"	factor = max(min(factor, 1), 0);\n"
+L"	for(int i = 1; i < gradient_colors_count; ++i) {\n"
+L"		if(color_factor[i - 1].a <= factor && factor <= color_factor[i].a) { \n"
+L"			diffuse += lerp(color_factor[i - 1].rgb, color_factor[i].rgb, (factor - color_factor[i - 1].a) / (color_factor[i].a - color_factor[i - 1].a));"
+L"			break; } \n"
+L"	}\n"
+L"	return float4(diffuse + additive_color.rgb * additive_color.a, diffuse_color.a);\n"
 L"}\n";
 
 d3d11_linear_gradient_brush::d3d11_linear_gradient_brush()
@@ -193,9 +197,11 @@ d3d11_linear_gradient_brush::~d3d11_linear_gradient_brush()
 
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::d3d11::d3d11_linear_gradient_brush, d3d11_brush);
 
-bool d3d11_linear_gradient_brush::create(d3d11_draw_context_t context, static_array<drawing::gradient_point> gradients)
+bool d3d11_linear_gradient_brush::create(d3d11_draw_context_t context, drawing::gradient_info gradients)
 {
-	_gradients = new collections::array_buffer<drawing::gradient_point>(gradients.size(), gradients.data());
+	_start_point = gradients.start_point;
+	_end_point = gradients.end_point;
+	_gradients = new collections::array_buffer<drawing::gradient_info::stop_color_info_t>(gradients.stop_colors.size(), gradients.stop_colors.data());
 	_technique = context->effect_library->find_technique("linear_gradient_fx"_s);
 	if (_technique.is_empty())
 		_technique = context->effect_library->load_technique(create_tecnique_template(L"linear_gradient_fx"_s, _linear_gradient_vertex_shader, _linear_gradient_pixel_shader));
@@ -215,14 +221,17 @@ void d3d11_linear_gradient_brush::draw(d3d11_driver_t driver, maths::matrix4 con
 	_technique->unmap_ps_uniform(driver.get(), colors);
 
 	auto gradient_info = _technique->map_ps_uniform(driver.get(), 1);
-	gradient_info[0].cast<int>() = _gradients->counter();
-	auto gradients = gradient_info[1].cast<static_array<graphics::reflect::variable>>();
+	auto pos = maths::float4{ _start_point.x,_start_point.y,0,1 } *tranform;
+	gradient_info[0].cast<maths::float2>() = { pos.get<0>(), pos.get<1>() };
+	pos = maths::float4{ _end_point.x,_end_point.y,0,1 } *tranform;
+	gradient_info[1].cast<maths::float2>() = { pos.get<0>(), pos.get<1>() };
+
+	gradient_info[2].cast<int>() = _gradients->counter();
+	auto gradients = gradient_info[3].cast<static_array<graphics::reflect::variable>>();
 	for (index i = 0; i <_gradients->counter(); ++i)
 	{
-		drawing::gradient_point& gradient = _gradients[i];
-		gradients[i][0].cast<maths::float4>() = color_to_vector(gradient.color);
-		auto pos = maths::float4{ gradient.position.x,gradient.position.y,0,1 } * tranform;
-		gradients[i][1].cast<maths::float4>() = pos;
+		drawing::gradient_info::stop_color_info_t& gradient = _gradients[i];
+		gradients[i].cast<maths::float4>() = color_to_vector(gradient.stop_color, gradient.stop_factor);
 	}
 	_technique->unmap_ps_uniform(driver.get(), gradient_info);
 

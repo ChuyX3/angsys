@@ -116,7 +116,7 @@ drawing::ibrush_t d3d11_draw_context::create_solid_brush(color_t color)
 	return brush.get();
 }
 
-drawing::ibrush_t d3d11_draw_context::create_linear_gradient_brush(static_array<drawing::gradient_point> gradients)
+drawing::ibrush_t d3d11_draw_context::create_linear_gradient_brush(drawing::gradient_info_t gradients)
 {
 	d3d11_linear_gradient_brush_t brush = new d3d11_linear_gradient_brush();
 	if (!brush->create(this, gradients))

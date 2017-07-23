@@ -36,6 +36,18 @@ void engine::init()
 	scene = new graphics::scenes::scene();
 	scene->load(driver.get(), effect_library, texture_loader, doc->xml_root().get());
 	camera = scene->camera();
+
+	graphics::drawing::gradient_info::stop_color_info_t stop_colors[] = {
+		{ 0, graphics::colors::yellow },
+		{ 0.8f, graphics::colors::antique_white },
+		{ 1, graphics::colors::antique_white },
+	};
+
+	solid_brush = draw_context->create_linear_gradient_brush({
+		{ 0,1 },
+		{ 0,-1 },
+		stop_colors
+	});
 }
 
 void engine::update(core::time::timer const& timer)
@@ -47,13 +59,20 @@ void engine::update(core::time::timer const& timer)
 
 void engine::draw()
 {
-	scene->draw(driver.get(), surface->frame_buffer());
+	auto frame_buffer = surface->frame_buffer();
+	auto size = frame_buffer->dimentions();
+	scene->draw(driver.get(), frame_buffer);
+
+	draw_context->begin_draw(frame_buffer);
+	draw_context->draw_rect(solid_brush, { graphics::point<float>(0,0), graphics::size<float>(size.width,300) });
+	draw_context->end_draw();
+
 	surface->swap_buffers();
 }
 
 void engine::exit()
 {
-
+	solid_brush = null;
 	driver->bind_shaders(null);
 	driver->bind_frame_buffer(null);
 	surface = null;
@@ -158,12 +177,16 @@ bool engine::init_driver()
 	driver = graphics::create_graphic_driver(graphics::graph_driver_type::DirectX11);
 	foundation::size<float> size = core_view->get_core_view_size();
 	surface = driver->create_surface(core_view);
+
+	draw_context = graphics::drawing::create_drawing_context(driver);
+
 	return true;
 }
 
 void engine::close_driver()
 {
 	_is_running = false;
+	draw_context = null;
 	surface = null;
 	driver = null;
 }

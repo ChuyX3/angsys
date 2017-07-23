@@ -34,6 +34,9 @@ namespace d3d11
 		graphics::effects::ieffect_library_t effect_library;
 		graphics::textures::itexture_loader_t texture_loader;
 
+		graphics::drawing::idraw_context_t draw_context;
+		graphics::drawing::ibrush_t solid_brush;
+
 		core::async::iasync_t<void> async_render_operation;
 
 		graphics::scenes::camera_t camera;

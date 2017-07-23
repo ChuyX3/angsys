@@ -67,7 +67,9 @@ namespace ang
 				: public d3d11_brush
 			{
 			private:
-				array<drawing::gradient_point> _gradients;
+				point<float> _start_point;
+				point<float> _end_point;
+				array<drawing::gradient_info::stop_color_info_t> _gradients;
 				effects::ishaders_t _technique;
 
 			public:
@@ -78,7 +80,7 @@ namespace ang
 
 				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, square_ptr_t) override;
 
-				bool create(d3d11_draw_context_t, static_array<drawing::gradient_point>);
+				bool create(d3d11_draw_context_t, drawing::gradient_info_t);
 
 			private:
 				virtual~d3d11_linear_gradient_brush();
@@ -100,7 +102,7 @@ namespace ang
 				ANG_DECLARE_INTERFACE();
 
 				drawing::ibrush_t create_solid_brush(color_t) override;
-				drawing::ibrush_t create_linear_gradient_brush(static_array<drawing::gradient_point>) override;
+				drawing::ibrush_t create_linear_gradient_brush(drawing::gradient_info_t) override;
 				drawing::ibrush_t create_texturing_brush(textures::tex_wrap_mode_t, textures::itexture_t) override;
 				void begin_draw(iframe_buffer_t) override;
 				void end_draw() override;
@@ -179,27 +181,29 @@ namespace ang
 							builder->attribute("name"_s, "gradient_info"_s);
 							builder->begin_element("var"_s);
 							{
+								builder->attribute("type"_s, "f32"_s);
+								builder->attribute("class"_s, "vec2"_s);
+								builder->attribute("name"_s, "gradient_start_point"_s);
+							}builder->end_element(/*var*/);
+							builder->begin_element("var"_s);
+							{
+								builder->attribute("type"_s, "f32"_s);
+								builder->attribute("class"_s, "vec2"_s);
+								builder->attribute("name"_s, "gradient_end_point"_s);
+							}builder->end_element(/*var*/);
+							builder->begin_element("var"_s);
+							{
 								builder->attribute("type"_s, "s32"_s);
 								builder->attribute("class"_s, "scalar"_s);
-								builder->attribute("name"_s, "gradient_count"_s);
+								builder->attribute("name"_s, "gradient_colors_count"_s);
 							}builder->end_element(/*var*/);
-							builder->begin_element("block"_s);
+							builder->begin_element("var"_s);
 							{
+								builder->attribute("type"_s, "f32"_s);
+								builder->attribute("class"_s, "vec4"_s);
+								builder->attribute("name"_s, "color_factor"_s);
 								builder->attribute("array"_s, "10"_s);
-								builder->attribute("name"_s, "gradients"_s);
-								builder->begin_element("var"_s);
-								{
-									builder->attribute("type"_s, "f32"_s);
-									builder->attribute("class"_s, "vec4"_s);
-									builder->attribute("name"_s, "color"_s);
-								}builder->end_element(/*var*/);
-								builder->begin_element("var"_s);
-								{
-									builder->attribute("type"_s, "f32"_s);
-									builder->attribute("class"_s, "vec4"_s);
-									builder->attribute("name"_s, "position"_s);
-								}builder->end_element(/*var*/);
-							}builder->end_element(/*block*/);
+							}builder->end_element(/*var*/);
 						}builder->end_element(/*uniforms*/);
 
 						builder->element("code"_s, pixel_shader);

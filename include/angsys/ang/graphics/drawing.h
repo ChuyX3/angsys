@@ -30,17 +30,20 @@ namespace ang
 	{
 		namespace drawing
 		{
-			typedef struct gradient_point
+			typedef struct gradient_info
 			{
-				color_t color;
-				point<float> position;
-				bool operator == (gradient_point const& other)const {
-					return color.code == other.color.code && position.x == other.position.x && position.y == other.position.y;
-				}
-				bool operator != (gradient_point const& other)const {
-					return color.code != other.color.code || position.x != other.position.x || position.y != other.position.y;
-				}
-			}gradient_point_t;
+				typedef struct stop_color_info
+				{
+					float stop_factor;
+					color_t stop_color;
+					bool operator == (stop_color_info const& other)const { return false; }
+					bool operator != (stop_color_info const& other)const { return false; }
+				}stop_color_info_t;
+
+				point<float> start_point;
+				point<float> end_point;
+				static_array<stop_color_info_t> stop_colors;
+			}gradient_info_t;
 
 			ANG_INTERFACE(ibrush);
 			ANG_INTERFACE(idraw_context);
@@ -50,7 +53,7 @@ namespace ang
 
 			ANG_BEGIN_INTERFACE(LINK, idraw_context)
 				visible vcall ibrush_t create_solid_brush(color_t) pure;
-				visible vcall ibrush_t create_linear_gradient_brush(static_array<gradient_point>) pure;
+				visible vcall ibrush_t create_linear_gradient_brush(gradient_info_t) pure;
 				visible vcall ibrush_t create_texturing_brush(textures::tex_wrap_mode_t, textures::itexture_t) pure;
 				visible vcall void begin_draw(iframe_buffer_t) pure;
 				visible vcall void end_draw() pure;
@@ -67,6 +70,7 @@ namespace ang
 #undef  LINK
 #endif//LINK
 
-ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::drawing::gradient_point_t)
+ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::drawing::gradient_info_t)
+ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::drawing::gradient_info::stop_color_info_t)
 
 #endif//__ANGRAPH_DRAWING_H__

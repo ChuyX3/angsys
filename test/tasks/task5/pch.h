@@ -16,23 +16,16 @@
 #include <ang/platform/angwin/angwin.h>
 
 #include <ang/graphics/angraph.h>
+#include <ang/graphics/drawing.h>
 
 #include <ang/maths/maths.h>
 #include <ang/maths/vectors.h>
 
 #include <ang/com_wrapper.h>
 
-#include <d3d11.h>
-#include <d3d11_2.h>
-#include <d3dcompiler.h>
-
 #pragma comment(lib, "angsys.lib")
 #pragma comment(lib, "angraph.lib")
 #pragma comment(lib, "angsys.platform.lib")
-
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "d3dcompiler.lib")
-
 
 #include <Xinput.h>
 #pragma comment(lib,"xinput.lib")

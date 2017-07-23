@@ -254,7 +254,7 @@ void scene::draw(idriver_t driver, iframe_buffer_t frame)
 	_current_size = frame->dimentions();
 	maths::float4 clear_color = maths::float4(_ambient_color / 5.0f, 1);
 	driver->bind_frame_buffer(frame);
-	driver->clear(graphics::colors::brown);
+	driver->clear(clear_color);
 	_camera->draw(this);
 	foreach(_objects, [&](scene_object_t& node)
 	{
