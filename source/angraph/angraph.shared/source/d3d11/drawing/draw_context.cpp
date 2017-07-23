@@ -11,16 +11,6 @@ using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
 
-static cwstr_t library = L".\\drawing\\effects\\drawing_eefetc_library.xml"_s;
-
-
-
-
-
-
-
-
-
 d3d11_draw_context::d3d11_draw_context(d3d11_driver_t driver, core::files::ifile_system_t fs)
 	: is_drawing(false)
 {
@@ -32,6 +22,43 @@ d3d11_draw_context::~d3d11_draw_context()
 	close();
 }
 
+ANG_IMPLEMENT_CLASSNAME(ang::graphics::d3d11::d3d11_draw_context);
+ANG_IMPLEMENT_OBJECTNAME(ang::graphics::d3d11::d3d11_draw_context);
+
+bool d3d11_draw_context::is_child_of(type_name_t name)
+{
+	return name == type_name<d3d11_draw_context>()
+		|| object::is_child_of(name)
+		|| drawing::idraw_context::is_child_of(name);
+}
+
+bool d3d11_draw_context::is_kind_of(type_name_t name)const
+{
+	return name == type_name<d3d11_draw_context>()
+		|| object::is_kind_of(name)
+		|| drawing::idraw_context::is_kind_of(name);
+}
+
+bool d3d11_draw_context::query_object(type_name_t name, unknown_ptr_t out)
+{
+	if (out == null)
+		return false;
+	if (name == type_name<d3d11_draw_context>())
+	{
+		*out = static_cast<d3d11_draw_context*>(this);
+		return true;
+	}
+	else if (object::query_object(name, out))
+	{
+		return true;
+	}
+	else if (drawing::idraw_context::query_object(name, out))
+	{
+		return true;
+	}
+	return false;
+}
+
 
 bool d3d11_draw_context::create(d3d11_driver_t driver, core::files::ifile_system_t fs)
 {
@@ -39,28 +66,35 @@ bool d3d11_draw_context::create(d3d11_driver_t driver, core::files::ifile_system
 		return false;
 	this->driver = driver;
 	effect_library = driver->create_effect_library();
-	//texture_loader = driver->create_texture_loader();
-
 	effect_library->set_file_system(fs);
-	//texture_loader->set_file_system(fs);
 
-	core::files::input_text_file_t file;
-	fs->open(L".\\drawing\\effects\\drawing_eefetc_library.xml"_s, file);
-	xml::xml_document_t doc;
-	try{
-		doc = new xml::xml_document(file);
-	}
-	catch (...)
-	{
-		close();
-		return false;
-	}
+	reflect::variable;
 
-	if (!effect_library->load_library(doc->xml_root().get()))
+	maths::float4 vertices[] = {
+		{ -1.0f,1.0f,-1.0f,1.0f },
+		{ 1.0f,1.0f,-1.0f,1.0f },
+		{ 1.0f,-1.0f,-1.0f,1.0f },
+		{ -1.0f,-1.0f,-1.0f,1.0f },
+	};
+
+	reflect::attribute_desc input_layout[] =
 	{
-		close();
-		return false;
-	}
+		{ reflect::var_type::f32, reflect::var_class::vec4 }
+	};
+
+	word indices[] = { 0,2,1,0,3,2 };
+
+	_square.indices = driver->create_index_buffer(
+		graphics::buffers::buffer_usage::def,
+		graphics::reflect::var_type::u16,
+		array_size(indices), static_array<byte>((byte*)indices, sizeof(indices))
+	);
+
+	_square.vertices = driver->create_vertex_buffer(
+		graphics::buffers::buffer_usage::def,
+		input_layout,
+		array_size(vertices), static_array<byte>((byte*)vertices, sizeof(vertices))
+	);
 
 	return true;
 }
@@ -74,9 +108,20 @@ bool d3d11_draw_context::close()
 }
 
 
-drawing::ibrush_t d3d11_draw_context::create_solid_brush(color_t)
+drawing::ibrush_t d3d11_draw_context::create_solid_brush(color_t color)
 {
-	return null;
+	d3d11_solid_brush_t brush = new d3d11_solid_brush();
+	if(!brush->create(this, color))
+		return null;
+	return brush.get();
+}
+
+drawing::ibrush_t d3d11_draw_context::create_linear_gradient_brush(static_array<drawing::gradient_point> gradients)
+{
+	d3d11_linear_gradient_brush_t brush = new d3d11_linear_gradient_brush();
+	if (!brush->create(this, gradients))
+		return null;
+	return brush.get();
 }
 
 drawing::ibrush_t d3d11_draw_context::create_texturing_brush(textures::tex_wrap_mode_t, textures::itexture_t)
@@ -88,6 +133,8 @@ void d3d11_draw_context::begin_draw(iframe_buffer_t frame)
 {
 	if (frame.is_empty())
 		return;
+	_dimentions = frame->dimentions();
+
 	driver->bind_frame_buffer(frame);
 	is_drawing = true;
 }
@@ -106,6 +153,24 @@ void d3d11_draw_context::clear(color_t color)
 		return;
 
 	driver->clear(color);
+}
+
+void d3d11_draw_context::draw_rect(drawing::ibrush_t brush, rect<float> rect)
+{
+	if (!is_drawing)
+		return;
+	maths::float2 origin = { _dimentions.width / 2 , _dimentions.height / 2 };
+	maths::float2 scale = { rect.width() / _dimentions.width, rect.height() / _dimentions.height };
+	maths::float2 pos = { rect.left + rect.width() / 2, rect.top + rect.height() / 2 };
+
+	pos.set<0>(pos.get<0>() / origin.get<0>());
+	pos.set<1>(-pos.get<1>() / origin.get<1>());
+	pos -= {1, -1};
+
+	maths::float4x4 trasnform = maths::matrix::scale(scale.get<0>(), scale.get<1>(), 0.01f)
+		*  maths::matrix::translation(pos.get<0>(), pos.get<1>(), 0);
+
+	static_cast<d3d11_brush*>(brush.get())->draw(driver.get(), trasnform, &_square);
 }
 
 #endif

@@ -71,7 +71,7 @@ drawing::idraw_context_t graphics::drawing::create_drawing_context(idriver_t dri
 	{
 #if DIRECTX_SUPPORT
 	case graph_driver_type::DirectX11:	
-		return null;// new d3d11::d3d11_draw_context(static_cast<d3d11::d3d11_driver*>(driver.get()), fs);
+		return new d3d11::d3d11_draw_context(static_cast<d3d11::d3d11_driver*>(driver.get()), fs);
 #endif//DIRECTX_SUPPORT
 
 #if VULKAN_SUPPORT

@@ -37,6 +37,9 @@
     <Filter Include="header files\include\d3d11\drawing">
       <UniqueIdentifier>{5f773b96-491d-4a3f-9376-592678b38bec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source files\d3d11\drawing">
+      <UniqueIdentifier>{c0668f95-5390-4530-b89c-d64b8265a5d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
@@ -133,6 +136,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\vulkan_surface.cpp">
       <Filter>source files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\draw_context.cpp">
+      <Filter>source files\d3d11\drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\brush.cpp">
+      <Filter>source files\d3d11\drawing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

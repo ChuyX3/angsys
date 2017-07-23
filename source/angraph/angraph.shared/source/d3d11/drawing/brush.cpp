@@ -1,0 +1,235 @@
+#include "pch.h"
+#include "d3d11/drawing/draw_context.h"
+
+
+#if defined _DEBUG
+#define new ANG_DEBUG_NEW()
+#endif
+
+#if DIRECTX_SUPPORT
+
+using namespace ang;
+using namespace ang::graphics;
+using namespace ang::graphics::d3d11;
+
+
+d3d11_brush::d3d11_brush()
+{
+
+}
+
+d3d11_brush::~d3d11_brush()
+{
+
+}
+
+ANG_IMPLEMENT_CLASSNAME(ang::graphics::d3d11::d3d11_brush);
+ANG_IMPLEMENT_OBJECTNAME(ang::graphics::d3d11::d3d11_brush);
+
+bool d3d11_brush::is_child_of(type_name_t name)
+{
+	return name == type_name<d3d11_brush>()
+		|| object::is_child_of(name)
+		|| drawing::ibrush::is_child_of(name);
+}
+
+bool d3d11_brush::is_kind_of(type_name_t name)const
+{
+	return name == type_name<d3d11_brush>()
+		|| object::is_kind_of(name)
+		|| drawing::ibrush::is_kind_of(name);
+}
+
+bool d3d11_brush::query_object(type_name_t name, unknown_ptr_t out)
+{
+	if (out == null)
+		return false;
+	if (name == type_name<d3d11_brush>())
+	{
+		*out = static_cast<d3d11_brush*>(this);
+		return true;
+	}
+	else if (object::query_object(name, out))
+	{
+		return true;
+	}
+	else if (drawing::ibrush::query_object(name, out))
+	{
+		return true;
+	}
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+static wchar _solid_color_vertex_shader[] =
+L"cbuffer world_data : register(b0) {\n"
+L"	float4x4 world;\n"
+L"}\n"
+L"float4 main(float4 position : POSITION) : SV_Position {\n"
+L"	return mul(float4(position.xyz, 1), world);\n"
+L"}\n";
+
+static wchar _solid_color_pixel_shader[] =
+L"cbuffer color_info : register(b0) {\n"
+L"	float4 additive_color;\n"
+L"	float4 diffuse_color;\n"
+L"}\n"
+L"float4 main(float4 position : SV_Position) : SV_Target {\n"
+L"	 return float4(diffuse_color.rgb + additive_color.rgb * additive_color.a, diffuse_color.a);\n"
+L"}\n";
+
+d3d11_solid_brush::d3d11_solid_brush()
+{
+}
+
+d3d11_solid_brush::~d3d11_solid_brush()
+{
+}
+
+ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::d3d11::d3d11_solid_brush, d3d11_brush);
+
+bool d3d11_solid_brush::create(d3d11_draw_context_t context, color_t color)
+{
+	_color = color;
+	_technique = context->effect_library->find_technique("solid_color_fx"_s);
+	if (_technique.is_empty())	
+		_technique = context->effect_library->load_technique(create_tecnique_template(L"solid_color_fx"_s, _solid_color_vertex_shader, _solid_color_pixel_shader));
+	return !_technique.is_empty();
+}
+
+void d3d11_solid_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, square_ptr_t square)
+{
+	driver->bind_shaders(_technique);
+	auto world = _technique->map_vs_uniform(driver.get(), 0);
+	world[0].cast<maths::float4x4>() = maths::matrix::transpose(tranform);
+	_technique->unmap_vs_uniform(driver.get(), world);
+
+	auto colors = _technique->map_ps_uniform(driver.get(), 0);
+	colors[0].cast<maths::float4>() = color_to_vector(graphics::colors::black, 0);
+	colors[1].cast<maths::float4>() = color_to_vector(_color);
+	_technique->unmap_ps_uniform(driver.get(), colors);
+
+	driver->bind_index_buffer(square->indices);
+	driver->bind_vertex_buffer(square->vertices);
+	driver->draw_indexed(square->indices->counter(), graphics::primitive::triangle);
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+static wchar _linear_gradient_vertex_shader[] =
+L"cbuffer world_data : register(b0) {\n"
+L"	float4x4 world;\n"
+L"}\n"
+L"struct vs_output {\n"
+L"	float4 position : SV_Position;\n"
+L"	float2 screencoord : TEXCOORD9;\n"
+L"};\n"
+L"vs_output main(float4 position : POSITION) {\n"
+L"	vs_output output;\n"
+L"	output.position = mul(float4(position.xyz, 1), world);\n"
+L"	output.screencoord = output.position.xy;\n"
+L"	return output;\n"
+L"}\n"
+L"\n";
+
+static wchar _linear_gradient_pixel_shader[] =
+L"cbuffer color_info : register(b0) {\n"
+L"	float4 additive_color;\n"
+L"	float4 diffuse_color;\n"
+L"}\n"
+L"cbuffer gradient_info : register(b1) {\n"
+L"	int gradients_count : packoffset(c0.x);\n"
+L"	struct {\n"
+L"		float4 color;\n"
+L"		float4 position;\n"
+L"	} gradients[10] : packoffset(c1);\n"
+L"}\n"
+L"float calc_factor(float2 A, float2 B, float2 C)\n"
+L"{\n"
+L"	if (A.x == B.x)\n"
+L"	{\n"
+L"		return (C.y - A.y) / (B.y - A.y);\n"
+L"	}\n"
+L"	else if (A.y == B.y)\n"
+L"	{\n"
+L"		return (C.x - A.x) / (B.x - A.x);\n"
+L"	}\n"
+L"	else\n"
+L"	{\n"
+L"		float2 BA = B - A;\n"
+L"		float m1 = BA.y / BA.x;\n"
+L"		float m2 = -1 / m1;\n"
+L"		float2 D = { 0, 0 };\n"
+L"		D.x = (m2 * C.x - m1 * A.x + A.y - C.y) / (m2 - m1);\n"
+L"		D.y = m2 * D.x - m2 * C.x + C.y;\n"
+L"		float factor = length(D - A) / length(BA);\n"
+L"		return D.x < A.x ? -factor : factor;\n"
+L"	}\n"
+L"}\n"
+L"float4 main(float4 position : SV_Position, float2 screencoord : TEXCOORD9) : SV_Target {\n"
+L"	 float3 diffuse = diffuse_color.rgb;\n"
+L"	 float factor = calc_factor(gradients[0].position.xy, gradients[1].position.xy, screencoord);\n"
+L"	 diffuse += lerp(gradients[0].color.rgb, gradients[1].color.rgb, factor);\n"
+L"	 return float4(diffuse + additive_color.rgb * additive_color.a, diffuse_color.a);\n"
+L"}\n";
+
+d3d11_linear_gradient_brush::d3d11_linear_gradient_brush()
+{
+}
+
+d3d11_linear_gradient_brush::~d3d11_linear_gradient_brush()
+{
+}
+
+ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::d3d11::d3d11_linear_gradient_brush, d3d11_brush);
+
+bool d3d11_linear_gradient_brush::create(d3d11_draw_context_t context, static_array<drawing::gradient_point> gradients)
+{
+	_gradients = new collections::array_buffer<drawing::gradient_point>(gradients.size(), gradients.data());
+	_technique = context->effect_library->find_technique("linear_gradient_fx"_s);
+	if (_technique.is_empty())
+		_technique = context->effect_library->load_technique(create_tecnique_template(L"linear_gradient_fx"_s, _linear_gradient_vertex_shader, _linear_gradient_pixel_shader));
+	return !_technique.is_empty();
+}
+
+void d3d11_linear_gradient_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, square_ptr_t square)
+{
+	driver->bind_shaders(_technique);
+	auto world = _technique->map_vs_uniform(driver.get(), 0);
+	world[0].cast<maths::float4x4>() = maths::matrix::transpose(tranform);
+	_technique->unmap_vs_uniform(driver.get(), world);
+
+	auto colors = _technique->map_ps_uniform(driver.get(), 0);
+	colors[0].cast<maths::float4>() = color_to_vector(graphics::colors::black);
+	colors[1].cast<maths::float4>() = color_to_vector(graphics::colors::black);
+	_technique->unmap_ps_uniform(driver.get(), colors);
+
+	auto gradient_info = _technique->map_ps_uniform(driver.get(), 1);
+	gradient_info[0].cast<int>() = _gradients->counter();
+	auto gradients = gradient_info[1].cast<static_array<graphics::reflect::variable>>();
+	for (index i = 0; i <_gradients->counter(); ++i)
+	{
+		drawing::gradient_point& gradient = _gradients[i];
+		gradients[i][0].cast<maths::float4>() = color_to_vector(gradient.color);
+		auto pos = maths::float4{ gradient.position.x,gradient.position.y,0,1 } * tranform;
+		gradients[i][1].cast<maths::float4>() = pos;
+	}
+	_technique->unmap_ps_uniform(driver.get(), gradient_info);
+
+	driver->bind_index_buffer(square->indices);
+	driver->bind_vertex_buffer(square->vertices);
+	driver->draw_indexed(square->indices->counter(), graphics::primitive::triangle);
+}
+
+
+#endif//DIRECTX_SUPPORT

@@ -42,6 +42,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_surface.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture_loader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\draw_context.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\brush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\reflect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\textures.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\variable.cpp" />
