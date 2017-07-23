@@ -268,6 +268,7 @@ bool variable_desc::load(xml::xml_node_t input, uint aligment)
 		wsize total = 0;
 		wsize size = 0;
 		wsize temp = 0;
+		wsize res = 0;
 		foreach(input->xml_children(), [&](xml::xml_node_t field)
 		{
 			variable_desc desc;
@@ -276,12 +277,13 @@ bool variable_desc::load(xml::xml_node_t input, uint aligment)
 			{
 				size = desc.get_size_in_bytes();
 				temp = total % _aligment;
-				if (temp != 0)
+				res = _aligment - temp;
+				if (res < _aligment)
 				{
-					if (temp > size)
+					if (res > size)
 						total += get_memory_size_aligned(temp, size) - temp;
-					else if (temp < size)
-						total += temp;
+					else if (res < size)
+						total += res;
 				}
 				desc._position = total;
 				total += size;
