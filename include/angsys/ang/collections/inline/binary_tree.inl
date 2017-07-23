@@ -1385,6 +1385,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::insert(ang::cstr
 	{
 		_root = allocator->object_alloc<node_t>(1);
 		allocator->construct(_root, key, ang::move(value));
+		_count++;
 		return true;
 	}
 	node_ptr_t node = _root;
@@ -1469,6 +1470,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::insert(ang::cstr
 		_root = left_rotate(node);
 	}
 	_root->parent(null);
+	_count++;
 	return true;
 }
 
@@ -1479,6 +1481,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::insert(ang::cwst
 	{
 		_root = allocator->object_alloc<node_t>(1);
 		allocator->construct(_root, key, ang::move(value));
+		_count++;
 		return true;
 	}
 	node_ptr_t node = _root;
@@ -1563,6 +1566,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::insert(ang::cwst
 		_root = left_rotate(node);
 	}
 	_root->parent(null);
+	_count++;
 	return true;
 }
 
@@ -1574,6 +1578,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::insert(ang::coll
 	{
 		_root = allocator->object_alloc<node_t>(1);
 		allocator->construct(_root, ang::move(pair));
+		_count++;
 		return true;
 	}
 	node_ptr_t node = _root;
@@ -1659,6 +1664,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::insert(ang::coll
 		_root = left_rotate(node);
 	}
 	_root->parent(null);
+	_count++;
 	return true;
 }
 
@@ -1669,6 +1675,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::update(ang::cstr
 	{
 		_root = allocator->object_alloc<node_t>(1);
 		allocator->construct(_root, key, ang::move(value));
+		_count++;
 		return true;
 	}
 	node_ptr_t node = _root;
@@ -1683,6 +1690,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::update(ang::cstr
 				node_ptr_t _new_node = allocator->object_alloc<node_t>(1);
 				allocator->construct(_new_node, key, ang::move(value));
 				node->left(_new_node);
+				_count++;
 				break;
 			}
 		}
@@ -1695,6 +1703,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::update(ang::cstr
 				node_ptr_t _new_node = allocator->object_alloc<node_t>(1);
 				allocator->construct(_new_node, key, ang::move(value));
 				node->right(_new_node);
+				_count++;
 				break;
 			}
 		}
@@ -1766,6 +1775,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::update(ang::cwst
 	{
 		_root = allocator->object_alloc<node_t>(1);
 		allocator->construct(_root, key, ang::move(value));
+		_count++;
 		return true;
 	}
 	node_ptr_t node = _root;
@@ -1780,6 +1790,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::update(ang::cwst
 				node_ptr_t _new_node = allocator->object_alloc<node_t>(1);
 				allocator->construct(_new_node, key, ang::move(value));
 				node->left(_new_node);
+				_count++;
 				break;
 			}
 		}
@@ -1792,6 +1803,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::update(ang::cwst
 				node_ptr_t _new_node = allocator->object_alloc<node_t>(1);
 				allocator->construct(_new_node, key, ang::move(value));
 				node->right(_new_node);
+				_count++;
 				break;
 			}
 		}
@@ -1863,6 +1875,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::update(ang::coll
 	{
 		_root = allocator->object_alloc<node_t>(1);
 		allocator->construct(_root, ang::move(pair));
+		_count++;
 		return true;
 	}
 	node_ptr_t node = _root;
@@ -1878,6 +1891,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::update(ang::coll
 				node_ptr_t _new_node = allocator->object_alloc<node_t>(1);
 				allocator->construct(_new_node, key, ang::move(pair.value()));
 				node->left(_new_node);
+				_count++;
 				break;
 			}
 		}
@@ -1890,6 +1904,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::update(ang::coll
 				node_ptr_t _new_node = allocator->object_alloc<node_t>(1);
 				allocator->construct(_new_node, key, ang::move(pair.value()));
 				node->right(_new_node);
+				_count++;
 				break;
 			}
 		}
@@ -1960,6 +1975,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::remove(ang::cstr
 	bool removed = false;
 	_root = remove_node(_root, key, removed);
 	_root->parent(null);
+	if (removed) _count--;
 	return removed;
 }
 
@@ -1969,6 +1985,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::remove(ang::cwst
 	bool removed = false;
 	_root = remove_node(_root, key, removed);
 	_root->parent(null);
+	if (removed) _count--;
 	return removed;
 }
 
@@ -1978,6 +1995,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::remove(ang::cstr
 	bool removed = false;
 	_root = remove_node(_root, key, value, removed);
 	_root->parent(null);
+	if (removed) _count--;
 	return removed;
 }
 
@@ -1987,6 +2005,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::remove(ang::cwst
 	bool removed = false;
 	_root = remove_node(_root, key, value, removed);
 	_root->parent(null);
+	if (removed) _count--;
 	return removed;
 }
 
@@ -2004,6 +2023,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::remove(ang::coll
 	{
 		_root = remove_node(node, node->key(), removed);
 		_root->parent(null);
+		if (removed) _count--;
 		return removed;
 	}
 	else
@@ -2012,9 +2032,11 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::remove(ang::coll
 		{
 		case 1:
 			node->parent()->left(remove_node(node, node->key(), removed));
+			if (removed) _count--;
 			return removed;
 		case 2:
 			node->parent()->right(remove_node(node, node->key(), removed));
+			if (removed) _count--;
 			return removed;
 		}
 	}
@@ -2033,6 +2055,7 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::remove(ang::coll
 	if (node == _root)
 	{
 		_root = remove_node(node, node->key(), value, removed);
+		if (removed) _count--;
 		return removed;
 	}
 	else
@@ -2041,9 +2064,11 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::remove(ang::coll
 		{
 		case 1:
 			node->parent()->left(remove_node(node, node->key(), value, removed));
+			if (removed) _count--;
 			return removed;
 		case 2:
 			node->parent()->right(remove_node(node, node->key(), value, removed));
+			if (removed) _count--;
 			return removed;
 		}
 	}
@@ -2065,13 +2090,13 @@ inline bool ang::collections::binary_tree_data<ang::string, T>::has_key(ang::cws
 template<typename T>
 inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::binary_tree_data<ang::string, T>::find(ang::cstr_t key)const
 {
-	return iterator_t(const_cast<binary_tree_data*>(this), null, 0);
+	return iterator_t(const_cast<binary_tree_data*>(this), find_node(key, _root), 0);
 }
 
 template<typename T>
 inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::binary_tree_data<ang::string, T>::find(ang::cwstr_t key)const
 {
-	return iterator_t(const_cast<binary_tree_data*>(this), null, 0);
+	return iterator_t(const_cast<binary_tree_data*>(this), find_node(key, _root), 0);
 }
 
 template<typename T>
