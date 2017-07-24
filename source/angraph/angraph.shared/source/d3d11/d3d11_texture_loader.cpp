@@ -1254,13 +1254,15 @@ bool d3d11_texture_loader::create_array_texture(d3d11_driver_t driver, tex_file_
 				texture->Release();
 				return false;
 			}
-
-			for (uint item = 0; item < info->arraySize; ++item)
+			driver->execute_on_thread_safe([&]()
 			{
-				uint res = D3D11CalcSubresource(0, item, mipLevels);
-				driver->D3D11Context()->UpdateSubresource(texture, res, nullptr, init_data[item].pSysMem, init_data[item].SysMemPitch, 0);
-			}
-			driver->D3D11Context()->GenerateMips(*resourceView);
+				for (uint item = 0; item < info->arraySize; ++item)
+				{
+					uint res = D3D11CalcSubresource(0, item, mipLevels);
+					driver->D3D11Context()->UpdateSubresource(texture, res, nullptr, init_data[item].pSysMem, init_data[item].SysMemPitch, 0);
+				}
+				driver->D3D11Context()->GenerateMips(*resourceView);
+			});
 		}
 	}
 

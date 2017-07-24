@@ -657,8 +657,9 @@ void d3d11_shaders::unmap_vs_uniform(idriver_t _driver, reflect::variable& var)
 	auto data = var.raw_data();
 	if (_vs_uniforms.is_empty() || _vs_uniforms->counter() <= idx || data.get() == null)
 		throw exception_t(except_code::invalid_param);
-
-	driver->D3D11Context()->UpdateSubresource(d3d_vs_const_buffers[idx].get(), 0, NULL, data.get(), 0, 0);
+	driver->execute_on_thread_safe([&]() {
+		driver->D3D11Context()->UpdateSubresource(d3d_vs_const_buffers[idx].get(), 0, NULL, data.get(), 0, 0); 
+	});
 	auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator);
 	alloc->memory_release(data.get());
 	var = reflect::variable();
@@ -672,8 +673,9 @@ void d3d11_shaders::unmap_ps_uniform(idriver_t _driver, reflect::variable& var)
 	auto data = var.raw_data();
 	if (_ps_uniforms.is_empty() || _ps_uniforms->counter() <= idx || data.get() == null)
 		throw exception_t(except_code::invalid_param);
-
-	driver->D3D11Context()->UpdateSubresource(d3d_ps_const_buffers[idx].get(), 0, NULL, data.get(), 0, 0);
+	driver->execute_on_thread_safe([&]() {
+		driver->D3D11Context()->UpdateSubresource(d3d_ps_const_buffers[idx].get(), 0, NULL, data.get(), 0, 0);
+	});	
 	auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator);
 	alloc->memory_release(data.get());
 	var = reflect::variable();
