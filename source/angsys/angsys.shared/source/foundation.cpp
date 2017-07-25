@@ -313,6 +313,7 @@ rect<float>& rect<float>::operator /= (float k)
 
 static ang_pair<graphics::colors, cstr_t> to_string_color_map[] =
 {
+	{ graphics::colors::null, "null"_s },
 	{ graphics::colors::transparent, "transparent"_s },
 	{ graphics::colors::black, "black"_s },
 	{ graphics::colors::maroon, "maroon"_s },
@@ -553,6 +554,7 @@ static ang_pair<cstr_t, graphics::colors> _parse_color_map[] =
 	{ "moccasin"_s, graphics::colors::moccasin },
 	{ "navajo_white"_s, graphics::colors::navajo_white },
 	{ "navy"_s, graphics::colors::navy },
+	{ "null"_s, graphics::colors::null },
 	{ "old_lace"_s, graphics::colors::old_lace },
 	{ "olive"_s, graphics::colors::olive },
 	{ "olive_drab"_s, graphics::colors::olive_drab },
@@ -625,6 +627,17 @@ graphics::color::color(dword rgba)
 	code = rgba;
 }
 
+graphics::color::color(enum_t c, byte a)
+{
+	code = c;
+	components.alpha = a;
+}
+
+graphics::color::color(dword rgb, byte a)
+{
+	code = rgb;
+	components.alpha = a;
+}
 graphics::color::color(byte r, byte g, byte b, byte a)
 {
 	components.red = r;

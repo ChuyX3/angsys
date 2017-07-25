@@ -11,6 +11,8 @@ using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
 
+ANG_IMPLEMENT_ENUM(ang::graphics::textures, tex_stretch_mode, uint, tex_stretch_mode::none);
+
 d3d11_draw_context::d3d11_draw_context(d3d11_driver_t driver, core::files::ifile_system_t fs)
 	: is_drawing(false)
 {
@@ -108,25 +110,36 @@ bool d3d11_draw_context::close()
 }
 
 
-drawing::ibrush_t d3d11_draw_context::create_solid_brush(color_t color)
+drawing::ibrush_t d3d11_draw_context::create_solid_brush(color_t diffuse, color_t additive)
 {
 	d3d11_solid_brush_t brush = new d3d11_solid_brush();
-	if(!brush->create(this, color))
+	if(!brush->create(this, diffuse, additive))
 		return null;
 	return brush.get();
 }
 
-drawing::ibrush_t d3d11_draw_context::create_linear_gradient_brush(drawing::gradient_info_t gradients)
+drawing::ibrush_t d3d11_draw_context::create_linear_gradient_brush(drawing::gradient_info_t gradients, color_t diffuse, color_t additive)
 {
 	d3d11_linear_gradient_brush_t brush = new d3d11_linear_gradient_brush();
-	if (!brush->create(this, gradients))
+	if (!brush->create(this, gradients, diffuse, additive))
 		return null;
 	return brush.get();
 }
 
-drawing::ibrush_t d3d11_draw_context::create_texturing_brush(textures::tex_wrap_mode_t, textures::itexture_t)
+drawing::ibrush_t d3d11_draw_context::create_texturing_brush(drawing::texturing_info_t texture, color_t diffuse, color_t additive)
 {
-	return null;
+	d3d11_texturing_brush_t brush = new d3d11_texturing_brush();
+	if (!brush->create(this, texture, diffuse, additive))
+		return null;
+	return brush.get();
+}
+
+drawing::ibrush_t d3d11_draw_context::create_linear_gradient_texturing_brush(drawing::gradient_info_t gradient, drawing::texturing_info_t texture, color_t diffuse, color_t additive)
+{
+	d3d11_linear_gradient_texturing_brush_t brush = new d3d11_linear_gradient_texturing_brush();
+	if (!brush->create(this, gradient, texture, diffuse, additive))
+		return null;
+	return brush.get();
 }
 
 void d3d11_draw_context::begin_draw(iframe_buffer_t frame)

@@ -28,6 +28,16 @@ namespace ang
 {
 	namespace graphics
 	{
+		namespace textures
+		{
+			ANG_BEGIN_ENUM(LINK, tex_stretch_mode, uint)
+				none = 0,
+				fill = 1,
+				uniform = 2,
+				uniform_to_fill = 3,
+			ANG_END_ENUM(tex_stretch_mode);
+		}
+
 		namespace drawing
 		{
 			typedef struct gradient_info
@@ -43,7 +53,30 @@ namespace ang
 				point<float> start_point;
 				point<float> end_point;
 				static_array<stop_color_info_t> stop_colors;
+				inline gradient_info(point<float> start, point<float>end, static_array<stop_color_info_t>colors)
+					: start_point(start)
+					, end_point(end)
+					, stop_colors(colors){
+				}
 			}gradient_info_t;
+
+			typedef struct texturing_info
+			{
+				textures::itexture_t texture;
+				textures::tex_wrap_mode_t wrap_mode;
+				textures::tex_stretch_mode_t stretch_mode;
+				size<float> tiling_factor;
+				inline texturing_info(textures::itexture_t tex,
+					textures::tex_wrap_mode_t wrap = textures::tex_wrap_mode::def,
+					textures::tex_stretch_mode_t stretch = textures::tex_stretch_mode::fill,
+					size<float> tiling = { 1,1 })
+					: texture(tex)
+					, wrap_mode(wrap)
+					, stretch_mode(stretch)
+					, tiling_factor(tiling){
+				}
+			}texturing_info_t, *texturing_info_ptr_t;
+		
 
 			ANG_INTERFACE(ibrush);
 			ANG_INTERFACE(idraw_context);
@@ -52,9 +85,23 @@ namespace ang
 			ANG_END_INTERFACE();
 
 			ANG_BEGIN_INTERFACE(LINK, idraw_context)
-				visible vcall ibrush_t create_solid_brush(color_t) pure;
-				visible vcall ibrush_t create_linear_gradient_brush(gradient_info_t) pure;
-				visible vcall ibrush_t create_texturing_brush(textures::tex_wrap_mode_t, textures::itexture_t) pure;
+				visible vcall ibrush_t create_solid_brush(
+					color_t /*diffuse*/, 
+					color_t /*additive*/ = colors::null
+				) pure;
+				visible vcall ibrush_t create_linear_gradient_brush(
+					gradient_info_t,
+					color_t /*diffuse*/ = colors::white,
+					color_t /*additive*/ = colors::null) pure;
+				visible vcall ibrush_t create_texturing_brush(
+					texturing_info_t,
+					color_t /*diffuse*/ = colors::white,
+					color_t /*additive*/ = colors::null) pure;
+				visible vcall ibrush_t create_linear_gradient_texturing_brush(
+					gradient_info_t, 
+					texturing_info_t,
+					color_t /*diffuse*/ = colors::white,
+					color_t /*additive*/ = colors::null) pure;
 				visible vcall void begin_draw(iframe_buffer_t) pure;
 				visible vcall void end_draw() pure;
 				visible vcall void clear(color_t) pure;

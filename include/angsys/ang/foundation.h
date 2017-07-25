@@ -256,11 +256,11 @@ namespace ang
 				}components;
 			};
 
-		private:
 			struct colors
 			{
 				enum enum_t : uint
 				{
+					null = 0X00000000,
 					alice_blue = 0XFFFFF8F0,
 					antique_white = 0XFFD7EBFA,
 					aqua = 0XFFFFFF00,
@@ -412,6 +412,8 @@ namespace ang
 			color(const color&);
 			color(enum_t rgba);
 			color(dword rgba);
+			color(enum_t rgb, byte a);
+			color(dword rgb, byte a);
 			color(byte r, byte g, byte b, byte a);
 			virtual~color();
 
@@ -419,7 +421,7 @@ namespace ang
 			void parse(cwstr_t);
 
 		public: //Override
-			string_t to_string()const;
+			string to_string()const;
 
 		public: //Operators
 

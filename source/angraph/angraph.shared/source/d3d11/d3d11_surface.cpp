@@ -69,8 +69,6 @@ bool d3d11_surface::create(platform::icore_view_t view)
 	foundation::size<float> size = view->get_core_view_size();
 	_current_size = size;
 
-	view->get_listener()->listen_to(new ang::platform::events::display_size_change_event(this, &d3d11_surface::on_display_size_changed_event));
-
 	DXGI_SWAP_CHAIN_DESC1 sd;
 	ZeroMemory(&sd, sizeof(sd));
 	sd.Width = (uint)size.width;
@@ -104,6 +102,8 @@ bool d3d11_surface::create(platform::icore_view_t view)
 
 	d3d_frame_buffer = new d3d11_frame_buffer(driver.get());
 	d3d_frame_buffer->create(this);
+
+	view->get_listener()->listen_to(new ang::platform::events::display_size_change_event(this, &d3d11_surface::on_display_size_changed_event));
 
 	return true;
 }
