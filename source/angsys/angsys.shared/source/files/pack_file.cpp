@@ -26,7 +26,7 @@ namespace ang
 				, public ifile
 			{
 			private:
-				wstring _path;
+				path _path;
 				ifile_t _original_source;
 				file_flags_t _flags;
 				ulong64 _size;
@@ -44,13 +44,13 @@ namespace ang
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
 
-				bool create(cwstr_t path, open_flags_t flags, ifile_t original_source, ulong64 offset, ulong64 size);
+				bool create(path_view path, open_flags_t flags, ifile_t original_source, ulong64 offset, ulong64 size);
 				bool is_created()const;
 				bool close();
 
 			public: //Methos
 				virtual streams::stream_mode_t mode()const override;
-				virtual wstring file_path()const override;
+				virtual path file_path()const override;
 				virtual file_size_t file_size()const override;
 				virtual text::encoding_t encoding()const override;
 				virtual void cursor(file_reference_t, file_cursor_t) override;
@@ -69,19 +69,20 @@ namespace ang
 }
 
 
-bool load_directory_recursive(wstring const& root_path, wstring const& subpath, file_cursor_t& header_size, file_cursor_t& offset, collections::vector<collections::pair<wstring, pack_file_info>>& files)
+bool load_directory_recursive(files::path const& root_path, files::path const& subpath, file_cursor_t& header_size, file_cursor_t& offset, collections::vector<collections::pair<files::path, pack_file_info>>& files)
 {
+#if defined WINDOWS_PLATFORM
 	WIN32_FIND_DATAW ffd;
 	LARGE_INTEGER filesize;
 
-	wstring path = root_path;
+	files::path path = root_path;
 
 	if (!subpath.is_empty() && subpath->counter() > 0)
 		path += "/"_s + subpath;
 
 	path += "/*"_s;
 
-	HANDLE  hFind = FindFirstFileW((cwstr_t)path, &ffd);
+	HANDLE  hFind = FindFirstFileW((path_view)path, &ffd);
 
 	if (INVALID_HANDLE_VALUE == hFind)
 	{
@@ -95,10 +96,10 @@ bool load_directory_recursive(wstring const& root_path, wstring const& subpath, 
 		{
 			if (ffd.cFileName != L"."_s && ffd.cFileName != L".."_s)
 			{
-				wstring _subpath = subpath;
+				files::path _subpath = subpath;
 				if (!subpath.is_empty() && subpath->counter() > 0)
 					_subpath += "/"_s;
-				_subpath += cwstr_t(ffd.cFileName);
+				_subpath += path_view(ffd.cFileName);
 				load_directory_recursive(root_path, _subpath, header_size, offset, files);
 			}
 		}
@@ -107,10 +108,10 @@ bool load_directory_recursive(wstring const& root_path, wstring const& subpath, 
 			filesize.LowPart = ffd.nFileSizeLow;
 			filesize.HighPart = ffd.nFileSizeHigh;
 
-			wstring _subpath = subpath;
+			files::path _subpath = subpath;
 			if (!subpath.is_empty() && subpath->counter() > 0)
 				_subpath += "/"_s;
-			_subpath += cwstr_t(ffd.cFileName);
+			_subpath += path_view(ffd.cFileName);
 
 			files += {_subpath, { (file_size_t)filesize.QuadPart, offset } };
 			offset += filesize.QuadPart;
@@ -118,13 +119,15 @@ bool load_directory_recursive(wstring const& root_path, wstring const& subpath, 
 		}
 	} while (FindNextFileW(hFind, &ffd) != 0);
 	FindClose(hFind);
+#else
+#endif
 	return true;
 }
 
 
-bool pack_file::create_pack_from_folder(cwstr_t in_path, cwstr_t out_path)
+bool pack_file::create_pack_from_folder(path_view in_path, path_view out_path)
 {
-	collections::vector<collections::pair<wstring, pack_file_info>> paths;
+	collections::vector<collections::pair<files::path, pack_file_info>> paths;
 #if defined WINDOWS_PLATFORM
 	file_cursor_t offset = 0;
 	file_cursor_t header_size = 0;
@@ -140,15 +143,15 @@ bool pack_file::create_pack_from_folder(cwstr_t in_path, cwstr_t out_path)
 	out_file->write([&](streams::ibinary_output_stream_t stream)->bool 
 	{
 		stream << paths->counter();
-		foreach(paths, [&](collections::pair<wstring, pack_file_info>& info)
+		foreach(paths, [&](collections::pair<files::path, pack_file_info>& info)
 		{
 			info.value().offset += header_size;
 			stream << info.value().offset << info.value().size << info.key_value();
 		});
-		wstring path = in_path;
+		files::path path = in_path;
 		path += "/*"_s;
 		auto end = path->end();
-		foreach(paths, [&](collections::pair<wstring, pack_file_info>& info)
+		foreach(paths, [&](collections::pair<files::path, pack_file_info>& info)
 		{
 			path->replace(info.key_value(), end, collections::iterator<wchar>(path.get(), null, path->counter()));
 			input_binary_file_t file = new input_binary_file(path);
@@ -221,22 +224,22 @@ bool pack_file::query_object(type_name_t name, unknown_ptr_t out)
 	return false;
 }
 
-bool pack_file::create(cwstr_t path, open_flags_t flags)
+bool pack_file::create(path_view path, open_flags_t flags)
 {
 	return false;
 }
 
-array<wstring> pack_file::paths()const
+array<path> pack_file::paths()const
 {
 	return null;
 }
 
-bool pack_file::register_paths(cwstr_t path)
+bool pack_file::register_paths(path_view path)
 {
 	return false;
 }
 
-bool pack_file::create_file_handle(cwstr_t path, open_flags_t flags, ifile_ptr_t out)
+bool pack_file::create_file_handle(path_view path, open_flags_t flags, ifile_ptr_t out)
 {
 	if (flags.is_active(open_flags::access_out))
 		return false;
@@ -244,25 +247,25 @@ bool pack_file::create_file_handle(cwstr_t path, open_flags_t flags, ifile_ptr_t
 	return true;
 }
 
-bool pack_file::open(cwstr_t path, input_text_file_t& out)
+bool pack_file::open(path_view path, input_text_file_t& out)
 {
 	out = null;
 	return false;
 }
 
-bool pack_file::open(cwstr_t, output_text_file_t& out)
+bool pack_file::open(path_view, output_text_file_t& out)
 {
 	out = null;
 	return false;
 }
 
-bool pack_file::open(cwstr_t path, input_binary_file_t& out)
+bool pack_file::open(path_view path, input_binary_file_t& out)
 {
 	out = null;
 	return false;
 }
 
-bool pack_file::open(cwstr_t, output_binary_file_t& out)
+bool pack_file::open(path_view, output_binary_file_t& out)
 {
 	out = null;
 	return false;

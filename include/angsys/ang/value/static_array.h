@@ -99,7 +99,7 @@ namespace ang
 			static_const_array(value<T const*> val, uint size) : _value(val.get()), _size(size) {}
 			static_const_array(static_const_array<T> const* val, uint size) : _value(&val->get()), _size(size) {}
 			static_const_array(static_const_array const& other) : _value(other._value), _size(other._size) {}
-			static_const_array(static_const_array && other) : _value(ang::move(other._value)), _value(ang::move(other._size)) {}
+			static_const_array(static_const_array && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
 			template<wsize N>
 			static_const_array(const T(&ar)[N])
 				: _value(ar), _size(N) { }
@@ -117,7 +117,7 @@ namespace ang
 		public: /*operators*/
 			static_const_array& operator = (type val) { set(ang::move(val), 1); return*this; }
 			static_const_array& operator = (value<T const*> const& val) { set(val.get(), 1); return*this; }
-			static_const_array& operator = (static_const_array const& val) { set(val._value, al._size); return*this; }
+			static_const_array& operator = (static_const_array const& val) { set(val._value, val._size); return*this; }
 			static_const_array& operator = (static_const_array && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
 			template<wsize N> static_const_array& operator = (const T(&ar)[N]) { set(ar, N); return*this; }
 

@@ -496,19 +496,6 @@ namespace ang
 		template<> xml_element_t LINK xml_node::xml_as<xml_element>();
 		template<> xml_attributes_t LINK xml_collection::xml_as<xml_attribute_list>();
 		template<> xml_element_list_t LINK xml_collection::xml_as<xml_element_list>();
-
-		template<class F>
-		inline void foreach(xml_collection_t const& store, F func) {
-			if (!store.is_empty())for (xml_iterator_t it = store->begin(); it.is_valid(); ++it)
-				func((xml_node*)it);
-		}
-
-		template<class F>
-		inline void foreach(xml_attributes_t const& store, F func) {
-			if(!store.is_empty())for (xml_iterator_t it = store->begin(); it.is_valid(); ++it)
-				func((xml_attribute*)(xml_node*)it);
-		}
-
 	}
 }
 
@@ -1013,6 +1000,22 @@ namespace ang
 		};
 	}
 }
+
+namespace ang
+{
+	template<class F>
+	inline void foreach(xml::xml_collection_t const& store, F func) {
+		if (!store.is_empty())for (xml::xml_iterator_t it = store->begin(); it.is_valid(); ++it)
+			func((xml::xml_node*)it);
+	}
+
+	template<class F>
+	inline void foreach(xml::xml_attributes_t const& store, F func) {
+		if (!store.is_empty())for (xml::xml_iterator_t it = store->begin(); it.is_valid(); ++it)
+			func((xml::xml_attribute*)(xml::xml_node*)it);
+	}
+}
+
 
 template<> bool LINK ang::xml::xml_value::as<bool>()const;
 template<> short LINK ang::xml::xml_value::as<short>()const;

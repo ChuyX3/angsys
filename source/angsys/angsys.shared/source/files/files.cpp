@@ -185,7 +185,7 @@ bool file::query_object(type_name_t name, unknown_ptr_t out)
 	return false;
 }
 
-bool file::create(cwstr_t path, open_flags_t flags)
+bool file::create(path_view path, open_flags_t flags)
 {
 	auto fs = ifile_system::get_file_system();
 	if (fs == null)
@@ -249,7 +249,7 @@ bool file::file_size(file_size_t size)
 
 streams::stream_mode_t file::mode()const
 {
-	return is_valid() ? hfile->mode() : streams::stream_mode::unknow;
+	return is_valid() ? hfile->mode().get() : streams::stream_mode::unknow;
 }
 
 bool file::set_mutex(core::async::mutex_t mutex)

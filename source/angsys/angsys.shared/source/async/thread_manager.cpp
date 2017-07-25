@@ -106,7 +106,7 @@ thread_handler_t thread_manager::create_thread(thread_t thread, thread_callback_
 		(ds.get() == detach_state::detached) ?
 		PTHREAD_CREATE_DETACHED : PTHREAD_CREATE_JOINABLE);
 
-	int_t result = pthread_create(
+	int result = pthread_create(
 		&_thread,
 		&attr,
 		(thread_start_routine_t)&thread_manager::thread_callback_procedure,
@@ -118,7 +118,7 @@ thread_handler_t thread_manager::create_thread(thread_t thread, thread_callback_
 		return null;
 	}
 	handle->_handle = (void*)_thread;
-	handle->_id = (dword_t)_thread;
+	handle->_id = (dword)_thread;
 
 #endif
 	return handle;
@@ -144,7 +144,7 @@ thread_t thread::current_thread(thread_t _thread)
 			, 0, FALSE, DUPLICATE_SAME_ACCESS);
 		handle->_id = GetCurrentThreadId();
 #elif defined __ANDROID__
-		handle->_id = (dword_t)pthread_self();
+		handle->_id = (dword)pthread_self();
 		handle->_handle = (void*)pthread_self();
 #endif
 		thread_manager::instance()->register_thread(handle);
@@ -229,7 +229,7 @@ dword thread_manager::get_current_thread_id()
 	return ::GetCurrentThreadId();
 }
 
-//dword_t thread_manager::get_thread_id(handle_t h)
+//dword thread_manager::get_thread_id(handle_t h)
 //{
 //#if WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP
 //	return ::GetThreadId(h);
@@ -246,7 +246,7 @@ dword thread_manager::get_current_thread_id()
 	return (dword)pthread_self();
 }
 
-//dword_t thread_manager::GetThreadId(Handle h)
+//dword thread_manager::GetThreadId(Handle h)
 //{
 //	HThread thread = reinterpret_cast<HThread>(h);
 //	DWord threadId = 0;

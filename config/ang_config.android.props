@@ -12,7 +12,7 @@
       <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
       <PreprocessorDefinitions>__ANDROID__;</PreprocessorDefinitions>
       <ExceptionHandling>Enabled</ExceptionHandling>
-      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

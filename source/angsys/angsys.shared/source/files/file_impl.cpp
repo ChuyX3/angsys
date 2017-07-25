@@ -202,18 +202,9 @@ bool mapped_file_buffer::realloc_buffer(wsize size)
 
 //////////////////////////////////////////////////////////////////////////
 
-dword file_impl::add_ref()
-{
-	return object::add_ref();
-}
-dword file_impl::release()
-{
-	return object::release();
-}
-
 file_size_t file_impl::get_file_size(file_handle_t h)
 {
-	ulong64 size;
+	ulong64 size = 0;
 #ifdef WINDOWS_PLATFORM
 	LARGE_INTEGER lint;
 	lint.QuadPart = 0;
@@ -236,6 +227,7 @@ text::encoding_t file_impl::get_file_encoding(file_handle_t handle)
 	SetFilePointerEx(handle, lint, 0, FILE_BEGIN);
 	ReadFile(handle, bom.bytes, 3, &out, NULL);
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
+	lseek(handle, 0, SEEK_SET);
 	::read(handle, bom.bytes, 3);
 #endif
 
@@ -247,8 +239,6 @@ text::encoding_t file_impl::get_file_encoding(file_handle_t handle)
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 		::lseek(handle, 2, SEEK_SET);
 #endif
-	//	file->cursor = 2;
-	//	flag += open_flags::EncodingUnicode;
 		return text::encoding::iso_10646; //unicode
 	}
 	else if ((bom.value & 0X00FFFFFF) == mbyte::inv_mbom)
@@ -259,7 +249,6 @@ text::encoding_t file_impl::get_file_encoding(file_handle_t handle)
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 		::lseek(handle, 3, SEEK_SET);
 #endif
-		//file->cursor = 3;
 		return text::encoding::utf_8; //mbyte
 	}
 	else
@@ -279,8 +268,8 @@ void file_impl::set_file_encoding(file_handle_t handle, text::encoding_t encodin
 	if (text::encoding::iso_10646 == encoding)
 	{
 		uint bom = mbyte::ubom;
-		dword overlapped = { 0 };
 #ifdef WINDOWS_PLATFORM
+		dword overlapped = { 0 };
 		LARGE_INTEGER lint;
 		LARGE_INTEGER cur;
 		lint.QuadPart = 2;
@@ -295,8 +284,8 @@ void file_impl::set_file_encoding(file_handle_t handle, text::encoding_t encodin
 	else if (text::encoding::utf_8 == encoding)
 	{
 		uint bom = mbyte::inv_mbom;
-		dword overlapped = { 0 };
 #ifdef WINDOWS_PLATFORM
+		dword overlapped = { 0 };
 		LARGE_INTEGER lint;
 		LARGE_INTEGER cur;
 		lint.QuadPart = 3;
@@ -378,7 +367,7 @@ bool file_impl::query_object(type_name_t name, unknown_ptr_t out)
 	return false;
 }
 
-bool file_impl::create(cwstr_t path, open_flags_t flags)
+bool file_impl::create(path_view path, open_flags_t flags)
 {
 	_flags = open_flags::null;
 
@@ -437,8 +426,8 @@ bool file_impl::create(cwstr_t path, open_flags_t flags)
 		: flags.is_active(open_flags::open_alway) ? O_CREAT
 		: /*args->createMode == CreateMode::CreateNew ?*/ O_CREAT | O_EXCL;
 
-	string _path = path;
-	_hfile = open((cstr_t)_path
+	_path = path;
+	_hfile = open((path_view)_path
 		, dwOpenFlags
 		, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
@@ -449,7 +438,6 @@ bool file_impl::create(cwstr_t path, open_flags_t flags)
 	}
 #endif
 
-	_path = path;
 	_size = get_file_size(_hfile);
 
 	if (flags.is_active(open_flags::type_text)) //text file
@@ -546,10 +534,10 @@ file_handle_t file_impl::map_handle(ulong64 _min)
 #else//STOREAPP
 		_hmap = CreateFileMappingFromApp(_hfile, NULL, accessFlags, _size, NULL);
 #endif//DESKTOP
+		_hmap_size = _hmap ? _size : 0;
 #else//LINUX|ANDROID
 		_hmap = 0;//not used
-#endif//PLATFORM
-		_hmap_size = _hmap ? _size : 0;
+#endif//PLATFORM		
 	}
 	else if (_min > _hmap_size)
 	{
@@ -614,7 +602,7 @@ streams::stream_mode_t file_impl::mode()const
 		: streams::stream_mode::unknow;
 }
 
-wstring file_impl::file_path()const
+path file_impl::file_path()const
 {
 	return _path;
 }
@@ -641,7 +629,7 @@ bool file_impl::file_size(file_size_t size)
 	SetFilePointerEx(_hfile, lint, null, 0);
 	return res ? true : false;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-	::lseek(_hfile, cur, 0);
+	::lseek(_hfile, _cursor, 0);
 #endif
 }
 

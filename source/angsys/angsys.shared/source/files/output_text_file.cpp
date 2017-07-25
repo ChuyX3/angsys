@@ -19,7 +19,7 @@ output_text_file::output_text_file()
 {
 }
 
-output_text_file::output_text_file(cwstr_t path, text::encoding_t encoding)
+output_text_file::output_text_file(path_view path, text::encoding_t encoding)
 	: output_text_file()
 {
 	open(path, encoding);
@@ -32,7 +32,7 @@ output_text_file::~output_text_file()
 
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::files::output_text_file, file);
 
-bool output_text_file::open(cwstr_t path, text::encoding_t encoding)
+bool output_text_file::open(path_view path, text::encoding_t encoding)
 {
 	if (is_valid())
 		return false;

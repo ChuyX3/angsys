@@ -266,7 +266,7 @@ inline bool ang::collections::imap<ang::wstring, T>::is_child_of(ang::type_name_
 template<class T>
 inline ang::type_name_t ang::collections::imap<ang::wstring, T>::class_name()
 {
-	static wstring _type_name = ang::move("ang::collections::imap<ang::wstring"_o + ","_s + type_name<T>() + ">"_s);
+	static string _type_name = ang::move("ang::collections::imap<ang::wstring"_o + ","_s + type_name<T>() + ">"_s);
 	return _type_name->cstr();
 }
 

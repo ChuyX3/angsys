@@ -29,7 +29,7 @@ bool ifile_system::register_file_system(ifile_system* fs, file_system_priority_t
 
 file_system::file_system()
 {
-	_paths = new collections::vector_buffer<wstring>();
+	_paths = new collections::vector_buffer<path>();
 	highest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();
 	lowest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();
 }
@@ -97,12 +97,12 @@ bool file_system::register_file_system(ifile_system* fs, file_system_priority_t 
 	return false;
 }
 
-array<wstring> file_system::paths()const
+array<path> file_system::paths()const
 {
-	return static_cast<collections::ienum<wstring> const*>(_paths.get());
+	return static_cast<collections::ienum<path> const*>(_paths.get());
 }
 
-bool file_system::register_paths(cwstr_t path)
+bool file_system::register_paths(path_view path)
 {
 	auto it = _paths->find(path);
 	if (it.is_valid())
@@ -111,7 +111,7 @@ bool file_system::register_paths(cwstr_t path)
 	return true;
 }
 
-bool file_system::create_file_handle(cwstr_t path, open_flags_t flags, ifile_ptr_t out)
+bool file_system::create_file_handle(path_view path, open_flags_t flags, ifile_ptr_t out)
 {
 	if (out.is_empty())
 		return false;
@@ -133,7 +133,7 @@ bool file_system::create_file_handle(cwstr_t path, open_flags_t flags, ifile_ptr
 	{
 		for (auto it = _paths->begin(); it.is_valid(); ++it)
 		{
-			wstring _path = (*it) + "/" + path;
+			files::path _path = (*it) + "/" + path;
 			file->create(_path, flags);
 			if (file->is_created())
 			{
@@ -152,7 +152,7 @@ bool file_system::create_file_handle(cwstr_t path, open_flags_t flags, ifile_ptr
 	return false;
 }
 
-bool file_system::open(cwstr_t path, input_text_file_t& out)
+bool file_system::open(path_view path, input_text_file_t& out)
 {
 	ifile_t _hfile;
 	if (!create_file_handle(path, open_flags::access_in + open_flags::type_text + open_flags::open_exist, &_hfile))
@@ -162,7 +162,7 @@ bool file_system::open(cwstr_t path, input_text_file_t& out)
 	return true;
 }
 
-bool file_system::open(cwstr_t path, output_text_file_t& out)
+bool file_system::open(path_view path, output_text_file_t& out)
 {
 	ifile_t _hfile;
 	if (!create_file_handle(path, open_flags::access_out + open_flags::type_text + open_flags::open_alway, &_hfile))
@@ -172,7 +172,7 @@ bool file_system::open(cwstr_t path, output_text_file_t& out)
 	return true;
 }
 
-bool file_system::open(cwstr_t path, input_binary_file_t& out)
+bool file_system::open(path_view path, input_binary_file_t& out)
 {
 	ifile_t _hfile;
 	if (!create_file_handle(path, open_flags::access_in + open_flags::type_binary + open_flags::open_exist, &_hfile))
@@ -182,7 +182,7 @@ bool file_system::open(cwstr_t path, input_binary_file_t& out)
 	return true;
 }
 
-bool file_system::open(cwstr_t path, output_binary_file_t& out)
+bool file_system::open(path_view path, output_binary_file_t& out)
 {
 	ifile_t _hfile;
 	if (!create_file_handle(path, open_flags::access_out + open_flags::type_binary + open_flags::open_alway, &_hfile))
@@ -197,15 +197,15 @@ bool file_system::open(cwstr_t path, output_binary_file_t& out)
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
-ifile_system_t ifile_system::create_file_system(wstring root)
+ifile_system_t ifile_system::create_file_system(path root)
 {
 	return new folder_file_system(root);
 }
 
-folder_file_system::folder_file_system(wstring root)
+folder_file_system::folder_file_system(path root)
 {
 	_root_path = root;
-	_paths = new collections::vector_buffer<wstring>();
+	_paths = new collections::vector_buffer<path>();
 }
 
 folder_file_system::~folder_file_system()
@@ -252,12 +252,12 @@ bool folder_file_system::query_object(type_name_t name, unknown_ptr_t out)
 	return false;
 }
 
-array<wstring> folder_file_system::paths()const
+array<path> folder_file_system::paths()const
 {
-	return static_cast<collections::ienum<wstring> const*>(_paths.get());
+	return static_cast<collections::ienum<path> const*>(_paths.get());
 }
 
-bool folder_file_system::register_paths(cwstr_t path)
+bool folder_file_system::register_paths(path_view path)
 {
 	auto it = _paths->find(path);
 	if (it.is_valid())
@@ -266,12 +266,12 @@ bool folder_file_system::register_paths(cwstr_t path)
 	return true;
 }
 
-bool folder_file_system::create_file_handle(cwstr_t path, open_flags_t flags, ifile_ptr_t out)
+bool folder_file_system::create_file_handle(path_view path, open_flags_t flags, ifile_ptr_t out)
 {
 	if (out.is_empty())
 		return false;
 
-	wstring _path = _root_path + "\\" + path;
+	files::path _path = _root_path + "\\" + path;
 
 	system_file_t file = new file_impl();
 	file->create(_path, flags);
@@ -296,7 +296,7 @@ bool folder_file_system::create_file_handle(cwstr_t path, open_flags_t flags, if
 	return false;
 }
 
-bool folder_file_system::open(cwstr_t path, input_text_file_t& out)
+bool folder_file_system::open(path_view path, input_text_file_t& out)
 {
 	ifile_t _hfile;
 	if (!create_file_handle(path, open_flags::access_in + open_flags::type_text + open_flags::open_exist, &_hfile))
@@ -306,7 +306,7 @@ bool folder_file_system::open(cwstr_t path, input_text_file_t& out)
 	return true;
 }
 
-bool folder_file_system::open(cwstr_t path, output_text_file_t& out)
+bool folder_file_system::open(path_view path, output_text_file_t& out)
 {
 	ifile_t _hfile;
 	if (!create_file_handle(path, open_flags::access_out + open_flags::type_text + open_flags::open_alway, &_hfile))
@@ -316,7 +316,7 @@ bool folder_file_system::open(cwstr_t path, output_text_file_t& out)
 	return true;
 }
 
-bool folder_file_system::open(cwstr_t path, input_binary_file_t& out)
+bool folder_file_system::open(path_view path, input_binary_file_t& out)
 {
 	ifile_t _hfile;
 	if (!create_file_handle(path, open_flags::access_in + open_flags::type_binary + open_flags::open_exist, &_hfile))
@@ -326,7 +326,7 @@ bool folder_file_system::open(cwstr_t path, input_binary_file_t& out)
 	return true;
 }
 
-bool folder_file_system::open(cwstr_t path, output_binary_file_t& out)
+bool folder_file_system::open(path_view path, output_binary_file_t& out)
 {
 	ifile_t _hfile;
 	if (!create_file_handle(path, open_flags::access_out + open_flags::type_binary + open_flags::open_alway, &_hfile))

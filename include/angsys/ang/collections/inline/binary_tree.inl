@@ -231,7 +231,7 @@ inline void ang::collections::binary_tree_data<K, T>::iteration_method(ang::coll
 	switch (method)
 	{
 	case algorithms::iteration_method::inorder:
-		algorithm = algorithms::binary_tree_inorder_iteration();
+		algorithm = algorithms::binary_tree_inorder_iteration<K,T>();
 	}
 }
 

@@ -1,8 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?> 
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup />
+  <PropertyGroup>
+    <OutDir>$(SolutionDir)binaries\bin\android\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)binaries\obj\android\$(Configuration)\$(Platform)\(RootNamespace)\</IntDir>
+    <TargetName>$(RootNamespace)</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>__ANDROID__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\..\include\angsys;$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)binaries\lib\android\$(Configuration)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

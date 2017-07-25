@@ -77,6 +77,7 @@
 #include <poll.h>
 #include <pthread.h>
 #include <sched.h>
+#include <errno.h>
 #include <android/configuration.h>
 #include <android/looper.h>
 #include <android/native_activity.h>

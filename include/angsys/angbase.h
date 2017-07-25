@@ -181,7 +181,6 @@ namespace ang
 #include <ang/value/ulong.h>
 #include <ang/value/float.h>
 #include <ang/value/double.h>
-#include <ang/value/static_array.h>
 
 namespace ang
 {
@@ -499,10 +498,11 @@ namespace ang
 			template<class obj_t, class... args_t> obj_t* construct(obj_t* obj, args_t... args)const {
 				return new((pointer)obj)obj_t(args...);
 			}
-			template<class obj_t> void destruct(obj_t* obj)const {
+			template<class obj_t> pointer destruct(obj_t* obj)const {
 				if (obj) {
 					obj->~obj_t();
 				}
+				return obj;
 			}
 		ANG_END_INTERFACE();
 
@@ -554,8 +554,7 @@ namespace ang
 	}
 }
 
-//
-
+#include <ang/value/static_array.h>
 
 #ifndef __PLACEMENT_NEW_INLINE
 #define __PLACEMENT_NEW_INLINE

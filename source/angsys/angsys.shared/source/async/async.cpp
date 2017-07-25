@@ -20,6 +20,8 @@
 #define NEW_ARGS(...) new(__VA_ARGS__)
 #endif
 
+#define GET_DEFAULT_ALLOC() memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator)
+
 using namespace ang;
 using namespace ang::core;
 using namespace ang::core::async;
@@ -29,7 +31,7 @@ typedef struct _mutex_handle
 {
 	pthread_mutexattr_t attr;
 	pthread_mutex_t _mutex;
-}*mutex_pointer;
+}*mutex_handle;
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -254,13 +256,14 @@ mutex::mutex()
 		, 0
 		, SYNCHRONIZE);
 #else
-	mutex_pointer _mutex = NEW _mutex_handle();
+	auto alloc = GET_DEFAULT_ALLOC();
+	mutex_handle _mutex = alloc->object_alloc<_mutex_handle>(1);
 	pthread_mutexattr_init(&_mutex->attr);
 	pthread_mutexattr_settype(&_mutex->attr, PTHREAD_MUTEX_RECURSIVE);
 	if (pthread_mutex_init(&_mutex->_mutex, &_mutex->attr) != 0)
 	{
 		pthread_mutexattr_destroy(&_mutex->attr);
-		delete _mutex;
+		alloc->memory_release(_mutex);
 		_mutex = null;
 	}
 	_handle = _mutex;
@@ -276,13 +279,14 @@ mutex::mutex(bool _lock)
 		, _lock ? CREATE_MUTEX_INITIAL_OWNER : 0
 		, SYNCHRONIZE);
 #else
-	mutex_pointer _mutex = NEW _mutex_handle();
+	auto alloc = GET_DEFAULT_ALLOC();
+	mutex_handle _mutex = alloc->object_alloc<_mutex_handle>(1);
 	pthread_mutexattr_init(&_mutex->attr);
 	pthread_mutexattr_settype(&_mutex->attr, PTHREAD_MUTEX_RECURSIVE);
 	if (pthread_mutex_init(&_mutex->_mutex, &_mutex->attr) != 0)
 	{
 		pthread_mutexattr_destroy(&_mutex->attr);
-		delete _mutex;
+		alloc->memory_release(_mutex);
 		_mutex = null;
 	}
 	_handle = _mutex;
@@ -302,10 +306,10 @@ mutex::~mutex()
 #if defined WINDOWS_PLATFORM
 		::CloseHandle(_handle);
 #else
-		auto _mutex = reinterpret_cast<mutex_pointer>(_handle);
+		auto _mutex = reinterpret_cast<mutex_handle>(_handle);
 		pthread_mutex_destroy(&_mutex->_mutex);
 		pthread_mutexattr_destroy(&_mutex->attr);
-		delete _mutex;
+		GET_DEFAULT_ALLOC()->memory_release(_mutex);
 #endif
 	}
 	_handle = null;
@@ -324,7 +328,7 @@ bool mutex::lock()const
 #if defined WINAPI_FAMILY
 		return bool(WAIT_OBJECT_0 == WaitForSingleObjectEx((HANDLE)_handle, INFINITE, FALSE));
 #else
-		return bool(0 == pthread_mutex_lock(&mutex_pointer(_handle)->_mutex));
+		return bool(0 == pthread_mutex_lock(&mutex_handle(_handle)->_mutex));
 #endif
 	return false;
 }
@@ -335,7 +339,7 @@ bool mutex::try_lock()const
 #if defined WINAPI_FAMILY
 		return bool(WAIT_OBJECT_0 == WaitForSingleObjectEx((HANDLE)_handle, 0, FALSE));
 #else
-		return bool(0 == pthread_mutex_trylock(&mutex_pointer(_handle)->_mutex));
+		return bool(0 == pthread_mutex_trylock(&mutex_handle(_handle)->_mutex));
 #endif
 	return false;
 }
@@ -346,7 +350,7 @@ bool mutex::unlock()const
 #if defined WINAPI_FAMILY
 		return ReleaseMutex(_handle) == 0 ? false : true;
 #else
-		return bool(0 == pthread_mutex_unlock(&mutex_pointer(_handle)->_mutex));
+		return bool(0 == pthread_mutex_unlock(&mutex_handle(_handle)->_mutex));
 #endif
 	return false;
 }
@@ -458,7 +462,7 @@ cond::cond()
 #ifdef WINDOWS_PLATFORM
 	_handle = CreateEventEx(null, null, 0, EVENT_ALL_ACCESS);
 #elif defined __ANDROID__ || defined LINUX
-	_handle = NEW pthread_cond_t();
+	_handle = GET_DEFAULT_ALLOC()->object_alloc<pthread_cond_t>(1);
 	pthread_cond_init((pthread_cond_t*)_handle, NULL);
 #endif
 }
@@ -469,7 +473,8 @@ cond::~cond()
 	CloseHandle(_handle);
 #elif defined __ANDROID__ || defined LINUX
 	pthread_cond_destroy((pthread_cond_t*)_handle);
-	delete (pthread_cond_t*)_handle;
+	GET_DEFAULT_ALLOC()->memory_release(_handle);
+	_handle = null;
 #endif
 }
 
@@ -486,7 +491,7 @@ bool cond::wait(mutex_t mutex)const
 	res = WaitForSingleObjectEx(_handle, INFINITE, FALSE);
 	mutex->lock();
 #elif defined __ANDROID__ || defined LINUX
-	res = pthread_cond_wait((pthread_cond_t*)_handle, &mutex_pointer(mutex->handle())->_mutex);
+	res = pthread_cond_wait((pthread_cond_t*)_handle, &mutex_handle(mutex->handle())->_mutex);
 #endif
 	return res == 0;
 }
@@ -504,7 +509,7 @@ bool cond::wait(mutex_t mutex, dword ms)const
 	timespec time;
 	time.tv_sec = ms / 1000;
 	time.tv_nsec = (ms - time.tv_sec * 1000) * 1000;
-	res = pthread_cond_timedwait((pthread_cond_t*)_handle, &mutex_pointer(mutex->handle())->_mutex, &time);
+	res = pthread_cond_timedwait((pthread_cond_t*)_handle, &mutex_handle(mutex->handle())->_mutex, &time);
 #endif
 	return res == 0;
 }

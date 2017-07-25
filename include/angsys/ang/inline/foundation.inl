@@ -19,11 +19,19 @@ namespace ang
 			static inline bool is_type_of(ang::type_name_t name) {
 				return name == type_name();
 			}
-			static inline ang::unknown_t dynamic_constructor() {
-				return new type();
+			static inline bool dynamic_constructor(ang::unknown_ptr_t out) {
+				if (out.get() == null)
+					return false;
+				auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator);
+				*out = alloc->construct(alloc->object_alloc<type>(1));
+				return true;
 			}
-			static inline void dynamic_destructor(ang::unknown_t uknown) {
-				delete reinterpret_cast<type*>(uknown.get());
+			static inline bool dynamic_destructor(ang::unknown_ptr_t uknown) {
+				if (uknown.get() == null)
+					return false;
+				auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator);
+				alloc->memory_release(alloc->destruct(reinterpret_cast<type*>(*uknown.get())));
+				return true;
 			}
 			static inline ang::runtime_type_info_t runtime_type() {
 				static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true);
@@ -47,11 +55,19 @@ namespace ang
 			static inline bool is_type_of(ang::type_name_t name) {
 				return name == type_name();
 			}
-			static inline ang::unknown_t dynamic_constructor() {
-				return new type();
+			static inline bool dynamic_constructor(ang::unknown_ptr_t out) {
+				if (out.get() == null)
+					return false;
+				auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator);
+				*out = alloc->construct(alloc->object_alloc<type>(1));
+				return true;
 			}
-			static inline void dynamic_destructor(ang::unknown_t uknown) {
-				delete reinterpret_cast<type*>(uknown.get());
+			static inline bool dynamic_destructor(ang::unknown_ptr_t uknown) {
+				if (uknown.get() == null)
+					return false;
+				auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator);
+				alloc->memory_release(alloc->destruct(reinterpret_cast<type*>(*uknown.get())));
+				return true;
 			}
 			static inline ang::runtime_type_info_t runtime_type() {
 				static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true);
@@ -75,11 +91,19 @@ namespace ang
 			static inline bool is_type_of(ang::type_name_t name) {
 				return name == type_name();
 			}
-			static inline ang::unknown_t dynamic_constructor() {
-				return new type();
+			static inline bool dynamic_constructor(ang::unknown_ptr_t out) {
+				if (out.get() == null)
+					return false;
+				auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator);
+				*out = alloc->construct(alloc->object_alloc<type>(1));
+				return true;
 			}
-			static inline void dynamic_destructor(ang::unknown_t uknown) {
-				delete reinterpret_cast<type*>(uknown.get());
+			static inline bool dynamic_destructor(ang::unknown_ptr_t uknown) {
+				if (uknown.get() == null)
+					return false;
+				auto alloc = memory::allocator_manager::get_allocator(memory::allocator_manager::default_allocator);
+				alloc->memory_release(alloc->destruct(reinterpret_cast<type*>(*uknown.get())));
+				return true;
 			}
 			static inline ang::runtime_type_info_t runtime_type() {
 				static runtime_type_info_t runtime_type_info(type_name(), &dynamic_constructor, &dynamic_destructor, true);

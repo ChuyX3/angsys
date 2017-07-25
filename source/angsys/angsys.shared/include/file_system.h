@@ -65,7 +65,7 @@ namespace ang
 				file_handle_t _hfile;
 				ulong64 _hmap_size;
 				file_handle_t _hmap;
-				wstring _path;
+				path _path;
 				file_flags_t _flags;
 				long64 _size;
 				long64 _cursor;
@@ -81,18 +81,15 @@ namespace ang
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
 
-				bool create(cwstr_t path, open_flags_t flags);
+				bool create(path_view path, open_flags_t flags);
 				file_handle_t handle()const;
 				file_handle_t map_handle(ulong64 min);
 				bool is_created()const;
 				bool close();
 
-				dword add_ref()override;
-				dword release()override;
-
 			public: //Methos
 				virtual streams::stream_mode_t mode()const override;
-				virtual wstring file_path()const override;
+				virtual path file_path()const override;
 				virtual file_size_t file_size()const override;
 				virtual bool file_size(file_size_t) override;
 				virtual void encoding(text::encoding_t)override;
@@ -125,7 +122,7 @@ namespace ang
 			{
 			private:
 				friend  singleton<file_system_t>;
-				collections::vector<wstring> _paths;
+				collections::vector<path> _paths;
 
 				collections::vector<intf_wrapper<ifile_system>> highest_priority;
 				collections::vector<intf_wrapper<ifile_system>> lowest_priority;
@@ -139,14 +136,14 @@ namespace ang
 
 			public:
 				bool register_file_system(ifile_system*, file_system_priority_t);
-				virtual array<wstring> paths()const override;
-				virtual bool register_paths(cwstr_t)override;
-				virtual bool create_file_handle(cwstr_t, open_flags_t, ifile_ptr_t)override;
+				virtual array<path> paths()const override;
+				virtual bool register_paths(path_view)override;
+				virtual bool create_file_handle(path_view, open_flags_t, ifile_ptr_t)override;
 
-				virtual bool open(cwstr_t, input_text_file_t&)override;
-				virtual bool open(cwstr_t, output_text_file_t&)override;
-				virtual bool open(cwstr_t, input_binary_file_t&)override;
-				virtual bool open(cwstr_t, output_binary_file_t&)override;
+				virtual bool open(path_view, input_text_file_t&)override;
+				virtual bool open(path_view, output_text_file_t&)override;
+				virtual bool open(path_view, input_binary_file_t&)override;
+				virtual bool open(path_view, output_binary_file_t&)override;
 			};
 
 
@@ -155,25 +152,25 @@ namespace ang
 				, public ifile_system
 			{
 			private:
-				wstring _root_path;
-				collections::vector<wstring> _paths;
+				path _root_path;
+				collections::vector<path> _paths;
 
 			public:
-				folder_file_system(wstring);
+				folder_file_system(path);
 				virtual~folder_file_system();
 
 			public:
 				ANG_DECLARE_INTERFACE();
 
 			public:
-				virtual array<wstring> paths()const override;
-				virtual bool register_paths(cwstr_t)override;
-				virtual bool create_file_handle(cwstr_t, open_flags_t, ifile_ptr_t)override;
+				virtual array<path> paths()const override;
+				virtual bool register_paths(path_view)override;
+				virtual bool create_file_handle(path_view, open_flags_t, ifile_ptr_t)override;
 
-				virtual bool open(cwstr_t, input_text_file_t&)override;
-				virtual bool open(cwstr_t, output_text_file_t&)override;
-				virtual bool open(cwstr_t, input_binary_file_t&)override;
-				virtual bool open(cwstr_t, output_binary_file_t&)override;
+				virtual bool open(path_view, input_text_file_t&)override;
+				virtual bool open(path_view, output_text_file_t&)override;
+				virtual bool open(path_view, input_binary_file_t&)override;
+				virtual bool open(path_view, output_binary_file_t&)override;
 			};
 
 		}

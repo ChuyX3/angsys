@@ -43,6 +43,15 @@ namespace ang
 			typedef intf_wrapper_ptr<ifile> ifile_ptr_t;
 			typedef intf_wrapper<ifile_system> ifile_system_t;
 
+#if defined WINDOWS_PLATFORM
+			typedef wstring path;
+			typedef cwstr_t path_view;
+#elif defined ANDROID_PLATFORM
+			typedef string path; 
+			typedef cstr_t path_view;
+#endif // WINDOWS_PLATFORM
+
+
 			class file;
 			class pack_file;
 			typedef object_wrapper<file> file_t;
@@ -139,7 +148,6 @@ namespace ang
 
 			typedef struct LINK pack_file_info
 			{
-				//wstring path;
 				file_size_t size;
 				file_cursor_t offset;
 			}pack_file_info_t;
@@ -150,7 +158,7 @@ namespace ang
 
 			ANG_BEGIN_INTERFACE(LINK, ifile)
 				visible vcall streams::stream_mode_t mode()const pure;
-				visible vcall wstring file_path()const pure;
+				visible vcall path file_path()const pure;
 				visible vcall file_size_t file_size()const pure;
 				visible vcall bool file_size(file_size_t) pure;
 				visible vcall void encoding(text::encoding_t) pure;
@@ -171,16 +179,16 @@ namespace ang
 
 			ANG_BEGIN_INTERFACE(LINK, ifile_system)
 				visible static ifile_system_t get_file_system();
-				visible static ifile_system_t create_file_system(wstring root);
+				visible static ifile_system_t create_file_system(path root);
 				visible static bool register_file_system(ifile_system*, file_system_priority_t);
-				visible vcall array<wstring> paths()const pure;
-				visible vcall bool register_paths(cwstr_t) pure;
-				visible vcall bool create_file_handle(cwstr_t, open_flags_t, ifile_ptr_t) pure;
+				visible vcall array<path> paths()const pure;
+				visible vcall bool register_paths(path_view) pure;
+				visible vcall bool create_file_handle(path_view, open_flags_t, ifile_ptr_t) pure;
 
-				visible vcall bool open(cwstr_t, input_text_file_t&)pure;
-				visible vcall bool open(cwstr_t, output_text_file_t&)pure;
-				visible vcall bool open(cwstr_t, input_binary_file_t&)pure;
-				visible vcall bool open(cwstr_t, output_binary_file_t&)pure;
+				visible vcall bool open(path_view, input_text_file_t&)pure;
+				visible vcall bool open(path_view, output_text_file_t&)pure;
+				visible vcall bool open(path_view, input_binary_file_t&)pure;
+				visible vcall bool open(path_view, output_binary_file_t&)pure;
 			ANG_END_INTERFACE();
 
 		}
@@ -205,7 +213,7 @@ namespace ang
 
 				file();
 				virtual~file();
-				bool create(cwstr_t path, open_flags_t flags);
+				bool create(path_view path, open_flags_t flags);
 				ibuffer_t map(wsize, file_cursor_t);
 				bool unmap(ibuffer_t);
 
@@ -228,11 +236,11 @@ namespace ang
 				, public ifile_system
 			{
 			public:
-				static bool create_pack_from_folder(cwstr_t in_path, cwstr_t out_path);
+				static bool create_pack_from_folder(path_view in_path, path_view out_path);
 
 			private:
 				core::async::mutex_t mutex;
-				array<collections::pair<wstring, pack_file_info>> files;
+				array<collections::pair<path, pack_file_info>> files;
 						
 			public:
 				pack_file();
@@ -240,16 +248,16 @@ namespace ang
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
 
-				bool create(cwstr_t path, open_flags_t flags);
+				bool create(path_view path, open_flags_t flags);
 
-				array<wstring> paths()const override;
-				bool register_paths(cwstr_t) override;
-				bool create_file_handle(cwstr_t, open_flags_t, ifile_ptr_t) override;
+				array<path> paths()const override;
+				bool register_paths(path_view) override;
+				bool create_file_handle(path_view, open_flags_t, ifile_ptr_t) override;
 
-				bool open(cwstr_t path, input_text_file_t&);
-				bool open(cwstr_t path, output_text_file_t&);
-				bool open(cwstr_t path, input_binary_file_t&);
-				bool open(cwstr_t path, output_binary_file_t&);
+				bool open(path_view path, input_text_file_t&)override;
+				bool open(path_view path, output_text_file_t&)override;
+				bool open(path_view path, input_binary_file_t&)override;
+				bool open(path_view path, output_binary_file_t&)override;
 
 			protected:
 				virtual~pack_file();
@@ -260,11 +268,11 @@ namespace ang
 			{
 			public:
 				input_text_file();
-				input_text_file(cwstr_t path);
+				input_text_file(path_view path);
 
 				ANG_DECLARE_INTERFACE();
 
-				bool open(cwstr_t path);
+				bool open(path_view path);
 				text::encoding_t format()const;
 				file_cursor_t cursor()const;
 				void cursor(file_cursor_t offset, file_reference_t ref = file_reference::begin);
@@ -295,11 +303,11 @@ namespace ang
 			{
 			public:
 				output_text_file();
-				output_text_file(cwstr_t path, text::encoding_t = text::encoding::ascii);
+				output_text_file(path_view path, text::encoding_t = text::encoding::ascii);
 
 				ANG_DECLARE_INTERFACE();
 
-				bool open(cwstr_t path, text::encoding_t = text::encoding::ascii);
+				bool open(path_view path, text::encoding_t = text::encoding::ascii);
 				text::encoding_t format()const;
 				void format(text::encoding_t);
 				file_cursor_t cursor()const;
@@ -331,11 +339,11 @@ namespace ang
 			{
 			public:
 				input_binary_file();
-				input_binary_file(cwstr_t path);
+				input_binary_file(path_view path);
 
 				ANG_DECLARE_INTERFACE();
 
-				bool open(cwstr_t path);
+				bool open(path_view path);
 				file_cursor_t cursor()const;
 				void cursor(file_cursor_t offset, file_reference_t ref = file_reference::begin);
 
@@ -363,11 +371,11 @@ namespace ang
 			{
 			public:
 				output_binary_file();
-				output_binary_file(cwstr_t path);
+				output_binary_file(path_view path);
 
 				ANG_DECLARE_INTERFACE();
 
-				bool open(cwstr_t path);
+				bool open(path_view path);
 				file_cursor_t cursor()const;
 				void cursor(file_cursor_t offset, file_reference_t ref = file_reference::begin);
 
@@ -396,9 +404,9 @@ namespace ang
 			{
 			public:
 				binary_file();
-				binary_file(cwstr_t path);
+				binary_file(path_view path);
 
-				bool open(cwstr_t path);
+				bool open(path_view path);
 				file_cursor_t cursor()const;
 				void cursor(file_cursor_t offset, file_reference_t ref = file_reference::begin);
 

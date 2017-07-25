@@ -19,7 +19,7 @@ binary_file::binary_file()
 {
 }
 
-binary_file::binary_file(cwstr_t path)
+binary_file::binary_file(path_view path)
 	: binary_file()
 {
 	open(path);
@@ -32,7 +32,7 @@ binary_file::binary_file(cwstr_t path)
 //
 //ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::files::binary_file, file);
 
-bool binary_file::open(cwstr_t path)
+bool binary_file::open(path_view path)
 {
 	if (is_valid())
 		return false;

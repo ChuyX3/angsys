@@ -19,7 +19,7 @@ output_binary_file::output_binary_file()
 {
 }
 
-output_binary_file::output_binary_file(cwstr_t path)
+output_binary_file::output_binary_file(path_view path)
 	: output_binary_file()
 {
 	open(path);
@@ -32,7 +32,7 @@ output_binary_file::~output_binary_file()
 
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::files::output_binary_file, file);
 
-bool output_binary_file::open(cwstr_t path)
+bool output_binary_file::open(path_view path)
 {
 	if (is_valid())
 		return false;
