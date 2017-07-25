@@ -71,33 +71,64 @@ bool d3d11_draw_context::create(d3d11_driver_t driver, core::files::ifile_system
 	effect_library->set_file_system(fs);
 
 	reflect::variable;
+	{//creating square model
+		maths::float4 vertices[] = {
+			{ -1.0f,1.0f,-1.0f,1.0f },
+			{ 1.0f,1.0f,-1.0f,1.0f },
+			{ 1.0f,-1.0f,-1.0f,1.0f },
+			{ -1.0f,-1.0f,-1.0f,1.0f },
+		};
 
-	maths::float4 vertices[] = {
-		{ -1.0f,1.0f,-1.0f,1.0f },
-		{ 1.0f,1.0f,-1.0f,1.0f },
-		{ 1.0f,-1.0f,-1.0f,1.0f },
-		{ -1.0f,-1.0f,-1.0f,1.0f },
-	};
+		reflect::attribute_desc input_layout[] =
+		{
+			{ reflect::var_type::f32, reflect::var_class::vec4 }
+		};
 
-	reflect::attribute_desc input_layout[] =
-	{
-		{ reflect::var_type::f32, reflect::var_class::vec4 }
-	};
+		word indices[] = { 0,2,1,0,3,2 };
 
-	word indices[] = { 0,2,1,0,3,2 };
+		_square.indices = driver->create_index_buffer(
+			graphics::buffers::buffer_usage::def,
+			graphics::reflect::var_type::u16,
+			array_size(indices), static_array<byte>((byte*)indices, sizeof(indices))
+		);
 
-	_square.indices = driver->create_index_buffer(
-		graphics::buffers::buffer_usage::def,
-		graphics::reflect::var_type::u16,
-		array_size(indices), static_array<byte>((byte*)indices, sizeof(indices))
-	);
+		_square.vertices = driver->create_vertex_buffer(
+			graphics::buffers::buffer_usage::def,
+			input_layout,
+			array_size(vertices), static_array<byte>((byte*)vertices, sizeof(vertices))
+		);
+	}
 
-	_square.vertices = driver->create_vertex_buffer(
-		graphics::buffers::buffer_usage::def,
-		input_layout,
-		array_size(vertices), static_array<byte>((byte*)vertices, sizeof(vertices))
-	);
+	{//creating circle model
+		//collections::vector<>;
 
+
+		maths::float4 vertices[] = {
+			{ -1.0f,1.0f,-1.0f,1.0f },
+			{ 1.0f,1.0f,-1.0f,1.0f },
+			{ 1.0f,-1.0f,-1.0f,1.0f },
+			{ -1.0f,-1.0f,-1.0f,1.0f },
+		};
+
+		reflect::attribute_desc input_layout[] =
+		{
+			{ reflect::var_type::f32, reflect::var_class::vec4 }
+		};
+
+		word indices[] = { 0,2,1,0,3,2 };
+
+		_circle.indices = driver->create_index_buffer(
+			graphics::buffers::buffer_usage::def,
+			graphics::reflect::var_type::u16,
+			array_size(indices), static_array<byte>((byte*)indices, sizeof(indices))
+		);
+
+		_circle.vertices = driver->create_vertex_buffer(
+			graphics::buffers::buffer_usage::def,
+			input_layout,
+			array_size(vertices), static_array<byte>((byte*)vertices, sizeof(vertices))
+		);
+	}
 	return true;
 }
 

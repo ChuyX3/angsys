@@ -24,11 +24,11 @@ namespace ang
 			typedef object_wrapper<d3d11_linear_gradient_brush> d3d11_linear_gradient_brush_t;
 			typedef object_wrapper<d3d11_linear_gradient_texturing_brush> d3d11_linear_gradient_texturing_brush_t;
 
-			typedef struct square
+			typedef struct _model
 			{
 				buffers::iindex_buffer_t indices;
 				buffers::ivertex_buffer_t vertices;
-			}square_t, *square_ptr_t;
+			}model_t, *model_ptr_t;
 
 
 			class d3d11_brush
@@ -41,7 +41,7 @@ namespace ang
 
 			public: /*overrides*/
 				ANG_DECLARE_INTERFACE();
-				virtual void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, square_ptr_t) = 0;
+				virtual void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t) = 0;
 			};
 
 			class d3d11_solid_brush
@@ -58,7 +58,7 @@ namespace ang
 			public: /*overrides*/
 				ANG_DECLARE_INTERFACE();
 
-				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, square_ptr_t) override;
+				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t) override;
 
 				bool create(d3d11_draw_context_t context, color_t diffuse, color_t additive);
 
@@ -83,7 +83,7 @@ namespace ang
 			public: /*overrides*/
 				ANG_DECLARE_INTERFACE();
 
-				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, square_ptr_t) override;
+				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t) override;
 
 				bool create(d3d11_draw_context_t context, drawing::gradient_info_t gradients, color_t diffuse, color_t additive);
 
@@ -108,7 +108,7 @@ namespace ang
 			public: /*overrides*/
 				ANG_DECLARE_INTERFACE();
 
-				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, square_ptr_t) override;
+				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t) override;
 
 				bool create(d3d11_draw_context_t context, drawing::texturing_info_t info, color_t diffuse, color_t additive);
 
@@ -136,7 +136,7 @@ namespace ang
 			public: /*overrides*/
 				ANG_DECLARE_INTERFACE();
 
-				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, square_ptr_t) override;
+				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t) override;
 				bool create(d3d11_draw_context_t context, drawing::gradient_info_t gradients_info, drawing::texturing_info_t texture_info, color_t diffuse, color_t additive);
 
 			private:
@@ -149,7 +149,8 @@ namespace ang
 			{
 			private:
 				size<float> _dimentions;
-				square_t _square;
+				model_t _square;
+				model_t _circle;
 
 			public:
 				d3d11_draw_context(d3d11_driver_t, core::files::ifile_system_t = null);

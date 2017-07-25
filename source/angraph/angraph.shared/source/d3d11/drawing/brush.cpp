@@ -281,7 +281,7 @@ bool d3d11_solid_brush::create(d3d11_draw_context_t context, color_t color, colo
 	return !_technique.is_empty();
 }
 
-void d3d11_solid_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, square_ptr_t square)
+void d3d11_solid_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t model)
 {
 	driver->bind_shaders(_technique);
 	auto world = _technique->map_vs_uniform(driver.get(), 0);
@@ -293,9 +293,9 @@ void d3d11_solid_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranfo
 	colors[1].cast<maths::float4>() = color_to_vector(_diffuse_color);
 	_technique->unmap_ps_uniform(driver.get(), colors);
 
-	driver->bind_index_buffer(square->indices);
-	driver->bind_vertex_buffer(square->vertices);
-	driver->draw_indexed(square->indices->counter(), graphics::primitive::triangle);
+	driver->bind_index_buffer(model->indices);
+	driver->bind_vertex_buffer(model->vertices);
+	driver->draw_indexed(model->indices->counter(), graphics::primitive::triangle);
 }
 
 
@@ -389,7 +389,7 @@ bool d3d11_linear_gradient_brush::create(d3d11_draw_context_t context, drawing::
 	return !_technique.is_empty();
 }
 
-void d3d11_linear_gradient_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, square_ptr_t square)
+void d3d11_linear_gradient_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t model)
 {
 	driver->bind_shaders(_technique);
 	auto world = _technique->map_vs_uniform(driver.get(), 0);
@@ -416,9 +416,9 @@ void d3d11_linear_gradient_brush::draw(d3d11_driver_t driver, maths::matrix4 con
 	}
 	_technique->unmap_ps_uniform(driver.get(), gradient_info);
 
-	driver->bind_index_buffer(square->indices);
-	driver->bind_vertex_buffer(square->vertices);
-	driver->draw_indexed(square->indices->counter(), graphics::primitive::triangle);
+	driver->bind_index_buffer(model->indices);
+	driver->bind_vertex_buffer(model->vertices);
+	driver->draw_indexed(model->indices->counter(), graphics::primitive::triangle);
 }
 
 
@@ -479,7 +479,7 @@ bool d3d11_texturing_brush::create(d3d11_draw_context_t context, drawing::textur
 	return !_technique.is_empty();
 }
 
-void d3d11_texturing_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, square_ptr_t square)
+void d3d11_texturing_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t model)
 {
 	driver->bind_shaders(_technique);
 	driver->bind_texture(_texture, 0);
@@ -492,10 +492,10 @@ void d3d11_texturing_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tr
 	colors[1].cast<maths::float4>() = color_to_vector(_diffuse_color);
 	_technique->unmap_ps_uniform(driver.get(), colors);
 
-	driver->bind_index_buffer(square->indices);
-	driver->bind_vertex_buffer(square->vertices);
+	driver->bind_index_buffer(model->indices);
+	driver->bind_vertex_buffer(model->vertices);
 	driver->bind_texture(_texture, 0);
-	driver->draw_indexed(square->indices->counter(), graphics::primitive::triangle);
+	driver->draw_indexed(model->indices->counter(), graphics::primitive::triangle);
 	driver->bind_texture(null, 0);
 }
 
@@ -597,7 +597,7 @@ bool d3d11_linear_gradient_texturing_brush::create(d3d11_draw_context_t context,
 	return !_technique.is_empty();
 }
 
-void d3d11_linear_gradient_texturing_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, square_ptr_t square)
+void d3d11_linear_gradient_texturing_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t model)
 {
 	driver->bind_shaders(_technique);
 	auto world = _technique->map_vs_uniform(driver.get(), 0);
@@ -624,9 +624,9 @@ void d3d11_linear_gradient_texturing_brush::draw(d3d11_driver_t driver, maths::m
 	}
 	_technique->unmap_ps_uniform(driver.get(), gradient_info);
 
-	driver->bind_index_buffer(square->indices);
-	driver->bind_vertex_buffer(square->vertices);
-	driver->draw_indexed(square->indices->counter(), graphics::primitive::triangle);
+	driver->bind_index_buffer(model->indices);
+	driver->bind_vertex_buffer(model->vertices);
+	driver->draw_indexed(model->indices->counter(), graphics::primitive::triangle);
 }
 
 
