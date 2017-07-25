@@ -42,8 +42,8 @@ icore_app_t icore_app::get_core_app()
 
 app::app()
 	: _main_wnd(null)
-	, mainWndCreatedEvent(this, [](events::core_msg_t code) { return events::win_msg_enum::Created == code; })
-	, mainWndDestroyedEvent(this, [](events::core_msg_t code) { return events::win_msg_enum::Destroyed == code; })
+	, mainWndCreatedEvent(this, [](events::core_msg_t code) { return events::win_msg_enum::created == code; })
+	, mainWndDestroyedEvent(this, [](events::core_msg_t code) { return events::win_msg_enum::destroyed == code; })
 {
 
 }
@@ -170,7 +170,7 @@ dword app::on_run_async(core::async::iasync_t<dword> action, window_t wnd)
 		{
 			switch (msg.message)
 			{
-			case events::win_msg_enum::SystemReservedEvent:
+			case events::win_msg_enum::system_reserved_event:
 				if (msg.wParam != 0 && msg.lParam != 0)
 				{
 					auto task = reinterpret_cast<async_msg_task*>(msg.wParam);
@@ -199,9 +199,9 @@ dword app::on_run_async(core::async::iasync_t<dword> action, window_t wnd)
 		}
 
 		timer.update();
-		events::message_t msg = new events::message(events::win_msg_enum::Update, &timer);
+		events::message_t msg = new events::message(events::win_msg_enum::update, &timer);
 		wnd->send_msg(msg);
-		wnd->send_msg(new events::message(events::win_msg_enum::Draw));
+		wnd->send_msg(new events::message(events::win_msg_enum::draw));
 	}
 	return 0;
 }

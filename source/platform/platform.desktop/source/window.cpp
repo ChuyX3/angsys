@@ -246,24 +246,24 @@ window::window(wnd_create_args_t args)
 
 window::window()
 	: _handle(null)
-	, createdEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::Created; })
-	, destroyedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::Destroyed; })
-	, drawEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::Draw; })
-	, updateEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::Update; })
-	, orientationEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::Orientation; })
-	, activateEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::GotFocus || msg == win_msg_enum::LostFocus; })
-	, sizeEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::Size; })
-	, charEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::Char; })
-	, keyPressedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::KeyDown; })
-	, keyReleasedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::KeyUp; })
-	, pointerMovedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::PointerMoved; })
-	, pointerPressedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::PointerPressed; })
-	, pointerReleasedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::PointerPressed; })
-	, mouseMovedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::MouseMove; })
-	, mouseButtonPressedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::LButtonDown
-		|| msg == win_msg_enum::RButtonDown || msg == win_msg_enum::MButtonDown; })
-	, mouseButtonReleasedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::LButtonUp
-		|| msg == win_msg_enum::RButtonUp || msg == win_msg_enum::MButtonUp; })
+	, createdEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::created; })
+	, destroyedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::destroyed; })
+	, drawEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::draw; })
+	, updateEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::update; })
+	, orientationEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::orientation; })
+	, activateEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::got_focus || msg == win_msg_enum::lost_focus; })
+	, sizeEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::size; })
+	, charEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::put_char; })
+	, keyPressedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::key_down; })
+	, keyReleasedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::key_up; })
+	, pointerMovedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::pointer_moved; })
+	, pointerPressedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::pointer_pressed; })
+	, pointerReleasedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::pointer_pressed; })
+	, mouseMovedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::mouse_move; })
+	, mouseButtonPressedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::lbutton_down
+		|| msg == win_msg_enum::rbutton_down || msg == win_msg_enum::mbutton_down; })
+	, mouseButtonReleasedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::lbutton_up
+		|| msg == win_msg_enum::rbutton_up || msg == win_msg_enum::mbutton_up; })
 {
 
 }
@@ -423,7 +423,7 @@ bool window::create(wnd_create_args_t args)
 		return false;
 	}
 
-	message_t msg = new message((core_msg_t)win_msg_enum::InitialUpdate, 0, 0);
+	message_t msg = new message((core_msg_t)win_msg_enum::initial_update, 0, 0);
 	send_msg(msg);
 
 	attach(handle);
@@ -478,7 +478,7 @@ core::async::iasync_t<dword> window::post_msg(message_t msg)
 	auto task = new async_msg_task(this, HWnd(_handle)->cond, HWnd(_handle)->mutex, msg);
 	task->add_ref();
 	if (PostMessageW((HWND)get_core_view_handle()
-		, (core_msg_t)win_msg_enum::SystemReservedEvent, (WPARAM)task
+		, (core_msg_t)win_msg_enum::system_reserved_event, (WPARAM)task
 		, (LPARAM)static_cast<imessage_reciever*>(this)) == 0)
 	{
 		task->release();
@@ -496,28 +496,28 @@ bool window::listen_to(event_t event)
 {
 	switch ((core_msg_t)event.get()->msg_type())
 	{
-	case win_msg_enum::Created:
+	case win_msg_enum::created:
 		createdEvent += event;
 		return true;
-	case win_msg_enum::Destroyed:
+	case win_msg_enum::destroyed:
 		destroyedEvent += event;
 		return true;
-	case win_msg_enum::Draw:
+	case win_msg_enum::draw:
 		drawEvent += event;
 		return true;
-	case win_msg_enum::Update:
+	case win_msg_enum::update:
 		updateEvent += event;
 		return true;
-	case win_msg_enum::Size:
+	case win_msg_enum::size:
 		sizeEvent += event;
 		return true;
-	case win_msg_enum::PointerMoved:
+	case win_msg_enum::pointer_moved:
 		pointerMovedEvent += event;
 		return true;
-	case win_msg_enum::PointerPressed:
+	case win_msg_enum::pointer_pressed:
 		pointerPressedEvent += event;
 		return true;
-	case win_msg_enum::PointerReleased:
+	case win_msg_enum::pointer_released:
 		pointerReleasedEvent += event;
 		return true;
 	default:
@@ -650,7 +650,7 @@ LRESULT WINAPI window_procedure(HWND hWnd, UINT m, WPARAM wprm, LPARAM lprm)
 	message_t msg = new message(m, (pointer)wprm, (pointer)lprm);
 	window_t wnd = null;
 
-	if (((core_msg_t)win_msg_enum::Created == m) && (lprm != 0))
+	if (((core_msg_t)win_msg_enum::created == m) && (lprm != 0))
 	{
 		LPCREATESTRUCT pcs = (LPCREATESTRUCT)lprm;
 		auto handle = (HWnd)pcs->lpCreateParams;
@@ -679,30 +679,30 @@ void window::window_proc(message_t msg)
 {
 	switch ((win_msg_enum)msg->msg())
 	{
-	case win_msg_enum::Created: {
+	case win_msg_enum::created: {
 		//Autoreference, Prevent Autodrestroy
 
 		attach(LPCREATESTRUCT(msg->arg2())->lpCreateParams);
 		msg->result(on_created(msg));
 	}break;
 
-	case win_msg_enum::InitialUpdate: {
+	case win_msg_enum::initial_update: {
 		initial_update();
 	} break;
 
-	case win_msg_enum::Destroyed: {
+	case win_msg_enum::destroyed: {
 		on_destroyed(msg);
 	} break;
 
-	case win_msg_enum::Draw: {
+	case win_msg_enum::draw: {
 		on_paint(msg);
 	} break;
 
-	case win_msg_enum::Update: {
+	case win_msg_enum::update: {
 		on_update(msg);
 	} break;
 
-	case win_msg_enum::Size: {
+	case win_msg_enum::size: {
 		on_size_change(msg);
 	} break;
 
@@ -713,48 +713,48 @@ void window::window_proc(message_t msg)
 		//	}	
 		//} break;
 
-	case win_msg_enum::GotFocus:
-	case win_msg_enum::LostFocus: {
+	case win_msg_enum::got_focus:
+	case win_msg_enum::lost_focus: {
 		on_activate(msg);
 	} break;
 
-	case win_msg_enum::PointerMoved: {
+	case win_msg_enum::pointer_moved: {
 		on_pointer_moved(msg);
 	} break;
 
-	case win_msg_enum::PointerPressed: {
+	case win_msg_enum::pointer_pressed: {
 		on_pointer_pressed(msg);
 	} break;
 
-	case win_msg_enum::PointerReleased: {
+	case win_msg_enum::pointer_released: {
 		on_pointer_released(msg);
 	} break;
 
-	case win_msg_enum::MouseMove: {
+	case win_msg_enum::mouse_move: {
 		on_mouse_moved(msg);
 	} break;
 
-	case win_msg_enum::LButtonDown:
-	case win_msg_enum::RButtonDown:
-	case win_msg_enum::XButtonDown: {
+	case win_msg_enum::lbutton_down:
+	case win_msg_enum::rbutton_down:
+	case win_msg_enum::xbutton_down: {
 		on_mouse_button_pressed(msg);
 	} break;
 
-	case win_msg_enum::LButtonUp:
-	case win_msg_enum::RButtonUp:
-	case win_msg_enum::XButtonUp: {
+	case win_msg_enum::lbutton_up:
+	case win_msg_enum::rbutton_up:
+	case win_msg_enum::xbutton_up: {
 		on_mouse_button_released(msg);
 	} break;
 
-	case win_msg_enum::KeyDown: {
+	case win_msg_enum::key_down: {
 		on_key_pressed(msg);
 		break;
 	}
-	case win_msg_enum::Char: {
+	case win_msg_enum::put_char: {
 		on_char(msg);
 		break;
 	}
-	case win_msg_enum::KeyUp: {
+	case win_msg_enum::key_up: {
 		on_key_released(msg);
 		break;
 	}
@@ -844,7 +844,7 @@ dword window::on_update(message_t m)
 
 dword window::on_activate(message_t m)
 {
-	activate_status_t status = m->msg() == (core_msg_t)win_msg_enum::GotFocus ? activate_status::activated : activate_status::deactivated;
+	activate_status_t status = m->msg() == (core_msg_t)win_msg_enum::got_focus ? activate_status::activated : activate_status::deactivated;
 	message_t msg = new message(m->msg(), &status);
 	msg->result(-1);
 	iactivate_event_args_t args = new activate_event_args(msg);

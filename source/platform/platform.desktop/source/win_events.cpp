@@ -7,7 +7,7 @@ using namespace ang::platform;
 using namespace ang::platform::events;
 using namespace ang::platform::windows;
 
-ANG_IMPLEMENT_ENUM(ang::platform::events, win_msg_enum, core_msg_t, win_msg_enum::None);
+ANG_IMPLEMENT_ENUM(ang::platform::events, win_msg_enum, core_msg_t, win_msg_enum::none);
 
 
 

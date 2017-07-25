@@ -41,8 +41,8 @@ process::process()
 	: _process(null)
 	, mutex(new core::async::mutex())
 	, cond(new core::async::cond())
-	, startAppEvent(this, [](events::core_msg_t code) { return code == events::win_msg_enum::StartApp; })
-	, exitAppEvent(this, [](events::core_msg_t code) { return code == events::win_msg_enum::ExitApp; })
+	, startAppEvent(this, [](events::core_msg_t code) { return code == events::win_msg_enum::start_app; })
+	, exitAppEvent(this, [](events::core_msg_t code) { return code == events::win_msg_enum::exit_app; })
 {
 	if (_current_process != null)
 		throw(exception_t(except_code::two_singleton));
@@ -235,7 +235,7 @@ dword process::on_message_dispatcher(events::message_t msg)
 	case WM_QUIT:
 		hprocess_t(_process)->close_request = true;
 		return (dword)msg->arg1();
-	case events::win_msg_enum::SystemReservedEvent:
+	case events::win_msg_enum::system_reserved_event:
 		if (msg->arg1() != null)
 		{
 			auto task = reinterpret_cast<async_msg_task*>(msg->arg1());
@@ -258,7 +258,7 @@ dword process::on_message_dispatcher(events::message_t msg)
 			task->release();
 		}
 		break;
-	case events::win_msg_enum::InterprocessCommand:
+	case events::win_msg_enum::interprocess_command:
 		if (msg->arg1() != null)
 		{
 			HANDLE hEvent = reinterpret_cast<HANDLE>(msg->arg1());
@@ -310,7 +310,7 @@ core::async::iasync_t<dword> process::post_msg(events::message_t msg)
 	auto task = new async_msg_task(this, cond, mutex, msg);
 	task->add_ref();
 	if (PostThreadMessageW(hprocess_t(_process)->main_thread->id()
-		, events::win_msg_enum::SystemReservedEvent, (WPARAM)task
+		, events::win_msg_enum::system_reserved_event, (WPARAM)task
 		, (LPARAM)static_cast<imessage_reciever*>(this)) == 0)
 	{
 		task->release();

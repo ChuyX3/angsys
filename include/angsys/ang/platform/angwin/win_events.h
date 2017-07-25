@@ -10,163 +10,163 @@ namespace ang
 		namespace events
 		{
 			ANG_BEGIN_ENUM(LINK, win_msg_enum, core_msg_t)
-				None = 0x0000,
-				Created = 0x0001,
-				Destroyed = 0x0002,
-				Move = 0x0003,
-				Size = 0x0005,
-				Activate = 0x0006,
-				GotFocus = 0x0007,
-				LostFocus = 0x0008,
-				Enable = 0x000A,
-				SetDraw = 0x000B,
-				SetText = 0x000C,
-				GetText = 0x000D,
-				GetTextLenght = 0x000E,
-				Draw = 0x000F,
-				Close = 0x0010,
-				Quit = 0x0012,
-				EraseBkgnd = 0x0014,
-				SysColorChange = 0x0015,
-				VisibilityChange = 0x0018,
-				ShowWindow = VisibilityChange,
-				FontChange = 0x001D,
-				TimeChange = 0x001E,
-				CancelMode = 0x001F,
-				SetCursor = 0x0020,
-				MouseActivate = 0x0021,
-				ChildActivate = 0x0022,
-				PaintIcon = 0x0026,
-				IconEraseBkgnd = 0x0027,
-				NextDlgCtrl = 0x0028,
-				SpoolerStatus = 0x002A,
-				DrawItem = 0x002B,
-				MeasureItem = 0x002C,
-				DeleteItem = 0x002D,
-				VKeyToItem = 0x002E,
-				CharToItem = 0x002F,
-				SetFont = 0x0030,
-				GetFont = 0x0031,
-				SetHotKey = 0x0032,
-				GetHotKey = 0x0033,
-				Notify = 0x004E,
+				none = 0x0000,
+				created = 0x0001,
+				destroyed = 0x0002,
+				move = 0x0003,
+				size = 0x0005,
+				activate = 0x0006,
+				got_focus = 0x0007,
+				lost_focus = 0x0008,
+				enable = 0x000A,
+				set_draw = 0x000B,
+				set_text = 0x000C,
+				get_text = 0x000D,
+				get_text_lenght = 0x000E,
+				draw = 0x000F,
+				close = 0x0010,
+				quit = 0x0012,
+				erase_bkgnd = 0x0014,
+				sys_color_change = 0x0015,
+				visibility_change = 0x0018,
+				show_window = visibility_change,
+				font_change = 0x001D,
+				time_change = 0x001E,
+				cancel_mode = 0x001F,
+				set_cursor = 0x0020,
+				mouse_activate = 0x0021,
+				child_activate = 0x0022,
+				paint_icon = 0x0026,
+				icon_erase_bkgnd = 0x0027,
+				next_dlg_ctrl = 0x0028,
+				spooler_status = 0x002A,
+				draw_item = 0x002B,
+				measure_item = 0x002C,
+				delete_item = 0x002D,
+				vkey_to_item = 0x002E,
+				char_to_item = 0x002F,
+				set_font = 0x0030,
+				get_font = 0x0031,
+				set_hot_key = 0x0032,
+				get_hot_key = 0x0033,
+				notify = 0x004E,
 
-				ContextMenu = 0x007B,
-				StyleChanging = 0x007C,
-				StyleChanged = 0x007D,
-				DisplayChange = 0x007E,
-				GetIcon = 0x007F,
-				SetIcon = 0x0080,
+				context_menu = 0x007B,
+				style_changing = 0x007C,
+				style_changed = 0x007D,
+				display_change = 0x007E,
+				get_icon = 0x007F,
+				set_icon = 0x0080,
 
-				NCCreate = 0x0081,
-				NCDestroy = 0x0082,
-				NCCalcSize = 0x0083,
-				NCHitTest = 0x0084,
-				NCPaint = 0x0085,
-				NCActivate = 0x0086,
-				GetDlgCode = 0x0087,
-				SysNCPaint = 0x0088,
-				NCMouseMove = 0x00A0,
-				NCLButtonDown = 0x00A1,
-				NCLButtonUp = 0x00A2,
-				NCLButtonDblClk = 0x00A3,
-				NCRButtonDown = 0x00A4,
-				NCRButtonUp = 0x00A5,
-				NCRButtonDblClk = 0x00A6,
-				NCMButtonDown = 0x00A7,
-				NCMButtonUp = 0x00A8,
-				NCMButtonDblClk = 0x00A9,
+				nc_create = 0x0081,
+				nc_destroy = 0x0082,
+				nc_calc_size = 0x0083,
+				nc_hit_test = 0x0084,
+				nc_paint = 0x0085,
+				nc_activate = 0x0086,
+				get_dlg_code = 0x0087,
+				sysnc_paint = 0x0088,
+				nc_mouse_move = 0x00A0,
+				nc_lbutton_down = 0x00A1,
+				nc_lbutton_up = 0x00A2,
+				nc_lbutton_dbl_clk = 0x00A3,
+				nc_rbutton_down = 0x00A4,
+				nc_rbutton_up = 0x00A5,
+				nc_rbutton_dbl_clk = 0x00A6,
+				nc_mbutton_down = 0x00A7,
+				nc_mbutton_up = 0x00A8,
+				nc_mbutton_dbl_clk = 0x00A9,
 
-				NCXButtonDown = 0x00AB,
-				NCXButtonUp = 0x00AC,
-				NCXButtonDblClk = 0x00AD,
-				InputDeviceChange = 0x00FE,
-				Input = 0x00FF,
+				nc_xbutton_down = 0x00AB,
+				nc_xbutton_up = 0x00AC,
+				nc_xbutton_dbl_clk = 0x00AD,
+				input_device_change = 0x00FE,
+				input = 0x00FF,
 
-				KeyFirst = 0x0100,
-				KeyDown = 0x0100,
-				KeyUp = 0x0101,
-				Char = 0x0102,
-				DeadChar = 0x0103,
-				SysKeyDown = 0x0104,
-				SysKeyUp = 0x0105,
-				SysChar = 0x0106,
-				SysDeadChar = 0x0107,
-				UiniChar = 0x0109,
-				KeyLast = 0x0109,
+				key_first = 0x0100,
+				key_down = 0x0100,
+				key_up = 0x0101,
+				put_char = 0x0102,
+				dead_char = 0x0103,
+				sys_key_down = 0x0104,
+				sys_key_up = 0x0105,
+				sys_char = 0x0106,
+				sys_dead_char = 0x0107,
+				uini_char = 0x0109,
+				key_last = 0x0109,
 
-				InitDialog = 0x0110,
-				Command = 0x0111,
-				SysCommand = 0x0112,
-				Timer = 0x0113,
-				HScroll = 0x0114,
-				VScroll = 0x0115,
-				InitMenu = 0x0116,
-				InitMenuPopup = 0x0117,
+				init_dialog = 0x0110,
+				command = 0x0111,
+				sys_command = 0x0112,
+				timer = 0x0113,
+				hscroll = 0x0114,
+				vscroll = 0x0115,
+				init_menu = 0x0116,
+				init_menu_popup = 0x0117,
 
-				GetRtue = 0x0119,
-				GetTrueNotify = 0x011A,
+				get_true = 0x0119,
+				get_true_notify = 0x011A,
 
-				MenuSelect = 0x011F,
-				MenuChar = 0x0120,
-				EnterIdle = 0x0121,
-				MenuRButtonUp = 0x0122,
-				MenuDrag = 0x0123,
-				MenuGetObject = 0x0124,
-				UnInitMenuPopup = 0x0125,
-				MenuCommand = 0x0126,
+				menu_select = 0x011F,
+				menu_char = 0x0120,
+				enter_idle = 0x0121,
+				menu_rbutton_up = 0x0122,
+				menu_drag = 0x0123,
+				menu_get_object = 0x0124,
+				un_init_menu_popup = 0x0125,
+				menu_command = 0x0126,
 
-				CtlColorMsgBox = 0x0132,
-				CtlColorEdit = 0x0133,
-				CtlColorListBox = 0x0134,
-				CtlColorBtn = 0x0135,
-				CtlColorDlg = 0x0136,
-				CtlColorScrollBar = 0x0137,
-				CtlColorStatic = 0x0138,
-				GetHMenu = 0x01E1,
+				ctl_color_msg_box = 0x0132,
+				ctl_color_edit = 0x0133,
+				ctl_color_list_box = 0x0134,
+				ctl_color_btn = 0x0135,
+				ctl_color_dlg = 0x0136,
+				ctl_color_scroll_bar = 0x0137,
+				ctl_color_static = 0x0138,
+				get_hmenu = 0x01E1,
 
-				MouseFirst = 0x0200,
-				MouseMove = 0x0200,
-				LButtonDown = 0x0201,
-				LButtonUp = 0x0202,
-				LButtonDblClk = 0x0203,
-				RButtonDown = 0x0204,
-				RButtonUp = 0x0205,
-				RButtonDblClk = 0x0206,
-				MButtonDown = 0x0207,
-				MButtonUp = 0x0208,
-				MButtonDblClk = 0x0209,
+				mouse_first = 0x0200,
+				mouse_move = 0x0200,
+				lbutton_down = 0x0201,
+				lbutton_up = 0x0202,
+				lbutton_dbl_clk = 0x0203,
+				rbutton_down = 0x0204,
+				rbutton_up = 0x0205,
+				rbutton_dbl_clk = 0x0206,
+				mbutton_down = 0x0207,
+				mbutton_up = 0x0208,
+				mbutton_dbl_clk = 0x0209,
 
-				MouseWheel = 0x020A,
-				XButtonDown = 0x020B,
-				XButtonUp = 0x020C,
-				XButtonDblClk = 0x020D,
-				MouseHWheel = 0x020E,
-				MouseLast = 0x020E,
+				mouse_wheel = 0x020A,
+				xbutton_down = 0x020B,
+				xbutton_up = 0x020C,
+				xbutton_dbl_clk = 0x020D,
+				mouse_hwheel = 0x020E,
+				mouse_last = 0x020E,
 
-				ParentNotify = 0x0210,
-				EnterMenuLoop = 0x0211,
-				ExitMenuLoop = 0x0212,
+				parent_notify = 0x0210,
+				enter_menu_loop = 0x0211,
+				exit_menu_loop = 0x0212,
 
-				NextMenu = 0x0213,
-				Sizing = 0x0214,
-				CaptureChanged = 0x0215,
-				Moving = 0x0216,
+				next_menu = 0x0213,
+				sizing = 0x0214,
+				capture_changed = 0x0215,
+				moving = 0x0216,
 
-				TouchInput = 0x0240,
-				PointerMoved = 0X0245,
-				PointerPressed = 0X0246,
-				PointerReleased = 0X0247,
+				touch_input = 0x0240,
+				pointer_moved = 0X0245,
+				pointer_pressed = 0X0246,
+				pointer_released = 0X0247,
 
-				SystemReservedEvent = 0x0401,
-				InterprocessCommand = 0x0402,
-				StartApp = 0x0403,
-				ExitApp = 0x0404,
-				Orientation = 0x0405,
-				InitialUpdate = 0x0406,
-				Update = 0x0407,
-				TextChange = 0x0408,
-				UserMsg = 0x0450,
+				system_reserved_event = 0x0401,
+				interprocess_command = 0x0402,
+				start_app = 0x0403,
+				exit_app = 0x0404,
+				orientation = 0x0405,
+				initial_update = 0x0406,
+				update = 0x0407,
+				text_change = 0x0408,
+				user_msg = 0x0450,
 			ANG_END_ENUM(win_msg_enum);
 
 
@@ -437,12 +437,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_moved_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::MouseMove) {
+					: event((core_msg_t)win_msg_enum::mouse_move) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_moved_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::MouseMove) {
+					: event((core_msg_t)win_msg_enum::mouse_move) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -453,12 +453,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_lbutton_down_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::LButtonDown) {
+					: event((core_msg_t)win_msg_enum::lbuttonDown) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_lbutton_down_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::LButtonDown) {
+					: event((core_msg_t)win_msg_enum::lbuttonDown) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -469,12 +469,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_lbutton_up_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::LButtonUp) {
+					: event((core_msg_t)win_msg_enum::lbuttonUp) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_lbutton_up_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::LButtonUp) {
+					: event((core_msg_t)win_msg_enum::lbuttonUp) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -485,12 +485,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_lbutton_dblclick_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::LButtonDblClk) {
+					: event((core_msg_t)win_msg_enum::lbuttonDblClk) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_lbutton_dblclick_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::LButtonDblClk) {
+					: event((core_msg_t)win_msg_enum::lbuttonDblClk) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -502,12 +502,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_rbutton_down_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::RButtonDown) {
+					: event((core_msg_t)win_msg_enum::rbuttonDown) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_rbutton_down_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::RButtonDown) {
+					: event((core_msg_t)win_msg_enum::rbuttonDown) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -518,12 +518,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_rbutton_up_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::RButtonUp) {
+					: event((core_msg_t)win_msg_enum::rbuttonUp) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_rbutton_up_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::RButtonUp) {
+					: event((core_msg_t)win_msg_enum::rbuttonUp) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -534,12 +534,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_rbutton_dblclick_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::RButtonDblClk) {
+					: event((core_msg_t)win_msg_enum::rbuttonDblClk) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_rbutton_dblclick_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::RButtonDblClk) {
+					: event((core_msg_t)win_msg_enum::rbuttonDblClk) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -550,12 +550,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_xbutton_down_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::XButtonDown) {
+					: event((core_msg_t)win_msg_enum::xbuttonDown) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_xbutton_down_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::XButtonDown) {
+					: event((core_msg_t)win_msg_enum::xbuttonDown) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -566,12 +566,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_xbutton_up_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::XButtonUp) {
+					: event((core_msg_t)win_msg_enum::xbuttonUp) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_xbutton_up_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::XButtonUp) {
+					: event((core_msg_t)win_msg_enum::xbuttonUp) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -582,12 +582,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_xbutton_dblclick_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::XButtonDblClk) {
+					: event((core_msg_t)win_msg_enum::xbuttonDblClk) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_xbutton_dblclick_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::XButtonDblClk) {
+					: event((core_msg_t)win_msg_enum::xbuttonDblClk) {
 					set<ipointer_event_args>(f);
 				}
 			};
