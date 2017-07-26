@@ -22,8 +22,8 @@ namespace d3d11
 		ANG_DECLARE_INTERFACE();
 
 		virtual void window_proc(events::message_t msg)override {
-			if (msg->msg() == events::win_msg_enum::EraseBkgnd
-				|| msg->msg() == events::win_msg_enum::Draw)
+			if (msg->msg() == events::win_msg_enum::erase_bkgnd
+				|| msg->msg() == events::win_msg_enum::draw)
 			{
 				graphics::paint_dc_t dc = new graphics::paint_dc(this);
 			}

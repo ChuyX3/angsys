@@ -244,7 +244,7 @@ namespace ang
 	public:
 		void clean();
 		void clean_unsafe();
-		bool_t is_empty()const;
+		bool is_empty()const;
 		type* get(void)const;
 		void set(type*);
 		type ** addres_of(void);
@@ -313,7 +313,7 @@ namespace ang
 	public:
 		void clean();
 		void clean_unsafe();
-		bool_t is_empty()const;
+		bool is_empty()const;
 		type* get(void)const;
 		void set(type*);
 		type ** addres_of(void);
@@ -380,7 +380,7 @@ namespace ang
 	public:
 		void clean();
 		void clean_unsafe();
-		bool_t is_empty()const;
+		bool is_empty()const;
 		type* get(void)const;
 		void set(type*);
 		type ** addres_of(void);
@@ -440,8 +440,8 @@ namespace ang
 
 			public:
 				inline void empty();
-				inline bool_t is_empty()const;
-				inline index_t append(function<return_t(args_t...)> func);
+				inline bool is_empty()const;
+				inline index append(function<return_t(args_t...)> func);
 
 			public:
 				inline listener& operator = (listener &&);
@@ -474,8 +474,8 @@ namespace ang
 
 			public:
 				inline void empty();
-				inline bool_t is_empty()const;
-				inline index_t append(function<void(args_t...)> func);
+				inline bool is_empty()const;
+				inline index append(function<void(args_t...)> func);
 
 			public:
 				inline listener& operator = (listener &&);
@@ -545,6 +545,87 @@ namespace ang
 	};
 }
 
+ANG_DECLARE_OBJECT_VECTOR_SPECIALIZATION(LINK, ang::core::delegates::function_data<dword(pointer)>);
+
+ANG_DECLARE_OBJECT_VECTOR_SPECIALIZATION(LINK, ang::core::delegates::function_data<void(ang::objptr, pointer)>);
+
+
+namespace ang
+{
+	namespace core
+	{
+		namespace delegates
+		{
+			template<> class LINK listener <dword(pointer)>
+			{
+			public:
+				typedef function<dword(pointer)> type;
+
+			protected:
+				collections::vector<function<dword(pointer)>> functions;
+
+			public:
+				listener();
+				listener(listener &&);
+				listener(listener const&);
+				~listener();
+
+			public:
+				void empty();
+				bool is_empty()const;
+				index append(function<dword(pointer)> func);
+
+			public:
+				listener& operator = (listener &&);
+				listener& operator = (listener const&);
+				listener& operator += (function<dword(pointer)>);
+
+				template<typename calleable_t>
+				inline listener& operator += (calleable_t const& func) {
+					append(function<dword(pointer)>(func));
+					return*this;
+				}
+
+				array<dword> invoke(pointer)const;
+				array<dword> operator()(pointer)const;
+			};
+
+			template<> class LINK listener <void(objptr, pointer)>
+			{
+			public:
+				typedef function<void(objptr, pointer)> type;
+
+			protected:
+				collections::vector<function<void(objptr, pointer)>> functions;
+
+			public:
+				listener();
+				listener(listener &&);
+				listener(listener const&);
+				~listener();
+
+			public:
+				void empty();
+				bool is_empty()const;
+				index append(function<void(objptr, pointer)> func);
+
+			public:
+				listener& operator = (listener &&);
+				listener& operator = (listener const&);
+				listener& operator += (function<void(objptr, pointer)>);
+
+				template<typename calleable_t>
+				inline listener& operator += (calleable_t const& func) {
+					append(function<void(objptr, pointer)>(func));
+					return*this;
+				}
+
+				void invoke(objptr, pointer)const;
+				void operator()(objptr, pointer)const;
+			};
+		}
+	}
+}
 
 #ifdef  LINK
 #undef  LINK

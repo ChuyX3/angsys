@@ -383,7 +383,7 @@ bool ang::core::delegates::listener<return_t(args_t...)>::is_empty()const
 }
 
 template<typename return_t, typename... args_t>
-ang::index_t ang::core::delegates::listener<return_t(args_t...)>::append(ang::core::delegates::function<return_t(args_t...)> func)
+index ang::core::delegates::listener<return_t(args_t...)>::append(ang::core::delegates::function<return_t(args_t...)> func)
 {
 	functions += ang::move(func);
 	return functions.get()->size() - 1;
@@ -492,7 +492,7 @@ bool ang::core::delegates::listener<void(args_t...)>::is_empty()const
 }
 
 template<typename... args_t>
-ang::index_t ang::core::delegates::listener<void(args_t...)>::append(ang::core::delegates::function<void(args_t...)> func)
+index ang::core::delegates::listener<void(args_t...)>::append(ang::core::delegates::function<void(args_t...)> func)
 {
 	functions += ang::move(func);
 	return functions.get()->size() - 1;

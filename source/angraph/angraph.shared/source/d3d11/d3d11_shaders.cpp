@@ -183,7 +183,7 @@ bool d3d11_shaders::load(d3d11_effect_library_t library, xml::xml_node_t node)
 		return false;
 	bool res = true;
 	_technique_name = node->xml_attributes()["name"];
-	xml::foreach(node->xml_children(), [&](xml::xml_node_t node)
+	foreach(node->xml_children(), [&](xml::xml_node_t node)
 	{
 		auto name = node->xml_name().as<cwstr_t>();
 		if (name == "vertex_shader")
@@ -209,7 +209,7 @@ bool d3d11_shaders::load_vertex_shader(d3d11_effect_library_t library, xml::xml_
 
 	collections::vector<D3D11_INPUT_ELEMENT_DESC> desc_list = new collections::vector_buffer<D3D11_INPUT_ELEMENT_DESC>();
 
-	xml::foreach(vertex->xml_children(), [&](xml::xml_node_t node)
+	foreach(vertex->xml_children(), [&](xml::xml_node_t node)
 	{
 		auto name = node->xml_name().as<cwstr_t>();
 		if (name == "uniforms"_s)
@@ -316,7 +316,7 @@ bool d3d11_shaders::load_pixel_shader(d3d11_effect_library_t library, xml::xml_n
 	array<string> configs;
 	ID3DBlob* compiled_code;
 
-	xml::foreach(pixel->xml_children(), [&](xml::xml_node_t node)
+	foreach(pixel->xml_children(), [&](xml::xml_node_t node)
 	{
 		auto name = node->xml_name().as<cwstr_t>();
 		if (name == "uniforms")
@@ -757,7 +757,7 @@ bool d3d11_effect_library::load_library(xml::xml_node_t library)
 	if (library.is_empty() || !library->xml_has_children())
 		return false;
 
-	xml::foreach(library->xml_children(), [&](xml::xml_node_t node)
+	foreach(library->xml_children(), [&](xml::xml_node_t node)
 	{
 		auto name = node->xml_name().as<cwstr_t>();
 		if (name == "sources"_s)
@@ -778,7 +778,7 @@ core::async::iasync_t<effects::ieffect_library_t> d3d11_effect_library::load_lib
 			return null;
 		}	
 
-		xml::foreach(library->xml_children(), [&](xml::xml_node_t node)
+		foreach(library->xml_children(), [&](xml::xml_node_t node)
 		{
 			auto name = node->xml_name().as<cwstr_t>();
 			if (name == "sources"_s)
@@ -795,7 +795,7 @@ bool d3d11_effect_library::load_sources(xml::xml_node_t sources)
 	if (!sources->xml_has_children())
 		return false;
 
-	xml::foreach(sources->xml_children(), [&](xml::xml_node_t file)
+	foreach(sources->xml_children(), [&](xml::xml_node_t file)
 	{
 		auto name = file->xml_name().as<cwstr_t>();
 		if (name != "file"_s)

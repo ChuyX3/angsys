@@ -27,6 +27,7 @@ namespace ang
 				display_change = 0x007E,
 				key_down = 0x0100,
 				key_up = 0x0101,
+				touch_input = 0x0240,
 				pointer_moved = 0X0245,
 				pointer_pressed = 0X0246,
 				pointer_released = 0X0247,

@@ -171,6 +171,7 @@ bool dispatcher_thread::start(thread_callback_t callback, void_args_t args
 	thread::start([this, callback, args](pointer)->dword
 	{
 		auto _thread = reinterpret_cast<thread_handler_t>(_handle);
+		start_event(this, args);
 		while (_thread->_status != async_action_status::canceled)
 		{
 			{ //suspending if _status is async_action_status::suspended
@@ -203,6 +204,7 @@ bool dispatcher_thread::start(thread_callback_t callback, void_args_t args
 				_mutex->unlock();
 			}
 		}
+		end_event(this, args);
 		return 0;
 	}, args, priority, detach_state::joinable);
 	return true;

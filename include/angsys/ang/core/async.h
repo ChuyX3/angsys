@@ -69,6 +69,7 @@ namespace ang
 			using async_task_result_t = object_wrapper<async_task_result<result_t>>;
 
 			typedef delegates::function<dword(pointer)> thread_callback_t;
+			typedef delegates::listener<dword(pointer)> thread_event_listener_t;
 			
 			/******************************************************************/
 			/* enum ang::core::async::thread_priority :                       */
@@ -138,7 +139,6 @@ namespace ang
 
 
 ANG_DECLARE_INTERFACE_VECTOR_SPECIALIZATION(LINK, ang::core::async::iasync_task);
-ANG_DECLARE_OBJECT_VECTOR_SPECIALIZATION(LINK, ang::core::delegates::function_data<dword(pointer)>);
 
 namespace ang
 {
@@ -168,6 +168,11 @@ namespace ang
 
 		template<class then_result_t>
 		core::async::iasync_t<then_result_t> then(core::delegates::function<then_result_t(core::async::iasync<result_t>*)> func);
+
+		inline bool wait(core::async::async_action_status_t status, dword ms = -1)const {
+			if (_ptr)return _ptr->wait(status, ms);
+			return false;
+		}
 
 	public:
 		intf_wrapper& operator = (type*);
@@ -352,10 +357,10 @@ namespace ang
 				}
 
 				template<typename func_t>
-				static void lock(mutex_t m, func_t func)
+				static auto lock(mutex_t m, func_t func) -> decltype(func())
 				{
 					scope_locker _lock = m;
-					func();
+					return func();
 				}
 			};
 
@@ -767,6 +772,7 @@ namespace ang
 			};
 
 
+
 			class LINK dispatcher_thread final
 				: public thread
 			{
@@ -785,6 +791,9 @@ namespace ang
 			public:
 				bool dispatch();
 				bool start(thread_callback_t , void_args_t, thread_priority_t = thread_priority::normal);
+
+				delegates::listener<void(objptr, pointer)> start_event;
+				delegates::listener<void(objptr, pointer)> end_event;
 
 			private:
 				virtual bool start(thread_callback_t, void_args_t

@@ -137,7 +137,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CppLanguageStandard>gnu++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -146,7 +146,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CppLanguageStandard>gnu++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -155,7 +155,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CppLanguageStandard>gnu++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -164,7 +164,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CppLanguageStandard>gnu++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -173,7 +173,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CppLanguageStandard>gnu++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -182,7 +182,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CppLanguageStandard>gnu++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -191,7 +191,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CppLanguageStandard>gnu++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -200,7 +200,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CppLanguageStandard>gnu++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -208,10 +208,13 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\include\angsys\ang\platform\android\android_events.h" />
     <ClInclude Include="..\..\..\include\angsys\ang\platform\android\android_platform.h" />
+    <ClInclude Include="include\async_msg_task.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\activity.cpp" />
+    <ClCompile Include="source\async_msg_task.cpp" />
+    <ClCompile Include="source\core_view.cpp" />
     <ClCompile Include="source\native_callbacks.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

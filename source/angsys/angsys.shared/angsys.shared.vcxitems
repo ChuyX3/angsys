@@ -85,6 +85,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\collections\array.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\collections\vector.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\debug\debug.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\delegates.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\exception.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\binary_file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\files.cpp" />

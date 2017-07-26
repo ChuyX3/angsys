@@ -23,7 +23,6 @@ namespace ang
 			{
 			private:
 				system_file_t _original_source;
-				pointer _handle;
 				pointer _buffer_ptr;
 				wsize _buffer_size;
 				file_size_t _buffer_offset;

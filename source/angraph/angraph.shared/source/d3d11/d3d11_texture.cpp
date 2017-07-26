@@ -269,7 +269,7 @@ bool d3d11_texture_loader::load_library(xml::xml_node_t library)
 	if (library.is_empty() || !library->xml_has_children())
 		return false;
 
-	xml::foreach(library->xml_children(), [&](xml::xml_node_t node)
+	foreach(library->xml_children(), [&](xml::xml_node_t node)
 	{
 		auto name = node->xml_name().as<cwstr_t>();
 		if (name == "sources"_s)
@@ -293,7 +293,7 @@ core::async::iasync_t<textures::itexture_loader_t> d3d11_texture_loader::load_li
 			return null;
 		}
 
-		xml::foreach(library->xml_children(), [&](xml::xml_node_t node)
+		foreach(library->xml_children(), [&](xml::xml_node_t node)
 		{
 			auto name = node->xml_name().as<cwstr_t>();
 			if (name == "sources"_s)
@@ -313,7 +313,7 @@ bool d3d11_texture_loader::load_sources(xml::xml_node_t sources)
 	if (!sources->xml_has_children())
 		return false;
 
-	xml::foreach(sources->xml_children(), [&](xml::xml_node_t file)
+	foreach(sources->xml_children(), [&](xml::xml_node_t file)
 	{
 		auto name = file->xml_name().as<cwstr_t>();
 		if (name != "file"_s)

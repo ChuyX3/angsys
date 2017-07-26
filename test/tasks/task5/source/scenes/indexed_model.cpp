@@ -23,7 +23,7 @@ collections::vector<indexed_model::model_element> indexed_model::load(xml::xml_n
 	if (material_info.is_empty() || !material_info->xml_has_children())
 		return null;
 	_elements = null;
-	xml::foreach(material_info->xml_children(), [&](xml::xml_node_t node)
+	foreach(material_info->xml_children(), [&](xml::xml_node_t node)
 	{
 		auto name = node->xml_name().as<cwstr_t>();
 		indexed_model::model_element element;
@@ -51,7 +51,7 @@ bool indexed_model::load_element(xml::xml_node_t node, indexed_model::model_elem
 	if (node.is_empty() || !node->xml_has_children())
 		return null;
 	bool res = true;
-	xml::foreach(node->xml_children(), [&](xml::xml_node_t node)
+	foreach(node->xml_children(), [&](xml::xml_node_t node)
 	{
 		auto name = node->xml_name().as<cwstr_t>();
 		if (name == "material"_s)
@@ -69,7 +69,7 @@ bool indexed_model::load_material(xml::xml_node_t material, indexed_model::model
 	if (material.is_empty() || !material->xml_has_children())
 		return false;
 	out.textures = null;
-	xml::foreach(material->xml_children(), [&](xml::xml_node_t node)
+	foreach(material->xml_children(), [&](xml::xml_node_t node)
 	{
 		auto name = node->xml_name().as<cwstr_t>();
 		if (name == "fx")

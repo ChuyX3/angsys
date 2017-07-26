@@ -671,6 +671,7 @@ ANG_IMPLEMENT_VECTOR_DATA_SPECIALIZATION(double)
 
 ANG_IMPLEMENT_INTERFACE_VECTOR_SPECIALIZATION(ang::core::async::iasync_task)
 ANG_IMPLEMENT_OBJECT_VECTOR_SPECIALIZATION(ang::core::delegates::function_data<dword(pointer)>)
+ANG_IMPLEMENT_OBJECT_VECTOR_SPECIALIZATION(ang::core::delegates::function_data<void(objptr, pointer)>)
 
 
 

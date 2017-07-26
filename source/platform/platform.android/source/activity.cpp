@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ang/platform/android/android_platform.h"
+#include "async_msg_task.h"
 
 using namespace ang;
 using namespace ang::platform;
@@ -26,88 +27,25 @@ extern "C" {
 };
 
 
-namespace ang
+enum looper_msg_type : uint
 {
-	namespace platform
-	{
-		namespace android
-		{
-			class core_context
-				: public object
-				, public icore_context
-			{
-			public:
-				core_context() {}
-				virtual~core_context() {}
+	MAIN_COMMAND = 1,
+	INPUT_COMMAND = 2,
+	USER_COMMAND = 3,
+};
 
-			public:
-				ANG_DECLARE_INTERFACE();
-
-				virtual pointer get_core_context_handle()const { return nullptr; }
-				virtual bool bind_graphic_native_surface(pointer) { return false; };
-			};
-		}
-	}
-}
-
-ANG_IMPLEMENT_CLASSNAME(ang::platform::android::core_context)
-ANG_IMPLEMENT_OBJECTNAME(ang::platform::android::core_context)
-
-
-bool core_context::is_kind_of(type_name_t name)const
-{
-	return (name == core_context::class_name()
-		|| object::is_kind_of(name)
-		|| icore_context::is_kind_of(name));
-}
-
-bool core_context::is_child_of(type_name_t name)
-{
-	return (name == core_context::class_name()
-		|| object::is_child_of(name)
-		|| icore_context::is_child_of(name));
-}
-
-
-bool core_context::query_object(type_name_t name, unknown_ptr_t out)
-{
-	if (out == nullptr)
-		return false;
-	if (name == core_context::class_name())
-	{
-		*out = static_cast<core_context*>(this);
-		return true;
-	}
-	else if (object::query_object(name, out))
-	{
-		return true;
-	}
-	else if (icore_context::query_object(name, out))
-	{
-		return true;
-	}
-	return false;
-}
-
-//////////////////////////////////////////////////////
 
 activity::activity()
 	: _cond(new core::async::cond())
 	, _mutex(new core::async::mutex())
 	, _main_thread(core::async::thread::current_thread())
-	, _input_thread(null)
-	, _render_thread(null)
-	, _input_async_action(null)
-	, _render_async_action(null)
-	, _status(core::async::async_action_status::starting)
-	, _dispatcher(new dispatcher(this))
+	, _worker_thread(null)
 	, _native_activity(null)
-	, _native_window(null)
 	, _config(null)
-	, _client_area(0,0,0,0)
-	, _scale_factor(1,1)
+	, _looper(null)
+	, _input_queue(null)
 	, start_app_event(this, [](events::core_msg_t msg)->bool { return msg == events::android_msg_enum::start_app; })
-	, exitAppEvent(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::exit_app; })
+	, exit_app_event(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::exit_app; })
 	, created_event(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::created; })
 	, destroyed_event(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::destroyed; })
 	, update_event(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::update; })
@@ -115,10 +53,12 @@ activity::activity()
 	, pointer_pressed_event(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::pointer_pressed; })
 	, pointer_released_event(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::pointer_released; })
 	, pointer_moved_event(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::pointer_moved; })
-	, begin_rendering_event(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::begin_drawing; })
-	, end_rendering_event(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::end_drawing; })
 {
-
+	_core_view = new core_view(this);
+	command_handler = core::delegates::function<dword(pointer)>(this, &activity::on_dispatch_command_event);
+	input_handler = core::delegates::function<dword(pointer)>(this, &activity::on_dispatch_input_event);
+	_msg_pipe[0] = 0;
+	_msg_pipe[1] = 0;
 }
 
 activity::~activity()
@@ -135,7 +75,7 @@ bool activity::is_kind_of(type_name_t name)const
 	return (name == activity::class_name()
 		|| object::is_kind_of(name)
 		|| icore_app::is_kind_of(name)
-		|| icore_view::is_kind_of(name));
+		|| icore_msg_dispatcher::is_kind_of(name));
 }
 
 bool activity::is_child_of(type_name_t name)
@@ -143,7 +83,7 @@ bool activity::is_child_of(type_name_t name)
 	return (name == activity::class_name()
 		|| object::is_child_of(name)
 		|| icore_app::is_child_of(name)
-		|| icore_view::is_child_of(name));
+		|| icore_msg_dispatcher::is_child_of(name));
 }
 
 
@@ -164,7 +104,7 @@ bool activity::query_object(type_name_t name, unknown_ptr_t out)
 	{
 		return true;
 	}
-	else if (icore_view::query_object(name, out))
+	else if (icore_msg_dispatcher::query_object(name, out))
 	{
 		return true;
 	}
@@ -178,7 +118,7 @@ pointer activity::get_core_app_handle()const
 
 icore_view_t activity::get_main_core_view()
 {
-	return this;
+	return _core_view.get();
 }
 
 input::ikeyboard_t activity::get_keyboard()
@@ -188,129 +128,318 @@ input::ikeyboard_t activity::get_keyboard()
 
 imessage_reciever_t activity::get_listener()const
 {
-	return _dispatcher.get();
+	return const_cast<activity*>(this);
 }
 
-pointer activity::get_core_view_handle()const
+
+void activity::send_msg(events::message_t msg)
 {
-	return _native_window;
+	if (is_worker_thread())
+	{
+		core::async::scope_locker::lock(main_mutex(), [&]()
+		{
+			on_pre_dispatch_message(msg);
+			main_mutex()->unlock();
+			on_command_event_handler(msg);
+			main_mutex()->lock();
+			on_post_dispatch_message(msg);
+		});
+		return;
+	}
+
+	core::async::iasync_t<dword> task = post_msg(msg);
+	task.wait(core::async::async_action_status::completed);
+	return;
 }
 
-icore_context_t activity::get_core_context()const
+core::async::iasync_t<dword> activity::post_msg(events::message_t msg)
 {
-	return new core_context();
+	return core::async::scope_locker::lock(main_mutex(), [&]() -> async_msg_task_t
+	{
+		ANG_LOGI("%s: Posting Message", class_name().cstr());
+		async_msg_task_t task = new async_msg_task(this, main_cond(), main_mutex(), msg);
+		task->add_ref();
+		if (write(_msg_pipe[1], (void*)task.addres_of(), sizeof(async_msg_task*)) != sizeof(async_msg_task*))
+		{
+			task->release();
+			return nullptr;
+		}
+		return task;
+	}).get();
 }
 
-graph::size<float> activity::get_core_view_size()const
+bool activity::listen_to(events::event_t)
 {
-	return{ _client_area.width, _client_area.height() };
+	return false;
 }
 
-graph::size<float> activity::get_core_view_scale_factor()const
+bool activity::dispatch_msg()
 {
-	return _scale_factor;
+	if (!is_worker_thread())
+		return false;
+	ANG_LOGI("%s: Dispatching Message", class_name().cstr());
+	return core::async::scope_locker::lock(main_mutex(), [this]()->bool
+	{
+		async_msg_task_t task = nullptr;
+
+		if (read(_msg_pipe[0], (void*)task.addres_of(), sizeof(async_msg_task*)) != sizeof(async_msg_task*))
+			return false;
+
+		if (!task->status().is_active(core::async::async_action_status::canceled))
+		{
+			task->_status = core::async::async_action_status::running;
+			on_pre_dispatch_message(task->_msg);
+			main_mutex()->unlock();
+			on_command_event_handler(task->_msg);
+			main_mutex()->lock();
+			on_post_dispatch_message(task->_msg);
+			task->_status = core::async::async_action_status::completed;
+		}
+		task->_result = task->_msg->result();
+		task->_cond->signal();
+		return true;
+	});
 }
 
-core::async::iasync<dword>* activity::run_async(ANativeActivity* _activity)
+core::async::iasync_task* activity::run_async(ANativeActivity* _activity)
 {
-	if (_input_thread != nullptr)
+	if (_worker_thread != nullptr)
 		return nullptr;
 
 	if (_activity == nullptr)
 		return nullptr;
 
-//	AssetsManager::Instance()->handle = activity->assetManager;
-
-	_activity->callbacks->onDestroy = &NativeCallBack_OnDestroy;
-	_activity->callbacks->onStart = &NativeCallBack_OnStart;
-	_activity->callbacks->onResume = &NativeCallBack_OnResume;
-	_activity->callbacks->onSaveInstanceState = &NativeCallBack_OnSaveInstanceState;
-	_activity->callbacks->onPause = &NativeCallBack_OnPause;
-	_activity->callbacks->onStop = &NativeCallBack_OnStop;
-	_activity->callbacks->onConfigurationChanged = &NativeCallBack_OnConfigurationChanged;
-	_activity->callbacks->onLowMemory = &NativeCallBack_OnLowMemory;
-	_activity->callbacks->onWindowFocusChanged = &NativeCallBack_OnWindowFocusChanged;
-	_activity->callbacks->onNativeWindowCreated = &NativeCallBack_OnNativeWindowCreated;
-	_activity->callbacks->onNativeWindowDestroyed = &NativeCallBack_OnNativeWindowDestroyed;
-	_activity->callbacks->onInputQueueCreated = &NativeCallBack_OnInputQueueCreated;
-	_activity->callbacks->onInputQueueDestroyed = &NativeCallBack_OnInputQueueDestroyed;
-	_activity->instance = this;
-
-	_native_activity = _activity;
-	_native_window = nullptr;
-	if (_config == nullptr)
-		_config = AConfiguration_new();
-	AConfiguration_fromAssetManager(_config, nativeActivity->assetManager);
 	_main_thread = core::async::thread::current_thread();
 
-	return core::async::async_task<dword>::run_async(
-		core::delegates::function<dword(core::async::iasync<dword>*, var_args_t)>(this, &activity::on_input_dispatcher_event_handler));
+	core::async::cond_t cond = new core::async::cond();
+	core::async::scope_locker lock = main_mutex();
+
+	_worker_thread = new core::async::dispatcher_thread();
+
+	_worker_thread->start_event += [=](objptr, pointer)
+	{
+		//AssetsManager::Instance()->handle = activity->assetManager;
+		_activity->callbacks->onDestroy = &NativeCallBack_OnDestroy;
+		_activity->callbacks->onStart = &NativeCallBack_OnStart;
+		_activity->callbacks->onResume = &NativeCallBack_OnResume;
+		_activity->callbacks->onSaveInstanceState = &NativeCallBack_OnSaveInstanceState;
+		_activity->callbacks->onPause = &NativeCallBack_OnPause;
+		_activity->callbacks->onStop = &NativeCallBack_OnStop;
+		_activity->callbacks->onConfigurationChanged = &NativeCallBack_OnConfigurationChanged;
+		_activity->callbacks->onLowMemory = &NativeCallBack_OnLowMemory;
+		_activity->callbacks->onWindowFocusChanged = &NativeCallBack_OnWindowFocusChanged;
+		_activity->callbacks->onNativeWindowCreated = &NativeCallBack_OnNativeWindowCreated;
+		_activity->callbacks->onNativeWindowDestroyed = &NativeCallBack_OnNativeWindowDestroyed;
+		_activity->callbacks->onInputQueueCreated = &NativeCallBack_OnInputQueueCreated;
+		_activity->callbacks->onInputQueueDestroyed = &NativeCallBack_OnInputQueueDestroyed;
+		_activity->instance = this;
+
+		_native_activity = _activity;
+
+		if (_config == nullptr)
+			_config = AConfiguration_new();
+
+		AConfiguration_fromAssetManager(_config, _activity->assetManager);
+
+		pipe(_msg_pipe);
+		_looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
+		ALooper_addFd(_looper, _msg_pipe[0], MAIN_COMMAND, ALOOPER_EVENT_INPUT, NULL, command_handler.get());
+
+		cond->signal();
+
+		if (!init_app())
+			_worker_thread->cancel();
+	};
+
+	_worker_thread->end_event += [=](objptr, pointer) { exit_app(); };
+
+	_worker_thread->start([=](pointer args)->dword
+	{
+		int ident = 0;
+		int events = 0;
+		core::delegates::function_data<dword(pointer)>* command = null;
+
+		do
+		{
+			if (!_worker_thread->status().is_active(ang::core::async::async_action_status::running))
+				break;
+
+			if (command)
+				command->invoke(null);
+
+			update_app();
+
+		} while ((ident = ALooper_pollAll(0, NULL, &events, (void**)&command)) >= 0);
+		return 0;
+	}, null);
+
+	cond->wait(main_mutex());
+	return _worker_thread.get();
 }
 
-Core::Threading::IAsyncAction<DWord>* Activity::UpdateActivity(ANativeActivity* _activity)
+bool activity::init_app()
 {
-	//auto runningAsync = new ActivityAsyncAction(this, Core::Threading::AsyncActionStatus::Running);
-	if (_activity == nullptr)
-		return nullptr;
+	return true;
+}
 
-	switch (status)
+void activity::update_app()
+{
+
+}
+
+bool activity::exit_app()
+{
+	return true;
+}
+
+dword activity::on_dispatch_command_event(pointer)
+{
+	return dispatch_msg() ? 0 : -1;
+}
+
+dword activity::on_dispatch_input_event(pointer)
+{
+	AInputEvent* event = NULL;
+	while (AInputQueue_getEvent(_input_queue, &event) >= 0)
 	{
-	case Ang::Core::Threading::AsyncActionStatus::Stopped:
-	case Ang::Core::Threading::AsyncActionStatus::Completed:
-		status = Ang::Core::Threading::AsyncActionStatus::Stopped;
-		return RunAsync(_activity);
-		break;
-	case Ang::Core::Threading::AsyncActionStatus::Canceled:
-		cond.While(mutex, [&]()->Bool { return  status == Ang::Core::Threading::AsyncActionStatus::Completed; });
-		return RunAsync(_activity);
-		break;
-
-	case Ang::Core::Threading::AsyncActionStatus::Running:
-		inputAsyncAction->Suspend();
-		cond.While(mutex, [&]()->Bool { return  status == Ang::Core::Threading::AsyncActionStatus::Suspended; });
-		break;
-	case Ang::Core::Threading::AsyncActionStatus::Suspended:
-		break;
-
-	default:
-		return nullptr;
-		break;
+		if (AInputQueue_preDispatchEvent(_input_queue, event) != 0)
+			continue;
+		events::message_t msg = new events::message(events::android_msg_enum::touch_input, (pointer)AInputEvent_getType(event), event);
+		on_command_event_handler(msg);
+		AInputQueue_finishEvent(_input_queue, event, (int)msg->result());
 	}
+	return 0;
+}
 
-	mutex.Lock();
-
-	AssetsManager::Instance()->handle = _activity->assetManager;
-
-	_activity->callbacks->onDestroy = &NativeCallBack_OnDestroy;
-	_activity->callbacks->onStart = &NativeCallBack_OnStart;
-	_activity->callbacks->onResume = &NativeCallBack_OnResume;
-	_activity->callbacks->onSaveInstanceState = &NativeCallBack_OnSaveInstanceState;
-	_activity->callbacks->onPause = &NativeCallBack_OnPause;
-	_activity->callbacks->onStop = &NativeCallBack_OnStop;
-	_activity->callbacks->onConfigurationChanged = &NativeCallBack_OnConfigurationChanged;
-	_activity->callbacks->onLowMemory = &NativeCallBack_OnLowMemory;
-	_activity->callbacks->onWindowFocusChanged = &NativeCallBack_OnWindowFocusChanged;
-	_activity->callbacks->onNativeWindowCreated = &NativeCallBack_OnNativeWindowCreated;
-	_activity->callbacks->onNativeWindowDestroyed = &NativeCallBack_OnNativeWindowDestroyed;
-	_activity->callbacks->onInputQueueCreated = &NativeCallBack_OnInputQueueCreated;
-	_activity->callbacks->onInputQueueDestroyed = &NativeCallBack_OnInputQueueDestroyed;
-	_activity->instance = this;
-
-	nativeActivity = _activity;
-	nativeWindow = nullptr;
-	if (config == nullptr)
-		config = AConfiguration_new();
-	AConfiguration_fromAssetManager(config, nativeActivity->assetManager);
-	mainThread = Core::Threading::Thread::CurrentThread();
-	auto runningAsync = new ActivityAsyncAction(this, Core::Threading::AsyncActionStatus::Running); //wait for running
-	if (dispatcher == nullptr)
+bool activity::on_pre_dispatch_message(events::message_t msg)
+{
+	switch (msg->msg())
 	{
-		dispatcher = new Android::Dispatcher(this);
-		ReferenceObj(dispatcher);
-		dispatcher->CreatePipe();
+	case events::android_msg_enum::input_device_crerated:
+	{
+		if (_input_queue != null)
+		{
+			AInputQueue_detachLooper(_input_queue);
+		}
+		_input_queue = reinterpret_cast<AInputQueue*>(msg->arg1());
+		if (_input_queue != NULL) {
+			AInputQueue_attachLooper(_input_queue, _looper, INPUT_COMMAND, NULL, input_handler.get());
+		}
+		msg->result(1);
+		return true;
 	}
-	inputAsyncAction->Resume();
-	cond.Signal(mutex);
-	mutex.Unlock();
-	return runningAsync;
+	case events::android_msg_enum::input_device_destroyed:
+	{
+		auto input_queue = reinterpret_cast<AInputQueue*>(msg->arg1());
+		if (_input_queue == input_queue)
+			_input_queue = null;
+			AInputQueue_detachLooper(input_queue);
+		
+		msg->result(1);
+		return true;
+	}
+	}
+	return false;
+}
+
+bool activity::on_post_dispatch_message(events::message_t msg)
+{
+	return false;
+}
+
+
+void activity::on_command_event_handler(events::message_t)
+{
+
+}
+
+void activity::on_init_window(events::message_t)
+{
+
+}
+
+void activity::on_term_window(events::message_t)
+{
+
+}
+
+void activity::on_window_resized(events::message_t)
+{
+
+}
+
+
+void activity::on_window_redraw_needed(events::message_t)
+{
+
+}
+
+void activity::on_content_rect_changed(events::message_t)
+{
+
+}
+
+void activity::on_get_focus(events::message_t)
+{
+
+}
+
+void activity::on_lost_focus(events::message_t)
+{
+
+}
+
+void activity::on_config_changed(events::message_t)
+{
+
+}
+
+void activity::on_low_memory(events::message_t)
+{
+
+}
+
+void activity::on_start(events::message_t)
+{
+
+}
+
+void activity::on_resume(events::message_t)
+{
+
+}
+
+void activity::on_save_state(events::message_t)
+{
+
+}
+
+void activity::on_pause(events::message_t)
+{
+
+}
+
+void activity::on_stop(events::message_t)
+{
+
+}
+
+void activity::on_destroy(events::message_t)
+{
+
+}
+
+void activity::on_input_event(events::message_t)
+{
+
+}
+
+void activity::on_update(events::message_t)
+{
+
+}
+
+void activity::on_draw(events::message_t)
+{
+
 }

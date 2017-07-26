@@ -16,6 +16,9 @@
     <Filter Include="source files">
       <UniqueIdentifier>{ca912b06-43ae-4566-aecf-921a693e764b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="header files\include">
+      <UniqueIdentifier>{dde9927d-567f-4743-8ad2-9b810c18b161}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -27,12 +30,21 @@
     <ClInclude Include="..\..\..\include\angsys\ang\platform\android\android_events.h">
       <Filter>header files\ang\platform\android</Filter>
     </ClInclude>
+    <ClInclude Include="include\async_msg_task.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\native_callbacks.cpp">
       <Filter>source files</Filter>
     </ClCompile>
     <ClCompile Include="source\activity.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core_view.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\async_msg_task.cpp">
       <Filter>source files</Filter>
     </ClCompile>
   </ItemGroup>

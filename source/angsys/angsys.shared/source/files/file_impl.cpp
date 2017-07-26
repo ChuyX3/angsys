@@ -20,7 +20,6 @@ using namespace ang::core::files;
 
 mapped_file_buffer::mapped_file_buffer(system_file_t file, file_flags_t access, uint size, ulong64 offset)
 	: _original_source(null)
-	, _handle(null)
 	, _buffer_ptr(null)
 	, _buffer_size(0)
 	, _buffer_offset(0)
@@ -220,8 +219,8 @@ file_size_t file_impl::get_file_size(file_handle_t h)
 text::encoding_t file_impl::get_file_encoding(file_handle_t handle)
 {
 	mbyte bom;
-	dword out;
 #ifdef WINDOWS_PLATFORM
+	dword out;
 	LARGE_INTEGER lint;
 	lint.QuadPart = 0;
 	SetFilePointerEx(handle, lint, 0, FILE_BEGIN);
@@ -312,8 +311,8 @@ void file_impl::set_file_encoding(file_handle_t handle, text::encoding_t encodin
 
 file_impl::file_impl()
 	: _hfile(0)
-	, _hmap(0)
 	, _hmap_size(0)
+	, _hmap(0)
 	, _path("")
 	, _flags()
 	, _size(0)
@@ -455,6 +454,8 @@ bool file_impl::create(path_view path, open_flags_t flags)
 				break;
 			case text::encoding::iso_8859_1:
 				_flags += open_flags::encoding_ascii;
+				break;
+			default:
 				break;
 			}
 		}
@@ -629,7 +630,9 @@ bool file_impl::file_size(file_size_t size)
 	SetFilePointerEx(_hfile, lint, null, 0);
 	return res ? true : false;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-	::lseek(_hfile, _cursor, 0);
+	auto res = ::lseek(_hfile, size, SEEK_SET) == size;
+	::lseek(_hfile, _cursor, SEEK_SET);
+	return res;
 #endif
 }
 

@@ -132,7 +132,7 @@ bool scene::load(idriver_t driver, effects::ieffect_library_t fxlibrary, texture
 	_effect_library = fxlibrary;
 	_texture_loader = texloader;
 
-	xml::foreach(scene_info->xml_children(), [&](xml::xml_node_t node)
+	foreach(scene_info->xml_children(), [&](xml::xml_node_t node)
 	{
 		auto name = node->xml_name().as<cwstr_t>();
 		if (name.cstr() == null)
