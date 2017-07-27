@@ -293,3 +293,13 @@ void android_main(struct android_app* state) {
 		}
 	}
 }
+
+using namespace ang;
+
+
+extern "C" void ANativeActivity_onCreate(ANativeActivity* activity,
+	void* savedState, wsize savedStateSize) {
+
+	platform::android::activity::instance()->run_async(activity);
+
+}

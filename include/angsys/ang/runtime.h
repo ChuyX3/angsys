@@ -16,9 +16,10 @@
 #elif !defined __ANG_RUNTIME_H__
 #define __ANG_RUNTIME_H__
 
+
 #define ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(_TYPE) \
 template<> struct ang::runtime::runtime_type_builder<ang::value<_TYPE>> { \
-	static inline ang::type_name_t type_name() { return #_TYPE; } \
+	static inline ang::type_name_t type_name() { return ANG_UTILS_TO_STRING_OBJ(#_TYPE); } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
 	static inline bool dynamic_constructor(ang::unknown_ptr_t out) { \
 		auto alloc = ang::memory::allocator_manager::get_allocator(ang::memory::allocator_manager::default_allocator); \
@@ -32,7 +33,7 @@ template<> struct ang::runtime::runtime_type_builder<ang::value<_TYPE>> { \
 	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
 }; \
 template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
-	static inline ang::type_name_t type_name() { return #_TYPE; } \
+	static inline ang::type_name_t type_name() { return ANG_UTILS_TO_STRING_OBJ(#_TYPE); } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
 	static inline bool dynamic_constructor(ang::unknown_ptr_t out) { \
 		auto alloc = ang::memory::allocator_manager::get_allocator(ang::memory::allocator_manager::default_allocator); \
@@ -48,7 +49,7 @@ template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
 
 #define ANG_REGISTER_RUNTIME_TYPE_INFORMATION(_TYPE) \
 template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
-	static inline ang::type_name_t type_name() { return #_TYPE##_s; } \
+	static inline ang::type_name_t type_name() { return ANG_UTILS_TO_STRING_OBJ(#_TYPE); } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
 	static inline bool dynamic_constructor(ang::unknown_ptr_t out) { \
 		auto alloc = ang::memory::allocator_manager::get_allocator(ang::memory::allocator_manager::default_allocator); \
@@ -65,7 +66,7 @@ template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
 #define ANG_REGISTER_RUNTIME_TYPENAME(_TYPE) \
 template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
 	typedef _TYPE type; \
-	static inline ang::type_name_t type_name() { return #_TYPE; } \
+	static inline ang::type_name_t type_name() { return ANG_UTILS_TO_STRING_OBJ(#_TYPE); } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_name(); } \
 	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_name<new_t>())) return (new_t*)_old; return null; } \
 };

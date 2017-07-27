@@ -115,16 +115,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\time\time.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\value\boolean.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\value\char.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\double.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\float.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\value\floating.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\int.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\value\interger.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\long.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\short.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\uint.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\ulong.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\ushort.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\value.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\value\void_ptr.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_attribute.cpp" />

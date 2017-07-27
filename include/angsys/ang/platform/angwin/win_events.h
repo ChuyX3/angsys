@@ -154,9 +154,10 @@ namespace ang
 				moving = 0x0216,
 
 				touch_input = 0x0240,
-				pointer_moved = 0X0245,
-				pointer_pressed = 0X0246,
-				pointer_released = 0X0247,
+				pointer_moved = 0x0245,
+				pointer_pressed = 0x0246,
+				pointer_released = 0x0247,
+				pointer_canceled = 0x024C,
 
 				system_reserved_event = 0x0401,
 				interprocess_command = 0x0402,
@@ -168,7 +169,6 @@ namespace ang
 				text_change = 0x0408,
 				user_msg = 0x0450,
 			ANG_END_ENUM(win_msg_enum);
-
 
 			//IMsgEventArgs empty implementation, Used for default
 			class LINK msg_event_args

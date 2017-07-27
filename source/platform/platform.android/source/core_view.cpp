@@ -78,7 +78,7 @@ core_view::core_view(activity* a)
 	, _client_area(0,0)
 	, _scale_factor(1,1)
 {
-
+	//wstring text = "jesus"_s;
 }
 
 core_view::~core_view()
@@ -141,12 +141,12 @@ icore_context_t core_view::get_core_context()const
 	return new core_context();
 }
 
-graphics::size<float> core_view::get_core_view_size()const
+foundation::size<float> core_view::get_core_view_size()const
 {
 	return _client_area;
 }
 
-graphics::size<float> core_view::get_core_view_scale_factor()const
+foundation::size<float> core_view::get_core_view_scale_factor()const
 {
 	return _scale_factor;
 }

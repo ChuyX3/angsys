@@ -395,7 +395,7 @@ bool ang::collections::vector_buffer<_TYPE>::is_kind_of(ang::type_name_t name)co
 		return true; \
 	return false; \
 } \
-ang::type_name_t ang::collections::vector_buffer<_TYPE>::class_name() { return "ang::collections::vector<"#_TYPE">"; } \
+ang::type_name_t ang::collections::vector_buffer<_TYPE>::class_name() { return ANG_UTILS_TO_STRING_OBJ("ang::collections::vector<"#_TYPE">"); } \
 ang::type_name_t ang::collections::vector_buffer<_TYPE>::object_name()const { return ang::collections::vector_buffer<_TYPE>::class_name(); } \
 bool ang::collections::vector_buffer<_TYPE>::query_object(ang::type_name_t className, ang::unknown_ptr_t out) { \
 	if (out == null) return false; \

@@ -173,6 +173,9 @@ namespace ang
 #include <ang/value/char.h>
 #include <ang/value/mbyte.h>
 #include <ang/value/void_ptr.h>
+
+#ifndef ANDROID_PLATFORM
+
 #include <ang/value/short.h>
 #include <ang/value/ushort.h>
 #include <ang/value/int.h>
@@ -181,6 +184,8 @@ namespace ang
 #include <ang/value/ulong.h>
 #include <ang/value/float.h>
 #include <ang/value/double.h>
+
+#endif // !ANDROID_PLATFORM
 
 namespace ang
 {

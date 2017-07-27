@@ -20,7 +20,7 @@ using namespace ang::core::async;
 
 ang::type_name_t ang::core::async::async_task_result<void>::class_name()
 {
-	return "ang::core::async::async_task_result<void>";
+	return "ang::core::async::async_task_result<void>"_s;
 }
 
 

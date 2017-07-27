@@ -7,12 +7,8 @@
 // that are part of the project
 //
 
-#include <jni.h>
-#include <errno.h>
-
-#include <string.h>
-#include <unistd.h>
-#include <sys/resource.h>
+#include <angsys.h>
+#include <ang/platform/android/android_platform.h>
 
 #include <EGL/egl.h>
 #include <GLES/gl.h>

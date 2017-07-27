@@ -134,7 +134,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,14 +142,14 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -158,7 +158,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -166,7 +166,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -174,7 +174,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -182,7 +182,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -190,7 +190,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

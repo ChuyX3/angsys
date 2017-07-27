@@ -15,54 +15,55 @@
 using namespace ang;
 using namespace ang::foundation;
 
+#ifndef ANDROID_PLATFORM
 
-point<float>::point()
+ang::foundation::point<float>::point()
 	: x(0)
 	, y(0)
 {
 }
 
-point<float>::point(point const& p)
+ang::foundation::point<float>::point(point const& p)
 	: x(p.x)
 	, y(p.y)
 {
 }
 
-point<float>::point(float x, float y)
+ang::foundation::point<float>::point(float x, float y)
 	: x(x)
 	, y(y)
 {
 }
 
-point<float>& point<float>::operator = (const point<float>& p)
+point<float>& ang::foundation::point<float>::operator = (const point<float>& p)
 {
 	x = p.x;
 	y = p.y;
 	return*this;
 }
 
-point<float>& point<float>::operator += (const point<float>& p)
+point<float>& ang::foundation::point<float>::operator += (const point<float>& p)
 {
 	x += p.x;
 	y += p.y;
 	return *this;
 }
 
-point<float>& point<float>::operator -= (const point<float>& p)
+point<float>& ang::foundation::point<float>::operator -= (const point<float>& p)
 {
 	x -= p.x;
 	y -= p.y;
 	return *this;
 }
 
-point<float>& point<float>::operator *= (float k)
+point<float>& ang::foundation::point<float>::operator *= (float k)
 {
 	x *= k;
 	y *= k;
 	return *this;
 }
 
-point<float>& point<float>::operator /= (float k)
+point<float>& ang::foundation::point<float>::operator /= (float k)
 {
 	x /= k;
 	y /= k;
@@ -78,7 +79,7 @@ size<float>::size()
 
 }
 
-size<float>::size(size const& b)
+size<float>::size(size<float> const& b)
 	: width(b.width)
 	, height(b.height)
 {
@@ -308,6 +309,8 @@ rect<float>& rect<float>::operator /= (float k)
 	bottom /= k;
 	return *this;
 }
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

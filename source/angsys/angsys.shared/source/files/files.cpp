@@ -25,11 +25,11 @@ cstr_t file_system_priority_t::to_string()const
 	switch (_value)
 	{
 	case file_system_priority::lowest:
-		return "lowest";
+		return "lowest"_s;
 	case file_system_priority::highest:
-		return "highest";
+		return "highest"_s;
 	default:
-		return "unknown";
+		return "unknown"_s;
 	}
 }
 
@@ -37,46 +37,46 @@ cstr_t file_system_priority_t::to_string()const
 
 /////////////////////////////////////////////////////////////////////////////
 
-inline ang::intf_wrapper<ifile>::intf_wrapper() : _ptr(null) {
+ang::intf_wrapper<ifile>::intf_wrapper() : _ptr(null) {
 
 }
 
-inline ang::intf_wrapper<ifile>::~intf_wrapper() {
+ang::intf_wrapper<ifile>::~intf_wrapper() {
 	clean();
 }
 
-inline ang::intf_wrapper<ifile>::intf_wrapper(ifile* ptr) : _ptr(null) {
+ang::intf_wrapper<ifile>::intf_wrapper(ifile* ptr) : _ptr(null) {
 	set(ptr);
 }
 
-inline ang::intf_wrapper<ifile>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
+ang::intf_wrapper<ifile>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
 	ifile * temp = other._ptr;
 	other._ptr = null;
 	_ptr = temp;
 }
 
-inline ang::intf_wrapper<ifile>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
+ang::intf_wrapper<ifile>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
 	set(other._ptr);
 }
 
-inline void ang::intf_wrapper<ifile>::clean()
+void ang::intf_wrapper<ifile>::clean()
 {
 	iobject * _obj = interface_cast<iobject>(_ptr);
 	if (_obj)_obj->release();
 	_ptr = null;
 }
 
-inline bool ang::intf_wrapper<ifile>::is_empty()const
+bool ang::intf_wrapper<ifile>::is_empty()const
 {
 	return _ptr == null;
 }
 
-inline ifile* ang::intf_wrapper<ifile>::get(void)const
+ifile* ang::intf_wrapper<ifile>::get(void)const
 {
 	return _ptr;
 }
 
-inline void ang::intf_wrapper<ifile>::set(ifile* ptr)
+void ang::intf_wrapper<ifile>::set(ifile* ptr)
 {
 	if (ptr == _ptr) return;
 	iobject * _old = interface_cast<iobject>(_ptr);
@@ -86,13 +86,13 @@ inline void ang::intf_wrapper<ifile>::set(ifile* ptr)
 	if (_old)_old->release();
 }
 
-inline ang::intf_wrapper<ifile>& ang::intf_wrapper<ifile>::operator = (ifile* ptr)
+ang::intf_wrapper<ifile>& ang::intf_wrapper<ifile>::operator = (ifile* ptr)
 {
 	set(ptr);
 	return*this;
 }
 
-inline ang::intf_wrapper<ifile>& ang::intf_wrapper<ifile>::operator = (ang::intf_wrapper<ifile> && other)
+ang::intf_wrapper<ifile>& ang::intf_wrapper<ifile>::operator = (ang::intf_wrapper<ifile> && other)
 {
 	if (this == &other)
 		return *this;
@@ -102,38 +102,38 @@ inline ang::intf_wrapper<ifile>& ang::intf_wrapper<ifile>::operator = (ang::intf
 	return*this;
 }
 
-inline ang::intf_wrapper<ifile>& ang::intf_wrapper<ifile>::operator = (ang::intf_wrapper<ifile> const& other)
+ang::intf_wrapper<ifile>& ang::intf_wrapper<ifile>::operator = (ang::intf_wrapper<ifile> const& other)
 {
 	set(other._ptr);
 	return*this;
 }
 
-inline ifile ** ang::intf_wrapper<ifile>::addres_of(void)
+ifile ** ang::intf_wrapper<ifile>::addres_of(void)
 {
 	return &_ptr;
 }
 
-inline ang::intf_wrapper_ptr<ifile> ang::intf_wrapper<ifile>::operator & (void)
+ang::intf_wrapper_ptr<ifile> ang::intf_wrapper<ifile>::operator & (void)
 {
 	return this;
 }
 
-inline ifile * ang::intf_wrapper<ifile>::operator -> (void)
+ifile * ang::intf_wrapper<ifile>::operator -> (void)
 {
 	return get();
 }
 
-inline ifile const* ang::intf_wrapper<ifile>::operator -> (void)const
+ifile const* ang::intf_wrapper<ifile>::operator -> (void)const
 {
 	return get();
 }
 
-inline ang::intf_wrapper<ifile>::operator ifile * (void)
+ang::intf_wrapper<ifile>::operator ifile * (void)
 {
 	return get();
 }
 
-inline ang::intf_wrapper<ifile>::operator ifile const* (void)const
+ang::intf_wrapper<ifile>::operator ifile const* (void)const
 {
 	return get();
 }

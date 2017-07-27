@@ -86,21 +86,21 @@ namespace ang
 			rect(point<T> lt, point<T> rb);
 			rect(point<T> lt, size<T> sz);
 
-			float width()const;
-			float height()const;
+			T width()const;
+			T height()const;
 			point<T> left_top()const;
 			point<T> right_top()const;
 			point<T> left_bottom()const;
 			point<T> right_bottom()const;
 
 			void move_to(point<T>);
-			void move_to(float x, float y);
+			void move_to(T x, T y);
 
 			void resize(size<T>);
-			void resize(float cx, float cy);
+			void resize(T cx, T cy);
 
-			void deflate(float l, float t, float r, float b);
-			void inflate(float l, float t, float r, float b);
+			void deflate(T l, T t, T r, T b);
+			void inflate(T l, T t, T r, T b);
 
 			rect<T>& operator = (const rect<T>&);
 			rect<T>& operator += (const rect<T>&);
@@ -109,10 +109,38 @@ namespace ang
 			rect<T>& operator -= (const point<T>&);
 			rect<T>& operator += (const size<T>&);
 			rect<T>& operator -= (const size<T>&);
-			rect<T>& operator *= (float);
-			rect<T>& operator /= (float);
+			rect<T>& operator *= (T);
+			rect<T>& operator /= (T);
 		};
 
+		template<typename T> point<T> operator + (const point<T>&, const point<T>&);
+		template<typename T> point<T> operator - (const point<T>&, const point<T>&);
+		template<typename T> point<T> operator * (const point<T>&, T);
+		template<typename T> point<T> operator * (T, const point<T>&);
+		template<typename T> point<T> operator / (const point<T>&, T);
+
+		template<typename T> size<T> operator + (const size<T>&, const size<T>&);
+		template<typename T> size<T> operator - (const size<T>&, const size<T>&);
+		template<typename T> size<T> operator * (const size<T>&, T);
+		template<typename T> size<T> operator * (T, const size<T>&);
+		template<typename T> size<T> operator / (const size<T>&, T);
+
+		template<typename T> rect<T> operator + (const point<T>&, const size<T>&);
+		template<typename T> rect<T> operator + (const size<T>&, const point<T>&);
+
+		template<typename T> rect<T> operator + (const rect<T>&, const rect<T>&);
+		template<typename T> rect<T> operator - (const rect<T>&, const rect<T>&);
+		template<typename T> rect<T> operator + (const rect<T>&, const point<T>&);
+		template<typename T> rect<T> operator - (const rect<T>&, const point<T>&);
+		template<typename T> rect<T> operator + (const point<T>&, const rect<T>&);
+		template<typename T> rect<T> operator + (const rect<T>&, const size<T>&);
+		template<typename T> rect<T> operator - (const rect<T>&, const size<T>&);
+		template<typename T> rect<T> operator + (const size<T>&, const rect<T>&);
+		template<typename T> rect<T> operator * (const rect<T>&, T);
+		template<typename T> rect<T> operator * (T, const rect<T>&);
+		template<typename T> rect<T> operator / (const rect<T>&, T);
+
+#ifndef ANDROID_PLATFORM
 
 		template<> struct LINK point<float>
 		{
@@ -121,14 +149,14 @@ namespace ang
 
 		public:
 			point();
-			point(point const&);
+			point(point<float> const&);
 			point(float x, float y);
 
-			point& operator = (const point&);
-			point& operator += (const point&);
-			point& operator -= (const point&);
-			point& operator *= (float);
-			point& operator /= (float);
+			point<float>& operator = (const point<float>&);
+			point<float>& operator += (const point<float>&);
+			point<float>& operator -= (const point<float>&);
+			point<float>& operator *= (float);
+			point<float>& operator /= (float);
 		};
 
 		template<> struct LINK size<float>
@@ -138,14 +166,14 @@ namespace ang
 
 		public:
 			size();
-			size(size const&);
+			size(size<float> const&);
 			size(float w, float h);
 
-			size& operator = (const size&);
-			size& operator += (const size&);
-			size& operator -= (const size&);
-			size& operator *= (float);
-			size& operator /= (float);
+			size<float>& operator = (const size<float>&);
+			size<float>& operator += (const size<float>&);
+			size<float>& operator -= (const size<float>&);
+			size<float>& operator *= (float);
+			size<float>& operator /= (float);
 		};
 
 		template<> struct LINK rect<float>
@@ -188,34 +216,7 @@ namespace ang
 			rect& operator *= (float);
 			rect& operator /= (float);
 		};
-
-		template<typename T> point<T> operator + (const point<T>&, const point<T>&);
-		template<typename T> point<T> operator - (const point<T>&, const point<T>&);
-		template<typename T> point<T> operator * (const point<T>&, T);
-		template<typename T> point<T> operator * (T, const point<T>&);
-		template<typename T> point<T> operator / (const point<T>&, T);
-
-		template<typename T> size<T> operator + (const size<T>&, const size<T>&);
-		template<typename T> size<T> operator - (const size<T>&, const size<T>&);
-		template<typename T> size<T> operator * (const size<T>&, T);
-		template<typename T> size<T> operator * (T, const size<T>&);
-		template<typename T> size<T> operator / (const size<T>&, T);
-
-		template<typename T> rect<T> operator + (const point<T>&, const size<T>&);
-		template<typename T> rect<T> operator + (const size<T>&, const point<T>&);
-
-		template<typename T> rect<T> operator + (const rect<T>&, const rect<T>&);
-		template<typename T> rect<T> operator - (const rect<T>&, const rect<T>&);
-		template<typename T> rect<T> operator + (const rect<T>&, const point<T>&);
-		template<typename T> rect<T> operator - (const rect<T>&, const point<T>&);
-		template<typename T> rect<T> operator + (const point<T>&, const rect<T>&);
-		template<typename T> rect<T> operator + (const rect<T>&, const size<T>&);
-		template<typename T> rect<T> operator - (const rect<T>&, const size<T>&);
-		template<typename T> rect<T> operator + (const size<T>&, const rect<T>&);
-		template<typename T> rect<T> operator * (const rect<T>&, T);
-		template<typename T> rect<T> operator * (T, const rect<T>&);
-		template<typename T> rect<T> operator / (const rect<T>&, T);
-
+#endif
 	}
 
 	namespace graphics

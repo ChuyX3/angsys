@@ -26,6 +26,8 @@
 #define ang_interface struct
 #define ANG_INTERFACE(_NAME) ang_interface _NAME; typedef ang::intf_wrapper<_NAME> _NAME##_t
 
+#define ANG_UTILS_TO_STRING_OBJ(_VALUE) _VALUE##_s
+
 #define ANG_DECLARE_CLASSNAME() static ang::type_name_t class_name();
 #define ANG_DECLARE_ISCHILDOF() static bool is_child_of(ang::type_name_t);
 #define ANG_DECLARE_DYNAMICTYPE() static ang::intfptr dynamic_constructor(); static bool dynamic_destructor(ang::intfptr&);
@@ -131,7 +133,7 @@
 	ANG_OVERRIDE_QUERYOBJECT()
 
 
-#define ANG_IMPLEMENT_CLASSNAME(_CLASS) ang::type_name_t _CLASS::class_name(){ return #_CLASS; }
+#define ANG_IMPLEMENT_CLASSNAME(_CLASS) ang::type_name_t _CLASS::class_name(){ return ANG_UTILS_TO_STRING_OBJ(#_CLASS); }
 #define ANG_IMPLEMENT_ISCHILDOF(_CLASS) bool _CLASS::is_child_of(ang::type_name_t name) { if (name == ang::type_name<_CLASS>())return true; return false; }
 #define ANG_IMPLEMENT_ISCHILDOF_BASE(_CLASS, _BASE) bool _CLASS::is_child_of(ang::type_name_t name) { if (name == ang::type_name<_CLASS>())return true; return _BASE::is_child_of(name); }
 #define ANG_IMPLEMENT_DYNAMICTYPE(_CLASS) ang::intfptr _CLASS::dynamic_constructor() { return reinterpret_cast<ang::interface_t*>(new _CLASS()); } \

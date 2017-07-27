@@ -53,6 +53,7 @@ activity::activity()
 	, pointer_pressed_event(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::pointer_pressed; })
 	, pointer_released_event(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::pointer_released; })
 	, pointer_moved_event(this, [](events::core_msg_t msg)->bool{ return msg == events::android_msg_enum::pointer_moved; })
+	, pointer_canceled_event(this, [](events::core_msg_t msg)->bool { return msg == events::android_msg_enum::pointer_canceled; })
 {
 	_core_view = new core_view(this);
 	command_handler = core::delegates::function<dword(pointer)>(this, &activity::on_dispatch_command_event);
@@ -110,6 +111,16 @@ bool activity::query_object(type_name_t name, unknown_ptr_t out)
 	}
 	return false;
 }
+
+core::async::cond_t activity::main_cond()const { return _cond; }
+core::async::mutex_t activity::main_mutex()const { return _mutex; }
+ANativeActivity* activity::native_activity()const { return _native_activity; }
+
+bool activity::is_main_thread()const { return main_thread().is_empty() ? false : main_thread()->id() == core::async::thread::current_thread_id(); }
+bool activity::is_worker_thread()const { return worker_thread().is_empty() ? false : worker_thread()->id() == core::async::thread::current_thread_id(); }
+bool activity::is_allowed_thread()const { return is_main_thread() || is_worker_thread(); }
+core::async::thread_t activity::main_thread()const { return _main_thread; }
+core::async::thread_t activity::worker_thread()const { return _worker_thread.get(); }
 
 pointer activity::get_core_app_handle()const
 {
@@ -253,7 +264,7 @@ core::async::iasync_task* activity::run_async(ANativeActivity* _activity)
 
 	_worker_thread->end_event += [=](objptr, pointer) { exit_app(); };
 
-	_worker_thread->start([=](pointer args)->dword
+	_worker_thread->start([=](pointer)->dword
 	{
 		int ident = 0;
 		int events = 0;
@@ -276,6 +287,20 @@ core::async::iasync_task* activity::run_async(ANativeActivity* _activity)
 	cond->wait(main_mutex());
 	return _worker_thread.get();
 }
+
+core::async::iasync_task* activity::update_activity(ANativeActivity* activity)
+{
+	return null;
+}
+
+core::async::iasync_task* activity::stop_async()
+{
+	if (_worker_thread.is_empty())
+		return null;
+	_worker_thread->cancel();
+	return _worker_thread.get();
+}
+
 
 bool activity::init_app()
 {
@@ -344,102 +369,272 @@ bool activity::on_pre_dispatch_message(events::message_t msg)
 
 bool activity::on_post_dispatch_message(events::message_t msg)
 {
-	return false;
+	return true;
 }
 
 
-void activity::on_command_event_handler(events::message_t)
+void activity::on_command_event_handler(events::message_t msg)
+{
+	switch (msg->msg())
+	{
+	case events::android_msg_enum::created:
+		on_init_window(msg);
+		break;
+	case events::android_msg_enum::destroyed:
+		on_term_window(msg);
+		break;
+	case events::android_msg_enum::size:
+		on_window_resized(msg);
+		break;
+		//case events::android_msg_enum::redraw:
+		//	OnWindowsRedrawNeeded(msg);
+		//	break;
+		//case events::android_msg_enum::ContentRectChanged:
+		//	OnContentRectChanged(msg);
+		//	break;
+		//case events::android_msg_enum::SaveState:
+		//	OnSaveState(msg);
+		//	break;
+	case events::android_msg_enum::got_focus:
+		on_get_focus(msg);
+		break;
+	case events::android_msg_enum::lost_focus:
+		on_lost_focus(msg);
+		break;
+	case events::android_msg_enum::config_change:
+		on_config_changed(msg);
+		break;
+	case events::android_msg_enum::low_memory:
+		on_low_memory(msg);
+		break;
+	case events::android_msg_enum::start_app:
+		on_start(msg);
+		break;
+	case events::android_msg_enum::resume:
+		on_resume(msg);
+		break;
+	case events::android_msg_enum::pause:
+		on_pause(msg);
+		break;
+	case events::android_msg_enum::stop:
+		on_stop(msg);
+		break;
+	case events::android_msg_enum::exit_app:
+		on_destroy(msg);
+		break;
+	case events::android_msg_enum::touch_input:
+		on_input_event(msg);
+		break;
+	case events::android_msg_enum::update:
+		on_update(msg);
+		break;
+	case events::android_msg_enum::draw:
+		on_draw(msg);
+		break;
+	default:
+		break;
+	}
+}
+
+events::event_trigger<activity>& activity::owner(events::event_listener& listener)
+{
+	return static_cast<events::event_trigger<activity>&>(listener);
+}
+
+events::event_trigger<activity>const& activity::trigger(events::event_listener const& listener)const
+{
+	return static_cast<events::event_trigger<activity>const&>(listener);
+}
+
+
+void activity::on_init_window(events::message_t msg)
+{
+	_core_view->native_window(reinterpret_cast<ANativeWindow*>(msg->arg1()));
+	msg->result(0);
+	events::message_t _msg = new events::message(events::android_msg_enum::created, static_cast<icore_view*>(_core_view.get()), static_cast<icore_app*>(this));
+	events::imsg_event_args_t args = new events::created_event_args(_msg);
+	try { trigger(created_event)(args); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_init_window: %s", class_name().cstr(), cstr_t(e->what()).cstr()); }
+}
+
+void activity::on_term_window(events::message_t msg)
+{
+	_core_view->native_window(reinterpret_cast<ANativeWindow*>(msg->arg1()));
+	msg->result(0);
+	events::message_t _msg = new events::message(events::android_msg_enum::created, static_cast<icore_view*>(_core_view.get()), static_cast<icore_app*>(this));
+	events::imsg_event_args_t args = new events::msg_event_args(_msg);
+	try { trigger(created_event)(args); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_term_window: %s", class_name().cstr(), cstr_t(e->what()).cstr()); }
+}
+
+void activity::on_window_resized(events::message_t msg)
+{
+	struct display_info_event_args2 {
+		display_invalidate_reason_t state;
+		display::display_info info;
+	};
+
+	AConfiguration_getScreenWidthDp(_config);
+
+	display::orientation_t o = (AConfiguration_getOrientation(_config) == 1 )?
+		display::orientation::portrait : display::orientation::landscape;
+	display_info_event_args2 args2 = {
+		display_invalidate_reason::size_changed,
+		{
+			o, o,
+			foundation::size<float>(
+				(float)ANativeWindow_getWidth(_core_view->_native_window)
+				, (float)ANativeWindow_getHeight(_core_view->_native_window)
+			),
+			_core_view->get_core_view_scale_factor(), 96
+		}
+	};
+
+	//_core_view->native_window(reinterpret_cast<ANativeWindow*>(msg->arg1()));
+	msg->result(0);
+	events::message_t _msg = new events::message(events::android_msg_enum::size, static_cast<icore_view*>(_core_view.get()), &args2);
+	events::imsg_event_args_t args = new events::display_info_event_args(_msg);
+	try { trigger(created_event)(args); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_term_window: %s", class_name().cstr(), cstr_t(e->what()).cstr()); }
+}
+
+
+void activity::on_window_redraw_needed(events::message_t msg)
 {
 
 }
 
-void activity::on_init_window(events::message_t)
+void activity::on_content_rect_changed(events::message_t msg)
 {
 
 }
 
-void activity::on_term_window(events::message_t)
+void activity::on_get_focus(events::message_t msg)
 {
 
 }
 
-void activity::on_window_resized(events::message_t)
+void activity::on_lost_focus(events::message_t msg)
 {
 
 }
 
+void activity::on_config_changed(events::message_t msg)
+{
+	AConfiguration_fromAssetManager(_config, _native_activity->assetManager);
+	msg->result(1);
+}
 
-void activity::on_window_redraw_needed(events::message_t)
+void activity::on_low_memory(events::message_t msg)
 {
 
 }
 
-void activity::on_content_rect_changed(events::message_t)
+void activity::on_start(events::message_t msg)
 {
 
 }
 
-void activity::on_get_focus(events::message_t)
+void activity::on_resume(events::message_t msg)
 {
 
 }
 
-void activity::on_lost_focus(events::message_t)
+void activity::on_save_state(events::message_t msg)
 {
 
 }
 
-void activity::on_config_changed(events::message_t)
+void activity::on_pause(events::message_t msg)
 {
 
 }
 
-void activity::on_low_memory(events::message_t)
+void activity::on_stop(events::message_t msg)
 {
 
 }
 
-void activity::on_start(events::message_t)
+void activity::on_destroy(events::message_t msg)
 {
-
+	if (_worker_thread.get() != null)
+		_worker_thread->cancel();
 }
 
-void activity::on_resume(events::message_t)
+void activity::on_input_event(events::message_t msg)
 {
+	dword eventType = (dword)msg->arg1();
+	AInputEvent* event = (AInputEvent*)msg->arg2();
 
+	if (AINPUT_EVENT_TYPE_MOTION == eventType)
+	{
+
+		int action = AMotionEvent_getAction(event);
+		int flag = action & AMOTION_EVENT_ACTION_MASK;
+		wsize counter = AMotionEvent_getPointerCount(event);
+
+		int idx = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+		short pid = (short)AMotionEvent_getPointerId(event, idx);
+		foundation::point<float> point = { AMotionEvent_getX(event, idx), AMotionEvent_getY(event, idx) };
+		float pressure = AMotionEvent_getPressure(event, idx);
+
+		input::poiner_info info = {
+			point,
+			pid,
+			true, //TODO
+			false, //TODO
+			input::pointer_hardware_type_t(input::pointer_hardware_type::touch), //TODO
+			input::key_modifiers_t(input::key_modifiers::none) //TODO
+		};
+
+		try {
+			switch (flag)
+			{
+			case AMOTION_EVENT_ACTION_DOWN:
+			case AMOTION_EVENT_ACTION_POINTER_DOWN: {
+				events::message_t _msg = new events::message{ events::android_msg_enum::pointer_pressed, &point, &info };
+				events::imsg_event_args_t args = new events::pointer_event_args(_msg);
+				trigger(pointer_pressed_event)(args); 
+			}break;
+			case AMOTION_EVENT_ACTION_UP:
+			case AMOTION_EVENT_ACTION_POINTER_UP: {
+				events::message_t _msg = new events::message{ events::android_msg_enum::pointer_released, &point, &info };
+				events::imsg_event_args_t args = new events::pointer_event_args(_msg);
+				trigger(pointer_released_event)(args);
+			}break;
+			case AMOTION_EVENT_ACTION_MOVE: {
+				events::message_t _msg = new events::message{ events::android_msg_enum::pointer_moved, &point, &info };
+				events::imsg_event_args_t args = new events::pointer_event_args(_msg);
+				trigger(pointer_moved_event)(args);
+			}break;
+			case AMOTION_EVENT_ACTION_CANCEL: {
+				events::message_t _msg = new events::message{ events::android_msg_enum::pointer_canceled, &point, &info };
+				events::imsg_event_args_t args = new events::pointer_event_args(_msg);
+				trigger(pointer_canceled_event)(args);
+			}break;
+			default:
+				break;
+			}
+		}
+		catch (const exception_t& e) { ANG_LOGE("%s::on_input_event: %s", class_name().cstr(), cstr_t(e->what()).cstr()); }
+		msg->result(1);
+	}
+	else if (AINPUT_EVENT_TYPE_KEY == eventType)
+	{
+		msg->result(1);
+	}
 }
 
-void activity::on_save_state(events::message_t)
+void activity::on_update(events::message_t msg)
 {
-
+	events::imsg_event_args_t args = new events::update_event_args(msg);
+	try { trigger(update_event)(args); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_update: %s", class_name().cstr(), cstr_t(e->what()).cstr()); }
 }
 
-void activity::on_pause(events::message_t)
+void activity::on_draw(events::message_t msg)
 {
-
-}
-
-void activity::on_stop(events::message_t)
-{
-
-}
-
-void activity::on_destroy(events::message_t)
-{
-
-}
-
-void activity::on_input_event(events::message_t)
-{
-
-}
-
-void activity::on_update(events::message_t)
-{
-
-}
-
-void activity::on_draw(events::message_t)
-{
-
+	events::imsg_event_args_t args = new events::draw_event_args(msg);
+	try { trigger(draw_event)(args); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_draw: %s", class_name().cstr(), cstr_t(e->what()).cstr()); }
 }

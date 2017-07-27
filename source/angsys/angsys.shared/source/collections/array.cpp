@@ -804,7 +804,7 @@ uint ang::collections::array_buffer<_TYPE>::counter()const { return _size; } \
 bool ang::collections::array_buffer<_TYPE>::is_kind_of(ang::type_name_t name)const { \
 	return (name == type_name<array_buffer<_TYPE>>() || ang::object::is_kind_of(name) || ang::collections::icollection<_TYPE>::is_kind_of(name)); \
 } \
-ang::type_name_t ang::collections::array_buffer<_TYPE>::class_name() {return "ang::collections::array<"#_TYPE">"; } \
+ang::type_name_t ang::collections::array_buffer<_TYPE>::class_name() {return ANG_UTILS_TO_STRING_OBJ("ang::collections::array<"#_TYPE">"); } \
 ang::type_name_t ang::collections::array_buffer<_TYPE>::object_name()const { return ang::collections::array_buffer<_TYPE>::class_name(); } \
 bool ang::collections::array_buffer<_TYPE>::query_object(ang::type_name_t className, ang::unknown_ptr_t out) { \
 	if (out == null) return false; \

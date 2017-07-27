@@ -75,7 +75,7 @@ cstr_t except_code_t::to_string()const
 	cstr_t code;
 	if (except_code_map::instance()->code_map().find(_value, code))
 		return code;
-	return "exception: unkown exception";
+	return "exception: unkown exception"_s;
 }
 
 exception::exception()throw()
@@ -154,12 +154,12 @@ uint exception::result()const throw()
 
 type_name_t exception::class_name()throw()
 {
-	return "ang::exception_t";
+	return "ang::exception_t"_s;
 }
 
 type_name_t exception::object_name()const throw()
 {
-	return "ang::exception_t";
+	return "ang::exception_t"_s;
 }
 
 bool exception::is_child_of(type_name_t type) throw()

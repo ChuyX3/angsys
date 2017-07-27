@@ -56,8 +56,8 @@ namespace ang
 				virtual imessage_reciever_t get_listener()const override;
 				virtual pointer get_core_view_handle()const override;
 				virtual icore_context_t get_core_context()const override;
-				virtual graphics::size<float> get_core_view_size()const override;
-				virtual graphics::size<float> get_core_view_scale_factor()const override;
+				virtual foundation::size<float> get_core_view_size()const override;
+				virtual foundation::size<float> get_core_view_scale_factor()const override;
 
 			private:
 				void native_window(ANativeWindow*);
@@ -150,8 +150,12 @@ namespace ang
 				events::event_listener pointer_pressed_event;
 				events::event_listener pointer_released_event;
 				events::event_listener pointer_moved_event;
+				events::event_listener pointer_canceled_event;
 
 			protected: //Events
+				events::event_trigger<activity>& owner(events::event_listener& listener);
+				events::event_trigger<activity>const& trigger(events::event_listener const& listener)const;
+
 				dword on_dispatch_command_event(pointer);
 				dword on_dispatch_input_event(pointer);
 

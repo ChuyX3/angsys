@@ -1,13 +1,13 @@
 #include "pch.h"
 #include <ang/core/time.h>
-#include "ang/platform/angwin/angwin.h"
+#include "ang/platform/android/android_platform.h"
 
 using namespace ang;
 using namespace ang::platform;
 using namespace ang::platform::events;
-using namespace ang::platform::windows;
+using namespace ang::platform::android;
 
-ANG_IMPLEMENT_ENUM(ang::platform::events, win_msg_enum, core_msg_t, win_msg_enum::none);
+ANG_IMPLEMENT_ENUM(ang::platform::events, android_msg_enum, core_msg_t, android_msg_enum::none);
 
 
 
@@ -148,7 +148,7 @@ const message_t& app_status_event_args::msg_info()const
 
 icore_app_t app_status_event_args::core_app()const
 {
-	return reinterpret_cast<app*>(msg->arg1());
+	return reinterpret_cast<activity*>(msg->arg1());
 }
 
 //core::Files::IFileSystem* app_status_event_args::FileSystem()const
@@ -235,17 +235,17 @@ const message_t& created_event_args::msg_info()const
 
 icore_view_t created_event_args::core_view()const
 {
-	return reinterpret_cast<window*>(msg->arg1());
+	return reinterpret_cast<android::core_view*>(msg->arg1());
 }
 
 icore_app_t created_event_args::core_app()const
 {
-	return static_cast<icore_app*>(app::current_app());
+	return static_cast<icore_app*>(msg->arg2());
 }
 
 var_args_t created_event_args::args_list()const
 {
-	return reinterpret_cast<var_args*>(msg->arg2());
+	return null;// reinterpret_cast<var_args*>(msg->arg2());
 }
 
 void created_event_args::handled(bool value)
@@ -415,12 +415,12 @@ const message_t& draw_event_args::msg_info()const
 
 icore_view_t draw_event_args::core_view()const
 {
-	return reinterpret_cast<window*>(msg->arg1());
+	return reinterpret_cast<android::core_view*>(msg->arg1());
 }
 
 icore_context_t draw_event_args::core_context()const
 {
-	return reinterpret_cast<graphics::device_context*>(msg->arg2());
+	return core_view()->get_core_context();
 }
 
 foundation::size<float> draw_event_args::canvas_size()const
@@ -507,7 +507,7 @@ const message_t& display_info_event_args::msg_info()const
 
 icore_view_t display_info_event_args::core_view()const
 {
-	return reinterpret_cast<window*>(msg->arg1());
+	return reinterpret_cast<android::core_view*>(msg->arg1());
 }
 
 
@@ -599,7 +599,7 @@ const message_t& visibility_change_event_args::visibility_change_event_args::msg
 
 icore_view_t visibility_change_event_args::visibility_change_event_args::core_view()const
 {
-	return reinterpret_cast<window*>(msg->arg1());
+	return reinterpret_cast<android::core_view*>(msg->arg1());
 }
 
 bool visibility_change_event_args::visibility_change_event_args::is_visible()const
@@ -764,7 +764,7 @@ const message_t& pointer_event_args::msg_info()const
 
 foundation::point<float> pointer_event_args::position()const
 {
-	return reinterpret_cast<input::poiner_info_t*>(msg->arg1())->point;
+	return reinterpret_cast<input::poiner_info*>(msg->arg1())->point;
 }
 
 input::key_modifiers_t pointer_event_args::modifiers()const
@@ -852,28 +852,28 @@ uint key_event_args::key()const
 input::key_modifiers_t key_event_args::modifiers()const
 {
 	word modifiers = 0;
-	if (GetKeyState(VK_CONTROL) && 0x8000)
-		modifiers |= (word)input::key_modifiers::control;
-	if (GetKeyState(VK_SHIFT) && 0x8000)
-		modifiers |= (word)input::key_modifiers::shift;
-	if (GetKeyState(VK_MENU) && 0x8000)
-		modifiers |= (word)input::key_modifiers::alt;
-	if (GetKeyState(VK_CAPITAL) && 0x0001)
-		modifiers |= (word)input::key_modifiers::caps_lock;
-	if (GetKeyState(VK_NUMLOCK) && 0x0001)
-		modifiers |= (word)input::key_modifiers::num_lock;
+	//if (GetKeyState(VK_CONTROL) && 0x8000)
+	//	modifiers |= (word_t)input::key_modifiers::control;
+	//if (GetKeyState(VK_SHIFT) && 0x8000)
+	//	modifiers |= (word_t)input::key_modifiers::shift;
+	//if (GetKeyState(VK_MENU) && 0x8000)
+	//	modifiers |= (word_t)input::key_modifiers::alt;
+	//if (GetKeyState(VK_CAPITAL) && 0x0001)
+	//	modifiers |= (word_t)input::key_modifiers::caps_lock;
+	//if (GetKeyState(VK_NUMLOCK) && 0x0001)
+	//	modifiers |= (word_t)input::key_modifiers::num_lock;
 	return input::key_modifiers(modifiers);
 }
 
 word key_event_args::flags()const
 {
-	uint value = (uint)(wsize)msg->arg2();
-	return word((value & 0XFFFF0000) >> 16);
+	uint_t value = (uint_t)(wsize_t)msg->arg2();
+	return word_t((value & 0XFFFF0000) >> 16);
 }
 
 bool key_event_args::is_pressed()const
 {
-	uint value = (uint)(wsize)msg->arg2();
+	uint_t value = (uint_t)(wsize_t)msg->arg2();
 	return (value & 0X0000FFFF) != 0;
 }
 

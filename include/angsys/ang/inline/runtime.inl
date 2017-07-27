@@ -48,7 +48,7 @@ namespace ang
 		{
 			typedef void type;
 			static inline type_name_t type_name() {
-				return "void";
+				return "void"_s;
 			}
 
 			static inline bool is_type_of(type_name_t name) {

@@ -9,11 +9,11 @@ namespace ang
 	{
 
 		template<typename T>
-		struct ang::runtime::runtime_type_builder<foundation::point<T>>
+		struct runtime_type_builder<foundation::point<T>>
 		{
 			typedef ang::foundation::point<T> type;
 			static inline ang::type_name_t type_name() {
-				static string _type_name = ang::move(string("ang::foundation::point<") + runtime::type_name<T>() + ">"_s);
+				static string _type_name = ang::move("ang::foundation::point<"_o + runtime::type_name<T>() + ">"_s);
 				return (type_name_t)_type_name;
 			}
 			static inline bool is_type_of(ang::type_name_t name) {
@@ -45,11 +45,11 @@ namespace ang
 		};
 
 		template<typename T>
-		struct ang::runtime::runtime_type_builder<foundation::size<T>>
+		struct runtime_type_builder<foundation::size<T>>
 		{
 			typedef ang::foundation::size<T> type;
 			static inline ang::type_name_t type_name() {
-				static string _type_name = ang::move(string("ang::foundation::size<") + runtime::type_name<T>() + ">"_s);
+				static string _type_name = ang::move("ang::foundation::size<"_o + runtime::type_name<T>() + ">"_s);
 				return (type_name_t)_type_name;
 			}
 			static inline bool is_type_of(ang::type_name_t name) {
@@ -81,11 +81,11 @@ namespace ang
 		};
 
 		template<typename T>
-		struct ang::runtime::runtime_type_builder<foundation::rect<T>>
+		struct runtime_type_builder<foundation::rect<T>>
 		{
 			typedef ang::foundation::rect<T> type;
 			static inline ang::type_name_t type_name() {
-				static string _type_name = ang::move(string("ang::foundation::rect<") + runtime::type_name<T>() + ">"_s);
+				static string _type_name = ang::move("ang::foundation::rect<"_o + runtime::type_name<T>() + ">"_s);
 				return (type_name_t)_type_name;
 			}
 			static inline bool is_type_of(ang::type_name_t name) {
@@ -117,6 +117,341 @@ namespace ang
 		};
 
 	}
+}
+
+
+template<typename T> 
+inline ang::foundation::point<T>::point()
+	: x(0)
+	, y(0)
+{
+}
+
+template<typename T> 
+inline ang::foundation::point<T>::point(point const& p)
+	: x(p.x)
+	, y(p.y)
+{
+}
+
+template<typename T> 
+inline ang::foundation::point<T>::point(T x, T y)
+	: x(x)
+	, y(y)
+{
+}
+
+template<typename T> 
+inline ang::foundation::point<T>& ang::foundation::point<T>::operator = (const ang::foundation::point<T>& p)
+{
+	x = p.x;
+	y = p.y;
+	return*this;
+}
+
+template<typename T> 
+inline ang::foundation::point<T>& ang::foundation::point<T>::operator += (const ang::foundation::point<T>& p)
+{
+	x += p.x;
+	y += p.y;
+	return *this;
+}
+
+template<typename T> 
+inline ang::foundation::point<T>& ang::foundation::point<T>::operator -= (const ang::foundation::point<T>& p)
+{
+	x -= p.x;
+	y -= p.y;
+	return *this;
+}
+
+template<typename T> 
+inline ang::foundation::point<T>& ang::foundation::point<T>::operator *= (T k)
+{
+	x *= k;
+	y *= k;
+	return *this;
+}
+
+template<typename T> 
+inline ang::foundation::point<T>& ang::foundation::point<T>::operator /= (T k)
+{
+	x /= k;
+	y /= k;
+	return *this;
+}
+
+
+template<typename T> 
+inline ang::foundation::size<T>::size()
+	: width(0)
+	, height(0)
+{
+
+}
+
+template<typename T> 
+inline ang::foundation::size<T>::size(size<T> const& b)
+	: width(b.width)
+	, height(b.height)
+{
+
+}
+
+template<typename T> 
+inline ang::foundation::size<T>::size(T width, T height)
+	: width(width)
+	, height(height)
+{
+
+}
+
+template<typename T> 
+inline ang::foundation::size<T>& ang::foundation::size<T>::operator = (const ang::foundation::size<T>& b)
+{
+	width = b.width;
+	height = b.height;
+	return*this;
+}
+
+template<typename T> 
+inline ang::foundation::size<T>& ang::foundation::size<T>::operator += (const ang::foundation::size<T>& b)
+{
+	width += b.width;
+	height += b.height;
+	return *this;
+}
+
+template<typename T> 
+inline ang::foundation::size<T>& ang::foundation::size<T>::operator -= (const ang::foundation::size<T>& b)
+{
+	width -= b.width;
+	height -= b.height;
+	return *this;
+}
+
+template<typename T> 
+inline ang::foundation::size<T>& ang::foundation::size<T>::operator *= (T k)
+{
+	width *= k;
+	height *= k;
+	return *this;
+}
+
+template<typename T> 
+inline ang::foundation::size<T>& ang::foundation::size<T>::operator /= (T k)
+{
+	width /= k;
+	height /= k;
+	return *this;
+}
+
+
+
+template<typename T>
+inline ang::foundation::rect<T>::rect()
+	: left(0)
+	, top(0)
+	, right(0)
+	, bottom(0)
+{
+
+}
+
+template<typename T>
+inline ang::foundation::rect<T>::rect(ang::foundation::rect<T> const& rc)
+	: left(rc.left)
+	, top(rc.top)
+	, right(rc.right)
+	, bottom(rc.bottom)
+{
+
+}
+
+template<typename T>
+inline ang::foundation::rect<T>::rect(T l, T t, T r, T b)
+	: left(l)
+	, top(t)
+	, right(r < l ? l : r)
+	, bottom(b < t ? t : b)
+{
+
+}
+
+template<typename T>
+inline ang::foundation::rect<T>::rect(ang::foundation::point<T> lt, ang::foundation::point<T> rb)
+	: left(lt.x)
+	, top(lt.y)
+	, right(rb.x)
+	, bottom(rb.y)
+{
+
+}
+
+template<typename T>
+inline ang::foundation::rect<T>::rect(ang::foundation::point<T> lt, ang::foundation::size<T> sz)
+	: left(lt.x)
+	, top(lt.y)
+	, right(lt.x + sz.width)
+	, bottom(lt.y + sz.height)
+{
+
+}
+
+template<typename T>
+inline T ang::foundation::rect<T>::width()const { return right - left; }
+
+template<typename T>
+inline T ang::foundation::rect<T>::height()const { return bottom - top; }
+
+template<typename T>
+inline ang::foundation::point<T> ang::foundation::rect<T>::left_top()const { return{ left, top }; }
+
+template<typename T>
+inline ang::foundation::point<T> ang::foundation::rect<T>::right_top()const { return{ right, top }; }
+
+template<typename T>
+inline ang::foundation::point<T> ang::foundation::rect<T>::left_bottom()const { return{ left, bottom }; }
+
+template<typename T>
+inline ang::foundation::point<T> ang::foundation::rect<T>::right_bottom()const { return{ right, bottom }; }
+
+template<typename T> 
+inline void ang::foundation::rect<T>::move_to(ang::foundation::point<T> p)
+{
+	right = right - left + p.x;
+	bottom = bottom - top + p.y;
+	left = p.x;
+	top = p.y;
+}
+
+template<typename T>
+inline void ang::foundation::rect<T>::move_to(T x, T y)
+{
+	right = right - left + x;
+	bottom = bottom - top + y;
+	left = x;
+	top = y;
+}
+
+template<typename T>
+inline void ang::foundation::rect<T>::resize(ang::foundation::size<T> sz)
+{
+	right = left + sz.width;
+	bottom = top + sz.height;
+}
+
+template<typename T>
+inline void ang::foundation::rect<T>::resize(T cx, T cy)
+{
+	right = left + cx;
+	bottom = top + cy;
+}
+
+template<typename T>
+inline void ang::foundation::rect<T>::deflate(T l, T t, T r, T b)
+{
+	left += l;
+	top += t;
+	right -= r;
+	bottom -= b;
+}
+
+template<typename T>
+inline void ang::foundation::rect<T>::inflate(T l, T t, T r, T b)
+{
+	left -= l;
+	top -= t;
+	right += r;
+	bottom += b;
+}
+
+template<typename T>
+inline ang::foundation::rect<T>& ang::foundation::rect<T>::operator = (const ang::foundation::rect<T>& rc)
+{
+	left = rc.left;
+	top = rc.top;
+	right = rc.right;
+	bottom = rc.bottom;
+	return *this;
+}
+
+template<typename T>
+inline ang::foundation::rect<T>& ang::foundation::rect<T>::operator += (const ang::foundation::rect<T>& rc)
+{
+	left += rc.left;
+	top += rc.top;
+	right += rc.right;
+	bottom += rc.bottom;
+	return *this;
+}
+
+template<typename T>
+inline ang::foundation::rect<T>& ang::foundation::rect<T>::operator -= (const ang::foundation::rect<T>& rc)
+{
+	left -= rc.left;
+	top -= rc.top;
+	right -= rc.right;
+	bottom -= rc.bottom;
+	return *this;
+}
+
+template<typename T>
+inline ang::foundation::rect<T>& ang::foundation::rect<T>::operator += (const ang::foundation::point<T>& pt)
+{
+	left += pt.x;
+	top += pt.y;
+	right += pt.x;
+	bottom += pt.y;
+	return *this;
+}
+
+template<typename T>
+inline ang::foundation::rect<T>& ang::foundation::rect<T>::operator -= (const ang::foundation::point<T>& pt)
+{
+	left -= pt.x;
+	top -= pt.y;
+	right -= pt.x;
+	bottom -= pt.y;
+	return *this;
+}
+
+template<typename T>
+inline ang::foundation::rect<T>& ang::foundation::rect<T>::operator += (const ang::foundation::size<T>& sz)
+{
+	right += sz.width;
+	bottom += sz.height;
+	return *this;
+}
+
+template<typename T> 
+inline ang::foundation::rect<T>& ang::foundation::rect<T>::operator -= (const ang::foundation::size<T>& sz)
+{
+	right -= sz.width;
+	bottom -= sz.height;
+	if (left > right) right = left;
+	if (top > bottom) bottom = top;
+	return *this;
+}
+
+template<typename T> 
+inline ang::foundation::rect<T>& ang::foundation::rect<T>::operator *= (T k)
+{
+	left *= k;
+	top *= k;
+	right *= k;
+	bottom *= k;
+	return *this;
+}
+
+template<typename T> 
+inline ang::foundation::rect<T>& ang::foundation::rect<T>::operator /= (T k)
+{
+	left /= k;
+	top /= k;
+	right /= k;
+	bottom /= k;
+	return *this;
 }
 
 

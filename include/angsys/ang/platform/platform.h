@@ -110,6 +110,7 @@ namespace ang
 				pointer_released = 0X0247,
 				pointer_enter = 0x0249,
 				pointer_leave = 0x024A,
+				pointer_canceled = 0x024C,
 
 				start_app = 0x0403,
 				exit_app = 0x0404,

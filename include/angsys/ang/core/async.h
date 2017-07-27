@@ -790,7 +790,7 @@ namespace ang
 
 			public:
 				bool dispatch();
-				bool start(thread_callback_t , void_args_t, thread_priority_t = thread_priority::normal);
+				bool start(thread_callback_t loop, void_args_t args, thread_priority_t = thread_priority::normal);
 
 				delegates::listener<void(objptr, pointer)> start_event;
 				delegates::listener<void(objptr, pointer)> end_event;

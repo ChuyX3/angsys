@@ -47,5 +47,8 @@
     <ClCompile Include="source\async_msg_task.cpp">
       <Filter>source files</Filter>
     </ClCompile>
+    <ClCompile Include="source\android_events.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

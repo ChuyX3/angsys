@@ -37,7 +37,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{09b9c216-9660-40ab-95e1-ca554fb328b5}</ProjectGuid>
     <Keyword>Android</Keyword>
-    <RootNamespace>platform_android</RootNamespace>
+    <RootNamespace>angsys.platform</RootNamespace>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <ApplicationType>Android</ApplicationType>
     <ApplicationTypeRevision>2.0</ApplicationTypeRevision>
@@ -138,7 +138,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -147,7 +147,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -156,7 +156,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -165,7 +165,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -174,7 +174,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -183,7 +183,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -192,7 +192,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -201,7 +201,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\platform.shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CppLanguageStandard>gnu++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
       <AdditionalOptions>-fpermissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -213,9 +213,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\activity.cpp" />
+    <ClCompile Include="source\android_events.cpp" />
     <ClCompile Include="source\async_msg_task.cpp" />
     <ClCompile Include="source\core_view.cpp" />
     <ClCompile Include="source\native_callbacks.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\angsys\angsys.android\angsys.android.vcxproj">
+      <Project>{9a4a5d3b-d3a4-49b7-b434-b7aedfb1b31b}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

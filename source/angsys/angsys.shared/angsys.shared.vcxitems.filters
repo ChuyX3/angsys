@@ -244,30 +244,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp">
       <Filter>source files</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\double.cpp">
-      <Filter>source files\value</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\float.cpp">
-      <Filter>source files\value</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\int.cpp">
-      <Filter>source files\value</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\long.cpp">
-      <Filter>source files\value</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\short.cpp">
-      <Filter>source files\value</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\uint.cpp">
-      <Filter>source files\value</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\ulong.cpp">
-      <Filter>source files\value</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\ushort.cpp">
-      <Filter>source files\value</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\value\void_ptr.cpp">
       <Filter>source files\value</Filter>
     </ClCompile>
@@ -414,6 +390,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\binary_file.cpp">
       <Filter>source files\files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\value.cpp">
+      <Filter>source files\value</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\delegates.cpp">
+      <Filter>source files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -219,12 +219,12 @@ cstr_t thread_priority_t::to_string()const
 	switch (_value)
 	{
 	case ang::core::async::thread_priority_t::low:
-		return "low";
+		return "low"_s;
 	default:
 	case ang::core::async::thread_priority_t::normal:
-		return "normal";
+		return "normal"_s;
 	case ang::core::async::thread_priority_t::high:
-		return "high";
+		return "high"_s;
 	}
 }
 
@@ -236,9 +236,9 @@ cstr_t detach_state_t::to_string()const
 	{
 	default:
 	case ang::core::async::detach_state_t::joinable:
-		return "joinable";
+		return "joinable"_s;
 	case ang::core::async::detach_state_t::detached:
-		return "detached";
+		return "detached"_s;
 	}
 }
 
