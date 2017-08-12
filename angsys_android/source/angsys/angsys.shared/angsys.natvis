@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+  <Type Name="ang::value&lt;char*&gt;">
+    <DisplayString>{_value,s}</DisplayString>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="ang::value&lt;char const*&gt;">
+    <DisplayString>{_value,s}</DisplayString>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="ang::value&lt;wchar_t*&gt;">
+    <DisplayString>{_value,su}</DisplayString>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="ang::value&lt;wchar_t const*&gt;">
+    <DisplayString>{_value,su}</DisplayString>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="ang::value&lt;*&gt;">
+    <DisplayString>{_value}</DisplayString>
+    <Expand>
+      <ExpandedItem>_value</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::static_array&lt;*&gt;">
+    <DisplayString>array[{_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+
+  <Type Name="ang::object_wrapper&lt;*&gt;">
+    <DisplayString Condition="_ptr != 0">{*_ptr}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <ExpandedItem>_ptr</ExpandedItem>
+    </Expand>
+  </Type>
+  <Type Name="ang::strings::string_buffer">
+    <DisplayString Condition="_data._flag_is_local_data != 0XFFFF">{_data._local_buffer,s}</DisplayString>
+    <DisplayString Condition="_data._flag_is_local_data == 0XFFFF">{_data._buffer_ptr,s}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._flag_is_local_data != 0XFFFF">_data._local_size</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._flag_is_local_data == 0XFFFF">_data._buffer_size_used</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._flag_is_local_data != 0XFFFF">29</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._flag_is_local_data == 0XFFFF">_data._buffer_capacity</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._flag_is_local_data != 0XFFFF">_data._local_buffer</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._flag_is_local_data == 0XFFFF">_data._buffer_ptr</Item>
+    </Expand>
+  </Type>
+  <Type Name="ang::strings::wstring_buffer">
+    <DisplayString Condition="_data._flag_is_local_data != 0XFFFF">{_data._local_buffer,su}</DisplayString>
+    <DisplayString Condition="_data._flag_is_local_data == 0XFFFF">{_data._buffer_ptr,su}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._flag_is_local_data != 0XFFFF">_data._local_size</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._flag_is_local_data == 0XFFFF">_data._buffer_size_used</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._flag_is_local_data != 0XFFFF">29</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._flag_is_local_data == 0XFFFF">_data._buffer_capacity</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._flag_is_local_data != 0XFFFF">_data._local_buffer</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._flag_is_local_data == 0XFFFF">_data._buffer_ptr</Item>
+    </Expand>
+  </Type>
+  <Type Name="ang::strings::mstring_buffer">
+    <DisplayString Condition="_data._flag_is_local_data != 0XFFFF">{_data._local_buffer,s}</DisplayString>
+    <DisplayString Condition="_data._flag_is_local_data == 0XFFFF">{_data._buffer_ptr,s}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._flag_is_local_data != 0XFFFF">_data._local_size</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._flag_is_local_data == 0XFFFF">_data._buffer_size_used</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._flag_is_local_data != 0XFFFF">29</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._flag_is_local_data == 0XFFFF">_data._buffer_capacity</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._flag_is_local_data != 0XFFFF">_data._local_buffer</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._flag_is_local_data == 0XFFFF">_data._buffer_ptr</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::iterator&lt;*&gt;">
+    <DisplayString Condition="_parent != 0 &amp;&amp; _current != 0 ">{_current}</DisplayString>
+    <DisplayString>invalid</DisplayString>
+    <Expand>
+      <Item Name="[parent]" ExcludeView="simple">_parent</Item>
+      <Item Name="[current]" ExcludeView="simple">_current</Item>
+      <Item Name="[offset]" ExcludeView="simple">_offset</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::array_buffer&lt;*&gt;">
+    <DisplayString>array[{_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::vector_buffer&lt;*&gt;">
+    <DisplayString>vector[{_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <Item Name="[capacity]" ExcludeView="simple">_capacity</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::list_data&lt;*&gt;">
+    <DisplayString>list[{_count}]</DisplayString>
+    <Expand>
+      <Item Name="[Counter]" ExcludeView="simple">_count</Item>
+      <LinkedListItems>
+        <Size>_count</Size>
+        <HeadPointer>_head</HeadPointer>
+        <NextPointer>_next</NextPointer>
+        <ValueNode>_value</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::queue_data&lt;*&gt;">
+    <DisplayString>queue[{_count}]</DisplayString>
+    <Expand>
+      <Item Name="[Counter]" ExcludeView="simple">_count</Item>
+      <LinkedListItems>
+        <Size>_count</Size>
+        <HeadPointer>_head</HeadPointer>
+        <NextPointer>_next</NextPointer>
+        <ValueNode>_value</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::stack_data&lt;*&gt;">
+    <DisplayString>stack[{_count}]</DisplayString>
+    <Expand>
+      <Item Name="[Counter]" ExcludeView="simple">_count</Item>
+      <LinkedListItems>
+        <Size>_count</Size>
+        <HeadPointer>_head</HeadPointer>
+        <NextPointer>_next</NextPointer>
+        <ValueNode>_value</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::pair&lt;*&gt;">
+    <DisplayString>[{_key}:{_value}]</DisplayString>
+    <Expand>
+      <Item Name="[key]" ExcludeView="simple">_key</Item>
+      <Item Name="[value]" ExcludeView="simple">_value</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::core::delegates::static_function&lt;*&gt;">
+    <DisplayString>function[{_function}]</DisplayString>
+    <Expand>
+      <Item Name="[calleable]" ExcludeView="simple">_function</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::core::delegates::member_function&lt;*&gt;">
+    <DisplayString>function[{_function}]</DisplayString>
+    <Expand>
+      <Item Name="[object]" ExcludeView="simple">_obj</Item>
+      <Item Name="[member]" ExcludeView="simple">_function</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang_hash_table&lt;*&gt;">
+    <DisplayString>table[{_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <Item Name="[capacity]" ExcludeView="simple">_capacity</Item>
+      <ArrayItems>
+        <Size>capacity</Size>
+        <ValuePointer>_table</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::map_node&lt;*&gt;">
+    <DisplayString>map_node[{_pair._key, _pair._value}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <Item Name="[capacity]" ExcludeView="simple">_capacity</Item>
+      <LinkedListItems>
+        <HeadPointer>this</HeadPointer>
+        <NextPointer>_next</NextPointer>
+        <ValueNode>this</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::map_data&lt;*&gt;">
+    <DisplayString>map[{_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <Item Name="[capacity]" ExcludeView="simple">_capacity</Item>
+      <ArrayItems>
+        <Size>_capacity</Size>
+        <ValuePointer>_table</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+</AutoVisualizer>

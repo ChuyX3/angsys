@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="header files">
+      <UniqueIdentifier>{c83bd829-1d3b-439a-a1d7-a76d402c1fe3}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="header files\angsys">
+      <UniqueIdentifier>{622e8fcb-6572-4780-a393-d621f0cfb199}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files">
+      <UniqueIdentifier>{2016ded0-d8cd-4b38-8d03-b3b862ddc3ab}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="header files\include">
+      <UniqueIdentifier>{2e73f5b8-f1f6-40ff-a5c0-741793f0327e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\angsys\ang">
+      <UniqueIdentifier>{163de97a-767c-474f-97dc-c41c7f8191d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\value">
+      <UniqueIdentifier>{843148c6-8423-41e1-aace-2a3863577b6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\strings">
+      <UniqueIdentifier>{91ed61c5-7c15-4b64-946f-eabbf41e7e12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debug">
+      <UniqueIdentifier>{90b7219e-5891-4561-a537-c35936638e3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\angsys\ang\collections">
+      <UniqueIdentifier>{0dd98073-06eb-41c9-af75-e00e358fc379}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\angsys\ang\core">
+      <UniqueIdentifier>{ff3e6952-325b-4561-88e7-e5e4c70d0812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\angsys\ang\docs">
+      <UniqueIdentifier>{3a12f94f-561e-432d-8fe4-ec34f8b65e9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\xml">
+      <UniqueIdentifier>{c1da7dd7-b080-4a10-8d96-9dba74504a20}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angbase.h">
+      <Filter>header files\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angplatform.h">
+      <Filter>header files\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angtypes.h">
+      <Filter>header files\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\enum.h">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\interface.h">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\utils.h">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\stringbase.h">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_inlines.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\string_utils_inline.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angsys.h">
+      <Filter>header files\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\wrappers.h">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\string.h">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_memory.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\properties.h">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\singleton.h">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\value.h">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\xml.h">
+      <Filter>header files\angsys\ang\docs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_debugger.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml_utils.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\vector.h">
+      <Filter>header files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\array.h">
+      <Filter>header files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections.h">
+      <Filter>header files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\iterators.h">
+      <Filter>header files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\exception_code_map.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\char.cpp">
+      <Filter>source files\value</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\algorithms.cpp">
+      <Filter>source files\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\object.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp">
+      <Filter>source files\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\wstring.cpp">
+      <Filter>source files\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\mstring.cpp">
+      <Filter>source files\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string_wrapper.cpp">
+      <Filter>source files\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\wstring_wrapper.cpp">
+      <Filter>source files\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\mstring_wrapper.cpp">
+      <Filter>source files\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\memory.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\ang_hash_table.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\logger.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_attribute.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_attribute_list.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_builder.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_comment.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_document.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_element.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_element_list.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_header.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_items.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_node.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_tree.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_value.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\exceptions.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis">
+      <Filter>debug</Filter>
+    </Natvis>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{4d105416-0867-47f0-8320-3f0e6b233d73}</ItemsProjectGuid>
+    <ItemsProjectName>angsys.shared</ItemsProjectName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angbase.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angplatform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angsys.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angtypes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\array.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\iterators.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\vector.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\enum.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\interface.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\properties.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\singleton.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\string.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\stringbase.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\utils.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\value.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\wrappers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\xml.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_debugger.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_inlines.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_memory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\exception_code_map.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\string_utils_inline.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml_utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\ang_hash_table.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\exceptions.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\logger.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\memory.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\object.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\algorithms.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\mstring.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\mstring_wrapper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string_wrapper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\wstring.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\wstring_wrapper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\value\char.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_attribute.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_attribute_list.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_builder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_comment.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_document.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_element.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_element_list.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_header.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_items.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_node.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_tree.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_value.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis" />
+  </ItemGroup>
+</Project>
