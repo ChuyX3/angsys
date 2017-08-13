@@ -29,7 +29,7 @@ xml_comment::xml_comment()
 
 }
 
-xml_comment::xml_comment(wstring value)
+xml_comment::xml_comment(mstring value)
 	: xml_node(xml_type_t::comment)
 {
 	xml_value(ang::move(value));
@@ -39,7 +39,7 @@ xml_comment::xml_comment(const xml_comment& comment)
 	: xml_node(xml_type_t::comment)
 {
 	if (comment._xml_content.data_type == xml_type_t::value)
-		xml_value(wstring(static_cast<strings::wstring_buffer*>(comment._xml_content.unknown.get())));
+		xml_value(mstring(static_cast<strings::mstring_buffer*>(comment._xml_content.unknown.get())));
 }
 
 xml_comment::xml_comment(const xml_comment* comment)
@@ -51,7 +51,7 @@ xml_comment::xml_comment(const xml_comment* comment)
 			xml_name(comment->_xml_name);
 
 		if (comment->_xml_content.data_type == xml_type_t::value)
-			xml_value(wstring(static_cast<strings::wstring_buffer*>(comment->_xml_content.unknown.get())));
+			xml_value(mstring(static_cast<strings::mstring_buffer*>(comment->_xml_content.unknown.get())));
 	}
 }
 

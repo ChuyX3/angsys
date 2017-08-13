@@ -249,7 +249,7 @@ bool xml_tree_iterator::end_child()
 {
 	if (xml_current())
 	{
-		xml_child((xml_current()->xml_children()) ? *xml_current()->xml_children()->end() : null);
+		xml_child((xml_current()->xml_children()) ? *xml_current()->xml_children()->rbegin() : null);
 		if (xml_child())
 			return true;
 	}
@@ -425,7 +425,7 @@ void xml_tree::clean()
 	_xml_tail = null;
 }
 
-wstring& xml_tree::xml_print(wstring& out, const xml_format_t& flags, ushort level)const
+mstring& xml_tree::xml_print(mstring& out, const xml_format_t& flags, ushort level)const
 {
 	xml_node_t node = xml_head();
 	while (!node.is_empty())
@@ -433,7 +433,7 @@ wstring& xml_tree::xml_print(wstring& out, const xml_format_t& flags, ushort lev
 		node->xml_print(out, flags, level);
 		node = node->xml_next();
 		if (flags.is_active(xml_format_t::wrap_text_space) || flags.is_active(xml_format_t::wrap_text_tab))
-			out << L"\n";
+			out << "\n"_sm;
 	}
 	return out;
 }
@@ -491,8 +491,8 @@ bool xml_tree::decrease(xml_base_iterator_t& it)const
 	if (node->xml_prev() != null)
 	{
 		node = node->xml_prev();
-		while (node->xml_children() && node->xml_children()->end().is_valid())
-			node = *node->xml_children()->end();
+		while (node->xml_children() && node->xml_children()->rbegin().is_valid())
+			node = *node->xml_children()->rbegin();
 		it = xml_iterator_t(const_cast<xml_tree*>(this), node);
 	}
 	else
@@ -520,7 +520,7 @@ xml_forward_iterator_t xml_tree::begin()
 
 xml_forward_iterator_t xml_tree::end()
 {
-	return xml_forward_iterator_t(const_cast<xml_tree*>(this), xml_head());
+	return xml_forward_iterator_t(const_cast<xml_tree*>(this), null);
 }
 
 xml_const_forward_iterator_t xml_tree::begin()const
@@ -530,7 +530,7 @@ xml_const_forward_iterator_t xml_tree::begin()const
 
 xml_const_forward_iterator_t xml_tree::end()const
 {
-	return xml_forward_iterator_t(const_cast<xml_tree*>(this), xml_head());
+	return xml_forward_iterator_t(const_cast<xml_tree*>(this), null);
 }
 
 
@@ -539,15 +539,15 @@ xml_backward_iterator_t xml_tree::rbegin()
 	xml_node* node = xml_tail();
 	if (node != null)
 	{
-		while (node->xml_children() && node->xml_children()->end().is_valid())
-			node = *node->xml_children()->end();
+		while (node->xml_children() && node->xml_children()->rbegin().is_valid())
+			node = *node->xml_children()->rbegin();
 	}
 	return xml_backward_iterator_t(const_cast<xml_tree*>(this), node);
 }
 
 xml_backward_iterator_t xml_tree::rend()
 {
-	return xml_backward_iterator_t(const_cast<xml_tree*>(this), xml_head());
+	return xml_backward_iterator_t(const_cast<xml_tree*>(this), null);
 }
 
 xml_const_backward_iterator_t xml_tree::rbegin()const
@@ -555,15 +555,15 @@ xml_const_backward_iterator_t xml_tree::rbegin()const
 	xml_node* node = xml_tail();
 	if (node != null)
 	{
-		while (node->xml_children() && node->xml_children()->end().is_valid())
-			node = *node->xml_children()->end();
+		while (node->xml_children() && node->xml_children()->rbegin().is_valid())
+			node = *node->xml_children()->rbegin();
 	}
 	return xml_const_backward_iterator_t(const_cast<xml_tree*>(this), node);
 }
 
 xml_const_backward_iterator_t xml_tree::rend()const
 {
-	return xml_const_backward_iterator_t(const_cast<xml_tree*>(this), xml_head());
+	return xml_const_backward_iterator_t(const_cast<xml_tree*>(this), null);
 }
 
 
@@ -581,7 +581,7 @@ xml_iterator_t xml_tree::find_first(cstr_t name, bool invert)const
 {
 	if (invert)
 	{
-		for (auto it = end(); it.is_valid(); it--)
+		for (auto it = rbegin(); it.is_valid(); it--)
 		{
 			if (name == (wstring const&)it->xml_name())
 				return it;
@@ -602,7 +602,7 @@ xml_iterator_t xml_tree::find_first(cwstr_t name, bool invert)const
 {
 	if (invert)
 	{
-		for (auto it = end(); it.is_valid(); it--)
+		for (auto it = rbegin(); it.is_valid(); it--)
 		{
 			if (name == (wstring const&)it->xml_name())
 				return it;
@@ -623,7 +623,7 @@ xml_iterator_t xml_tree::find_first(cmstr_t name, bool invert)const
 {
 	if (invert)
 	{
-		for (auto it = end(); it.is_valid(); it--)
+		for (auto it = rbegin(); it.is_valid(); it--)
 		{
 			if (name == (wstring const&)it->xml_name())
 				return it;
@@ -643,7 +643,7 @@ xml_iterator_t xml_tree::find_first(cmstr_t name, bool invert)const
 xml_iterator_t xml_tree::find_next(cstr_t name, xml_iterator_t nextTo, bool invert)const
 {
 	if (!nextTo.is_valid() || nextTo.parent() != this)
-		nextTo = (invert) ? end() : begin();
+		nextTo = (invert) ? (xml_iterator_t)rbegin() : (xml_iterator_t)begin();
 
 	if (invert)
 	{
@@ -667,7 +667,7 @@ xml_iterator_t xml_tree::find_next(cstr_t name, xml_iterator_t nextTo, bool inve
 xml_iterator_t xml_tree::find_next(cwstr_t name, xml_iterator_t nextTo, bool invert)const
 {
 	if (!nextTo.is_valid() || nextTo.parent() != this)
-		nextTo = (invert) ? end() : begin();
+		nextTo = (invert) ? (xml_iterator_t)rbegin() : (xml_iterator_t)begin();
 
 	if (invert)
 	{
@@ -691,7 +691,7 @@ xml_iterator_t xml_tree::find_next(cwstr_t name, xml_iterator_t nextTo, bool inv
 xml_iterator_t xml_tree::find_next(cmstr_t name, xml_iterator_t nextTo, bool invert)const
 {
 	if (!nextTo.is_valid() || nextTo.parent() != this)
-		nextTo = (invert) ? end() : begin();
+		nextTo = (invert) ? (xml_iterator_t)rbegin() : (xml_iterator_t)begin();
 
 	if (invert)
 	{

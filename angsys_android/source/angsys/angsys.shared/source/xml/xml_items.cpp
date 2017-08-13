@@ -14,6 +14,7 @@
 using namespace ang;
 using namespace ang::xml;
 
+
 ang::object_wrapper<xml_items>::object_wrapper()
 	: _ptr(null)
 {
@@ -255,20 +256,20 @@ bool xml_items::xml_is_type_of(xml_type_t type)const
 	return _xml_type == type || xml_type_t::store == type;
 }
 
-wstring& xml_items::xml_print(wstring& stream, const xml_format_t& flag, ushort level)const
+mstring& xml_items::xml_print(mstring& stream, const xml_format_t& flag, ushort level)const
 {
 	switch (_xml_type)
 	{
 	case xml_type_t::attribute_list:
 		for (auto it = begin(); it.is_valid(); ++it)
-			it->xml_print(stream, flag, level) << L" "_s;
+			it->xml_print(stream, flag, level) << " "_sm;
 		break;
 	case xml_type_t::element_list:
 		for (auto it = begin(); it.is_valid(); ++it)
 		{
 			if (flag.is_active(xml_format::wrap_text_tab)
 				|| flag.is_active(xml_format::wrap_text_space))
-				stream << L"\n"_s;
+				stream << "\n"_sm;
 			it->xml_print(stream, flag, level);
 		}
 		break;

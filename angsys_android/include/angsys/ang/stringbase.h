@@ -42,9 +42,11 @@ namespace ang
 			static uint string_copy(ang_mstr_t str, ang_cwstr_t cstr, uint max = -1);
 
 			static uint string_expand(ang_str_t str, uint len, index beg, index end, uint max = -1);
+			static uint string_expand(ang_mstr_t str, uint len, index beg, index end, uint max = -1);
 			static uint string_expand(ang_wstr_t str, uint len, index beg, index end, uint max = -1);
 
 			static uint string_contract(ang_str_t str, uint len, index beg, index end);
+			static uint string_contract(ang_mstr_t str, uint len, index beg, index end);
 			static uint string_contract(ang_wstr_t str, uint len, index beg, index end);
 
 			static int string_compare(ang_cstr_t first, ang_cstr_t second);
@@ -78,7 +80,7 @@ namespace ang
 	{
 		class text_format;
 		struct itext_buffer;
-
+		template<wsize SIZE = sizeof(wchar)>struct native_encoding_selection;
 
 		/******************************************************************/
 		/* enum ang::text::encoding :                                     */
@@ -86,13 +88,42 @@ namespace ang
 		/******************************************************************/
 		ANG_BEGIN_ENUM(LINK, encoding, uint)
 			unknown = 0,
-			ascii,
-			iso_8859_1 = ascii,
+			auto_detect = 0,
+			ascii,//native char
+			unicode, //native wchar_t
 			utf_8,
-			unicode,
-			iso_10646 = unicode,
 			utf_16,
+			utf_16_le,
+			utf_16_be,
+			utf_32,
+			utf_32_le,
+			utf_32_be,
 		ANG_END_ENUM(encoding);
+
+		template<uint ENCODING>
+		struct char_type_by_encoding;
+
+		template<> 	struct char_type_by_encoding<encoding::ascii>
+		{
+			typedef char char_t;
+			typedef char* str_t;
+			typedef char const* cstr_t;
+		};
+
+		template<> 	struct char_type_by_encoding<encoding::utf_8>
+		{
+			typedef mchar char_t;
+			typedef mchar* str_t;
+			typedef mchar const* cstr_t;
+		};
+
+		template<> 	struct char_type_by_encoding<encoding::unicode>
+		{
+			typedef wchar char_t;
+			typedef wchar* str_t;
+			typedef wchar const* cstr_t;
+		};
+
 	}
 }
 

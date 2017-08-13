@@ -212,10 +212,10 @@ namespace ang
 		void set(collections::vector_buffer<T>*);
 		collections::vector_buffer<T>** addres_of(void);
 
-		collections::forward_iterator<T> begin() { return _ptr ? _ptr->begin() : collections::iterator<T>(); }
-		collections::forward_iterator<T> end() { return _ptr ? _ptr->end() : collections::iterator<T>(); }
-		collections::forward_iterator<const T> begin()const { return _ptr ? _ptr->begin() : collections::iterator<const T>(); }
-		collections::forward_iterator<const T> end()const { return _ptr ? _ptr->end() : collections::iterator<const T>(); }
+		collections::forward_iterator<T> begin() { return _ptr ? _ptr->begin() : collections::forward_iterator<T>(); }
+		collections::forward_iterator<T> end() { return _ptr ? _ptr->end() : collections::forward_iterator<T>(); }
+		collections::forward_iterator<const T> begin()const { return _ptr ? ((type const*)_ptr)->begin() : collections::forward_iterator<const T>(); }
+		collections::forward_iterator<const T> end()const { return _ptr ? ((type const*)_ptr)->end() : collections::forward_iterator<const T>(); }
 
 	public:
 		object_wrapper& operator = (collections::vector_buffer<T>*);

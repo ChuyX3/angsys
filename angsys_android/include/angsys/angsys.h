@@ -265,7 +265,7 @@ namespace ang
 			return true;
 		if ((!obj1.get() && obj2.get()) || (obj1.get() && !obj2.get()))
 			return false;
-		return obj1->compare(*obj2.get()) == comparision_result::same;
+		return obj1.get()->compare(*obj2.get()) == comparision_result::same;
 	}
 	template<typename T>
 	bool operator != (object_wrapper<T> const& obj1, object_wrapper<T> const& obj2) {
@@ -273,7 +273,7 @@ namespace ang
 			return true;
 		if ((!obj1.get() && obj2.get()) || (obj1.get() && !obj2.get()))
 			return false;
-		return obj1->compare(*obj2.get()) != comparision_result::same;
+		return obj1.get()->compare(*obj2.get()) != comparision_result::same;
 	}
 
 }

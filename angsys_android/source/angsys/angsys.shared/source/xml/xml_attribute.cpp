@@ -29,7 +29,7 @@ xml_attribute::xml_attribute()
 
 }
 
-xml_attribute::xml_attribute(wstring name, wstring value)
+xml_attribute::xml_attribute(mstring name, mstring value)
 	: xml_node(xml_type_t::attribute)
 {
 	xml_name(ang::move(name));
@@ -43,7 +43,7 @@ xml_attribute::xml_attribute(const xml_attribute& att)
 		xml_name(att._xml_name);
 
 	if (att._xml_content.data_type == xml_type_t::value)
-		xml_value(wstring(static_cast<strings::wstring_buffer*>(att._xml_content.unknown.get())));
+		xml_value(mstring(static_cast<strings::mstring_buffer*>(att._xml_content.unknown.get())));
 }
 
 xml_attribute::xml_attribute(const xml_attribute* att)
@@ -55,7 +55,7 @@ xml_attribute::xml_attribute(const xml_attribute* att)
 			xml_name(att->_xml_name);
 
 		if (att->_xml_content.data_type == xml_type_t::value)
-			xml_value(wstring(static_cast<strings::wstring_buffer*>(att->_xml_content.unknown.get())));
+			xml_value(mstring(static_cast<strings::mstring_buffer*>(att->_xml_content.unknown.get())));
 	}
 }
 

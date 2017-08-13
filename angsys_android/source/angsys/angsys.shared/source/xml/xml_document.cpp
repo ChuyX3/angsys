@@ -315,8 +315,8 @@ void xml_document::parse(cstr_t code)
 	_last_parsing_error = "success"_s;
 	create();
 	index begin = 0;
-
-	if (!decode_header(code,  begin))
+	xml_encoding_t encoding = decode_header(code, begin);
+	if (encoding == xml_encoding::unknown)
 	{
 		builder()->push_header(new xml_header());
 		begin = 0;
@@ -338,7 +338,8 @@ void xml_document::parse(cwstr_t code)
 	_last_parsing_error = "success"_s;
 	create();
 	index begin = 0;
-	if (!decode_header(code, begin))
+	xml_encoding_t encoding = decode_header(code, begin);
+	if (encoding == xml_encoding::unknown)
 	{
 		builder()->push_header(new xml_header());
 		begin = 0;
@@ -369,7 +370,8 @@ void xml_document::parse(cmstr_t code)
 	_last_parsing_error = "success"_s;
 	create();
 	index begin = 0;
-	if (!decode_header(code, begin))
+	xml_encoding_t encoding = decode_header(code, begin);
+	if (encoding == xml_encoding::unknown)
 	{
 		builder()->push_header(new xml_header());
 		begin = 0;
@@ -410,133 +412,205 @@ void xml_document::builder(xml_builder_t value)
 	_builder = value;
 }
 
-bool xml_document::decode_header(cstr_t code, index& begin)
+xml_encoding_t xml_document::decode_header(cstr_t code, index& begin)
 {
-	wstring value;
-	wstring header = "";
+	xml_value_t value;
+	xml_value_t header = "";
 	windex beg;
 	windex end;
+	windex temp;
+	xml_encoding_t result = xml_encoding::unknown;
 
-	begin = code.find("<?xml", 0u, 6u);
+	begin = code.find("<?xml"_s, 0u, 6u);
 	if (begin == invalid_index)
-		return false;
+		return result;
 
-	auto _end = code.find("?>", begin);
+	auto _end = code.find("?>"_s, begin);
 	if (_end == invalid_index)
-		return false;
+		return result;
 
-	code.sub_string(header, begin, _end);
+	code.sub_string(header, begin, _end - begin);
 	begin = _end + 2;
 
 	xml_header_t _header = new xml_header();
 
-	beg = header->find("version", 0);
+	beg = header->find("version"_s, 0);
 	if (beg != invalid_index)
 	{
-		beg = header->find("\"", beg);
-		beg++;
-		end = header->find(L"\"", beg);
-		header->sub_string(value, beg, end);
+		temp = header->find("\""_s, beg);
+		if (temp == invalid_index)
+		{
+			beg = header->find("'"_s, beg);
+			if (beg == invalid_index)return result;
+			end = header->find("'"_s, ++beg);
+		}
+		else
+		{
+			beg = temp + 1;
+			end = header->find("\""_s, beg);
+		}
+		if (end == invalid_index) return result;
+
+		header->sub_string(value, beg, end - beg);
 		_header->version(ang::move(value));
 	}
 
-	beg = header->find("encoding", beg);
+	beg = header->find("encoding"_s, beg);
 	if (beg != invalid_index)
 	{
-		beg = header->find("\"", beg);
-		beg++;
-		end = header->find("\"", beg);
-		header->sub_string(value, beg, end);
-		_header->encoding(value);
+		temp = header->find("\""_s, beg);
+		if (temp == invalid_index)
+		{
+			beg = header->find("'"_s, beg);
+			if (beg == invalid_index)return result;
+			end = header->find("'"_s, ++beg);
+		}
+		else
+		{
+			beg = temp + 1;
+			end = header->find("\""_s, beg);
+		}
+		if (end == invalid_index) return result;
+		header->sub_string(value, beg, end - beg);
+		_header->encoding(value.get());
+		result = value.as<xml_encoding_t>();
 	}
 	builder()->push_header(_header);
-	return true;
+	return result;
 }
 
-bool xml_document::decode_header(cwstr_t code, index& begin)
+xml_encoding_t xml_document::decode_header(cwstr_t code, index& begin)
 {
-	wstring value;
-	wstring header = "";
+	xml_value_t value;
+	xml_value_t header = "";
 	windex beg;
 	windex end;
+	windex temp;
+	xml_encoding_t result = xml_encoding::unknown;
 
-	begin = code.find("<?xml", 0u, 6u);
+	begin = code.find("<?xml"_s, 0u, 6u);
 	if (begin == invalid_index)
-		return false;
+		return result;
 
-	auto _end = code.find("?>", begin);
+	auto _end = code.find("?>"_s, begin);
 	if (_end == invalid_index)
-		return false;
+		return result;
 
-	code.sub_string(header, begin, _end);
+	code.sub_string(header, begin, _end - begin);
 	begin = _end + 2;
 
 	xml_header_t _header = new xml_header();
 
-	beg = header->find("version", 0);
+	beg = header->find("version"_s, 0);
 	if (beg != invalid_index)
 	{
-		beg = header->find("\"", beg);
-		beg++;
-		end = header->find(L"\"", beg);
-		header->sub_string(value, beg, end);
+		temp = header->find("\""_s, beg);
+		if (temp == invalid_index)
+		{
+			beg = header->find("'"_s, beg);
+			if (beg == invalid_index)return result;
+			end = header->find("'"_s, ++beg);
+		}
+		else
+		{
+			beg = temp + 1;
+			end = header->find("\""_s, beg);
+		}
+		if (end == invalid_index) return result;
+
+		header->sub_string(value, beg, end - beg);
 		_header->version(ang::move(value));
 	}
 
-	beg = header->find(L"encoding", beg);
+	beg = header->find("encoding"_s, beg);
 	if (beg != invalid_index)
 	{
-		beg = header->find(L"\"", beg);
-		beg++;
-		end = header->find(L"\"", beg);
-		header->sub_string(value, beg, end);
-		_header->encoding(value);
+		temp = header->find("\""_s, beg);
+		if (temp == invalid_index)
+		{
+			beg = header->find("'"_s, beg);
+			if (beg == invalid_index)return result;
+			end = header->find("'"_s, ++beg);
+		}
+		else
+		{
+			beg = temp + 1;
+			end = header->find("\""_s, beg);
+		}
+		if (end == invalid_index) return result;
+		header->sub_string(value, beg, end - beg);
+		_header->encoding(value.get());
+		result = value.as<xml_encoding_t>();
 	}
 	builder()->push_header(_header);
-	return true;
+	return result;
 }
 
-bool xml_document::decode_header(cmstr_t code, index& begin)
+xml_encoding_t xml_document::decode_header(cmstr_t code, index& begin)
 {
-	wstring value;
-	wstring header = "";
+	xml_value_t value;
+	xml_value_t header = "";
 	windex beg;
 	windex end;
+	windex temp;
+	xml_encoding_t result = xml_encoding::unknown;
 
-	begin = code.find("<?xml", 0u, 6u);
+	begin = code.find("<?xml"_sm, 0u, 6u);
 	if (begin == invalid_index)
-		return false;
+		return result;
 
-	auto _end = code.find("?>", begin);
+	auto _end = code.find("?>"_sm, begin);
 	if (_end == invalid_index)
-		return false;
+		return result;
 
-	code.sub_string(header, begin, _end);
+	code.sub_string(header, begin, _end - begin);
 	begin = _end + 2;
 
 	xml_header_t _header = new xml_header();
 
-	beg = header->find("version", 0);
+	beg = header->find("version"_sm, 0);
 	if (beg != invalid_index)
 	{
-		beg = header->find("\"", beg);
-		beg++;
-		end = header->find(L"\"", beg);
-		header->sub_string(value, beg, end);
+		temp = header->find("\""_sm, beg);
+		if (temp == invalid_index)
+		{
+			beg = header->find("'"_sm, beg);
+			if (beg == invalid_index)return result;
+			end = header->find("'"_sm, ++beg);
+		}
+		else
+		{
+			beg = temp + 1;
+			end = header->find("\""_sm, beg);
+		}
+		if (end == invalid_index) return result;
+
+		header->sub_string(value, beg, end - beg);
 		_header->version(ang::move(value));
 	}
 
-	beg = header->find(L"encoding", beg);
+	beg = header->find("encoding"_sm, beg);
 	if (beg != invalid_index)
 	{
-		beg = header->find(L"\"", beg);
-		beg++;
-		end = header->find(L"\"", beg);
-		header->sub_string(value, beg, end);
-		_header->encoding(value);
+		temp = header->find("\""_sm, beg);
+		if (temp == invalid_index)
+		{
+			beg = header->find("'"_sm, beg);
+			if (beg == invalid_index)return result;
+			end = header->find("'"_sm, ++beg);
+		}
+		else
+		{
+			beg = temp + 1;
+			end = header->find("\""_sm, beg);
+		}
+		if (end == invalid_index) return result;
+		header->sub_string(value, beg, end - beg);
+		_header->encoding(value.get());
+		result = value.as<xml_encoding_t>();
 	}
 	builder()->push_header(_header);
-	return true;
+	return result;
 }
 
 #if defined _DEBUG
@@ -551,18 +625,18 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 
 	index end;
 	uint c = 0;
-	wstring name = null;// = { 0 };
-	wstring value = null;
+	mstring name = null;// = { 0 };
+	mstring value = null;
 
-	begin = code.find("<", begin);
+	begin = code.find("<"_s, begin);
 	while (begin != invalid_index)
 	{
 		c = 0;
 		//Check if the node is a comment
-		auto find = code.find("<!--", begin, begin + 5);
+		auto find = code.find("<!--"_s, begin, begin + 5);
 		if (find == begin)
 		{
-			end = code.find("-->", begin);
+			end = code.find("-->"_s, begin);
 			if (end != invalid_index)
 			{
 				//get comment value
@@ -571,7 +645,24 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 				builder()->comment(value.get());
 			}
 			//Finding next node start position
-			begin = code.find( "<", end);
+			begin = code.find( "<"_s, end);
+			continue;
+		}
+
+		//Check if it is a data node
+		find = code.find("<![CDATA["_s, begin, begin + 10);
+		if (find == begin)
+		{
+			end = code.find("]]>"_s, begin);
+			if (end != invalid_index)
+			{
+				//get comment value
+				code.sub_string(value, begin + 9, end - 9 - begin);
+				//insert comment
+				builder()->comment(value.get());
+			}
+			//Finding next node start position
+			begin = code.find("<"_s, end);
 			continue;
 		}
 
@@ -581,15 +672,15 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 			xml_element_t current = builder()->xml_current();
 			if (current == null)//unkown error
 			{
-				_last_parsing_error = "unknown Error";
+				_last_parsing_error = "unknown Error"_s;
 				return false;
 			}
 			begin += 2;
 
 			//get element name
 			bool same = true;
-			wchar nC = 0;
-			cwstr_t temp = current->xml_name()->cstr();
+			int nC = 0;
+			cmstr_t temp = current->xml_name()->cstr();
 			wsize length = current->xml_name()->length();
 			c = 0;
 			while (same)
@@ -613,13 +704,13 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 
 			if (!same)
 			{
-				_last_parsing_error->format("bad end of element <%ls> in position %u", (wchar const*)(cwstr_t)current->xml_name(), (index)begin);
+				_last_parsing_error->format("bad end of element <%s> in position %u", (const mchar*)(cmstr_t)current->xml_name(), (index)begin);
 				return false;
 			}//parsing error
 
 			begin += c;
 
-			find = code.find( ">", begin);
+			find = code.find( ">"_s, begin);
 			if (find == invalid_index)
 			{
 				_last_parsing_error->format("missing character > in position %u", (index)begin + current->xml_name()->length());
@@ -628,7 +719,7 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 			begin = find;
 
 			builder()->end_element();
-			begin = code.find( "<", begin);
+			begin = code.find( "<"_s, begin);
 			continue;
 		}
 
@@ -642,14 +733,14 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 		c = 0;
 
 		//parse attributes
-		while (code[begin] != L'>')
+		while (code[begin] != '>')
 		{
 			begin += xml_skip_space<char>(code, begin);
-			if (code[begin] == L'>')
+			if (code[begin] == '>')
 			{
 				break;
 			}
-			else if (code[begin] == L'/' && code[begin + 1] == L'>')
+			else if (code[begin] == '/' && code[begin + 1] == '>')
 			{
 				++begin;
 				break;
@@ -660,10 +751,10 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 			code.sub_string(name, begin, c);
 			begin += c;
 			c = 0;
-			begin = code.find( "=", begin);
+			begin = code.find( "="_s, begin);
 			if (begin == invalid_index)
 			{
-				_last_parsing_error->format("unexpected end of file parsing element %ls", (wchar const*)(cwstr_t)name);
+				_last_parsing_error->format("unexpected end of file parsing element %s", (mchar const*)(cmstr_t)name);
 				return false;
 			}
 
@@ -672,13 +763,13 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 			begin += xml_skip_space<char>(code, begin);
 			c = 0;
 
-			if (code[begin] == L'"')
+			if (code[begin] == '"')
 			{
-				end = code.find( "\"", begin + 1);
+				end = code.find( "\""_s, begin + 1);
 			}
-			else if (code[begin] == L'\'')
+			else if (code[begin] == '\'')
 			{
-				end = code.find( "\'", begin + 1);
+				end = code.find( "\'"_s, begin + 1);
 			}
 			else//parsing error
 			{
@@ -698,11 +789,11 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 
 		}
 
-		//if is not an empty node
-		if (code[begin - 1] == L'/')
+		//if is an empty node
+		if (code[begin - 1] == '/')
 		{
 			builder()->end_element();
-			begin = code.find( "<", begin);
+			begin = code.find( "<"_s, begin);
 			continue;
 		}
 		else
@@ -724,15 +815,15 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 					xml_element* current = builder()->xml_current();
 					if (current == null)//unkown error
 					{
-						_last_parsing_error = "unknown Error";
+						_last_parsing_error = "unknown Error"_s;
 						return false;
 					}
 					begin += 2;
 
 					//get element name
 					bool same = true;
-					wchar _c = 0;
-					cwstr_t temp = current->xml_name();
+					char _c = 0;
+					cmstr_t temp = current->xml_name();
 					wsize length = current->xml_name()->length();
 					c = 0;
 					while (same)
@@ -756,13 +847,13 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 
 					if (!same)
 					{
-						_last_parsing_error->format("bad end of element <%ls> in position %u", (wchar const*)(cwstr_t)current->xml_name(), (index)begin);
+						_last_parsing_error->format("bad end of element <%s> in position %u", (mchar const*)(cmstr_t)current->xml_name(), (index)begin);
 						return false;
 					}//parsing error
 
 					begin += c;
 
-					find = code.find( ">", begin);
+					find = code.find( ">"_s, begin);
 					if (find == invalid_index)
 					{
 						_last_parsing_error->format("missing character > in position %u", (index)begin + current->xml_name()->length());
@@ -770,7 +861,7 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 					}//parsing error
 					begin = find;
 					builder()->end_element();
-					begin = code.find( "<", begin);
+					begin = code.find( "<"_s, begin);
 					continue;
 				}
 				else
@@ -782,7 +873,7 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 			}
 			else
 			{
-				end = code.find( "<", begin + c);
+				end = code.find( "<"_s, begin + c);
 				if (end == invalid_index)
 				{
 					_last_parsing_error->format("missing character < in position %u", (index)begin + c);
@@ -790,6 +881,26 @@ bool xml_document::decode_element(cstr_t code, index& begin)
 				}//parsing error
 				value.clean();
 				code.sub_string(value, begin, end - begin);
+				windex _b = value->find("&"_s, 0);
+				while (_b != invalid_index) //fix entities
+				{
+					bool flag = false;
+					for (xml_entity_values_t entity : xml_entity_values)
+					{
+						if (strings::algorithms::string_compare_until(entity.code, value->sub_string(_b)) == entity.code.size())
+						{
+							value->replace(entity.value, _b, _b + entity.code.size());
+							flag = true;
+							break;
+						}
+					}
+					if (!flag)
+					{
+						_last_parsing_error->format("invalid character '&' in position %u",(index)begin + _b);
+						return false;
+					}
+					_b = value->find("&"_s, _b + 1);
+				}
 				builder()->value(value.get());
 				begin = end;
 				continue;
@@ -813,18 +924,18 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 
 	index end;
 	uint c = 0;
-	wstring name = null;// = { 0 };
-	wstring value = null;
+	mstring name = null;// = { 0 };
+	mstring value = null;
 
-	begin = code.find("<", begin);
+	begin = code.find("<"_s, begin);
 	while (begin != invalid_index)
 	{
 		c = 0;
 		//Check if the node is a comment
-		auto find = code.find("<!--", begin, begin + 5);
+		auto find = code.find("<!--"_s, begin, begin + 5);
 		if (find == begin)
 		{
-			end = code.find("-->", begin);
+			end = code.find("-->"_s, begin);
 			if (end != invalid_index)
 			{
 				//get comment value
@@ -833,7 +944,24 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 				builder()->comment(value.get());
 			}
 			//Finding next node start position
-			begin = code.find("<", end);
+			begin = code.find("<"_s, end);
+			continue;
+		}
+
+		//Check if it is a data node
+		find = code.find("<![CDATA["_s, begin, begin + 10);
+		if (find == begin)
+		{
+			end = code.find("]]>"_s, begin);
+			if (end != invalid_index)
+			{
+				//get comment value
+				code.sub_string(value, begin + 9, end - 9 - begin);
+				//insert comment
+				builder()->comment(value.get());
+			}
+			//Finding next node start position
+			begin = code.find("<"_s, end);
 			continue;
 		}
 
@@ -843,15 +971,15 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 			xml_element_t current = builder()->xml_current();
 			if (current == null)//unkown error
 			{
-				_last_parsing_error = "unknown Error";
+				_last_parsing_error = "unknown Error"_s;
 				return false;
 			}
 			begin += 2;
 
 			//get element name
 			bool same = true;
-			wchar nC = 0;
-			cwstr_t temp = current->xml_name();
+			int nC = 0;
+			cmstr_t temp = current->xml_name();
 			wsize length = current->xml_name()->length();
 			c = 0;
 			while (same)
@@ -875,13 +1003,13 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 
 			if (!same)
 			{
-				_last_parsing_error->format("bad end of element <%ls> in position %u", (wchar const*)(cwstr_t)current->xml_name(), (index)begin);
+				_last_parsing_error->format("bad end of element <%s> in position %u", (mchar const*)(cmstr_t)current->xml_name(), (index)begin);
 				return false;
 			}//parsing error
 
 			begin += c;
 
-			find = code.find(">", begin);
+			find = code.find(">"_s, begin);
 			if (find == invalid_index)
 			{
 				_last_parsing_error->format("missing character > in position %u", (index)begin + current->xml_name()->length());
@@ -890,7 +1018,7 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 			begin = find;
 
 			builder()->end_element();
-			begin = code.find("<", begin);
+			begin = code.find("<"_s, begin);
 			continue;
 		}
 
@@ -904,14 +1032,14 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 		c = 0;
 
 		//parse attributes
-		while (code[begin] != L'>')
+		while (code[begin] != '>')
 		{
 			begin += xml_skip_space<wchar>(code, begin);
-			if (code[begin] == L'>')
+			if (code[begin] == '>')
 			{
 				break;
 			}
-			else if (code[begin] == L'/' && code[begin + 1] == L'>')
+			else if (code[begin] == '/' && code[begin + 1] == '>')
 			{
 				++begin;
 				break;
@@ -922,10 +1050,10 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 			code.sub_string(name, begin, c);
 			begin += c;
 			c = 0;
-			begin = code.find("=", begin);
+			begin = code.find("="_s, begin);
 			if (begin == invalid_index)
 			{
-				_last_parsing_error->format("unexpected end of file parsing element %ls", (wchar const*)(cwstr_t)name);
+				_last_parsing_error->format("unexpected end of file parsing element %s", (mchar const*)(cmstr_t)name);
 				return false;
 			}
 
@@ -934,13 +1062,13 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 			begin += xml_skip_space<wchar>(code, begin);
 			c = 0;
 
-			if (code[begin] == L'"')
+			if (code[begin] == '"')
 			{
-				end = code.find("\"", begin + 1);
+				end = code.find("\""_s, begin + 1);
 			}
-			else if (code[begin] == L'\'')
+			else if (code[begin] == '\'')
 			{
-				end = code.find("\'", begin + 1);
+				end = code.find("\'"_s, begin + 1);
 			}
 			else//parsing error
 			{
@@ -961,10 +1089,10 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 		}
 
 		//if is not an empty node
-		if (code[begin - 1] == L'/')
+		if (code[begin - 1] == '/')
 		{
 			builder()->end_element();
-			begin = code.find("<", begin);
+			begin = code.find("<"_s, begin);
 			continue;
 		}
 		else
@@ -986,7 +1114,7 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 					xml_element* current = builder()->xml_current();
 					if (current == null)//unkown error
 					{
-						_last_parsing_error = "unknown Error";
+						_last_parsing_error = "unknown Error"_s;
 						return false;
 					}
 					begin += 2;
@@ -994,7 +1122,7 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 					//get element name
 					bool same = true;
 					wchar _c = 0;
-					cwstr_t temp = current->xml_name();
+					cmstr_t temp = current->xml_name();
 					wsize length = current->xml_name()->length();
 					c = 0;
 					while (same)
@@ -1018,13 +1146,13 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 
 					if (!same)
 					{
-						_last_parsing_error->format("bad end of element <%ls> in position %u", (wchar const*)(cwstr_t)current->xml_name(), (index)begin);
+						_last_parsing_error->format("bad end of element <%s> in position %u", (mchar const*)(cmstr_t)current->xml_name(), (index)begin);
 						return false;
 					}//parsing error
 
 					begin += c;
 
-					find = code.find(">", begin);
+					find = code.find(">"_s, begin);
 					if (find == invalid_index)
 					{
 						_last_parsing_error->format("missing character > in position %u", (index)begin + current->xml_name()->length());
@@ -1032,7 +1160,7 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 					}//parsing error
 					begin = find;
 					builder()->end_element();
-					begin = code.find("<", begin);
+					begin = code.find("<"_s, begin);
 					continue;
 				}
 				else
@@ -1044,7 +1172,7 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 			}
 			else
 			{
-				end = code.find("<", begin + c);
+				end = code.find("<"_s, begin + c);
 				if (end == invalid_index)
 				{
 					_last_parsing_error->format("missing character < in position %u", (index)begin + c);
@@ -1052,6 +1180,26 @@ bool xml_document::decode_element(cwstr_t code, index& begin)
 				}//parsing error
 				value.clean();
 				code.sub_string(value, begin, end - begin);
+				windex _b = value->find("&"_s, 0);
+				while (_b != invalid_index) //fix entities
+				{
+					bool flag = false;
+					for (xml_entity_values_t entity : xml_entity_values)
+					{
+						if (strings::algorithms::string_compare_until(entity.code, value->sub_string(_b)) == entity.code.size())
+						{
+							value->replace(entity.value, _b, _b + entity.code.size());
+							flag = true;
+							break;
+						}
+					}
+					if (!flag)
+					{
+						_last_parsing_error->format("invalid character '&' in position %u", (index)begin + _b);
+						return false;
+					}
+					_b = value->find("&"_s, _b + 1);
+				}
 				builder()->value(value.get());
 				begin = end;
 				continue;
@@ -1075,18 +1223,18 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 
 	index end;
 	uint c = 0;
-	wstring name = null;// = { 0 };
-	wstring value = null;
+	mstring name = null;// = { 0 };
+	mstring value = null;
 
-	begin = code.find("<", begin);
+	begin = code.find("<"_sm, begin);
 	while (begin != invalid_index)
 	{
 		c = 0;
 		//Check if the node is a comment
-		auto find = code.find("<!--", begin, begin + 5);
+		auto find = code.find("<!--"_sm, begin, begin + 5);
 		if (find == begin)
 		{
-			end = code.find("-->", begin);
+			end = code.find("-->"_sm, begin);
 			if (end != invalid_index)
 			{
 				//get comment value
@@ -1095,7 +1243,24 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 				builder()->comment(value.get());
 			}
 			//Finding next node start position
-			begin = code.find("<", end);
+			begin = code.find("<"_sm, end);
+			continue;
+		}
+
+		//Check if it is a data node
+		find = code.find("<![CDATA["_s, begin, begin + 10);
+		if (find == begin)
+		{
+			end = code.find("]]>"_s, begin);
+			if (end != invalid_index)
+			{
+				//get comment value
+				code.sub_string(value, begin + 9, end - 9 - begin);
+				//insert comment
+				builder()->comment(value.get());
+			}
+			//Finding next node start position
+			begin = code.find("<"_s, end);
 			continue;
 		}
 
@@ -1105,15 +1270,15 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 			xml_element_t current = builder()->xml_current();
 			if (current == null)//unkown error
 			{
-				_last_parsing_error = "unknown Error";
+				_last_parsing_error = "unknown Error"_s;
 				return false;
 			}
 			begin += 2;
 
 			//get element name
 			bool same = true;
-			wchar nC = 0;
-			cwstr_t temp = current->xml_name();
+			int nC = 0;
+			cmstr_t temp = current->xml_name();
 			wsize length = current->xml_name()->length();
 			c = 0;
 			while (same)
@@ -1137,13 +1302,13 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 
 			if (!same)
 			{
-				_last_parsing_error->format("bad end of element <%ls> in position %u", (wchar const*)(cwstr_t)current->xml_name(), (index)begin);
+				_last_parsing_error->format("bad end of element <%s> in position %u", (mchar const*)(cmstr_t)current->xml_name(), (index)begin);
 				return false;
 			}//parsing error
 
 			begin += c;
 
-			find = code.find(">", begin);
+			find = code.find(">"_sm, begin);
 			if (find == invalid_index)
 			{
 				_last_parsing_error->format("missing character > in position %u", (index)begin + current->xml_name()->length());
@@ -1152,7 +1317,7 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 			begin = find;
 
 			builder()->end_element();
-			begin = code.find("<", begin);
+			begin = code.find("<"_sm, begin);
 			continue;
 		}
 
@@ -1166,14 +1331,14 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 		c = 0;
 
 		//parse attributes
-		while (code[begin] != L'>')
+		while (code[begin] != '>')
 		{
 			begin += xml_skip_space<mchar>(code, begin);
-			if (code[begin] == L'>')
+			if (code[begin] == '>')
 			{
 				break;
 			}
-			else if (code[begin] == L'/' && code[begin + 1] == L'>')
+			else if (code[begin] == '/' && code[begin + 1] == '>')
 			{
 				++begin;
 				break;
@@ -1184,10 +1349,10 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 			code.sub_string(name, begin, c);
 			begin += c;
 			c = 0;
-			begin = code.find("=", begin);
+			begin = code.find("="_sm, begin);
 			if (begin == invalid_index)
 			{
-				_last_parsing_error->format("unexpected end of file parsing element %ls", (wchar const*)(cwstr_t)name);
+				_last_parsing_error->format("unexpected end of file parsing element %s", (mchar const*)(cmstr_t)name);
 				return false;
 			}
 
@@ -1196,13 +1361,13 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 			begin += xml_skip_space<mchar>(code, begin);
 			c = 0;
 
-			if (code[begin] == L'"')
+			if (code[begin] == '"')
 			{
-				end = code.find("\"", begin + 1);
+				end = code.find("\""_sm, begin + 1);
 			}
-			else if (code[begin] == L'\'')
+			else if (code[begin] == '\'')
 			{
-				end = code.find("\'", begin + 1);
+				end = code.find("\'"_sm, begin + 1);
 			}
 			else//parsing error
 			{
@@ -1223,10 +1388,10 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 		}
 
 		//if is not an empty node
-		if (code[begin - 1] == L'/')
+		if (code[begin - 1] == '/')
 		{
 			builder()->end_element();
-			begin = code.find("<", begin);
+			begin = code.find("<"_sm, begin);
 			continue;
 		}
 		else
@@ -1248,7 +1413,7 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 					xml_element* current = builder()->xml_current();
 					if (current == null)//unkown error
 					{
-						_last_parsing_error = "unknown Error";
+						_last_parsing_error = "unknown Error"_s;
 						return false;
 					}
 					begin += 2;
@@ -1256,7 +1421,7 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 					//get element name
 					bool same = true;
 					wchar _c = 0;
-					cwstr_t temp = current->xml_name();
+					cmstr_t temp = current->xml_name();
 					wsize length = current->xml_name()->length();
 					c = 0;
 					while (same)
@@ -1280,13 +1445,13 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 
 					if (!same)
 					{
-						_last_parsing_error->format("bad end of element <%ls> in position %u", (wchar const*)(cwstr_t)current->xml_name(), (index)begin);
+						_last_parsing_error->format("bad end of element <%s> in position %u", (mchar const*)(cmstr_t)current->xml_name(), (index)begin);
 						return false;
 					}//parsing error
 
 					begin += c;
 
-					find = code.find(">", begin);
+					find = code.find(">"_sm, begin);
 					if (find == invalid_index)
 					{
 						_last_parsing_error->format("missing character > in position %u", (index)begin + current->xml_name()->length());
@@ -1294,7 +1459,7 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 					}//parsing error
 					begin = find;
 					builder()->end_element();
-					begin = code.find("<", begin);
+					begin = code.find("<"_sm, begin);
 					continue;
 				}
 				else
@@ -1306,7 +1471,7 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 			}
 			else
 			{
-				end = code.find("<", begin + c);
+				end = code.find("<"_sm, begin + c);
 				if (end == invalid_index)
 				{
 					_last_parsing_error->format("missing character < in position %u", (index)begin + c);
@@ -1314,6 +1479,26 @@ bool xml_document::decode_element(cmstr_t code, index& begin)
 				}//parsing error
 				value.clean();
 				code.sub_string(value, begin, end - begin);
+				windex _b = value->find("&"_s, 0);
+				while (_b != invalid_index) //fix entities
+				{
+					bool flag = false;
+					for (xml_entity_values_t entity : xml_entity_values)
+					{
+						if (strings::algorithms::string_compare_until(entity.code, value->sub_string(_b)) == entity.code.size())
+						{
+							value->replace(entity.value, _b, _b + entity.code.size());
+							flag = true;
+							break;
+						}
+					}
+					if (!flag)
+					{
+						_last_parsing_error->format("invalid character '&' in position %u", (index)begin + _b);
+						return false;
+					}
+					_b = value->find("&"_s, _b + 1);
+				}
 				builder()->value(value.get());
 				begin = end;
 				continue;

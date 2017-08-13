@@ -255,6 +255,85 @@ object_wrapper<strings::mstring_buffer>::operator cmstr_t (void)const
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+mstring& ang::operator << (mstring& stream, mstring const& cstr)
+{
+	if (stream.is_empty())
+		stream = cstr.is_empty() ? null : new mstring_buffer(cstr.get());
+	else if (!cstr.is_empty())
+		stream->concat(cstr);
+	return stream;
+}
+
+mstring& ang::operator << (mstring& stream, wstring const& cstr)
+{
+	if (stream.is_empty())
+		stream = cstr.is_empty() ? null : new mstring_buffer(cstr.get());
+	else if (!cstr.is_empty())
+		stream->concat(cstr);
+	return stream;
+}
+
+mstring& ang::operator << (mstring& stream, string const& cstr)
+{
+	if (stream.is_empty())
+		stream = cstr.is_empty() ? null : new mstring_buffer(cstr.get());
+	else if (!cstr.is_empty())
+		stream->concat(cstr);
+	return stream;
+}
+
+mstring& ang::operator << (mstring& stream, cmstr_t cstr)
+{
+	if (stream.is_empty())
+		stream = new mstring_buffer(cstr);
+	else
+		stream->concat(cstr);
+	return stream;
+}
+
+mstring& ang::operator << (mstring& stream, cwstr_t cstr)
+{
+	if (stream.is_empty())
+		stream = new mstring_buffer(cstr);
+	else
+		stream->concat(cstr);
+	return stream;
+}
+
+mstring& ang::operator << (mstring& stream, cstr_t cstr)
+{
+	if (stream.is_empty())
+		stream = new mstring_buffer(cstr);
+	else
+		stream->concat(cstr);
+	return stream;
+}
+
+mstring& ang::operator << (mstring& stream, char c)
+{
+	char cstr[2] = { c, 0 };
+	if (stream.is_empty())
+		stream = new mstring_buffer(cstr);
+	else
+		stream->concat(cstr);
+	return stream;
+}
+
+mstring& ang::operator << (mstring& stream, wchar c)
+{
+	wchar cstr[2] = { c, 0 };
+	if (stream.is_empty())
+		stream = new mstring_buffer(cstr);
+	else
+		stream->concat(cstr);
+	return stream;
+}
+
+
 bool ang::operator == (mstring const& first, mstring const& second) { return (algorithms::string_compare((cmstr_t)first, (cmstr_t)second) == 0); }
 bool ang::operator != (mstring const& first, mstring const& second) { return (algorithms::string_compare((cmstr_t)first, (cmstr_t)second) != 0); }
 bool ang::operator >= (mstring const& first, mstring const& second) { return (algorithms::string_compare((cmstr_t)first, (cmstr_t)second) >= 0); }

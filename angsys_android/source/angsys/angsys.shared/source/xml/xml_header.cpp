@@ -26,7 +26,7 @@ using namespace ang::xml;
 xml_header::xml_header()
 	: xml_node(xml_type_t::header)
 {
-	version("1.0");
+	version("1.0"_sm);
 	encoding(xml_encoding::utf_8);
 }
 
@@ -49,7 +49,7 @@ xml_header::xml_header(const xml_header* att)
 	}
 	else
 	{
-		version("1.0");
+		version("1.0"_sm);
 		encoding(xml_encoding::utf_8);
 	}
 }
@@ -67,36 +67,36 @@ xml_node_t xml_header::xml_clone()const
 }
 
 
-wstring xml_header::version()const
+mstring xml_header::version()const
 {
-	xml_value_t version = xml_attributes()["version"];
+	xml_value_t version = xml_attributes()["version"_sm];
 	return version;
 }
 
 xml_encoding xml_header::encoding()const
 {
-	xml_value_t encoding = xml_attributes()["encoding"];
+	xml_value_t encoding = xml_attributes()["encoding"_sm];
 	return encoding.as<xml_encoding_t>();
 }
 
 bool xml_header::is_stand_alone()const
 {
-	xml_value_t standalone = xml_attributes()["standalone"];
-	return standalone.as<bool>();
+	xml_value_t standalone = xml_attributes()["standalone"_sm];
+	return false;// standalone.as<bool>();
 }
 
-void xml_header::version(wstring value)
+void xml_header::version(mstring value)
 {
 	if (_xml_attributes.is_empty())
 	{
 		_xml_attributes = new xml_attribute_list();
 		//xmlAttributes->XmlParent(this);
 	}
-	auto it = _xml_attributes->find_first("version");
+	auto it = _xml_attributes->find_first("version"_sm);
 	if (it.is_valid())
 		it->xml_value(ang::move(value));
 	else
-		_xml_attributes->insert(new xml_attribute("version", ang::move(value)), 0);
+		_xml_attributes->insert(new xml_attribute("version"_sm, ang::move(value)), 0);
 }
 
 void xml_header::encoding(xml_encoding_t value)
@@ -107,14 +107,14 @@ void xml_header::encoding(xml_encoding_t value)
 		//xmlAttributes->XmlParent(this);
 	}
 
-	auto it = _xml_attributes->find_first("encoding");
+	auto it = _xml_attributes->find_first("encoding"_sm);
 	if (it.is_valid())
 		it->xml_value(value.to_string());
 	else
-		_xml_attributes->insert(new xml_attribute("encoding", value.to_string()), 1);
+		_xml_attributes->insert(new xml_attribute("encoding"_sm, value.to_string()), 1);
 }
 
-void xml_header::encoding(wstring value)
+void xml_header::encoding(mstring value)
 {
 	if (value.is_empty())
 		return;
@@ -124,11 +124,11 @@ void xml_header::encoding(wstring value)
 		//xmlAttributes->XmlParent(this);
 	}
 	value->lowercase();
-	auto it = _xml_attributes->find_first("encoding");
+	auto it = _xml_attributes->find_first("encoding"_sm);
 	if (it.is_valid())
 		it->xml_value(ang::move(value));
 	else
-		_xml_attributes->insert(new xml_attribute("encoding", ang::move(value)), 1);
+		_xml_attributes->insert(new xml_attribute("encoding"_sm, ang::move(value)), 1);
 }
 
 void xml_header::is_stand_alone(bool value)
@@ -138,9 +138,9 @@ void xml_header::is_stand_alone(bool value)
 		_xml_attributes = new xml_attribute_list();
 		//xmlAttributes->XmlParent(this);
 	}
-	auto it = _xml_attributes->find_first("standalone");
+	auto it = _xml_attributes->find_first("standalone"_sm);
 	if (it.is_valid() && value)
 		_xml_attributes->pop_at(it);
 	else if (!value)
-		_xml_attributes->insert(new xml_attribute("standalone", "no"), 2);
+		_xml_attributes->insert(new xml_attribute("standalone"_sm, "no"_sm), 2);
 }

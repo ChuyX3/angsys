@@ -913,4 +913,4 @@ inline T& ang::object_wrapper<ang::collections::vector_buffer<T>>::operator[](in
 	return _ptr->data()[idx];
 }
 
-#endif __ANG_VECTOR_INL__
+#endif//__ANG_VECTOR_INL__

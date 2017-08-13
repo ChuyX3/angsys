@@ -122,31 +122,31 @@ namespace ang
 
 
 		class LINK xml_value final
-			: public wstring
+			: public mstring
 		{
 		public:
 			xml_value();
 			xml_value(cstr_t);
 			xml_value(cwstr_t);
 			xml_value(cmstr_t);
-			xml_value(strings::wstring_buffer*);
+			xml_value(strings::mstring_buffer*);
 			xml_value(ang::nullptr_t const&);
-			xml_value(wstring &&);
-			xml_value(wstring const&);
-			xml_value(string const&);
+			xml_value(mstring &&);
 			xml_value(mstring const&);
+			xml_value(string const&);
+			xml_value(wstring const&);
 
 			template<wsize N> xml_value(const wchar(&ar)[N])
 				: xml_value(cwstr_t(ar, N - 1U)) { }
 			template<wsize N> xml_value(const char(&ar)[N])
 				: xml_value(cstr_t(ar, N - 1U)) { }
 
-			xml_value& operator = (wstring &&);
-			xml_value& operator = (wstring const&);
-			xml_value& operator = (string const&);
+			xml_value& operator = (mstring &&);
 			xml_value& operator = (mstring const&);
+			xml_value& operator = (string const&);
+			xml_value& operator = (wstring const&);
 			xml_value& operator = (ang::nullptr_t const&);
-			xml_value& operator = (strings::wstring_buffer*);
+			xml_value& operator = (strings::mstring_buffer*);
 
 			xml_value& operator = (cstr_t);
 			xml_value& operator = (cwstr_t);
@@ -158,9 +158,9 @@ namespace ang
 				return xml_value::operator = (cwstr_t(ar, N - 1U));
 			}
 
-			xml_value& operator += (wstring const&);
-			xml_value& operator += (string const&);
 			xml_value& operator += (mstring const&);
+			xml_value& operator += (string const&);
+			xml_value& operator += (wstring const&);
 			xml_value& operator += (cstr_t);
 			xml_value& operator += (cwstr_t);
 			xml_value& operator += (cmstr_t);
@@ -176,7 +176,7 @@ namespace ang
 				//	"exception: unsupported type cast, user must implement the specialization of \"template<typename T> T xml_value::as()const\""_s);
 				return T();
 			}
-			wstring& xml_print(wstring& stream, xml_format_t const& format, ushort level)const;
+			mstring& xml_print(mstring& stream, xml_format_t const& format, ushort level)const;
 			//streams::itext_output_stream_t& xml_print(streams::itext_output_stream_t& stream, xml_format_t const& format, ushort level)const;
 		};
 
@@ -184,7 +184,7 @@ namespace ang
 		ANG_BEGIN_INTERFACE(LINK, ixmlobject)
 			visible vcall xml_type_t xml_type()const pure;
 			visible vcall bool xml_is_type_of(xml_type_t)const pure;
-			visible vcall wstring& xml_print(wstring& stream, const xml_format_t& flag, ushort level = 0)const pure;
+			visible vcall mstring& xml_print(mstring& stream, const xml_format_t& flag, ushort level = 0)const pure;
 			//visible vcall streams::itext_output_stream_t& xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flag, ushort level = 0)const pure;
 		ANG_END_INTERFACE();
 	}
@@ -444,7 +444,7 @@ namespace ang
 
 			xml_type_t xml_type()const override;
 			bool xml_is_type_of(xml_type_t)const override;
-			wstring& xml_print(wstring& stream, const xml_format_t& flag, ushort level = 0)const override;
+			mstring& xml_print(mstring& stream, const xml_format_t& flag, ushort level = 0)const override;
 			//streams::itext_output_stream_t& xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flag, ushort level = 0)const override;
 
 			template<class _xml_type>
@@ -464,9 +464,9 @@ namespace ang
 			virtual xml_items_t xml_children()const;
 			virtual xml_attributes_t xml_attributes()const;
 
-			virtual bool xml_name(wstring);
-			virtual bool xml_data(wstring);
-			virtual bool xml_value(wstring);
+			virtual bool xml_name(mstring);
+			virtual bool xml_data(mstring);
+			virtual bool xml_value(mstring);
 			virtual bool xml_children(xml_items_t);
 			virtual bool xml_attributes(xml_items_t);
 
@@ -483,9 +483,9 @@ namespace ang
 		protected:
 			const xml_type_t _xml_type;
 			uint _count;
+			mutable weak_ptr<xml_node> _xml_parent;
 			xml_node_t _xml_first;
 			xml_node_t _xml_last;
-			mutable weak_ptr<xml_node> _xml_parent;
 
 		public:
 			typedef xml_node*						node_ptr_t;
@@ -502,7 +502,7 @@ namespace ang
 
 			xml_type_t xml_type()const override;
 			bool xml_is_type_of(xml_type_t)const override;
-			wstring& xml_print(wstring& stream, const xml_format_t& flag, ushort level = 0)const override;
+			mstring& xml_print(mstring& stream, const xml_format_t& flag, ushort level = 0)const override;
 			//streams::itext_output_stream_t& xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flag, ushort level = 0)const override;
 
 		public: //ienum overrides
@@ -578,7 +578,7 @@ namespace ang
 		{
 		public:
 			xml_attribute();
-			xml_attribute(wstring, wstring);
+			xml_attribute(mstring, mstring);
 			xml_attribute(xml_attribute const&);
 			xml_attribute(xml_attribute const*);
 
@@ -608,7 +608,7 @@ namespace ang
 		{
 		public:
 			xml_comment();
-			xml_comment(wstring);
+			xml_comment(mstring);
 			xml_comment(xml_comment const&);
 			xml_comment(xml_comment const*);
 
@@ -639,8 +639,8 @@ namespace ang
 		{
 		public:
 			xml_element();
-			xml_element(wstring, wstring);
-			xml_element(wstring, xml_items_t);
+			xml_element(mstring, mstring);
+			xml_element(mstring, xml_items_t);
 			xml_element(xml_element const&);
 			xml_element(xml_element const*);
 
@@ -674,16 +674,16 @@ namespace ang
 			xml_node_t xml_clone()const override;
 
 		public:
-			wstring version()const;
+			mstring version()const;
 			xml_encoding encoding()const;
 			bool is_stand_alone()const;
 
-			void version(wstring);
+			void version(mstring);
 			void encoding(xml_encoding_t);
 			void is_stand_alone(bool);
 
-			void encoding(wstring);
-			void is_stand_alone(wstring);
+			void encoding(mstring);
+			void is_stand_alone(mstring);
 
 		private:
 			using xml_node::xml_has_name;
@@ -866,7 +866,7 @@ namespace ang
 
 			xml_type_t xml_type()const override;
 			bool xml_is_type_of(xml_type_t)const override;
-			wstring& xml_print(wstring& stream, const xml_format_t& flag, ushort level = 0)const override;
+			mstring& xml_print(mstring& stream, const xml_format_t& flag, ushort level = 0)const override;
 			//streams::itext_output_stream_t& xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flag, ushort level = 0)const override;
 
 		public: //ienum overrides
@@ -953,13 +953,14 @@ namespace ang
 			bool move_backward();
 
 			void push_header(xml_header_t);
-			bool begin_element(wstring name);
+			bool begin_element(mstring name);
 			bool end_element();
-			bool element(wstring name, wstring value);
+			bool element(mstring name, mstring value);
 			bool element(xml_element_t element);
-			bool value(wstring value);
-			bool attribute(wstring name, wstring value);
-			bool comment(wstring value);
+			bool data(mstring value);
+			bool value(mstring value);
+			bool attribute(mstring name, mstring value);
+			bool comment(mstring value);
 
 		private:
 			virtual~xml_builder();
@@ -1032,8 +1033,8 @@ namespace ang
 			//void serialize(streams::itext_output_stream_t)const;
 
 			void parse(string code);
-			void parse(wstring code);
 			void parse(mstring code);
+			void parse(wstring code);
 
 			void parse(cstr_t code);
 			void parse(cwstr_t code);
@@ -1050,16 +1051,16 @@ namespace ang
 
 			//bool decode_header(string& code, collections::iterator<char_t>& begin);
 			//bool decode_element(string& code, collections::iterator<char_t>& begin);
-			//bool decode_header(wstring& code, collections::iterator<achar_t>& begin);
-			//bool decode_element(wstring& code, collections::iterator<achar_t>& begin);
+			//bool decode_header(mstring& code, collections::iterator<achar_t>& begin);
+			//bool decode_element(mstring& code, collections::iterator<achar_t>& begin);
 
-			bool decode_header(cstr_t code, index& begin);
+			xml_encoding_t decode_header(cstr_t code, index& begin);
 			bool decode_element(cstr_t code, index& begin);
 
-			bool decode_header(cwstr_t code, index& begin);
+			xml_encoding_t decode_header(cwstr_t code, index& begin);
 			bool decode_element(cwstr_t code, index& begin);
 
-			bool decode_header(cmstr_t code, index& begin);
+			xml_encoding_t decode_header(cmstr_t code, index& begin);
 			bool decode_element(cmstr_t code, index& begin);
 
 		private:
@@ -1097,10 +1098,11 @@ template<> float LINK ang::xml::xml_value::as<float>()const;
 template<> double LINK ang::xml::xml_value::as<double>()const;
 
 template<> ang::cstr_t LINK ang::xml::xml_value::as<ang::cstr_t>()const;
+template<> ang::cmstr_t LINK ang::xml::xml_value::as<ang::cmstr_t>()const;
 template<> ang::cwstr_t LINK ang::xml::xml_value::as<ang::cwstr_t>()const;
 template<> ang::string LINK ang::xml::xml_value::as<ang::string>()const;
-template<> ang::wstring LINK ang::xml::xml_value::as<ang::wstring>()const;
 template<> ang::mstring LINK ang::xml::xml_value::as<ang::mstring>()const;
+template<> ang::wstring LINK ang::xml::xml_value::as<ang::wstring>()const;
 template<> ang::xml::xml_encoding_t LINK ang::xml::xml_value::as<ang::xml::xml_encoding_t>()const;
 
 inline ang::xml::xml_node const* ang::collections::iterator<const ang::xml::xml_node>::operator -> ()const

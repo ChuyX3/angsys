@@ -29,14 +29,14 @@ xml_element::xml_element()
 
 }
 
-xml_element::xml_element(wstring name, wstring value)
+xml_element::xml_element(mstring name, mstring value)
 	: xml_node(xml_type_t::element)
 {
 	xml_name(ang::move(name));
 	xml_value(ang::move(value));
 }
 
-xml_element::xml_element(wstring name, xml_items_t items)
+xml_element::xml_element(mstring name, xml_items_t items)
 	: xml_node(xml_type_t::element)
 {
 	xml_name(ang::move(name));
@@ -54,7 +54,7 @@ xml_element::xml_element(const xml_element& att)
 		xml_name(att._xml_name);
 
 	if (att._xml_content.data_type == xml_type_t::value)
-		xml_value(wstring(static_cast<strings::wstring_buffer*>(att._xml_content.unknown.get())));
+		xml_value(mstring(static_cast<strings::mstring_buffer*>(att._xml_content.unknown.get())));
 	else if (att._xml_content.data_type == xml_type_t::element_list)
 		xml_children(static_cast<xml_element_list*>(att._xml_content.unknown.get())->xml_clone());
 	if (att.xml_has_attributes())
@@ -70,7 +70,7 @@ xml_element::xml_element(const xml_element* att)
 			xml_name(att->_xml_name);
 
 		if (att->_xml_content.data_type == xml_type_t::value)
-			xml_value(wstring(static_cast<strings::wstring_buffer*>(att->_xml_content.unknown.get())));
+			xml_value(mstring(static_cast<strings::mstring_buffer*>(att->_xml_content.unknown.get())));
 		else if (att->_xml_content.data_type == xml_type_t::element_list)
 			xml_children(static_cast<xml_element_list*>(att->_xml_content.unknown.get())->xml_clone());
 		if (att->xml_has_attributes())

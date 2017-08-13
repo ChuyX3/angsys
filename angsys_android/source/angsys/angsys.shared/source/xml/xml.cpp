@@ -27,6 +27,7 @@ static ang_pair<ang::xml::xml_type, cstr_t> s_xml_type_to_string_map[] =
 	{ ang::xml::xml_type::tree, "tree"_s },
 	{ ang::xml::xml_type::header, "header"_s },
 	{ ang::xml::xml_type::element, "element"_s },
+	{ ang::xml::xml_type::data, "data"_s },
 	{ ang::xml::xml_type::comment, "comment"_s },
 	{ ang::xml::xml_type::attribute, "attribute"_s },
 	{ ang::xml::xml_type::element_list, "element_list"_s },
@@ -43,6 +44,7 @@ static ang_pair<cstr_t, ang::xml::xml_type> s_xml_type_parsing_map[] =
 	{ "attribute_list"_s, ang::xml::xml_type::attribute_list },
 	{ "builder"_s, ang::xml::xml_type::builder },
 	{ "comment"_s, ang::xml::xml_type::comment },
+	{ "data"_s, ang::xml::xml_type::data },
 	{ "document"_s, ang::xml::xml_type::document },
 	{ "element"_s, ang::xml::xml_type::element },
 	{ "element_list"_s, ang::xml::xml_type::element_list },
@@ -85,45 +87,11 @@ ANG_IMPLEMENT_ENUM(xml, xml_exception_code, uint, xml_exception_code::unknown);
 
 cstr_t xml_exception_code_t::to_string()const
 {
-	return "TODO"_o; // ang::move(except_code_t((except_code)_value).to_string());
+	return ang::move(except_code_t((except_code)_value).to_string());
 }
 
 ANG_IMPLEMENT_FLAGS(ang::xml, xml_format, uint);
 
 ANG_IMPLEMENT_INTERFACE(ang::xml, ixmlobject);
-//
-//bool ang::collections::ienum<xml_node>::is_kind_of(ang::type_name_t name)const
-//{
-//	if (name == ang::collections::ienum<xml_node>::class_name())
-//		return true;
-//	return false;
-//}
-//
-//bool ang::collections::ienum<xml_node>::is_child_of(ang::type_name_t name)
-//{
-//	if (name == ang::collections::ienum<xml_node>::class_name())
-//		return true;
-//	return false;
-//}
-//
-//ang::type_name_t ang::collections::ienum<xml_node>::class_name()
-//{
-//	return "ang::collections::ienum<xml_node>"_s;
-//}
-//
-//ang::type_name_t ang::collections::ienum<xml_node>::object_name()const
-//{
-//	return ang::collections::ienum<xml_node>::class_name();
-//}
-//
-//bool ang::collections::ienum<xml_node>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
-//{
-//	if (out == null)
-//		return false;
-//	if (name == class_name())
-//	{
-//		*out = static_cast<ang::collections::ienum<xml_node>*>(this);
-//		return true;
-//	}
-//	return false;
-//}
+
+ANG_IMPLEMENT_INTERFACE(ang::collections, ienum<ang::xml::xml_node>);

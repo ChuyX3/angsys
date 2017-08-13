@@ -390,9 +390,11 @@ namespace ang
 		friend LINK mstring operator + (mstring const&, cstr_t);
 		friend LINK mstring operator + (cstr_t, mstring const&);
 
+		friend LINK mstring& operator << (mstring&, mstring const&);
 		friend LINK mstring& operator << (mstring&, wstring const&);
 		friend LINK mstring& operator << (mstring&, string const&);
 		friend LINK mstring& operator << (mstring&, cwstr_t);
+		friend LINK mstring& operator << (mstring&, cmstr_t);
 		friend LINK mstring& operator << (mstring&, cstr_t);
 		friend LINK mstring& operator << (mstring&, wchar);
 		friend LINK mstring& operator << (mstring&, char);
@@ -525,11 +527,18 @@ namespace ang
 
 		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itext_buffer, ibuffer)
 			visible vcall encoding_t encoding()const pure;
+			template<uint ENCODING> typename char_type_by_encoding<ENCODING>::str_t text_buffer() {
+				return ENCODING == encoding().get() ? (typename char_type_by_encoding<ENCODING>::str_t) buffer_ptr() : null;
+			}
+			template<uint ENCODING> typename char_type_by_encoding<ENCODING>::cstr_t text_buffer()const {
+				return ENCODING == encoding().get() ? (typename char_type_by_encoding<ENCODING>::cstr_t) buffer_ptr() : null;
+			}
 		ANG_END_INTERFACE();
 	}
 
 	namespace strings
 	{
+
 		class LINK wstring_buffer
 			: public object
 			, public text::itext_buffer
@@ -654,7 +663,6 @@ namespace ang
 			void uppercase();
 			void lowercase();
 		};
-
 
 		class LINK string_buffer
 			: public object
@@ -782,7 +790,6 @@ namespace ang
 			void lowercase();
 		};
 
-
 		class LINK mstring_buffer
 			: public object
 			, public text::itext_buffer
@@ -872,6 +879,51 @@ namespace ang
 			mchar const& at(index it)const;
 			cmstr_t begin()const;
 			cmstr_t end()const;
+
+			uint insert(cmstr_t cstr, index pos);
+			uint insert(mbyte c, index pos);
+
+			uint insert(cstr_t cstr, index pos);
+			uint insert(char c, index pos);
+
+			uint insert(cwstr_t cstr, index pos);
+			uint insert(wchar c, index pos);
+
+			uint replace(cmstr_t cstr, index beg, index end);
+			uint replace(mbyte c, index beg, index end);
+
+			uint replace(cstr_t cstr, index beg, index end);
+			uint replace(char c, index beg, index end);
+
+			uint replace(cwstr_t cstr, index beg, index end);
+			uint replace(wchar c, index beg, index end);
+
+			//int replace_all(cwstr_t from, cwstr_t to);
+			index find(cmstr_t cstr, index start, bool rev = false)const;
+			index find(cmstr_t cstr, index start, index end, bool rev = false)const;
+
+			index find(cstr_t cstr, index start, bool rev = false)const;
+			index find(cstr_t cstr, index start, index end, bool rev = false)const;
+
+			index find(cwstr_t cstr, index start, bool rev = false)const;
+			index find(cwstr_t cstr, index start, index end, bool rev = false)const;
+			
+			mstr_t sub_string(index at);
+			cmstr_t sub_string(index at)const;
+
+			uint sub_string(mstring& out, index start, uint count = -1)const;
+			uint sub_string(mstr_t out, index start, uint count = -1)const;
+
+			uint sub_string(string& out, index start, uint count = -1)const;
+			uint sub_string(str_t out, index start, uint count = -1)const;
+
+			uint sub_string(wstring& out, index start, uint count = -1)const;
+			uint sub_string(wstr_t out, index start, uint count = -1)const;
+
+			void invert();
+			void invert(index beg, index end);
+			void uppercase();
+			void lowercase();
 		};
 	
 	}

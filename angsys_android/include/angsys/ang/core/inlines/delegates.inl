@@ -7,15 +7,15 @@
 template<typename return_t, typename... args_t>
 inline ang::type_name_t ang::core::delegates::ifunction<return_t(args_t...)>::class_name()
 {
-	static string _class_name = string("ang::core::delegates::ifunction<") + type_name<return_t(args_t...)>() + ")>";
-	return _class_name;
+	static type_name_t name = runtime_data_base::regist_typename(ang::move("ang::core::delegates::ifunction<"_o + type_of<return_t(args_t...)>() + ")>"_s));
+	return name;
 }
 
 template<typename... args_t>
 inline ang::type_name_t ang::core::delegates::ifunction<void(args_t...)>::class_name()
 {
-	static string _class_name = string("ang::core::delegates::ifunction<") + type_name<void(args_t...)>() + ")>";
-	return _class_name;
+	static type_name_t name = runtime_data_base::regist_typename(ang::move("ang::core::delegates::ifunction<"_o + type_of<void(args_t...)>() + ")>"_s));
+	return name;
 }
 
 template<typename return_t, typename... args_t>
@@ -67,15 +67,15 @@ inline bool ang::core::delegates::ifunction<void(args_t...)>::query_object(ang::
 template<typename return_t, typename... args_t>
 inline ang::type_name_t ang::core::delegates::function_data<return_t(args_t...)>::class_name()
 {
-	static string _class_name = string("ang::core::delegates::function<") + type_name<return_t(args_t...)>() + ")>";
-	return _class_name;
+	static type_name_t name = runtime_data_base::regist_typename(ang::move("ang::core::delegates::function<"_o + type_of<return_t(args_t...)>() + ")>"_s));
+	return name;
 }
 
 template<typename... args_t>
 inline ang::type_name_t ang::core::delegates::function_data<void(args_t...)>::class_name()
 {
-	static string _class_name = string("ang::core::delegates::function<") + type_name<void(args_t...)>() + ")>";
-	return _class_name;
+	static type_name_t name = runtime_data_base::regist_typename(ang::move("ang::core::delegates::function<"_o + type_of<void(args_t...)>() + ")>"_s));
+	return name;
 }
 
 template<typename return_t, typename... args_t>
@@ -420,7 +420,7 @@ ang::array<return_t> ang::core::delegates::listener<return_t(args_t...)>::operat
 
 		function<return_t(args_t...)>func;
 
-		for (index_t i = 0U; i < result->size(); ++i)
+		for (index i = 0U; i < result->size(); ++i)
 		{
 			func = functions[i];
 			result[i] = func(args...);
@@ -441,7 +441,7 @@ ang::array<return_t> ang::core::delegates::listener<return_t(args_t...)>::invoke
 
 		function<return_t(args_t...)>func;
 
-		for (index_t i = 0U; i < result->size(); ++i)
+		for (index i = 0U; i < result->size(); ++i)
 		{
 			func = functions[i];
 			result[i] = func(args...);

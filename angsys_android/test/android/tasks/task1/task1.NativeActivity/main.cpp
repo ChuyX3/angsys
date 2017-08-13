@@ -1,40 +1,31 @@
-/*
-* Copyright (C) 2010 The Android Open Source Project
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*/
+
 
 #define LOGI(...) ang_debug_output_info(__VA_ARGS__)
 #define LOGW(...) ang_debug_output_warning(__VA_ARGS__)
 
-ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(android_app);
-ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(android_app*);
+using namespace ang;
+using namespace ang::platform;
+using namespace ang::platform::android;
 
-/**
-* Our saved state data.
-*/
 struct saved_state {
 	float angle;
 	int32_t x;
 	int32_t y;
 };
 
+class engine;
+typedef object_wrapper<engine> engine_t;
+
 /**
 * Shared state for our app.
 */
-struct engine {
-	struct android_app* app;
+class engine : public object {
+public:
+	engine() {}
+
+	ANG_DECLARE_DYNAMIC_INTERFACE();
+
+	ang::platform::android::activity_t activity;
 
 	ASensorManager* sensorManager;
 	const ASensor* accelerometerSensor;
@@ -47,12 +38,17 @@ struct engine {
 	int32_t width;
 	int32_t height;
 	struct saved_state state;
+
+private:
+	virtual~engine() {}
 };
+
+ANG_IMPLEMENT_BASIC_INTERFACE(engine, ang::object);
 
 /**
 * Initialize an EGL context for the current display.
 */
-static int engine_init_display(struct engine* engine) {
+static int engine_init_display(engine_t engine) {
 	// initialize OpenGL ES and EGL
 
 	/*
@@ -120,7 +116,7 @@ static int engine_init_display(struct engine* engine) {
 /**
 * Just the current frame in the display.
 */
-static void engine_draw_frame(struct engine* engine) {
+static void engine_draw_frame(engine_t engine) {
 	if (engine->display == NULL) {
 		// No display.
 		return;
@@ -137,7 +133,7 @@ static void engine_draw_frame(struct engine* engine) {
 /**
 * Tear down the EGL context currently associated with the display.
 */
-static void engine_term_display(struct engine* engine) {
+static void engine_term_display(engine_t engine) {
 	if (engine->display != EGL_NO_DISPLAY) {
 		eglMakeCurrent(engine->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 		if (engine->context != EGL_NO_CONTEXT) {
@@ -157,8 +153,8 @@ static void engine_term_display(struct engine* engine) {
 /**
 * Process the next input event.
 */
-static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
-	struct engine* engine = (struct engine*)app->userData;
+static dword engine_handle_input(ang::platform::android::activity_t app, AInputEvent* event) {
+	engine_t engine = app->user_data()->as<::engine>();
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
 		engine->state.x = AMotionEvent_getX(event, 0);
 		engine->state.y = AMotionEvent_getY(event, 0);
@@ -170,8 +166,8 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 /**
 * Process the next main command.
 */
-static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
-	struct engine* engine = (struct engine*)app->userData;
+static dword engine_handle_cmd(ang::platform::android::activity_t app, uint cmd) {
+	engine_t engine = app->user_data()->as<::engine>();
 	switch (cmd) {
 	case APP_CMD_SAVE_STATE:
 		// The system has asked us to save our current state.  Do so.
@@ -212,46 +208,46 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 		engine_draw_frame(engine);
 		break;
 	}
+	return 0;
 }
 
 using namespace ang;
 
-/**
-* This is the main entry point of a native application that is using
-* android_native_app_glue.  It runs in its own thread, with its own
-* event loop for receiving input events and doing other things.
-*/
-extern "C" void android_main(struct android_app* state) {
-	struct engine engine;
+cstr_t xml_code = 
+//"<?xml version='1.0' encoding='UTF-8'?>\n"
+"<note>\n"
+"  <to>Tove</to>\n"
+"  <from>Jani</from>\n"
+"  <heading>Reminder</heading>\n"
+"  <body>Don't forget me this weekend!</body>\n"
+"</note>\n";
 
-	cstr_t values[] = {"jesus", "angel" , "rocha" , "morales" };
+using namespace ang::xml;
 
-	array<cstr_t> arr = values;
 
-	for (cstr_t value : arr)
-	{
-		debug::get_platform_logger()->print(debug::log_level::verbose, value);
-	}
+int main() {
+	engine_t engine = new ::engine();
+	
+	activity_t activity = android::activity::get_activity();
 
-	memset(&engine, 0, sizeof(engine));
-	state->userData = &engine;
-	state->onAppCmd = engine_handle_cmd;
-	state->onInputEvent = engine_handle_input;
-	engine.app = state;
+	activity->user_data(engine.get());
+	activity->command_event += &engine_handle_cmd;
+	activity->input_event += engine_handle_input;
+	engine->activity = activity;
 
 	// Prepare to monitor accelerometer
-	engine.sensorManager = ASensorManager_getInstance();
-	engine.accelerometerSensor = ASensorManager_getDefaultSensor(engine.sensorManager,
+	engine->sensorManager = ASensorManager_getInstance();
+	engine->accelerometerSensor = ASensorManager_getDefaultSensor(engine->sensorManager,
 		ASENSOR_TYPE_ACCELEROMETER);
-	engine.sensorEventQueue = ASensorManager_createEventQueue(engine.sensorManager,
-		state->looper, LOOPER_ID_USER, NULL, NULL);
+	engine->sensorEventQueue = ASensorManager_createEventQueue(engine->sensorManager,
+		activity->looper(), LOOPER_ID_USER, NULL, NULL);
 
-	if (state->savedState != NULL) {
-		// We are starting with a previous saved state; restore from it.
-		engine.state = *(struct saved_state*)state->savedState;
+	if (activity->savedState != NULL) {
+		// We are starting with a previous saved activity; restore from it.
+		engine->activity = *(struct saved_state*)activity->savedState;
 	}
 
-	engine.animating = 1;
+	engine->animating = 1;
 
 	// loop waiting for stuff to do.
 
@@ -264,19 +260,19 @@ extern "C" void android_main(struct android_app* state) {
 		// If not animating, we will block forever waiting for events.
 		// If animating, we loop until all events are read, then continue
 		// to draw the next frame of animation.
-		while ((ident = ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
+		while ((ident = ALooper_pollAll(engine->animating ? 0 : -1, NULL, &events,
 			(void**)&source)) >= 0) {
 
 			// Process this event.
 			if (source != NULL) {
-				source->process(state, source);
+				source->process(activity, source);
 			}
 
 			// If a sensor has data, process it now.
 			if (ident == LOOPER_ID_USER) {
-				if (engine.accelerometerSensor != NULL) {
+				if (engine->accelerometerSensor != NULL) {
 					ASensorEvent event;
-					while (ASensorEventQueue_getEvents(engine.sensorEventQueue,
+					while (ASensorEventQueue_getEvents(engine->sensorEventQueue,
 						&event, 1) > 0) {
 						LOGI("accelerometer: x=%f y=%f z=%f",
 							event.acceleration.x, event.acceleration.y,
@@ -286,17 +282,17 @@ extern "C" void android_main(struct android_app* state) {
 			}
 
 			// Check if we are exiting.
-			if (state->destroyRequested != 0) {
+			if (activity->destroyRequested != 0) {
 				engine_term_display(&engine);
 				return;
 			}
 		}
 
-		if (engine.animating) {
+		if (engine->animating) {
 			// Done with events; draw next animation frame.
-			engine.state.angle += .01f;
-			if (engine.state.angle > 1) {
-				engine.state.angle = 0;
+			engine->activity.angle += .01f;
+			if (engine->activity.angle > 1) {
+				engine->activity.angle = 0;
 			}
 
 			// Drawing is throttled to the screen update rate, so there

@@ -39,6 +39,9 @@
     <Filter Include="source files\xml">
       <UniqueIdentifier>{c1da7dd7-b080-4a10-8d96-9dba74504a20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source files\async">
+      <UniqueIdentifier>{10f59fbe-72ba-4cbd-bcd2-f23801409f0c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
@@ -115,6 +118,21 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\exception_code_map.h">
       <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\async.h">
+      <Filter>header files\angsys\ang\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\delegates.h">
+      <Filter>header files\angsys\ang\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\files.h">
+      <Filter>header files\angsys\ang\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\sockets.h">
+      <Filter>header files\angsys\ang\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\time.h">
+      <Filter>header files\angsys\ang\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -201,6 +219,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\exceptions.cpp">
       <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\delegates.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\async\async.cpp">
+      <Filter>source files\async</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

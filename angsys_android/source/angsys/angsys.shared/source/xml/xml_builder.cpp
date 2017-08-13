@@ -69,6 +69,7 @@ void xml_builder::push(xml_node_t node, bool last)
 		xml_root(node);
 		xml_head(node);
 		xml_tail(node);
+		_count++;
 	}
 	else
 	{
@@ -84,6 +85,7 @@ void xml_builder::push(xml_node_t node, bool last)
 		{
 			xml_items_t children = current->xml_children();
 			children->push(node, last);
+			_count++;
 		}
 		else if (current->xml_parent())
 		{
@@ -91,6 +93,7 @@ void xml_builder::push(xml_node_t node, bool last)
 			if (children.is_empty()) //for debug
 				throw exception(xml_exception_code::unexpected_error, "exception: unexpected error calling the function xml_builder::push"_s);
 			children->insert(node, xml_iterator_t(children.get(), current.get()), last);
+			_count++;
 		}
 		else
 		{
@@ -103,6 +106,7 @@ void xml_builder::push(xml_node_t node, bool last)
 					insert_in_tail(node);
 				else
 					insert_next_to(current, node);
+				_count++;
 			}
 			else
 			{
@@ -120,6 +124,7 @@ void xml_builder::push(xml_node_t node, bool last)
 				}
 				else
 					insert_prev_to(current, node);
+				_count++;
 			}
 		}
 	}
@@ -144,6 +149,7 @@ bool xml_builder::insert(xml_node_t node, xml_iterator_t at, bool nextTo)
 		if (children.is_empty())
 			throw exception(xml_exception_code::unexpected_error, "exception: unexpected error calling the function xml_builder::insert"_s);
 		children->insert(node, xml_iterator_t(children, current.get()), nextTo);
+		_count++;
 	}
 	else
 	{
@@ -156,6 +162,7 @@ bool xml_builder::insert(xml_node_t node, xml_iterator_t at, bool nextTo)
 				insert_in_tail(node);
 			else
 				insert_next_to(current, node);
+			_count++;
 		}
 		else
 		{
@@ -173,6 +180,7 @@ bool xml_builder::insert(xml_node_t node, xml_iterator_t at, bool nextTo)
 			}
 			else
 				insert_prev_to(current, node);
+			_count++;
 		}
 	}
 	return true;
@@ -251,6 +259,7 @@ void xml_builder::push_header(xml_header_t obj)
 	{
 		xml_head(obj.get());
 		xml_tail(obj.get());
+		_count++;
 	}
 	else
 	{
@@ -274,11 +283,12 @@ void xml_builder::push_header(xml_header_t obj)
 			xml_head(obj.get());
 			old->xml_prev(obj.get());
 			((xml_node*)obj.get())->xml_next(old);
+			_count++;
 		}
 	}
 }
 
-bool xml_builder::begin_element(wstring name)
+bool xml_builder::begin_element(mstring name)
 {
 	if (xml_tail() == null)
 	{
@@ -287,6 +297,7 @@ bool xml_builder::begin_element(wstring name)
 		xml_tail(element.get());
 		xml_root(element.get());
 		_current.xml_current(element.get());
+		_count++;
 	}
 	else if (xml_root() == null)
 	{
@@ -295,6 +306,7 @@ bool xml_builder::begin_element(wstring name)
 		xml_tail()->xml_next(xml_root());
 		xml_root()->xml_prev(xml_tail());
 		xml_tail(xml_root());
+		_count++;
 	}
 	else if (_current.xml_current().get() == null)
 	{
@@ -316,19 +328,22 @@ bool xml_builder::begin_element(wstring name)
 			}
 			children->push(NEW xml_element(name, xml_items_t()));
 			_current.end_child();
+			_count++;
 		}
 		else
 		{
 			xml_items_t children = current->xml_children();
-			if (children->end().current() == _current.child().current())
+			if (children->rbegin().current() == _current.child().current())
 			{
 				children->push(NEW xml_element(name, xml_items_t()));
 				_current.end_child();
+				_count++;
 			}
 			else
 			{
 				children->insert(NEW xml_element(name, xml_items_t()), xml_iterator_t(children, _current.child().current()));
 				_current.next_child();
+				_count++;
 			}
 		}
 		_current.forward();
@@ -344,13 +359,14 @@ bool xml_builder::end_element()
 	return true;
 }
 
-bool xml_builder::element(wstring name, wstring value)
+bool xml_builder::element(mstring name, mstring value)
 {
 	if (xml_tail() == null)
 	{
 		xml_root(NEW xml_element(ang::move(name), ang::move(value)));
 		xml_head(xml_root());
 		xml_tail(xml_head());
+		_count++;
 	}
 	else if (xml_root() == null)
 	{
@@ -359,6 +375,7 @@ bool xml_builder::element(wstring name, wstring value)
 		xml_tail()->xml_next(xml_root());
 		xml_root()->xml_prev(xml_tail());
 		xml_tail(xml_root());
+		_count++;
 	}
 	else
 	{
@@ -382,19 +399,22 @@ bool xml_builder::element(wstring name, wstring value)
 				}
 				children->push(NEW xml_element(ang::move(name), ang::move(value)));
 				_current.end_child();
+				_count++;
 			}
 			else
 			{
 				xml_items_t children = current->xml_children();
-				if (children->end().current() == _current.child().current())
+				if (children->rbegin().current() == _current.child().current())
 				{
 					children->push(NEW xml_element(ang::move(name), ang::move(value)));
 					_current.end_child();
+					_count++;
 				}
 				else
 				{
 					children->insert(NEW xml_element(ang::move(name), ang::move(value)), _current.child());
 					_current.next_child();
+					_count++;
 				}
 			}
 		}
@@ -417,6 +437,7 @@ bool xml_builder::element(xml_element_t element)
 		xml_tail()->xml_next(xml_root());
 		xml_root()->xml_prev(xml_tail());
 		xml_tail(xml_root());
+		_count++; //TODO: RECURSIVE COUNT
 	}
 	else
 	{
@@ -440,19 +461,22 @@ bool xml_builder::element(xml_element_t element)
 				}
 				children->push(element.get());
 				_current.end_child();
+				_count++;
 			}
 			else
 			{
 				xml_items_t children = current->xml_children();
-				if (children->end().current() == _current.child().current())
+				if (children->rbegin().current() == _current.child().current())
 				{
 					children->push(element.get());
 					_current.end_child();
+					_count++;
 				}
 				else
 				{
 					children->insert(element.get(), _current.child());
 					_current.next_child();
+					_count++;
 				}
 			}
 		}
@@ -460,7 +484,16 @@ bool xml_builder::element(xml_element_t element)
 	return true;
 }
 
-bool xml_builder::value(wstring value)
+bool xml_builder::data(mstring value)
+{
+	if (_current.xml_current().get() == null)
+		return false;
+	xml_node_t current = _current.xml_current();
+	current->xml_data(ang::move(value));
+	return true;
+}
+
+bool xml_builder::value(mstring value)
 {
 	if (_current.xml_current().get() == null)
 		return false;
@@ -469,7 +502,7 @@ bool xml_builder::value(wstring value)
 	return true;
 }
 
-bool xml_builder::attribute(wstring name, wstring value)
+bool xml_builder::attribute(mstring name, mstring value)
 {
 	if (_current.xml_current() == null)
 		return false;
@@ -484,12 +517,13 @@ bool xml_builder::attribute(wstring name, wstring value)
 	return true;
 }
 
-bool xml_builder::comment(wstring value)
+bool xml_builder::comment(mstring value)
 {
 	if (xml_tail() == null)
 	{
 		xml_head(NEW xml_comment(ang::move(value)));
 		xml_tail(xml_head());
+		_count++;
 	}
 	else
 	{
@@ -498,6 +532,7 @@ bool xml_builder::comment(wstring value)
 			xml_tail()->xml_next(new xml_comment(ang::move(value)));
 			xml_tail()->xml_next()->xml_prev(xml_tail());
 			xml_tail(xml_tail()->xml_next());
+			_count++;
 		}
 		else
 		{
@@ -515,19 +550,22 @@ bool xml_builder::comment(wstring value)
 				}
 				children->push(NEW xml_comment(ang::move(value)));
 				_current.end_child();
+				_count++;
 			}
 			else
 			{
 				xml_items_t children = current->xml_children();
-				if (children->end().current() == _current.child().current())
+				if (children->rbegin().current() == _current.child().current())
 				{
 					children->push(NEW xml_comment(ang::move(value)));
 					_current.end_child();
+					_count++;
 				}
 				else
 				{
 					children->insert(NEW xml_comment(ang::move(value)), _current.child());
 					_current.next_child();
+					_count++;
 				}
 			}
 		}

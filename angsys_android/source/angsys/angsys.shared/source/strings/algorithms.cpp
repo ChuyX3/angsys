@@ -222,8 +222,10 @@ uint algorithms::string_copy(char* str, const wchar* cstr, uint max)
 	if (str == null || cstr == null || max == 0U)
 		return 0U;
 	uint idx = 0;
-	while (idx < max && cstr[idx] != 0)
-		str[idx++] = (char)cstr[idx];
+	while (idx < max && cstr[idx] != 0) {
+		char c = (char)(int)cstr[idx];
+		str[idx++] = c;
+	}
 	if (idx < max) str[idx] = 0;
 	return idx;
 }
@@ -297,8 +299,11 @@ uint algorithms::string_copy(wchar* str, const char* cstr, uint max)
 	if (str == null || cstr == null || max == 0U)
 		return 0U;
 	uint idx = 0;
-	while (idx < max && cstr[idx] != 0)
-		str[idx++] = (wchar)cstr[idx];
+	while (idx < max && cstr[idx] != 0) {
+		wchar c = (wchar)(int)cstr[idx];
+		str[idx++] = c;
+	}
+
 	if (idx < max)str[idx] = 0;
 	return idx;
 }
@@ -445,6 +450,25 @@ uint algorithms::string_expand(char* str, uint len, uint beg, uint end, uint max
 	return end - beg;
 }
 
+uint algorithms::string_expand(mchar* str, uint len, uint beg, uint end, uint max)
+{
+	if (beg >= end || beg >= len || len >= max)
+		return 0;
+	if (end >= max)
+		return (max - beg - 1);
+
+	uint count = len - beg;
+	if (count >= (max - end))
+		count = max - end - 1;
+
+	for (uint i = count; i > 0U; --i)
+	{
+		str[end + i - 1] = str[beg + i - 1];
+	}
+	str[end + count] = 0;
+	return end - beg;
+}
+
 uint algorithms::string_expand(wchar* str, uint len, uint beg, uint end, uint max)
 {
 	if (beg >= end || beg >= len || len >= max)
@@ -465,6 +489,25 @@ uint algorithms::string_expand(wchar* str, uint len, uint beg, uint end, uint ma
 }
 
 uint algorithms::string_contract(char* str, uint len, uint beg, uint end)
+{
+	if (beg >= end || beg >= len || str == null)
+		return 0;
+
+	if (end >= len)
+	{
+		str[beg] = 0;
+		return (len - beg);
+	}
+
+	for (uint i = 0; i < (len - end); ++i)
+	{
+		str[beg + i] = str[end + i];
+	}
+	str[len + beg - end] = 0;
+	return end - beg;
+}
+
+uint algorithms::string_contract(mchar* str, uint len, uint beg, uint end)
 {
 	if (beg >= end || beg >= len || str == null)
 		return 0;
@@ -1164,6 +1207,16 @@ uint cwstr_t::find(cwstr_t str, uint beg, uint end)const
 	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, false);
 }
 
+uint cwstr_t::find(cmstr_t str, uint beg)const
+{
+	return string_find(cstr(), size(), str.cstr(), str.size(), beg, false);
+}
+
+uint cwstr_t::find(cmstr_t str, uint beg, uint end)const
+{
+	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, false);
+}
+
 uint cwstr_t::find(cstr_t str, uint beg)const
 {
 	return string_find(cstr(), size(), str.cstr(), str.size(), beg, false);
@@ -1190,6 +1243,16 @@ uint cwstr_t::find_rev(cwstr_t str, uint beg)const
 }
 
 uint cwstr_t::find_rev(cwstr_t str, uint beg, uint end)const
+{
+	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, true);
+}
+
+uint cwstr_t::find_rev(cmstr_t str, uint beg)const
+{
+	return string_find(cstr(), size(), str.cstr(), str.size(), beg, true);
+}
+
+uint cwstr_t::find_rev(cmstr_t str, uint beg, uint end)const
 {
 	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, true);
 }
@@ -1238,6 +1301,28 @@ uint cwstr_t::sub_string(char* out, uint start, uint count)const
 	return string_substr(cstr(), size(), out, start, count);
 }
 
+uint cwstr_t::sub_string(mstring& out, uint start, uint count)const
+{
+	if (cstr() == null || size() == 0)
+		return 0;
+
+	if (out.is_empty())
+		out = new mstring_buffer();
+
+	if (!out->realloc(min(size(), count), false))
+		return 0;
+	mstring_buffer* buffer = out.get();
+	buffer->length(string_substr(cstr(), size(), buffer->str().str(), start, count));
+	return buffer->length();
+}
+
+uint cwstr_t::sub_string(mchar* out, uint start, uint count)const
+{
+	if (cstr() == null || size() == 0)
+		return 0;
+	return string_substr(cstr(), size(), out, start, count);
+}
+
 uint cwstr_t::sub_string(wstring& out, uint start, uint count)const
 {
 	if (cstr() == null || size() == 0)
@@ -1272,6 +1357,16 @@ uint cstr_t::find(cwstr_t str, uint beg, uint end)const
 	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, false);
 }
 
+uint cstr_t::find(cmstr_t str, uint beg)const
+{
+	return string_find(cstr(), size(), str.cstr(), str.size(), beg, false);
+}
+
+uint cstr_t::find(cmstr_t str, uint beg, uint end)const
+{
+	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, false);
+}
+
 uint cstr_t::find(cstr_t str, uint beg)const
 {
 	return string_find(cstr(), size(), str.cstr(), str.size(), beg, false);
@@ -1299,6 +1394,16 @@ uint cstr_t::find_rev(cwstr_t str, uint beg)const
 }
 
 uint cstr_t::find_rev(cwstr_t str, uint beg, uint end)const
+{
+	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, true);
+}
+
+uint cstr_t::find_rev(cmstr_t str, uint beg)const
+{
+	return string_find(cstr(), size(), str.cstr(), str.size(), beg, true);
+}
+
+uint cstr_t::find_rev(cmstr_t str, uint beg, uint end)const
 {
 	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, true);
 }
@@ -1340,6 +1445,28 @@ uint cstr_t::sub_string(string& out, uint start, uint count)const
 }
 
 uint cstr_t::sub_string(char* out, uint start, uint count)const
+{
+	if (cstr() == null || size() == 0)
+		return 0;
+	return string_substr(cstr(), size(), out, start, count);
+}
+
+uint cstr_t::sub_string(mstring& out, uint start, uint count)const
+{
+	if (cstr() == null || size() == 0)
+		return 0;
+
+	if (out.is_empty())
+		out = new mstring_buffer();
+
+	if (!out->realloc(min(size(), count), false))
+		return 0;
+	mstring_buffer* buffer = out.get();
+	buffer->length(string_substr(cstr(), size(), buffer->str().str(), start, count));
+	return buffer->length();
+}
+
+uint cstr_t::sub_string(mchar* out, uint start, uint count)const
 {
 	if (cstr() == null || size() == 0)
 		return 0;
@@ -1399,6 +1526,27 @@ uint cmstr_t::find(cmstr_t str, uint beg)const
 uint cmstr_t::find(cmstr_t str, uint beg, uint end)const
 {
 	return string_find(cstr(), min(size(), end), str.cstr(), str.size(), beg, false);
+}
+
+uint cmstr_t::sub_string(mstring& out, uint start, uint count)const
+{
+	if (cstr() == null || size() == 0)
+		return 0;
+	if (out.is_empty())
+		out = new mstring_buffer();
+
+	if (!out->realloc(min(size(), count), false))
+		return 0;
+	mstring_buffer* buffer = out.get();
+	buffer->length(string_substr(cstr(), size(), buffer->str().str(), start, count));
+	return buffer->length();
+}
+
+uint cmstr_t::sub_string(mchar* out, uint start, uint count)const
+{
+	if (cstr() == null || size() == 0)
+		return 0;
+	return string_substr(cstr(), size(), out, start, count);
 }
 
 uint cmstr_t::sub_string(string& out, uint start, uint count)const

@@ -4,7 +4,7 @@
 #define __ANG_ASYNC_HPP__
 
 #if defined _DEBUG
-#define NEW ANG_DEBUG_NEW()
+#define NEW new(__FILE__, __LINE__)
 #define NEW_ARGS(...) new(__VA_ARGS__, __FILE__, __LINE__)
 #else
 #define NEW new
@@ -15,8 +15,8 @@
 template<class T>
 inline ang::type_name_t ang::core::async::iasync<T>::class_name()
 {
-	static string className = string("ang::core::async::iasync<"_s) + type_name<T>() + ">"_s;
-	return className->cstr();
+	static type_name_t name = runtime_data_base::regist_typename(ang::move("ang::core::async::iasync<"_o + type_of<T>() + ">"_s));
+	return name;
 }
 
 template<class T>
@@ -63,8 +63,8 @@ inline bool ang::core::async::iasync<T>::query_object(ang::type_name_t name, ang
 template<class T>
 inline ang::type_name_t ang::core::async::async_task_result<T>::class_name()
 {
-	static string className = string("ang::core::async::async_task_result<"_s) + type_name<T>() + ">"_s;
-	return className->cstr();
+	static type_name_t name = runtime_data_base::regist_typename(ang::move("ang::core::async::async_task_result<"_o + type_of<T>() + ">"_s));
+	return name;
 }
 
 template<class T>

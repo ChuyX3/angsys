@@ -138,7 +138,7 @@ namespace ang
 }//ang
 
 
-ANG_DECLARE_INTERFACE_VECTOR_SPECIALIZATION(LINK, ang::core::async::iasync_task);
+//ANG_DECLARE_INTERFACE_VECTOR_SPECIALIZATION(LINK, ang::core::async::iasync_task);
 
 namespace ang
 {
@@ -501,7 +501,7 @@ namespace ang
 				template<typename calleable_t, typename... args_t>
 				static thread_t create_worker_thread(calleable_t callback, args_t... args) {
 					thread_t worker = new thread();
-					if(!worker->start([=](void_args_t)->dword {
+					if(!worker->start([=](pointer)->dword {
 						callback(args...);
 						return 0U;
 					}, null)) return null;
@@ -518,7 +518,7 @@ namespace ang
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
 
-				virtual bool start(thread_callback_t callback, void_args_t args
+				virtual bool start(thread_callback_t callback, pointer args
 					, thread_priority_t priority = thread_priority::normal
 					, detach_state_t ds = detach_state::joinable);
 
@@ -618,7 +618,7 @@ namespace ang
 	public:
 		void clean();
 		void clean_unsafe();
-		bool_t is_empty()const;
+		bool is_empty()const;
 		type* get(void)const;
 		void set(type*);
 		type ** addres_of(void);
@@ -790,13 +790,13 @@ namespace ang
 
 			public:
 				bool dispatch();
-				bool start(thread_callback_t , void_args_t, thread_priority_t = thread_priority::normal);
+				bool start(thread_callback_t , pointer, thread_priority_t = thread_priority::normal);
 
 				delegates::listener<void(objptr, pointer)> start_event;
 				delegates::listener<void(objptr, pointer)> end_event;
 
 			private:
-				virtual bool start(thread_callback_t, void_args_t
+				virtual bool start(thread_callback_t, pointer
 					, thread_priority_t, detach_state_t) override;
 			public:
 				virtual bool wait(async_action_status_t, dword)const override;

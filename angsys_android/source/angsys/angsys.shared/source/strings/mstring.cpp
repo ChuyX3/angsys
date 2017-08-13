@@ -414,3 +414,701 @@ cmstr_t mstring_buffer::end()const
 	return  &cstr()[length()];
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
+uint mstring_buffer::insert(cstr_t cstr, index pos)
+{
+	if (is_empty())
+		return copy(cstr);
+
+	uint l1 = length();
+	uint l2 = cstr.size();
+	if (l2 == 0)
+		return false;
+	if (pos >= l1)
+		return concat(cstr);
+
+	if ((capacity() <= (l1 + l2)) && !realloc((l1 + l2), true))
+		return 0;
+
+	auto data = str();
+	l2 = algorithms::string_expand(data, l1, pos, pos + l2, capacity() + 1);
+	algorithms::string_copy(&data[pos], cstr, l2);
+
+	if (is_local_data())
+		_data._local_size = ushort(l1 + l2);
+	else
+		_data._buffer_size_used = l1 + l2;
+	return l2;
+}
+
+uint mstring_buffer::insert(char c, index pos)
+{
+	const char cstr[] = { c, 0 };
+
+	if (is_empty())
+		return copy(cstr);
+
+	uint l1 = length();
+	uint l2 = 1;
+	if (pos >= l1)
+		return concat(cstr);
+
+	if ((capacity() <= (l1 + l2)) && !realloc((l1 + l2), true))
+		return 0;
+
+	auto data = str();
+	l2 = algorithms::string_expand(data, l1, pos, pos + l2, capacity() + 1);
+	algorithms::string_copy(&data[pos], cstr, l2);
+
+	if (is_local_data())
+		_data._local_size = ushort(l1 + l2);
+	else
+		_data._buffer_size_used = l1 + l2;
+	return l2;
+}
+
+uint mstring_buffer::insert(cmstr_t cstr, index pos)
+{
+	if (is_empty())
+		return copy(cstr);
+
+	uint l1 = length();
+	uint l2 = cstr.size();
+	if (l2 == 0)
+		return false;
+	if (pos >= l1)
+		return concat(cstr);
+
+	if ((capacity() <= (l1 + l2)) && !realloc((l1 + l2), true))
+		return 0;
+
+	auto data = str();
+	l2 = algorithms::string_expand(data, l1, pos, pos + l2, capacity() + 1);
+	algorithms::string_copy(&data[pos], cstr, l2);
+
+	if (is_local_data())
+		_data._local_size = ushort(l1 + l2);
+	else
+		_data._buffer_size_used = l1 + l2;
+	return l2;
+}
+
+uint mstring_buffer::insert(mbyte c, index pos)
+{
+	const wchar cstr[] = { (wchar)c.value, 0 };
+
+	if (is_empty())
+		return copy(cstr);
+
+	uint l1 = length();
+	uint l2 = 1;
+	if (pos >= l1)
+		return concat(cstr);
+
+	if ((capacity() <= (l1 + l2)) && !realloc((l1 + l2), true))
+		return 0;
+
+	auto data = str();
+	l2 = algorithms::string_expand(data, l1, pos, pos + l2, capacity() + 1);
+	algorithms::string_copy(&data[pos], cstr, l2);
+
+	if (is_local_data())
+		_data._local_size = ushort(l1 + l2);
+	else
+		_data._buffer_size_used = l1 + l2;
+	return l2;
+}
+
+uint mstring_buffer::insert(cwstr_t cstr, index pos)
+{
+	if (is_empty())
+		return copy(cstr);
+
+	uint l1 = length();
+	uint l2 = cstr.size();
+	if (l2 == 0)
+		return false;
+	if (pos >= l1)
+		return concat(cstr);
+
+	if ((capacity() <= (l1 + l2)) && !realloc((l1 + l2), true))
+		return 0;
+
+	auto data = str();
+	l2 = algorithms::string_expand(data, l1, pos, pos + l2, capacity() + 1);
+	algorithms::string_copy(&data[pos], cstr, l2);
+
+	if (is_local_data())
+		_data._local_size = ushort(l1 + l2);
+	else
+		_data._buffer_size_used = l1 + l2;
+	return l2;
+}
+
+uint mstring_buffer::insert(wchar c, index pos)
+{
+	const wchar cstr[] = { c, 0 };
+
+	if (is_empty())
+		return copy(cstr);
+
+	uint l1 = length();
+	uint l2 = 1;
+	if (pos >= l1)
+		return concat(cstr);
+
+	if ((capacity() <= (l1 + l2)) && !realloc((l1 + l2), true))
+		return 0;
+
+	auto data = str();
+	l2 = algorithms::string_expand(data, l1, pos, pos + l2, capacity() + 1);
+	algorithms::string_copy(&data[pos], cstr, l2);
+
+	if (is_local_data())
+		_data._local_size = ushort(l1 + l2);
+	else
+		_data._buffer_size_used = l1 + l2;
+	return l2;
+}
+
+
+uint mstring_buffer::replace(cstr_t cstr, index beg, index end)
+{
+	if (is_empty() || cstr == null)
+		return 0;
+
+	if (beg >= end)
+		return insert(cstr, beg);
+
+	uint l1 = length();
+	uint l2 = cstr.size();
+
+	if (end > l1)
+		end = l1;
+
+	if (l2 == (end - beg))
+	{
+		mstr_t buff = str();
+		for (index i = 0; i < l2; i++)
+			buff[i + beg] = (mchar)(long)cstr[i];
+	}
+	else if (capacity() <= (l1 + l2 + beg - end))
+	{
+		uint size = 32, new_size = l1 + l2 + beg - end;
+		while (size <= new_size)
+			size *= 2U;
+		mchar* new_buffer = ANG_ALLOCATOR_NEW(mchar, size);
+		new_size = algorithms::string_copy(new_buffer, this->cstr(), beg);
+		new_size += algorithms::string_copy(&new_buffer[new_size], cstr, l2);
+		new_size += algorithms::string_copy(&new_buffer[new_size], &this->cstr()[end]);
+
+		clean();
+		_data._buffer_size_used = new_size;
+		_data._buffer_capacity = size - 1;
+		_data._buffer_ptr = new_buffer;
+		_data._flag_is_local_data = 0XFFFF;
+	}
+	else
+	{
+		uint new_size = l1 + l2 + beg - end;
+		if (l1 < new_size)
+		{
+			algorithms::string_expand(str(), l1, beg, 2 * beg + l2 - end, capacity() + 1);
+			algorithms::string_copy(&str()[beg], cstr, l2);
+		}
+		else
+		{
+			algorithms::string_contract(str(), l1, beg, end - l2);
+			algorithms::string_copy(&str()[beg], cstr, l2);
+		}
+		if (is_local_data())
+			_data._local_size = (ushort)new_size;
+		else
+			_data._buffer_size_used = new_size;
+	}
+	return l2;
+}
+
+uint mstring_buffer::replace(char c, index beg, index end)
+{
+	if (is_empty())
+		return 0;
+
+	if (beg >= end)
+		return insert(c, beg);
+
+	const char cstr[] = { c, 0 };
+	uint l1 = length();
+	uint l2 = 1;
+
+	if (end > l1)
+		end = l1;
+
+	if (l2 == (end - beg))
+	{
+		mstr_t buff = str();
+		for (uint i = 0; i < l2; i++)
+			buff[i + beg] = (mchar)(long)cstr[i];
+	}
+	else if (capacity() <= (l1 + l2 + beg - end))
+	{
+		uint size = 32, new_size = l1 + l2 + beg - end;
+		while (size <= new_size)
+			size *= 2U;
+		mchar* new_buffer = ANG_ALLOCATOR_NEW(mchar, size);
+		new_size = algorithms::string_copy(new_buffer, this->cstr(), beg);
+		new_size += algorithms::string_copy(&new_buffer[new_size], cstr, l2);
+		new_size += algorithms::string_copy(&new_buffer[new_size], &this->cstr()[end]);
+
+		clean();
+		_data._buffer_size_used = new_size;
+		_data._buffer_capacity = size - 1;
+		_data._buffer_ptr = new_buffer;
+		_data._flag_is_local_data = 0XFFFF;
+	}
+	else
+	{
+		uint new_size = l1 + l2 + beg - end;
+		if (l1 < new_size)
+		{
+			algorithms::string_expand(str(), l1, beg, 2 * beg + l2 - end, capacity() + 1);
+			algorithms::string_copy(&str()[beg], cstr, l2);
+		}
+		else
+		{
+			algorithms::string_contract(str(), l1, beg, end - l2);
+			algorithms::string_copy(&str()[beg], cstr, l2);
+		}
+		if (is_local_data())
+			_data._local_size = (ushort)new_size;
+		else
+			_data._buffer_size_used = new_size;
+	}
+	return l2;
+}
+
+uint mstring_buffer::replace(cmstr_t cstr, index beg, index end)
+{
+	if (is_empty() || cstr == null)
+		return 0;
+
+	if (beg >= end)
+		return insert(cstr, beg);
+
+	uint l1 = length();
+	uint l2 = cstr.size();
+
+	if (end > l1)
+		end = l1;
+
+	if (l2 == (end - beg))
+	{
+		mstr_t buff = str();
+		for (index i = 0; i < l2; i++)
+			buff[i + beg] = (mchar)(long)cstr[i];
+	}
+	else if (capacity() <= (l1 + l2 + beg - end))
+	{
+		uint size = 32, new_size = l1 + l2 + beg - end;
+		while (size <= new_size)
+			size *= 2U;
+		mchar* new_buffer = ANG_ALLOCATOR_NEW(mchar, size);
+		new_size = algorithms::string_copy(new_buffer, this->cstr(), beg);
+		new_size += algorithms::string_copy(&new_buffer[new_size], cstr, l2);
+		new_size += algorithms::string_copy(&new_buffer[new_size], &this->cstr()[end]);
+
+		clean();
+		_data._buffer_size_used = new_size;
+		_data._buffer_capacity = size - 1;
+		_data._buffer_ptr = new_buffer;
+		_data._flag_is_local_data = 0XFFFF;
+	}
+	else
+	{
+		uint new_size = l1 + l2 + beg - end;
+		if (l1 < new_size)
+		{
+			algorithms::string_expand(str(), l1, beg, 2 * beg + l2 - end, capacity() + 1);
+			algorithms::string_copy(&str()[beg], cstr, l2);
+		}
+		else
+		{
+			algorithms::string_contract(str(), l1, beg, end - l2);
+			algorithms::string_copy(&str()[beg], cstr, l2);
+		}
+		if (is_local_data())
+			_data._local_size = (ushort)new_size;
+		else
+			_data._buffer_size_used = new_size;
+	}
+	return l2;
+}
+
+uint mstring_buffer::replace(mbyte c, index beg, index end)
+{
+	if (is_empty())
+		return 0;
+
+	if (beg >= end)
+		return insert(c, beg);
+
+	const wchar cstr[] = { (wchar)c.value, 0 };
+	uint l1 = length();
+	uint l2 = 1;
+
+	if (end > l1)
+		end = l1;
+
+	if (l2 == (end - beg))
+	{
+		mstr_t buff = str();
+		for (uint i = 0; i < l2; i++)
+			buff[i + beg] = (mchar)(long)cstr[i];
+	}
+	else if (capacity() <= (l1 + l2 + beg - end))
+	{
+		uint size = 32, new_size = l1 + l2 + beg - end;
+		while (size <= new_size)
+			size *= 2U;
+		mchar* new_buffer = ANG_ALLOCATOR_NEW(mchar, size);
+		new_size = algorithms::string_copy(new_buffer, this->cstr(), beg);
+		new_size += algorithms::string_copy(&new_buffer[new_size], cstr, l2);
+		new_size += algorithms::string_copy(&new_buffer[new_size], &this->cstr()[end]);
+
+		clean();
+		_data._buffer_size_used = new_size;
+		_data._buffer_capacity = size - 1;
+		_data._buffer_ptr = new_buffer;
+		_data._flag_is_local_data = 0XFFFF;
+	}
+	else
+	{
+		uint new_size = l1 + l2 + beg - end;
+		if (l1 < new_size)
+		{
+			algorithms::string_expand(str(), l1, beg, 2 * beg + l2 - end, capacity() + 1);
+			algorithms::string_copy(&str()[beg], cstr, l2);
+		}
+		else
+		{
+			algorithms::string_contract(str(), l1, beg, end - l2);
+			algorithms::string_copy(&str()[beg], cstr, l2);
+		}
+		if (is_local_data())
+			_data._local_size = (ushort)new_size;
+		else
+			_data._buffer_size_used = new_size;
+	}
+	return l2;
+}
+
+uint mstring_buffer::replace(cwstr_t cstr, index beg, index end)
+{
+	if (is_empty() || cstr == null)
+		return 0;
+
+	if (beg >= end)
+		return insert(cstr, beg);
+
+	uint l1 = length();
+	uint l2 = cstr.size();
+
+	if (end > l1)
+		end = l1;
+
+	if (l2 == (end - beg))
+	{
+		mstr_t buff = str();
+		for (index i = 0; i < l2; i++)
+			buff[i + beg] = (mchar)(long)cstr[i];
+	}
+	else if (capacity() <= (l1 + l2 + beg - end))
+	{
+		uint size = 32, new_size = l1 + l2 + beg - end;
+		while (size <= new_size)
+			size *= 2U;
+		mchar* new_buffer = ANG_ALLOCATOR_NEW(mchar, size);
+		new_size = algorithms::string_copy(new_buffer, this->cstr(), beg);
+		new_size += algorithms::string_copy(&new_buffer[new_size], cstr, l2);
+		new_size += algorithms::string_copy(&new_buffer[new_size], &this->cstr()[end]);
+
+		clean();
+		_data._buffer_size_used = new_size;
+		_data._buffer_capacity = size - 1;
+		_data._buffer_ptr = new_buffer;
+		_data._flag_is_local_data = 0XFFFF;
+	}
+	else
+	{
+		uint new_size = l1 + l2 + beg - end;
+		if (l1 < new_size)
+		{
+			algorithms::string_expand(str(), l1, beg, 2 * beg + l2 - end, capacity() + 1);
+			algorithms::string_copy(&str()[beg], cstr, l2);
+		}
+		else
+		{
+			algorithms::string_contract(str(), l1, beg, end - l2);
+			algorithms::string_copy(&str()[beg], cstr, l2);
+		}
+		if (is_local_data())
+			_data._local_size = (ushort)new_size;
+		else
+			_data._buffer_size_used = new_size;
+	}
+	return l2;
+}
+
+uint mstring_buffer::replace(wchar c, index beg, index end)
+{
+	if (is_empty())
+		return 0;
+
+	if (beg >= end)
+		return insert(c, beg);
+
+	const wchar cstr[] = { c, 0 };
+	uint l1 = length();
+	uint l2 = 1;
+
+	if (end > l1)
+		end = l1;
+
+	if (l2 == (end - beg))
+	{
+		mstr_t buff = str();
+		for (uint i = 0; i < l2; i++)
+			buff[i + beg] = (mchar)(long)cstr[i];
+	}
+	else if (capacity() <= (l1 + l2 + beg - end))
+	{
+		uint size = 32, new_size = l1 + l2 + beg - end;
+		while (size <= new_size)
+			size *= 2U;
+		mchar* new_buffer = ANG_ALLOCATOR_NEW(mchar, size);
+		new_size = algorithms::string_copy(new_buffer, this->cstr(), beg);
+		new_size += algorithms::string_copy(&new_buffer[new_size], cstr, l2);
+		new_size += algorithms::string_copy(&new_buffer[new_size], &this->cstr()[end]);
+
+		clean();
+		_data._buffer_size_used = new_size;
+		_data._buffer_capacity = size - 1;
+		_data._buffer_ptr = new_buffer;
+		_data._flag_is_local_data = 0XFFFF;
+	}
+	else
+	{
+		uint new_size = l1 + l2 + beg - end;
+		if (l1 < new_size)
+		{
+			algorithms::string_expand(str(), l1, beg, 2 * beg + l2 - end, capacity() + 1);
+			algorithms::string_copy(&str()[beg], cstr, l2);
+		}
+		else
+		{
+			algorithms::string_contract(str(), l1, beg, end - l2);
+			algorithms::string_copy(&str()[beg], cstr, l2);
+		}
+		if (is_local_data())
+			_data._local_size = (ushort)new_size;
+		else
+			_data._buffer_size_used = new_size;
+	}
+	return l2;
+}
+
+index mstring_buffer::find(cmstr_t _cstr, index _start, bool _rev)const
+{
+	return _start < length() ? ang::string_find<mchar, mchar>(cstr(), length(), _cstr, _cstr.size(), _start, _rev) : invalid_index;
+}
+
+index mstring_buffer::find(cmstr_t _cstr, index _start, index _end, bool _rev)const
+{
+	return _start < length() ? ang::string_find<mchar, mchar>(cstr(), min<uint>(length(), _end), _cstr, _cstr.size(), _start, _rev) : invalid_index;
+}
+
+index mstring_buffer::find(cstr_t _cstr, index _start, bool _rev)const
+{
+	return _start < length() ? ang::string_find<mchar, char>(cstr(), length(), _cstr, _cstr.size(), _start, _rev) : invalid_index;
+}
+
+index mstring_buffer::find(cstr_t _cstr, index _start, index _end, bool _rev)const
+{
+	return _start < length() ? ang::string_find<mchar, char>(cstr(), min<uint>(length(), _end), _cstr, _cstr.size(), _start, _rev) : invalid_index;
+}
+
+index mstring_buffer::find(cwstr_t _cstr, index _start, bool _rev)const
+{
+	return _start < length() ? ang::string_find<mchar, wchar>(cstr(), length(), _cstr, _cstr.size(), _start, _rev) : invalid_index;
+}
+
+index mstring_buffer::find(cwstr_t _cstr, index _start, index _end, bool _rev)const
+{
+	return _start < length() ? ang::string_find<mchar, wchar>(cstr(), min<uint>(length(), _end), _cstr, _cstr.size(), _start, _rev) : invalid_index;
+}
+
+mstr_t mstring_buffer::sub_string(index at)
+{
+	if (at >= length())
+		return mstr_t();
+	return mstr_t(&str()[at], length() - at);
+}
+
+cmstr_t mstring_buffer::sub_string(index at)const
+{
+	if (at >= length())
+		return cmstr_t();
+	return cmstr_t(&cstr()[at], length() - at);
+}
+
+uint mstring_buffer::sub_string(mstring& out, index start, uint count)const
+{
+	if (is_empty())
+		return 0;
+
+	if (out.is_empty())
+		out = new mstring_buffer();
+
+	auto l1 = length();
+	if (count > l1 || (count + start) > l1)
+		count = l1 - start;
+
+	if (!out->realloc(count, false))
+		return 0;
+
+	mstring_buffer* buffer = out.get();
+
+	if (buffer->is_local_data())
+		return (buffer->_data._local_size = (ushort)string_substr<mchar, mchar>(cstr(), l1, buffer->_data._local_buffer, start, count));
+	else
+		return (buffer->_data._buffer_size_used = string_substr<mchar, mchar>(cstr(), l1, buffer->_data._buffer_ptr, start, count));
+}
+
+uint mstring_buffer::sub_string(mstr_t out, index start, uint count)const
+{
+	if (is_empty())
+		return 0;
+	return string_substr<mchar, mchar>(cstr(), length(), out, start, count);
+}
+
+
+uint mstring_buffer::sub_string(string& out, index start, uint count)const
+{
+	if (is_empty())
+		return 0;
+
+	if (out.is_empty())
+		out = new string_buffer();
+
+	auto l1 = length();
+	if (count > l1 || (count + start) > l1)
+		count = l1 - start;
+
+	if (!out->realloc(count, false))
+		return 0;
+
+	string_buffer* buffer = out.get();
+
+	if (buffer->is_local_data())
+		return (buffer->_data._local_size = (ushort)string_substr<mchar, char>(cstr(), l1, buffer->str(), start, count));
+	else
+		return (buffer->_data._buffer_size_used = string_substr<mchar, char>(cstr(), l1, buffer->str(), start, count));
+}
+
+uint mstring_buffer::sub_string(str_t out, index start, uint count)const
+{
+	if (is_empty())
+		return 0;
+	return string_substr<mchar, char>(cstr(), length(), out, start, count);
+}
+
+uint mstring_buffer::sub_string(wstring& out, index start, uint count)const
+{
+	if (is_empty())
+		return 0;
+
+	if (out.is_empty())
+		out = new wstring_buffer();
+
+	if (!out->realloc(count, false))
+		return 0;
+
+	wstring_buffer* buffer = out.get();
+
+	if (buffer->is_local_data())
+		return (buffer->_data._local_size = (ushort)string_substr<mchar, wchar>(cstr(), length(), buffer->str(), start, count));
+	else
+		return (buffer->_data._buffer_size_used = string_substr<mchar, wchar>(cstr(), length(), buffer->str(), start, count));
+}
+
+uint mstring_buffer::sub_string(wstr_t out, index start, uint count)const
+{
+	if (is_empty())
+		return 0;
+	return string_substr<mchar, wchar>(cstr(), length(), out, start, count);
+}
+
+
+void mstring_buffer::invert()
+{
+	if (is_empty())
+		return;
+
+	mchar* _beg = begin();
+	mchar* _end = end();
+	mchar temp;
+	while (_beg < _end)
+	{
+		temp = *_beg;
+		*_beg = *_end;
+		*_end = temp;
+		_end--;
+		_beg++;
+	}
+}
+
+void mstring_buffer::invert(index b, index e)
+{
+	if (is_empty() || length() <= e || e <= b)
+		return;
+
+	mchar* _beg = &(mchar&)b;
+	mchar* _end = &(mchar&)e;
+	mchar temp;
+	while (_beg < _end)
+	{
+		temp = *_beg;
+		*_beg = *_end;
+		*_end = temp;
+		_end--;
+		_beg++;
+	}
+}
+
+void mstring_buffer::uppercase()
+{
+	if (is_empty())
+		return;
+	uint l = length();
+	mchar* buff = str();
+	for (uint i = 0; i < l; i++)
+	{
+		if ((buff[i] >= 97) && (buff[i] <= 122))
+			buff[i] = mchar((long)buff[i] + 65 - 97);
+	}
+}
+
+void mstring_buffer::lowercase()
+{
+	if (is_empty())
+		return;
+	uint l = length();
+	mchar* buff = str();
+	for (uint i = 0; i < l; i++)
+	{
+		if ((buff[i] >= 65) && (buff[i] <= 90))
+			buff[i] = mchar((long)buff[i] + 97 - 65);
+	}
+}
+

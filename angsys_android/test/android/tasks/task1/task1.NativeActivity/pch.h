@@ -8,7 +8,8 @@
 //
 
 #include <angsys.h>
-
+#include <ang/xml.h>
+#include <ang/core/delegates.h>
 //#include <string.h>
 //#include <unistd.h>
 //#include <sys/resource.h>

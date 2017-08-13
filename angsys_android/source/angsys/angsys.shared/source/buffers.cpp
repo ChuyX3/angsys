@@ -58,6 +58,11 @@ buffer::buffer()
 
 }
 
+buffer::buffer(wsize sz,pointer ptr)
+{
+	mem_copy(sz, ptr);
+}
+
 buffer::~buffer()
 {
 

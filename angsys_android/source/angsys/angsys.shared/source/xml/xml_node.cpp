@@ -261,20 +261,20 @@ bool xml_node::xml_is_type_of(xml_type_t type)const
 	return (_xml_type == type || xml_type_t::node == type);
 }
 
-wstring& xml_node::xml_print(wstring& stream, xml_format_t const& flag, ushort level)const
+mstring& xml_node::xml_print(mstring& stream, xml_format_t const& flag, ushort level)const
 {
 	switch (_xml_type)
 	{
 	case xml_type_t::header:
 	{
-		auto version = (xml_value_t)_xml_attributes["version"];
-		auto encoding = (xml_value_t)_xml_attributes["encoding"];
-		auto standalone = (xml_value_t)_xml_attributes["standalone"];
-		stream << L"<?xml "_s << L"version=\""_s << version << L"\""_s;
-		stream << L" encoding="_s << L"\""_s << (encoding.is_empty() ? L"utf-8"_s : encoding->cstr()) << L"\""_s;
+		auto version = (xml_value_t)_xml_attributes["version"_sm];
+		auto encoding = (xml_value_t)_xml_attributes["encoding"_sm];
+		auto standalone = (xml_value_t)_xml_attributes["standalone"_sm];
+		stream << "<?xml "_sm << "version=\""_sm << version << "\""_sm;
+		stream << " encoding="_sm << "\""_sm << (encoding.is_empty() ? "utf-8"_sm : encoding->cstr()) << "\""_sm;
 		if (!standalone.is_empty())
-			stream << L" standalone=\""_s << standalone << L"\""_s;
-		stream << L"?>"_s;
+			stream << " standalone=\""_sm << standalone << "\""_sm;
+		stream << "?>"_sm;
 	}
 	break;
 	case xml_type_t::element:
@@ -283,19 +283,19 @@ wstring& xml_node::xml_print(wstring& stream, xml_format_t const& flag, ushort l
 			if (flag.is_active(xml_format::wrap_text_tab))
 			{
 				for (index i = 0; i < level; i++)
-					stream << L"\t"_s;
+					stream << "\t"_sm;
 			}
 			else if (flag.is_active(xml_format::wrap_text_space))
 			{
 				for (index i = 0; i < level; i++)
-					stream << L"  "_s;
+					stream << "  "_sm;
 			}
 
-			stream << L"<"_s << _xml_name;
+			stream << "<"_sm << _xml_name;
 
 			if (xml_has_attributes())
 			{
-				stream << L" "_s;
+				stream << " "_sm;
 				_xml_attributes->xml_print(stream, flag, level);
 			}
 
@@ -303,62 +303,62 @@ wstring& xml_node::xml_print(wstring& stream, xml_format_t const& flag, ushort l
 			{
 				if (_xml_content.data_type == xml_type_t::value)
 				{
-					stream << L">"_s;
-					xml_value_t(static_cast<strings::wstring_buffer*>(_xml_content.unknown.get())).xml_print(stream, flag, level);
+					stream << ">"_sm;
+					xml_value_t(static_cast<strings::mstring_buffer*>(_xml_content.unknown.get())).xml_print(stream, flag, level);
 				}
 				else if (_xml_content.data_type == xml_type_t::data)
 				{
-					stream << L">"_s;
+					stream << ">"_sm;
 					if (flag.is_active(xml_format::wrap_text_tab))
 					{
-						stream << L"\n"_s;
+						stream << "\n"_sm;
 						for (index i = 0; i <= level; i++)
-							stream << L"\t"_s;
+							stream << "\t"_sm;
 					}
 					else if (flag.is_active(xml_format::wrap_text_space))
 					{
-						stream << L"\n"_s;
+						stream << "\n"_sm;
 						for (index i = 0; i <= level; i++)
-							stream << L"  "_s;
+							stream << "  "_sm;
 					}
-					stream << L"<![CDATA["_s;
-					xml_value_t(static_cast<strings::wstring_buffer*>(_xml_content.unknown.get())).xml_print(stream, flag - xml_format::fix_entity, level);
-					stream << L"]]>"_s;
+					stream << "<![CDATA["_sm;
+					xml_value_t(static_cast<strings::mstring_buffer*>(_xml_content.unknown.get())).xml_print(stream, flag - xml_format::fix_entity, level);
+					stream << "]]>"_sm;
 					if (flag.is_active(xml_format::wrap_text_tab))
 					{
-						stream << L"\n"_s;
+						stream << "\n"_sm;
 						for (index i = 0; i < level; i++)
-							stream << L"\t"_s;
+							stream << "\t"_sm;
 					}
 					else if (flag.is_active(xml_format::wrap_text_space))
 					{
-						stream << L"\n"_s;
+						stream << "\n"_sm;
 						for (index i = 0; i < level; i++)
-							stream << L"  "_s;
+							stream << "  "_sm;
 					}
 				}
 				else
 				{
-					stream << L">"_s;
+					stream << ">"_sm;
 					static_cast<xml_items*>(_xml_content.unknown.get())->xml_print(stream, flag, level + 1);
 					if (flag.is_active(xml_format::wrap_text_tab))
 					{
-						stream << L"\n"_s;
+						stream << "\n"_sm;
 						for (index i = 0; i < level; i++)
-							stream << L"\t"_s;
+							stream << "\t"_sm;
 					}
 					else if (flag.is_active(xml_format::wrap_text_space))
 					{
-						stream << L"\n"_s;
+						stream << "\n"_sm;
 						for (index i = 0; i < level; i++)
-							stream << L"  "_s;
+							stream << "  "_sm;
 					}
 				}
-				stream << L"</"_s << _xml_name << L">"_s;
+				stream << "</"_sm << _xml_name << ">"_sm;
 			}
 			else
 			{
-				stream << L"/>"_s;
+				stream << "/>"_sm;
 			}
 		}
 		break;
@@ -366,34 +366,34 @@ wstring& xml_node::xml_print(wstring& stream, xml_format_t const& flag, ushort l
 		if (flag.is_active(xml_format::wrap_text_tab))
 		{
 			for (index i = 0; i < level; i++)
-				stream << L"\t"_s;
+				stream << "\t"_sm;
 		}
 		else if (flag.is_active(xml_format::wrap_text_space))
 		{
 			for (index i = 0; i < level; i++)
-				stream << L"  "_s;
+				stream << "  "_sm;
 		}
-		stream << L"<!--"_s;
+		stream << "<!--"_sm;
 		if (xml_has_value())
-			stream << xml_value_t(static_cast<strings::wstring_buffer*>(_xml_content.unknown.get()));
-		stream << L"-->"_s;
+			stream << xml_value_t(static_cast<strings::mstring_buffer*>(_xml_content.unknown.get()));
+		stream << "-->"_sm;
 		break;
 	case xml_type_t::attribute:
 		if (xml_has_name() && xml_has_value())
 		{
 			stream << _xml_name;
-			xml_value_t val = static_cast<strings::wstring_buffer*>(_xml_content.unknown.get());
-			if (val->find("\""_s, 0) != invalid_index)
+			xml_value_t val = static_cast<strings::mstring_buffer*>(_xml_content.unknown.get());
+			if (val->find("\""_sm, 0) != invalid_index)
 			{
-				stream << L"='"_s;
+				stream << "='"_sm;
 				val.xml_print(stream, xml_format::none, 0);
-				stream << L"'"_s;
+				stream << "'"_sm;
 			}
 			else
 			{
-				stream << L"=\""_s;
+				stream << "=\""_sm;
 				val.xml_print(stream, xml_format::none, 0);
-				stream << L"\""_s;
+				stream << "\""_sm;
 			}
 		}
 		break;
@@ -402,6 +402,7 @@ wstring& xml_node::xml_print(wstring& stream, xml_format_t const& flag, ushort l
 }
 
 bool xml_node::xml_has_name()const { return false; }
+bool xml_node::xml_has_data()const { return false; }
 bool xml_node::xml_has_value()const { return false; }
 bool xml_node::xml_has_children()const { return false; }
 bool xml_node::xml_has_attributes()const { return false; }
@@ -444,14 +445,14 @@ xml_value_t xml_node::xml_name()const
 xml_value_t xml_node::xml_data()const
 {
 	if (_xml_content.data_type == xml_type_t::data)
-		return xml_value_t(static_cast<strings::wstring_buffer*>(_xml_content.unknown.get()));
+		return xml_value_t(static_cast<strings::mstring_buffer*>(_xml_content.unknown.get()));
 	return xml_value_t();
 }
 
 xml_value_t xml_node::xml_value()const
 {
 	if (_xml_content.data_type == xml_type_t::value)
-		return xml_value_t(static_cast<strings::wstring_buffer*>(_xml_content.unknown.get()));
+		return xml_value_t(static_cast<strings::mstring_buffer*>(_xml_content.unknown.get()));
 	return xml_value_t();
 }
 
@@ -467,7 +468,7 @@ xml_attributes_t xml_node::xml_attributes()const
 	return (xml_attribute_list*)_xml_attributes.get();
 }
 
-bool xml_node::xml_name(wstring value)
+bool xml_node::xml_name(mstring value)
 {
 	if (_xml_type != xml_type_t::attribute
 		&& _xml_type != xml_type_t::element)
@@ -476,7 +477,7 @@ bool xml_node::xml_name(wstring value)
 	return true;
 }
 
-bool xml_node::xml_data(wstring value)
+bool xml_node::xml_data(mstring value)
 {
 	if (_xml_type != xml_type_t::attribute
 		&& _xml_type != xml_type_t::element
@@ -487,7 +488,7 @@ bool xml_node::xml_data(wstring value)
 	return true;
 }
 
-bool xml_node::xml_value(wstring value)
+bool xml_node::xml_value(mstring value)
 {
 	if (_xml_type != xml_type_t::attribute
 		&& _xml_type != xml_type_t::element

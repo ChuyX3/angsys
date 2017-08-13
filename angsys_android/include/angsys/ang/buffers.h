@@ -84,6 +84,7 @@ namespace ang
 
 	public:
 		buffer();
+		buffer(wsize, pointer);
 
 	public: //overrides
 		ANG_DECLARE_INTERFACE();

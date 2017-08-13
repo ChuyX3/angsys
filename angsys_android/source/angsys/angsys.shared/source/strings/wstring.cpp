@@ -904,7 +904,7 @@ void wstring_buffer::uppercase()
 	for (uint i = 0; i < l; i++)
 	{
 		if ((buff[i] >= 97) && (buff[i] <= 122))
-			buff[i] = wchar(buff[i] + 65 - 97);
+			buff[i] = wchar((long)buff[i] + 65 - 97);
 	}
 }
 
@@ -917,7 +917,7 @@ void wstring_buffer::lowercase()
 	for (uint i = 0; i < l; i++)
 	{
 		if ((buff[i] >= 65) && (buff[i] <= 90))
-			buff[i] = wchar(buff[i] + 97 - 64);
+			buff[i] = wchar((long)buff[i] + 97 - 65);
 	}
 }
 
