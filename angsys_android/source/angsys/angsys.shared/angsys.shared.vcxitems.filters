@@ -134,6 +134,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\time.h">
       <Filter>header files\angsys\ang\core</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\thread_manager.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_async.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">

@@ -161,7 +161,7 @@ inline ang::intf_wrapper<ang::collections::ienum<T>>::intf_wrapper(ang::collecti
 }
 template<typename T>
 inline ang::intf_wrapper<ang::collections::ienum<T>>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
-	T * temp = other._ptr;
+	ang::collections::ienum<T> * temp = other._ptr;
 	other._ptr = null;
 	_ptr = temp;
 }

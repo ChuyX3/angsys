@@ -11,6 +11,8 @@
 #include "angsys.h"
 #include "ang/core/delegates.h"
 #include "ang/core/async.h"
+#include "ang_async.h"
+
 
 #if defined _DEBUG && defined MEMORY_DEBUGGING
 #define NEW ANG_DEBUG_NEW()
@@ -26,13 +28,8 @@ using namespace ang;
 using namespace ang::core;
 using namespace ang::core::async;
 
-#if defined __ANDROID__ || defined LINUX
-typedef struct _mutex_handle
-{
-	pthread_mutexattr_t attr;
-	pthread_mutex_t _mutex;
-}*mutex_handle;
-#endif
+typedef ang_mutex_t _mutex_handle, *mutex_handle;
+typedef ang_cond_t _cond_handle, *cond_handle;
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -250,68 +247,20 @@ ANG_IMPLEMENT_FLAGS(async, async_action_status, uint)
 mutex::mutex()
 	: _handle(null)
 {
-#if defined WINAPI_FAMILY
-	_handle = CreateMutexExW(NULL
-		, NULL
-		, 0
-		, SYNCHRONIZE);
-#else
-	auto alloc = GET_DEFAULT_ALLOC();
-	mutex_handle _mutex = alloc->alloc_object<_mutex_handle>(1);
-	pthread_mutexattr_init(&_mutex->attr);
-	pthread_mutexattr_settype(&_mutex->attr, PTHREAD_MUTEX_RECURSIVE);
-	if (pthread_mutex_init(&_mutex->_mutex, &_mutex->attr) != 0)
-	{
-		pthread_mutexattr_destroy(&_mutex->attr);
-		alloc->free(_mutex);
-		_mutex = null;
-	}
-	_handle = _mutex;
-#endif
+	_handle = ang_allocator<_mutex_handle>::construct(ang_allocator<_mutex_handle>::alloc(1));
 }
 
 mutex::mutex(bool _lock)
 	: _handle(null)
 {
-#if defined WINAPI_FAMILY
-	_handle = CreateMutexExW(NULL
-		, NULL
-		, _lock ? CREATE_MUTEX_INITIAL_OWNER : 0
-		, SYNCHRONIZE);
-#else
-	auto alloc = GET_DEFAULT_ALLOC();
-	mutex_handle _mutex = alloc->alloc_object<_mutex_handle>(1);
-	pthread_mutexattr_init(&_mutex->attr);
-	pthread_mutexattr_settype(&_mutex->attr, PTHREAD_MUTEX_RECURSIVE);
-	if (pthread_mutex_init(&_mutex->_mutex, &_mutex->attr) != 0)
-	{
-		pthread_mutexattr_destroy(&_mutex->attr);
-		alloc->free(_mutex);
-		_mutex = null;
-	}
-	_handle = _mutex;
-
-	if (_lock && _mutex)
-	{
-		pthread_mutex_lock(&_mutex->_mutex);
-	}
-	
-#endif
+	_handle = ang_allocator<_mutex_handle>::construct(ang_allocator<_mutex_handle>::alloc(1));
+	if (_lock) mutex_handle(_handle)->lock();
 }
 
 mutex::~mutex()
 {
 	if (_handle != null)
-	{
-#if defined WINDOWS_PLATFORM
-		::CloseHandle(_handle);
-#else
-		auto _mutex = reinterpret_cast<mutex_handle>(_handle);
-		pthread_mutex_destroy(&_mutex->_mutex);
-		pthread_mutexattr_destroy(&_mutex->attr);
-		GET_DEFAULT_ALLOC()->free(_mutex);
-#endif
-	}
+		ang_allocator<_mutex_handle>::destruct_and_free(reinterpret_cast<mutex_handle>(_handle));
 	_handle = null;
 }
 
@@ -325,33 +274,21 @@ pointer mutex::handle()const
 bool mutex::lock()const
 {
 	if (_handle != null)
-#if defined WINAPI_FAMILY
-		return bool(WAIT_OBJECT_0 == WaitForSingleObjectEx((HANDLE)_handle, INFINITE, FALSE));
-#else
-		return bool(0 == pthread_mutex_lock(&mutex_handle(_handle)->_mutex));
-#endif
+		return reinterpret_cast<mutex_handle>(_handle)->lock();
 	return false;
 }
 
 bool mutex::try_lock()const
 {
 	if (_handle != null)
-#if defined WINAPI_FAMILY
-		return bool(WAIT_OBJECT_0 == WaitForSingleObjectEx((HANDLE)_handle, 0, FALSE));
-#else
-		return bool(0 == pthread_mutex_trylock(&mutex_handle(_handle)->_mutex));
-#endif
+		return reinterpret_cast<mutex_handle>(_handle)->try_lock();
 	return false;
 }
 
 bool mutex::unlock()const
 {
 	if (_handle != null)
-#if defined WINAPI_FAMILY
-		return ReleaseMutex(_handle) == 0 ? false : true;
-#else
-		return bool(0 == pthread_mutex_unlock(&mutex_handle(_handle)->_mutex));
-#endif
+		return reinterpret_cast<mutex_handle>(_handle)->unlock();
 	return false;
 }
 
@@ -459,23 +396,14 @@ mutex * ang::object_wrapper<mutex>::operator -> (void)const
 
 cond::cond()
 {
-#ifdef WINDOWS_PLATFORM
-	_handle = CreateEventEx(null, null, 0, EVENT_ALL_ACCESS);
-#elif defined __ANDROID__ || defined LINUX
-	_handle = GET_DEFAULT_ALLOC()->alloc_object<pthread_cond_t>(1);
-	pthread_cond_init((pthread_cond_t*)_handle, NULL);
-#endif
+	_handle = ang_allocator<_cond_handle>::construct(ang_allocator<_cond_handle>::alloc(1));
 }
 
 cond::~cond()
 {
-#ifdef WINDOWS_PLATFORM
-	CloseHandle(_handle);
-#elif defined __ANDROID__ || defined LINUX
-	pthread_cond_destroy((pthread_cond_t*)_handle);
-	GET_DEFAULT_ALLOC()->free(_handle);
+	if (_handle != null)
+		ang_allocator<_cond_handle>::destruct_and_free(reinterpret_cast<cond_handle>(_handle));
 	_handle = null;
-#endif
 }
 
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::async::cond, ang::object);
@@ -483,45 +411,23 @@ ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::async::cond, ang::object);
 
 bool cond::wait(mutex_t mutex)const
 {
-	int res = 0;
-	if (mutex.is_empty())
-		return false;
-#ifdef WINAPI_FAMILY
-	mutex->unlock();
-	res = WaitForSingleObjectEx(_handle, INFINITE, FALSE);
-	mutex->lock();
-#elif defined __ANDROID__ || defined LINUX
-	res = pthread_cond_wait((pthread_cond_t*)_handle, &mutex_handle(mutex->handle())->_mutex);
-#endif
-	return res == 0;
+	if (!mutex.is_empty() && _handle != null)
+		return reinterpret_cast<cond_handle>(_handle)->wait(*mutex_handle(mutex->handle()));
+	return false;
 }
 
 bool cond::wait(mutex_t mutex, dword ms)const
 {
-	int res = 0;
-	if (mutex.is_empty())
-		return false;
-#ifdef WINAPI_FAMILY
-	mutex->unlock();
-	res = WaitForSingleObjectEx(_handle, ms, FALSE);
-	mutex->lock();
-#elif defined __ANDROID__ || defined LINUX
-	timespec time;
-	time.tv_sec = ms / 1000;
-	time.tv_nsec = (ms - time.tv_sec * 1000) * 1000;
-	res = pthread_cond_timedwait((pthread_cond_t*)_handle, &mutex_handle(mutex->handle())->_mutex, &time);
-#endif
-	return res == 0;
+	if (!mutex.is_empty() && _handle != null)
+		return reinterpret_cast<cond_handle>(_handle)->wait(*mutex_handle(mutex->handle()), ms);
+	return false;
 }
 
 bool cond::signal()const
 {
-#ifdef WINAPI_FAMILY
-	SetEvent(_handle);
-#elif defined __ANDROID__ || defined LINUX
-	pthread_cond_broadcast((pthread_cond_t*)_handle);
-#endif
-	return true;
+	if (_handle != null)
+		return reinterpret_cast<cond_handle>(_handle)->signal();
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

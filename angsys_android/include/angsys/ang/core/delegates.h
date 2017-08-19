@@ -453,8 +453,8 @@ namespace ang
 					append(function<return_t(args_t...)>(func));
 					return*this;
 				}
-				inline array<return_t> invoke(args_t... args)const;
-				inline array<return_t> operator()(args_t... args)const;
+				inline collections::ienum_t<return_t> invoke(args_t... args)const;
+				inline collections::ienum_t<return_t> operator()(args_t... args)const;
 			};
 
 			template<typename... args_t>

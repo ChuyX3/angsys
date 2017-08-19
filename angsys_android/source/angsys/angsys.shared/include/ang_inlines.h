@@ -10,45 +10,6 @@
 //ANG_EXTERN ang_void_ptr_t ang_alloc_unmanaged_memory(ang_size_t);
 //ANG_EXTERN void ang_free_unmanaged_memory(ang_void_ptr_t);
 
-struct ang_mutex
-{
-#if defined __ANDROID__ || defined LINUX
-	mutable pthread_mutexattr_t attr;
-	mutable pthread_mutex_t _mutex;
-	inline ang_mutex() {
-		pthread_mutexattr_init(&attr);
-		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-	}
-	inline ~ang_mutex() {
-		pthread_mutex_destroy(&_mutex);
-		pthread_mutexattr_destroy(&attr);
-	}
-	inline void lock()const { pthread_mutex_lock(&_mutex); }
-	inline void unlock()const { pthread_mutex_unlock(&_mutex); }
-#elif defined WINDOWS_PLATFORM
-	HANDLE _hmutex;
-	inline ang_mutex() {
-		_hmutex = CreateMutexExW(NULL, NULL, 0, SYNCHRONIZE);
-	}
-	inline ~ang_mutex() {
-		::CloseHandle(_hmutex);
-	}
-	inline void lock()const { WaitForSingleObjectEx(_hmutex, INFINITE, FALSE) }
-	inline void unlock()const { ReleaseMutex(_hmutex); }
-#endif
-
-};
-
-struct ang_scope_locker
-{
-	ang_mutex & _mutex;
-	ang_scope_locker(ang_mutex& m) : _mutex(m) {
-		_mutex.lock();
-	}
-	~ang_scope_locker() {
-		_mutex.unlock();
-	}
-};
 
 #ifndef __PLACEMENT_NEW_INLINE
 #define __PLACEMENT_NEW_INLINE

@@ -84,9 +84,9 @@ static int engine_init_display(engine_t engine) {
 	* ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. */
 	eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
 
-	ANativeWindow_setBuffersGeometry(engine->app->window, 0, 0, format);
+	ANativeWindow_setBuffersGeometry(engine->activity->window(), 0, 0, format);
 
-	surface = eglCreateWindowSurface(display, config, engine->app->window, NULL);
+	surface = eglCreateWindowSurface(display, config, engine->activity->window(), NULL);
 	context = eglCreateContext(display, config, NULL, NULL);
 
 	if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
@@ -171,13 +171,13 @@ static dword engine_handle_cmd(ang::platform::android::activity_t app, uint cmd)
 	switch (cmd) {
 	case APP_CMD_SAVE_STATE:
 		// The system has asked us to save our current state.  Do so.
-		engine->app->savedState = malloc(sizeof(struct saved_state));
-		*((struct saved_state*)engine->app->savedState) = engine->state;
-		engine->app->savedStateSize = sizeof(struct saved_state);
+		//app->savedState = malloc(sizeof(struct saved_state));
+		//*((struct saved_state*)app->savedState) = engine->state;
+		//app->savedStateSize = sizeof(struct saved_state);
 		break;
 	case APP_CMD_INIT_WINDOW:
 		// The window is being shown, get it ready.
-		if (engine->app->window != NULL) {
+		if (engine->activity->window() != NULL) {
 			engine_init_display(engine);
 			engine_draw_frame(engine);
 		}
@@ -228,11 +228,11 @@ using namespace ang::xml;
 int main() {
 	engine_t engine = new ::engine();
 	
-	activity_t activity = android::activity::get_activity();
+	activity_t activity = android::activity::instance();
 
 	activity->user_data(engine.get());
 	activity->command_event += &engine_handle_cmd;
-	activity->input_event += engine_handle_input;
+	activity->input_event += &engine_handle_input;
 	engine->activity = activity;
 
 	// Prepare to monitor accelerometer
@@ -242,10 +242,10 @@ int main() {
 	engine->sensorEventQueue = ASensorManager_createEventQueue(engine->sensorManager,
 		activity->looper(), LOOPER_ID_USER, NULL, NULL);
 
-	if (activity->savedState != NULL) {
-		// We are starting with a previous saved activity; restore from it.
-		engine->activity = *(struct saved_state*)activity->savedState;
-	}
+	//if (activity->savedState != NULL) {
+	//	// We are starting with a previous saved activity; restore from it.
+	//	engine->activity = *(struct saved_state*)activity->savedState;
+	//}
 
 	engine->animating = 1;
 
@@ -255,17 +255,17 @@ int main() {
 		// Read all pending events.
 		int ident;
 		int events;
-		struct android_poll_source* source;
+		core::delegates::function<void(void)> callback;
 
 		// If not animating, we will block forever waiting for events.
 		// If animating, we loop until all events are read, then continue
 		// to draw the next frame of animation.
 		while ((ident = ALooper_pollAll(engine->animating ? 0 : -1, NULL, &events,
-			(void**)&source)) >= 0) {
+			(void**)callback.addres_of())) >= 0) {
 
 			// Process this event.
-			if (source != NULL) {
-				source->process(activity, source);
+			if (callback.get() != NULL) {
+				callback();
 			}
 
 			// If a sensor has data, process it now.
@@ -283,21 +283,21 @@ int main() {
 
 			// Check if we are exiting.
 			if (activity->destroyRequested != 0) {
-				engine_term_display(&engine);
-				return;
+				engine_term_display(engine);
+				return 0;
 			}
 		}
 
 		if (engine->animating) {
 			// Done with events; draw next animation frame.
-			engine->activity.angle += .01f;
-			if (engine->activity.angle > 1) {
-				engine->activity.angle = 0;
-			}
+			//engine->activity.angle += .01f;
+			//if (engine->activity.angle > 1) {
+			//	engine->activity.angle = 0;
+			//}
 
 			// Drawing is throttled to the screen update rate, so there
 			// is no need to do timing here.
-			engine_draw_frame(&engine);
+			engine_draw_frame(engine);
 		}
 	}
 }

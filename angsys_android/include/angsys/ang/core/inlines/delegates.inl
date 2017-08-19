@@ -411,45 +411,27 @@ ang::core::delegates::listener<return_t(args_t...)>& ang::core::delegates::liste
 }
 
 template<typename return_t, typename... args_t>
-ang::array<return_t> ang::core::delegates::listener<return_t(args_t...)>::operator() (args_t... args)const
+ang::collections::ienum_t<return_t> ang::core::delegates::listener<return_t(args_t...)>::operator() (args_t... args)const
 {
-	array<return_t> result;
+	collections::vector<return_t> result;
 	if (!is_empty())
 	{
-		result = ang::move(array<return_t>(functions->size()));
-
-		function<return_t(args_t...)>func;
-
-		for (index i = 0U; i < result->size(); ++i)
-		{
-			func = functions[i];
-			result[i] = func(args...);
-		}
-			
-		
+		for (function<return_t(args_t...)>func : functions)	
+			result += func(args...);
 	}
-	return ang::move(result);
+	return result.get();
 }
 
 template<typename return_t, typename... args_t>
-ang::array<return_t> ang::core::delegates::listener<return_t(args_t...)>::invoke(args_t... args)const
+ang::collections::ienum_t<return_t> ang::core::delegates::listener<return_t(args_t...)>::invoke(args_t... args)const
 {
-	array<return_t> result;
+	collections::vector<return_t> result;
 	if (!is_empty())
 	{
-		result = ang::move(array<return_t>(functions->size()));
-
-		function<return_t(args_t...)>func;
-
-		for (index i = 0U; i < result->size(); ++i)
-		{
-			func = functions[i];
-			result[i] = func(args...);
-		}
-
-
+		for (function<return_t(args_t...)>func : functions)
+			result += func(args...);
 	}
-	return ang::move(result);
+	return result.get();
 }
 
 

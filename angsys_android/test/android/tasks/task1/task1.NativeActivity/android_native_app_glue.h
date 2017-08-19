@@ -40,12 +40,11 @@ namespace ang
 
 			class activity
 				: public object
+				, public singleton<activity_t>
 			{
 			private:
+				friend singleton<activity_t>;
 				static void* activity_entry(void* param);
-				static activity_t _the_activity;
-			public:
-				static activity_t get_activity() { return _the_activity; }
 
 			private:
 				objptr _user_data;
@@ -54,11 +53,11 @@ namespace ang
 				ANativeActivity* _activity;
 				AConfiguration* _config;
 				ALooper* _looper;
-				AInputQueue* input_queue;
-				ANativeWindow* window;
+				AInputQueue* _input_queue;
+				ANativeWindow* _window;
 				ARect contentRect;
 				int activityState;
-				int destroyRequested;
+				
 				mutable ang::core::async::mutex_t _mutex;
 				mutable ang::core::async::cond_t _cond;
 				int msgread;
@@ -72,16 +71,17 @@ namespace ang
 				ANativeWindow* pendingWindow;
 				ARect pendingContentRect;
 
-				ang::core::delegates::function<dword(activity_t)> on_command_event_handler;
-				ang::core::delegates::function<dword(activity_t)> on_input_event_handler;
-
-			public:
-				activity(ANativeActivity* na, ibuffer_t savedState);
+				ang::core::delegates::function<void(void)> on_command_event_handler;
+				ang::core::delegates::function<void(void)> on_input_event_handler;
 
 			protected:
-				virtual~ activity();
+				activity() { throw exception(except_code::invalid_param); }
+				activity(ANativeActivity* na, ibuffer_t savedState);
+				virtual~activity();
 
 			public:
+				int destroyRequested;
+
 				ang::core::delegates::listener<dword(activity_t, uint)> command_event;
 				ang::core::delegates::listener<dword(activity_t, AInputEvent*)> input_event;
 
@@ -93,6 +93,10 @@ namespace ang
 
 				ANativeActivity* native_activity()const { return _activity; }
 				AConfiguration* configuration()const { return _config; }
+				ALooper* looper()const { return _looper; }
+				AInputQueue* input_queue()const { return _input_queue; }
+				ANativeWindow* window()const { return _window; }
+
 				ang::core::async::mutex_t main_mutex()const { return _mutex; }
 				ang::core::async::cond_t main_cond()const { return _cond; }
 
@@ -122,14 +126,35 @@ namespace ang
 				int get_ui_mode_night()const { return AConfiguration_getUiModeNight(_config); }
 
 			public:
-				byte read_cmd();
-
+				uint read_cmd(void);
+				void write_cmd(uint);
+				void set_input(AInputQueue*);
+				void set_window(ANativeWindow*);
+				void set_activity_state(uint);
+				void process_command();
+				void process_input();
+				void close();
 
 			protected:
-				virtual void pre_execute_comand(byte cmd);
-				virtual void post_execute_comand(byte cmd);
+				virtual void pre_execute_comand(uint cmd);
+				virtual void post_execute_comand(uint cmd);
 
-				//extern void android_main(struct activity* app);
+			private:
+
+				static void onDestroy(ANativeActivity* activity);
+				static void onStart(ANativeActivity* activity);
+				static void onResume(ANativeActivity* activity);
+				static void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen);
+				static void onPause(ANativeActivity* activity);
+				static void onStop(ANativeActivity* activity);
+				static void onConfigurationChanged(ANativeActivity* activity);
+				static void onLowMemory(ANativeActivity* activity);
+				static void onWindowFocusChanged(ANativeActivity* activity, int focused);
+				static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window);
+				static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window);
+				static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue);
+				static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue);
+
 			};
 
 			enum LOOPER_ID {
@@ -138,7 +163,7 @@ namespace ang
 				LOOPER_ID_USER = 3,
 			};
 
-			enum APP_CMD : byte {
+			enum APP_CMD : uint {
 				APP_CMD_INPUT_CHANGED,
 				APP_CMD_INIT_WINDOW,
 				APP_CMD_TERM_WINDOW,

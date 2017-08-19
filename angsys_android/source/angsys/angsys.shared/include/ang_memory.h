@@ -2,6 +2,7 @@
 
 #include "angsys.h"
 #include "ang_inlines.h"
+#include "ang_async.h"
 
 #if defined _DEBUG || defined _DEVELOPPER
 #define _MEMORY_PROFILING
