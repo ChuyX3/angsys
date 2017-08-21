@@ -8,7 +8,7 @@
 /*********************************************************************************************************************/
 
 #include "pch.h"
-#include "thread_manager.h"
+#include "ang/core/async.h"
 #include "ang/core/time.h"
 
 //#if defined _DEBUG && defined MEMORY_DEBUGGING
@@ -28,6 +28,13 @@ using namespace ang;
 using namespace ang::core;
 using namespace ang::core::async;
 
+typedef struct _thread_data
+{
+	thread_t _thread;
+	async_action_status_t _status;
+	thread_callback_t _callback;
+	pointer _args;
+}thread_data_t, *thread_data_ptr_t;
 
 ///////////////////////////////////////////////////////////////
 
@@ -141,14 +148,31 @@ void thread::sleep(dword dwMilliseconds)
 #endif
 }
 
+inline thread_data_ptr_t get_thread_data(ang_core_thread_ptr_t thread) {
+	if (thread == null )
+		return null;
+	return thread->tle_data<thread_data_t>();
+}
+
 thread_t thread::main_thread()
 {
-	return thread_manager::get_main_thread();
+	auto _thread = get_thread_data(ang_core_thread_main_thread());
+	return _thread ? _thread->_thread : null;
+}
+
+thread_t thread::current_thread()
+{
+	auto _this_thread = ang_core_thread_this_thread();
+	auto _thread_data = get_thread_data(_this_thread);
+	if (_thread_data == null)
+	{
+	}
+	return _thread_data->_thread;
 }
 
 dword thread::current_thread_id()
 {
-	return thread_manager::get_current_thread_id();
+	return ang_core_thread_this_thread_id();
 }
 
 thread::thread()
@@ -167,18 +191,18 @@ ANG_IMPLEMENT_OBJECTNAME(ang::core::async::thread);
 
 bool thread::is_child_of(type_name_t name)
 {
-	if (name == type_name<thread>()
+	if (name == type_of<thread>()
 		|| object::is_child_of(name)
-		|| name, type_name<iasync_task>())
+		|| name, type_of<iasync_task>())
 		return true;
 	return false;
 }
 
 bool thread::is_kind_of(type_name_t name)const
 {
-	if (name == type_name<thread>()
+	if (name == type_of<thread>()
 		|| object::is_kind_of(name)
-		|| name, type_name<iasync_task>())
+		|| name, type_of<iasync_task>())
 		return true;
 	return false;
 }
@@ -187,7 +211,7 @@ bool thread::query_object(type_name_t name, unknown_ptr_t out)
 {
 	if (out == null)
 		return false;
-	if (name == type_name<thread>())
+	if (name == type_of<thread>())
 	{
 		*out = static_cast<thread*>(this);
 		return true;
@@ -196,7 +220,7 @@ bool thread::query_object(type_name_t name, unknown_ptr_t out)
 	{
 		return true;
 	}
-	else if (name == type_name<iasync_task>())
+	else if (name == type_of<iasync_task>())
 	{
 		*out = static_cast<iasync_task*>(this);
 		return true;
@@ -204,20 +228,41 @@ bool thread::query_object(type_name_t name, unknown_ptr_t out)
 	return false;
 }
 
-bool thread::start(thread_callback_t callback, void_args_t args
+bool thread::start(thread_callback_t callback, pointer args
 	, thread_priority_t priority, detach_state_t ds)
 {
 	scope_locker lock = thread_manager::instance()->main_mutex;
-	auto handle = thread_handler_t(_handle);
-	if (handle != null && handle->_thread.get() == this)
+	auto handle = ang_thread_ptr_t(_handle);
+	if (handle && handle->tle_data<thread_data_t>())
 		return false;
 
 	dettach();
 
-	_handle = thread_manager::create_thread(this, callback, args, priority, ds);
+	auto data = ang_allocator<thread_data_t>::construct(ang_allocator<thread_data_t>::alloc(1));
+	data->_args = args;
+	data->_callback = callback;
+	data->_thread = this;
+	data->_status = async_action_status::starting;
+	ang_thread_ptr_t _thread = thread_manager::instance()->create_thread(0, sizeof(thread_data_t), data, false);
+	_handle = _thread;
 	if (_handle == null)
+	{
+		ang_allocator<thread_data_t>::destruct_and_free(data);
 		return false;
-	
+	}
+#if defined WINDOWS_PLATFORM
+	_thread->start([](pointer args)->dword
+#else
+	_thread->start([](pointer args)->pointer
+#endif
+	{
+		auto data = reinterpret_cast<thread_data_ptr_t>(args);
+		data->_status = async_action_status::running;
+		data->_callback(data->_args);
+		data->_status = async_action_status::finished;
+		return NULL;
+	}, data);
+
 	return true;
 }
 

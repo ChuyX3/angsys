@@ -42,6 +42,12 @@
     <Filter Include="source files\async">
       <UniqueIdentifier>{10f59fbe-72ba-4cbd-bcd2-f23801409f0c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source files\core_base">
+      <UniqueIdentifier>{7a7a6255-60d4-471e-be91-de61628eb47b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include\ang_core">
+      <UniqueIdentifier>{6f1c3024-da42-4cc9-abb9-9771b660d68a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
@@ -134,11 +140,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\time.h">
       <Filter>header files\angsys\ang\core</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\thread_manager.h">
-      <Filter>header files\include</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_async.h">
       <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_base.h">
+      <Filter>header files\include\ang_core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_hash_table.h">
+      <Filter>header files\include\ang_core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -231,6 +240,15 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\async\async.cpp">
       <Filter>source files\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\async\thread.cpp">
+      <Filter>source files\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\core_base\ang_core_async.c">
+      <Filter>source files\core_base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\core_base\ang_core_hash_table.c">
+      <Filter>source files\core_base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

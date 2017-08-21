@@ -39,20 +39,28 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\wrappers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\xml.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_async.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_base.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_hash_table.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_debugger.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_inlines.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_memory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\exception_code_map.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\string_utils_inline.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\thread_manager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\xml_utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\ang_hash_table.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\async\async.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\async\thread.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\core_base\ang_core_async.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\core_base\ang_core_hash_table.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\delegates.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\exceptions.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\logger.cpp" />

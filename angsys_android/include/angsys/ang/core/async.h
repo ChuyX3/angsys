@@ -315,7 +315,7 @@ namespace ang
 				mutex& operator = (const mutex&) = delete;
 
 			protected:
-				pointer _handle;
+				ang_core_mutex_ptr_t _handle;
 
 			public:
 				mutex();
@@ -326,10 +326,11 @@ namespace ang
 				ANG_DECLARE_INTERFACE();
 
 			public: //Properties
-				pointer handle()const;
 				bool lock()const;
-				bool try_lock()const;
+				bool trylock()const;
 				bool unlock()const;
+
+				friend cond;
 			};
 
 
@@ -378,7 +379,7 @@ namespace ang
 				cond& operator = (const cond&);
 
 			protected:
-				pointer _handle;
+				ang_core_cond_ptr_t _handle;
 
 			public:
 				cond();
@@ -494,7 +495,7 @@ namespace ang
 			{
 			public:
 				static void sleep(dword ms);
-				static thread_t current_thread(thread_t = null);
+				static thread_t current_thread();
 				static dword current_thread_id();
 				static thread_t main_thread();
 

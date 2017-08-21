@@ -170,7 +170,7 @@ uint ang_create_hash_index(pointer, uint);
 uint ang_create_hash_index(const char*, uint);
 uint ang_create_hash_index(const wchar*, uint);
 
-uint ang_hash_table_get_next_size(uint);
+ANG_EXTERN wsize ang_hash_table_get_next_size(wsize);
 
 #include "inlines/ang_hash_table.inl"
 

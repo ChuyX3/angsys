@@ -13,6 +13,7 @@
 #include <angsys.h>
 #include "ang_memory.h"
 #include "ang_debugger.h"
+#include "ang_core_base.h"
 
 #ifdef ANGSYS_DYNAMIC_LIBRARY
 ANG_IMPLEMENT_MEMORYMANAGER();
@@ -89,11 +90,13 @@ namespace ang
 			_object_allocator.set_logger(&_platform_logger);
 			_buffer_allocator.set_logger(&_platform_logger);
 			_aligned_allocator.set_logger(&_platform_logger);
+
+			ang_core_thread_manager_initialize();
 		}
 
 		~ang_instance_manager()
 		{
-
+			ang_core_thread_manager_terminate();
 		}
 
 	public:

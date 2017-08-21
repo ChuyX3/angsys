@@ -83,7 +83,7 @@ uint list[] =
 	16381u,
 };
 
-uint ang_hash_table_get_next_size(uint size)
+extern "C" wsize ang_hash_table_get_next_size(wsize size)
 {
 	uint out = 0;
 	if (size >= 16381)

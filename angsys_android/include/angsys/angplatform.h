@@ -56,7 +56,9 @@
 
 #ifdef ANDROID_PLATFORM
 
+#ifdef __cplusplus
 #include <initializer_list>
+#endif//__cplusplus
 
 #define index _index
 #define rindex _rindex

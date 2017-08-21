@@ -18,6 +18,9 @@ namespace ang
 	template<class T>
 	class singleton
 	{
+	private:
+		static T* instance(T* ptr, bool write = false, bool del = false);
+
 	public:
 		typedef T derived_t;
 		static derived_t* instance();
@@ -30,8 +33,6 @@ namespace ang
 				new T(args...);
 			return static_cast<T*>(_instance);
 		}
-	protected:
-		static derived_t* _instance;
 
 		singleton();
 		virtual~singleton();
@@ -40,6 +41,9 @@ namespace ang
 	template<class T>
 	class singleton<object_wrapper<T>>
 	{
+	private:
+		static T* instance(T* ptr, bool write = false, bool del = false);
+
 	public:
 		typedef T derived_t;
 		static derived_t* instance();
@@ -52,8 +56,6 @@ namespace ang
 				new T(args...);
 			return static_cast<T*>(_instance);
 		}
-	protected:
-		static derived_t* _instance;
 
 		singleton();
 		virtual~singleton();

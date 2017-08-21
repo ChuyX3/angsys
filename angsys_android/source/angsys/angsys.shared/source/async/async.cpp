@@ -11,7 +11,7 @@
 #include "angsys.h"
 #include "ang/core/delegates.h"
 #include "ang/core/async.h"
-#include "ang_async.h"
+
 
 
 #if defined _DEBUG && defined MEMORY_DEBUGGING
@@ -27,9 +27,6 @@
 using namespace ang;
 using namespace ang::core;
 using namespace ang::core::async;
-
-typedef ang_mutex_t _mutex_handle, *mutex_handle;
-typedef ang_cond_t _cond_handle, *cond_handle;
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -247,48 +244,43 @@ ANG_IMPLEMENT_FLAGS(async, async_action_status, uint)
 mutex::mutex()
 	: _handle(null)
 {
-	_handle = ang_allocator<_mutex_handle>::construct(ang_allocator<_mutex_handle>::alloc(1));
+	_handle = ang_core_mutex_create();
 }
 
 mutex::mutex(bool _lock)
 	: _handle(null)
 {
-	_handle = ang_allocator<_mutex_handle>::construct(ang_allocator<_mutex_handle>::alloc(1));
-	if (_lock) mutex_handle(_handle)->lock();
+	_handle = ang_core_mutex_create();
+	if (_lock) _handle->lock();
 }
 
 mutex::~mutex()
 {
 	if (_handle != null)
-		ang_allocator<_mutex_handle>::destruct_and_free(reinterpret_cast<mutex_handle>(_handle));
+		ang_core_mutex_destroy(_handle);
 	_handle = null;
 }
 
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::async::mutex, ang::object);
 
-pointer mutex::handle()const
-{
-	return _handle;
-}
-
 bool mutex::lock()const
 {
 	if (_handle != null)
-		return reinterpret_cast<mutex_handle>(_handle)->lock();
+		return _handle->lock();
 	return false;
 }
 
-bool mutex::try_lock()const
+bool mutex::trylock()const
 {
 	if (_handle != null)
-		return reinterpret_cast<mutex_handle>(_handle)->try_lock();
+		return _handle->trylock();
 	return false;
 }
 
 bool mutex::unlock()const
 {
 	if (_handle != null)
-		return reinterpret_cast<mutex_handle>(_handle)->unlock();
+		return _handle->unlock();
 	return false;
 }
 
@@ -396,13 +388,13 @@ mutex * ang::object_wrapper<mutex>::operator -> (void)const
 
 cond::cond()
 {
-	_handle = ang_allocator<_cond_handle>::construct(ang_allocator<_cond_handle>::alloc(1));
+	_handle = ang_core_cond_create();
 }
 
 cond::~cond()
 {
 	if (_handle != null)
-		ang_allocator<_cond_handle>::destruct_and_free(reinterpret_cast<cond_handle>(_handle));
+		ang_core_cond_destroy(_handle);
 	_handle = null;
 }
 
@@ -412,21 +404,21 @@ ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::async::cond, ang::object);
 bool cond::wait(mutex_t mutex)const
 {
 	if (!mutex.is_empty() && _handle != null)
-		return reinterpret_cast<cond_handle>(_handle)->wait(*mutex_handle(mutex->handle()));
+		return _handle->wait(mutex->_handle);
 	return false;
 }
 
 bool cond::wait(mutex_t mutex, dword ms)const
 {
 	if (!mutex.is_empty() && _handle != null)
-		return reinterpret_cast<cond_handle>(_handle)->wait(*mutex_handle(mutex->handle()), ms);
+		return _handle->wait(mutex->_handle, ms);
 	return false;
 }
 
 bool cond::signal()const
 {
 	if (_handle != null)
-		return reinterpret_cast<cond_handle>(_handle)->signal();
+		return _handle->signal();
 	return false;
 }
 

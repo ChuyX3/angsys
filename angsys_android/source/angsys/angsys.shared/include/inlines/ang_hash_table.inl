@@ -101,7 +101,7 @@ template<class K, class T>
 bool ang_hash_table<K, T>::is_empty()const { return _size == 0; }
 
 template<class K, class T>
-bool ang_hash_table<K, T>::contains(K const& key)const { return find(key) == NULL; }
+bool ang_hash_table<K, T>::contains(K const& key)const { return find(key) != NULL; }
 
 template<class K, class T>
 ang_uint64_t ang_hash_table<K, T>::size()const { return _size; }
