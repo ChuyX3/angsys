@@ -491,7 +491,7 @@ namespace ang
 			/******************************************************************/
 			class LINK thread
 				: public object
-				, public iasync_task
+				, public iasync<dword>
 			{
 			public:
 				static void sleep(dword ms);
@@ -511,7 +511,7 @@ namespace ang
 				}
 
 			protected:
-				pointer _handle;
+				ang_core_thread_ptr_t _handle;
 
 			public:
 				thread();
@@ -532,6 +532,9 @@ namespace ang
 				virtual bool cancel()override;
 				virtual bool suspend()override;
 				virtual bool resume()override;
+				virtual dword result()const override;
+				virtual void then(delegates::function<void(iasync<dword>*)>)override;
+			
 
 				bool is_main_thread()const;
 				bool is_current_thread()const;
@@ -540,6 +543,7 @@ namespace ang
 				dword id()const;
 
 			private: //Properties
+				void complete(dword);
 				void dettach();
 
 			protected:

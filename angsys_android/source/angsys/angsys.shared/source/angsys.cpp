@@ -13,7 +13,7 @@
 #include <angsys.h>
 #include "ang_memory.h"
 #include "ang_debugger.h"
-#include "ang_core_base.h"
+#include "ang_core_async.h"
 
 #ifdef ANGSYS_DYNAMIC_LIBRARY
 ANG_IMPLEMENT_MEMORYMANAGER();

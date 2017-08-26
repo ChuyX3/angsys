@@ -10,6 +10,8 @@
 #include "pch.h"
 #include "ang/core/async.h"
 #include "ang/core/time.h"
+#include "ang_inlines.h"
+#include "ang_core_async.h"
 
 //#if defined _DEBUG && defined MEMORY_DEBUGGING
 //#define NEW ANG_DEBUG_NEW()
@@ -19,6 +21,12 @@
 //#define NEW_ARGS(...) new(__VA_ARGS__)
 //#endif
 
+
+#if defined WINDOWS_PLATFORM
+typedef dword thread_result_t;
+#else
+typedef pointer thread_result_t;
+#endif
 
 #if defined _DEBUG
 #define new ANG_DEBUG_NEW()
@@ -30,10 +38,11 @@ using namespace ang::core::async;
 
 typedef struct _thread_data
 {
-	thread_t _thread;
-	async_action_status_t _status;
-	thread_callback_t _callback;
-	pointer _args;
+	thread_t _thread = null;
+	async_action_status_t _status = async_action_status::none;
+	thread_callback_t _callback = null;
+	pointer _args = null;
+	dword _result = 0;
 }thread_data_t, *thread_data_ptr_t;
 
 ///////////////////////////////////////////////////////////////
@@ -231,36 +240,78 @@ bool thread::query_object(type_name_t name, unknown_ptr_t out)
 bool thread::start(thread_callback_t callback, pointer args
 	, thread_priority_t priority, detach_state_t ds)
 {
-	scope_locker lock = thread_manager::instance()->main_mutex;
-	auto handle = ang_thread_ptr_t(_handle);
-	if (handle && handle->tle_data<thread_data_t>())
-		return false;
+	ang_scope_locker<ang_core_mutex_ptr_t> lock = ang_core_thread_main_mutex();
+
+	if (_handle)
+	{
+		auto state = _handle->thread_state();
+		if (state > ang_thread_state_wait_for_finish && state < ang_thread_state_attached)
+			dettach();
+		else if (state != ang_thread_state_wait_for_finish)
+			return false;
+	}
+
+	thread_data_ptr_t data = _handle && _handle->tle_data<thread_data_t>() ?
+		_handle->tle_data<thread_data_t>() :
+		ang_allocator<thread_data_t>::construct(ang_allocator<thread_data_t>::alloc(1));
 
 	dettach();
 
-	auto data = ang_allocator<thread_data_t>::construct(ang_allocator<thread_data_t>::alloc(1));
+#if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
+	uint flags = (ds == detach_state::detached) ? PTHREAD_CREATE_DETACHED : PTHREAD_CREATE_JOINABLE;
+#elif defined WINDOWS_PLATFORM
+	uint flags = priority == thread_priority::low ? THREAD_PRIORITY_BELOW_NORMAL
+		: priority == thread_priority::high ? THREAD_PRIORITY_NORMAL
+		: THREAD_PRIORITY_ABOVE_NORMAL);
+#endif
+
 	data->_args = args;
 	data->_callback = callback;
 	data->_thread = this;
 	data->_status = async_action_status::starting;
-	ang_thread_ptr_t _thread = thread_manager::instance()->create_thread(0, sizeof(thread_data_t), data, false);
-	_handle = _thread;
+	_handle = ang_core_thread::create(flags, sizeof(thread_data_t), data, false);
+
 	if (_handle == null)
 	{
 		ang_allocator<thread_data_t>::destruct_and_free(data);
 		return false;
 	}
-#if defined WINDOWS_PLATFORM
-	_thread->start([](pointer args)->dword
-#else
-	_thread->start([](pointer args)->pointer
-#endif
+
+	_handle->set_tle_notify([](ang_core_thread_ptr_t _thread, wsize sz, pointer data)
 	{
+		if (data && sizeof(thread_data_t) == sz)
+		{
+			auto thread_data = reinterpret_cast<thread_data_ptr_t>(data);
+			thread_data->_thread->dettach();
+			thread_data->_status = async_action_status::completed;
+			ang_singal_main_cond();
+			ang_allocator<thread_data_t>::destruct_and_free(thread_data);
+		}
+	});
+
+	_handle->start([](pointer args)->thread_result_t
+	{
+		thread_result_t result;
 		auto data = reinterpret_cast<thread_data_ptr_t>(args);
+
+		ang_lock_main_mutex();
 		data->_status = async_action_status::running;
-		data->_callback(data->_args);
-		data->_status = async_action_status::finished;
-		return NULL;
+		ang_singal_main_cond();
+		ang_unlock_main_mutex();
+		try {
+			result = (thread_result_t)data->_callback(data->_args);
+		}
+		catch (...) {
+			result = (thread_result_t)-1;
+		}
+		ang_lock_main_mutex();
+		data->_result = (dword)result;
+		data->_status = async_action_status::completed;
+		ang_singal_main_cond();
+		ang_unlock_main_mutex();
+
+		return result;
+		
 	}, data);
 
 	return true;
@@ -268,15 +319,25 @@ bool thread::start(thread_callback_t callback, pointer args
 
 void thread::dettach()
 {
-	auto handle = thread_handler_t(_handle);
+	auto _thread = _handle;
 	_handle = null;
-	if (handle != null)
-	{
-#if defined WINDOWS_PLATFORM
-		::CloseHandle(handle->_handle);
-#endif
-		delete handle;
-	}
+	if (_thread != null)
+		_thread->join();
+}
+
+dword thread::result()const
+{
+	if (!_handle)
+		return -1;
+	ang_scope_locker<ang_core_mutex_ptr_t> lock = ang_core_thread_main_mutex();
+
+	async_action_status_t status = async_action_status::finished;
+	auto data = _handle->tle_data<thread_data_t>();
+	if (is_current_thread())
+		return data->_result;
+	else while (!status.is_active(data->_status))
+		ang_wait_main_cond();
+	return data->_result;
 }
 
 pointer thread::handle()const
@@ -286,22 +347,52 @@ pointer thread::handle()const
 
 bool thread::is_main_thread()const
 {
-	return  (_handle) ? thread_handler_t(_handle)->_is_main_thread : false;
+	return  (_handle) ? _handle->is_main_thread() : false;
 }
 
 bool thread::is_current_thread()const
 {
-	return current_thread() == this;
+	return current_thread_id() == id();
+}
+
+void thread::then(delegates::function<void(iasync<dword>*)> callback)
+{
+	if (!_handle && _handle->thread_state() > ang_thread_state_wait_for_finish)
+		return;
+
+	struct then_context
+	{
+		thread_t thread;
+		delegates::function<void(iasync<dword>*)> callback;
+	};
+
+	then_context* context = ang_allocator<then_context>::construct(ang_allocator<then_context>::alloc(1));
+	context->thread = this;
+	context->callback = callback;
+	callback.get()->add_ref();
+	_handle->then([](pointer args, pointer result)->thread_result_t
+	{
+		auto context = (then_context*)args;
+		context->callback(context->thread.get());
+		return (thread_result_t)context->thread->result();
+	}, context);
 }
 
 async_action_status_t thread::status()const
 {
-	return  (_handle) ? (async_action_status)thread_handler_t(_handle)->_status.value() : async_action_status::stopped;
+	thread_data_ptr_t data;
+	if (_handle && (data = _handle->tle_data<thread_data_t>()))
+		return data->_status;
+	return async_action_status::stopped;
 }
 
 bool thread::cancel()
 {
-	return false;
+	if (!_handle)
+		return false;
+	auto data = _handle->tle_data<thread_data_t>();
+	data->_status = async_action_status::canceled;
+	return _handle->cancel();
 }
 
 bool thread::suspend()
@@ -309,60 +400,29 @@ bool thread::suspend()
 	if (_handle == null)
 		return false;
 
-	auto _thread = reinterpret_cast<thread_handler_t>(_handle);
-	if(is_current_thread())
-	{
-		scope_locker lock = thread_manager::instance()->main_mutex;
-		_thread->_status = async_action_status::suspended;
-		thread_manager::instance()->main_cond->waitfor(thread_manager::instance()->main_mutex
-			, [&]() {return _thread->_status == async_action_status::suspended; });
-	}
-	else
-	{
-#ifdef WINDOWS_PLATFORM
-		scope_locker lock = thread_manager::instance()->main_mutex;
-		if (_thread->_status == async_action_status::suspended)
-			return true; //already suspended
-		else if (SuspendThread(_thread->_handle) != dword(-1))
-			_thread->_status = async_action_status::suspended;
-		else
-			return false;
-#elif defined __ANDROID__ || defined LINUX
+	auto data = _handle->tle_data<thread_data_t>();
+	ang_scope_locker<ang_core_mutex_ptr_t> lock = ang_core_thread_main_mutex();
+	if (data->_status != async_action_status::running)
 		return false;
-#endif
-	}
+	if (data->_status == async_action_status::suspended)
+		return true;
+	if(is_current_thread()) while (data->_status == async_action_status::suspended)
+		ang_wait_main_cond();
 	return true;
-
 }
 
 bool thread::resume()
 {
 	if (_handle == null || is_current_thread())
 		return false;
-#if defined WINDOWS_PLATFORM
-	auto _thread = reinterpret_cast<thread_handler_t>(_handle);
-	scope_locker lock = thread_manager::instance()->main_mutex;
-
-	if (_thread->_status != async_action_status::suspended)
+	auto data = _handle->tle_data<thread_data_t>();
+	ang_scope_locker<ang_core_mutex_ptr_t> lock = ang_core_thread_main_mutex();
+	if (data->_status != async_action_status::suspended)
 		return false;
 
-	auto res = ResumeThread(_thread->_handle);
-	if (res != dword(-1))
-	{
-		_thread->_status = async_action_status::running;
-		if (res == 0) thread_manager::instance()->main_cond->signal();
-	}
+	data->_status = async_action_status::running;
+	ang_singal_main_cond();
 	return true;
-#elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-	auto _thread = reinterpret_cast<thread_handler_t>(_handle);
-	scope_locker lock = thread_manager::instance()->main_mutex;
-
-	if (_thread->_status != async_action_status::suspended)
-		return false;
-	_thread->_status = async_action_status::running;
-	thread_manager::instance()->main_cond->signal();
-	return true;
-#endif
 }
 
 bool thread::wait(async_action_status_t status, dword ms)const
@@ -370,43 +430,40 @@ bool thread::wait(async_action_status_t status, dword ms)const
 	thread_t prevent_destruction = const_cast<thread*>(this);
 	if (_handle == null || is_current_thread())
 		return false;
-	auto _thread = reinterpret_cast<thread_handler_t>(_handle);
+	auto data = _handle->tle_data<thread_data_t>();
+	ang_scope_locker<ang_core_mutex_ptr_t> lock = ang_core_thread_main_mutex();
 	if (ms == dword(-1))
 	{
-		scope_locker lock = thread_manager::instance()->main_mutex;
-		if (status.is_active(_thread->_status.value()))
+		if (status.is_active(data->_status.value()))
 			return true;
 		auto last = time::get_performance_time();
-		auto _ms = double_t(ms);
-		while (_ms > 0.0 && !status.is_active(_thread->_status.value()))
+		auto _ms = double(ms);
+		while (_ms > 0.0 && !status.is_active(data->_status.value()))
 		{
-			thread_manager::instance()->main_cond->wait(thread_manager::instance()->main_mutex, dword((uint)_ms));
+			ang_timed_wait_main_cond(dword(_ms));
 			auto current = time::get_performance_time();
 			_ms -= (current - last);
 			last = current;
 		}
-		return status.is_active(_thread->_status.value());
+		return status.is_active(data->_status.value());
 	}
 	else
 	{
-		scope_locker lock = thread_manager::instance()->main_mutex;
-		thread_manager::instance()->main_cond->waitfor(thread_manager::instance()->main_mutex,
-			[&]() { return !status.is_active(_thread->_status.value()); });
+		while(!status.is_active(data->_status.value()))
+			ang_wait_main_cond();
 		return true;
 	}
 }
 
 void thread::join()
 {
-	if (_handle == null || is_current_thread() || is_main_thread())
-		return;
-
-	wait(async_action_status::stopped, -1);
+	if (!_handle) return;
+	auto data = _handle->tle_data<thread_data_t>();
+	data->_status = async_action_status::canceled;
+	 _handle->join();
 }
 
 dword thread::id()const
 {
-	if (_handle == null)
-		return -1;
-	return reinterpret_cast<thread_handler_t>(_handle)->_id;
+	return _handle != null ? _handle->thread_id() : -1;
 }

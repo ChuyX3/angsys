@@ -22,7 +22,7 @@ namespace ang
 				visible vcall void invoke(objptr, imsg_event_args_t)const pure;
 				visible vcall ievent_function* clone()const pure;
 
-				void* operator new(wsize_t);
+				void* operator new(wsize);
 				void operator delete(void*);
 			};
 
@@ -124,7 +124,7 @@ namespace ang
 
 				template<typename args_t, typename obj_t>
 				inline void set(obj_t* obj, void(obj_t::*f)(objptr, intf_wrapper<args_t>)) {
-					if (is_type_of<obj_t>(type_name<object>()))
+					if (is_type_of<obj_t>(type_of<object>()))
 						_function = new platform::events::object_member_event_function<obj_t, args_t>(interface_cast<object>(obj), f);
 					else
 						_function = new platform::events::member_event_function<obj_t, args_t>(obj, f);
@@ -177,7 +177,7 @@ namespace ang
 
 }
 
-ANG_DECLARE_OBJECT_VECTOR_SPECIALIZATION(LINK, ang::platform::events::event)
+//ANG_DECLARE_OBJECT_VECTOR_SPECIALIZATION(LINK, ang::platform::events::event)
 
 namespace ang
 {

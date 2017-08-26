@@ -19,7 +19,7 @@ namespace ang
 	class singleton
 	{
 	private:
-		static T* instance(T* ptr, bool write = false, bool del = false);
+		static T* instance_manager(T* ptr, bool write = false, bool del = false);
 
 	public:
 		typedef T derived_t;
@@ -29,9 +29,9 @@ namespace ang
 
 		template<class...Ts>
 		static derived_t* instance(Ts... args) {
-			if (_instance == null)
+			if (instance_manager(null, false, false) == null)
 				new T(args...);
-			return static_cast<T*>(_instance);
+			return instance_manager(null, false, false);
 		}
 
 		singleton();
@@ -42,7 +42,7 @@ namespace ang
 	class singleton<object_wrapper<T>>
 	{
 	private:
-		static T* instance(T* ptr, bool write = false, bool del = false);
+		static T* instance_manager(T* ptr, bool write = false, bool del = false);
 
 	public:
 		typedef T derived_t;
@@ -52,9 +52,9 @@ namespace ang
 
 		template<class...Ts>
 		static derived_t* instance(Ts... args) {
-			if (_instance == null)
+			if (instance_manager(null, false, false) == null)
 				new T(args...);
-			return static_cast<T*>(_instance);
+			return instance_manager(null, false, false);
 		}
 
 		singleton();

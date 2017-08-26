@@ -698,7 +698,7 @@ namespace ang
 	};
 
 	inline cstr_t operator "" _s(const char* str, wsize sz) { return cstr_t(str, sz); }
-	inline cwstr_t operator "" _s(const wchar* str, wsize sz) { return cwstr_t(str, sz); }
+	inline cwstr_t operator "" _s(const wchar_t* str, wsize sz) { return cwstr_t(str, sz); }
 	inline cmstr_t operator "" _sm(const char* str, wsize sz) { return cmstr_t((mchar const*)str, sz); }
 
 	inline value<char> operator ""_ac(unsigned long long val) { return value<char>(static_cast<char>(val)); }

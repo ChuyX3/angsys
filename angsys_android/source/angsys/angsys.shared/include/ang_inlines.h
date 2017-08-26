@@ -3,6 +3,10 @@
 
 #include "angbase.h"
 
+#ifdef __cplusplus
+#include <initializer_list>
+#endif
+
 #define ang_new(_type) ang_allocator<_type>:: template contruct<void>(ang_allocator<_type>::alloc(1))
 #define ang_new_args(_type, ...) ang_allocator<_type>:: template construct<void>(ang_allocator<_type>::alloc(1), __VA_ARGS__)
 #define ang_delete(_ptr) ang_allocator<typename ang::remove_reference<decltype(*_ptr)>::type>::destruct_and_free(_ptr)
@@ -56,13 +60,6 @@ struct ang_pair
 	key_t key;
 	value_t value;
 };
-
-template<class T>
-struct ang_pair<T,T>
-{
-	T key;
-};
-
 
 template<class K, class T, ang_size_t N>
 ang_size_t ang_binary_search(K const& key, const T(&vector)[N])

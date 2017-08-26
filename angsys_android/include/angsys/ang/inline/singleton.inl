@@ -5,7 +5,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 template<class T>
-T* ang::singleton<ang::object_wrapper<T>>::instance(T* ptr, bool write, bool del)
+T* ang::singleton<ang::object_wrapper<T>>::instance_manager(T* ptr, bool write, bool del)
 {
 	static ang::object_wrapper<T> _instance = null;
 	if (write) {
@@ -20,20 +20,20 @@ T* ang::singleton<ang::object_wrapper<T>>::instance()
 {
 	if (!is_instanced())
 		new T();
-	return instance(null, false);
+	return instance_manager(null, false);
 }
 
 template<class T>
 bool ang::singleton<ang::object_wrapper<T>>::release_instance()
 {
-	instance(null, true, true);
+	instance_manager(null, true, true);
 	return true;
 }
 
 template<class T>
 bool ang::singleton<ang::object_wrapper<T>>::is_instanced()
 {
-	return (instance(null, false) != null);
+	return (instance_manager(null, false) != null);
 }
 
 template<class T>
@@ -41,20 +41,20 @@ ang::singleton<ang::object_wrapper<T>>::singleton()
 {
 	if (is_instanced())
 		throw exception(except_code::two_singleton);
-	instance(static_cast<T*>(this), true);
+	instance_manager(static_cast<T*>(this), true);
 }
 
 template<class T>
 ang::singleton<ang::object_wrapper<T>>::~singleton()
 {
-	if (_instance != null)
-		instance(null, true, false);
+	if (instance_manager(null, false, false) == this)
+		instance_manager(null, true, false);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
 template<class T>
-T* ang::singleton<ang::object_wrapper<T>>::instance(T* ptr, bool write, bool del)
+T* ang::singleton<T>::instance_manager(T* ptr, bool write, bool del)
 {
 	static T* _instance = null;
 	if (write) {
@@ -69,20 +69,20 @@ T* ang::singleton<T>::instance()
 {
 	if (!is_instanced())
 		new T();
-	return instance(null, false);
+	return instance_manager(null, false);
 }
 
 template<class T>
 bool ang::singleton<T>::release_instance()
 {
-	instance(null, true, true);
+	instance_manager(null, true, true);
 	return true;
 }
 
 template<class T>
 bool ang::singleton<T>::is_instanced()
 {
-	return (instance(null, false) != null);
+	return (instance_manager(null, false) != null);
 }
 
 
@@ -91,14 +91,14 @@ ang::singleton<T>::singleton()
 {
 	if (is_instanced())
 		throw exception(except_code::two_singleton);
-	instance(static_cast<T*>(this), true, false);
+	instance_manager(static_cast<T*>(this), true, false);
 }
 
 template<class T>
 ang::singleton<T>::~singleton()
 {
-	if(instance(null, false) == this)
-		instance(null, true, false);
+	if(instance_manager(null, false) == this)
+		instance_manager(null, true, false);
 }
 
 

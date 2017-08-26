@@ -21,7 +21,7 @@
       </ArrayItems>
     </Expand>
   </Type>
-  <Type Name="ang::value&lt;wchar_t*&gt;">
+  <Type Name="ang::value&lt;wchar*&gt;">
     <DisplayString>{_value,su}</DisplayString>
     <Expand>
       <Item Name="[length]" ExcludeView="simple">_size</Item>
@@ -31,7 +31,7 @@
       </ArrayItems>
     </Expand>
   </Type>
-  <Type Name="ang::value&lt;wchar_t const*&gt;">
+  <Type Name="ang::value&lt;wchar const*&gt;">
     <DisplayString>{_value,su}</DisplayString>
     <Expand>
       <Item Name="[length]" ExcludeView="simple">_size</Item>

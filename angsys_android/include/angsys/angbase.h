@@ -67,7 +67,7 @@ namespace ang
 	typedef value<pointer*>			unknown_ptr_t;
 
 	typedef value<char*>			str_t;
-	typedef value<wchar_t*>			wstr_t;
+	typedef value<wchar*>			wstr_t;
 	typedef value<mchar*>			mstr_t;
 	typedef value<char const*>		cstr_t;
 	typedef value<wchar const*>		cwstr_t;

@@ -11,8 +11,8 @@
 #include "angsys.h"
 #include "ang/core/delegates.h"
 #include "ang/core/async.h"
-
-
+#include "ang_inlines.h"
+#include "ang_define_enum.h"
 
 #if defined _DEBUG && defined MEMORY_DEBUGGING
 #define NEW ANG_DEBUG_NEW()
@@ -206,35 +206,29 @@ ang::object_wrapper_ptr<ang::core::delegates::function_data<void(iasync<void>*)>
 ANG_IMPLEMENT_INTERFACE(ang::core::async, iasync_task);
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::async::iasync<void>, iasync_task)
 
-ANG_IMPLEMENT_ENUM(async, thread_priority, word_t, thread_priority::normal);
+ANG_IMPLEMENT_ENUM(async, thread_priority, word, thread_priority::normal);
 
-cstr_t thread_priority_t::to_string()const
-{
-	switch (_value)
-	{
-	case ang::core::async::thread_priority_t::low:
-		return "low"_s;
-	default:
-	case ang::core::async::thread_priority_t::normal:
-		return "normal"_s;
-	case ang::core::async::thread_priority_t::high:
-		return "high"_s;
-	}
-}
+ANG_IMPLEMENT_ENUM_PARSE(thread_priority, thread_priority::normal, //alphabetical order
+	high,
+	low,
+	normal
+);
 
-ANG_IMPLEMENT_ENUM(async, detach_state, word_t, detach_state::joinable);
+ANG_IMPLEMENT_ENUM_TOSTRING(thread_priority, "normal", //value order
+	low,
+	normal,
+	high
+);
 
-cstr_t detach_state_t::to_string()const
-{
-	switch (_value)
-	{
-	default:
-	case ang::core::async::detach_state_t::joinable:
-		return "joinable"_s;
-	case ang::core::async::detach_state_t::detached:
-		return "detached"_s;
-	}
-}
+ANG_IMPLEMENT_ENUM(async, detach_state, word, detach_state::joinable);
+ANG_IMPLEMENT_ENUM_PARSE(detach_state, detach_state::joinable, //alphabetical order
+	detached,
+	joinable
+);
+ANG_IMPLEMENT_ENUM_TOSTRING(detach_state, "joinable", //value order
+	detached,
+	joinable
+);
 
 ////////////////////////////////////////////////////////////////
 ANG_IMPLEMENT_FLAGS(async, async_action_status, uint)
@@ -244,20 +238,20 @@ ANG_IMPLEMENT_FLAGS(async, async_action_status, uint)
 mutex::mutex()
 	: _handle(null)
 {
-	_handle = ang_core_mutex_create();
+	_handle = ang_core_mutex::create();
 }
 
 mutex::mutex(bool _lock)
 	: _handle(null)
 {
-	_handle = ang_core_mutex_create();
+	_handle = ang_core_mutex::create();
 	if (_lock) _handle->lock();
 }
 
 mutex::~mutex()
 {
 	if (_handle != null)
-		ang_core_mutex_destroy(_handle);
+		ang_core_mutex::destroy(_handle);
 	_handle = null;
 }
 
@@ -388,13 +382,13 @@ mutex * ang::object_wrapper<mutex>::operator -> (void)const
 
 cond::cond()
 {
-	_handle = ang_core_cond_create();
+	_handle = ang_core_cond::create();
 }
 
 cond::~cond()
 {
 	if (_handle != null)
-		ang_core_cond_destroy(_handle);
+		ang_core_cond::destroy(_handle);
 	_handle = null;
 }
 

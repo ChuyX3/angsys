@@ -68,7 +68,7 @@ void base_allocator::operator delete(pointer ptr)
 default_allocator::default_allocator(uint type)
 	: _allocator_type(type)
 #ifdef _MEMORY_PROFILING
-	, mutex()
+	, mutex(ang_core_mutex_create())
 	, memory_map()
 #endif
 {
@@ -116,12 +116,12 @@ pointer default_allocator::malloc(wsize size)
 	auto block = memory_block_create(size, ang_alloc_unmanaged_memory(sizeof(memory_block) + size));
 	block->line = 0;
 	block->file = null;
-	mutex.lock();
+	mutex->lock();
 	if (!memory_map.insert(block->ptr, block))
 	{
 		__debugbreak();
 	}
-	mutex.unlock();
+	mutex->unlock();
 	return block->ptr;
 #else
 	return ang_alloc_unmanaged_memory(size);
@@ -132,12 +132,12 @@ void default_allocator::free(pointer ptr)
 {
 #ifdef _MEMORY_PROFILING
 	memory_block_t block;
-	mutex.lock();
+	mutex->lock();
 	if (!ptr || !memory_map.remove(ptr, block)) {
-		mutex.unlock();
+		mutex->unlock();
 		return;
 	}
-	mutex.unlock();
+	mutex->unlock();
 	if (block == null)
 	{
 		__debugbreak();
@@ -156,12 +156,12 @@ pointer default_allocator::malloc(wsize size, const char* file, int line)
 	block->line = line;
 	block->file = (char*)ang_alloc_unmanaged_memory(strings::algorithms::string_length(file) + 1);
 	strings::algorithms::string_copy(block->file, file);
-	mutex.lock();
+	mutex->lock();
 	if (!memory_map.insert(block->ptr, block))
 	{
 		__debugbreak();
 	}
-	mutex.unlock();
+	mutex->unlock();
 	return block->ptr;
 #else
 	return ang_alloc_unmanaged_memory(size);

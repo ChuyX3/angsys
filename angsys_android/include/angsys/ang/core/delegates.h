@@ -30,6 +30,12 @@
 #define LINK
 #endif
 
+#define DEFINE_ARG_TYPE(_LINK, _NAME_, ...) typedef ang::object_wrapper<class _NAME_> _NAME_##_t; class _LINK _NAME_ : public ang::object { public: _NAME_(); ANG_DECLARE_INTERFACE(); DECLARE_VARSN(__VA_ARGS__); private: virtual~_NAME_(); }
+#define DEFINE_CORE_EVENT(_LINK, _RET_TYPE, _NAME, ...)  DEFINE_ARG_TYPE(_LINK, _NAME##_event_args, __VA_ARGS__); \
+		typedef ang::core::delegates::listener<_RET_TYPE(ang::objptr, _NAME##_event_args##_t)> _NAME##_event_handler, _NAME##_event_handler_t; \
+		typedef ang::core::delegates::function_data<_RET_TYPE(ang::objptr, _NAME##_event_args##_t)> _NAME##_event; \
+		typedef ang::core::delegates::function<_RET_TYPE(ang::objptr, _NAME##_event_args##_t)> _NAME##_event_t 
+
 namespace ang
 {
 	namespace core

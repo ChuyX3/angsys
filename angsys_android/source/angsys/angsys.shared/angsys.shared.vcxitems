@@ -31,6 +31,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\enum.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\interface.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\properties.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\runtime.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\singleton.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\string.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\stringbase.h" />
@@ -38,10 +39,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\value.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\wrappers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\xml.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_async.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_base.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_async.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_hash_table.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_string.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_debugger.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_define_enum.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_inlines.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_memory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
@@ -59,6 +61,15 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\core_base\ang_core_hash_table.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\core_base\ang_core_string.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\core_base\ang_core_string_compare.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\core_base\ang_core_string_converter.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\delegates.cpp" />

@@ -265,6 +265,7 @@ mstring& xml_node::xml_print(mstring& stream, xml_format_t const& flag, ushort l
 {
 	switch (_xml_type)
 	{
+	default:break;
 	case xml_type_t::header:
 	{
 		auto version = (xml_value_t)_xml_attributes["version"_sm];

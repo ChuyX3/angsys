@@ -3,9 +3,53 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="android_native_app_glue.h" />
+    <ClInclude Include="MathHelper.h" />
+    <ClInclude Include="SimpleRenderer.h" />
+    <ClInclude Include="..\..\..\..\..\include\angsys\ang\platform\core_msg.h">
+      <Filter>header\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\angsys\ang\platform\events.h">
+      <Filter>header\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\angsys\ang\platform\input.h">
+      <Filter>header\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\angsys\ang\platform\platform.h">
+      <Filter>header\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\ang_inlines.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\ang_define_enum.h">
+      <Filter>header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="android_native_app_glue.cpp" />
+    <ClCompile Include="SimpleRenderer.cpp" />
+    <ClCompile Include="platform\platform.cpp">
+      <Filter>source\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\events.cpp">
+      <Filter>source\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\message.cpp">
+      <Filter>source\platform</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{d4b27d74-c43d-490d-a56e-368cbd69e0c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\platform">
+      <UniqueIdentifier>{459ff738-eb20-4d12-8ef5-9bcbccac59eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header">
+      <UniqueIdentifier>{8e2b01a9-4db2-4bc4-b129-7c48d7294a54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\platform">
+      <UniqueIdentifier>{9a179aca-3187-48af-9297-0968914a1e8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

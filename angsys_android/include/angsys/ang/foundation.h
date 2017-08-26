@@ -32,11 +32,34 @@
 
 namespace ang
 {
-	namespace foundation
+	namespace graphics
 	{
+		typedef struct color color_t;
 		template<typename T> struct point;
 		template<typename T> struct size;
 		template<typename T> struct rect;
+
+		typedef size<float> sizef;
+		typedef rect<float> rectf;
+		typedef point<float> pointf;
+
+		ANG_BEGIN_ENUM(LINK, graph_driver_type, byte)
+			null = 0,
+			OpenGL,
+			OpenGLES,
+			DirectX,
+			DirectX11 = DirectX,
+			Vulkan,//todo
+			DirectX12,//todo
+		ANG_END_ENUM(graph_driver_type);
+
+		ANG_BEGIN_ENUM(LINK, primitive, byte)
+			point,
+			line,
+			triangle,
+			squere,
+			poligon
+		ANG_END_ENUM(primitive);
 
 		template<typename T> struct point
 		{
@@ -215,32 +238,7 @@ namespace ang
 		template<typename T> rect<T> operator * (const rect<T>&, T);
 		template<typename T> rect<T> operator * (T, const rect<T>&);
 		template<typename T> rect<T> operator / (const rect<T>&, T);
-
-	}
-
-	namespace graphics
-	{
-		using namespace foundation;
-
-		typedef struct color color_t;
-
-		ANG_BEGIN_ENUM(LINK, graph_driver_type, byte)
-			null = 0,
-			OpenGL,
-			OpenGLES,
-			DirectX,
-			DirectX11 = DirectX,
-			Vulkan,//todo
-			DirectX12,//todo
-		ANG_END_ENUM(graph_driver_type);
-
-		ANG_BEGIN_ENUM(LINK, primitive, byte)
-			point,
-			line,
-			triangle,
-			squere,
-			poligon
-		ANG_END_ENUM(primitive);
+	
 
 		struct LINK color
 		{
@@ -447,9 +445,26 @@ ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ang::graphics::color_t)
 ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ang::graphics::graph_driver_type_t)
 ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ang::graphics::primitive_t)
 
+
+//#define FUNCX(X) typename X
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION_TEMPLATE(ang::graphics::point, T)
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION_TEMPLATE(ang::graphics::size, T)
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION_TEMPLATE(ang::graphics::rect, T)
+//#undef FUNCX
+
 #ifdef LINK
 #undef LINK
 #endif//LINK
+
+
+
+
+
+
+
+
+
+
 
 #include <ang/inline/foundation.inl>
 

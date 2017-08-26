@@ -1,5 +1,5 @@
 #include <angtypes.h>
-#include "ang_core_base.h"
+#include "ang_core_async.h"
 #include "ang_core_hash_table.h"
 
 #define new(_TYPE) (_TYPE*)ang_alloc_unmanaged_memory(sizeof(_TYPE))
@@ -245,7 +245,7 @@ static dword ang_core_thread_start_routine(pointer args)
 	ang_unlock_main_mutex();
 
 	ang_core_thread_unregist_thread(thread);
-
+	ang_core_thread_destroy(thread);
 	return result;
 }
 
@@ -259,8 +259,10 @@ ang_core_thread_ptr_t ang_core_thread_attach_this_thread(ang_bool_t is_main, wsi
 	this->tle_size = &ang_core_thread_impl_tle_size;
 	this->tle_buffer = &ang_core_thread_impl_tle_buffer;
 	this->set_tle_data = &ang_core_thread_impl_set_tle_data;
+	this->set_tle_notify = &ang_core_thread_impl_set_tle_notify;
 	this->user_args = &ang_core_thread_impl_user_args;
 	this->thread_id = &ang_core_thread_impl_thread_id;
+	this->thread_state = &ang_core_thread_impl_thread_state;
 	this->sleep = &ang_core_thread_impl_sleep;
 	this->start = &ang_core_thread_impl_start;
 	this->then = &ang_core_thread_impl_then;
@@ -296,7 +298,7 @@ ang_core_thread_ptr_t ang_core_thread_attach_this_thread(ang_bool_t is_main, wsi
 }
 
 
-ang_core_thread_ptr_t ang_core_thread_create_thread_suspended(uint flags, wsize sz, pointer tle, ang_bool_t alloc)
+ang_core_thread_ptr_t ang_core_thread_create_suspended(uint flags, wsize sz, pointer tle, ang_bool_t alloc)
 {
 	ang_core_thread_impl_ptr_t this = new (ang_core_thread_impl_t);
 	memset(this, 0, sizeof(ang_core_thread_impl_t));
@@ -345,9 +347,9 @@ ang_core_thread_ptr_t ang_core_thread_create_thread_suspended(uint flags, wsize 
 	return (ang_core_thread_ptr_t)this;
 }
 
-ang_core_thread_ptr_t ang_core_thread_create_thread(ang_core_thread_start_routine_t routine, pointer args, uint flags, wsize sz, pointer tle, ang_bool_t alloc)
+ang_core_thread_ptr_t ang_core_thread_create(ang_core_thread_start_routine_t routine, pointer args, uint flags, wsize sz, pointer tle, ang_bool_t alloc)
 {
-	ang_core_thread_ptr_t this = ang_core_thread_create_thread_suspended(flags, sz, tle, alloc);
+	ang_core_thread_ptr_t this = ang_core_thread_create_suspended(flags, sz, tle, alloc);
 	this->start(this, routine, args);
 	return this;
 }
@@ -357,7 +359,7 @@ void ang_core_thread_destroy(ang_core_thread_ptr_t _this)
 	ang_core_thread_impl_ptr_t this = (ang_core_thread_impl_ptr_t)_this;
 	if (this == NULL)return;
 	this->join(_this);
-
+	if (this->tle_notify_callback) this->tle_notify_callback(_this, this->_tle_size, this->_tle_data);
 	if (this->_del_tle && this->_tle_data != NULL)
 		ang_free_unmanaged_memory(this->_tle_data);
 	this->_tle_data = NULL;
@@ -401,6 +403,7 @@ pointer ang_core_thread_impl_tle_buffer(ang_core_thread_ptr_t _this)
 void ang_core_thread_impl_set_tle_data(ang_core_thread_ptr_t _this, pointer data, wsize sz, ang_bool_t alloc)
 {
 	ang_core_thread_impl_ptr_t this = (ang_core_thread_impl_ptr_t)_this;
+	if (this->tle_notify_callback) this->tle_notify_callback(_this, this->_tle_size, this->_tle_data);
 	if (this->_del_tle && this->_tle_data != NULL)
 		ang_free_unmanaged_memory(this->_tle_data);
 	if (alloc && sz > 0) {
@@ -414,6 +417,12 @@ void ang_core_thread_impl_set_tle_data(ang_core_thread_ptr_t _this, pointer data
 		this->_tle_size = sz;
 		this->_tle_data = data;
 	}
+}
+
+void ang_core_thread_impl_set_tle_notify(ang_core_thread_ptr_t _this, ang_core_thread_tle_deleting_notify_callback_t callback)
+{
+	ang_core_thread_impl_ptr_t this = (ang_core_thread_impl_ptr_t)_this;
+	this->tle_notify_callback = callback;
 }
 
 pointer ang_core_thread_impl_user_args(ang_core_thread_ptr_t _this)
@@ -430,6 +439,12 @@ dword ang_core_thread_impl_thread_id(ang_core_thread_ptr_t _this)
 #elif defined WINDOWS_PLATFORM
 	return this->_id;
 #endif
+}
+
+uint ang_core_thread_impl_thread_state(ang_core_thread_ptr_t _this)
+{
+	ang_core_thread_impl_ptr_t this = (ang_core_thread_impl_ptr_t)_this;
+	return this->_state;
 }
 
 void ang_core_thread_impl_sleep(ang_core_thread_ptr_t _this, dword ms)
@@ -596,7 +611,6 @@ static ulong64 ang_core_thread_manager_hash_table_create_hash(ulong64 key, ulong
 
 ang_bool_t ang_core_thread_manager_initialize()
 {
-	ang_core_thread_ptr_t thread;
 	ang_core_thread_manager_ptr_t manager;
 	if (ang_core_thread_manager_get_instance() != NULL)
 		return ang_false;
@@ -609,8 +623,10 @@ ang_bool_t ang_core_thread_manager_initialize()
 		&ang_core_thread_manager_hash_table_create_hash
 	);
 
-	thread = ang_core_thread_attach_this_thread(ang_false, 0, NULL, ang_false);
-	manager->_thread_map->insert(manager->_thread_map, ang_core_thread_this_thread_id(), (ulong64)thread);
+	ang_core_thread_manager_instance(manager, ang_true, ang_false);
+
+	manager->_main_thread = ang_core_thread_attach_this_thread(ang_true, 0, NULL, ang_false);
+	manager->_thread_map->insert(manager->_thread_map, ang_core_thread_this_thread_id(), (ulong64)manager->_main_thread);
 	return ang_true;
 }
 

@@ -98,8 +98,8 @@ namespace ang
 				got_focus = 0x0007,
 				lost_focus = 0x0008,
 				draw = 0x000F,
-				begin_drawing = 0x0407,
-				end_drawing = 0x0408,
+				//begin_drawing = 0x0407,
+				//end_drawing = 0x0408,
 				visibility_change = 0x0018,
 
 				display_change = 0x007E,

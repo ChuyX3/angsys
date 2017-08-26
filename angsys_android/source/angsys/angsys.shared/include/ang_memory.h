@@ -2,7 +2,6 @@
 
 #include "angsys.h"
 #include "ang_inlines.h"
-#include "ang_async.h"
 
 #if defined _DEBUG || defined _DEVELOPPER
 #define _MEMORY_PROFILING
@@ -30,7 +29,7 @@ namespace ang
 		private:
 			uint _allocator_type;
 #ifdef _MEMORY_PROFILING
-			ang_mutex mutex;
+			ang_core_mutex_ptr_t mutex;
 			debug::ilogger_t logger;
 			ang_hash_table<pointer, memory_block_t> memory_map;
 #endif

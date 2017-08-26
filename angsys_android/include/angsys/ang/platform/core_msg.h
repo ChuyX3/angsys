@@ -75,7 +75,7 @@ namespace ang
 			ANG_BEGIN_INTERFACE_WITH_BASE(LINK, idraw_event_args, imsg_event_args)
 				visible vcall icore_view_t core_view()const pure;
 				visible vcall icore_context_t core_context()const pure;
-				visible vcall foundation::size<float> canvas_size()const pure;
+				visible vcall graphics::size<float> canvas_size()const pure;
 			ANG_END_INTERFACE();
 
 			ANG_BEGIN_INTERFACE_WITH_BASE(LINK, ikey_event_args, public imsg_event_args)
@@ -86,7 +86,7 @@ namespace ang
 			ANG_END_INTERFACE();
 
 			ANG_BEGIN_INTERFACE_WITH_BASE(LINK, ipointer_event_args, public imsg_event_args)
-				visible vcall foundation::point<float> position()const pure;
+				visible vcall graphics::point<float> position()const pure;
 				visible vcall input::key_modifiers_t modifiers()const pure;
 				visible vcall input::poiner_info_t info()const pure;
 			ANG_END_INTERFACE();

@@ -260,6 +260,7 @@ mstring& xml_items::xml_print(mstring& stream, const xml_format_t& flag, ushort 
 {
 	switch (_xml_type)
 	{
+	default:break;
 	case xml_type_t::attribute_list:
 		for (auto it = begin(); it.is_valid(); ++it)
 			it->xml_print(stream, flag, level) << " "_sm;

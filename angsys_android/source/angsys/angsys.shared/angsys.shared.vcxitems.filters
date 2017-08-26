@@ -140,13 +140,19 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\time.h">
       <Filter>header files\angsys\ang\core</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_async.h">
-      <Filter>header files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_base.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_hash_table.h">
       <Filter>header files\include\ang_core</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_hash_table.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\runtime.h">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_define_enum.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_async.h">
+      <Filter>header files\include\ang_core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_core_string.h">
       <Filter>header files\include\ang_core</Filter>
     </ClInclude>
   </ItemGroup>
@@ -248,6 +254,15 @@
       <Filter>source files\core_base</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\core_base\ang_core_hash_table.c">
+      <Filter>source files\core_base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\core_base\ang_core_string.c">
+      <Filter>source files\core_base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\core_base\ang_core_string_compare.c">
+      <Filter>source files\core_base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\core_base\ang_core_string_converter.c">
       <Filter>source files\core_base</Filter>
     </ClCompile>
   </ItemGroup>

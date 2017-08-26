@@ -95,7 +95,7 @@ namespace ang
 
 			typedef struct poiner_info
 			{
-				property<const foundation::point<float>, poiner_info > point;
+				property<const graphics::point<float>, poiner_info > point;
 				property<const short, poiner_info > id;
 				property<const bool, poiner_info > is_primary_action;
 				property<const bool, poiner_info > is_secondary_action;

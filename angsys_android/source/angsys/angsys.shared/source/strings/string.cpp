@@ -356,16 +356,16 @@ pointer string_buffer::map_buffer(windex start, wsize size)
 {
 	if ((start + size) > capacity())
 		return null;
+	//length(start);//new length??
 	return (byte*)(pointer)str() + start;
 }
 
 void string_buffer::unmap_buffer(pointer ptr, wsize used)
 {
-	auto this_ptr = ((byte*)(pointer)str() + length());
-	if (ptr == this_ptr
-		&& (length() + used) <= capacity())
+	auto this_ptr = (byte*)(pointer)str();
+	if (ptr >= this_ptr && ptr < (this_ptr + capacity()))
 	{
-		length(length() + used);
+		length(min(length() + used, capacity()));
 		str()[length()] = 0;
 	}
 }

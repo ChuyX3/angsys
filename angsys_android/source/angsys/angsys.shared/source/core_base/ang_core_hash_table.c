@@ -1,5 +1,5 @@
 #include <angtypes.h>
-#include "ang_core_base.h"
+#include "ang_core_async.h"
 #include "ang_core_hash_table.h"
 
 #define new(_TYPE) (_TYPE*)ang_alloc_unmanaged_memory(sizeof(_TYPE))
@@ -64,6 +64,8 @@ ang_hash_table_ptr_t ang_hash_table_create(ang_hash_table_delete_data_callback_t
 	this->contains = &ang_hash_table_contains;
 	this->find = &ang_hash_table_find;
 	this->size = &ang_hash_table_size;
+	this->hash_callback = hash_callback;
+	this->delete_callback = delete_callback;
 
 	this->_size = 0;
 	this->_capacity = 127;

@@ -12,6 +12,8 @@
 #include "ang_inlines.h"
 #include "string_utils_inline.h"
 
+#include "ang_define_enum.h"
+
 using namespace ang;
 using namespace ang::strings;
 using namespace ang::text;
@@ -21,6 +23,7 @@ static const char nullchar = '\0';
 
 ANG_IMPLEMENT_ENUM(text, encoding, uint, encoding::unknown)
 //ANG_IMPLEMENT_INTERFACE(ang::text, itext_buffer);
+
 
 static ang_pair<encoding, cstr_t> to_string_encoding_map[] =
 {
