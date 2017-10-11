@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="header files">
+      <UniqueIdentifier>{c83bd829-1d3b-439a-a1d7-a76d402c1fe3}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="header files\angsys">
+      <UniqueIdentifier>{622e8fcb-6572-4780-a393-d621f0cfb199}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\angsys\ang">
+      <UniqueIdentifier>{ad101a24-44ba-46d4-bcbf-7e9a512925a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files">
+      <UniqueIdentifier>{2016ded0-d8cd-4b38-8d03-b3b862ddc3ab}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="header files\include">
+      <UniqueIdentifier>{2e73f5b8-f1f6-40ff-a5c0-741793f0327e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debug info">
+      <UniqueIdentifier>{3531e1db-7d20-44c6-916e-937e9f13cbda}</UniqueIdentifier>
+      <Extensions>natvis</Extensions>
+    </Filter>
+    <Filter Include="header files\angsys\ang\base">
+      <UniqueIdentifier>{3dd8331e-762d-458d-ae99-43201d5e0a65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\angc">
+      <UniqueIdentifier>{1ae12d3d-3129-44fc-944d-8d9254c2725a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include\angc">
+      <UniqueIdentifier>{a900c1af-508d-464c-b519-7ca7d167985c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\base">
+      <UniqueIdentifier>{edd5e51f-a2d3-4873-aa82-924fd2ea4098}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\angsys\ang\collections">
+      <UniqueIdentifier>{674f1da5-7f1d-42e4-a47c-3446542dfa7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\strings">
+      <UniqueIdentifier>{fed8fc33-751e-4cba-85e2-5c4aec889277}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\angsys\ang\core">
+      <UniqueIdentifier>{79ec5b58-0850-4196-b4a6-057dd07d59c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\async">
+      <UniqueIdentifier>{faee456b-af83-4e44-9b26-e0dd4b7e01cd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis">
+      <Filter>debug info</Filter>
+    </Natvis>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angbase.h">
+      <Filter>header files\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angplatform.h">
+      <Filter>header files\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angsys.h">
+      <Filter>header files\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angtypes.h">
+      <Filter>header files\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\allocator.hpp">
+      <Filter>header files\angsys\ang\base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\array.hpp">
+      <Filter>header files\angsys\ang\base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\utils.hpp">
+      <Filter>header files\angsys\ang\base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_memory.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\angc\core_hash_table.h">
+      <Filter>header files\include\angc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\interface.hpp">
+      <Filter>header files\angsys\ang\base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\enum.hpp">
+      <Filter>header files\angsys\ang\base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\text.hpp">
+      <Filter>header files\angsys\ang\base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\encoder.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\string.hpp">
+      <Filter>header files\angsys\ang\base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\runtime.hpp">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections.hpp">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\buffers.hpp">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\iterators.hpp">
+      <Filter>header files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\string.hpp">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\array.hpp">
+      <Filter>header files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\exceptions.hpp">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\singleton.hpp">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\vector.hpp">
+      <Filter>header files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\delegates.hpp">
+      <Filter>header files\angsys\ang\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\async.hpp">
+      <Filter>header files\angsys\ang\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\thread.hpp">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\value.hpp">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\format_parser.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\memory.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\base\safe_str.cpp">
+      <Filter>source files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\base\encoder.cpp">
+      <Filter>source files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\angc\ang_core_hash_table.c">
+      <Filter>source files\angc</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\object.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp">
+      <Filter>source files\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\exceptions.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\delegates.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\async\async.cpp">
+      <Filter>source files\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\async\thread.cpp">
+      <Filter>source files\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\async\dispatcher.cpp">
+      <Filter>source files\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\text_format.cpp">
+      <Filter>source files\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\boolean.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\floating.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\integer.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

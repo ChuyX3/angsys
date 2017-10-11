@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{4d105416-0867-47f0-8320-3f0e6b233d73}</ItemsProjectGuid>
+    <ItemsProjectName>angsys.shared</ItemsProjectName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis">
+      <FileType>Document</FileType>
+      <SubType>Designer</SubType>
+    </Natvis>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angbase.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angplatform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angsys.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angtypes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\allocator.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\array.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\enum.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\interface.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\string.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\text.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\utils.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\buffers.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\array.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\iterators.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\vector.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\async.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\delegates.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\exceptions.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\runtime.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\singleton.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\string.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\value.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\angc\core_hash_table.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_memory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\encoder.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\format_parser.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\thread.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\angc\ang_core_hash_table.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\async\async.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\async\dispatcher.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\async\thread.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\base\encoder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\base\safe_str.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\boolean.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\delegates.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\exceptions.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\floating.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\integer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\memory.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\object.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\text_format.cpp" />
+  </ItemGroup>
+</Project>
