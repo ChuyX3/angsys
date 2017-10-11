@@ -135,16 +135,16 @@
 
 
 #define ANG_IMPLEMENT_CLASSNAME(_CLASS) ang::type_name_t _CLASS::class_name(){ return ANG_UTILS_TO_STRING_OBJ(_CLASS); }
-#define ANG_IMPLEMENT_ISCHILDOF(_CLASS) bool _CLASS::is_child_of(ang::type_name_t name) { if (name == ang::type_of<_CLASS>())return true; return false; }
-#define ANG_IMPLEMENT_ISCHILDOF_BASE(_CLASS, _BASE) bool _CLASS::is_child_of(ang::type_name_t name) { if (name == ang::type_of<_CLASS>())return true; return _BASE::is_child_of(name); }
+#define ANG_IMPLEMENT_ISCHILDOF(_CLASS) bool _CLASS::is_child_of(ang::type_name_t name) { return (name == ang::type_of<_CLASS>()) || (name == ang::type_of<ang::interface_t>()); }
+#define ANG_IMPLEMENT_ISCHILDOF_BASE(_CLASS, _BASE) bool _CLASS::is_child_of(ang::type_name_t name) { return (name == ang::type_of<_CLASS>()) || _BASE::is_child_of(name); }
 #define ANG_IMPLEMENT_DYNAMICTYPE(_CLASS) ang::intfptr _CLASS::dynamic_constructor() { return reinterpret_cast<ang::interface_t*>(new _CLASS()); } \
 									   bool _CLASS::dynamic_destructor(ang::intfptr& intf){ if(!intf->is_kind_of(type_of<_CLASS>()))return false; intf = null; return true; }
 #define ANG_IMPLEMENT_OBJECTNAME(_CLASS) ang::type_name_t _CLASS::object_name()const{ return class_name(); }
-#define ANG_IMPLEMENT_ISKINDOF(_CLASS) bool _CLASS::is_kind_of(ang::type_name_t name)const{ if (name == ang::type_of<_CLASS>())return true; return false; }
-#define ANG_IMPLEMENT_ISKINDOF_BASE(_CLASS, _BASE) bool _CLASS::is_kind_of(ang::type_name_t name)const{ if (name == ang::type_of<_CLASS>())return true; return _BASE::is_kind_of(name); }
+#define ANG_IMPLEMENT_ISKINDOF(_CLASS) bool _CLASS::is_kind_of(ang::type_name_t name)const{ return (name == ang::type_of<_CLASS>()) || (name == ang::type_of<ang::interface_t>()); }
+#define ANG_IMPLEMENT_ISKINDOF_BASE(_CLASS, _BASE) bool _CLASS::is_kind_of(ang::type_name_t name)const{ return (name == ang::type_of<_CLASS>()) || _BASE::is_kind_of(name); }
 #define ANG_IMPLEMENT_QUERYOBJECT(_CLASS) bool _CLASS::query_object(ang::type_name_t name, ang::unknown_ptr_t out){ \
 		if(out == null) return false; \
-		if(name == ang::type_of<_CLASS>()){ *out = static_cast<_CLASS*>(this); return true; }return false; }
+		if(name == ang::type_of<_CLASS>()){ *out = static_cast<_CLASS*>(this); return true; } else if(name == ang::type_of<ang::interface_t>()){ *out = static_cast<_CLASS*>(this); return true; }return false; }
 #define ANG_IMPLEMENT_QUERYOBJECT_BASE(_CLASS, _BASE) bool _CLASS::query_object(ang::type_name_t name, ang::unknown_ptr_t out) {\
 		if(out == null) return false; \
 		if(name == ang::type_of<_CLASS>()){ *out = static_cast<_CLASS*>(this); return true; }\
@@ -179,5 +179,26 @@
 	ANG_IMPLEMENT_OBJECTNAME(_NAMESPACE::_CLASS) \
 	ANG_IMPLEMENT_ISKINDOF(_NAMESPACE::_CLASS) \
 	ANG_IMPLEMENT_QUERYOBJECT(_NAMESPACE::_CLASS)
+
+namespace ang
+{
+	template<typename T, 
+		typename = void, 
+		typename = void, 
+		typename = void,
+		typename = void,
+		typename = void>
+	struct has_runtime_type_info : public false_type { };
+
+	template <typename T>
+	struct has_runtime_type_info<T,
+		void_t<decltype(&T::class_name)>,
+		void_t<decltype(&T::object_name)>,
+		void_t<decltype(&T::is_child_of)>,
+		void_t<decltype(&T::is_kind_of)>,
+		void_t<decltype(&T::query_object)>> : true_type {
+	};
+
+}
 
 #endif//__ANGSYS_H__

@@ -143,6 +143,31 @@ inline ang::intf_wrapper<T>::operator T const* (void)const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T> 
+ang::intf_wrapper<ang::interface_t>::intf_wrapper(T* ptr) : _ptr(null) {
+	static_assert(has_runtime_type_info<T>::value, "T is not interface type and it is not inherited from anyone");
+	set(reinterpret_cast<interface_ptr_t>(ptr));
+}
+
+template<typename T> ang::intf_wrapper<ang::interface_t>::intf_wrapper(ang::intf_wrapper<T> const& ptr) : _ptr(null) {
+	set(reinterpret_cast<interface_ptr_t>(ptr.get()));
+}
+
+template<typename T>
+ang::intf_wrapper<ang::interface_t>& ang::intf_wrapper<ang::interface_t>::operator = (T* ptr) {
+	static_assert(has_runtime_type_info<T>::value, "T is not interface type and it is not inherited from anyone");
+	set(reinterpret_cast<interface_ptr_t>(ptr));
+	return*this;
+}
+
+template<typename T> ang::intf_wrapper<ang::interface_t>& ang::intf_wrapper<ang::interface_t>::operator = (ang::intf_wrapper<T> const& ptr) {
+	set(reinterpret_cast<interface_ptr_t>(ptr.get()));
+	return*this;
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -675,5 +700,6 @@ inline ang::intf_wrapper<ang::collections::imap<K, T>>::operator ang::collection
 {
 	return get();
 }
+
 
 #endif//__intf_WRAPPER_HPP__

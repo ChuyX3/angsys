@@ -6,6 +6,10 @@ using namespace ang;
 ANG_IMPLEMENT_INTERFACE(ang, iobject);
 ANG_IMPLEMENT_ENUM(ang, comparision_result, int, comparision_result::diferent);
 
+ang::type_name_t interface_t::class_name() { return "interface"; }
+bool interface_t::is_child_of(type_name_t name) { return name == class_name(); }
+
+
 #define ANG_MEMORY_MANAGER
 
 #ifdef ANG_MEMORY_MANAGER
@@ -434,6 +438,137 @@ ang::object_wrapper<object>::operator object * (void)
 }
 
 ang::object_wrapper<object>::operator object const* (void)const
+{
+	return get();
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+ang::intf_wrapper<ang::interface_t>::intf_wrapper() : _ptr(null) {
+}
+
+ang::intf_wrapper<ang::interface_t>::intf_wrapper(ang::nullptr_t const&) : _ptr(null) {
+}
+
+ang::intf_wrapper<ang::interface_t>::intf_wrapper(ang::interface_t* ptr) : _ptr(null) {
+	set(ptr);
+}
+
+ang::intf_wrapper<ang::interface_t>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
+	ang::interface_t * temp = other._ptr;
+	other._ptr = null;
+	_ptr = temp;
+}
+
+ang::intf_wrapper<ang::interface_t>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
+	set(other._ptr);
+}
+
+
+ang::intf_wrapper<ang::interface_t>::~intf_wrapper() {
+	clean();
+}
+
+
+inline void ang::intf_wrapper<ang::interface_t>::clean()
+{
+	has_runtime_type_info<interface_t>::value;
+
+	iobject * _obj = interface_cast<iobject>(_ptr);
+	if (_obj)_obj->release();
+	_ptr = null;
+}
+
+
+inline bool ang::intf_wrapper<ang::interface_t>::is_empty()const
+{
+	return _ptr == null;
+}
+
+
+inline ang::interface_t* ang::intf_wrapper<ang::interface_t>::get(void)const
+{
+	return _ptr;
+}
+
+
+inline void ang::intf_wrapper<ang::interface_t>::set(ang::interface_t* ptr)
+{
+	if (ptr == _ptr) return;
+	iobject * _old = interface_cast<iobject>(_ptr);
+	iobject * _new = interface_cast<iobject>(ptr);
+	_ptr = ptr;
+	if (_new)_new->add_ref();
+	if (_old)_old->release();
+}
+
+
+inline ang::intf_wrapper<ang::interface_t>& ang::intf_wrapper<ang::interface_t>::operator = (ang::interface_t* ptr)
+{
+	set(ptr);
+	return*this;
+}
+
+
+inline ang::intf_wrapper<ang::interface_t>& ang::intf_wrapper<ang::interface_t>::operator = (ang::nullptr_t const&)
+{
+	clean();
+	return*this;
+}
+
+
+inline ang::intf_wrapper<ang::interface_t>& ang::intf_wrapper<ang::interface_t>::operator = (ang::intf_wrapper<ang::interface_t> && other)
+{
+	if (this == &other)
+		return *this;
+	clean();
+	_ptr = other._ptr;
+	other._ptr = null;
+	return*this;
+}
+
+
+inline ang::intf_wrapper<ang::interface_t>& ang::intf_wrapper<ang::interface_t>::operator = (ang::intf_wrapper<ang::interface_t> const& other)
+{
+	set(other._ptr);
+	return*this;
+}
+
+
+inline ang::interface_t ** ang::intf_wrapper<ang::interface_t>::addres_of(void)
+{
+	return &_ptr;
+}
+
+
+inline ang::intf_wrapper_ptr<ang::interface_t> ang::intf_wrapper<ang::interface_t>::operator & (void)
+{
+	return this;
+}
+
+
+inline ang::interface_t * ang::intf_wrapper<ang::interface_t>::operator -> (void)
+{
+	return get();
+}
+
+
+inline ang::interface_t const* ang::intf_wrapper<ang::interface_t>::operator -> (void)const
+{
+	return get();
+}
+
+
+inline ang::intf_wrapper<ang::interface_t>::operator ang::interface_t * (void)
+{
+	return get();
+}
+
+
+inline ang::intf_wrapper<ang::interface_t>::operator ang::interface_t const* (void)const
 {
 	return get();
 }

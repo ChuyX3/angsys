@@ -77,7 +77,8 @@ namespace ang
 	typedef integer_constant<bool, true> true_type;
 	typedef integer_constant<bool, false> false_type;
 
-	template<bool VALUE>
+
+	template<bool VALUE, typename = void>
 	struct rule {
 		rule() { static_assert(VALUE, "ERROR..."); }
 	};
@@ -324,38 +325,37 @@ namespace ang
 		return N;
 	}
 
+	template<bool VALUE1>
+	struct not_expression : public false_type { };
+	template<> struct not_expression<false> : public true_type { };
 
 	template<bool VALUE1, bool VALUE2>
-	struct xor_expression {
-		static constexpr bool result() { return false; }
-	};
-
-	template<> struct xor_expression<true,false> {
-		static constexpr bool result() { return true; }
-	};
-
-	template<> struct xor_expression<false, true> {
-		static constexpr bool result() { return true; }
-	};
+	struct and_expression : public false_type { };
+	template<> struct and_expression<true, true> : public true_type { };
+	template<bool VALUE1, bool VALUE2> using nor_expression = and_expression<VALUE1, VALUE2>;
 
 	template<bool VALUE1, bool VALUE2>
-	struct xnor_expression {
-		static constexpr bool result() { return false; }
-	};
-
-	template<> struct xnor_expression<true, true> {
-		static constexpr bool result() { return true; }
-	};
-
-	template<> struct xnor_expression<false, false> {
-		static constexpr bool result() { return true; }
-	};
+	struct or_expression : public true_type { };
+	template<> struct or_expression<false, false> : public false_type { };
+	template<bool VALUE1, bool VALUE2> using nand_expression = or_expression<VALUE1, VALUE2>;
 
 	template<bool VALUE1, bool VALUE2>
-	constexpr bool xor_operator() { return  xor_expression<VALUE1, VALUE2>::result(); }
+	struct xor_expression : public false_type { };
+	template<> struct xor_expression<true,false> : public true_type { };
+	template<> struct xor_expression<false, true> : public true_type { };
 
 	template<bool VALUE1, bool VALUE2>
-	constexpr bool xnor_operator() { return  xnor_expression<VALUE1, VALUE2>::result(); }
+	struct xnor_expression : public false_type { };
+	template<> struct xnor_expression<true, true> : public true_type { };
+	template<> struct xnor_expression<false, false> : public true_type { };
+
+
+
+	template<bool VALUE1, bool VALUE2>
+	constexpr bool xor_operator() { return  xor_expression<VALUE1, VALUE2>::value; }
+
+	template<bool VALUE1, bool VALUE2>
+	constexpr bool xnor_operator() { return  xnor_expression<VALUE1, VALUE2>::value; }
 
 	template<typename T1, typename T2>
 	struct is_same : public integer_constant<bool, false> { };

@@ -165,19 +165,11 @@ namespace ang
 			}
 		};
 
-		template<typename T, typename = void>
-		struct has_class_name : public false_type {
-		};
-
-		template <typename T>
-		struct has_class_name<T, void_t<decltype(&T::class_name)>> : true_type {};
-
-
-		template<typename T, bool FLAG = runtime::has_class_name<T>::value>
+		template<typename T, bool FLAG = ang::has_runtime_type_info<T>::value>
 		struct __runtime_type_builder_impl
 		{
 			typedef T type;
-			static constexpr bool has_class_name = FLAG;
+			static constexpr bool has_runtime_type_info = FLAG;
 			static inline type_name_t type_of() { return __runtime_type_builder_impl_warning<T>::type_of(); }
 			static inline bool is_type_of(type_name_t name) { return __runtime_type_builder_impl_warning<T>::is_type_of(name); }
 			static inline type_name_t runtime_type_name(const type& var) { return __runtime_type_builder_impl_warning<T>::runtime_type_name(var); }
@@ -190,7 +182,7 @@ namespace ang
 		struct __runtime_type_builder_impl<T, true>
 		{
 			typedef T type;
-			static constexpr bool has_class_name = true;
+			static constexpr bool has_runtime_type_info = true;
 			static inline type_name_t type_of() { return type::class_name(); }
 			static inline bool is_type_of(type_name_t name) { return type::is_child_of(name); }
 			static inline type_name_t runtime_type_name(const type& var) { return var.object_name(); }
@@ -207,19 +199,19 @@ namespace ang
 		{
 			typedef T type;
 			static inline type_name_t type_of() { 
-				ANG_RUNTIME_ERROR(__runtime_type_builder_impl<T>::has_class_name, "using type_of without regist the type can cause undefined probles...");
+				ANG_RUNTIME_ERROR(__runtime_type_builder_impl<T>::has_runtime_type_info, "using type_of without regist the type can cause undefined probles...");
 				return __runtime_type_builder_impl<T>::type_of(); 
 			}
 			static inline bool is_type_of(type_name_t name) { 
-				ANG_RUNTIME_ERROR(__runtime_type_builder_impl<T>::has_class_name, "using is_type_of without regist the type can cause undefined probles..."); 
+				ANG_RUNTIME_ERROR(__runtime_type_builder_impl<T>::has_runtime_type_info, "using is_type_of without regist the type can cause undefined probles...");
 				return __runtime_type_builder_impl<T>::is_type_of(name); 
 			}
 			static inline type_name_t runtime_type_name(const type& var) { 
-				ANG_RUNTIME_ERROR(__runtime_type_builder_impl<T>::has_class_name, "using runtime_type_name without regist the type can cause undefined probles..."); 
+				ANG_RUNTIME_ERROR(__runtime_type_builder_impl<T>::has_runtime_type_info, "using runtime_type_name without regist the type can cause undefined probles...");
 				return __runtime_type_builder_impl<T>::runtime_type_name(var); 
 			}
 			template<typename new_t> static inline auto interface_cast(T* _old) -> typename runtime_type_builder<new_t>::type* {
-				ANG_RUNTIME_ERROR(__runtime_type_builder_impl<T>::has_class_name, "using interface_cast without regist the type can cause undefined probles...");
+				ANG_RUNTIME_ERROR(__runtime_type_builder_impl<T>::has_runtime_type_info, "using interface_cast without regist the type can cause undefined probles...");
 				return __runtime_type_builder_impl<T>::template interface_cast<new_t>(_old);
 			}
 		};

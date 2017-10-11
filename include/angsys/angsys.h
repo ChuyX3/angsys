@@ -56,6 +56,8 @@ namespace ang
 	/******************************************************************/
 	typedef struct _interface
 	{
+		visible static type_name_t class_name();
+		visible static bool is_child_of(type_name_t);
 		visible virtual type_name_t object_name()const pure;
 		visible virtual bool is_kind_of(type_name_t)const pure;
 		visible virtual bool query_object(type_name_t, unknown_ptr_t) pure;
@@ -79,12 +81,30 @@ namespace ang
 
 namespace ang
 {
+	template<bool VALUE, typename T>
+	struct rule<VALUE, object_wrapper<T>> {
+		 static_assert(VALUE, "T is not inherited from object class...");
+	};
+
+	template<bool VALUE, typename T>
+	struct rule<VALUE, intf_wrapper<T>> {
+		static_assert(VALUE, "T is not a interface type...");
+	};
+
+	template<typename T> struct is_object_type
+		: public integer_constant<bool, or_expression<is_same<object,T>::value, is_base_of<object, T>::value>::value> {
+	};
+
+	template<typename T> struct is_interface_type
+		: public integer_constant<bool, and_expression<has_runtime_type_info<T>::value, not_expression<is_object_type<T>::value>::value>::value> {
+	};
+
 	/******************************************************************/
 	/* template class ang::object_wrapper :                           */
 	/*  -> implements handling of smart pointers                      */
 	/******************************************************************/
 	template<typename T>
-	class object_wrapper
+	class object_wrapper : rule<is_object_type<T>::value, object_wrapper<T>>
 	{
 	public:
 		typedef T type;
@@ -164,7 +184,8 @@ namespace ang
 	/* template class ang::intf_wrapper :                             */
 	/*  -> implements handling of smart pointers for intercafes       */
 	/******************************************************************/
-	template<class T> class intf_wrapper
+
+	template<class T> class intf_wrapper : rule<is_interface_type<T>::value , intf_wrapper<T>>
 	{
 	public:
 		typedef T				type;
@@ -431,6 +452,51 @@ namespace ang
 		weak_ptr& operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }
 	};
 
+
+	template<> class LINK intf_wrapper<interface_t>
+	{
+	public:
+		typedef interface_t type;
+	protected:
+		interface_t* _ptr;
+
+	public:
+		intf_wrapper();
+		intf_wrapper(type*);
+		intf_wrapper(ang::nullptr_t const&);
+		intf_wrapper(intf_wrapper &&);
+		intf_wrapper(intf_wrapper const&);
+
+		template<typename T> intf_wrapper(T*);
+		template<typename T> intf_wrapper(intf_wrapper<T> const&);
+
+		~intf_wrapper();
+
+	public:
+		void clean();
+		bool is_empty()const;
+		type* get(void)const;
+		void set(type*);
+		type ** addres_of(void);
+
+		template<typename T> auto as();
+
+	public:
+		intf_wrapper& operator = (type*);
+		intf_wrapper& operator = (ang::nullptr_t const&);
+		intf_wrapper& operator = (intf_wrapper &&);
+		intf_wrapper& operator = (intf_wrapper const&);
+		template<typename T> intf_wrapper& operator = (T*);
+		template<typename T> intf_wrapper& operator = (intf_wrapper<T> const&);
+
+		intf_wrapper_ptr<type> operator & (void);
+		type * operator -> (void);
+		type const* operator -> (void)const;
+		operator type * (void);
+		operator type const* (void)const;
+
+
+	};
 }
 
 
@@ -480,6 +546,11 @@ namespace ang
 	template<typename T>
 	inline bool object::as(T*& out) {
 		return interface_cast<T>(this, out);
+	}
+
+	template<typename T>
+	inline auto intfptr::as() {
+		return interface_cast<T>(get());
 	}
 
 	namespace interop

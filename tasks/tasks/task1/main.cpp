@@ -14,10 +14,23 @@ struct MyStruct
 {
 	int a;
 };
+ 
+class MyClass : public object
+{
+	
+
+};
+
+ANG_INTERFACE(imy_intercface);
+ANG_BEGIN_INTERFACE(,imy_intercface)
+ANG_END_INTERFACE();
 
 int main(int argc, char* argv[])
 {
-	array<MyStruct> ar;
+
+	intfptr ptr = new collections::array_buffer<int>();
+
+	array<int> arr = ptr.as<array<int>>();
 
 	core::async::thread_t thread = core::async::thread::create_thread([](core::async::thread_t thread, var_args_t args)->dword
 	{
