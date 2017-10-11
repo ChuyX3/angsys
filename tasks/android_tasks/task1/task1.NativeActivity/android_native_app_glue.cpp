@@ -88,7 +88,7 @@ void android_app_pre_exec_cmd(application_t app, int8_t cmd) {
                 LOGV("Attaching input queue to looper");
                 AInputQueue_attachLooper(app->inputQueue,
                         app->looper, LOOPER_ID_INPUT, NULL,
-                        &app->inputPollSource);
+                        app->inputPollSource.get());
             }
             app->cond.signal();
             app->mutex.unlock();
@@ -164,30 +164,30 @@ static void android_app_destroy(application_t app) {
         AInputQueue_detachLooper(app->inputQueue);
     }
     AConfiguration_delete(app->config);
-    app->destroyed = 1;
+    //app->destroyed = 1;
     app->cond.signal();
     app->mutex.unlock();
     // Can't touch app object after this.
 }
 
-static void process_input(application_t app, struct android_poll_source* source) {
+void application::process_input() {
     AInputEvent* event = NULL;
-    while (AInputQueue_getEvent(app->inputQueue, &event) >= 0) {
+    while (AInputQueue_getEvent(this->inputQueue, &event) >= 0) {
         LOGV("New input event: type=%d\n", AInputEvent_getType(event));
-        if (AInputQueue_preDispatchEvent(app->inputQueue, event)) {
+        if (AInputQueue_preDispatchEvent(this->inputQueue, event)) {
             continue;
         }
         int32_t handled = 0;
-        if (app->onInputEvent != NULL) handled = app->onInputEvent(app, event);
-        AInputQueue_finishEvent(app->inputQueue, event, handled);
+		input_event(this, event);
+        AInputQueue_finishEvent(this->inputQueue, event, handled);
     }
 }
 
-static void process_cmd(application_t app, struct android_poll_source* source) {
-    int8_t cmd = android_app_read_cmd(app);
-    android_app_pre_exec_cmd(app, cmd);
-    if (app->onAppCmd != NULL) app->onAppCmd(app, cmd);
-    android_app_post_exec_cmd(app, cmd);
+void application::process_cmd() {
+    int8_t cmd = android_app_read_cmd(this);
+    android_app_pre_exec_cmd(this, cmd);
+    command_event(this, cmd);
+    android_app_post_exec_cmd(this, cmd);
 }
 
 dword application::android_app_entry(ang::core::async::thread_t sender, ang::var_args_t args) {
@@ -197,16 +197,12 @@ dword application::android_app_entry(ang::core::async::thread_t sender, ang::var
 
     print_cur_config(this);
 
-    this->cmdPollSource.id = LOOPER_ID_MAIN;
-    this->cmdPollSource.app = this;
-    this->cmdPollSource.process = process_cmd;
-    this->inputPollSource.id = LOOPER_ID_INPUT;
-    this->inputPollSource.app = this;
-    this->inputPollSource.process = process_input;
+	cmdPollSource = ang::bind(this, &application::process_cmd);
+	inputPollSource = ang::bind(this, &application::process_input);
 
     ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
     ALooper_addFd(looper, this->msgread, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, NULL,
-            &this->cmdPollSource);
+            this->cmdPollSource.get());
     this->looper = looper;
 
     this->mutex.lock();
@@ -303,12 +299,12 @@ static void android_app_set_activity_state(application_t app, int8_t cmd) {
 
 static void android_app_free(application_t app) {
 	app->mutex.lock();
-    android_app_write_cmd(app, APP_CMD_DESTROY);
-    while (!app->destroyed) {
-		app->cond.wait(app->mutex);
-    }
+	android_app_write_cmd(app, APP_CMD_DESTROY);
+	//while (!app->destroyed) {
+	//	app->cond.wait(app->mutex);
+	//}
 	app->mutex.unlock();
-
+	app->thread->join();
     close(app->msgread);
     close(app->msgwrite);
     //pthread_cond_destroy(&app->cond);
@@ -429,7 +425,24 @@ void ANativeActivity_onCreate(ANativeActivity* activity,
 
 application::application()
 {
-
+	activity = nullptr;
+	config = nullptr;
+	savedState = nullptr;
+	savedStateSize = 0;
+	looper = nullptr;
+	inputQueue = nullptr;
+	window = nullptr;
+	contentRect = {0,0,0,0};
+	activityState = 0;
+	destroyRequested = 0;
+	msgread = 0;
+	msgwrite = 0;
+	running = 0;
+	stateSaved = 0;
+	redrawNeeded = 0;
+	pendingInputQueue = 0;
+	pendingWindow = 0;
+	pendingContentRect = { 0,0,0,0 };
 }
 
 application::~application()

@@ -221,4 +221,143 @@ ang::string ang::value_wrapper<T>::to_string()const {
 	return type_of<T>();
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::object_wrapper() : _ptr(null) {
+
+}
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::object_wrapper(ang::value_wrapper<T>* ptr) : _ptr(null) {
+	set(ptr);
+}
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::object_wrapper(object_wrapper && other) : _ptr(null) {
+	ang::value_wrapper<T> * temp = other._ptr;
+	other._ptr = null;
+	_ptr = temp;
+}
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::object_wrapper(object_wrapper const& other) : _ptr(null) {
+	set(other._ptr);
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::object_wrapper(std::nullptr_t const&) : _ptr(null) {
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::~object_wrapper() { clean(); }
+
+template<typename T>
+inline void ang::object_wrapper<ang::value_wrapper<T>>::clean()
+{
+	if (_ptr)_ptr->release();
+	_ptr = null;
+}
+
+template<typename T>
+inline void ang::object_wrapper<ang::value_wrapper<T>>::clean_unsafe()
+{
+	_ptr = null;
+}
+
+template<typename T>
+inline bool ang::object_wrapper<ang::value_wrapper<T>>::is_empty()const
+{
+	return _ptr == null;
+}
+
+template<typename T>
+inline ang::value_wrapper<T>* ang::object_wrapper<ang::value_wrapper<T>>::get(void)const
+{
+	return _ptr;
+}
+
+template<typename T>
+inline void ang::object_wrapper<ang::value_wrapper<T>>::set(ang::value_wrapper<T>* ptr)
+{
+	ang::value_wrapper<T> * temp = _ptr;
+	if (ptr == _ptr) return;
+	_ptr = ptr;
+	if (_ptr)_ptr->add_ref();
+	if (temp)temp->release();
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>& ang::object_wrapper<ang::value_wrapper<T>>::operator = (ang::value_wrapper<T>* ptr)
+{
+	set(ptr);
+	return*this;
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>& ang::object_wrapper<ang::value_wrapper<T>>::operator = (ang::object_wrapper<ang::value_wrapper<T>> && other)
+{
+	if (this == &other)
+		return *this;
+	clean();
+	_ptr = other._ptr;
+	other._ptr = null;
+	return*this;
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>& ang::object_wrapper<ang::value_wrapper<T>>::operator = (ang::object_wrapper<ang::value_wrapper<T>> const& other)
+{
+	set(other._ptr);
+	return*this;
+}
+
+template<typename T>
+inline ang::value_wrapper<T> ** ang::object_wrapper<ang::value_wrapper<T>>::addres_of(void)
+{
+	return &_ptr;
+}
+
+template<typename T>
+inline ang::object_wrapper_ptr<ang::value_wrapper<T>> ang::object_wrapper<ang::value_wrapper<T>>::operator& (void)
+{
+	return this;
+}
+
+
+template<typename T>
+inline T * ang::object_wrapper<ang::value_wrapper<T>>::operator -> (void)
+{
+	return &get()->get();
+}
+
+template<typename T>
+inline T const* ang::object_wrapper<ang::value_wrapper<T>>::operator -> (void)const
+{
+	return &get()->get();
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::operator T * (void)
+{
+	return &get()->get();
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::operator T const* (void)const
+{
+	return &get()->get();
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::operator ang::value_wrapper<T> * (void)
+{
+	return get();
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::operator ang::value_wrapper<T> const* (void)const
+{
+	return get();
+}
+
+/////////////////////////////////////////////////////////////////////////
+
 #endif//__OBJECT_WRAPPER_HPP__

@@ -366,7 +366,7 @@ namespace ang
 		object_wrapper& operator = (object_wrapper &&);
 		object_wrapper& operator = (object_wrapper const&);
 
-		object_wrapper_ptr<T> operator & (void);
+		object_wrapper_ptr<type> operator & (void);
 		T * operator -> (void);
 		T const* operator -> (void)const;
 		explicit operator T& (void);

@@ -81,23 +81,6 @@ class application;
 typedef ang::object_wrapper<application> application_t;
 
 /**
- * Data associated with an ALooper fd that will be returned as the "outData"
- * when that source has data ready.
- */
-struct android_poll_source {
-    // The identifier of this source.  May be LOOPER_ID_MAIN or
-    // LOOPER_ID_INPUT.
-    int32_t id;
-
-    // The android_app this ident is associated with.
-	application_t app;
-
-    // Function to call to perform the standard processing of data from
-    // this source.
-    void (*process)(application_t app, struct android_poll_source* source);
-};
-
-/**
  * This is the interface for the standard glue code of a threaded
  * application.  In this model, the application's code is running
  * in its own thread separate from the main thread of the process.
@@ -134,16 +117,16 @@ public:
 
     // The application can place a pointer to its own state object
     // here if it likes.
-    void* userData;
+    ang::objptr userData;
 
     // Fill this in with the function to process main app commands (APP_CMD_*)
-    void (*onAppCmd)(application_t app, int32_t cmd);
+    ang::core::delegates::listener<void(application_t, int cmd)> command_event;
 
     // Fill this in with the function to process input events.  At this point
     // the event has already been pre-dispatched, and it will be finished upon
     // return.  Return 1 if you have handled the event, 0 for any default
     // dispatching.
-    int32_t (*onInputEvent)(application_t app, AInputEvent* event);
+	ang::core::delegates::listener<int(application_t, AInputEvent*)> input_event;
 
     // The ANativeActivity object instance that this app is running in.
     ANativeActivity* activity;
@@ -195,12 +178,12 @@ public:
 
 	ang::core::async::thread_t thread;
 
-    struct android_poll_source cmdPollSource;
-    struct android_poll_source inputPollSource;
+    ang::core::delegates::function<void(void)> cmdPollSource;
+	ang::core::delegates::function<void(void)> inputPollSource;
 
     int running;
     int stateSaved;
-    int destroyed;
+    //int destroyed;
     int redrawNeeded;
     AInputQueue* pendingInputQueue;
     ANativeWindow* pendingWindow;
@@ -209,6 +192,9 @@ public:
 
 	dword android_app_entry(ang::core::async::thread_t sender, ang::var_args_t args);
 
+private:
+	void process_input();
+	void process_cmd();
 
 };
 

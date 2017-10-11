@@ -18,77 +18,81 @@
 
 #define ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(_TYPE) \
 template<> struct ang::runtime::runtime_type_builder<_TYPE> { \
-	static inline ang::type_name_t type_of() { return #_TYPE; } \
+	typedef _TYPE type;\
+	static inline ang::type_name_t type_of() { return ANG_UTILS_TO_STRING_OBJ(_TYPE); } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_of<new_t>())) return (new_t*)_old; return null; } \
 }; \
 template<> struct ang::runtime::runtime_type_builder<const _TYPE> { \
-		static inline ang::type_name_t type_of() { return "const "#_TYPE; } \
-		static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
-		template<typename new_t> static inline new_t* interface_cast(_TYPE const* _old) { if (is_type_of(runtime::type_of<new_t>())) return (new_t*)_old; return null; } \
+	typedef _TYPE const type;\
+	static inline ang::type_name_t type_of() { return "const " ANG_UTILS_TO_STRING(_TYPE) ""_s; } \
+	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
+	template<typename new_t> static inline new_t* interface_cast(_TYPE const* _old) { if (is_type_of(runtime::type_of<new_t>())) return (new_t*)_old; return null; } \
 }; \
 template<> struct ang::runtime::runtime_type_builder<_TYPE&> { \
-		static inline ang::type_name_t type_of() { return #_TYPE"&"; } \
-		static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
-		template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_of<new_t>())) return (new_t*)_old; return null; } \
+	typedef _TYPE type;\
+	static inline ang::type_name_t type_of() { return ANG_UTILS_TO_STRING(_TYPE) "&"_s; } \
+	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
+	template<typename new_t> static inline new_t* interface_cast(_TYPE* _old) { if (is_type_of(runtime::type_of<new_t>())) return (new_t*)_old; return null; } \
 }; \
 template<> struct ang::runtime::runtime_type_builder<_TYPE const&> { \
-		static inline ang::type_name_t type_of() { return "const "#_TYPE"&"; } \
-		static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
-		template<typename new_t> static inline new_t* interface_cast(_TYPE const* _old) { if (is_type_of(runtime::type_of<new_t>())) return (new_t*)_old; return null; } \
+	typedef _TYPE const type;\
+	static inline ang::type_name_t type_of() { return "const " ANG_UTILS_TO_STRING(_TYPE) "&"_s; } \
+	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
+	template<typename new_t> static inline new_t* interface_cast(_TYPE const* _old) { if (is_type_of(runtime::type_of<new_t>())) return (new_t*)_old; return null; } \
 }; \
 template<> struct ang::runtime::runtime_type_builder<ang::collections::array_view<_TYPE>> { \
-	static inline ang::type_name_t type_of() { return #_TYPE"[]"; } \
+	static inline ang::type_name_t type_of() { return ANG_UTILS_TO_STRING(_TYPE) "[]"_s; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 }; \
 template<> struct ang::runtime::runtime_type_builder<ang::collections::array_view<const _TYPE>> { \
-	static inline ang::type_name_t type_of() { return "const "#_TYPE"[]"; } \
+	static inline ang::type_name_t type_of() { return "const " ANG_UTILS_TO_STRING(_TYPE) "[]"_s; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 }; \
 template<> struct ang::runtime::runtime_type_builder<ang::collections::scope_array<_TYPE>> { \
-	static inline ang::type_name_t type_of() { return #_TYPE"[]"; } \
+	static inline ang::type_name_t type_of() { return ANG_UTILS_TO_STRING(_TYPE) "[]"_s; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 }; \
 template<> struct ang::runtime::runtime_type_builder<ang::collections::scope_array<const _TYPE>> { \
-	static inline ang::type_name_t type_of() { return "const "#_TYPE"[]"; } \
+	static inline ang::type_name_t type_of() { return "const " ANG_UTILS_TO_STRING(_TYPE) "[]"_s; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 }; \
 template<wsize _SIZE> struct ang::runtime::runtime_type_builder<ang::collections::stack_array<_TYPE, _SIZE>> { \
-	static inline ang::type_name_t type_of() { return #_TYPE"[]"; } \
+	static inline ang::type_name_t type_of() { return ANG_UTILS_TO_STRING(_TYPE) "[]"_s; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 }; \
 template<wsize _SIZE> struct ang::runtime::runtime_type_builder<ang::collections::stack_array<const _TYPE, _SIZE>> { \
-	static inline ang::type_name_t type_of() { return "const "#_TYPE"[]"; } \
+	static inline ang::type_name_t type_of() { return "const " ANG_UTILS_TO_STRING(_TYPE) "[]"_s; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 }; \
 
 #define ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION_TEMPLATE(_TYPE, ...) \
 TEMPLATE(__VA_ARGS__) struct ang::runtime::runtime_type_builder<_TYPE<__VA_ARGS__>> { \
-	static inline ang::type_name_t type_of() { static type_name_t  name = runtime_data_base::regist_typename(ang::move((#_TYPE"<"_o += ang::runtime::args_list_type_of<__VA_ARGS__>()) += ">"_s)); return name; } \
+	static inline ang::type_name_t type_of() { static type_name_t  name = runtime_data_base::regist_typename(ang::move((ANG_UTILS_TO_STRING(_TYPE) "<"_o += ang::runtime::args_list_type_of<__VA_ARGS__>()) += ">"_s)); return name; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 	template<typename new_t> static inline new_t* interface_cast(_TYPE<__VA_ARGS__>* _old) { if (is_type_of(runtime::type_of<new_t>())) return (new_t*)_old; return null; } \
 }; \
 TEMPLATE(__VA_ARGS__) struct ang::runtime::runtime_type_builder<const _TYPE<__VA_ARGS__>> { \
-		static inline ang::type_name_t type_of() { static type_name_t  name = runtime_data_base::regist_typename(ang::move(("const "#_TYPE"<"_o += ang::runtime::args_list_type_of<__VA_ARGS__>()) += ">"_s)); return name; } \
+		static inline ang::type_name_t type_of() { static type_name_t  name = runtime_data_base::regist_typename(ang::move(("const " ANG_UTILS_TO_STRING(_TYPE) "<"_o += ang::runtime::args_list_type_of<__VA_ARGS__>()) += ">"_s)); return name; } \
 		static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 		template<typename new_t> static inline new_t* interface_cast(_TYPE<__VA_ARGS__> const* _old) { if (is_type_of(runtime::type_of<new_t>())) return (new_t*)_old; return null; } \
 }; \
 TEMPLATE(__VA_ARGS__) struct ang::runtime::runtime_type_builder<_TYPE<__VA_ARGS__>&> { \
-		static inline ang::type_name_t type_of() { static type_name_t  name = runtime_data_base::regist_typename(ang::move((#_TYPE"<"_o += ang::runtime::args_list_type_of<__VA_ARGS__>()) += ">&"_s)); return name; } \
+		static inline ang::type_name_t type_of() { static type_name_t  name = runtime_data_base::regist_typename(ang::move((ANG_UTILS_TO_STRING(_TYPE) "<"_o += ang::runtime::args_list_type_of<__VA_ARGS__>()) += ">&"_s)); return name; } \
 		static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 		template<typename new_t> static inline new_t* interface_cast(_TYPE<__VA_ARGS__>* _old) { if (is_type_of(runtime::type_of<new_t>())) return (new_t*)_old; return null; } \
 }; \
 TEMPLATE(__VA_ARGS__) struct ang::runtime::runtime_type_builder<_TYPE<__VA_ARGS__> const&> { \
-		static inline ang::type_name_t type_of() { static type_name_t  name = runtime_data_base::regist_typename(ang::move(("const "#_TYPE"<"_o += ang::runtime::args_list_type_of<__VA_ARGS__>()) += ">&"_s)); return name; } \
+		static inline ang::type_name_t type_of() { static type_name_t  name = runtime_data_base::regist_typename(ang::move(("const " ANG_UTILS_TO_STRING(_TYPE) "<"_o += ang::runtime::args_list_type_of<__VA_ARGS__>()) += ">&"_s)); return name; } \
 		static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 		template<typename new_t> static inline new_t* interface_cast(_TYPE<__VA_ARGS__> const* _old) { if (is_type_of(runtime::type_of<new_t>())) return (new_t*)_old; return null; } \
 }; \
 TEMPLATE(__VA_ARGS__) struct ang::runtime::runtime_type_builder<ang::collections::array_view<_TYPE<__VA_ARGS__>>> { \
-	static inline ang::type_name_t type_of() { static type_name_t  name = runtime_data_base::regist_typename(ang::move((#_TYPE"<"_o += ang::runtime::args_list_type_of<__VA_ARGS__>()) += ">[]"_s)); return name;; } \
+	static inline ang::type_name_t type_of() { static type_name_t  name = runtime_data_base::regist_typename(ang::move((ANG_UTILS_TO_STRING(_TYPE) "<"_o += ang::runtime::args_list_type_of<__VA_ARGS__>()) += ">[]"_s)); return name;; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 }; \
 TEMPLATE(__VA_ARGS__) struct ang::runtime::runtime_type_builder<ang::collections::array_view<const _TYPE<__VA_ARGS__>>> { \
-	static inline ang::type_name_t type_of() { static type_name_t  name = runtime_data_base::regist_typename(ang::move(("const "#_TYPE"<"_o += ang::runtime::args_list_type_of<__VA_ARGS__>()) += ">[]"_s)); return name; } \
+	static inline ang::type_name_t type_of() { static type_name_t  name = runtime_data_base::regist_typename(ang::move(("const " ANG_UTILS_TO_STRING(_TYPE) "<"_o += ang::runtime::args_list_type_of<__VA_ARGS__>()) += ">[]"_s)); return name; } \
 	static inline bool is_type_of(ang::type_name_t name) { return name == type_of(); } \
 }; \
 
@@ -175,8 +179,8 @@ namespace ang
 			typedef T type;
 			static constexpr bool has_class_name = FLAG;
 			static inline type_name_t type_of() { return __runtime_type_builder_impl_warning<T>::type_of(); }
-			static inline bool is_type_of(type_name_t name) { return __runtime_type_builder_impl_warning<T>::is_type_of(); }
-			static inline type_name_t runtime_type_name(const type& var) { return __runtime_type_builder_impl_warning<T>::runtime_type_name(); }
+			static inline bool is_type_of(type_name_t name) { return __runtime_type_builder_impl_warning<T>::is_type_of(name); }
+			static inline type_name_t runtime_type_name(const type& var) { return __runtime_type_builder_impl_warning<T>::runtime_type_name(var); }
 			template<typename new_t> static inline auto interface_cast(T* _old) -> typename runtime_type_builder<new_t>::type* {
 				return __runtime_type_builder_impl_warning<T>::template interface_cast<new_t>(_old);
 			}

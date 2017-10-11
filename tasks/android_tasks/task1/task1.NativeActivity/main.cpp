@@ -33,20 +33,22 @@ struct saved_state {
 * Shared state for our app.
 */
 struct engine {
-	application_t app;
+	application_t app = nullptr;
 
-	ASensorManager* sensorManager;
-	const ASensor* accelerometerSensor;
-	ASensorEventQueue* sensorEventQueue;
+	ASensorManager* sensorManager = nullptr;
+	const ASensor* accelerometerSensor = nullptr;
+	ASensorEventQueue* sensorEventQueue = nullptr;
 
-	int animating;
-	EGLDisplay display;
-	EGLSurface surface;
-	EGLContext context;
-	int32_t width;
-	int32_t height;
-	struct saved_state state;
+	int animating = 0;
+	EGLDisplay display = nullptr;
+	EGLSurface surface = nullptr;
+	EGLContext context = nullptr;
+	int32_t width = 0;
+	int32_t height = 0;
+	saved_state state = { 0.0f,0,0 };
 };
+
+ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(engine);
 
 /**
 * Initialize an EGL context for the current display.
@@ -156,11 +158,11 @@ static void engine_term_display(struct engine* engine) {
 /**
 * Process the next input event.
 */
-static int32_t engine_handle_input(application_t app, AInputEvent* event) {
-	struct engine* engine = (struct engine*)app->userData;
+static int engine_handle_input(application_t app, AInputEvent* event) {
+	auto e = app->userData->as<engine>();
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
-		engine->state.x = AMotionEvent_getX(event, 0);
-		engine->state.y = AMotionEvent_getY(event, 0);
+		e->state.x = AMotionEvent_getX(event, 0);
+		e->state.y = AMotionEvent_getY(event, 0);
 		return 1;
 	}
 	return 0;
@@ -170,45 +172,45 @@ static int32_t engine_handle_input(application_t app, AInputEvent* event) {
 * Process the next main command.
 */
 static void engine_handle_cmd(application_t app, int32_t cmd) {
-	struct engine* engine = (struct engine*)app->userData;
+	auto e = app->userData->as<engine>();
 	switch (cmd) {
 	case APP_CMD_SAVE_STATE:
 		// The system has asked us to save our current state.  Do so.
-		engine->app->savedState = malloc(sizeof(struct saved_state));
-		*((struct saved_state*)engine->app->savedState) = engine->state;
-		engine->app->savedStateSize = sizeof(struct saved_state);
+		e->app->savedState = malloc(sizeof(struct saved_state));
+		*((struct saved_state*)e->app->savedState) = e->state;
+		e->app->savedStateSize = sizeof(struct saved_state);
 		break;
 	case APP_CMD_INIT_WINDOW:
 		// The window is being shown, get it ready.
-		if (engine->app->window != NULL) {
-			engine_init_display(engine);
-			engine_draw_frame(engine);
+		if (e->app->window != NULL) {
+			engine_init_display(e);
+			engine_draw_frame(e);
 		}
 		break;
 	case APP_CMD_TERM_WINDOW:
 		// The window is being hidden or closed, clean it up.
-		engine_term_display(engine);
+		engine_term_display(e);
 		break;
 	case APP_CMD_GAINED_FOCUS:
 		// When our app gains focus, we start monitoring the accelerometer.
-		if (engine->accelerometerSensor != NULL) {
-			ASensorEventQueue_enableSensor(engine->sensorEventQueue,
-				engine->accelerometerSensor);
+		if (e->accelerometerSensor != NULL) {
+			ASensorEventQueue_enableSensor(e->sensorEventQueue,
+				e->accelerometerSensor);
 			// We'd like to get 60 events per second (in us).
-			ASensorEventQueue_setEventRate(engine->sensorEventQueue,
-				engine->accelerometerSensor, (1000L / 60) * 1000);
+			ASensorEventQueue_setEventRate(e->sensorEventQueue,
+				e->accelerometerSensor, (1000L / 60) * 1000);
 		}
 		break;
 	case APP_CMD_LOST_FOCUS:
 		// When our app loses focus, we stop monitoring the accelerometer.
 		// This is to avoid consuming battery while not being used.
-		if (engine->accelerometerSensor != NULL) {
-			ASensorEventQueue_disableSensor(engine->sensorEventQueue,
-				engine->accelerometerSensor);
+		if (e->accelerometerSensor != NULL) {
+			ASensorEventQueue_disableSensor(e->sensorEventQueue,
+				e->accelerometerSensor);
 		}
 		// Also stop animating.
-		engine->animating = 0;
-		engine_draw_frame(engine);
+		e->animating = 0;
+		engine_draw_frame(e);
 		break;
 	}
 }
@@ -219,29 +221,25 @@ static void engine_handle_cmd(application_t app, int32_t cmd) {
 * event loop for receiving input events and doing other things.
 */
 void android_main(application_t state) {
-	struct engine engine;
-
-	ang::array<ang::string> args = ang::initializer_list_t<cstr_t>{"1"_s, "2"_s , "3"_s , "4"_s };
-
-	memset(&engine, 0, sizeof(engine));
-	state->userData = &engine;
-	state->onAppCmd = engine_handle_cmd;
-	state->onInputEvent = engine_handle_input;
-	engine.app = state;
+	ang::shared_ptr<engine> e = new value_wrapper<engine>();
+	state->userData = e.get();
+	state->command_event += &engine_handle_cmd;
+	state->input_event += &engine_handle_input;
+	e->app = state;
 
 	// Prepare to monitor accelerometer
-	engine.sensorManager = ASensorManager_getInstance();
-	engine.accelerometerSensor = ASensorManager_getDefaultSensor(engine.sensorManager,
+	e->sensorManager = ASensorManager_getInstance();
+	e->accelerometerSensor = ASensorManager_getDefaultSensor(e->sensorManager,
 		ASENSOR_TYPE_ACCELEROMETER);
-	engine.sensorEventQueue = ASensorManager_createEventQueue(engine.sensorManager,
+	e->sensorEventQueue = ASensorManager_createEventQueue(e->sensorManager,
 		state->looper, LOOPER_ID_USER, NULL, NULL);
 
 	if (state->savedState != NULL) {
 		// We are starting with a previous saved state; restore from it.
-		engine.state = *(struct saved_state*)state->savedState;
+		e->state = *(struct saved_state*)state->savedState;
 	}
 
-	engine.animating = 1;
+	e->animating = 1;
 
 	// loop waiting for stuff to do.
 
@@ -249,24 +247,25 @@ void android_main(application_t state) {
 		// Read all pending events.
 		int ident;
 		int events;
-		struct android_poll_source* source;
+		ang::core::delegates::function<void(void)> callback;
 
 		// If not animating, we will block forever waiting for events.
 		// If animating, we loop until all events are read, then continue
 		// to draw the next frame of animation.
-		while ((ident = ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
-			(void**)&source)) >= 0) {
+		while ((ident = ALooper_pollAll(e->animating ? 0 : -1, NULL, &events,
+			(void**)callback.addres_of())) >= 0) {
 
 			// Process this event.
-			if (source != NULL) {
-				source->process(state, source);
+			if (!callback.is_empty()) {
+				callback.get()->add_ref();
+				callback();
 			}
 
 			// If a sensor has data, process it now.
 			if (ident == LOOPER_ID_USER) {
-				if (engine.accelerometerSensor != NULL) {
+				if (e->accelerometerSensor != NULL) {
 					ASensorEvent event;
-					while (ASensorEventQueue_getEvents(engine.sensorEventQueue,
+					while (ASensorEventQueue_getEvents(e->sensorEventQueue,
 						&event, 1) > 0) {
 						LOGI("accelerometer: x=%f y=%f z=%f",
 							event.acceleration.x, event.acceleration.y,
@@ -277,21 +276,21 @@ void android_main(application_t state) {
 
 			// Check if we are exiting.
 			if (state->destroyRequested != 0) {
-				engine_term_display(&engine);
+				engine_term_display(e);
 				return;
 			}
 		}
 
-		if (engine.animating) {
+		if (e->animating) {
 			// Done with events; draw next animation frame.
-			engine.state.angle += .01f;
-			if (engine.state.angle > 1) {
-				engine.state.angle = 0;
+			e->state.angle += .01f;
+			if (e->state.angle > 1) {
+				e->state.angle = 0;
 			}
 
 			// Drawing is throttled to the screen update rate, so there
 			// is no need to do timing here.
-			engine_draw_frame(&engine);
+			engine_draw_frame(e);
 		}
 	}
 }

@@ -507,9 +507,9 @@ void ang::core::delegates::listener<void(args_t...)>::invoke(args_t... args)cons
 {
 	if (!is_empty())
 	{
-		foreach(functions, [&](function<void(args_t...)> const & func) {
+		for(function<void(args_t...)> const & func : functions) {
 			func(args...);
-		});
+		}
 	}
 }
 
@@ -518,9 +518,9 @@ void ang::core::delegates::listener<void(args_t...)>::operator() (args_t... args
 {
 	if (!is_empty())
 	{
-		foreach(functions, [&](function<void(args_t...)> const & func) {
+		for(function<void(args_t...)> const & func : functions) {
 			func(args...);
-		});
+		}
 	}
 }
 
