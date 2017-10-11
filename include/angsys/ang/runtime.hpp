@@ -150,7 +150,7 @@ namespace ang
 		};
 
 		template<typename T>
-		struct ANG_DEPRECATE(__runtime_type_builder_impl_warning , "using runtime type info without regist the type can cause undefined probles...")
+		struct __runtime_type_builder_impl_warning //__attribute__((deprecated("using runtime type info without regist the type can cause undefined probles...")))
 		{
 			typedef T type;
 			static inline type_name_t type_of() { return "'undefined'"; }
@@ -161,8 +161,15 @@ namespace ang
 			}
 		};
 
+		template<typename T, typename = void>
+		struct has_class_name : public false_type {
+		};
 
-		template<typename T, bool FLAG = ang::has_class_name<T>::value>
+		template <typename T>
+		struct has_class_name<T, void_t<decltype(&T::class_name)>> : true_type {};
+
+
+		template<typename T, bool FLAG = runtime::has_class_name<T>::value>
 		struct __runtime_type_builder_impl
 		{
 			typedef T type;
@@ -225,12 +232,6 @@ namespace ang
 			}
 		};
 
-		template<typename T, typename = void>
-		struct has_class_name : public false_type {
-		};
-
-		template <typename T>
-		struct has_class_name<T, void_t<decltype(&T::class_name)>> : true_type {};
 	}
 
 	using namespace runtime;

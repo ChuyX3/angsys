@@ -26,10 +26,6 @@
 #include <android/looper.h>
 #include <android/native_activity.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * The native activity interface provided by <android/native_activity.h>
  * is based on a set of application-provided callbacks that will be called
@@ -81,7 +77,8 @@ extern "C" {
  * full usage example.  Also look at the JavaDoc of NativeActivity.
  */
 
-struct android_app;
+class application;
+typedef ang::object_wrapper<application> application_t;
 
 /**
  * Data associated with an ALooper fd that will be returned as the "outData"
@@ -93,11 +90,11 @@ struct android_poll_source {
     int32_t id;
 
     // The android_app this ident is associated with.
-    struct android_app* app;
+	application_t app;
 
     // Function to call to perform the standard processing of data from
     // this source.
-    void (*process)(struct android_app* app, struct android_poll_source* source);
+    void (*process)(application_t app, struct android_poll_source* source);
 };
 
 /**
@@ -108,19 +105,45 @@ struct android_poll_source {
  * VM, although it will need to be in order to make JNI calls any
  * Java objects.
  */
-struct android_app {
+class application
+	: public ang::object
+{
+public:
+	static void onDestroy(ANativeActivity* activity);
+	static void onStart(ANativeActivity* activity);
+	static void onResume(ANativeActivity* activity);
+	static void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen);
+	static void onPause(ANativeActivity* activity);
+	static void onStop(ANativeActivity* activity);
+	static void onConfigurationChanged(ANativeActivity* activity);
+	static void onLowMemory(ANativeActivity* activity);
+	static void onWindowFocusChanged(ANativeActivity* activity, int focused);
+	static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window);
+	static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window);
+	static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue);
+	static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue);
+
+public:
+	application();
+
+protected:
+	virtual~application();
+
+public:
+	ANG_DECLARE_INTERFACE();
+
     // The application can place a pointer to its own state object
     // here if it likes.
     void* userData;
 
     // Fill this in with the function to process main app commands (APP_CMD_*)
-    void (*onAppCmd)(struct android_app* app, int32_t cmd);
+    void (*onAppCmd)(application_t app, int32_t cmd);
 
     // Fill this in with the function to process input events.  At this point
     // the event has already been pre-dispatched, and it will be finished upon
     // return.  Return 1 if you have handled the event, 0 for any default
     // dispatching.
-    int32_t (*onInputEvent)(struct android_app* app, AInputEvent* event);
+    int32_t (*onInputEvent)(application_t app, AInputEvent* event);
 
     // The ANativeActivity object instance that this app is running in.
     ANativeActivity* activity;
@@ -164,13 +187,13 @@ struct android_app {
     // -------------------------------------------------
     // Below are "private" implementation of the glue code.
 
-    pthread_mutex_t mutex;
-    pthread_cond_t cond;
+    ang::core::async::mutex_t mutex;
+	ang::core::async::cond_t cond;
 
     int msgread;
     int msgwrite;
 
-    pthread_t thread;
+	ang::core::async::thread_t thread;
 
     struct android_poll_source cmdPollSource;
     struct android_poll_source inputPollSource;
@@ -182,6 +205,11 @@ struct android_app {
     AInputQueue* pendingInputQueue;
     ANativeWindow* pendingWindow;
     ARect pendingContentRect;
+
+
+	dword android_app_entry(ang::core::async::thread_t sender, ang::var_args_t args);
+
+
 };
 
 enum {
@@ -315,30 +343,27 @@ enum {
  * Call when ALooper_pollAll() returns LOOPER_ID_MAIN, reading the next
  * app command message.
  */
-int8_t android_app_read_cmd(struct android_app* android_app);
+int8_t android_app_read_cmd(application_t android_app);
 
 /**
  * Call with the command returned by android_app_read_cmd() to do the
  * initial pre-processing of the given command.  You can perform your own
  * actions for the command after calling this function.
  */
-void android_app_pre_exec_cmd(struct android_app* android_app, int8_t cmd);
+void android_app_pre_exec_cmd(application_t android_app, int8_t cmd);
 
 /**
  * Call with the command returned by android_app_read_cmd() to do the
  * final post-processing of the given command.  You must have done your own
  * actions for the command before calling this function.
  */
-void android_app_post_exec_cmd(struct android_app* android_app, int8_t cmd);
+void android_app_post_exec_cmd(application_t android_app, int8_t cmd);
 
 /**
  * This is the function that application code must implement, representing
  * the main entry to the app.
  */
-extern void android_main(struct android_app* app);
+extern void android_main(application_t app);
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _ANDROID_NATIVE_APP_GLUE_H */

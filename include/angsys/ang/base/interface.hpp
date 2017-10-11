@@ -26,7 +26,7 @@
 #define ang_interface struct
 #define ANG_INTERFACE(_NAME) ang_interface _NAME; typedef ang::intf_wrapper<_NAME> _NAME##_t; typedef ang::intf_wrapper_ptr<_NAME> _NAME##_ptr_t
 
-#define ANG_UTILS_TO_STRING_OBJ(_VALUE) _VALUE##_s
+#define ANG_UTILS_TO_STRING_OBJ(_VALUE) ang::cstr_t(_VALUE)
 
 #define ANG_DECLARE_CLASSNAME() static ang::type_name_t class_name();
 #define ANG_DECLARE_ISCHILDOF() static bool is_child_of(ang::type_name_t);

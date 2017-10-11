@@ -8,6 +8,7 @@
 //
 
 #include <angsys.h>
+#include <ang/core/async.hpp>
 
 #include <jni.h>
 #include <errno.h>

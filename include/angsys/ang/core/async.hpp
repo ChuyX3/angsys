@@ -54,12 +54,7 @@ namespace ang
 			ANG_INTERFACE(icore_thread);
 			ANG_INTERFACE(idispatcher);
 
-#ifdef WINDOWS_PLATFORM
 			typedef pointer handle;
-#elif defined ANDROID_PLATFORM
-			typedef dword handle;
-#endif // window_
-
 
 			//typedef object_wrapper<dispatcher_thread> dispatcher_thread_t;
 

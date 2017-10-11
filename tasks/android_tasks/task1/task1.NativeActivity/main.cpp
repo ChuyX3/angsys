@@ -33,7 +33,7 @@ struct saved_state {
 * Shared state for our app.
 */
 struct engine {
-	struct android_app* app;
+	application_t app;
 
 	ASensorManager* sensorManager;
 	const ASensor* accelerometerSensor;
@@ -156,7 +156,7 @@ static void engine_term_display(struct engine* engine) {
 /**
 * Process the next input event.
 */
-static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
+static int32_t engine_handle_input(application_t app, AInputEvent* event) {
 	struct engine* engine = (struct engine*)app->userData;
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
 		engine->state.x = AMotionEvent_getX(event, 0);
@@ -169,7 +169,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 /**
 * Process the next main command.
 */
-static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
+static void engine_handle_cmd(application_t app, int32_t cmd) {
 	struct engine* engine = (struct engine*)app->userData;
 	switch (cmd) {
 	case APP_CMD_SAVE_STATE:
@@ -218,7 +218,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 * android_native_app_glue.  It runs in its own thread, with its own
 * event loop for receiving input events and doing other things.
 */
-void android_main(struct android_app* state) {
+void android_main(application_t state) {
 	struct engine engine;
 
 	ang::array<ang::string> args = ang::initializer_list_t<cstr_t>{"1"_s, "2"_s , "3"_s , "4"_s };

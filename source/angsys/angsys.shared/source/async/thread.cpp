@@ -303,7 +303,9 @@ core_thread::~core_thread()
 
 bool core_thread::is_main_thread()const { return _is_main; }
 
-bool core_thread::is_current_thread()const { return _id == core_thread_manager::this_thread_id(); }
+bool core_thread::is_current_thread()const {
+	return thread_id() == core_thread_manager::this_thread_id();
+}
 
 ibuffer_view_t core_thread::tle_buffer()const { return _tle_data; }
 
@@ -321,7 +323,13 @@ void core_thread::set_tle_notify(tle_deleting_event_t callback) { tle_notify_cal
 
 var_args_t core_thread::user_args()const { return _user_args; }
 
-dword core_thread::thread_id()const { return _id; }
+dword core_thread::thread_id()const { 
+#if defined WINDOWS_PLATFORM
+	return _id;
+#elif defined  ANDROID_PLATFORM || defined LINUX_PLATFORM
+	return dword(_thread);
+#endif
+}
 
 async_action_status_t core_thread::thread_state()const { return _state; }
 

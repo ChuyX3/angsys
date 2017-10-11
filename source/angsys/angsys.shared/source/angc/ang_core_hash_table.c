@@ -50,7 +50,7 @@ typedef struct ang_hash_table_impl
 	ang_hash_table_create_hash_callback_t hash_callback;
 	ang_hash_table_delete_data_callback_t delete_callback;
 	ang_hash_table_node_ptr_t* _table;
-}ang_hash_table_impl_t, far *ang_hash_table_impl_ptr_t;
+}ang_hash_table_impl_t, *ang_hash_table_impl_ptr_t;
 
 ang_hash_table_ptr_t ang_hash_table_create(ang_hash_table_delete_data_callback_t delete_callback, ang_hash_table_create_hash_callback_t hash_callback)
 {

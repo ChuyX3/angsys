@@ -41,7 +41,6 @@ inline ang::collections::vector_buffer<T, allocator>::vector_buffer(ang::collect
 	_size = ar._size;
 	_data = ar._data;
 	_capacity = ar._capacity;
-	_allocator = ar._allocator;
 	ar._size = 0;
 	ar._capacity = 0;
 	ar._data = null;
@@ -273,7 +272,6 @@ inline bool ang::collections::vector_buffer<T, allocator>::move(ang::collections
 	_size = ar._size;
 	_data = ar._data;
 	_capacity = ar._capacity;
-	_allocator = ar._allocator;
 	ar._data = null;
 	ar._size = 0;
 	ar._capacity = 0;

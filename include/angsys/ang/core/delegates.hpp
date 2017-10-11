@@ -214,6 +214,7 @@ namespace ang
 				inline virtual~pseudo_member_function() {}
 			};
 
+
 		}
 	}
 
@@ -314,7 +315,7 @@ namespace ang
 
 		template<typename obj_t>
 		object_wrapper(obj_t* obj, void(obj_t::*f)(args_t...)) : object_wrapper() {
-			set(new core::delegates::member_function<obj_t, void, args_t...>(obj, f));
+			set(new core::delegates::member_function<obj_t, is_base_of<object, obj_t>::value, void, args_t...>(obj, f));
 		}
 
 	public:
@@ -381,7 +382,7 @@ namespace ang
 
 		template<typename obj_t>
 		object_wrapper(obj_t* obj, void(obj_t::*f)(void)) : object_wrapper() {
-			set(new core::delegates::member_function<obj_t, void>(obj, f));
+			set(new core::delegates::member_function<obj_t, is_base_of<object, obj_t>::value, void>(obj, f));
 		}
 
 	public:
@@ -425,6 +426,15 @@ namespace ang
 		friend safe_pointer;
 	};
 
+	template<typename O, typename T, typename ...Ts>
+	inline core::delegates::function<T(Ts...)> bind(O*o, T(O::*func)(Ts...)) {
+		return ang::move(core::delegates::function<T(Ts...)>(o, func));
+	}
+
+	template<typename O, typename T, typename ...Ts>
+	inline core::delegates::function<T(Ts...)> bind(object_wrapper<O> o, T(O::*func)(Ts...)) {
+		return ang::move(core::delegates::function<T(Ts...)>(o.get(), func));
+	}
 
 	namespace core
 	{

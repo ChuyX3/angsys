@@ -47,7 +47,8 @@ mutex::mutex()
 	pthread_mutexattr_t attr;
 	pthread_mutexattr_init(&attr);
 	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-	pthread_mutex_init(&this->_handle, &attr);
+	_handle = memory::default_allocator<pthread_mutex_t>::alloc(1);
+	pthread_mutex_init((pthread_mutex_t*)_handle, &attr);
 	pthread_mutexattr_destroy(&attr);
 #elif defined WINDOWS_PLATFORM
 	this->_handle = CreateMutexExW(NULL, NULL, 0, SYNCHRONIZE);
@@ -61,9 +62,10 @@ mutex::mutex(bool _lock)
 	pthread_mutexattr_t attr;
 	pthread_mutexattr_init(&attr);
 	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-	pthread_mutex_init(&this->_handle, &attr);
+	_handle = memory::default_allocator<pthread_mutex_t>::alloc(1);
+	pthread_mutex_init((pthread_mutex_t*)_handle, &attr);
 	pthread_mutexattr_destroy(&attr);
-	if (_lock)pthread_mutex_lock(&this->_handle);
+	if (_lock)pthread_mutex_lock((pthread_mutex_t*)_handle);
 #elif defined WINDOWS_PLATFORM
 	this->_handle = CreateMutexExW(NULL, NULL, 0, SYNCHRONIZE);
 	if (_lock)WaitForSingleObjectEx(this->_handle, INFINITE, FALSE);
@@ -74,7 +76,8 @@ mutex::mutex(bool _lock)
 mutex::~mutex()
 {
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-	pthread_mutex_destroy(&this->_handle);
+	pthread_mutex_destroy((pthread_mutex_t*)_handle);
+	memory::default_allocator<pthread_mutex_t>::free((pthread_mutex_t*)_handle);
 #elif defined WINDOWS_PLATFORM
 	::CloseHandle(this->_handle);
 #endif
@@ -84,7 +87,7 @@ bool mutex::lock()const
 {
 	if (_handle != NULL)
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-		return pthread_mutex_lock(&this->_handle) == 0 ? ang_true : ang_false;
+		return pthread_mutex_lock((pthread_mutex_t*)_handle) == 0 ? ang_true : ang_false;
 #elif defined WINDOWS_PLATFORM
 		return WaitForSingleObjectEx(this->_handle, INFINITE, FALSE) == WAIT_OBJECT_0 ? true : false;
 #endif
@@ -95,7 +98,7 @@ bool mutex::trylock()const
 {
 	if (_handle != NULL)
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-		return pthread_mutex_trylock(&this->_handle) == 0 ? ang_true : ang_false;
+		return pthread_mutex_trylock((pthread_mutex_t*)_handle) == 0 ? ang_true : ang_false;
 #elif defined WINDOWS_PLATFORM
 		return WaitForSingleObjectEx(this->_handle, 0, FALSE) == WAIT_OBJECT_0 ? true : false;
 #endif
@@ -106,7 +109,7 @@ bool mutex::unlock()const
 {
 	if (_handle != NULL)
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-		return pthread_mutex_unlock(&this->_handle) == 0 ? ang_true : ang_false;
+		return pthread_mutex_unlock((pthread_mutex_t*)_handle) == 0 ? ang_true : ang_false;
 #elif defined WINDOWS_PLATFORM
 		return ReleaseMutex(this->_handle) ? true : false;
 #endif
@@ -119,7 +122,8 @@ bool mutex::unlock()const
 cond::cond()
 {
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-	pthread_cond_init(&this->_handle, NULL);
+	_handle = memory::default_allocator<pthread_cond_t>::alloc(1);
+	pthread_cond_init((pthread_cond_t*)_handle, NULL);
 #elif defined WINDOWS_PLATFORM
 	this->_handle = CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
 #endif
@@ -129,7 +133,10 @@ cond::~cond()
 {
 	if (_handle != NULL)
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-		pthread_cond_destroy(&this->_handle);
+	{
+		pthread_cond_destroy((pthread_cond_t*)_handle);
+		memory::default_allocator<pthread_cond_t>::free((pthread_cond_t*)_handle);
+	}
 #elif defined WINDOWS_PLATFORM
 		CloseHandle(this->_handle);
 #endif
@@ -141,7 +148,7 @@ bool cond::wait(mutex& mutex)const
 	if (_handle == NULL)
 		return false;
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-	return pthread_cond_wait(&this->_cond, &mutex->_mutex) == 0 ? true : false;
+	return pthread_cond_wait((pthread_cond_t*)_handle, (pthread_mutex_t*)mutex._handle) == 0 ? true : false;
 #elif defined WINDOWS_PLATFORM
 	mutex.unlock();
 	auto res = WaitForSingleObjectEx(this->_handle, INFINITE, FALSE) == WAIT_OBJECT_0 ? true : false;
@@ -158,7 +165,7 @@ bool cond::wait(mutex& mutex, dword ms)const
 	timespec time;
 	time.tv_sec = (long)ms / 1000;
 	time.tv_nsec = ((long)ms - time.tv_sec * 1000) * 1000;
-	return pthread_cond_timedwait(&this->_cond, &mutex->_mutex, &time) == 0 ? ang_true : ang_false;
+	return pthread_cond_timedwait((pthread_cond_t*)_handle, (pthread_mutex_t*)mutex._handle, &time) == 0 ? ang_true : ang_false;
 #elif defined WINDOWS_PLATFORM
 	return scope_locker::lock(mutex, [&]() {
 		return WaitForSingleObjectEx(this->_handle, ms, FALSE) == WAIT_OBJECT_0 ? true : false;
@@ -170,7 +177,7 @@ bool cond::signal()const
 {
 	if (_handle != null)
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-		return pthread_cond_broadcast(&this->_handle) == 0 ? true : false;
+		return pthread_cond_broadcast((pthread_cond_t*)_handle) == 0 ? true : false;
 #elif defined WINDOWS_PLATFORM
 	{
 		bool _res = SetEvent(_handle) ? true : false;

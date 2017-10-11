@@ -62,6 +62,21 @@
 namespace ang
 {
 
+	template <typename... Ts> using void_t = void;
+
+	template<typename T, T _Val>
+	struct integer_constant {
+		static constexpr T value = _Val;
+		typedef T value_type;
+		typedef integer_constant<T, _Val> type;
+		constexpr operator value_type() const { return (value); }
+		constexpr value_type operator()() const { return (value); }
+		static constexpr value_type get() { return (value); }
+	};
+
+	typedef integer_constant<bool, true> true_type;
+	typedef integer_constant<bool, false> false_type;
+
 	template<bool VALUE>
 	struct rule {
 		rule() { static_assert(VALUE, "ERROR..."); }
@@ -136,7 +151,7 @@ namespace ang
 	// TEMPLATE CLASS is_lvalue_reference
 	template<typename T>
 	struct is_lvalue_reference
-		: false_type
+		: public false_type
 	{	// determine whether T is an lvalue reference
 	};
 
@@ -170,20 +185,7 @@ namespace ang
 		return (static_cast<T&&>(_Arg));
 	}
 
-	template <typename... Ts> using void_t = void;
-
-	template<typename T, T _Val>
-	struct integer_constant {
-		static constexpr T value = _Val;
-		typedef T value_type;
-		typedef integer_constant<T, _Val> type;
-		constexpr operator value_type() const { return (value); }
-		constexpr value_type operator()() const { return (value); }
-		static constexpr value_type get() { return (value); }
-	};
-
-	typedef integer_constant<bool, true> true_type;
-	typedef integer_constant<bool, false> false_type;
+	
 
 	template<typename>
 	struct integer_value
