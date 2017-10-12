@@ -215,6 +215,16 @@ namespace ang
 	template<> struct integer_value<long64> { static const bool is_integer_value = true; };
 	template<> struct integer_value<ulong64> { static const bool is_integer_value = true; };
 
+	template<typename T> struct char_value : public false_type{};
+	template<typename T> struct char_value<const T> : public char_value<T> {};
+	template<typename T> struct char_value<T&> : public char_value<T> {};
+	template<typename T> struct char_value<const T&> : public char_value<T> {};
+
+	template<> struct char_value<char> : public true_type {};
+	template<> struct char_value<byte> : public true_type {};
+	template<> struct char_value<wchar> : public true_type {};
+	template<> struct char_value<char16_t> : public true_type {};
+	template<> struct char_value<char32_t> : public true_type {};
 
 	enum comparision_type
 	{

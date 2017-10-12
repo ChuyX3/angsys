@@ -5,7 +5,7 @@
 
 namespace ang
 {
-	template<typename T> struct safe_str;
+	template<typename T> struct safe_str : public rule<char_value<T>::value>;
 
 	template<> struct LINK safe_str<char>
 	{

@@ -115,33 +115,15 @@ protected:
 public:
 	ANG_DECLARE_INTERFACE();
 
-    // The application can place a pointer to its own state object
-    // here if it likes.
     ang::objptr userData;
 
-    // Fill this in with the function to process main app commands (APP_CMD_*)
     ang::core::delegates::listener<void(application_t, int cmd)> command_event;
-
-    // Fill this in with the function to process input events.  At this point
-    // the event has already been pre-dispatched, and it will be finished upon
-    // return.  Return 1 if you have handled the event, 0 for any default
-    // dispatching.
 	ang::core::delegates::listener<int(application_t, AInputEvent*)> input_event;
 
-    // The ANativeActivity object instance that this app is running in.
-    ANativeActivity* activity;
 
-    // The current configuration the app is running in.
+    ANativeActivity* activity;
     AConfiguration* config;
 
-    // This is the last instance's saved state, as provided at creation time.
-    // It is NULL if there was no state.  You can use this as you need; the
-    // memory will remain around until you call android_app_exec_cmd() for
-    // APP_CMD_RESUME, at which point it will be freed and savedState set to NULL.
-    // These variables should only be changed when processing a APP_CMD_SAVE_STATE,
-    // at which point they will be initialized to NULL and you can malloc your
-    // state and place the information here.  In that case the memory will be
-    // freed for you later.
     void* savedState;
     size_t savedStateSize;
 

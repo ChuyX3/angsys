@@ -154,7 +154,7 @@ namespace ang
 		};
 
 		template<typename T>
-		struct __runtime_type_builder_impl_warning //__attribute__((deprecated("using runtime type info without regist the type can cause undefined probles...")))
+		struct ANG_DEPRECATE("using runtime type info without regist the type can cause undefined probles...") __runtime_type_builder_impl_warning
 		{
 			typedef T type;
 			static inline type_name_t type_of() { return "'undefined'"; }
