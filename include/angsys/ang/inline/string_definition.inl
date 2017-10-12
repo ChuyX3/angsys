@@ -87,6 +87,7 @@ namespace ang
 
 		protected:
 			str_data<ENCODING> _data;
+			wsize _map_index, _map_size;
 
 		public:
 			string_buffer();
@@ -131,12 +132,12 @@ namespace ang
 			}
 			template<typename cstr_t>
 			inline void concat(cstr_t cstr) {
-				concat((pointer)(typename char_type_by_type<cstr_t>::cstr_t)cstr, algorithms::string_length(cstr), encoding_by_type<typename char_type_by_type<cstr_t>::char_t>::encoding());
+				copy_at(length() ,(pointer)(typename char_type_by_type<cstr_t>::cstr_t)cstr, algorithms::string_length(cstr), encoding_by_type<typename char_type_by_type<cstr_t>::char_t>::encoding());
 			}
 
 		protected:
 			void copy(pointer raw, wsize sz, encoding_t);
-			void concat(pointer raw, wsize sz, encoding_t);
+			void copy_at(windex, pointer raw, wsize sz, encoding_t);
 
 		public:
 			virtual comparision_result_t compare(object const& obj)const override;

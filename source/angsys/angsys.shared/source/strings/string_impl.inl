@@ -142,16 +142,22 @@ typename text::char_type_by_encoding<CURRENT_ENCODING>::char_t object_wrapper<st
 string_buffer<CURRENT_ENCODING>::string_buffer()
 {
 	memset(&_data, 0, sizeof(_data));
+	_map_index = invalid_index;
+	_map_size = invalid_index;
 }
 
 string_buffer<CURRENT_ENCODING>::string_buffer(wsize reserv)
 {
 	memset(&_data, 0, sizeof(_data));
+	_map_index = invalid_index;
+	_map_size = invalid_index;
 	realloc(reserv, false);
 }
 
 string_buffer<CURRENT_ENCODING>::~string_buffer()
 {
+	_map_index = invalid_index;
+	_map_size = invalid_index;
 	clean();
 }
 
@@ -207,23 +213,33 @@ wsize string_buffer<CURRENT_ENCODING>::mem_copy(wsize _size, pointer _ptr, text:
 	if (format == encoding::binary
 		|| format == encoding::auto_detect)
 		throw exception_t(except_code::unsupported);
-	copy(_ptr, _size, format);
-	return length();
+	if (_map_index != invalid_index || _map_size != invalid_index)
+	{
+		copy_at(_map_index / sizeof(typename string_buffer<CURRENT_ENCODING>::char_t), _ptr, min(_map_size, _size) / sizeof(typename string_buffer<CURRENT_ENCODING>::char_t), format);
+		return min(_map_size, _size);
+	}
+	else {
+		copy(_ptr, _size / sizeof(typename string_buffer<CURRENT_ENCODING>::char_t), format);
+		return length() * sizeof(typename string_buffer<CURRENT_ENCODING>::char_t);
+	}
 }
 
 ibuffer_view_t string_buffer<CURRENT_ENCODING>::map_buffer(windex start, wsize size)
 {
+	if (_map_index != invalid_index || _map_size != invalid_index)
+		return null;
 	if ((start + size) > (capacity() * sizeof(typename string_buffer<CURRENT_ENCODING>::char_t)))
 		return null;
-	return new buffer_view(this, start, size);
+	_map_index = start;
+	_map_size = size;
+	return this;
 }
 
 bool string_buffer<CURRENT_ENCODING>::unmap_buffer(ibuffer_view_t& view, wsize used)
 {
-	buffer_view_t buff = interface_cast<buffer_view_t>(view.get());
-	if (buff == null && buff->parent().get() != this)
+	if (view.get() != static_cast<ibuffer_view*>(this))
 		return false;
-	length((wsize(buff->buffer_ptr()) - wsize(buffer_ptr()) + used) / sizeof(typename string_buffer<CURRENT_ENCODING>::char_t));
+	length((_map_index + used) / sizeof(typename string_buffer<CURRENT_ENCODING>::char_t));
 	view = null;
 	return true;
 }
@@ -343,12 +359,12 @@ void string_buffer<CURRENT_ENCODING>::copy(pointer raw, wsize sz, encoding_t enc
 	}
 }
 
-void string_buffer<CURRENT_ENCODING>::concat(pointer raw, wsize sz, encoding_t encoding)
+void string_buffer<CURRENT_ENCODING>::copy_at(windex at, pointer raw, wsize sz, encoding_t encoding)
 {
 	if (sz == 0U)
 		return;
 
-	wsize my_len = length();
+	wsize my_len = min(length(), at);
 	if ((my_len + sz) < LOCAL_CAPACITY)
 	{
 		_data._stack_length = my_len + get_encoder<ENCODING>().convert(&_data._stack_buffer[my_len], min(LOCAL_CAPACITY - my_len - 1, sz), raw, encoding, true);

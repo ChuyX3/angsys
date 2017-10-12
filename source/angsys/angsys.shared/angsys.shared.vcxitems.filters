@@ -140,6 +140,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\format_parser.h">
       <Filter>header files\include</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\streams.hpp">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">

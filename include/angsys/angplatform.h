@@ -19,13 +19,13 @@
 #define WINDOWS_DESKTOP_PLATFORM WINAPI_FAMILY_DESKTOP_APP
 #define WINDOWS_PHONE_PLATFORM WINAPI_FAMILY_PHONE_APP
 #define ANG_PLATFORM WINDOWS_PLATFORM
-#define ANG_DEPRECATE(_ELEMENT, _MSG) __declspec(deprecated(_MSG)) _NAME
+#define ANG_DEPRECATE(_MSG) __declspec(deprecated(_MSG)) 
 
 #elif defined __ANDROID__
 
 #define ANDROID_PLATFORM
 #define ANG_PLATFORM ANDROID_PLATFORM
-#define ANG_DEPRECATE(_NAME, _MSG) _NAME __attribute__((deprecated(_MSG)))
+#define ANG_DEPRECATE(_MSG) __attribute__((deprecated(_MSG)))
 #elif defined __18CXX
 
 #define MICRO8_PLATFORM

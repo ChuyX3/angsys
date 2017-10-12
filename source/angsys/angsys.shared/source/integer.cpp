@@ -49,7 +49,7 @@ wstring integer::to_wstring(value<int> value)
 
 string integer::to_string(value<int> value, text::text_format_t f)
 {
-	const byte max_char = 65;
+	const uint max_char = 65;
 
 	qword format = f.format_flags();
 	if (GET_FLAG_TARGET(format) != text::text_format::signed_integer)
@@ -59,7 +59,7 @@ string integer::to_string(value<int> value, text::text_format_t f)
 	char fill = GET_FLAG_FILL(format);
 	int max = GET_FLAG_MAX(format);
 	bool neg = false;
-	word c = max_char - 2;
+	uint c = max_char - 2;
 
 	if (max == 0 || max > max_char)
 		max = max_char - 1;
@@ -157,7 +157,7 @@ string integer::to_string(value<int> value, text::text_format_t f)
 
 wstring integer::to_wstring(value<int> value, text::text_format_t f)
 {
-	const byte max_char = 65;
+	const uint max_char = 65;
 
 	qword format = f.format_flags();
 	if (GET_FLAG_TARGET(format) != text::text_format::signed_integer)
@@ -167,7 +167,7 @@ wstring integer::to_wstring(value<int> value, text::text_format_t f)
 	char fill = GET_FLAG_FILL(format);
 	int max = GET_FLAG_MAX(format);
 	bool neg = false;
-	word c = max_char - 2;
+	uint c = max_char - 2;
 
 	if (max == 0 || max > max_char)
 		max = max_char - 1;
@@ -374,7 +374,7 @@ wstring uinteger::to_wstring(value<uint> value)
 
 string uinteger::to_string(value<uint> value, text::text_format_t f)
 {
-	const byte max_char = 65;
+	const uint max_char = 65;
 
 	qword format = f.format_flags();
 	if (GET_FLAG_TARGET(format) != text::text_format::signed_integer)
@@ -383,7 +383,7 @@ string uinteger::to_string(value<uint> value, text::text_format_t f)
 
 	char fill = GET_FLAG_FILL(format);
 	int max = GET_FLAG_MAX(format);
-	word c = max_char - 2;
+	uint c = max_char - 2;
 
 	if (max == 0 || max > max_char)
 		max = max_char - 1;
@@ -472,7 +472,7 @@ string uinteger::to_string(value<uint> value, text::text_format_t f)
 
 wstring uinteger::to_wstring(value<uint> value, text::text_format_t f)
 {
-	const byte max_char = 65;
+	const uint max_char = 65;
 
 	qword format = f.format_flags();
 	if (GET_FLAG_TARGET(format) != text::text_format::signed_integer)
@@ -481,7 +481,7 @@ wstring uinteger::to_wstring(value<uint> value, text::text_format_t f)
 
 	char fill = GET_FLAG_FILL(format);
 	int max = GET_FLAG_MAX(format);
-	word c = max_char - 2;
+	uint c = max_char - 2;
 
 	if (max == 0 || max > max_char)
 		max = max_char - 1;
@@ -680,7 +680,7 @@ wstring integer64::to_wstring(value<long64> value)
 
 string integer64::to_string(value<long64> value, text::text_format_t f)
 {
-	const byte max_char = 65;
+	const uint max_char = 65;
 
 	qword format = f.format_flags();
 	if (GET_FLAG_TARGET(format) != text::text_format::signed_integer)
@@ -690,7 +690,7 @@ string integer64::to_string(value<long64> value, text::text_format_t f)
 	char fill = GET_FLAG_FILL(format);
 	int max = GET_FLAG_MAX(format);
 	bool neg = false;
-	word c = max_char - 2;
+	uint c = max_char - 2;
 
 	if (max == 0 || max > max_char)
 		max = max_char - 1;
@@ -788,7 +788,7 @@ string integer64::to_string(value<long64> value, text::text_format_t f)
 
 wstring integer64::to_wstring(value<long64> value, text::text_format_t f)
 {
-	const byte max_char = 65;
+	const uint max_char = 65;
 
 	qword format = f.format_flags();
 	if (GET_FLAG_TARGET(format) != text::text_format::signed_integer)
@@ -798,7 +798,7 @@ wstring integer64::to_wstring(value<long64> value, text::text_format_t f)
 	char fill = GET_FLAG_FILL(format);
 	int max = GET_FLAG_MAX(format);
 	bool neg = false;
-	word c = max_char - 2;
+	uint c = max_char - 2;
 
 	if (max == 0 || max > max_char)
 		max = max_char - 1;
@@ -1007,7 +1007,7 @@ wstring uinteger64::to_wstring(value<ulong64> value)
 
 string uinteger64::to_string(value<ulong64> value, text::text_format_t f)
 {
-	const byte max_char = 65;
+	const uint max_char = 65;
 
 	qword format = f.format_flags();
 	if (GET_FLAG_TARGET(format) != text::text_format::signed_integer)
@@ -1016,7 +1016,7 @@ string uinteger64::to_string(value<ulong64> value, text::text_format_t f)
 
 	char fill = GET_FLAG_FILL(format);
 	int max = GET_FLAG_MAX(format);
-	word c = max_char - 2;
+	uint c = max_char - 2;
 
 	if (max == 0 || max > max_char)
 		max = max_char - 1;
@@ -1105,7 +1105,7 @@ string uinteger64::to_string(value<ulong64> value, text::text_format_t f)
 
 wstring uinteger64::to_wstring(value<ulong64> value, text::text_format_t f)
 {
-	const byte max_char = 65;
+	const uint max_char = 65;
 
 	qword format = f.format_flags();
 	if (GET_FLAG_TARGET(format) != text::text_format::signed_integer)
@@ -1114,7 +1114,7 @@ wstring uinteger64::to_wstring(value<ulong64> value, text::text_format_t f)
 	char out[max_char] = { 0 };
 	char fill = GET_FLAG_FILL(format);
 	int max = GET_FLAG_MAX(format);
-	word c = max_char - 2;
+	uint c = max_char - 2;
 
 	if (max == 0 || max > max_char)
 		max = max_char - 1;
