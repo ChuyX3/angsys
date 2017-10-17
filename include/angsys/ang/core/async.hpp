@@ -42,7 +42,7 @@ namespace ang
 			class thread;
 			struct iasync_task;
 			template<typename result_t>struct iasync;
-			template<typename return_t>class async_task;
+			//template<typename return_t>class async_task;
 			template<typename result_t> class async_task_result;
 
 			typedef mutex mutex_t;
@@ -61,8 +61,8 @@ namespace ang
 			template <typename result_t>
 			using iasync_t = intf_wrapper<iasync<result_t>>;
 
-			template <typename result_t>
-			using async_task_t = object_wrapper<async_task<result_t>>;
+			//template <typename result_t>
+			//using async_task_t = object_wrapper<async_task<result_t>>;
 
 			template<typename result_t>
 			using async_task_result_t = object_wrapper<async_task_result<result_t>>;
@@ -117,6 +117,7 @@ namespace ang
 				visible vcall bool wait(async_action_status_t, dword)const pure;
 				visible vcall async_action_status_t status()const pure;
 				visible vcall bool cancel()pure;
+				visible vcall iasync_task_t then(delegates::function<void(iasync_task*)>)pure;
 				//visible vcall bool suspend()pure;
 				//visible vcall bool resume()pure;
 			ANG_END_INTERFACE();
@@ -129,16 +130,18 @@ namespace ang
 			/******************************************************************/
 			template<typename result_t>
 			ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(iasync, public iasync_task)
+				visible vcall void complete(result_t) pure;
 				visible vcall result_t result()const pure;
-				visible vcall void result(result_t) pure;
 				visible vcall void then(delegates::function<void(iasync<result_t>*)>)pure;
+				inherit using iasync_task::then;
 			ANG_END_INTERFACE();
 
 
 			template<>
 			ANG_BEGIN_INTERFACE_WITH_BASE(LINK, iasync<void>, public iasync_task)
-				visible vcall void result()const pure;
-				visible vcall void then(delegates::function<void(iasync<void>*)>)pure;
+				visible vcall void complete()pure;
+				visible vcall void completed()const pure;
+				visible vcall iasync_task_t then(delegates::function<void(iasync<void>*)>, iasync_task_t = null)pure;
 			ANG_END_INTERFACE();
 
 			ANG_BEGIN_INTERFACE(LINK, idispatcher)
@@ -318,6 +321,88 @@ namespace ang
 			};
 		}//async
 	}//core
+
+
+	namespace core
+	{
+		namespace async
+		{
+			template<typename T> class async_task_result;
+			template<typename T> using async_task_result_t = object_wrapper<async_task_result<T>>;
+
+			class LINK async_task 
+				: public object
+				, public iasync_task
+			{
+			public:
+				template<typename T> static iasync_t<T> run_async(delegates::function < T(iasync<T>*, var_args_t)>, var_args_t = null);
+				template<typename T> static iasync_t<T> run_async(async_task_result<T>*, delegates::function < T(iasync<T>*, var_args_t)>, var_args_t = null);
+				template<typename T> static iasync_t<T> run_sync(async_task_result<T>*, delegates::function < T(iasync<T>*, var_args_t)>, var_args_t = null);
+
+			protected:
+				mutable cond_t _cond;
+				mutable mutex_t _mutex;
+				icore_thread_t _thread;
+				async_action_status_t _status;
+
+			public:
+				async_task();
+
+			public:
+				ANG_DECLARE_INTERFACE();
+				virtual bool wait(async_action_status_t, dword)const override;
+				virtual async_action_status_t status()const override;
+				virtual bool cancel()override;
+				virtual void then(delegates::function<void(iasync_task*)>)override;
+
+			public:
+				cond_t& cond()const;
+				mutex_t& mutex()const;
+				icore_thread_t thread()const;
+				async_action_status_t status()const;
+
+			protected:
+				virtual~async_task();
+			};
+
+			template<typename T>
+			class async_task_result
+				: public object
+				, public iasync<T>
+			{
+			protected:
+				T _result;
+				object_wrapper<async_task> _task;
+
+			public:
+				inline async_task_result(async_task* task);
+				//inline async_task_result(thread_t, mutex_t, cond_t);
+
+			protected:
+				inline virtual~async_task_result();
+
+				async_task_result(const async_task_result<T>&) = delete;
+				async_task_result& operator =(const async_task_result<T>&) = delete;
+
+			public:
+				ANG_DECLARE_INTERFACE();
+
+				inline bool wait(async_action_status_t, dword)const override;
+				inline async_action_status_t status()const override;
+				inline bool cancel() override;
+				//inline bool suspend() override;
+				//inline bool resume() override;
+				inline void complete(T) override;
+				inline T result()const override;
+				inline iasync_task_t then(delegates::function<void(iasync<T>*)>, iasync_task_t = null)override;
+
+				friend async_task<T>;
+			};
+
+		}
+	}
 }
+
+#include <ang/core/inlines/async.inl>
 
 #endif//__ANG_ASYNC_HPP__

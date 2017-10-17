@@ -847,9 +847,10 @@ inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::opera
 	return get();
 }
 
-template<typename T, template <typename> class allocator>
-inline T const& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator[](int idx)const
+template<typename T, template <typename> class allocator> template<typename I>
+inline T const& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator[](I const& idx)const
 {
+	static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted"); 
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	if ((idx >= _ptr->size()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
@@ -857,9 +858,10 @@ inline T const& ang::object_wrapper<ang::collections::vector_buffer<T, allocator
 	return _ptr->data()[idx];
 }
 
-template<typename T, template <typename> class allocator>
-inline T & ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator[](int idx)
+template<typename T, template <typename> class allocator> template<typename I>
+inline T & ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator[](I const& idx)
 {
+	static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted");
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	if ((idx >= _ptr->size()) || (idx < 0)) throw(exception_t(except_code::array_overflow));

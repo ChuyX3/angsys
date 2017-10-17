@@ -7,6 +7,7 @@
 #include "inline/encoder_size.inl"
 #include "inline/encoder_convert.inl"
 #include "inline/encoder_compare.inl"
+#include "inline/encoder_find.inl"
 
 using namespace ang;
 using namespace ang::text;
@@ -63,6 +64,12 @@ void ang_text_encoder_interface_initialize_interface(encoder_interface* encoder)
 	};
 	encoder->_compare_string_until = [](pointer dest, pointer src, encoding_t format)->wsize {
 		return ang_text_encoder<ENCODING>::compare_until((typename ang::text::char_type_by_encoding<ENCODING>::cstr_t)dest, src, format);
+	};
+	encoder->_find = [](pointer first, wsize s1, pointer second, wsize s2, text::encoding_t format, windex start)->windex {
+		return ang_text_encoder<ENCODING>::find((typename ang::text::char_type_by_encoding<ENCODING>::cstr_t)first, s1, second, s2, format, start);
+	};
+	encoder->_find_revert = [](pointer first, wsize s1, pointer second, wsize s2, text::encoding_t format, windex start)->windex {
+		return ang_text_encoder<ENCODING>::find_revert((typename ang::text::char_type_by_encoding<ENCODING>::cstr_t)first, s1, second, s2, format, start);
 	};
 }
 

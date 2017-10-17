@@ -196,12 +196,12 @@ namespace ang
 			template<typename U, wsize N> scope_array& operator = (U(&ar)[N]) { copy(ar); return*this; }
 			template<typename U, wsize N> scope_array& operator = (const U(&ar)[N]) { copy(ar); return*this; }
 
-			operator type& () { return get(); }
-			operator type ()const { return get(); }
+			explicit operator type& () { return get(); }
+			explicit operator type ()const { return get(); }
 			operator array_view<T>()const { return array_view<T>(size(), get()); }
 
-			template<typename I>element_type& operator [](I idx) { static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted"); ANG_ASSERT(idx < _size, "scope_array: operator [] overflow exception"); return _data[idx]; }
-			template<typename I>element_type const& operator [](I idx)const { static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted"); ANG_ASSERT(idx < _size, "scope_array: operator [] overflow exception"); return _data[idx]; }
+			template<typename I>element_type& operator [](I const& idx) { static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted"); ANG_ASSERT(wsize(idx) < _size, "scope_array: operator [] overflow exception"); return _data[idx]; }
+			template<typename I>element_type const& operator [](I const& idx)const { static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted"); ANG_ASSERT(windex(idx) < _size, "scope_array: operator [] overflow exception"); return _data[idx]; }
 
 			element_type** operator & () { return &get(); }
 		};

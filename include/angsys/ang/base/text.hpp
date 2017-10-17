@@ -205,6 +205,8 @@ namespace ang
 			int(*_compare_string)(pointer, pointer, encoding_t);
 			wsize(*_compare_string_until)(pointer, pointer, encoding_t);
 			wsize(*_convert_string)(pointer, wsize, pointer, encoding_t, bool);
+			windex(*_find)(pointer, wsize, pointer, wsize, encoding_t, windex);
+			windex(*_find_revert)(pointer, wsize, pointer, wsize, encoding_t, windex);
 		};
 
 
@@ -239,6 +241,13 @@ namespace ang
 			inline wsize convert(str_t dest, wsize maxsize, T const* src, bool end_of_string = true)const { return _convert_string((pointer)dest, maxsize, (pointer)src, encoding_by_type<T>::encoding(), end_of_string); }
 			inline wsize convert(str_t dest, wsize maxsize, pointer src, text::encoding_t format, bool end_of_string = true)const { return _convert_string((pointer)dest, maxsize, src, format, end_of_string); }
 
+			template<typename T>
+			windex find(cstr_t first, wsize s1, T const* second, wsize s2, windex start)const { return _find((pointer)first, s1, (pointer)second, s2, encoding_by_type<T>::encoding(), start); }
+			windex find(cstr_t first, wsize s1, pointer second, wsize s2, text::encoding_t format, windex start)const { return _find((pointer)first, s1, second, s2, format, start); }
+
+			template<typename T>
+			windex find_revert(cstr_t first, wsize s1, T const* second, wsize s2, windex start)const { return _find_revert((pointer)first, s1, (pointer)second, s2, encoding_by_type<T>::encoding(), min(s1, start)); }
+			windex find_revert(cstr_t first, wsize s1, pointer second, wsize s2, text::encoding_t format, windex start)const { return _find_revert((pointer)first, s1, second, s2, format, min(s1,start)); }
 		};
 
 

@@ -19,7 +19,7 @@ ANG_IMPLEMENT_BASIC_INTERFACE(ang::ibuffer, ang::ibuffer_view);
 
 typedef struct _buffer_handler
 {
-	uint size;
+	wsize size;
 	inline pointer get_buffer() {
 		return pointer(wsize(this) + sizeof(_buffer_handler));
 	}

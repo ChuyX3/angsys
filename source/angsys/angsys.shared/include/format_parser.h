@@ -38,11 +38,11 @@ namespace ang
 {
 	class format_parser
 	{
-		static bool parse_char(cstr_t format, uint& beg, qword& flag);
-		static bool parse_string(cstr_t format, uint& beg, qword& flag);
-		static bool parse_signed(cstr_t format, uint& beg, qword& flag);
-		static bool parse_unsigned(cstr_t format, uint& beg, qword& flag);
-		static bool parse_floating(cstr_t format, uint& beg, qword& flag);
+		static bool parse_char(cstr_t format, wsize& beg, qword& flag);
+		static bool parse_string(cstr_t format, wsize& beg, qword& flag);
+		static bool parse_signed(cstr_t format, wsize& beg, qword& flag);
+		static bool parse_unsigned(cstr_t format, wsize& beg, qword& flag);
+		static bool parse_floating(cstr_t format, wsize& beg, qword& flag);
 
 	public:
 		static qword parse(cstr_t f);

@@ -40,7 +40,7 @@ namespace ang
 
 			private:
 				bool _is_main;
-				bool _then_request;
+				bool _join_request;
 				ibuffer_view_t _tle_data;
 				tle_deleting_event_t tle_notify_callback;
 				async_action_status_t _state;

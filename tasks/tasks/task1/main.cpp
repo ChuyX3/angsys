@@ -11,6 +11,8 @@ using namespace ang;
 
 int main(int argc, char* argv[])
 {
+	cmstr_t text = u8"Jesús Ángel Rocha Morales"; 
+	auto idx = text.find_revert(L"Ángels"_s, -1);
 
 	core::async::thread_t thread = core::async::thread::create_thread([](core::async::thread_t thread, var_args_t args)->dword
 	{

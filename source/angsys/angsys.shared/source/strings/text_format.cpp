@@ -271,11 +271,11 @@ bool format_parser::format(qword flags, string& out)
 	return true;
 }
 
-bool format_parser::parse_char(cstr_t format, uint& beg, qword& flag)
+bool format_parser::parse_char(cstr_t format, wsize& beg, qword& flag)
 {
 	flag = (qword)text_format::target::character;
 
-	uint end = format.size();
+	wsize end = format.size();
 
 	while (beg < end)
 	{
@@ -322,11 +322,11 @@ bool format_parser::parse_char(cstr_t format, uint& beg, qword& flag)
 	return false;
 }
 
-bool format_parser::parse_string(cstr_t format, uint& beg, qword& flag)
+bool format_parser::parse_string(cstr_t format, wsize& beg, qword& flag)
 {
 	flag = (qword)text_format::target::text;
 
-	uint end = format.size();
+	wsize end = format.size();
 
 	while (beg < end)
 	{
@@ -373,11 +373,11 @@ bool format_parser::parse_string(cstr_t format, uint& beg, qword& flag)
 	return false;
 }
 
-bool format_parser::parse_signed(cstr_t format, uint& beg, qword& flag)
+bool format_parser::parse_signed(cstr_t format, wsize& beg, qword& flag)
 {
 	flag = (qword)text_format::target::signed_integer;
 
-	uint end = format.size();
+	wsize end = format.size();
 
 	bool waitForEnd = false;
 	bool notation = false;
@@ -503,11 +503,11 @@ bool format_parser::parse_signed(cstr_t format, uint& beg, qword& flag)
 	return false;
 }
 
-bool format_parser::parse_unsigned(cstr_t format, uint& beg, qword& flag)
+bool format_parser::parse_unsigned(cstr_t format, wsize& beg, qword& flag)
 {
 	flag = (qword)text_format::target::usigned_integer;
 
-	uint end = format.size();
+	wsize end = format.size();
 
 	bool waitForEnd = false;
 	bool notation = false;
@@ -620,11 +620,11 @@ bool format_parser::parse_unsigned(cstr_t format, uint& beg, qword& flag)
 	return false;
 }
 
-bool format_parser::parse_floating(cstr_t format, uint& beg, qword& flag)
+bool format_parser::parse_floating(cstr_t format, wsize& beg, qword& flag)
 {
 	flag = (qword)text_format::target::floating;
 
-	uint end = format.size();
+	wsize end = format.size();
 
 	bool waitForEnd = false;
 	bool notation = false;
@@ -782,7 +782,7 @@ qword format_parser::parse(cstr_t format)
 
 	//format->lowercase();
 
-	uint beg = 0, pos = 0, end = format.size();
+	wsize beg = 0, pos = 0, end = format.size();
 
 	bool isOpened = false;
 

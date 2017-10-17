@@ -254,6 +254,8 @@ dword core_thread::core_thread_start_routine(pointer args)
 
 
 core_thread::core_thread()
+	: _is_main(false)
+	, _join_request(false)
 {
 	this->_state = async_action_status::initializing; //initializing
 	this->_is_main = false;
@@ -261,6 +263,8 @@ core_thread::core_thread()
 }
 
 core_thread::core_thread(wsize flags, ibuffer_view_t data, bool alloc)
+	: _is_main(false)
+	, _join_request(false)
 {
 	scope_locker lock = core_thread_manager::instance()->main_mutex();
 
@@ -352,7 +356,7 @@ bool core_thread::start(thread_start_routine_t callback, var_args_t args)
 
 bool core_thread::then(thread_then_routine_t callback, var_args_t args)
 {
-	if (callback.is_empty())return false;
+	if (callback.is_empty() || _join_request)return false;
 	cond_t& cond = core_thread_manager::instance()->main_cond();
 	mutex_t& mutex = core_thread_manager::instance()->main_mutex();
 	scope_locker lock = mutex;
@@ -431,7 +435,7 @@ bool core_thread::join()
 	cond_t& cond = core_thread_manager::instance()->main_cond();
 	mutex_t& mutex = core_thread_manager::instance()->main_mutex();
 	scope_locker lock = mutex;
-
+	_join_request = true;
 	core_thread_manager::instance()->main_cond().waitfor(core_thread_manager::instance()->main_mutex(),
 		[this]() { return _state == async_action_status::running || !_start_routine.is_empty(); });
 	_state = async_action_status::completed;

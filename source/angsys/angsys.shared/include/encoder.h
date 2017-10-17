@@ -36,6 +36,8 @@ namespace ang
 			static wsize convert(typename char_type_by_encoding<ENCODING>::str_t str, wsize sz, pointer raw, encoding_t format, bool eos);
 			static int compare(typename char_type_by_encoding<ENCODING>::cstr_t, pointer, encoding_t);
 			static wsize compare_until(typename char_type_by_encoding<ENCODING>::cstr_t, pointer, encoding_t);
+			static windex find(typename ang::text::char_type_by_encoding<ENCODING>::cstr_t first, wsize s1, pointer second, wsize s2, encoding_t format, windex start);
+			static windex find_revert(typename ang::text::char_type_by_encoding<ENCODING>::cstr_t first, wsize s1, pointer second, wsize s2, encoding_t format, windex start);
 		};
 
 		template<> constexpr bool ang_text_encoder<encoding::utf16_se>::is_endian_swapped() { return true; }

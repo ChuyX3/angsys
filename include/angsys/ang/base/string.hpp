@@ -5,7 +5,7 @@
 
 namespace ang
 {
-	template<typename T> struct safe_str : public rule<char_value<T>::value>;
+	template<typename T> struct safe_str : public rule<char_value<T>::value> {};
 
 	template<> struct LINK safe_str<char>
 	{
@@ -81,23 +81,20 @@ namespace ang
 		inline char const* cstr()const { return _value; }
 
 	public: /*string operations*/
-		wsize find(cstr_t cstr, wsize start)const;
-		wsize find(cstr_t cstr, wsize start, wsize end)const;
-		wsize find(cmstr_t cstr, wsize start)const;
-		wsize find(cmstr_t cstr, wsize start, wsize end)const;
-		wsize find(cwstr_t cstr, wsize start)const;
-		wsize find(cwstr_t cstr, wsize start, wsize end)const;
-		wsize find(char c, wsize start)const;
-		wsize find(char c, wsize start, wsize end)const;
+		template<typename T> wsize find(safe_str<T> const& cstr, wsize start)const;
+		template<typename T> wsize find(safe_str<T> const& cstr, wsize start, wsize end)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::char_t cstr, wsize start)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::char_t cstr, wsize start, wsize end)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::cstr_t cstr, wsize start)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::cstr_t cstr, wsize start, wsize end)const;
 
-		wsize find_rev(cstr_t cstr, wsize start)const;
-		wsize find_rev(cstr_t cstr, wsize start, wsize end)const;
-		wsize find_rev(cmstr_t cstr, wsize start)const;
-		wsize find_rev(cmstr_t cstr, wsize start, wsize end)const;
-		wsize find_rev(cwstr_t cstr, wsize start)const;
-		wsize find_rev(cwstr_t cstr, wsize start, wsize end)const;
-		wsize find_rev(char c, wsize start)const;
-		wsize find_rev(char c, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(safe_str<T> const& cstr, wsize start)const;
+		template<typename T> wsize find_revert(safe_str<T> const& cstr, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::char_t cstr, wsize start)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::char_t cstr, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::cstr_t cstr, wsize start)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::cstr_t cstr, wsize start, wsize end)const;
+
 
 		//wsize sub_string(string& out, wsize start, wsize count)const;
 		wsize sub_string(char* out, wsize start, wsize count)const;
@@ -207,24 +204,19 @@ namespace ang
 		inline wchar const* cstr()const { return _value; }
 
 	public: /*string operations*/
+		template<typename T> wsize find(safe_str<T> const& cstr, wsize start)const;
+		template<typename T> wsize find(safe_str<T> const& cstr, wsize start, wsize end)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::char_t cstr, wsize start)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::char_t cstr, wsize start, wsize end)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::cstr_t cstr, wsize start)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::cstr_t cstr, wsize start, wsize end)const;
 
-		wsize find(cstr_t str, wsize start)const;
-		wsize find(cstr_t str, wsize start, wsize end)const;
-		wsize find(cmstr_t str, wsize start)const;
-		wsize find(cmstr_t str, wsize start, wsize end)const;
-		wsize find(cwstr_t str, wsize start)const;
-		wsize find(cwstr_t str, wsize start, wsize end)const;
-		wsize find(wchar c, wsize start)const;
-		wsize find(wchar c, wsize start, wsize end)const;
-
-		wsize find_rev(cstr_t cstr, wsize start)const;
-		wsize find_rev(cstr_t cstr, wsize start, wsize end)const;
-		wsize find_rev(cmstr_t cstr, wsize start)const;
-		wsize find_rev(cmstr_t cstr, wsize start, wsize end)const;
-		wsize find_rev(cwstr_t cstr, wsize start)const;
-		wsize find_rev(cwstr_t cstr, wsize start, wsize end)const;
-		wsize find_rev(char c, wsize start)const;
-		wsize find_rev(char c, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(safe_str<T> const& cstr, wsize start)const;
+		template<typename T> wsize find_revert(safe_str<T> const& cstr, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::char_t cstr, wsize start)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::char_t cstr, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::cstr_t cstr, wsize start)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::cstr_t cstr, wsize start, wsize end)const;
 
 		//wsize sub_string(wstring& out, wsize start, wsize count)const;
 		wsize sub_string(wchar* out, wsize start, wsize count)const;
@@ -339,20 +331,19 @@ namespace ang
 		inline mchar const* cstr()const { return _value; }
 
 	public: /*string operations*/
-		template<wsize N>
-		wsize find(const char(&ar)[N], wsize start, wsize* plenght = null) {
-			return find(cstr_t(ar), start, plenght);
-		}
-		template<wsize N>
-		wsize find(const char(&ar)[N], wsize start, wsize end, wsize* plenght = null) {
-			return find(cstr_t(ar), start, end, plenght);
-		}
-		wsize find(cmstr_t cstr, wsize start)const;
-		wsize find(cmstr_t cstr, wsize start, wsize end)const;
-		wsize find(cstr_t cstr, wsize start, wsize* plenght = null)const;
-		wsize find(cstr_t cstr, wsize start, wsize end, wsize* plenght = null)const;
-		wsize find(cwstr_t cstr, wsize start, wsize* plenght = null)const;
-		wsize find(cwstr_t cstr, wsize start, wsize end, wsize* plenght = null)const;
+		template<typename T> wsize find(safe_str<T> const& cstr, wsize start)const;
+		template<typename T> wsize find(safe_str<T> const& cstr, wsize start, wsize end)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::char_t cstr, wsize start)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::char_t cstr, wsize start, wsize end)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::cstr_t cstr, wsize start)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::cstr_t cstr, wsize start, wsize end)const;
+
+		template<typename T> wsize find_revert(safe_str<T> const& cstr, wsize start)const;
+		template<typename T> wsize find_revert(safe_str<T> const& cstr, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::char_t cstr, wsize start)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::char_t cstr, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::cstr_t cstr, wsize start)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::cstr_t cstr, wsize start, wsize end)const;
 
 		//wsize sub_string(mstring& out, wsize start, wsize count)const;
 		wsize sub_string(mchar* out, wsize start, wsize count)const;
@@ -462,24 +453,19 @@ namespace ang
 		inline char16_t const* cstr()const { return _value; }
 
 	public: /*string operations*/
+		template<typename T> wsize find(safe_str<T> const& cstr, wsize start)const;
+		template<typename T> wsize find(safe_str<T> const& cstr, wsize start, wsize end)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::char_t cstr, wsize start)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::char_t cstr, wsize start, wsize end)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::cstr_t cstr, wsize start)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::cstr_t cstr, wsize start, wsize end)const;
 
-		wsize find(cstr_t str, wsize start)const;
-		wsize find(cstr_t str, wsize start, wsize end)const;
-		wsize find(cmstr_t str, wsize start)const;
-		wsize find(cmstr_t str, wsize start, wsize end)const;
-		wsize find(cwstr_t str, wsize start)const;
-		wsize find(cwstr_t str, wsize start, wsize end)const;
-		wsize find(char16_t c, wsize start)const;
-		wsize find(char16_t c, wsize start, wsize end)const;
-
-		wsize find_rev(cstr_t cstr, wsize start)const;
-		wsize find_rev(cstr_t cstr, wsize start, wsize end)const;
-		wsize find_rev(cmstr_t cstr, wsize start)const;
-		wsize find_rev(cmstr_t cstr, wsize start, wsize end)const;
-		wsize find_rev(cwstr_t cstr, wsize start)const;
-		wsize find_rev(cwstr_t cstr, wsize start, wsize end)const;
-		wsize find_rev(char c, wsize start)const;
-		wsize find_rev(char c, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(safe_str<T> const& cstr, wsize start)const;
+		template<typename T> wsize find_revert(safe_str<T> const& cstr, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::char_t cstr, wsize start)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::char_t cstr, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::cstr_t cstr, wsize start)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::cstr_t cstr, wsize start, wsize end)const;
 
 		//wsize sub_string(wstring& out, wsize start, wsize count)const;
 		wsize sub_string(char16_t* out, wsize start, wsize count)const;
@@ -589,24 +575,19 @@ namespace ang
 		inline char32_t const* cstr()const { return _value; }
 
 	public: /*string operations*/
+		template<typename T> wsize find(safe_str<T> const& cstr, wsize start)const;
+		template<typename T> wsize find(safe_str<T> const& cstr, wsize start, wsize end)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::char_t cstr, wsize start)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::char_t cstr, wsize start, wsize end)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::cstr_t cstr, wsize start)const;
+		template<typename T> wsize find(typename text::char_type_by_type<T>::cstr_t cstr, wsize start, wsize end)const;
 
-		wsize find(cstr_t str, wsize start)const;
-		wsize find(cstr_t str, wsize start, wsize end)const;
-		wsize find(cmstr_t str, wsize start)const;
-		wsize find(cmstr_t str, wsize start, wsize end)const;
-		wsize find(cwstr_t str, wsize start)const;
-		wsize find(cwstr_t str, wsize start, wsize end)const;
-		wsize find(char32_t c, wsize start)const;
-		wsize find(char32_t c, wsize start, wsize end)const;
-
-		wsize find_rev(cstr_t cstr, wsize start)const;
-		wsize find_rev(cstr_t cstr, wsize start, wsize end)const;
-		wsize find_rev(cmstr_t cstr, wsize start)const;
-		wsize find_rev(cmstr_t cstr, wsize start, wsize end)const;
-		wsize find_rev(cwstr_t cstr, wsize start)const;
-		wsize find_rev(cwstr_t cstr, wsize start, wsize end)const;
-		wsize find_rev(char c, wsize start)const;
-		wsize find_rev(char c, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(safe_str<T> const& cstr, wsize start)const;
+		template<typename T> wsize find_revert(safe_str<T> const& cstr, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::char_t cstr, wsize start)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::char_t cstr, wsize start, wsize end)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::cstr_t cstr, wsize start)const;
+		template<typename T> wsize find_revert(typename text::char_type_by_type<T>::cstr_t cstr, wsize start, wsize end)const;
 
 		//wsize sub_string(wstring& out, wsize start, wsize count)const;
 		wsize sub_string(char32_t* out, wsize start, wsize count)const;
