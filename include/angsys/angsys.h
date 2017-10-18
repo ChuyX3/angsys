@@ -88,7 +88,7 @@ namespace ang
 
 	template<bool VALUE, typename T>
 	struct rule<VALUE, intf_wrapper<T>> {
-		static_assert(VALUE, "T is not a interface type...");
+		static_assert(VALUE, "T is not an interface type...");
 	};
 
 	template<typename T> struct is_object_type
@@ -98,6 +98,21 @@ namespace ang
 	template<typename T> struct is_interface_type
 		: public integer_constant<bool, and_expression<has_runtime_type_info<T>::value, not_expression<is_object_type<T>::value>::value>::value> {
 	};
+
+	template<typename T, bool IS_OBJECT = is_object_type<T>::value, bool IS_INTERFACE = is_interface_type<T>::value>
+	struct is_smart_ptr_type : public false_type {};
+	template<typename T> struct is_smart_ptr_type<T, true, false> : public true_type {};
+	template<typename T> struct is_smart_ptr_type<T, false, true> : public true_type {};
+
+
+	template<typename T, bool IS_OBJECT = is_object_type<T>::value, bool IS_INTERFACE = is_interface_type<T>::value> struct smart_ptr_type
+	{ static_assert(is_smart_ptr_type<T>::value, "T is not a smart type");  typedef T* smart_ptr_t; };
+	template<typename T> struct smart_ptr_type<T, true, false> { typedef object_wrapper<T> smart_ptr_t; };
+	template<typename T> struct smart_ptr_type<T, false, true> { typedef intf_wrapper<T> smart_ptr_t; };
+
+	template<typename T> struct smart_ptr_type<object_wrapper<T>, false, false> { typedef object_wrapper<T> smart_ptr_t; };
+	template<typename T> struct smart_ptr_type<intf_wrapper<T>, false, false> { typedef intf_wrapper<T> smart_ptr_t; };
+
 
 	/******************************************************************/
 	/* template class ang::object_wrapper :                           */
@@ -303,7 +318,7 @@ namespace ang
 		bool operator != (object const& obj)const;
 
 		template<typename T>
-		auto as();
+		typename smart_ptr_type<T>::smart_ptr_t as();
 
 		template<typename T>
 		bool as(T*& out);
@@ -360,6 +375,8 @@ namespace ang
 
 		template<typename T>//array convertible
 		inline object_wrapper(initializer_list_t<T>);
+
+		template<typename T> typename smart_ptr_type<T>::smart_ptr_t as();
 	
 	public:
 		void clean();
@@ -390,7 +407,7 @@ namespace ang
 	class LINK safe_pointer
 	{
 	public:
-		typedef object type;
+		typedef interface_t type;
 
 	private:
 		pointer _info;
@@ -399,10 +416,12 @@ namespace ang
 		safe_pointer();
 		safe_pointer(safe_pointer&&);
 		safe_pointer(safe_pointer const&);
-		safe_pointer(object*);
+		safe_pointer(interface_t*);
 		safe_pointer(ang::nullptr_t const&);
 		template< typename T>
-		safe_pointer(object_wrapper<T> obj) : safe_pointer(obj.get()) {}
+		safe_pointer(object_wrapper<T> obj) : safe_pointer(reinterpret_cast<interface_t*>(obj.get())) {}
+		template< typename T>
+		safe_pointer(intf_wrapper<T> intf) : safe_pointer(reinterpret_cast<interface_t*>(intf.get())) {}
 		~safe_pointer();
 
 	private:
@@ -411,9 +430,9 @@ namespace ang
 
 	public: //properties
 		bool is_valid()const;
-		template< typename T>
-		object_wrapper<T> lock() {
-			return is_valid() ? lock<object>()->as<T>() : null;
+		template<typename T>
+		typename smart_ptr_type<T>::smart_ptr_t lock() {
+			return lock<intfptr>().as<T>();
 		}
 
 		safe_pointer& operator = (objptr);
@@ -479,7 +498,7 @@ namespace ang
 		void set(type*);
 		type ** addres_of(void);
 
-		template<typename T> auto as();
+		template<typename T> typename smart_ptr_type<T>::smart_ptr_t as();
 
 	public:
 		intf_wrapper& operator = (type*);
@@ -539,7 +558,7 @@ namespace ang
 	}
 
 	template<typename T>
-	inline auto object::as() {
+	inline typename smart_ptr_type<T>::smart_ptr_t object::as() {
 		return interface_cast<T>(this);
 	}
 
@@ -549,7 +568,12 @@ namespace ang
 	}
 
 	template<typename T>
-	inline auto intfptr::as() {
+	inline typename smart_ptr_type<T>::smart_ptr_t objptr::as() {
+		return interface_cast<T>(get());
+	}
+
+	template<typename T>
+	inline typename smart_ptr_type<T>::smart_ptr_t intfptr::as() {
 		return interface_cast<T>(get());
 	}
 
