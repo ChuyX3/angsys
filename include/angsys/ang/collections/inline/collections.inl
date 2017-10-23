@@ -131,43 +131,43 @@ inline bool ang::collections::iarray<T>::query_object(ang::type_name_t name, ang
 }
 
 template<class T>
-inline bool ang::collections::iseqlist<T>::is_kind_of(ang::type_name_t name)const
+inline bool ang::collections::isequence<T>::is_kind_of(ang::type_name_t name)const
 {
-	if (name == ang::collections::iseqlist<T>::class_name()
+	if (name == ang::collections::isequence<T>::class_name()
 		|| name == ang::collections::ienum<T>::class_name())
 		return true;
 	return false;
 }
 
 template<class T>
-inline bool ang::collections::iseqlist<T>::is_child_of(ang::type_name_t name)
+inline bool ang::collections::isequence<T>::is_child_of(ang::type_name_t name)
 {
-	if (name == ang::collections::iseqlist<T>::class_name()
+	if (name == ang::collections::isequence<T>::class_name()
 		|| name == ang::collections::ienum<T>::class_name())
 		return true;
 	return false;
 }
 
 template<class T>
-inline ang::type_name_t ang::collections::iseqlist<T>::class_name() {
-	static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::collections::iseqlist<"_o += type_of<T>()) += ">"_s));
+inline ang::type_name_t ang::collections::isequence<T>::class_name() {
+	static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::collections::isequence<"_o += type_of<T>()) += ">"_s));
 	return name;
 }
 
 template<class T>
-inline ang::type_name_t ang::collections::iseqlist<T>::object_name()const
+inline ang::type_name_t ang::collections::isequence<T>::object_name()const
 {
-	return ang::collections::iseqlist<T>::class_name();
+	return ang::collections::isequence<T>::class_name();
 }
 
 template<class T>
-inline bool ang::collections::iseqlist<T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+inline bool ang::collections::isequence<T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
 {
 	if (out == null)
 		return false;
-	if (name == ang::collections::iseqlist<T>::class_name())
+	if (name == ang::collections::isequence<T>::class_name())
 	{
-		*out = static_cast<ang::collections::iseqlist<T>*>(this);
+		*out = static_cast<ang::collections::isequence<T>*>(this);
 		return true;
 	}
 	else if (name == ang::collections::ienum<T>::class_name())

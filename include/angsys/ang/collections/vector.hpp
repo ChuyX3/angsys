@@ -176,6 +176,7 @@ namespace ang
 
 		template<>
 		class vector_buffer<void> final {};
+
 	}
 
 	/******************************************************************/
@@ -264,6 +265,91 @@ namespace ang
 		operator array_view<T>()const { return _ptr ? collections::to_array(_ptr->data(), _ptr->size()) : array_view<T>(); }
 		template<typename I>T& operator[](I const& idx);
 		template<typename I>T const& operator[](I const& idx)const;
+	};
+
+
+	template<typename T, template<typename> class allocator>
+	class object_wrapper<collections::vector_buffer<object_wrapper<T>, allocator>>
+	{
+	public:
+		typedef collections::vector_buffer<object_wrapper<T>, allocator> type;
+		typedef typename collections::vector_buffer<object_wrapper<T>, allocator>::type data_type;
+
+	private:
+		collections::vector_buffer<object_wrapper<T>, allocator>* _ptr;
+
+	public:
+		object_wrapper();
+		object_wrapper(const collections::ienum<object_wrapper<T>>* store);
+		object_wrapper(object_wrapper &&);
+		object_wrapper(object_wrapper const&);
+		object_wrapper(ang::nullptr_t const&);
+		object_wrapper(collections::vector_buffer<object_wrapper<T>, allocator>*);
+		object_wrapper(ang::initializer_list_t<object_wrapper<T>> list);
+		~object_wrapper();
+
+		inline object_wrapper(array_view<object_wrapper<T>> const& ar) : _ptr(null) {
+			set(new collections::vector_buffer<object_wrapper<T>, allocator>(ar));
+		}
+		template<template<typename> class allocator2> inline object_wrapper(scope_array<object_wrapper<T>, allocator2> const& ar) : _ptr(null) {
+			set(new collections::vector_buffer<object_wrapper<T>, allocator>(ar));
+		}
+		template<wsize SIZE> inline object_wrapper(stack_array<object_wrapper<T>, SIZE> const& ar) : _ptr(null) {
+			set(new collections::vector_buffer<object_wrapper<T>, allocator>(ar));
+		}
+		template<wsize N> inline object_wrapper(object_wrapper<T>(&ar)[N]) : _ptr(null) {
+			set(new collections::vector_buffer<T, allocator>(to_array(ar, N)));
+		}
+
+
+	public:
+		void clean();
+		void clean_unsafe();
+		bool is_empty()const;
+		collections::vector_buffer<object_wrapper<T>, allocator>* get(void)const;
+		void set(collections::vector_buffer<object_wrapper<T>, allocator>*);
+		collections::vector_buffer<object_wrapper<T>, allocator>** addres_of(void);
+
+		collections::forward_iterator<object_wrapper<T>> begin() { return _ptr ? _ptr->begin() : collections::forward_iterator<T>(); }
+		collections::forward_iterator<object_wrapper<T>> end() { return _ptr ? _ptr->end() : collections::forward_iterator<T>(); }
+		collections::forward_iterator<const object_wrapper<T>> begin()const { return _ptr ? ((type const*)_ptr)->begin() : collections::forward_iterator<const T>(); }
+		collections::forward_iterator<const object_wrapper<T>> end()const { return _ptr ? ((type const*)_ptr)->end() : collections::forward_iterator<const T>(); }
+
+	public:
+		object_wrapper& operator = (collections::vector_buffer<object_wrapper<T>, allocator>*);
+		object_wrapper& operator = (const ang::nullptr_t&);
+		object_wrapper& operator = (collections::ienum<object_wrapper<T>> const* items);
+		object_wrapper& operator = (object_wrapper &&);
+		object_wrapper& operator = (object_wrapper const&);
+		template<wsize N>
+		object_wrapper& operator = (object_wrapper<T>(&ar)[N]) {
+			if (is_empty()) set(new collections::vector_buffer<object_wrapper<T>, allocator>(to_array(ar, N)));
+			else _ptr->copy(to_array(ar, N));
+			return *this;
+		}
+
+		template<wsize N>
+		object_wrapper& operator += (object_wrapper<T>(&ar)[N]) {
+			if (is_empty()) set(new collections::vector_buffer<object_wrapper<T>, allocator>(to_array(ar, N)));
+			else _ptr->expand(to_array(ar, N));
+			return *this;
+		}
+
+
+		object_wrapper& operator += (object_wrapper<T> const& value) {
+			if (is_empty()) set(new collections::vector_buffer<object_wrapper<T>, allocator>());
+			_ptr->push(value);
+			return *this;
+		}
+
+		object_wrapper_ptr<collections::vector_buffer<object_wrapper<T>, allocator>> operator & (void);
+		collections::vector_buffer<object_wrapper<T>, allocator> * operator -> (void);
+		collections::vector_buffer<object_wrapper<T>, allocator> const* operator -> (void)const;
+		explicit operator collections::vector_buffer<object_wrapper<T>, allocator> * (void);
+		explicit operator collections::vector_buffer<object_wrapper<T>, allocator> const* (void)const;
+		operator array_view<object_wrapper<T>>()const { return _ptr ? collections::to_array(_ptr->data(), _ptr->size()) : array_view<object_wrapper<T>>(); }
+		template<typename I>object_wrapper<T>& operator[](I const& idx);
+		template<typename I>object_wrapper<T> const& operator[](I const& idx)const;
 	};
 
 }

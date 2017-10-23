@@ -106,19 +106,19 @@ namespace ang
 		template<class T> using ilist_t = intf_wrapper<ilist<T>>;
 
 		/******************************************************************/
-		/* interface ang::collections::iqueue :                           */
+		/* interface ang::collections::isequence :                        */
 		/*  -> represents a list of objects or variables where the user   */
 		/*     can insert or remove elements sequentially                 */
 		/******************************************************************/
 		template<typename T>
-		ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(iseqlist, public ienum<T>)
+		ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(isequence, public ienum<T>)
 			visible vcall void extend(const ienum<T>*) pure;
 			visible vcall void push(T const&) pure;
 			visible vcall bool pop() pure;
 			visible vcall bool pop(T&) pure;
 		ANG_END_INTERFACE();
 
-		template<class T> using iseqlist_t = intf_wrapper<iseqlist<T>>;
+		template<class T> using isequence_t = intf_wrapper<isequence<T>>;
 
 		/******************************************************************/
 		/* interface ang::collections::imap :                             */
@@ -210,6 +210,52 @@ namespace ang
 			}
 
 			T value;
+			node_ptr_t prev;
+			node_ptr_t next;
+		};
+
+
+		template<typename T>
+		struct linked_node<object_wrapper<T>> {
+			typedef object_wrapper<T> type;
+			typedef linked_node<object_wrapper<T>> sefl_t;
+			typedef linked_node<object_wrapper<T>> node_t;
+			typedef linked_node<object_wrapper<T>> *node_ptr_t;
+
+			linked_node()
+				: value()
+				, next(null) {
+			}
+
+			linked_node(object_wrapper<T> const& val)
+				: value(val.get())
+				, next(null) {
+			}
+
+			object_wrapper<T> value;
+			node_ptr_t next;
+		};
+
+		template<typename T>
+		struct double_linked_node<object_wrapper<T>> {
+			typedef object_wrapper<T> type;
+			typedef double_linked_node<object_wrapper<T>> self_t;
+			typedef double_linked_node<object_wrapper<T>> node_t;
+			typedef double_linked_node<object_wrapper<T>> *node_ptr_t;
+
+			double_linked_node()
+				: value()
+				, prev(null)
+				, next(null) {
+			}
+
+			double_linked_node(object_wrapper<T> const& val)
+				: value(val.get())
+				, prev(null)
+				, next(null) {
+			}
+
+			object_wrapper<T> value;
 			node_ptr_t prev;
 			node_ptr_t next;
 		};
