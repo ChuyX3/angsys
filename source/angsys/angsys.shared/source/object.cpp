@@ -32,7 +32,7 @@ typedef struct smart_ptr_info //16bytes for correct 16 byte alignment
 	dword _ref_counter; //4bytes
 	union
 	{
-		pointer _object; //4-8bytes
+		interface_t* _object; //4-8bytes
 		ulong64 _unused;//8bytes
 	};
 
@@ -54,7 +54,7 @@ safe_pointer::safe_pointer(safe_pointer&& other)
 safe_pointer::safe_pointer(safe_pointer const& other)
 	: _info(null)
 {
-	set(const_cast<safe_pointer&>(other).lock<object>());
+	set(const_cast<safe_pointer&>(other).lock<intfptr>());
 }
 
 
@@ -63,7 +63,7 @@ safe_pointer::safe_pointer(ang::nullptr_t const&)
 {
 }
 
-safe_pointer::safe_pointer(object* obj)
+safe_pointer::safe_pointer(interface_t* obj)
 	: _info(null)
 {
 	set(obj);
@@ -91,7 +91,7 @@ void safe_pointer::clean()
 	_info = null;
 }
 
-void safe_pointer::set(object* obj)
+void safe_pointer::set(interface_t* obj)
 {
 	if (_info && smart_ptr_info_ptr_t(_info)->_object == obj)
 		return;
@@ -116,20 +116,14 @@ bool safe_pointer::is_valid()const
 }
 
 template<>
-object_t safe_pointer::lock<object>()
+intfptr safe_pointer::lock<intfptr>()
 {
-	return is_valid() ? (object*)smart_ptr_info_ptr_t(_info)->_object : null;
+	return is_valid() ? smart_ptr_info_ptr_t(_info)->_object : null;
 }
 
-safe_pointer& safe_pointer::operator = (object* obj)
+safe_pointer& safe_pointer::operator = (interface_t* obj)
 {
 	set(obj);
-	return *this;
-}
-
-safe_pointer& safe_pointer::operator = (object_t obj)
-{
-	set(obj.get());
 	return *this;
 }
 
@@ -142,7 +136,7 @@ safe_pointer& safe_pointer::operator = (safe_pointer&& other)
 
 safe_pointer& safe_pointer::operator = (safe_pointer const& ptr)
 {
-	objptr obj = const_cast<safe_pointer&>(ptr).lock<object>();
+	intfptr obj = const_cast<safe_pointer&>(ptr).lock<intfptr>();
 	set(obj.get());
 	return *this;
 }
@@ -158,7 +152,7 @@ ang_void_ptr_t object::operator new(wsize size)
 	smart_ptr_info_ptr_t ptr = (smart_ptr_info_ptr_t)ANG_ALLOCATOR_ALLOC(size + sizeof(smart_ptr_info_t));
 	ptr->_shared_counter = 0;
 	ptr->_ref_counter = 0;
-	ptr->_object = (object*)ang_void_ptr_t(wsize(ptr) + sizeof(smart_ptr_info_t));
+	ptr->_object = (interface_t*)ang_void_ptr_t(wsize(ptr) + sizeof(smart_ptr_info_t));
 	return ptr->_object;
 }
 
@@ -167,7 +161,7 @@ ang_void_ptr_t object::operator new(wsize size, ushort ALIGMENT)
 	smart_ptr_info_ptr_t ptr = (smart_ptr_info_ptr_t)ANG_ALIGNED_ALLOCATOR_ALLOC(size + sizeof(smart_ptr_info_t), 16U);
 	ptr->_shared_counter = 0;
 	ptr->_ref_counter = 0;
-	ptr->_object = (object*)ang_void_ptr_t(wsize(ptr) + sizeof(smart_ptr_info_t));
+	ptr->_object = (interface_t*)ang_void_ptr_t(wsize(ptr) + sizeof(smart_ptr_info_t));
 	return ptr->_object;
 }
 
@@ -204,7 +198,7 @@ ang_void_ptr_t object::operator new(wsize size, char const* file, int line)
 	smart_ptr_info_ptr_t ptr = (smart_ptr_info_ptr_t)ANG_ALLOCATOR_ALLOC_DEBUG(size + sizeof(smart_ptr_info_t), file, line);
 	ptr->_shared_counter = 0;
 	ptr->_ref_counter = 0;
-	ptr->_object = (object*)ang_void_ptr_t(wsize(ptr) + sizeof(smart_ptr_info_t));
+	ptr->_object = (interface_t*)ang_void_ptr_t(wsize(ptr) + sizeof(smart_ptr_info_t));
 	return ptr->_object;
 }
 

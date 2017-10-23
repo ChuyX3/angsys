@@ -78,16 +78,16 @@ namespace ang
 
 		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itext_buffer, public ibuffer)
 			visible vcall encoding_t encoding()const pure;
-		template<encoding_enum ENCODING> safe_str<typename char_type_by_encoding<ENCODING>::char_t> text_buffer() {
-			typedef typename char_type_by_encoding<ENCODING>::char_t char_t;
-			typedef safe_str<typename char_type_by_encoding<ENCODING>::char_t> return_t;
-			return  ENCODING == encoding().get() ? return_t((char_t*)buffer_ptr(), buffer_size() / sizeof(char_t)) : return_t(null, 0);
-		}
-		template<encoding_enum ENCODING> auto text_buffer()const {
-			typedef typename char_type_by_encoding<ENCODING>::char_t char_t;
-			typedef safe_str<typename char_type_by_encoding<ENCODING>::char_t const> return_t;
-			return  ENCODING == encoding().get() ? return_t((char_t const*)buffer_ptr(), buffer_size() / sizeof(char_t)) : return_t(null, 0);
-		}
+			template<encoding_enum ENCODING> safe_str<typename char_type_by_encoding<ENCODING>::char_t> text_buffer() {
+				typedef typename char_type_by_encoding<ENCODING>::char_t char_t;
+				typedef safe_str<typename char_type_by_encoding<ENCODING>::char_t> return_t;
+				return  ENCODING == encoding().get() ? return_t((char_t*)buffer_ptr(), buffer_size() / sizeof(char_t)) : return_t(null, 0);
+			}
+			template<encoding_enum ENCODING> auto text_buffer()const {
+				typedef typename char_type_by_encoding<ENCODING>::char_t char_t;
+				typedef safe_str<typename char_type_by_encoding<ENCODING>::char_t const> return_t;
+				return  ENCODING == encoding().get() ? return_t((char_t const*)buffer_ptr(), buffer_size() / sizeof(char_t)) : return_t(null, 0);
+			}
 		ANG_END_INTERFACE();
 	}
 

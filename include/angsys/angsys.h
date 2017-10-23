@@ -400,78 +400,6 @@ namespace ang
 		friend class safe_pointer;
 	};
 
-	/******************************************************************/
-	/* class ang::safe_pointer :                                      */
-	/*  -> implements a weak reference to a smart pointer             */
-	/******************************************************************/
-	class LINK safe_pointer
-	{
-	public:
-		typedef interface_t type;
-
-	private:
-		pointer _info;
-
-	public:
-		safe_pointer();
-		safe_pointer(safe_pointer&&);
-		safe_pointer(safe_pointer const&);
-		safe_pointer(interface_t*);
-		safe_pointer(ang::nullptr_t const&);
-		template< typename T>
-		safe_pointer(object_wrapper<T> obj) : safe_pointer(reinterpret_cast<interface_t*>(obj.get())) {}
-		template< typename T>
-		safe_pointer(intf_wrapper<T> intf) : safe_pointer(reinterpret_cast<interface_t*>(intf.get())) {}
-		~safe_pointer();
-
-	private:
-		void set(object*);
-		void clean();
-
-	public: //properties
-		bool is_valid()const;
-		template<typename T>
-		typename smart_ptr_type<T>::smart_ptr_t lock() {
-			return lock<intfptr>().as<T>();
-		}
-
-		safe_pointer& operator = (objptr);
-		safe_pointer& operator = (object*);
-		safe_pointer& operator = (safe_pointer&&);
-		safe_pointer& operator = (safe_pointer const&);
-		template< typename T>
-		safe_pointer& operator = (object_wrapper<T> obj) { return operator = (objptr(obj.get())); }
-		safe_pointer& operator = (ang::nullptr_t const&);
-	};
-
-	template<> objptr LINK safe_pointer::lock<object>();
-
-	template<class T>
-	class weak_ptr : public safe_pointer
-	{
-	public:
-		weak_ptr() : safe_pointer() {}
-		weak_ptr(weak_ptr&& other) : safe_pointer((safe_pointer&&)other) {}
-		weak_ptr(weak_ptr const& other) : safe_pointer((safe_pointer const&)other) {}
-		weak_ptr(ang::nullptr_t const&) : safe_pointer(null) {}
-		weak_ptr(T* obj) : safe_pointer(obj) {}
-		weak_ptr(object_wrapper<T> obj) : safe_pointer(obj.get()) {}
-		~weak_ptr() {}
-
-	public: //properties
-		object_wrapper<T> lock() {
-			auto _obj = safe_pointer::lock<object>();
-			return static_cast<T*>(_obj.get());
-		}
-
-		weak_ptr& operator = (object_wrapper<T> obj) { safe_pointer::operator=(obj.get()); return *this; }
-		weak_ptr& operator = (T* obj) { safe_pointer::operator=(obj);  return *this; }
-		weak_ptr& operator = (weak_ptr&& other) { safe_pointer::operator=(other); return *this; }
-		weak_ptr& operator = (weak_ptr const& other) { safe_pointer::operator=(other);  return *this; }
-		weak_ptr& operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }
-	};
-
-
 	template<> class LINK intf_wrapper<interface_t>
 	{
 	public:
@@ -516,6 +444,85 @@ namespace ang
 
 
 	};
+
+	/******************************************************************/
+	/* class ang::safe_pointer :                                      */
+	/*  -> implements a weak reference to a smart pointer             */
+	/******************************************************************/
+	class LINK safe_pointer
+	{
+	public:
+		typedef interface_t type;
+
+	private:
+		pointer _info;
+
+	public:
+		safe_pointer();
+		safe_pointer(safe_pointer&&);
+		safe_pointer(safe_pointer const&);
+		safe_pointer(interface_t*);
+		safe_pointer(ang::nullptr_t const&);
+		template< typename T>
+		safe_pointer(object_wrapper<T> obj) : safe_pointer(reinterpret_cast<interface_t*>(obj.get())) {}
+		template< typename T>
+		safe_pointer(intf_wrapper<T> intf) : safe_pointer(reinterpret_cast<interface_t*>(intf.get())) {}
+		~safe_pointer();
+
+	private:
+		template<typename T> void set(T* ptr) {
+			static_assert(is_smart_ptr_type<T>::value, "T is not samrt pointer type");
+			set((interface_t*) ptr);
+		}
+		void set(interface_t*);
+		void clean();
+
+	public: //properties
+		bool is_valid()const;
+		template<typename T>
+		typename smart_ptr_type<T>::smart_ptr_t lock() {
+			return lock<intfptr>().as<T>();
+		}
+		template<typename T>
+		safe_pointer& operator = (T* ptr) {
+			static_assert(is_smart_ptr_type<T>::value, "T is not samrt pointer type");
+			return operator = ((interface_t*)ptr);
+		}
+		template< typename T> safe_pointer& operator = (intf_wrapper<T> obj) { return operator = ((interface_t*)obj.get()); }
+		template< typename T> safe_pointer& operator = (object_wrapper<T> obj) { return operator = ((interface_t*)obj.get()); }
+		safe_pointer& operator = (interface_t*);
+		safe_pointer& operator = (safe_pointer&&);
+		safe_pointer& operator = (safe_pointer const&);
+		safe_pointer& operator = (ang::nullptr_t const&);
+	};
+
+	template<> intfptr LINK safe_pointer::lock<intfptr>();
+
+	template<class T>
+	class weak_ptr : public safe_pointer
+	{
+	public:
+		weak_ptr() : safe_pointer() {}
+		weak_ptr(weak_ptr&& other) : safe_pointer((safe_pointer&&)other) {}
+		weak_ptr(weak_ptr const& other) : safe_pointer((safe_pointer const&)other) {}
+		weak_ptr(ang::nullptr_t const&) : safe_pointer(null) {}
+		weak_ptr(T* obj) : safe_pointer(obj) {}
+		weak_ptr(object_wrapper<T> obj) : safe_pointer(obj.get()) {}
+		~weak_ptr() {}
+
+	public: //properties
+		object_wrapper<T> lock() {
+			auto _obj = safe_pointer::lock<object>();
+			return static_cast<T*>(_obj.get());
+		}
+
+		weak_ptr& operator = (object_wrapper<T> obj) { safe_pointer::operator=(obj.get()); return *this; }
+		weak_ptr& operator = (T* obj) { safe_pointer::operator=(obj);  return *this; }
+		weak_ptr& operator = (weak_ptr&& other) { safe_pointer::operator=(other); return *this; }
+		weak_ptr& operator = (weak_ptr const& other) { safe_pointer::operator=(other);  return *this; }
+		weak_ptr& operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }
+	};
+
 }
 
 

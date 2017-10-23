@@ -271,7 +271,7 @@ namespace ang
 			return*this;
 		}
 
-		operator object_t()const {
+		operator objptr()const {
 			return _ptr;
 		}
 
@@ -340,7 +340,7 @@ namespace ang
 			return*this;
 		}
 
-		operator object_t()const {
+		operator objptr()const {
 			return _ptr;
 		}
 
@@ -407,7 +407,7 @@ namespace ang
 			return*this;
 		}
 
-		operator object_t()const {
+		operator objptr()const {
 			return _ptr;
 		}
 

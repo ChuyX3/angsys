@@ -165,8 +165,8 @@ ang::value_wrapper<T>::~value_wrapper() {
 
 template<typename T>
 ang::type_name_t ang::value_wrapper<T>::class_name() {
-	static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::value_wrapper<"_o += type_of<T>()) += ">"_s));
-	return name;
+	//static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::value_wrapper<"_o += type_of<T>()) += ">"_s));
+	return  type_of<T*>();
 }
 
 template<typename T>
@@ -231,6 +231,12 @@ template<typename T>
 inline ang::object_wrapper<ang::value_wrapper<T>>::object_wrapper(ang::value_wrapper<T>* ptr) : _ptr(null) {
 	set(ptr);
 }
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::object_wrapper(ang::value<T>const& val) : _ptr(null) {
+	set(new ang::value_wrapper<T>(val));
+}
+
 template<typename T>
 inline ang::object_wrapper<ang::value_wrapper<T>>::object_wrapper(object_wrapper && other) : _ptr(null) {
 	ang::value_wrapper<T> * temp = other._ptr;
@@ -310,6 +316,16 @@ inline ang::object_wrapper<ang::value_wrapper<T>>& ang::object_wrapper<ang::valu
 }
 
 template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>& ang::object_wrapper<ang::value_wrapper<T>>::operator = (ang::value<T> const& other)
+{
+	if (is_empty())
+		set(new value_wrapper<T>(other));
+	else
+		get()->set(other);
+	return*this;
+}
+
+template<typename T>
 inline ang::value_wrapper<T> ** ang::object_wrapper<ang::value_wrapper<T>>::addres_of(void)
 {
 	return &_ptr;
@@ -332,6 +348,18 @@ template<typename T>
 inline T const* ang::object_wrapper<ang::value_wrapper<T>>::operator -> (void)const
 {
 	return &get()->get();
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::operator T& (void)
+{
+	return get()->get();
+}
+
+template<typename T>
+inline ang::object_wrapper<ang::value_wrapper<T>>::operator T const& (void)const
+{
+	return get()->get();
 }
 
 template<typename T>

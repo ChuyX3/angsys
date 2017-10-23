@@ -371,7 +371,7 @@ void string_buffer<CURRENT_ENCODING>::copy_at(windex at, pointer raw, wsize sz, 
 	}
 	else
 	{
-		realloc(sz, true);
+		realloc(my_len + sz, true);
 		_data._stack_length = my_len + get_encoder<ENCODING>().convert(&_data._allocated_buffer[my_len], min(_data._allocated_capacity - my_len - 1, sz), raw, encoding, true);
 	}
 }

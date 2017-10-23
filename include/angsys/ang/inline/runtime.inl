@@ -85,7 +85,7 @@ namespace ang
 		{
 			typedef T* type;
 			static inline type_name_t type_of() {
-				static type_name_t out = runtime_data_base::regist_typename(ang::move(string(runtime_type_builder<type>::type_of()) += "*"_s));
+				static type_name_t out = runtime_data_base::regist_typename(ang::move(string(runtime_type_builder<T>::type_of()) += "*"_s));
 				return out;
 			}
 
@@ -106,7 +106,7 @@ namespace ang
 		{
 			typedef T type;
 			static inline type_name_t type_of() {
-				static type_name_t out = runtime_data_base::regist_typename(ang::move(("const "_o += runtime_type_builder<type>::type_of()) += "*"_s));
+				static type_name_t out = runtime_data_base::regist_typename(ang::move(("const "_o += runtime_type_builder<T>::type_of()) += "*"_s));
 				return out;
 			}
 
