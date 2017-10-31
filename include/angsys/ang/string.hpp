@@ -74,20 +74,18 @@ namespace ang
 
 		typedef text_format text_format_t;
 
-		ANG_INTERFACE(itext_buffer);
+		template<encoding_enum ENCODING> struct itext_buffer;
+		template<encoding_enum ENCODING> using itext_buffer_t = intf_wrapper<itext_buffer<ENCODING>>;
+		template<encoding_enum ENCODING> using itext_buffer_ptr_t = intf_wrapper_ptr<itext_buffer<ENCODING>>;
 
-		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itext_buffer, public ibuffer)
-			visible vcall encoding_t encoding()const pure;
-			template<encoding_enum ENCODING> safe_str<typename char_type_by_encoding<ENCODING>::char_t> text_buffer() {
-				typedef typename char_type_by_encoding<ENCODING>::char_t char_t;
-				typedef safe_str<typename char_type_by_encoding<ENCODING>::char_t> return_t;
-				return  ENCODING == encoding().get() ? return_t((char_t*)buffer_ptr(), buffer_size() / sizeof(char_t)) : return_t(null, 0);
-			}
-			template<encoding_enum ENCODING> auto text_buffer()const {
-				typedef typename char_type_by_encoding<ENCODING>::char_t char_t;
-				typedef safe_str<typename char_type_by_encoding<ENCODING>::char_t const> return_t;
-				return  ENCODING == encoding().get() ? return_t((char_t const*)buffer_ptr(), buffer_size() / sizeof(char_t)) : return_t(null, 0);
-			}
+		//ANG_INTERFACE(itext_buffer);
+
+		template<encoding_enum ENCODING>
+		ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(itext_buffer, public ibuffer)
+			visible vcall wsize length()const pure;
+			visible vcall safe_str<typename char_type_by_encoding<ENCODING>::char_t> text_buffer() pure;
+			visible vcall safe_str<typename char_type_by_encoding<ENCODING>::char_t const> text_buffer()const pure;
+
 		ANG_END_INTERFACE();
 	}
 

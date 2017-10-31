@@ -5,8 +5,8 @@ using namespace ang;
 using namespace ang::core;
 using namespace ang::core::async;
 
-ANG_IMPLEMENT_INTERFACE(ang::core::async, iasync_task);
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::async::iasync<void>, iasync_task)
+ANG_IMPLEMENT_INTERFACE(ang::core::async, itask);
+//ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::async::iasync<void>, itask)
 
 ANG_IMPLEMENT_FLAGS(async, async_action_status, uint);
 

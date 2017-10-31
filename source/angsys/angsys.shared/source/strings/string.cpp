@@ -4,7 +4,7 @@
 using namespace ang;
 using namespace ang::strings;
 
-ANG_IMPLEMENT_INTERFACE(ang::text, itext_buffer);
+//ANG_IMPLEMENT_INTERFACE(ang::text, itext_buffer);
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING encoding::ascii

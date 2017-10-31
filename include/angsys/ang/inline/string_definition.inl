@@ -15,7 +15,7 @@ namespace ang
 		object_wrapper(object_wrapper const&);
 		object_wrapper(strings::string_buffer<ENCODING>*);
 		object_wrapper(ang::nullptr_t const&);
-		template<typename T> object_wrapper(T const* str);
+		//template<typename T> object_wrapper(T const* str);
 		template<typename T> object_wrapper(safe_str<T> const& str);
 		template<text::encoding_enum OTHER_ENCODING> object_wrapper(object_wrapper<strings::string_buffer<OTHER_ENCODING>> const& str);
 		template<typename T, wsize N> object_wrapper(const T(&ar)[N]);
@@ -74,7 +74,7 @@ namespace ang
 
 		template<> class LINK string_buffer<CURRENT_ENCODING>
 			: public object
-			, public text::itext_buffer
+			, public text::itext_buffer<CURRENT_ENCODING>
 		{
 		public:
 			static const text::encoding_enum ENCODING = CURRENT_ENCODING;
@@ -114,7 +114,6 @@ namespace ang
 			bool is_empty()const;
 			str_t str();
 			cstr_t cstr() const;
-			wsize length() const;
 			wsize capacity() const;
 
 		public:
@@ -150,6 +149,10 @@ namespace ang
 			virtual bool realloc_buffer(wsize) override;
 			virtual text::encoding_t encoding()const override;
 
+			virtual wsize length() const override;
+			virtual str_t text_buffer() override;
+			virtual cstr_t text_buffer()const override;
+
 		public:
 			char_t& at(windex it);
 			str_t begin();
@@ -174,11 +177,11 @@ namespace ang
 		set(new strings::string_buffer<ENCODING>(str));
 	}
 
-	template<typename T>
-	inline object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::object_wrapper(T const* str)
-		: object_wrapper() {
-		set(new strings::string_buffer<ENCODING>(safe_str<const T>(str, -1)));
-	}
+	//template<typename T>
+	//inline object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::object_wrapper(T const* str)
+	//	: object_wrapper() {
+	//	set(new strings::string_buffer<ENCODING>(safe_str<const T>(str, -1)));
+	//}
 
 	template<text::encoding_enum OTHER_ENCODING>
 	inline object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::object_wrapper(object_wrapper<strings::string_buffer<OTHER_ENCODING>> const& str)

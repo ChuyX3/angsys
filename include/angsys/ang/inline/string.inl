@@ -16,6 +16,50 @@
 namespace ang
 {
 
+	template<text::encoding_enum ENCODING>
+	inline bool text::itext_buffer<ENCODING>::is_kind_of(ang::type_name_t name)const
+	{
+		return name == text::itext_buffer<ENCODING>::class_name() ||
+			ibuffer::is_kind_of(name);
+	}
+
+	template<text::encoding_enum ENCODING>
+	inline bool text::itext_buffer<ENCODING>::is_child_of(ang::type_name_t name)
+	{
+		return name == text::itext_buffer<ENCODING>::class_name() ||
+			ibuffer::is_child_of(name);
+	}
+
+	template<text::encoding_enum ENCODING>
+	inline ang::type_name_t text::itext_buffer<ENCODING>::class_name() {
+		static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::text::itext_buffer<"_o += text::encoding_t(ENCODING).to_string()) += ">"_s));
+		return name;
+	}
+
+	template<text::encoding_enum ENCODING>
+	inline ang::type_name_t text::itext_buffer<ENCODING>::object_name()const
+	{
+		return text::itext_buffer<ENCODING>::class_name();
+	}
+
+	template<text::encoding_enum ENCODING>
+	inline bool text::itext_buffer<ENCODING>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+	{
+		if (out == null)
+			return false;
+		if (name == class_name())
+		{
+			*out = static_cast<text::itext_buffer<ENCODING>*>(this);
+			return true;
+		}
+		else if (ibuffer::query_object(name, out))
+		{
+			return true;
+		}
+		return false;
+	}
+
+
 	template<text::encoding_enum ENCODING1, text::encoding_enum ENCODING2>
 	inline bool operator == (object_wrapper<strings::string_buffer<ENCODING1>> const& cstr1, object_wrapper<strings::string_buffer<ENCODING2>> const& cstr2) {
 		return text::get_encoder<ENCODING1>().compare(((typename strings::safe_str_by_encoding<ENCODING1>::ctype)(cstr1)).cstr(),

@@ -308,6 +308,11 @@ namespace ang
 		object_wrapper(std::nullptr_t const&);
 		~object_wrapper();
 
+		object_wrapper(core::delegates::function_data<void(args_t...)> * func) : object_wrapper() {
+			set(func);
+		}
+
+
 		template<typename calleable_t>
 		object_wrapper(calleable_t const& func) : object_wrapper() {
 			set(new core::delegates::static_function<calleable_t, void, args_t...>(func));

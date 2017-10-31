@@ -97,6 +97,9 @@ bool buffer::query_object(type_name_t type, unknown_ptr_t out)
 	return false;
 }
 
+text::encoding_t buffer::encoding()const {
+	return text::encoding::binary;
+}
 
 pointer buffer::buffer_ptr()const
 {
@@ -213,6 +216,10 @@ bool aligned_buffer::auto_release()
 	return object::auto_release(16U);
 }
 
+text::encoding_t aligned_buffer::encoding()const {
+	return text::encoding::binary;
+}
+
 pointer aligned_buffer::buffer_ptr()const
 {
 	return BUFFER_HANDLER(wsize(this) + sizeof(aligned_buffer))->get_buffer();
@@ -324,6 +331,7 @@ ibuffer_t buffer_view::parent()const
 {
 	return _buffer;
 }
+
 
 pointer buffer_view::buffer_ptr()const
 {

@@ -116,6 +116,7 @@ namespace ang
 		private:
 	
 		public: //ibuffer overrides
+			inline text::encoding_t encoding()const override;
 			inline pointer buffer_ptr()const override;
 			inline wsize buffer_size()const override;
 			inline wsize mem_copy(wsize, pointer, text::encoding_t = text::encoding::binary) override;

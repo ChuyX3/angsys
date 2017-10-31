@@ -36,19 +36,18 @@ namespace ang
 		typedef long64 stream_index_t;
 		struct iinput_stream;
 		struct ioutput_stream;
-		struct itext_input_stream;
-		struct itext_output_stream;
 		struct ibinary_input_stream;
 		struct ibinary_output_stream;
-
+		template<text::encoding_enum ENCODING>struct itext_input_stream;
+		template<text::encoding_enum ENCODING>struct itext_output_stream;
 
 		typedef intf_wrapper<iinput_stream> iinput_stream_t;
 		typedef intf_wrapper<ioutput_stream> ioutput_stream_t;
-		typedef intf_wrapper<itext_input_stream> itext_input_stream_t;
-		typedef intf_wrapper<itext_output_stream> itext_output_stream_t;
 		typedef intf_wrapper<ibinary_input_stream> ibinary_input_stream_t;
 		typedef intf_wrapper<ibinary_output_stream> ibinary_output_stream_t;
 
+		template<text::encoding_enum ENCODING>using itext_input_stream_t = intf_wrapper<itext_input_stream<ENCODING>>;
+		template<text::encoding_enum ENCODING>using itext_output_stream_t = intf_wrapper<itext_output_stream<ENCODING>>;
 
 		class binary_buffer_input_stream;
 		class binary_buffer_output_stream;
@@ -143,19 +142,18 @@ namespace ang
 
 		//////////////////////////////////////////////////////////////////////////////////
 
-
-		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itext_input_stream, public iinput_stream)
-			visible vcall wsize seek(pointer, wsize, text::encoder_t)pure;
-			visible vcall wsize read(pointer, wsize, text::encoder_t)pure;
-			visible vcall wsize read_line(pointer, wsize, text::encoder_t, array_view<char32_t>)pure;
-
-			visible template<typename T> wsize seek(safe_str<text::char_type_by_encoding<ENCODING>::char_t const> const&)pure; //read a specific sequence of characters
+		template<text::encoding_enum ENCODING>
+		ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(itext_input_stream, public iinput_stream)
+			visible using iinput_stream::read;
+			visible vcall wsize seek(safe_str<text::char_type_by_encoding<ENCODING>::char_t const> const&)pure;
+			visible vcall wsize read(safe_str<text::char_type_by_encoding<ENCODING>::char_t>, wsize max)pure;
 			visible vcall wsize read(strings::string_base<ENCODING>&, wsize max)pure;
-			visible vcall wsize read_line(strings::string_base<ENCODING>&, wsize max, array_view<text::char_type_by_encoding<ENCODING>::char_t> stop)pure;
-			using iinput_stream::read;
+			visible vcall wsize read_line(safe_str<text::char_type_by_encoding<ENCODING>::char_t>, wsize max, array_view<text::char_type_by_encoding<ENCODING>::char_t>)pure;
+			visible vcall wsize read_line(strings::string_base<ENCODING>&, wsize max, array_view<text::char_type_by_encoding<ENCODING>::char_t>)pure;
 		ANG_END_INTERFACE();
 
-		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itext_output_stream, public ioutput_stream)
+		template<text::encoding_enum ENCODING>
+		ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(itext_output_stream, public ioutput_stream)
 			visible vcall void enable_text_format(bool)pure;
 			visible vcall bool is_text_format_enabled()const pure;
 			visible vcall void text_format(cstr_t)pure;
@@ -387,6 +385,33 @@ namespace ang
 		inline ibinary_output_stream_t& operator << (ibinary_output_stream_t& stream, double value) { stream->write(value); return stream; }
 		inline ibinary_output_stream_t& operator << (ibinary_output_stream_t& stream, string value) { stream->write(value); return stream; }
 		inline ibinary_output_stream_t& operator << (ibinary_output_stream_t& stream, wstring value) { stream->write(value); return stream; }
+	}
+}
+
+namespace ang
+{
+	namespace text
+	{
+		template<text::encoding_enum ENCODING>
+		class text_buffer_wrapper final
+			: public object
+			, public itext_buffer<ENCODING>
+		{
+		private:
+			ibuffer_t _buffer;
+		public:
+			inline text_buffer_wrapper(ibuffer_t buffer) : _buffer(buffer) {}
+
+			ANG_DECLARE_INLINE_INTERFACE();
+
+			inline encoding_t encoding()const override { return ENCODING; }
+			inline wsize length()const override { _buffer.is_empty()? 0 : _buffer->buffer_size() / sizeof(typename text::char_type_by_encoding<ENCODING>::char_t); }
+			inline safe_str<typename char_type_by_encoding<ENCODING>::char_t> text_buffer() override { return _buffer.is_empty() ? null : (typename text::char_type_by_encoding<ENCODING>::str_t)_buffer->buffer_ptr(); }
+			inline safe_str<typename char_type_by_encoding<ENCODING>::char_t const> text_buffer()const override { return _buffer.is_empty() ? null : (typename text::char_type_by_encoding<ENCODING>::cstr_t)_buffer->buffer_ptr(); }
+
+		private:
+			inline~text_buffer_wrapper(){}
+		};
 	}
 }
 

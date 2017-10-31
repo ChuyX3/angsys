@@ -196,6 +196,12 @@ inline void ang::collections::array_buffer<T, allocator>::copy(ang::scope_array<
 	_data.copy(ar);
 }
 
+template<typename T, template<typename> class allocator>
+inline ang::text::encoding_t ang::collections::array_buffer<T, allocator>::encoding()const
+{
+	return text::encoding::binary;
+}
+
 template<typename T, template <typename> class allocator>
 inline pointer ang::collections::array_buffer<T, allocator>::buffer_ptr()const
 {

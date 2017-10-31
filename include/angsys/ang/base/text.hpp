@@ -10,7 +10,7 @@ namespace ang
 	namespace text
 	{
 		class text_format;
-		struct itext_buffer;
+
 		template<wsize SIZE = sizeof(wchar)>struct native_encoding_selection;
 
 		/******************************************************************/

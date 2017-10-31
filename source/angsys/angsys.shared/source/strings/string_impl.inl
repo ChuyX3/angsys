@@ -170,13 +170,13 @@ type_name_t string_buffer<CURRENT_ENCODING>::object_name()const { return class_n
 bool string_buffer<CURRENT_ENCODING>::is_child_of(type_name_t name)
 {
 	return name == type_of<string_buffer<CURRENT_ENCODING>>()
-		|| object::is_child_of(name) || itext_buffer::is_child_of(name);
+		|| object::is_child_of(name) || itext_buffer<CURRENT_ENCODING>::is_child_of(name);
 }
 
 bool string_buffer<CURRENT_ENCODING>::is_kind_of(type_name_t name)const
 {
 	return name == type_of<string_buffer<CURRENT_ENCODING>>()
-		|| object::is_kind_of(name) || itext_buffer::is_kind_of(name);
+		|| object::is_kind_of(name) || itext_buffer<CURRENT_ENCODING>::is_kind_of(name);
 }
 
 bool string_buffer<CURRENT_ENCODING>::query_object(type_name_t name, unknown_ptr_t out)
@@ -190,7 +190,7 @@ bool string_buffer<CURRENT_ENCODING>::query_object(type_name_t name, unknown_ptr
 	else if (object::query_object(name, out)) {
 		return true;
 	}
-	else if (itext_buffer::query_object(name, out)) {
+	else if (itext_buffer<CURRENT_ENCODING>::query_object(name, out)) {
 		return true;
 	}
 	return false;
@@ -253,11 +253,15 @@ text::encoding_t string_buffer<CURRENT_ENCODING>::encoding()const
 	return ENCODING;
 }
 
+typename string_buffer<CURRENT_ENCODING>::str_t  string_buffer<CURRENT_ENCODING>::text_buffer() { return str(); }
+
+typename string_buffer<CURRENT_ENCODING>::cstr_t  string_buffer<CURRENT_ENCODING>::text_buffer()const { return cstr(); }
+
 /////////////////////////////////////////////////////////////////////////
 
 comparision_result_t string_buffer<CURRENT_ENCODING>::compare(object const& obj)const
 {
-	itext_buffer_t buffer = interface_cast<itext_buffer>(&obj);
+	itext_buffer_t<CURRENT_ENCODING> buffer = interface_cast<itext_buffer<CURRENT_ENCODING>>(&obj);
 	if (buffer.is_empty())
 		return comparision_result::diferent;
 	auto encoder = get_encoder<ENCODING>();

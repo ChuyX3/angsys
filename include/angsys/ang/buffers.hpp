@@ -33,6 +33,7 @@ namespace ang
 	ANG_END_INTERFACE();
 
 	ANG_BEGIN_INTERFACE_WITH_BASE(LINK, ibuffer, ibuffer_view)
+		visible vcall text::encoding_t encoding()const pure;
 		visible vcall wsize mem_copy(wsize, pointer, text::encoding_t = text::encoding::binary) pure;
 		visible vcall ibuffer_view_t map_buffer(windex, wsize) pure;
 		visible vcall bool unmap_buffer(ibuffer_view_t&, wsize used) pure;
@@ -93,6 +94,7 @@ namespace ang
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
 
+		virtual text::encoding_t encoding()const override;
 		virtual pointer buffer_ptr()const override;
 		virtual wsize buffer_size()const override;
 		virtual wsize mem_copy(wsize, pointer, text::encoding_t = text::encoding::binary) override;
@@ -123,6 +125,7 @@ namespace ang
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
 
+		virtual text::encoding_t encoding()const override;
 		virtual pointer buffer_ptr()const override;
 		virtual wsize buffer_size()const override;
 		virtual wsize mem_copy(wsize, pointer, text::encoding_t = text::encoding::binary) override;
@@ -181,8 +184,9 @@ namespace ang
 		virtual ~stack_buffer();
 
 	public: //overrides
-		ANG_DECLARE_INTERFACE();
+		ANG_DECLARE_INLINE_INTERFACE();
 
+		virtual text::encoding_t encoding()const override;
 		virtual pointer buffer_ptr()const override;
 		virtual wsize buffer_size()const override;
 		virtual wsize mem_copy(wsize, pointer, text::encoding_t = text::encoding::binary) override;

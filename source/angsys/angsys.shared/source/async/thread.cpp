@@ -16,7 +16,7 @@ thread_t thread::create_thread_suspended(uint flags, ibuffer_view_t buffer, bool
 	return new core_thread(flags, buffer, alloc);;
 }
 
-thread_t thread::create_thread(thread_start_routine_t routine, var_args_t args, uint flags, ibuffer_view_t buffer, bool alloc)
+thread_t thread::create_thread(thread_routine_t routine, var_args_t args, uint flags, ibuffer_view_t buffer, bool alloc)
 {
 	core_thread_t thread = new core_thread(flags, buffer, alloc);
 	thread->start(routine, args);
@@ -218,7 +218,7 @@ dword core_thread::core_thread_start_routine(pointer args)
 
 		if (thread->_state & async_action_status::finished)//cancel
 		{
-			//thread->_state = async_action_status::completed;
+			thread->_state = async_action_status::completed;
 			manager->main_cond().signal();
 			manager->main_mutex().unlock();
 			return result;
@@ -232,12 +232,12 @@ dword core_thread::core_thread_start_routine(pointer args)
 		manager->main_cond().signal();
 		manager->main_mutex().unlock();
 
-		result = routine(thread.get(), user_args);
-
+		 routine(thread.get(), user_args);
+		 result = 0;
 		manager->main_mutex().lock();
 		if (thread->_state & async_action_status::finished)//cancel
 		{
-			//thread->_state = async_action_status::completed;
+			thread->_state = async_action_status::completed;
 			manager->main_cond().signal();
 			manager->main_mutex().unlock();
 			return result;
@@ -325,7 +325,6 @@ void core_thread::set_tle_data(ibuffer_view_t data, bool alloc) {
 
 void core_thread::set_tle_notify(tle_deleting_event_t callback) { tle_notify_callback = callback; }
 
-var_args_t core_thread::user_args()const { return _user_args; }
 
 dword core_thread::thread_id()const { 
 #if defined WINDOWS_PLATFORM
@@ -335,9 +334,9 @@ dword core_thread::thread_id()const {
 #endif
 }
 
-async_action_status_t core_thread::thread_state()const { return _state; }
+async_action_status_t core_thread::status()const { return _state; }
 
-bool core_thread::start(thread_start_routine_t callback, var_args_t args) 
+bool core_thread::start(delegates::function<void(icore_thread*, var_args_t)> callback, var_args_t args)
 {
 	mutex_t& mutex = core_thread_manager::instance()->main_mutex();
 	cond_t& cond = core_thread_manager::instance()->main_cond();
@@ -354,7 +353,7 @@ bool core_thread::start(thread_start_routine_t callback, var_args_t args)
 	return !_start_routine.is_empty();
 }
 
-bool core_thread::then(thread_then_routine_t callback, var_args_t args)
+bool core_thread::then(delegates::function<void(icore_thread*, var_args_t)> callback, var_args_t args)
 {
 	if (callback.is_empty() || _join_request)return false;
 	cond_t& cond = core_thread_manager::instance()->main_cond();
@@ -380,7 +379,7 @@ bool core_thread::then(thread_then_routine_t callback, var_args_t args)
 	return true;
 }
 
-bool core_thread::wait(async_action_status_t state)
+bool core_thread::wait(async_action_status_t state)const
 {
 	if (is_current_thread())
 		return false;
@@ -391,7 +390,7 @@ bool core_thread::wait(async_action_status_t state)
 	return true;
 }
 
-bool core_thread::wait(async_action_status_t state, dword ms)
+bool core_thread::wait(async_action_status_t state, dword ms)const
 {
 	if (is_current_thread())
 		return false;
@@ -427,7 +426,7 @@ bool core_thread::cancel()
 	return true;
 }
 
-bool core_thread::join()
+bool core_thread::join()const
 {
 	if (is_current_thread())
 		return false;

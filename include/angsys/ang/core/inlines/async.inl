@@ -12,34 +12,34 @@
 #endif
 
 
-template<class T>
+template<typename T>
 inline ang::type_name_t ang::core::async::iasync<T>::class_name()
 {
 	static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::core::async::iasync<"_o += type_of<T>()) += ">"_s));
 	return name;
 }
 
-template<class T>
+template<typename T>
 inline bool ang::core::async::iasync<T>::is_child_of(ang::type_name_t name)
 {
 	return name == class_name()
-		|| iasync_task::is_child_of(name);
+		|| itask::is_child_of(name);
 }
 
-template<class T>
+template<typename T>
 inline ang::type_name_t ang::core::async::iasync<T>::object_name()const
 {
 	return class_name();
 }
 
-template<class T>
+template<typename T>
 inline bool ang::core::async::iasync<T>::is_kind_of(ang::type_name_t name)const
 {
 	return name == class_name()
-		|| iasync_task::is_kind_of(name);
+		|| itask::is_kind_of(name);
 }
 
-template<class T>
+template<typename T>
 inline bool ang::core::async::iasync<T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
 {
 	if (out == null)
@@ -49,7 +49,7 @@ inline bool ang::core::async::iasync<T>::query_object(ang::type_name_t name, ang
 		*out = static_cast<ang::core::async::iasync<T>*>(this);
 		return true;
 	}
-	else if (ang::core::async::iasync_task::query_object(name, out))
+	else if (ang::core::async::itask::query_object(name, out))
 	{
 		return true;
 	}
@@ -59,41 +59,41 @@ inline bool ang::core::async::iasync<T>::query_object(ang::type_name_t name, ang
 //////////////////////////////////////////////////////////////////////////
 
 
-template<class T>
-inline ang::type_name_t ang::core::async::async_task_result<T>::class_name()
+template<typename T>
+inline ang::type_name_t ang::core::async::task_handler<T>::class_name()
 {
-	static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::core::async::async_task_result<"_o += type_of<T>()) += ">"_s));
+	static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::core::async::task_handler<"_o += type_of<T>()) += ">"_s));
 	return name;
 }
 
-template<class T>
-inline bool ang::core::async::async_task_result<T>::is_child_of(ang::type_name_t name)
+template<typename T>
+inline bool ang::core::async::task_handler<T>::is_child_of(ang::type_name_t name)
 {
 	return name == class_name()
 		|| iasync<T>::is_child_of(name);
 }
 
-template<class T>
-inline ang::type_name_t ang::core::async::async_task_result<T>::object_name()const
+template<typename T>
+inline ang::type_name_t ang::core::async::task_handler<T>::object_name()const
 {
 	return class_name();
 }
 
-template<class T>
-inline bool ang::core::async::async_task_result<T>::is_kind_of(ang::type_name_t name)const
+template<typename T>
+inline bool ang::core::async::task_handler<T>::is_kind_of(ang::type_name_t name)const
 {
 	return name == class_name()
 		|| iasync<T>::is_kind_of(name);
 }
 
-template<class T>
-inline bool ang::core::async::async_task_result<T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+template<typename T>
+inline bool ang::core::async::task_handler<T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
 {
 	if (out == null)
 		return false;
 	if (name == class_name())
 	{
-		*out = static_cast<ang::core::async::async_task_result<T>*>(this);
+		*out = static_cast<ang::core::async::task_handler<T>*>(this);
 		return true;
 	}
 	else if (object::query_object(name, out))
@@ -108,285 +108,131 @@ inline bool ang::core::async::async_task_result<T>::query_object(ang::type_name_
 }
 
 
-template<class T>
-inline ang::core::async::async_task_result<T>::async_task_result(ang::core::async::async_task* task)
+template<typename T>
+inline ang::core::async::task_handler<T>::task_handler()
+	: _result()
+	, _task(null)
+{
+
+}
+
+template<typename T>
+inline ang::core::async::task_handler<T>::task_handler(ang::core::async::itask* task)
 	: _result()
 	, _task(task)
 {
 
 }
 
-//template<class T>
-//inline ang::core::async::async_task_result<T>::async_task_result(ang::core::async::thread_t _t, ang::core::async::mutex_t _m, ang::core::async::cond_t _c)
-//	: _result()
-//	, _cond(_c)
-//	, _mutex(_m)
-//	, _was_canceled(false)
-//	, _handled(false)
-//	, _thread(_t)
-//	, _status(ang::core::async::async_action_status::starting)
-//{
-//
-//}
-
-template<class T>
-inline ang::core::async::async_task_result<T>::~async_task_result()
+template<typename T>
+inline ang::core::async::task_handler<T>::~task_handler()
 {
-	scope_locker lock = _mutex;
-	if (_status == async_action_status::wait_for_then && !_thread.is_empty())
-	{
-		_status = async_action_status::completed;
-		_thread->cancel();
-	}
+	if(!_task.is_empty())_task->join();
 }
 
-//template<class T>
-//inline void ang::core::async::async_task_result<T>::complete()
-//{
-//	if (_thread.is_empty() || !_thread->is_current_thread())
-//		throw(ang::exception_t(ang::except_code::invalid_access));
-//
-//	scope_locker locker = _mutex;
-//	_was_canceled = true;
-//	_status = async_action_status::completed;
-//	_cond->signal();
-//	if (!_then.is_empty())
-//	{
-//		_then(this);
-//	}
-//}
-
-template<class T>
-inline void ang::core::async::async_task_result<T>::complete(T value)
+template<typename T>
+inline bool ang::core::async::task_handler<T>::wait(ang::core::async::async_action_status_t status)const
 {
-	if (_thread.is_empty() || !_thread->is_current_thread())
-		throw(ang::exception_t(ang::except_code::invalid_access));
-
-	scope_locker locker = _mutex;
-	//_status == async_action_status::canceled;
-	_result = value;
-	_status = async_action_status::wait_for_then;
-	_cond->signal();
-	//if (!_then.is_empty())
-	//{
-	//	_then(this);
-	//}
+	return _task.is_empty() ? false : _task->wait(status);
 }
 
-template<class T>
-inline bool ang::core::async::async_task_result<T>::wait(ang::core::async::async_action_status_t status, dword ms)const
+template<typename T>
+inline bool ang::core::async::task_handler<T>::wait(ang::core::async::async_action_status_t status, dword ms)const
 {
-	async_task_result_t<T> prevent_destruction = const_cast<async_task_result<T>*>(this);
-	if (_thread->is_current_thread())
-		return false;
-	if (ms == dword(-1))
-	{
-		scope_locker locker = _mutex;
-		_cond->waitfor(_mutex, [&]()
-		{
-			return !status.is_active(_status);
-		});
-		return true;
-	}
-	else
-	{
-		scope_locker locker = _mutex;
-		if(!status.is_active(_status))
-			_cond->wait(_mutex, ms);
-		return status.is_active(_status);
-	}
+	return _task.is_empty() ? false : _task->wait(status, ms);
 }
 
-template<class T>
-inline ang::core::async::async_action_status_t ang::core::async::async_task_result<T>::status()const
+template<typename T>
+inline ang::core::async::async_action_status_t ang::core::async::task_handler<T>::status()const
 {
-	return _status;
+	return _task.is_empty() ? async_action_status::error : _task->status();
 }
 
-template<class T>
-inline bool ang::core::async::async_task_result<T>::cancel()
+template<typename T>
+inline bool ang::core::async::task_handler<T>::cancel()
 {
-	scope_locker locker = _mutex;
-	_status = async_action_status::canceled;
-	_cond.signal();
-	/*async_action_status_t status = async_action_status::initializing
-		+ async_action_status::running;
+	return _task.is_empty() ? false : _task->cancel();
+}
 
-	if (status.is_active(_status))
-	{
-		_status = async_action_status::canceled;
-		return true;
-	}*/
-	return true;
+template<typename T>
+inline bool ang::core::async::task_handler<T>::join()const
+{
+	return _task.is_empty() ? false : _task->join();
 }
 
 
-template<class T>
-inline T ang::core::async::async_task_result<T>::result()const
+template<typename T>
+inline ang::core::async::itask_t ang::core::async::task_handler<T>::then(delegates::function<void(ang::core::async::iasync<T>*)> func)
 {
-	scope_locker lock = _mutex;
-	if (_thread.is_empty()) { throw(ang::exception_t(ang::except_code::invalid_access)); }
-	async_task_result_t<T> _this = const_cast<async_task_result<T>*>(this);
+	return _task.is_empty() ? null : _task->then([=](ang::core::async::itask*t){ func(this); });
+}
 
-	if(!_thread->is_current_thread()){
-		//_cond.waitfor(_mutex, [this]() { return _status < async_action_status::wait_for_then; });
-		if (_status == async_action_status::canceled) { throw(ang::exception_t(ang::except_code::operation_canceled)); }
-		//if (_status >= async_action_status::completed) { throw(ang::exception_t(ang::except_code::expired_object)); }
-		_status = async_action_status::completed;
-		_thread->join();
-		//else if (_status == async_action_status::wait_for_then) { 
-		//	_status = async_action_status::completed;
-		//}
-	}
-	//else if (_status == async_action_status::canceled) { throw(ang::exception_t(ang::except_code::operation_canceled)); }
+template<typename T>
+inline ang::core::async::itask_t ang::core::async::task_handler<T>::then(delegates::function<void(ang::core::async::itask*)> func)
+{
+	return _task.is_empty() ? null : _task->then(func);
+}
+
+template<typename T>
+inline T ang::core::async::task_handler<T>::result()const
+{
+	if(_task.is_empty())
+		throw_exception(except_code::invalid_access);
+	_task->join();
 	return _result;
 }
 
-template<class T>
-inline ang::core::async::iasync_task_t ang::core::async::async_task_result<T>::then(delegates::function<void(ang::core::async::iasync<T>*)> func, ang::core::async::iasync_task_t then_task)
-{
-	scope_locker lock = _mutex;
-	if (_thread.is_empty()) { throw(ang::exception_t(ang::except_code::invalid_access)); }
-	else if (_status < async_action_status::running) { throw(ang::exception_t(ang::except_code::invalid_access)); }
-	else if (_status > async_action_status::wait_for_then) { throw(ang::exception_t(ang::except_code::expired_object)); }
-	else
-	{
-		async_task_result_t<T> _this = this;
-		_status = async_action_status::completed;
-		_thread->then([=](thread_t, var_args_t)->dword
-		{
-			func(_this.get());
-		
-			return 0;
-		}, null);
-	}
-	return then_task.get();
+template<typename T> inline ang::core::async::iasync_t<T> ang::core::async::task::run_async(ang::core::delegates::function<T(ang::core::async::iasync<T>*)> func) {
+	return task_handler<T>::create_task(func);
+}
+
+template<typename T> inline ang::core::async::iasync_t<T> ang::core::async::task::run_async(ang::core::delegates::function<T(ang::core::async::iasync<T>*, ang::var_args_t)> func, ang::var_args_t args) {
+	return task_handler<T>::create_task(func, args);
+}
+
+
+template<> inline ang::core::async::iasync_t<void> ang::core::async::task::run_async(ang::core::delegates::function<void(iasync<void>*)> func) {
+	return static_cast<iasync<void>*>(task::run_async([func](itask *t) { func(static_cast<iasync<void>*>(t)); }).get());
+}
+
+template<> inline ang::core::async::iasync_t<void> ang::core::async::task::run_async(ang::core::delegates::function<void(iasync<void>*, var_args_t)> func, var_args_t args) {
+	return static_cast<iasync<void>*>(task::run_async([func](itask *t, var_args_t a) { func(static_cast<iasync<void>*>(t), a); }, args).get());
 }
 
 template<typename T>
-ang::core::async::iasync_t<T> ang::core::async::async_task<T>::run_async(ang::core::delegates::function<T(iasync<T>*,var_args_t)> func, ang::var_args_t args)
+ang::core::async::iasync_t<T> ang::core::async::task_handler<T>::create_task(ang::core::delegates::function<T(iasync<T>*)> func)
 {
-	if (_func.is_empty())
-		return null;
-
-	async_task_result_t<T> _async = NEW async_task_result<T>();
-
-	if (_async->_thread.is_empty())	
-		_async->_thread = thread::create_thread_suspended(0, null, false);
-	
-	delegates::function<dword(thread_t, var_args_t)> callback = [=](thread_t t, var_args_t a)->dword {
-		_async->_mutex.lock();
-		_async->_status = async_action_status::running;
-		_async->_cond->signal();
-		_async->_mutex.unlock();
-		_async->complete(func(_async, args));
-		return 0;
-	};
-
-	if ((_async->_thread->thread_state() > async_action_status::wait_for_start) ?
-		!_async->_thread->then(callback, { _async.get(), func.get(), args.get() }) :
-		!_async->_thread->start(callback, { _async.get(), func.get(), args.get() }))
-		return null;
+	if (func.is_empty()) return null;
+	task_handler_t<T> _async = NEW task_handler<T>();
+	_async->_task = task::run_async([=](itask* t, var_args_t a) {
+		_async.get()->_result = func(_async.get());
+	}, { _async.get() });
 	return _async;
 }
 
-
 template<typename T>
-ang::core::async::iasync_t<T> ang::core::async::async_task<T>::run_async(ang::core::async::async_task_result<T>* task, ang::core::delegates::function<T(iasync<T>*, var_args_t)> func, ang::var_args_t args)
+ang::core::async::iasync_t<T> ang::core::async::task_handler<T>::create_task(ang::core::delegates::function<T(iasync<T>*,var_args_t)> func, ang::var_args_t args)
 {
-	async_task_result_t<T> _async = task;
-	if (_func.is_empty() || _async.is_empty())
-		return null;
-
-	if (_async->_thread.is_empty())
-		_async->_thread = thread::create_thread_suspended(0, null, false);
-
-	delegates::function<dword(thread_t, var_args_t)> callback = [=](thread_t t, var_args_t a)->dword {
-		_async->_mutex.lock();
-		_async->_status = async_action_status::running;
-		_async->_cond->signal();
-		_async->_mutex.unlock();
-		_async->complete(func(_async, args));
-		return 0;
-	};
-
-	if ((_async->_thread->thread_state() > async_action_status::wait_for_start) ?
-		!_async->_thread->then(callback, { _async.get(), func.get(), args.get() }) :
-		!_async->_thread->start(callback, { _async.get(), func.get(), args.get() }))
-		return null;
+	if (func.is_empty()) return null;
+	task_handler_t<T> _async = NEW task_handler<T>();
+	_async->_task = task::run_async([=](itask* t, var_args_t a) {
+		_async->_result = func(_async.get(), args);
+	}, { _async.get(), args });
 	return _async;
 }
 
-
-template<typename T>
-ang::core::async::iasync_t<T> ang::core::async::async_task<T>::run_sync(ang::core::async::async_task_result<T>* task, ang::core::delegates::function<T(iasync<T>*, var_args_t)> func, ang::var_args_t args)
+template<typename T> template<typename U>
+ang::core::async::iasync_t<T> ang::core::async::task_handler<T>::handle_then(ang::core::async::iasync_t<U> task, ang::core::delegates::function<T(iasync<U>*)> func)
 {
-	async_task_result_t<T> _task = task;
-	if (func.is_empty())
-		return null;
-
-	task->_mutex->lock();
-	task->_thread = thread::this_thread();
-	task->_status = async_action_status::running;
-	task->_cond->signal();
-	task->_mutex->unlock();
-	task->complete(func(task, args));
-
-	return _task.get();
+	if (func.is_empty()) return null;
+	task_handler_t<T> _async = NEW task_handler<T>();
+	_async->_task = task->then([=](iasync<U>* t) {
+		_async.get()->_result = func(task.get());
+	});
+	return _async;
 }
 
-
-//template<typename T>
-//ang::core::async::iasync_t<T> ang::core::async::dispatcher_thread::run_async(ang::core::delegates::function<T(ang::core::async::iasync<T>*, ang::var_args_t)> _func, ang::var_args_t _args)
-//{
-//	if (_func.is_empty())
-//		return null;
-//
-//	auto args = _args.get();
-//	if (args)args->add_ref();
-//
-//	auto func = _func.get();
-//	func->add_ref();
-//
-//	async_task_result_t<T> _task = NEW async_task_result<T>();
-//	async_task_result<T>* task = _task.get();
-//	task->add_ref();
-//	task->_thread = this;
-//	thread_callback_t callback = [=](pointer)->dword {
-//		if (task->_status == async_action_status::canceled)
-//		{
-//			task->complete();
-//			func->release();
-//			if (args)args->release();
-//			task->release();
-//			return -1;
-//		}
-//		else
-//		{
-//			task->_status = async_action_status::running;
-//			task->_cond->signal();
-//
-//			task->complete(func->invoke(task, args));
-//
-//			func->release();
-//			if (args)args->release();
-//			task->release();
-//			return 0U;
-//		}
-//	};
-//
-//	post_task(callback);
-//	return _task.get();
-//}
-//
-//
-//template<typename T, class... Ts>
-//ang::core::async::iasync_t<T> ang::core::async::dispatcher_thread::run_async(ang::core::delegates::function<T(ang::core::async::iasync<T>*, ang::var_args_t)> _func, Ts const&... args) {
-//	return run_async(ang::move(_func), var_args_t( args... ));
-//}
-//
-//
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename result_t>
 inline ang::intf_wrapper<ang::core::async::iasync<result_t>>::intf_wrapper() : _ptr(null) {
@@ -525,25 +371,12 @@ ang::core::async::iasync_t<then_result_t> ang::intf_wrapper<ang::core::async::ia
 {
 	if (_ptr == null)
 		return null;
-	ang::core::async::async_task_result_t<then_result_t> _then_task = NEW ang::core::async::async_task_result<then_result_t>();
-	ang::core::async::async_task_result<then_result_t> *then_task = _then_task.get();
-	then_task->add_ref();
-	try {
-		_ptr->then([=](ang::core::async::iasync<result_t>* async)
-		{
-			ang::core::async::async_task<then_result_t>::run_sync(then_task, [&](ang::core::async::iasync<then_result_t>* _task, var_args_t)
-			{
-				return func(async);
-			});
-			then_task->release();
-		});
-	}
-	catch (exception_t)
+
+	return core::async::task_handler<then_result_t>::template handle_then<result_t>(_ptr, [=](core::async::iasync<result_t>* task)->then_result_t 
 	{
-		return null;
-	}
-	
-	return ang::move(_then_task);
+		return ang::move(func(task));
+	});
+
 }
 
 

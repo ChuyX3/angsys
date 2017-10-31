@@ -78,14 +78,14 @@ namespace ang
 			, public itext_input_stream<CURRENT_ENCODING>
 		{
 		private:
-			text::itext_buffer_t _buffer;
+			text::itext_buffer_t<CURRENT_ENCODING> _buffer;
 			stream_index_t _cursor;
 
 		public:
 			text_buffer_input_stream();
 			text_buffer_input_stream(text_buffer_input_stream*);
-			text_buffer_input_stream(text::itext_buffer*);
-			text_buffer_input_stream(ibuffer_t, text::encoding_t _format);
+			text_buffer_input_stream(text::itext_buffer<CURRENT_ENCODING>*);
+			text_buffer_input_stream(ibuffer_t);
 
 		public: //overrides
 			ANG_DECLARE_INTERFACE();
@@ -114,8 +114,8 @@ namespace ang
 
 			bool is_valid()const;
 			ibuffer* buffer()const;
-			bool attach(text::itext_buffer*);
-			bool attach(ibuffer* buff, text::encoding_t);
+			bool attach(text::itext_buffer<CURRENT_ENCODING>*);
+			bool attach(ibuffer* buff);
 			bool can_move_to(stream_index_t size, stream_reference_t ref);
 			pointer pointer_at(stream_index_t);
 
@@ -149,8 +149,8 @@ namespace ang
 		public:
 			text_buffer_output_stream();
 			text_buffer_output_stream(text_buffer_output_stream*);
-			text_buffer_output_stream(text::itext_buffer*);
-			text_buffer_output_stream(ibuffer_t, text::encoding_t);
+			text_buffer_output_stream(text::itext_buffer<CURRENT_ENCODING>*);
+			text_buffer_output_stream(ibuffer_t);
 
 		public: //overrides
 			ANG_DECLARE_INTERFACE();

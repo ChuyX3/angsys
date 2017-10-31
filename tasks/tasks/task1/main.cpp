@@ -14,24 +14,15 @@ int main(int argc, char* argv[])
 	cmstr_t text = u8"Jesús Ángel Rocha Morales"; 
 	auto idx = text.find_revert(L"Ángels"_s, -1);
 
-	core::async::thread_t thread = core::async::thread::create_thread([](core::async::thread_t thread, var_args_t args)->dword
+	auto res = core::async::task::run_async<string>([=](core::async::itask* task) ->string
 	{
-		printf("core::async::icore_thread do... \n");
-		core::async::thread::sleep(1000);
-		printf("core::async::icore_thread done. \n");
-		return 0;
-	}, null, 0, null, false);
-
-	thread->then([](core::async::thread_t thread, var_args_t args)->dword
+		return "hello world";
+	}).then<string>([=](core::async::iasync<string>* task)->string 
 	{
-		printf("core::async::icore_thread then do... \n");
-		core::async::thread::sleep(1000);
-		printf("core::async::icore_thread done. \n");
-		return  0;
-	}, null);
-
-	thread->join();
-	printf("bye \n");
+		return task->result() + " hello world"_s;
+	})->result();
+	
+	printf("%s \n bye \n", res->cstr().cstr());
     return 0;
 }
 

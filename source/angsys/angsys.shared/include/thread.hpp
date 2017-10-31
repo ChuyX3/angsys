@@ -2,6 +2,8 @@
 #include "ang/core/async.hpp"
 #include "angc/core_hash_table.h"
 
+#include "ang/collections/queue.hpp"
+
 namespace ang
 {
 	namespace core
@@ -28,24 +30,23 @@ namespace ang
 				virtual ibuffer_view_t tle_buffer()const override;
 				virtual void set_tle_data(ibuffer_view_t, bool alloc = false) override;
 				virtual void set_tle_notify(tle_deleting_event_t callback) override;
-				virtual var_args_t user_args()const override;
 				virtual dword thread_id()const override;
-				virtual async_action_status_t thread_state()const override;
-				virtual bool start(thread_start_routine_t callback, var_args_t args) override;
-				virtual bool then(thread_then_routine_t callback, var_args_t args) override;
-				virtual bool wait(async_action_status_t) override;
-				virtual bool wait(async_action_status_t, dword ms) override;
+				virtual async_action_status_t status()const override;
+				virtual bool start(thread_routine_t callback, var_args_t args) override;
+				virtual bool then(thread_routine_t callback, var_args_t args) override;
+				virtual bool wait(async_action_status_t)const override;
+				virtual bool wait(async_action_status_t, dword ms)const override;
 				virtual bool cancel() override;
-				virtual bool join() override;
+				virtual bool join()const override;
 
 			private:
 				bool _is_main;
-				bool _join_request;
+				mutable bool _join_request;
 				ibuffer_view_t _tle_data;
 				tle_deleting_event_t tle_notify_callback;
-				async_action_status_t _state;
+				mutable async_action_status_t _state;
 				var_args_t _user_args;
-				thread_start_routine_t _start_routine;
+				thread_routine_t _start_routine;
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 				pthread_t _thread;
 #elif defined WINDOWS_PLATFORM
@@ -56,7 +57,6 @@ namespace ang
 				virtual~core_thread();
 			};
 			
-
 
 			class core_thread_manager
 				: public singleton<core_thread_manager>
@@ -81,12 +81,18 @@ namespace ang
 				core_thread_t main_thread()const;
 				cond_t& main_cond()const { return _main_cond; }
 				mutex_t& main_mutex()const { return _main_mutex; }
-			
+
 				core_thread_t this_thread()const;
 				core_thread_t attach_this_thread(core_thread_t, bool is_main, ibuffer_view_t data, bool alloc);
 				core_thread_t regist_thread(core_thread_t thread);
 				core_thread_t unregist_thread(core_thread_t thread);
 			};
+
+
+			typedef object_wrapper<class dispatched_task> dispatched_task_t;
+
+	
+
 		}
 
 

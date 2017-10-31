@@ -227,6 +227,12 @@ inline void ang::collections::vector_buffer<T, allocator>::expand(ang::stack_arr
 }
 
 template<typename T, template<typename> class allocator>
+inline ang::text::encoding_t ang::collections::vector_buffer<T, allocator>::encoding()const
+{
+	return text::encoding::binary;
+}
+
+template<typename T, template<typename> class allocator>
 inline pointer ang::collections::vector_buffer<T, allocator>::buffer_ptr()const
 {
 	return (pointer)_data;
