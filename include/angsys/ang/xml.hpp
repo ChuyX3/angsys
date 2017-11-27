@@ -300,7 +300,7 @@ namespace ang
 		operator xml::xml_text_t()const;
 
 		xml::ixml_node_t operator[](raw_str_t)const;
-		template<typename T> xml::ixml_node_t operator[](safe_str<T> str)const { return operator[](raw_str(str)); }
+		template<typename T> xml::ixml_node_t operator[](safe_str<T> str)const;
 	};
 
 	template<> class LINK intf_wrapper<xml::ixml_store>
@@ -335,10 +335,10 @@ namespace ang
 		}
 
 		xml::xml_const_forward_iterator_t begin()const {
-			return _ptr ? _ptr->begin() : xml::xml_const_forward_iterator_t(null);
+			return _ptr ? ((xml::ixml_store const*)_ptr)->begin() : xml::xml_const_forward_iterator_t(null);
 		}
 		xml::xml_const_forward_iterator_t end()const {
-			return _ptr ? _ptr->end() : xml::xml_const_forward_iterator_t(null);
+			return _ptr ? ((xml::ixml_store const*)_ptr)->end() : xml::xml_const_forward_iterator_t(null);
 		}
 
 	public:
@@ -354,7 +354,7 @@ namespace ang
 		operator xml::ixml_store const* (void)const;
 
 		xml::ixml_node_t operator[](raw_str_t)const;
-		template<typename T> xml::ixml_node_t operator[](safe_str<T> str)const { return operator[](raw_str(str)); }
+		template<typename T> xml::ixml_node_t operator[](safe_str<T> str)const;
 	};
 
 	template<> class LINK object_wrapper<xml::xml_text>
@@ -405,8 +405,8 @@ namespace ang
 		operator wstr_t(void);
 		operator cwstr_t(void)const;
 		operator wstring (void)const;
-		typename wchar& operator [] (int);
-		typename wchar operator [] (int)const;
+		wchar& operator [] (int);
+		wchar operator [] (int)const;
 		template<text::encoding_enum OTHER_ENCODING>
 
 		friend object_wrapper<xml::xml_text> operator +
@@ -465,7 +465,7 @@ namespace ang
 		operator xml::ixml_node_t()const;
 
 		xml::ixml_node_t operator[](raw_str_t)const;
-		template<typename T> xml::ixml_node_t operator[](safe_str<T> str)const { return operator[](raw_str(str)); }
+		template<typename T> xml::ixml_node_t operator[](safe_str<T> str)const;
 	};
 
 	template<> class LINK intf_wrapper<xml::ixml_document>
@@ -500,10 +500,10 @@ namespace ang
 		}
 
 		xml::xml_const_forward_iterator_t begin()const {
-			return _ptr ? _ptr->begin() : xml::xml_const_forward_iterator_t(null);
+			return _ptr ? ((xml::ixml_document const*)_ptr)->begin() : xml::xml_const_forward_iterator_t(null);
 		}
 		xml::xml_const_forward_iterator_t end()const {
-			return _ptr ? _ptr->end() : xml::xml_const_forward_iterator_t(null);
+			return _ptr ? ((xml::ixml_document const*)_ptr)->end() : xml::xml_const_forward_iterator_t(null);
 		}
 
 	public:
@@ -1131,10 +1131,10 @@ namespace ang
 			}
 
 			xml::xml_const_forward_iterator_t begin()const {
-				return _ptr ? _ptr->begin() : xml::xml_const_forward_iterator_t(null);
+				return _ptr ? ((xml::ixml_store const*)_ptr)->begin() : xml::xml_const_forward_iterator_t(null);
 			}
 			xml::xml_const_forward_iterator_t end()const {
-				return _ptr ? _ptr->end() : xml::xml_const_forward_iterator_t(null);
+				return _ptr ? ((xml::ixml_store const*)_ptr)->end() : xml::xml_const_forward_iterator_t(null);
 			}
 
 		public:

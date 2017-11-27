@@ -117,8 +117,8 @@ void ang_text_encoder_interface_initialize_interface(encoder_interface* encoder)
 	encoder->_length = [](pointer ptr)->wsize { return ang_text_encoder<ENCODING>::length((typename ang::text::char_type_by_encoding<ENCODING>::cstr_t)ptr); };
 	encoder->_size = [](pointer ptr, encoding_t format)->wsize { return ang_text_encoder<ENCODING>::size(ptr, format); };
 	encoder->_to_utf32 = is_endian_swapped<ENCODING>()?
-		function_cast<char32_t, pointer, windex&>([](pointer ptr, windex& idx)->char32_t { return converter<char32_t, typename text::char_type_by_encoding<ENCODING>::char_t>::convert<true>((typename text::char_type_by_encoding<ENCODING>::char_t const*)ptr, idx); }) :
-		function_cast<char32_t, pointer, windex&>([](pointer ptr, windex& idx)->char32_t { return converter<char32_t, typename text::char_type_by_encoding<ENCODING>::char_t>::convert<false>((typename text::char_type_by_encoding<ENCODING>::char_t const*)ptr, idx); });
+		function_cast<char32_t, pointer, windex&>([](pointer ptr, windex& idx)->char32_t { return converter<char32_t, typename text::char_type_by_encoding<ENCODING>::char_t>::template convert<true>((typename text::char_type_by_encoding<ENCODING>::char_t const*)ptr, idx); }) :
+		function_cast<char32_t, pointer, windex&>([](pointer ptr, windex& idx)->char32_t { return converter<char32_t, typename text::char_type_by_encoding<ENCODING>::char_t>::template convert<false>((typename text::char_type_by_encoding<ENCODING>::char_t const*)ptr, idx); });
 
 	encoder->_convert_string = [](pointer dest, wsize sz, pointer src, encoding_t format, bool eos)->wsize {
 		return ang_text_encoder<ENCODING>::convert((typename ang::text::char_type_by_encoding<ENCODING>::str_t)dest, sz, src, format, eos);

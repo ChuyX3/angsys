@@ -133,7 +133,7 @@ ixml_node_t intf_wrapper<ixml_store>::operator[](raw_str_t value)const
 xml_node::xml_store::xml_store(xml_node_t node, xml_type_t type)
 	: _xml_type(type)
 	, _count(0)
-	, _xml_parent(node)
+	, _xml_parent(node.get())
 	, _xml_first(null)
 	, _xml_last(null)
 {
@@ -385,7 +385,7 @@ bool xml_node::xml_store::pop_at(xml_iterator_t it, ixml_node_ptr_t out)
 	if (it.current() == null)
 		return false;
 
-	ixml_node_t temp = it;
+	ixml_node_t temp = *it;
 	if (!out.is_empty())
 	{
 		*out = temp;

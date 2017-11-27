@@ -593,7 +593,7 @@ xml_iterator_t xml_document::find(raw_str_t name, bool invert)const
 xml_iterator_t xml_document::find(raw_str_t name, xml_iterator_t nextTo, bool invert)const
 {
 	if (!nextTo.is_valid() || nextTo.parent() != this)
-		nextTo = (invert) ? rbegin() : begin();
+		nextTo = (invert) ? xml_iterator_t(rbegin()) : xml_iterator_t(begin());
 
 	if (invert)
 	{
@@ -1073,7 +1073,7 @@ void xml_document::parse(raw_str_t text)
 
 	if (decode_header(code,	idx, version, encoding, standalone))
 	{
-		text._encoding = encoding != xml_encoding::auto_detect ? encoding : text._encoding;
+		text._encoding = encoding != xml_encoding::auto_detect ? encoding.get() : text._encoding;
 		push_header(version, text._encoding, standalone);
 	}
 	

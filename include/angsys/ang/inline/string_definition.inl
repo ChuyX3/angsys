@@ -203,7 +203,7 @@ namespace ang
 
 		};
 
-		template<> inline int string_buffer<CURRENT_ENCODING>::template compare(raw_str_t cstr)const {
+		template<> inline int string_buffer<CURRENT_ENCODING>::compare(raw_str_t cstr)const {
 			return get_encoder<ENCODING>().compare(this->cstr().cstr(), cstr._value, cstr._encoding);
 		}
 	}
