@@ -379,11 +379,6 @@ namespace ang
 		friend safe_pointer;
 	};
 
-	template<typename T>
-	using wrapper = object_wrapper<value_wrapper<T>>;
-
-	template<class T> 
-	using shared_ptr = object_wrapper<value_wrapper<T>>;
 
 	template<typename T>
 	void swap(object_wrapper<T>& a, object_wrapper<T>&b) {

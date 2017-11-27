@@ -122,6 +122,13 @@ typedef unsigned char byte;
 typedef unsigned char uchar;
 typedef unsigned char mchar;
 typedef wchar_t wchar;
+#ifdef __cplusplus
+typedef char16_t char16;
+typedef char32_t char32;
+#else
+typedef unsigned short char16;
+typedef unsigned long char32;
+#endif
 typedef unsigned short word;
 typedef unsigned short ushort;
 typedef unsigned int uint;

@@ -184,7 +184,7 @@ namespace ang
 			typedef T type;
 			static constexpr bool has_runtime_type_info = true;
 			static inline type_name_t type_of() { return type::class_name(); }
-			static inline bool is_type_of(type_name_t name) { return type::is_child_of(name); }
+			static inline bool is_type_of(type_name_t name) { return type::is_inherited_of(name); }
 			static inline type_name_t runtime_type_name(const type& var) { return var.object_name(); }
 			template<typename new_t> static inline auto interface_cast(T* _old) -> typename runtime_type_builder<new_t>::type* {
 				if (_old == null) return null;

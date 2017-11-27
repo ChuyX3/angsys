@@ -80,11 +80,11 @@ inline ang::type_name_t ang::collections::queue_data<T, allocator>::class_name()
 }
 
 template<typename T, template<typename> class allocator>
-inline bool ang::collections::queue_data<T, allocator>::is_child_of(ang::type_name_t name)
+inline bool ang::collections::queue_data<T, allocator>::is_inherited_of(ang::type_name_t name)
 {
 	if (name == type_of<queue_data<T, allocator>>()
-		|| ang::object::is_child_of(name)
-		|| ang::collections::isequence<T>::is_child_of(name))
+		|| ang::object::is_inherited_of(name)
+		|| ang::collections::isequence<T>::is_inherited_of(name))
 		return true;
 	return false;
 }
@@ -145,7 +145,7 @@ inline wsize ang::collections::queue_data<T, allocator>::size()const
 template<typename T, template<typename> class allocator>
 inline bool ang::collections::queue_data<T, allocator>::move(ang::collections::queue_data<T, allocator>& qu)
 {
-	if (&ar == this)
+	if (&qu == this)
 		return false;
 	clean();
 	_size = qu._size;

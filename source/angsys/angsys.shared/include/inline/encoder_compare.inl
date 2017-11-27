@@ -33,13 +33,13 @@ struct ang_text_encoder_compare
 		if (first == null || second == null)
 			return 0;
 
-		windex i = 0, j = 0;
+		windex i = 0, j = 0, k = 0;
 		ang::utf32_char_t c1, c2;
 	LOOP:
 		c1 = ang::text::converter<ang::utf32_char_t, typename ang::text::char_type_by_encoding<ENCODING>::char_t>::template convert<SWAP1>(first, i);
 		c2 = ang::text::converter<ang::utf32_char_t, typename ang::text::char_type_by_encoding<OTHER_ENCODING>::char_t>::template convert<SWAP2>(second, j);
-		if (c1 != c2) return i;
-		else if (c1 == 0) return i - 1;
+		if (c1 != c2 || c1 == 0) return k;
+		k = i;
 		goto LOOP;
 	}
 };

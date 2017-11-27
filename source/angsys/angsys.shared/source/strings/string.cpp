@@ -1,10 +1,11 @@
 #include "pch.h"
 #include <angsys.h>
+#include <ang/streams.hpp>
 
 using namespace ang;
 using namespace ang::strings;
 
-//ANG_IMPLEMENT_INTERFACE(ang::text, itext_buffer);
+ANG_IMPLEMENT_BASIC_INTERFACE(ang::text::itext_buffer, ang::ibuffer);
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING encoding::ascii

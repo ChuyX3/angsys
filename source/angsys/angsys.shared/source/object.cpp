@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <angsys.h>
+#include <ang/streams.hpp>
 
 using namespace ang;
 
@@ -7,7 +8,7 @@ ANG_IMPLEMENT_INTERFACE(ang, iobject);
 ANG_IMPLEMENT_ENUM(ang, comparision_result, int, comparision_result::diferent);
 
 ang::type_name_t interface_t::class_name() { return "interface"; }
-bool interface_t::is_child_of(type_name_t name) { return name == class_name(); }
+bool interface_t::is_inherited_of(type_name_t name) { return name == class_name(); }
 
 
 #define ANG_MEMORY_MANAGER
@@ -42,17 +43,20 @@ typedef struct smart_ptr_info //16bytes for correct 16 byte alignment
 
 safe_pointer::safe_pointer()
 	: _info(null)
+	, _offset(0)
 {
 }
 
 safe_pointer::safe_pointer(safe_pointer&& other)
 	: _info(other._info)
+	, _offset(other._offset)
 {
 	other._info = null;
 }
 
 safe_pointer::safe_pointer(safe_pointer const& other)
 	: _info(null)
+	, _offset(0)
 {
 	set(const_cast<safe_pointer&>(other).lock<intfptr>());
 }
@@ -60,11 +64,13 @@ safe_pointer::safe_pointer(safe_pointer const& other)
 
 safe_pointer::safe_pointer(ang::nullptr_t const&)
 	: _info(null)
+	, _offset(0)
 {
 }
 
 safe_pointer::safe_pointer(interface_t* obj)
 	: _info(null)
+	, _offset(0)
 {
 	set(obj);
 }
@@ -89,10 +95,15 @@ void safe_pointer::clean()
 		}
 	}
 	_info = null;
+	_offset = 0;
 }
 
-void safe_pointer::set(interface_t* obj)
+void safe_pointer::set(interface_t* _obj)
 {
+	interface_t* obj = null;
+	if (_obj && !_obj->query_object(type_of<iobject>(), (void**)&obj))
+		throw_exception(except_code::invalid_param, "the interface instances is not a iobject type");
+
 	if (_info && smart_ptr_info_ptr_t(_info)->_object == obj)
 		return;
 	clean();
@@ -101,6 +112,7 @@ void safe_pointer::set(interface_t* obj)
 	{
 		auto info = GET_SMART_PTR_INFO(obj);
 		_info = info;
+		_offset = wsize(_obj) - wsize(obj);
 #ifdef WINDOWS_PLATFORM
 		InterlockedIncrement(&info->_shared_counter);
 #elif defined ANDROID_PLATFORM
@@ -118,7 +130,7 @@ bool safe_pointer::is_valid()const
 template<>
 intfptr safe_pointer::lock<intfptr>()
 {
-	return is_valid() ? smart_ptr_info_ptr_t(_info)->_object : null;
+	return is_valid() ? (interface_t*)(wsize(smart_ptr_info_ptr_t(_info)->_object) + _offset) : null;
 }
 
 safe_pointer& safe_pointer::operator = (interface_t* obj)
@@ -130,7 +142,9 @@ safe_pointer& safe_pointer::operator = (interface_t* obj)
 safe_pointer& safe_pointer::operator = (safe_pointer&& other)
 {
 	_info = other._info;
+	_offset = other._offset;
 	other._info = null;
+	other._offset = 0;
 	return *this;
 }
 
@@ -146,6 +160,8 @@ safe_pointer& safe_pointer::operator = (ang::nullptr_t const&)
 	clean();
 	return *this;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ang_void_ptr_t object::operator new(wsize size)
 {
@@ -223,7 +239,7 @@ object::~object()
 }
 
 ANG_IMPLEMENT_CLASSNAME(ang::object);
-ANG_IMPLEMENT_ISCHILDOF_BASE(ang::object, ang::iobject);
+ANG_IMPLEMENT_ISINHERITEDOF_BASE(ang::object, ang::iobject);
 ANG_IMPLEMENT_OBJECTNAME(ang::object);
 ANG_IMPLEMENT_ISKINDOF_BASE(ang::object, ang::iobject);
 
@@ -326,6 +342,18 @@ comparision_result_t object::compare(object const& obj)const
 string object::to_string()const
 {
 	return object_name();
+}
+
+ANG_EXTERN ang_uint64_t ang_create_hash_index_cstr(ang_cstr_t key, ang_uint64_t TS);
+
+wsize object::serialize(streams::ibinary_output_stream_t stream)const
+{
+	return stream->write(ang_create_hash_index_cstr(object_name(), 0X7FFFFFFFFFFFFFFF));
+}
+
+wsize object::serialize(streams::itext_output_stream_t stream)const
+{
+	return stream->write(object_name());
 }
 
 ang::object_wrapper<object>::object_wrapper() : _ptr(null) {
@@ -469,8 +497,6 @@ ang::intf_wrapper<ang::interface_t>::~intf_wrapper() {
 
 inline void ang::intf_wrapper<ang::interface_t>::clean()
 {
-	has_runtime_type_info<interface_t>::value;
-
 	iobject * _obj = interface_cast<iobject>(_ptr);
 	if (_obj)_obj->release();
 	_ptr = null;

@@ -15,7 +15,7 @@
 
 namespace ang
 {
-
+/*
 	template<text::encoding_enum ENCODING>
 	inline bool text::itext_buffer<ENCODING>::is_kind_of(ang::type_name_t name)const
 	{
@@ -24,10 +24,10 @@ namespace ang
 	}
 
 	template<text::encoding_enum ENCODING>
-	inline bool text::itext_buffer<ENCODING>::is_child_of(ang::type_name_t name)
+	inline bool text::itext_buffer<ENCODING>::is_inherited_of(ang::type_name_t name)
 	{
 		return name == text::itext_buffer<ENCODING>::class_name() ||
-			ibuffer::is_child_of(name);
+			ibuffer::is_inherited_of(name);
 	}
 
 	template<text::encoding_enum ENCODING>
@@ -58,7 +58,7 @@ namespace ang
 		}
 		return false;
 	}
-
+*/
 
 	template<text::encoding_enum ENCODING1, text::encoding_enum ENCODING2>
 	inline bool operator == (object_wrapper<strings::string_buffer<ENCODING1>> const& cstr1, object_wrapper<strings::string_buffer<ENCODING2>> const& cstr2) {

@@ -109,6 +109,8 @@ strings::string_buffer<CURRENT_ENCODING> const* object_wrapper<strings::string_b
 
 object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator strings::string_buffer<CURRENT_ENCODING> * (void) { return get(); }
 
+object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator objptr (void)const { return get(); }
+
 object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator strings::string_buffer<CURRENT_ENCODING> const* (void)const { return get(); }
 
 object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator safe_str<typename text::char_type_by_encoding<CURRENT_ENCODING>::char_t>(void)
@@ -167,16 +169,16 @@ type_name_t string_buffer<CURRENT_ENCODING>::class_name() {
 }
 type_name_t string_buffer<CURRENT_ENCODING>::object_name()const { return class_name(); }
 
-bool string_buffer<CURRENT_ENCODING>::is_child_of(type_name_t name)
+bool string_buffer<CURRENT_ENCODING>::is_inherited_of(type_name_t name)
 {
 	return name == type_of<string_buffer<CURRENT_ENCODING>>()
-		|| object::is_child_of(name) || itext_buffer<CURRENT_ENCODING>::is_child_of(name);
+		|| object::is_inherited_of(name) || itext_buffer::is_inherited_of(name);
 }
 
 bool string_buffer<CURRENT_ENCODING>::is_kind_of(type_name_t name)const
 {
 	return name == type_of<string_buffer<CURRENT_ENCODING>>()
-		|| object::is_kind_of(name) || itext_buffer<CURRENT_ENCODING>::is_kind_of(name);
+		|| object::is_kind_of(name) || itext_buffer::is_kind_of(name);
 }
 
 bool string_buffer<CURRENT_ENCODING>::query_object(type_name_t name, unknown_ptr_t out)
@@ -190,7 +192,7 @@ bool string_buffer<CURRENT_ENCODING>::query_object(type_name_t name, unknown_ptr
 	else if (object::query_object(name, out)) {
 		return true;
 	}
-	else if (itext_buffer<CURRENT_ENCODING>::query_object(name, out)) {
+	else if (itext_buffer::query_object(name, out)) {
 		return true;
 	}
 	return false;
@@ -244,7 +246,7 @@ bool string_buffer<CURRENT_ENCODING>::unmap_buffer(ibuffer_view_t& view, wsize u
 	return true;
 }
 
-bool string_buffer<CURRENT_ENCODING>::can_realloc_buffer()const { return true; };
+bool string_buffer<CURRENT_ENCODING>::can_realloc_buffer()const { return (_map_index == invalid_index && _map_size == invalid_index); };
 
 bool string_buffer<CURRENT_ENCODING>::realloc_buffer(wsize size) { return realloc(size / sizeof(typename string_buffer<CURRENT_ENCODING>::char_t), true); };
 
@@ -253,15 +255,45 @@ text::encoding_t string_buffer<CURRENT_ENCODING>::encoding()const
 	return ENCODING;
 }
 
-typename string_buffer<CURRENT_ENCODING>::str_t  string_buffer<CURRENT_ENCODING>::text_buffer() { return str(); }
+raw_str_t  string_buffer<CURRENT_ENCODING>::text_buffer() { 
+	str_t s = str();
+	return{ s.data(), s.size() * sizeof(char_t), CURRENT_ENCODING };
+}
 
-typename string_buffer<CURRENT_ENCODING>::cstr_t  string_buffer<CURRENT_ENCODING>::text_buffer()const { return cstr(); }
+wsize string_buffer<CURRENT_ENCODING>::serialize(streams::ibinary_output_stream_t stream)const
+{
+	return ibuffer::serialize(const_cast<string_buffer<CURRENT_ENCODING>*>(this), stream);
+}
+
+wsize string_buffer<CURRENT_ENCODING>::serialize(streams::itext_output_stream_t stream)const
+{
+	return ibuffer::serialize(const_cast<string_buffer<CURRENT_ENCODING>*>(this), stream);
+}
+
 
 /////////////////////////////////////////////////////////////////////////
 
+void string_buffer<CURRENT_ENCODING>::move(string_base<CURRENT_ENCODING>& other)
+{
+	if (other.is_empty() || this == other.get())
+		return;
+	clean();
+	memcpy(&_data, &other->_data, sizeof(_data));
+	memset(&other->_data, 0, sizeof(_data));
+}
+
+void string_buffer<CURRENT_ENCODING>::move(string_buffer<CURRENT_ENCODING>* other)
+{
+	if (other == null || this == other)
+		return;
+	clean();
+	memcpy(&_data, &other->_data, sizeof(_data));
+	memset(&other->_data, 0, sizeof(_data));
+}
+
 comparision_result_t string_buffer<CURRENT_ENCODING>::compare(object const& obj)const
 {
-	itext_buffer_t<CURRENT_ENCODING> buffer = interface_cast<itext_buffer<CURRENT_ENCODING>>(&obj);
+	itext_buffer_t buffer = interface_cast<itext_buffer>(&obj);
 	if (buffer.is_empty())
 		return comparision_result::diferent;
 	auto encoder = get_encoder<ENCODING>();
@@ -274,11 +306,14 @@ comparision_result_t string_buffer<CURRENT_ENCODING>::compare(object const& obj)
 
 bool string_buffer<CURRENT_ENCODING>::is_local_data()const
 {
-	return  bool(_data._storage_type != 0XFFFF);
+	return  bool(_data._storage_type != invalid_index);
 }
 
 bool string_buffer<CURRENT_ENCODING>::realloc(wsize new_size, bool save)
 {
+	if (_map_index != invalid_index || _map_size != invalid_index)
+		return false;
+
 	if (capacity() >= new_size)
 		return true;
 	
@@ -322,22 +357,34 @@ bool string_buffer<CURRENT_ENCODING>::is_empty()const
 
 typename string_buffer<CURRENT_ENCODING>::str_t string_buffer<CURRENT_ENCODING>::str()
 {
-	return is_local_data() ? typename string_buffer<CURRENT_ENCODING>::str_t(_data._stack_buffer, LOCAL_CAPACITY - 1) : typename string_buffer<CURRENT_ENCODING>::str_t(_data._allocated_buffer, _data._allocated_capacity - 1);
+	if (_map_index != invalid_index || _map_size != invalid_index)
+		return is_local_data() ? typename string_buffer<CURRENT_ENCODING>::str_t(&_data._stack_buffer[_map_index], _map_size) : typename string_buffer<CURRENT_ENCODING>::str_t(&_data._allocated_buffer[_map_index], _map_size);
+	else
+		return is_local_data() ? typename string_buffer<CURRENT_ENCODING>::str_t(_data._stack_buffer, _data._stack_length) : typename string_buffer<CURRENT_ENCODING>::str_t(_data._allocated_buffer, _data._allocated_length);
 }
 
 typename string_buffer<CURRENT_ENCODING>::cstr_t string_buffer<CURRENT_ENCODING>::cstr() const
 {
-	return is_local_data() ? typename string_buffer<CURRENT_ENCODING>::cstr_t(_data._stack_buffer, LOCAL_CAPACITY - 1) : typename string_buffer<CURRENT_ENCODING>::cstr_t(_data._allocated_buffer, _data._allocated_capacity - 1);
+	if (_map_index != invalid_index || _map_size != invalid_index)
+		return is_local_data() ? typename string_buffer<CURRENT_ENCODING>::cstr_t(&_data._stack_buffer[_map_index], _map_size) : typename string_buffer<CURRENT_ENCODING>::cstr_t(&_data._allocated_buffer[_map_index], _map_size);
+	else
+		return is_local_data() ? typename string_buffer<CURRENT_ENCODING>::cstr_t(_data._stack_buffer, _data._stack_length) : typename string_buffer<CURRENT_ENCODING>::cstr_t(_data._allocated_buffer, _data._allocated_length);
 }
 
 wsize string_buffer<CURRENT_ENCODING>::length() const
 {
-	return is_local_data() ? _data._stack_length : _data._allocated_length;
+	if (_map_index != invalid_index || _map_size != invalid_index)
+		return _map_size;
+	else
+		return is_local_data() ? _data._stack_length : _data._allocated_length;
 }
 
 wsize string_buffer<CURRENT_ENCODING>::capacity() const
 {
-	return is_local_data() ? LOCAL_CAPACITY - 1 : _data._allocated_capacity - 1;
+	if (_map_index != invalid_index || _map_size != invalid_index)
+		return _map_size;
+	else
+		return is_local_data() ? LOCAL_CAPACITY - 1 : _data._allocated_capacity - 1;
 }
 
 void string_buffer<CURRENT_ENCODING>::clean()
@@ -359,7 +406,7 @@ void string_buffer<CURRENT_ENCODING>::copy(pointer raw, wsize sz, encoding_t enc
 	else
 	{
 		realloc(sz, false);
-		_data._stack_length = get_encoder<ENCODING>().convert(_data._allocated_buffer, min(_data._allocated_capacity - 1, sz), raw, encoding, true);
+		_data._allocated_length = get_encoder<ENCODING>().convert(_data._allocated_buffer, min(_data._allocated_capacity - 1, sz), raw, encoding, true);
 	}
 }
 
@@ -376,7 +423,28 @@ void string_buffer<CURRENT_ENCODING>::copy_at(windex at, pointer raw, wsize sz, 
 	else
 	{
 		realloc(my_len + sz, true);
-		_data._stack_length = my_len + get_encoder<ENCODING>().convert(&_data._allocated_buffer[my_len], min(_data._allocated_capacity - my_len - 1, sz), raw, encoding, true);
+		_data._allocated_length = my_len + get_encoder<ENCODING>().convert(&_data._allocated_buffer[my_len], min(_data._allocated_capacity - my_len - 1, sz), raw, encoding, true);
+	}
+}
+
+wsize string_buffer<CURRENT_ENCODING>::sub_string(pointer raw, windex start, windex end, encoding_t e)const
+{
+	if (start >= end || start > length()) return 0;
+	//char_type_by_encoding<CURRENT_ENCODING>::str_t
+	switch (e)
+	{
+	case encoding::ascii: return get_encoder<encoding::ascii>().convert((char_type_by_encoding<encoding::ascii>::str_t)raw, end - start, &at(start), true);
+	case encoding::unicode: return get_encoder<encoding::unicode>().convert((char_type_by_encoding<encoding::unicode>::str_t)raw, end - start, &at(start), true);
+	case encoding::utf8: return get_encoder<encoding::utf8>().convert((char_type_by_encoding<encoding::utf8>::str_t)raw, end - start, &at(start), true);
+	case encoding::utf16: return get_encoder<encoding::utf16>().convert((char_type_by_encoding<encoding::utf16>::str_t)raw, end - start, &at(start), true);
+	case encoding::utf16_le: return get_encoder<encoding::utf16_le>().convert((char_type_by_encoding<encoding::utf16_le>::str_t)raw, end - start, &at(start), true);
+	case encoding::utf16_be: return get_encoder<encoding::utf16_be>().convert((char_type_by_encoding<encoding::utf16_be>::str_t)raw, end - start, &at(start), true);
+	case encoding::utf16_se: return get_encoder<encoding::utf16_se>().convert((char_type_by_encoding<encoding::utf16_se>::str_t)raw, end - start, &at(start), true);
+	case encoding::utf32: return get_encoder<encoding::utf32>().convert((char_type_by_encoding<encoding::utf32>::str_t)raw, end - start, &at(start), true);
+	case encoding::utf32_le: return get_encoder<encoding::utf32_le>().convert((char_type_by_encoding<encoding::utf32_le>::str_t)raw, end - start, &at(start), true);
+	case encoding::utf32_be: return get_encoder<encoding::utf32_be>().convert((char_type_by_encoding<encoding::utf32_be>::str_t)raw, end - start, &at(start), true);
+	case encoding::utf32_se: return get_encoder<encoding::utf32_se>().convert((char_type_by_encoding<encoding::utf32_se>::str_t)raw, end - start, &at(start), true);
+	default: return 0;
 	}
 }
 

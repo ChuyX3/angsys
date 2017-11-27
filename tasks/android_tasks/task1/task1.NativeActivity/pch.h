@@ -7,6 +7,8 @@
 // that are part of the project
 //
 
+#define ANG_NO_RUNTIME_ERRORS
+
 #include <angsys.h>
 #include <ang/core/async.hpp>
 

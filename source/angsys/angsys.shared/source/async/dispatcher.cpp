@@ -17,11 +17,11 @@ ANG_IMPLEMENT_INTERFACE(ang::core::async, idispatcher);
 //ANG_IMPLEMENT_CLASSNAME(ang::core::async::dispatcher_thread);
 //ANG_IMPLEMENT_OBJECTNAME(ang::core::async::dispatcher_thread);
 //
-//bool dispatcher_thread::is_child_of(type_name_t name)
+//bool dispatcher_thread::is_inherited_of(type_name_t name)
 //{
 //	return name == class_name() ||
-//		thread::is_child_of(name) ||
-//		idispatcher::is_child_of(name);
+//		thread::is_inherited_of(name) ||
+//		idispatcher::is_inherited_of(name);
 //}
 //
 //bool dispatcher_thread::is_kind_of(type_name_t name)const

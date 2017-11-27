@@ -20,10 +20,10 @@ inline ang::type_name_t ang::core::async::iasync<T>::class_name()
 }
 
 template<typename T>
-inline bool ang::core::async::iasync<T>::is_child_of(ang::type_name_t name)
+inline bool ang::core::async::iasync<T>::is_inherited_of(ang::type_name_t name)
 {
 	return name == class_name()
-		|| itask::is_child_of(name);
+		|| itask::is_inherited_of(name);
 }
 
 template<typename T>
@@ -67,10 +67,10 @@ inline ang::type_name_t ang::core::async::task_handler<T>::class_name()
 }
 
 template<typename T>
-inline bool ang::core::async::task_handler<T>::is_child_of(ang::type_name_t name)
+inline bool ang::core::async::task_handler<T>::is_inherited_of(ang::type_name_t name)
 {
 	return name == class_name()
-		|| iasync<T>::is_child_of(name);
+		|| iasync<T>::is_inherited_of(name);
 }
 
 template<typename T>

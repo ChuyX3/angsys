@@ -57,7 +57,7 @@ namespace ang
 	typedef struct _interface
 	{
 		visible static type_name_t class_name();
-		visible static bool is_child_of(type_name_t);
+		visible static bool is_inherited_of(type_name_t);
 		visible virtual type_name_t object_name()const pure;
 		visible virtual bool is_kind_of(type_name_t)const pure;
 		visible virtual bool query_object(type_name_t, unknown_ptr_t) pure;
@@ -77,7 +77,15 @@ namespace ang
 
 	class exception;
 	typedef object_wrapper<exception> exception_t;
+
+	template<typename T> class value_wrapper;
+	template<typename T> using wrapper = object_wrapper<value_wrapper<T>>;
+	template<class T> using shared_ptr = object_wrapper<value_wrapper<T>>;
 }
+
+#include <ang/istream.hpp>
+#include <ang/ibuffer.hpp>
+#include <ang/collections.hpp>
 
 namespace ang
 {
@@ -107,12 +115,13 @@ namespace ang
 
 	template<typename T, bool IS_OBJECT = is_object_type<T>::value, bool IS_INTERFACE = is_interface_type<T>::value> struct smart_ptr_type
 	{ static_assert(is_smart_ptr_type<T>::value, "T is not a smart type");  typedef T* smart_ptr_t; };
-	template<typename T> struct smart_ptr_type<T, true, false> { typedef object_wrapper<T> smart_ptr_t; };
-	template<typename T> struct smart_ptr_type<T, false, true> { typedef intf_wrapper<T> smart_ptr_t; };
+	template<typename T> struct smart_ptr_type<T, true, false> { typedef object_wrapper<T> smart_ptr_t; typedef typename smart_ptr_t::type type; };
+	template<typename T> struct smart_ptr_type<T, false, true> { typedef intf_wrapper<T> smart_ptr_t; typedef typename smart_ptr_t::type type; };
 
-	template<typename T> struct smart_ptr_type<object_wrapper<T>, false, false> { typedef object_wrapper<T> smart_ptr_t; };
-	template<typename T> struct smart_ptr_type<intf_wrapper<T>, false, false> { typedef intf_wrapper<T> smart_ptr_t; };
+	template<typename T> struct smart_ptr_type<object_wrapper<T>, false, false> { typedef object_wrapper<T> smart_ptr_t; typedef typename smart_ptr_t::type type; };
+	template<typename T> struct smart_ptr_type<intf_wrapper<T>, false, false> { typedef intf_wrapper<T> smart_ptr_t; typedef typename smart_ptr_t::type type; };
 
+	template<typename T> struct smart_ptr_type<T, false, false> { typedef shared_ptr<T> smart_ptr_t; typedef typename smart_ptr_t::type type; };
 
 	/******************************************************************/
 	/* template class ang::object_wrapper :                           */
@@ -282,6 +291,8 @@ namespace ang
 	public:
 		virtual comparision_result_t compare(object const& obj)const;
 		virtual string to_string()const;
+		virtual wsize serialize(streams::itext_output_stream_t)const;
+		virtual wsize serialize(streams::ibinary_output_stream_t)const;
 
 	protected:
 		virtual bool auto_release();
@@ -456,6 +467,7 @@ namespace ang
 
 	private:
 		pointer _info;
+		wsize _offset;
 
 	public:
 		safe_pointer();
@@ -467,6 +479,11 @@ namespace ang
 		safe_pointer(object_wrapper<T> obj) : safe_pointer(reinterpret_cast<interface_t*>(obj.get())) {}
 		template< typename T>
 		safe_pointer(intf_wrapper<T> intf) : safe_pointer(reinterpret_cast<interface_t*>(intf.get())) {}
+
+		template< typename T>
+		safe_pointer(T* ptr) : safe_pointer(reinterpret_cast<interface_t*>(ptr)) {
+			static_assert(is_smart_ptr_type<T>::value, "T is not samrt pointer type");
+		}
 		~safe_pointer();
 
 	private:
@@ -507,16 +524,16 @@ namespace ang
 		weak_ptr(weak_ptr const& other) : safe_pointer((safe_pointer const&)other) {}
 		weak_ptr(ang::nullptr_t const&) : safe_pointer(null) {}
 		weak_ptr(T* obj) : safe_pointer(obj) {}
-		weak_ptr(object_wrapper<T> obj) : safe_pointer(obj.get()) {}
+		weak_ptr(typename smart_ptr_type<T>::smart_ptr_t obj) : safe_pointer(obj.get()) {}
 		~weak_ptr() {}
 
 	public: //properties
-		object_wrapper<T> lock() {
-			auto _obj = safe_pointer::lock<object>();
-			return static_cast<T*>(_obj.get());
+		typename smart_ptr_type<T>::smart_ptr_t lock() {
+			auto ptr = safe_pointer::lock<intfptr>();
+			return reinterpret_cast<T*>(ptr.get());
 		}
 
-		weak_ptr& operator = (object_wrapper<T> obj) { safe_pointer::operator=(obj.get()); return *this; }
+		weak_ptr& operator = (typename smart_ptr_type<T>::smart_ptr_t obj) { safe_pointer::operator=(obj.get()); return *this; }
 		weak_ptr& operator = (T* obj) { safe_pointer::operator=(obj);  return *this; }
 		weak_ptr& operator = (weak_ptr&& other) { safe_pointer::operator=(other); return *this; }
 		weak_ptr& operator = (weak_ptr const& other) { safe_pointer::operator=(other);  return *this; }
@@ -525,18 +542,13 @@ namespace ang
 
 }
 
-
 #include <ang/runtime.hpp>
 #include <ang/buffers.hpp>
-#include <ang/collections.hpp>
 #include <ang/collections/array.hpp>
 
 #include <ang/string.hpp>
 #include <ang/value.hpp>
 #include <ang/exceptions.hpp>
-//#include <ang/boolean.h>
-//#include <ang/interger.h>
-//#include <ang/floating.h>
 #include <ang/singleton.hpp>
 
 #ifdef  LINK
@@ -566,22 +578,22 @@ namespace ang
 
 	template<typename T>
 	inline typename smart_ptr_type<T>::smart_ptr_t object::as() {
-		return interface_cast<T>(this);
+		return interface_cast<typename smart_ptr_type<T>::type>(this);
 	}
 
 	template<typename T>
 	inline bool object::as(T*& out) {
-		return interface_cast<T>(this, out);
+		return interface_cast<typename smart_ptr_type<T>::type>(this, out);
 	}
 
 	template<typename T>
 	inline typename smart_ptr_type<T>::smart_ptr_t objptr::as() {
-		return interface_cast<T>(get());
+		return interface_cast<typename smart_ptr_type<T>::type>(get());
 	}
 
 	template<typename T>
 	inline typename smart_ptr_type<T>::smart_ptr_t intfptr::as() {
-		return interface_cast<T>(get());
+		return interface_cast<typename smart_ptr_type<T>::type>(get());
 	}
 
 	namespace interop

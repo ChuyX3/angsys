@@ -88,10 +88,10 @@ bool boolean::is_kind_of(type_name_t type)const
 		|| (type == type_of<value<bool>>());
 }
 
-bool boolean::is_child_of(type_name_t type)
+bool boolean::is_inherited_of(type_name_t type)
 {
 	return (type == type_of<boolean>())
-		|| object::is_child_of(type)
+		|| object::is_inherited_of(type)
 		|| (type == type_of<value<bool>>());
 }
 

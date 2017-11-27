@@ -22,11 +22,11 @@ task::~task()
 ANG_IMPLEMENT_CLASSNAME(ang::core::async::task);
 ANG_IMPLEMENT_OBJECTNAME(ang::core::async::task);
 
-bool task::is_child_of(type_name_t name)
+bool task::is_inherited_of(type_name_t name)
 {
 	return name == class_name() ||
-		object::is_child_of(name) ||
-		itask::is_child_of(name);
+		object::is_inherited_of(name) ||
+		itask::is_inherited_of(name);
 }
 
 bool task::is_kind_of(type_name_t name)const
@@ -82,8 +82,8 @@ async_task::async_task()
 	: handled(false)
 	, cond_(new value_wrapper<cond_t>())
 	, mutex_(new value_wrapper<mutex_t>())
-	, worker_thread(null)
 	, status_(async_action_status::initializing)
+	, worker_thread(null)
 	, then_callback(null)
 {
 
@@ -93,8 +93,8 @@ async_task::async_task(async_task_t parent)
 	: handled(false)
 	, cond_(parent->cond_.get())
 	, mutex_(parent->mutex_.get())
-	, worker_thread(parent->worker_thread.get())
 	, status_(async_action_status::initializing)
+	, worker_thread(parent->worker_thread.get())
 	, then_callback(null)
 {
 

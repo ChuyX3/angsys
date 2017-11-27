@@ -168,6 +168,7 @@
 
 #define ANG_END_ENUM(_NAME) }; \
 		static _NAME##_t parse(cstr_t);\
+		static _NAME##_t parse(cmstr_t);\
 		static _NAME##_t parse(cwstr_t);\
 		_NAME##_t(); \
 		_NAME##_t(enum_t); \

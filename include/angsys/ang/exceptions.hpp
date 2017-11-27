@@ -45,7 +45,7 @@ namespace ang
 
 	public: //Overrides
 		static type_name_t class_name()throw();
-		static bool is_child_of(type_name_t) throw();
+		static bool is_inherited_of(type_name_t) throw();
 		virtual type_name_t object_name()const throw();
 		virtual bool is_kind_of(type_name_t)const throw();
 		virtual bool query_object(type_name_t, unknown_ptr_t) throw();

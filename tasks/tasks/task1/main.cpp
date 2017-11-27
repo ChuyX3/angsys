@@ -2,27 +2,45 @@
 //
 
 #include "pch.h"
-#include <ang/core/async.hpp>
+#include <ang/streams.hpp>
+#include <ang/xml.hpp>
 
 #include <type_traits>
 
 using namespace ang;
 
+//static cwstr_t _code =
+//L"<?xml version=\"1.0\" encoding=\"utf-16\"?>\n"
+//"<Type Name = \"ang::xml::xml_value\">\n"
+//"	<DisplayString>{_value}</DisplayString>\n"
+//"	<Expand>\n"
+//"		<ExpandedItem>_value</ExpandedItem>\n"
+//"	</Expand>\n"
+//"</Type>"_s;
 
 int main(int argc, char* argv[])
 {
-	cmstr_t text = u8"Jesús Ángel Rocha Morales"; 
-	auto idx = text.find_revert(L"Ángels"_s, -1);
+	FILE* file = fopen("angxml.xml", "r");
+	if (file)
+	{
+		fseek(file, 0, SEEK_END);
+		wsize sz = ftell(file);
+		fseek(file, 0, SEEK_SET);
 
-	auto res = core::async::task::run_async<string>([=](core::async::itask* task) ->string
-	{
-		return "hello world";
-	}).then<string>([=](core::async::iasync<string>* task)->string 
-	{
-		return task->result() + " hello world"_s;
-	})->result();
-	
-	printf("%s \n bye \n", res->cstr().cstr());
+		ibuffer_t buff = new(sz) buffer();
+
+		fread(buff->buffer_ptr(), 1, buff->buffer_size(), file);
+
+
+		xml::xml_document_t doc = new xml::xml_document();
+		raw_str_t code(buff->buffer_ptr(), buff->buffer_size(), text::encoding::auto_detect);
+		doc->parse(code);
+
+
+		fclose(file);
+	}
+
+
     return 0;
 }
 

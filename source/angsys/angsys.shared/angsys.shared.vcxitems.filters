@@ -49,6 +49,9 @@
     <Filter Include="source files\streams">
       <UniqueIdentifier>{045ec139-9465-45af-b379-30e1a9492e7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source files\xml">
+      <UniqueIdentifier>{1a9d08f3-a944-4ae9-9501-ad14f2e46806}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis">
@@ -97,9 +100,6 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\encoder.h">
       <Filter>header files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\string.hpp">
-      <Filter>header files\angsys\ang\base</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\runtime.hpp">
       <Filter>header files\angsys\ang</Filter>
@@ -151,6 +151,18 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\queue.hpp">
       <Filter>header files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\xml.hpp">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\ibuffer.hpp">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\istream.hpp">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml_entity_values.hpp">
+      <Filter>header files\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -207,6 +219,48 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\async\task.cpp">
       <Filter>source files\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\binary_buffer_input_stream.cpp">
+      <Filter>source files\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\binary_buffer_output_stream.cpp">
+      <Filter>source files\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\text_buffer_input_stream.cpp">
+      <Filter>source files\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\text_buffer_output_stream.cpp">
+      <Filter>source files\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\streams.cpp">
+      <Filter>source files\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_attribute.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_comment.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_element.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_node.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_store.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_text.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_document.cpp">
+      <Filter>source files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_header.cpp">
+      <Filter>source files\xml</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

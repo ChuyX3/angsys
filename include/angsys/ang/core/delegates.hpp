@@ -63,19 +63,15 @@ namespace ang
 				visible vcall ifunction* clone()const pure;
 			ANG_END_INTERFACE();
 
-			template<typename return_t, typename... args_t> 
-			using function_cast = return_t(*)(args_t...);
 
-			template<typename return_t, typename... args_t>
-			using function_type = return_t(*)(args_t...);
 			
 		}
 	}
 
 	using ang::core::delegates::var_args;
 	using ang::core::delegates::var_args_t;
-	using ang::core::delegates::function_cast;
-	using ang::core::delegates::function_type;
+	//using ang::core::delegates::function_cast;
+	//using ang::core::delegates::function_type;
 }
 
 namespace ang

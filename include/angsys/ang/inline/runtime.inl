@@ -146,7 +146,7 @@ namespace ang
 				return type::class_name();
 			}
 			static inline bool is_type_of(type_name_t name) {
-				return type::is_child_of(name);
+				return type::is_inherited_of(name);
 			}
 			static inline type_name_t runtime_type_of(const object_wrapper<type>& var) {
 				return (var.get()) ? var->object_name() : type::class_name();
@@ -161,7 +161,7 @@ namespace ang
 				return type::class_name();
 			}
 			static inline bool is_type_of(type_name_t name) {
-				return type::is_child_of(name);
+				return type::is_inherited_of(name);
 			}
 			static inline type_name_t runtime_type_of(const intf_wrapper<type>& var) {
 				return (var.get()) ? var->object_name() : type::class_name();

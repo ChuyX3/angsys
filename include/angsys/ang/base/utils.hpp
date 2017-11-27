@@ -388,7 +388,11 @@ namespace ang
 	template<typename U, typename T, typename... Ts>
 	struct is_function<T(U::*)(Ts...)> : public true_type {};
 
+	template<typename return_t, typename... args_t>
+	using function_cast = return_t(*)(args_t...);
 
+	template<typename return_t, typename... args_t>
+	using function_type = return_t(*)(args_t...);
 
 
 	template<wsize ALIGMENT> wsize align_to(wsize value) {

@@ -15,7 +15,9 @@
 #include <ang/collections/vector.hpp>
 #include "thread.hpp"
 
-//#include <ang/streams.hpp>
+#include <ang/xml.hpp>
+
+#include <ang/streams.hpp>
 
 using namespace ang;
 
@@ -25,7 +27,7 @@ inline uint _create_hash_index(K const& k, ang_uint64_t const TS)
 {
 	union {
 		K k;
-		ang_uint64_t val;
+		ulong64 val;
 	}key;
 	key.val = 0;
 	key.k = k;
@@ -48,13 +50,13 @@ ANG_EXTERN ang_uint64_t ang_create_hash_index_voidptr(ang_void_ptr_t key, ang_ui
 	return _create_hash_index<ang_void_ptr_t>(key, TS);
 }
 ANG_EXTERN ang_uint64_t ang_create_hash_index_cstr(ang_cstr_t key, ang_uint64_t TS) {
-	ulong h = 75025;
+	ulong64 h = 75025;
 	for (int i = 0; key[i] != 0; i++)
 		h = (h << 5) + h + key[i] + 1;
 	return ang_uint64_t(h % TS);
 }
 ANG_EXTERN ang_uint64_t ang_create_hash_index_cwstr(ang_cwstr_t key, ang_uint64_t TS) {
-	ulong h = 75025;
+	ulong64 h = 75025;
 	for (int i = 0; key[i] != 0; i++)
 		h = (h << 5) + h + key[i] + 1;
 	return ang_uint64_t(h % TS);
@@ -288,7 +290,7 @@ extern "C" void ang_debug_output_warning(const char* format, ...)
 #elif defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
 #if defined _DEBUG || defined _DEVELOPPER
 	printf("%s %s\n", "angsys", buffer);
-	OutputDebugStringA("angsys");
+	//OutputDebugStringA("angsys");
 	OutputDebugStringA(buffer);
 	OutputDebugStringA("\n");
 #endif

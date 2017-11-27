@@ -74,7 +74,7 @@ namespace ang
 
 		template<> class LINK string_buffer<CURRENT_ENCODING>
 			: public object
-			, public text::itext_buffer<CURRENT_ENCODING>
+			, public text::itext_buffer
 		{
 		public:
 			static const text::encoding_enum ENCODING = CURRENT_ENCODING;
@@ -100,7 +100,7 @@ namespace ang
 			string_buffer(string_buffer<OTHER_ENCODING> const* str) : string_buffer() {
 				if (str)copy(str->cstr());
 			}
-		private:
+		protected:
 			virtual~string_buffer();
 
 		public:
@@ -108,6 +108,7 @@ namespace ang
 			bool is_local_data()const;
 			bool realloc(wsize new_size, bool save = true);
 			void length(wsize len);
+			wsize length() const;
 
 		public:
 			void clean();
@@ -115,6 +116,8 @@ namespace ang
 			str_t str();
 			cstr_t cstr() const;
 			wsize capacity() const;
+			void move(string_base<CURRENT_ENCODING>&);
+			void move(string_buffer<CURRENT_ENCODING>*);
 
 		public:
 			template<typename cstr_t>
@@ -134,12 +137,46 @@ namespace ang
 				copy_at(length() ,(pointer)(typename char_type_by_type<cstr_t>::cstr_t)cstr, algorithms::string_length(cstr), encoding_by_type<typename char_type_by_type<cstr_t>::char_t>::encoding());
 			}
 
-		protected:
+			template<typename cstr_t>
+			inline windex find(cstr_t cstr, windex start = 0)const { 
+				return get_encoder<ENCODING>().find(this->cstr(), this->length(), (typename text::char_type_by_type<cstr_t>::cstr_t)cstr, algorithms::string_length(cstr), start);
+			}
+
+			template<typename cstr_t>
+			inline windex find_revert(cstr_t cstr, windex start = -1)const {
+				return get_encoder<ENCODING>().find_revert(this->cstr(), this->length(), (typename text::char_type_by_type<cstr_t>::cstr_t)cstr, algorithms::string_length(cstr), start);
+			}
+
+			template<typename T>
+			inline wsize sub_string(wsize sz, T* ptr, windex start = 0, windex end = -1) {
+				return sub_string((pointer)ptr, start, start + min(sz, end - start), encoding_by_type<T>::encoding());
+			}
+
+			template<typename T>
+			inline wsize sub_string(safe_str<T> ptr, windex start = 0, windex end = -1) {
+				return sub_string((pointer)ptr.get(), start, start + min(ptr.size(), end - start), encoding_by_type<T>::encoding());
+			}
+
+			template<encoding_enum OTHER_ENCODING>
+			inline wsize sub_string(string_base<OTHER_ENCODING>& str, windex start = 0, windex end = -1) {
+				if (str.is_empty())
+					str = new string_buffer<OTHER_ENCODING>();
+				str->realloc(min(end, length()) - start, false);
+				auto ptr = str->str();
+				str->length(sub_string((pointer)ptr.get(), start, min(end, length()), OTHER_ENCODING));
+				return str->length();
+			}
+
 			void copy(pointer raw, wsize sz, encoding_t);
+
+		protected:
 			void copy_at(windex, pointer raw, wsize sz, encoding_t);
+			wsize sub_string(pointer raw, windex start, windex end, encoding_t)const;
 
 		public:
 			virtual comparision_result_t compare(object const& obj)const override;
+			virtual wsize serialize(streams::ibinary_output_stream_t stream)const override;
+			virtual wsize serialize(streams::itext_output_stream_t stream)const override;
 			virtual pointer buffer_ptr()const override;
 			virtual wsize buffer_size()const override;
 			virtual wsize mem_copy(wsize, pointer, text::encoding_t = ENCODING) override;
@@ -148,10 +185,7 @@ namespace ang
 			virtual bool can_realloc_buffer()const override;
 			virtual bool realloc_buffer(wsize) override;
 			virtual text::encoding_t encoding()const override;
-
-			virtual wsize length() const override;
-			virtual str_t text_buffer() override;
-			virtual cstr_t text_buffer()const override;
+			virtual raw_str_t text_buffer() override;
 
 		public:
 			char_t& at(windex it);
@@ -169,6 +203,9 @@ namespace ang
 
 		};
 
+		template<> inline int string_buffer<CURRENT_ENCODING>::template compare(raw_str_t cstr)const {
+			return get_encoder<ENCODING>().compare(this->cstr().cstr(), cstr._value, cstr._encoding);
+		}
 	}
 
 	template<typename T>

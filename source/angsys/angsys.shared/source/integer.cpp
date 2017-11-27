@@ -303,10 +303,10 @@ bool integer::is_kind_of(type_name_t type)const
 		|| (type == type_of<value<int>>());
 }
 
-bool integer::is_child_of(type_name_t type)
+bool integer::is_inherited_of(type_name_t type)
 {
 	return (type == type_of<integer>())
-		|| object::is_child_of(type)
+		|| object::is_inherited_of(type)
 		|| (type == type_of<value<int>>());
 }
 
@@ -608,10 +608,10 @@ bool uinteger::is_kind_of(type_name_t type)const
 		|| (type == type_of<value<uint>>());
 }
 
-bool uinteger::is_child_of(type_name_t type)
+bool uinteger::is_inherited_of(type_name_t type)
 {
 	return (type == type_of<uinteger>())
-		|| object::is_child_of(type)
+		|| object::is_inherited_of(type)
 		|| (type == type_of<value<uint>>());
 }
 
@@ -934,10 +934,10 @@ bool integer64::is_kind_of(type_name_t type)const
 		|| (type == type_of<value<long64>>());
 }
 
-bool integer64::is_child_of(type_name_t type)
+bool integer64::is_inherited_of(type_name_t type)
 {
 	return (type == type_of<integer64>())
-		|| object::is_child_of(type)
+		|| object::is_inherited_of(type)
 		|| (type == type_of<value<long64>>());
 }
 
@@ -1241,10 +1241,10 @@ bool uinteger64::is_kind_of(type_name_t type)const
 		|| (type == type_of<value<ulong64>>());
 }
 
-bool uinteger64::is_child_of(type_name_t type)
+bool uinteger64::is_inherited_of(type_name_t type)
 {
 	return (type == type_of<uinteger64>())
-		|| object::is_child_of(type)
+		|| object::is_inherited_of(type)
 		|| (type == type_of<value<ulong64>>());
 }
 

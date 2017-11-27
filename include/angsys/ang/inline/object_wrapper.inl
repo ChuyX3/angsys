@@ -185,10 +185,10 @@ inline bool ang::value_wrapper<T>::is_kind_of(ang::type_name_t name)const
 }
 
 template<class T>
-inline bool ang::value_wrapper<T>::is_child_of(ang::type_name_t name)
+inline bool ang::value_wrapper<T>::is_inherited_of(ang::type_name_t name)
 {
 	if (name == ang::value_wrapper<T>::class_name()
-		|| object::is_child_of(name)
+		|| object::is_inherited_of(name)
 		|| is_type_of<value<T>>(name))
 		return true;
 	return false;

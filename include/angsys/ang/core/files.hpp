@@ -9,8 +9,8 @@
 #define __ANG_FILES_H__
 
 #include <angsys.h>
-#include <ang/streams.h>
-#include <ang/core/async.h>
+#include <ang/streams.hpp>
+#include <ang/core/async.hpp>
 
 #ifdef  LINK
 #undef  LINK

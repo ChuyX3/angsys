@@ -645,6 +645,8 @@ namespace ang
 		typedef object_wrapper<string_buffer<encoding::ascii>> string_t, string;
 		typedef object_wrapper<string_buffer<encoding::unicode>> wstring_t, wstring;
 		typedef object_wrapper<string_buffer<encoding::utf8>> mstring_t, mstring;
+		typedef object_wrapper<string_buffer<encoding::utf16>> u16string_t, u16string;
+		typedef object_wrapper<string_buffer<encoding::utf32>> u32string_t, u32string;
 		template<encoding_enum ENCODING> using string_base = object_wrapper<string_buffer<ENCODING>>;
 
 		template<encoding_enum ENCODING>
@@ -743,6 +745,8 @@ namespace ang
 	using strings::string;
 	using strings::wstring;
 	using strings::mstring;
+	using strings::u16string;
+	using strings::u32string;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

@@ -58,11 +58,11 @@ thread::~thread() {}
 ANG_IMPLEMENT_CLASSNAME(ang::core::async::thread);
 ANG_IMPLEMENT_OBJECTNAME(ang::core::async::thread);
 
-bool thread::is_child_of(type_name_t name)
+bool thread::is_inherited_of(type_name_t name)
 {
 	return name == class_name() ||
-		object::is_child_of(name) ||
-		icore_thread::is_child_of(name);
+		object::is_inherited_of(name) ||
+		icore_thread::is_inherited_of(name);
 }
 
 bool thread::is_kind_of(type_name_t name)const
@@ -164,7 +164,6 @@ core_thread_t core_thread_manager::main_thread()const
 
 core_thread_t core_thread_manager::this_thread()const
 {
-	ulong64 value = 0;
 	core_thread_t thread = null;
 	main_mutex().lock();
 	if (!_thread_map.find(this_thread_id(), &thread))
@@ -435,9 +434,9 @@ bool core_thread::join()const
 	mutex_t& mutex = core_thread_manager::instance()->main_mutex();
 	scope_locker lock = mutex;
 	_join_request = true;
-	core_thread_manager::instance()->main_cond().waitfor(core_thread_manager::instance()->main_mutex(),
+	cond.waitfor(core_thread_manager::instance()->main_mutex(),
 		[this]() { return _state == async_action_status::running || !_start_routine.is_empty(); });
 	_state = async_action_status::completed;
-	core_thread_manager::instance()->main_cond().signal();
+	cond.signal();
 	return true;
 }

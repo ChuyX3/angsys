@@ -74,19 +74,39 @@ namespace ang
 
 		typedef text_format text_format_t;
 
-		template<encoding_enum ENCODING> struct itext_buffer;
-		template<encoding_enum ENCODING> using itext_buffer_t = intf_wrapper<itext_buffer<ENCODING>>;
-		template<encoding_enum ENCODING> using itext_buffer_ptr_t = intf_wrapper_ptr<itext_buffer<ENCODING>>;
+		ANG_INTERFACE(itext_buffer); //template<encoding_enum ENCODING> struct itext_buffer;
+		//template<encoding_enum ENCODING> using itext_buffer_t = intf_wrapper<itext_buffer<ENCODING>>;
+		//template<encoding_enum ENCODING> using itext_buffer_ptr_t = intf_wrapper_ptr<itext_buffer<ENCODING>>;
 
-		//ANG_INTERFACE(itext_buffer);
+	
 
-		template<encoding_enum ENCODING>
-		ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(itext_buffer, public ibuffer)
-			visible vcall wsize length()const pure;
-			visible vcall safe_str<typename char_type_by_encoding<ENCODING>::char_t> text_buffer() pure;
-			visible vcall safe_str<typename char_type_by_encoding<ENCODING>::char_t const> text_buffer()const pure;
-
+		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itext_buffer, public ibuffer)
+			visible vcall raw_str_t text_buffer() pure;
 		ANG_END_INTERFACE();
+
+
+		template<text::encoding_enum ENCODING>
+		class text_buffer_wrapper final
+			: public object
+			, public itext_buffer
+		{
+		private:
+			ibuffer_t _buffer;
+
+		public:
+			inline text_buffer_wrapper(ibuffer_t buffer) : _buffer(buffer) {}
+
+			ANG_DECLARE_INLINE_INTERFACE();
+
+			inline encoding_t encoding()const override { return ENCODING; }
+			raw_str_t text_buffer() override {
+				return _buffer.is_empty() ? raw_str_t{ null, 0, encoding::none } 
+				: raw_str_t{ _buffer->buffer_ptr(), _buffer->buffer_size(), ENCODING };
+			}
+
+		private:
+			inline~text_buffer_wrapper() {}
+		};
 	}
 
 	namespace strings
@@ -187,6 +207,19 @@ namespace ang
 
 namespace ang
 {
+	namespace text
+	{
+		template<encoding_enum ENCODING>
+		inline windex string_util::sub_string(strings::string_base<ENCODING>& str, windex start, windex end)const {
+			if (str.is_empty())
+				str = new strings::string_buffer<ENCODING>();
+			str->realloc(min(end, _data.size() / _char_size) - start, false);
+			auto ptr = str->str();
+			str->length(get_encoder<ENCODING>().convert(str->str(), min(_data.size() / _char_size, end) - start, (byte*)_data.ptr() + start * _char_size, _data.encoding(), true));
+			return str->length();
+		}
+	}
+
 	//template<text::encoding_enum ENCODING1, text::encoding_enum ENCODING2>
 	//bool operator == (object_wrapper<strings::string_buffer<ENCODING1>> const&, object_wrapper<strings::string_buffer<ENCODING2>> const&);
 	//template<text::encoding_enum ENCODING1, text::encoding_enum ENCODING2>

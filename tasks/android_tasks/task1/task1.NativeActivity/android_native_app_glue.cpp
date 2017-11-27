@@ -190,7 +190,7 @@ void application::process_cmd() {
     android_app_post_exec_cmd(this, cmd);
 }
 
-dword application::android_app_entry(ang::core::async::thread_t sender, ang::var_args_t args) {
+void application::android_app_entry(ang::core::async::itask* task) {
 
     this->config = AConfiguration_new();
     AConfiguration_fromAssetManager(this->config, this->activity->assetManager);
@@ -214,8 +214,6 @@ dword application::android_app_entry(ang::core::async::thread_t sender, ang::var
 
     android_app_destroy(this);
 
-
-    return NULL;
 }
 
 // --------------------------------------------------------------------
@@ -245,7 +243,9 @@ static application_t android_app_create(ANativeActivity* activity,
 	app->msgread = msgpipe[0];
 	app->msgwrite = msgpipe[1];
 
-	app->thread = ang::core::async::thread::create_thread(ang::bind(app, &application::android_app_entry), null, PTHREAD_CREATE_DETACHED, null, false);
+	
+
+	app->task = ang::core::async::task::run_async(ang::bind(app, &application::android_app_entry));
 
     // Wait for thread to start.
 	app->mutex.lock();
@@ -304,7 +304,7 @@ static void android_app_free(application_t app) {
 	//	app->cond.wait(app->mutex);
 	//}
 	app->mutex.unlock();
-	app->thread->join();
+	app->task->join();
     close(app->msgread);
     close(app->msgwrite);
     //pthread_cond_destroy(&app->cond);

@@ -9,24 +9,34 @@ struct ang_text_encoder_find
 		typedef typename ang::text::char_type_by_encoding<ENCODING>::char_t char1_t;
 		typedef typename ang::text::char_type_by_encoding<OTHER_ENCODING>::char_t char2_t;
 
-		if (first == null || second == null) return invalid_index;
-		if (s2 == 0 || start >= s1) return invalid_index;
-		if (s2 > (s1 - start)) return invalid_index;
+		if (first == null || second == null) return ang::invalid_index;
+		if (s2 == 0 || start >= s1) return ang::invalid_index;
+		if (s2 > (s1 - start)) return ang::invalid_index;
 
 		char1_t const* beg = first + start;
 		char1_t const* end = first + s1 - s2 + 1;
-		windex i = start, j, k, t;
+
+		char32_t c1, c2;
+		windex i = start, j, k, l, t;
 		do {
 			j = 0;
 			k = 0;
-			while (k < s2 && converter<char32_t, char1_t>::template convert<SWAP1>(beg, j) == converter<char32_t, char2_t>::template convert<SWAP1>(second, k));
-			if (k == s2) return i;	
+			l = 0;
+			while (k < s2)
+			{
+				c1 = ang::strings::converter<char32_t, char1_t>::template convert<SWAP1>(beg, j);
+				c2 = ang::strings::converter<char32_t, char2_t>::template convert<SWAP1>(second, k);
+				if (c1 != c2)
+					break;
+				l = k;
+			}
+			if (l == s2) return i;	
 			t = 0;
-			converter<char32_t, char1_t>::template size<SWAP1>(beg, t);
+			ang::strings::converter<char32_t, char1_t>::template size<SWAP1>(beg, t);
 			i += t;
 			beg += t;
 		} while (beg < end);
-		return invalid_index;
+		return ang::invalid_index;
 	}
 
 	template<bool SWAP1, bool SWAP2>
@@ -35,9 +45,9 @@ struct ang_text_encoder_find
 		typedef typename ang::text::char_type_by_encoding<ENCODING>::char_t char1_t;
 		typedef typename ang::text::char_type_by_encoding<OTHER_ENCODING>::char_t char2_t;
 
-		if (first == null || second == null) return invalid_index;
-		if (s2 == 0 || start > s1) return invalid_index;
-		if (s2 > start)	return invalid_index;
+		if (first == null || second == null) return ang::invalid_index;
+		if (s2 == 0 || start > s1) return ang::invalid_index;
+		if (s2 > start)	return ang::invalid_index;
 
 		char1_t const* beg = first;
 		char1_t const* end = first + (start - s2);
@@ -45,11 +55,11 @@ struct ang_text_encoder_find
 		do {
 			j = 0;
 			k = 0;
-			while (k < s2 && converter<char32_t, char1_t>::template convert<SWAP1>(end, j) == converter<char32_t, char2_t>::template convert<SWAP1>(second, k));
+			while (k < s2 && ang::strings::converter<char32_t, char1_t>::template convert<SWAP1>(end, j) == ang::strings::converter<char32_t, char2_t>::template convert<SWAP1>(second, k));
 			if (k == s2) return i;
 			i--;
 		} while (beg <= --end);
-		return invalid_index;
+		return ang::invalid_index;
 	}
 };
 

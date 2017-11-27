@@ -34,33 +34,19 @@ namespace ang
 	{
 		typedef long64 stream_size_t;
 		typedef long64 stream_index_t;
-		struct iinput_stream;
-		struct ioutput_stream;
-		struct ibinary_input_stream;
-		struct ibinary_output_stream;
-		template<text::encoding_enum ENCODING>struct itext_input_stream;
-		template<text::encoding_enum ENCODING>struct itext_output_stream;
 
-		typedef intf_wrapper<iinput_stream> iinput_stream_t;
-		typedef intf_wrapper<ioutput_stream> ioutput_stream_t;
-		typedef intf_wrapper<ibinary_input_stream> ibinary_input_stream_t;
-		typedef intf_wrapper<ibinary_output_stream> ibinary_output_stream_t;
-
-		template<text::encoding_enum ENCODING>using itext_input_stream_t = intf_wrapper<itext_input_stream<ENCODING>>;
-		template<text::encoding_enum ENCODING>using itext_output_stream_t = intf_wrapper<itext_output_stream<ENCODING>>;
-
+		class text_buffer_input_stream;
+		class text_buffer_output_stream;
 		class binary_buffer_input_stream;
 		class binary_buffer_output_stream;
-		template<text::encoding_enum ENCODING>class text_buffer_input_stream;
-		template<text::encoding_enum ENCODING>class text_buffer_output_stream;
 
+		typedef object_wrapper<text_buffer_input_stream> text_buffer_input_stream_t;
+		typedef object_wrapper<text_buffer_output_stream> text_buffer_output_stream_t;
 		typedef object_wrapper<binary_buffer_input_stream> binary_buffer_input_stream_t;
 		typedef object_wrapper<binary_buffer_output_stream> binary_buffer_output_stream_t;
-		template<text::encoding_enum ENCODING>using text_buffer_input_stream_t = object_wrapper<text_buffer_input_stream<ENCODING>>;
-		template<text::encoding_enum ENCODING>using text_buffer_output_stream_t = object_wrapper<text_buffer_output_stream<ENCODING>>;
 
 
-		struct iserializable;
+		//struct iserializable;
 
 		ANG_BEGIN_ENUM(LINK, stream_mode, byte)
 			unknow,
@@ -131,6 +117,10 @@ namespace ang
 			visible vcall wsize write(ulong64)pure;
 			visible vcall wsize write(float)pure;
 			visible vcall wsize write(double)pure;
+			visible vcall wsize write(objptr)pure;
+			template<typename T> inline wsize write(object_wrapper<T> const& obj) {
+				return write(objptr(obj.get()));
+			}
 
 			visible vcall text::encoding_t format()const pure;
 			visible vcall stream_index_t position()const pure;
@@ -142,50 +132,80 @@ namespace ang
 
 		//////////////////////////////////////////////////////////////////////////////////
 
-		template<text::encoding_enum ENCODING>
-		ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(itext_input_stream, public iinput_stream)
+		
+		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itext_input_stream, public iinput_stream)
 			visible using iinput_stream::read;
-			visible vcall wsize seek(safe_str<text::char_type_by_encoding<ENCODING>::char_t const> const&)pure;
-			visible vcall wsize read(safe_str<text::char_type_by_encoding<ENCODING>::char_t>, wsize max)pure;
-			visible vcall wsize read(strings::string_base<ENCODING>&, wsize max)pure;
-			visible vcall wsize read_line(safe_str<text::char_type_by_encoding<ENCODING>::char_t>, wsize max, array_view<text::char_type_by_encoding<ENCODING>::char_t>)pure;
-			visible vcall wsize read_line(strings::string_base<ENCODING>&, wsize max, array_view<text::char_type_by_encoding<ENCODING>::char_t>)pure;
+			visible vcall wsize seek(raw_str_t)pure;
+			visible vcall wsize read(raw_str_t, wsize max)pure;
+			visible vcall wsize read_line(raw_str_t, wsize max, array_view<char32_t>)pure;
+
+			template<text::encoding_enum ENCODING>
+			inline wsize read(strings::string_base<ENCODING>& str, wsize max) {
+				ibuffer_view_t buff = str->map_buffer(0, max);
+				auto c = read(raw_str_t(buff->buffer_ptr(), buff->buffer_size(), ENCODING), max);
+				str->unmap_buffer(buff, c);
+				return c;
+			}
+		
+			template<text::encoding_enum ENCODING>
+			inline wsize read_line(strings::string_base<ENCODING>& str, wsize max, array_view<char32_t> endline) {
+				ibuffer_view_t buff = str->map_buffer(0, max);
+				auto c = read_line(raw_str_t(buff->buffer_ptr(), buff->buffer_size(), ENCODING), max, endline);
+				str->unmap_buffer(buff, c);
+				return c;
+			}
 		ANG_END_INTERFACE();
 
-		template<text::encoding_enum ENCODING>
-		ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(itext_output_stream, public ioutput_stream)
+
+		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itext_output_stream, public ioutput_stream)
 			visible vcall void enable_text_format(bool)pure;
 			visible vcall bool is_text_format_enabled()const pure;
 			visible vcall void text_format(cstr_t)pure;
 			visible vcall void text_format(text::text_format_t)pure;
 			visible vcall bool command(special_command_t) pure;
-			visible vcall wsize write(safe_str<text::char_type_by_encoding<ENCODING>::char_t const> const&)pure;
-			visible vcall wsize write_line(safe_str<text::char_type_by_encoding<ENCODING>::char_t const> const&)pure;
+			visible vcall wsize write(raw_str_t)pure;
+			visible vcall wsize write_line(raw_str_t)pure;
+
+			template<typename T>
+			inline wsize write(safe_str<T> str) {
+				return write(raw_str_t(str));
+			}
+			template<typename T>
+			inline wsize write_line(safe_str<T> str) {
+				return write(raw_str_t(str));
+			}
+			template<text::encoding_enum ENCODING>
+			inline wsize write(strings::string_base<ENCODING>& str) {
+				return write(str->text_buffer());
+			}
+			template<text::encoding_enum ENCODING>
+			inline wsize write_line(strings::string_base<ENCODING>& str) {
+				return write_line(str->text_buffer());
+			}
 			using ioutput_stream::write;
 		ANG_END_INTERFACE();
 
 
 		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, ibinary_input_stream, public iinput_stream)
-			visible vcall wsize read(string&)pure;
-			visible vcall wsize read(wstring&)pure;
-			using iinput_stream::read;
+			//visible vcall wsize read(string&)pure;
+			//visible vcall wsize read(wstring&)pure;
+			//using iinput_stream::read;
 		ANG_END_INTERFACE();
 
 
 		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, ibinary_output_stream, public ioutput_stream)
-			visible vcall wsize write(string)pure;
-			visible vcall wsize write(wstring)pure;
-			using ioutput_stream::write;
+			//visible vcall wsize write(string)pure;
+			//visible vcall wsize write(wstring)pure;
+			//using ioutput_stream::write;
 		ANG_END_INTERFACE();
 
 	}
 
 
-	template<text::encoding_enum ENCODING>
-	class intf_wrapper<streams::itext_input_stream<ENCODING>>
+	template<> class LINK intf_wrapper<streams::itext_input_stream>
 	{
 	public:
-		typedef streams::itext_input_stream<ENCODING>	type;
+		typedef streams::itext_input_stream	type;
 	protected:
 		type* _ptr;
 
@@ -214,11 +234,11 @@ namespace ang
 		operator type const* (void)const;
 	};
 
-	template<text::encoding_enum ENCODING>
-	class intf_wrapper<streams::itext_output_stream<ENCODING>>
+
+	template<> class LINK intf_wrapper<streams::itext_output_stream>
 	{
 	public:
-		typedef streams::itext_output_stream<ENCODING> type;
+		typedef streams::itext_output_stream type;
 	protected:
 		type* _ptr;
 
@@ -318,37 +338,37 @@ namespace ang
 
 	namespace streams
 	{
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, char& value) { stream->read(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, byte& value) { stream->read(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, short& value) { stream->read(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, ushort& value) { stream->read(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, int& value) { stream->read(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, uint& value) { stream->read(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, long& value) { stream->read(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, ulong& value) { stream->read(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, long64& value) { stream->read(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, ulong64& value) { stream->read(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, float& value) { stream->read(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, double& value) { stream->read(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, strings::string_base<ENCODING>& value) { stream->read(value, -1); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_input_stream_t<ENCODING>& operator >> (itext_input_stream_t<ENCODING>& stream, safe_str<typename text::char_type_by_encoding<ENCODING>::char_t const> const& value) { stream->seek(value); return stream; }
+		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, char& value) { stream->read(value); return stream; }
+		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, byte& value) { stream->read(value); return stream; }
+		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, short& value) { stream->read(value); return stream; }
+		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, ushort& value) { stream->read(value); return stream; }
+		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, int& value) { stream->read(value); return stream; }
+		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, uint& value) { stream->read(value); return stream; }
+		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, long& value) { stream->read(value); return stream; }
+		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, ulong& value) { stream->read(value); return stream; }
+		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, long64& value) { stream->read(value); return stream; }
+		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, ulong64& value) { stream->read(value); return stream; }
+		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, float& value) { stream->read(value); return stream; }
+		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, double& value) { stream->read(value); return stream; }
+		//template<text::encoding_enum ENCODING> inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, strings::string_base<ENCODING>& value) { stream->read(value, -1); return stream; }
+		//inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, safe_str<typename text::char_type_by_encoding::char_t const> const& value) { stream->seek(value); return stream; }
 
 		//////////////////////////////////////////////////////////////////////////////////
 
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, special_command_t value) { stream->command(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, char value) { stream->write(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, byte value) { stream->write(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, short value) { stream->write(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, ushort value) { stream->write(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, int value) { stream->write(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, uint value) { stream->write(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, long value) { stream->write(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, ulong value) { stream->write(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, long64 value) { stream->write(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, ulong64 value) { stream->write(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, float value) { stream->write(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, double value) { stream->write(value); return stream; }
-		template<text::encoding_enum ENCODING>inline itext_output_stream_t<ENCODING>& operator << (itext_output_stream_t<ENCODING>& stream, safe_str<typename text::char_type_by_encoding<ENCODING>::char_t const> const& value) { stream->write(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, special_command_t value) { stream->command(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, char value) { stream->write(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, byte value) { stream->write(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, short value) { stream->write(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, ushort value) { stream->write(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, int value) { stream->write(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, uint value) { stream->write(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, long value) { stream->write(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, ulong value) { stream->write(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, long64 value) { stream->write(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, ulong64 value) { stream->write(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, float value) { stream->write(value); return stream; }
+		inline itext_output_stream_t& operator << (itext_output_stream_t& stream, double value) { stream->write(value); return stream; }
+		template<typename T>inline itext_output_stream_t& operator << (itext_output_stream_t& stream, safe_str<T> const& value) { stream->write(value); return stream; }
 
 		//////////////////////////////////////////////////////////////////////////////////
 
@@ -364,8 +384,8 @@ namespace ang
 		inline ibinary_input_stream_t& operator >> (ibinary_input_stream_t& stream, ulong64& value) { stream->read(value); return stream; }
 		inline ibinary_input_stream_t& operator >> (ibinary_input_stream_t& stream, float& value) { stream->read(value); return stream; }
 		inline ibinary_input_stream_t& operator >> (ibinary_input_stream_t& stream, double& value) { stream->read(value); return stream; }
-		inline ibinary_input_stream_t& operator >> (ibinary_input_stream_t& stream, string& value) { stream->read(value); return stream; }
-		inline ibinary_input_stream_t& operator >> (ibinary_input_stream_t& stream, wstring& value) { stream->read(value); return stream; }
+		//inline ibinary_input_stream_t& operator >> (ibinary_input_stream_t& stream, string& value) { stream->read(value); return stream; }
+		//inline ibinary_input_stream_t& operator >> (ibinary_input_stream_t& stream, wstring& value) { stream->read(value); return stream; }
 		template<typename T>
 		inline ibinary_input_stream_t& operator >> (ibinary_input_stream_t& stream, T& value) { stream->read(&value, sizeof(value)); return stream; }
 
@@ -388,39 +408,12 @@ namespace ang
 	}
 }
 
-namespace ang
-{
-	namespace text
-	{
-		template<text::encoding_enum ENCODING>
-		class text_buffer_wrapper final
-			: public object
-			, public itext_buffer<ENCODING>
-		{
-		private:
-			ibuffer_t _buffer;
-		public:
-			inline text_buffer_wrapper(ibuffer_t buffer) : _buffer(buffer) {}
 
-			ANG_DECLARE_INLINE_INTERFACE();
-
-			inline encoding_t encoding()const override { return ENCODING; }
-			inline wsize length()const override { _buffer.is_empty()? 0 : _buffer->buffer_size() / sizeof(typename text::char_type_by_encoding<ENCODING>::char_t); }
-			inline safe_str<typename char_type_by_encoding<ENCODING>::char_t> text_buffer() override { return _buffer.is_empty() ? null : (typename text::char_type_by_encoding<ENCODING>::str_t)_buffer->buffer_ptr(); }
-			inline safe_str<typename char_type_by_encoding<ENCODING>::char_t const> text_buffer()const override { return _buffer.is_empty() ? null : (typename text::char_type_by_encoding<ENCODING>::cstr_t)_buffer->buffer_ptr(); }
-
-		private:
-			inline~text_buffer_wrapper(){}
-		};
-	}
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////
-#define CURRENT_ENCODING ang::text::encoding::ascii
-#include <ang/inline/streams_definition.inl>
-#undef CURRENT_ENCODING
-/////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//#define CURRENT_ENCODING ang::text::encoding::ascii
+//#include <ang/inline/streams_definition.inl>
+//#undef CURRENT_ENCODING
+///////////////////////////////////////////////////////////////////////////////////
 
 
 namespace ang
@@ -457,8 +450,8 @@ namespace ang
 			virtual wsize read(ulong64&)override;
 			virtual wsize read(float&)override;
 			virtual wsize read(double&)override;
-			virtual wsize read(string&)override;
-			virtual wsize read(wstring&)override;
+			//virtual wsize read(string&)override;
+			//virtual wsize read(wstring&)override;
 
 			virtual stream_index_t position()const override;
 			virtual stream_size_t stream_size()const override;
@@ -511,9 +504,10 @@ namespace ang
 			virtual wsize write(ulong64)override;
 			virtual wsize write(float)override;
 			virtual wsize write(double)override;
-			virtual wsize write(string)override;
-			virtual wsize write(wstring)override;
+			virtual wsize write(objptr)override;
+			//virtual wsize write(wstring)override;
 
+			virtual text::encoding_t format()const override;
 			virtual stream_index_t position()const override;
 			virtual stream_size_t stream_size()const override;
 			virtual bool move_to(stream_index_t size, stream_reference_t ref)override;
@@ -556,6 +550,8 @@ namespace ang
 
 ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ang::streams::stream_mode_t);
 ANG_REGISTER_RUNTIME_TYPE_INFORMATION(ang::streams::stream_reference_t);
+
+//#include <ang/inline/streams.inl>
 
 #ifdef LINK
 #undef LINK

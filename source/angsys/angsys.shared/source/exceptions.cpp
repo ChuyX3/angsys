@@ -125,10 +125,10 @@ type_name_t exception::object_name()const throw()
 	return "ang::exception_t"_s;
 }
 
-bool exception::is_child_of(type_name_t type) throw()
+bool exception::is_inherited_of(type_name_t type) throw()
 {
 	return (type == type_of<exception>())
-		|| object::is_child_of(type);
+		|| object::is_inherited_of(type);
 }
 
 bool exception::is_kind_of(type_name_t type)const throw()

@@ -19,7 +19,7 @@ namespace ang
 			element_type* _data;
 
 		public:
-			array_view() : _data(null), _size(0) {}
+			array_view() : _size(0), _data(null) {}
 			array_view(wsize size, type val) : _size(size), _data(val) {}
 			array_view(nullptr_t const&) : _size(0), _data(null) {}
 			array_view(array_view const& other) : _size(other._size), _data(other._data) {}

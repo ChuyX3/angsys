@@ -171,7 +171,7 @@ inline void operator delete(pointer, pointer) throw() { return; }
 #include <ang/base/allocator.hpp>
 #include <ang/base/array.hpp>
 #include <ang/base/text.hpp>
-#include <ang/base/string.hpp>
+//#include <ang/base/string.hpp>
 //#include <ang/base/string.hpp>
 
 #endif//__cplusplus

@@ -108,7 +108,7 @@ namespace ang
 		template<typename T>
 		struct converter<T, char16_t> {
 			template<bool SWAP> static inline windex size(const char16_t* words, windex& idx) {
-				if ((dword_cast(swap_endian<SWAP>(words[idx])) & 0XDC00) == 0XDC00)
+				if ((swap_endian<SWAP>(words[idx]) & 0XFC00) == 0XDC00)
 					idx += 2;
 				else
 					idx++;
@@ -116,7 +116,8 @@ namespace ang
 			}
 			template<bool SWAP> static inline T convert(const char16_t* words, windex& idx) {
 				dword out;
-				if ((dword_cast(swap_endian<SWAP>(words[idx])) & 0XDC00) == 0XDC00) {
+				char16_t c = swap_endian<SWAP>(words[idx]);
+				if ((c & 0XFC00) == 0XDC00) {
 					out = dword_cast(swap_endian<SWAP>(words[idx++])) & 0X03FF;
 					out |= (dword_cast(swap_endian<SWAP>(words[idx++])) & 0X03FF) << 10;
 					out += 0X10000;
@@ -209,7 +210,7 @@ namespace ang
 				}
 			}
 			template<bool SWAP1, bool SWAP2> static inline void convert(byte* dest, windex& i, const char16_t* src, windex& j) {
-				if ((dword_cast(swap_endian<SWAP2>(src[j])) & 0XDC00) == 0XDC00) {
+				if ((swap_endian<SWAP2>(src[j]) & 0XFC00) == 0XDC00) {
 					byte temp = ((swap_endian<SWAP2>(src[j]) >> 6) & 0X0F) + 1; //110110ww wwzzzzyy (uuuuu = wwww + 1)
 					dest[i++] = 0XF0 | (temp >> 2); //11110uuu
 					dest[i++] = 0X80 | (0X30 & (temp << 4)) | (0X0F & (swap_endian<SWAP2>(src[j]) >> 2));
@@ -300,7 +301,7 @@ namespace ang
 		template<>
 		struct converter<char16_t, char16_t> {
 			template<bool SWAP> static inline windex size(const char16_t* src, windex& idx) {
-				if ((dword_cast(swap_endian<SWAP>(src[idx])) & 0XDC00) == 0XDC00) {
+				if ((swap_endian<SWAP>(src[idx]) & 0XFC00) == 0XDC00) {
 					idx += 2; return 2;
 				}
 				else {

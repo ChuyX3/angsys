@@ -148,8 +148,8 @@ namespace ang
 			inline iterator_t at(windex) override;
 			inline const_iterator_t at(windex)const override;
 			inline void copy(const ienum<T>*) override;
-			inline windex find(const T&, bool invert = false)const override;
-			inline windex find(const T&, base_iterator_t next_to, bool invert = false)const override;
+			inline iterator_t find(const T&, bool invert = false)const override;
+			inline iterator_t find(const T&, base_iterator_t next_to, bool invert = false)const override;
 
 		public: //ilist overrides
 			inline void extend(const ienum<T>*) override;
@@ -165,7 +165,7 @@ namespace ang
 
 		public: //overrides
 			inline static type_name_t class_name();
-			inline static bool is_child_of(type_name_t);
+			inline static bool is_inherited_of(type_name_t);
 			inline type_name_t object_name()const override;
 			inline bool is_kind_of(type_name_t)const override;
 			inline bool query_object(type_name_t, unknown_ptr_t) override;
@@ -313,8 +313,8 @@ namespace ang
 
 		collections::forward_iterator<object_wrapper<T>> begin() { return _ptr ? _ptr->begin() : collections::forward_iterator<T>(); }
 		collections::forward_iterator<object_wrapper<T>> end() { return _ptr ? _ptr->end() : collections::forward_iterator<T>(); }
-		collections::forward_iterator<const object_wrapper<T>> begin()const { return _ptr ? ((type const*)_ptr)->begin() : collections::forward_iterator<const T>(); }
-		collections::forward_iterator<const object_wrapper<T>> end()const { return _ptr ? ((type const*)_ptr)->end() : collections::forward_iterator<const T>(); }
+		collections::forward_iterator<const object_wrapper<T>> begin()const { return _ptr ? ((type const*)_ptr)->begin() : collections::forward_iterator<const object_wrapper<T>>(); }
+		collections::forward_iterator<const object_wrapper<T>> end()const { return _ptr ? ((type const*)_ptr)->end() : collections::forward_iterator<const object_wrapper<T>>(); }
 
 	public:
 		object_wrapper& operator = (collections::vector_buffer<object_wrapper<T>, allocator>*);

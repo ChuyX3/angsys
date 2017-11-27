@@ -105,11 +105,11 @@ inline ang::type_name_t ang::collections::array_buffer<T, allocator>::class_name
 }
 
 template<typename T, template <typename> class allocator>
-inline bool ang::collections::array_buffer<T, allocator>::is_child_of(ang::type_name_t name)
+inline bool ang::collections::array_buffer<T, allocator>::is_inherited_of(ang::type_name_t name)
 {
 	if (name == type_of<array_buffer<T, allocator>>()
-		|| ang::object::is_child_of(name)
-		|| ang::collections::iarray<T>::is_child_of(name))
+		|| ang::object::is_inherited_of(name)
+		|| ang::collections::iarray<T>::is_inherited_of(name))
 		return true;
 	return false;
 }
@@ -299,41 +299,41 @@ inline ang::collections::iterator<const T> ang::collections::array_buffer<T, all
 }
 
 template<typename T, template <typename> class allocator>
-inline windex ang::collections::array_buffer<T, allocator>::find(T const& datum, bool invert)const
+inline ang::collections::iterator<T> ang::collections::array_buffer<T, allocator>::find(T const& datum, bool invert)const
 {
 	if (!is_empty())
 	{
 		if (invert) for (auto i = size(); i > 0; --i)
 		{
 			if (comparision_operations<T, T>::template compare<comparision_same>(_data[i - 1] , datum))
-				return i - 1;
+				return at(i - 1);
 		}
 		else for (auto i = 0U; i < size(); ++i)
 		{
 			if (comparision_operations<T, T>::template compare<comparision_same>(_data[i] , datum))
-				return i;
+				return at(i);
 		}
 	}
-	return invalid_index;
+	return at(invalid_index);
 }
 
 template<typename T, template <typename> class allocator>
-inline windex ang::collections::array_buffer<T, allocator>::find(T const& datum, ang::collections::base_iterator<T> next_to, bool invert)const
+inline ang::collections::iterator<T> ang::collections::array_buffer<T, allocator>::find(T const& datum, ang::collections::base_iterator<T> next_to, bool invert)const
 {
 	if (!is_empty() && next_to.parent() == this)
 	{
 		if (invert) for (auto i = next_to.offset() + 1; i > 0; --i)
 		{
 			if (comparision_operations<T, T>::template compare<comparision_same>(_data[i - 1], datum))
-				return i - 1;
+				return at(i - 1);
 		}
 		else for (auto i = next_to.offset(); i < size(); ++i)
 		{
 			if (comparision_operations<T, T>::template compare<comparision_same>(_data[i], datum))
-				return i;
+				return at(i);
 		}
 	}
-	return invalid_index;
+	return at(invalid_index);
 }
 
 template<typename T, template <typename> class allocator>

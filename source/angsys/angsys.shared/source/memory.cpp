@@ -137,7 +137,7 @@ allocator_internal::~allocator_internal() {
 		if (value)
 		{
 			error = true;
-			ang_debug_output_warning("Allocator[%d]: Memory leak at %X: size: %d; file: %s: %d;\n", _allocator_type, (wsize)value->ptr, value->size, value->file, value->line);
+			ang_debug_output_warning("%s(%d): Allocator[%d]: Memory leak at %X: size: %d\n", value->file, value->line, _allocator_type, (wsize)value->ptr, value->size);
 		}
 	});
 	if (error)

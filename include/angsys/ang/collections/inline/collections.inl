@@ -50,7 +50,7 @@ inline bool ang::collections::ienum<T>::is_kind_of(ang::type_name_t name)const
 }
 
 template<class T>
-inline bool ang::collections::ienum<T>::is_child_of(ang::type_name_t name)
+inline bool ang::collections::ienum<T>::is_inherited_of(ang::type_name_t name)
 {
 	if (name == ang::collections::ienum<T>::class_name())
 		return true;
@@ -92,7 +92,7 @@ inline bool ang::collections::iarray<T>::is_kind_of(ang::type_name_t name)const
 }
 
 template<class T>
-inline bool ang::collections::iarray<T>::is_child_of(ang::type_name_t name)
+inline bool ang::collections::iarray<T>::is_inherited_of(ang::type_name_t name)
 {
 	if (name == ang::collections::iarray<T>::class_name()
 		|| name == ang::collections::ienum<T>::class_name())
@@ -140,7 +140,7 @@ inline bool ang::collections::isequence<T>::is_kind_of(ang::type_name_t name)con
 }
 
 template<class T>
-inline bool ang::collections::isequence<T>::is_child_of(ang::type_name_t name)
+inline bool ang::collections::isequence<T>::is_inherited_of(ang::type_name_t name)
 {
 	if (name == ang::collections::isequence<T>::class_name()
 		|| name == ang::collections::ienum<T>::class_name())
@@ -189,7 +189,7 @@ inline bool ang::collections::ilist<T>::is_kind_of(ang::type_name_t name)const
 }
 
 template<class T>
-inline bool ang::collections::ilist<T>::is_child_of(ang::type_name_t name)
+inline bool ang::collections::ilist<T>::is_inherited_of(ang::type_name_t name)
 {
 	if (name == ang::collections::ilist<T>::class_name()
 		|| name == ang::collections::iarray<T>::class_name()
@@ -236,7 +236,7 @@ inline bool ang::collections::imap<K, T>::is_kind_of(ang::type_name_t name)const
 }
 
 template<class K, class T>
-inline bool ang::collections::imap<K, T>::is_child_of(ang::type_name_t name)
+inline bool ang::collections::imap<K, T>::is_inherited_of(ang::type_name_t name)
 {
 	return (name == ang::collections::imap<K, T>::class_name())
 		|| (name == ang::collections::ienum<pair<K, T>>::class_name());

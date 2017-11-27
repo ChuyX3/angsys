@@ -158,7 +158,7 @@ public:
     int msgread;
     int msgwrite;
 
-	ang::core::async::thread_t thread;
+	ang::core::async::itask_t task;
 
     ang::core::delegates::function<void(void)> cmdPollSource;
 	ang::core::delegates::function<void(void)> inputPollSource;
@@ -172,7 +172,7 @@ public:
     ARect pendingContentRect;
 
 
-	dword android_app_entry(ang::core::async::thread_t sender, ang::var_args_t args);
+	void android_app_entry(ang::core::async::itask* task);
 
 private:
 	void process_input();

@@ -29,7 +29,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\array.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\enum.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\interface.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\string.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\text.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\utils.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\buffers.hpp" />
@@ -41,11 +40,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\async.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\delegates.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\exceptions.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\ibuffer.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\istream.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\runtime.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\singleton.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\streams.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\string.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\value.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\xml.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\angc\core_hash_table.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_memory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
@@ -53,6 +55,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\format_parser.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\task.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\thread.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml_entity_values.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angc\ang_core_hash_table.c">
@@ -73,7 +76,33 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\integer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\memory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\object.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\binary_buffer_input_stream.cpp">
+      <ExcludedFromBuild>false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\binary_buffer_output_stream.cpp">
+      <ExcludedFromBuild>false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\text_buffer_input_stream.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\text_buffer_output_stream.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\text_format.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_attribute.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_comment.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_document.cpp">
+      <ExcludedFromBuild>false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_element.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_header.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_node.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_store.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_text.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\streams.cpp" />
   </ItemGroup>
 </Project>

@@ -123,7 +123,7 @@ namespace ang
 
 		public: //overrides
 			inline static type_name_t class_name();
-			inline static bool is_child_of(type_name_t);
+			inline static bool is_inherited_of(type_name_t);
 			inline type_name_t object_name()const override;
 			inline bool is_kind_of(type_name_t)const override;
 			inline bool query_object(type_name_t, unknown_ptr_t) override;

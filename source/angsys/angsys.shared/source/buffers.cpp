@@ -10,12 +10,71 @@
 
 #include "pch.h"
 #include "angsys.h"
+#include "ang/streams.hpp"
 
 using namespace ang;
 
 ANG_IMPLEMENT_INTERFACE(ang, ibuffer_view);
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::ibuffer, ang::ibuffer_view);
 //ANG_IMPLEMENT_BASIC_INTERFACE(ang::text::itext_buffer, ibuffer);
+
+ANG_EXTERN ang_uint64_t ang_create_hash_index_cstr(ang_cstr_t key, ang_uint64_t TS);
+
+wsize ibuffer::serialize(ibuffer_t buffer, streams::ibinary_output_stream_t stream)
+{
+	ang_uint64_t hash = ang_create_hash_index_cstr(buffer->object_name(), 0X7FFFFFFFFFFFFFFF);
+	if (text::itext_buffer_t buffer = interface_cast<text::itext_buffer>(buffer.get()))
+	{
+		auto str = buffer->text_buffer();
+
+		struct
+		{
+			qword hash;
+			dword encoding;
+			dword length;
+		}info;
+		info.hash = hash;
+		info.encoding = buffer->encoding();
+		info.length = str._size;
+
+		auto sz = stream->write(&info, sizeof(info));
+		sz += stream->write(str._value, str._size);
+		return sz;
+	}
+	else
+	{
+		struct
+		{
+			qword hash;
+			dword encoding;
+			dword length;
+		}info;
+		info.hash = hash;
+		info.encoding = buffer->encoding();
+		info.length = buffer->buffer_size();
+
+		auto sz = stream->write(&info, sizeof(info));
+		sz += stream->write(buffer->buffer_ptr(), buffer->buffer_size());
+		return sz;
+	}
+}
+
+wsize ibuffer::serialize(ibuffer_t buffer, streams::itext_output_stream_t stream)
+{
+	if (text::itext_buffer_t buffer = interface_cast<text::itext_buffer>(buffer.get()))
+	{
+		auto sz = stream->write("ang::string<"_s);
+		sz += stream->write(buffer->encoding().to_string());
+		sz += stream->write(">{"_s);
+		sz += stream->write(buffer->text_buffer());
+		sz += stream->write("}"_s);
+		return sz;
+	}
+	else
+	{
+		return stream->write(buffer->object_name());
+	}
+}
 
 typedef struct _buffer_handler
 {
@@ -62,7 +121,7 @@ buffer::~buffer()
 ANG_IMPLEMENT_CLASSNAME(ang::buffer);
 ANG_IMPLEMENT_OBJECTNAME(ang::buffer);
 
-bool buffer::is_child_of(type_name_t type)
+bool buffer::is_inherited_of(type_name_t type)
 {
 	return type == class_name()
 		|| type == object::class_name()
@@ -176,7 +235,7 @@ aligned_buffer::~aligned_buffer()
 ANG_IMPLEMENT_CLASSNAME(ang::aligned_buffer);
 ANG_IMPLEMENT_OBJECTNAME(ang::aligned_buffer);
 
-bool aligned_buffer::is_child_of(type_name_t type)
+bool aligned_buffer::is_inherited_of(type_name_t type)
 {
 	return type == class_name()
 		|| type == object::class_name()
@@ -285,7 +344,7 @@ buffer_view::~buffer_view()
 ANG_IMPLEMENT_CLASSNAME(ang::buffer_view);
 ANG_IMPLEMENT_OBJECTNAME(ang::buffer_view);
 
-bool buffer_view::is_child_of(type_name_t type)
+bool buffer_view::is_inherited_of(type_name_t type)
 {
 	return type == class_name()
 		|| type == object::class_name()
@@ -363,6 +422,11 @@ ang::intf_wrapper<ibuffer>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
 
 ang::intf_wrapper<ibuffer>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
 	set(other._ptr);
+}
+
+ang::intf_wrapper<ibuffer>::intf_wrapper(std::nullptr_t const&)
+	: _ptr(null)
+{
 }
 
 ang::intf_wrapper<ibuffer>::~intf_wrapper() {

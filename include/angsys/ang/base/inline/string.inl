@@ -1,7 +1,55 @@
-#ifndef __ANG_BASE_STRING_HPP__
+#ifndef __ANG_BASE_TEXT_HPP__
 #error ...
 #elif !defined __ANG_BASE_STRING_INL__
 #define __ANG_BASE_STRING_INL__
+
+
+inline ang::raw_str::raw_str()
+	: _value(null)
+	, _size(0)
+	, _encoding(text::encoding::none) {
+}
+
+inline ang::raw_str::raw_str(pointer v, wsize s, text::encoding e)
+	: _value(v)
+	, _size(s)
+	, _encoding(e) {
+}
+
+inline ang::raw_str::raw_str(raw_str const& str)
+	: _value(str._value)
+	, _size(str._size)
+	, _encoding(str._encoding) {
+}
+
+template<typename T>
+inline ang::raw_str::raw_str(safe_str<T> const& str)
+	: _value((pointer)str.get())
+	, _size(str.size() * sizeof(T))
+	, _encoding(text::encoding_by_type<typename text::char_type_by_type<T>::char_t>::encoding()) {
+}
+
+inline pointer ang::raw_str::ptr()const { return _value; }
+inline wsize ang::raw_str::size()const { return _size; }
+inline wsize ang::raw_str::count()const { return _size / text::encoder<text::encoding::auto_detect>().char_size_by_encoding(_encoding); }
+inline wsize ang::raw_str::char_size()const { return text::encoder<text::encoding::auto_detect>().char_size_by_encoding(_encoding); }
+inline ang::text::encoding_t ang::raw_str::encoding()const { return _encoding; }
+
+template<typename T> inline ang::raw_str::operator ang::safe_str<T>() {
+	return (text::encoding_by_type<typename text::char_type_by_type<T>::char_t>::encoding() == _encoding) ? safe_str<T>((T*)_value, _size / sizeof(T)) : safe_str<T>(null, 0);
+}
+template<typename T> inline ang::raw_str::operator ang::safe_str<T const>()const {
+	return (text::encoding_by_type<typename text::char_type_by_type<T>::char_t>::encoding() == _encoding) ? safe_str<T const>((T const*)_value, _size / sizeof(T)) : safe_str<T const>(null, 0);
+}
+
+template<typename T> inline ang::safe_str<T> ang::raw_str::to_str() {
+	return (text::encoding_by_type<typename text::char_type_by_type<T>::char_t>::encoding() == _encoding) ? safe_str<T>((T*)_value, _size / sizeof(T)) : safe_str<T>(null, 0);
+}
+
+template<typename T> inline ang::safe_str<T const> ang::raw_str::to_cstr()const {
+	return (text::encoding_by_type<typename text::char_type_by_type<T>::char_t>::encoding() == _encoding) ? safe_str<T const>((T const*)_value, _size / sizeof(T)) : safe_str<const T>(null, 0);
+}
+
 
 inline ang::safe_str<char>::operator char*& () { return get(); }
 inline ang::safe_str<char>::operator char* ()const { return get(); }

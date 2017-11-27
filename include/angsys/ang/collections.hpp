@@ -78,8 +78,8 @@ namespace ang
 			visible vcall iterator<T> at(windex) pure;
 			visible vcall const_iterator<T> at(windex)const pure;
 			visible vcall void copy(const ienum<T>*) pure;
-			visible vcall windex find(const T&, bool invert = false)const pure;
-			visible vcall windex find(const T&, base_iterator<T> next_to, bool invert = false)const pure;
+			visible vcall iterator<T> find(const T&, bool invert = false)const pure;
+			visible vcall iterator<T> find(const T&, base_iterator<T> next_to, bool invert = false)const pure;
 		ANG_END_INTERFACE();
 
 		template<class T> using iarray_t = intf_wrapper<iarray<T>>;

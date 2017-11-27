@@ -375,10 +375,10 @@ bool floating::is_kind_of(type_name_t type)const
 		|| (type == type_of<value<float>>());
 }
 
-bool floating::is_child_of(type_name_t type)
+bool floating::is_inherited_of(type_name_t type)
 {
 	return (type == type_of<floating>())
-		|| object::is_child_of(type)
+		|| object::is_inherited_of(type)
 		|| (type == type_of<value<float>>());
 }
 
@@ -775,10 +775,10 @@ bool floating64::is_kind_of(type_name_t type)const
 		|| (type == type_of<value<double>>());
 }
 
-bool floating64::is_child_of(type_name_t type)
+bool floating64::is_inherited_of(type_name_t type)
 {
 	return (type == type_of<floating64>())
-		|| object::is_child_of(type)
+		|| object::is_inherited_of(type)
 		|| (type == type_of<value<double>>());
 }
 
