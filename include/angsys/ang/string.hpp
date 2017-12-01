@@ -60,6 +60,7 @@ namespace ang
 			};
 
 		public:
+			text_format();//default format-> bad format
 			text_format(cstr_t format);
 			text_format(const text_format&);
 			virtual~text_format();
@@ -74,6 +75,24 @@ namespace ang
 
 		typedef text_format text_format_t;
 
+		template<typename T>
+		struct default_text_format {
+			static text_format_t format() {
+				return text_format_t();
+			}
+		};
+
+		template<typename T>
+		struct default_text_format<const T> : default_text_format<T> { };
+
+		template<typename T>
+		struct default_text_format<T&> : default_text_format<T> { };
+
+		template<typename T>
+		struct default_text_format<const T&> : default_text_format<T> { };
+
+
+
 		ANG_INTERFACE(itext_buffer); //template<encoding_enum ENCODING> struct itext_buffer;
 		//template<encoding_enum ENCODING> using itext_buffer_t = intf_wrapper<itext_buffer<ENCODING>>;
 		//template<encoding_enum ENCODING> using itext_buffer_ptr_t = intf_wrapper_ptr<itext_buffer<ENCODING>>;
@@ -81,7 +100,7 @@ namespace ang
 	
 
 		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itext_buffer, public ibuffer)
-			visible vcall raw_str_t text_buffer() pure;
+			visible vcall raw_str_t text_buffer()const pure;
 		ANG_END_INTERFACE();
 
 
@@ -137,6 +156,87 @@ namespace ang
 		};
 	}
 
+	namespace strings
+	{
+		class LINK string_base_buffer
+			: public object
+				, public text::itext_buffer
+		{
+		protected:
+			struct _str_data
+			{
+				static constexpr wsize RAW_CAPACITY = 128u;
+
+				union {
+					wsize _storage_type;
+					struct {
+						wsize _unused;
+						wsize _allocated_length;
+						wsize _allocated_capacity;
+						pointer _allocated_buffer;
+					};
+					struct {
+						wsize _stack_length;
+						byte _stack_buffer[RAW_CAPACITY];
+					};
+				};
+			};
+
+		protected:
+			_str_data _data;
+			wsize _map_index, _map_size;
+
+		public:
+			string_base_buffer();
+
+		protected:
+			virtual~string_base_buffer();
+
+		public:
+			ANG_DECLARE_INTERFACE();
+			bool is_local_data()const;
+			bool realloc(wsize new_size, bool save = true);
+			void length(wsize len);
+			wsize length() const;
+
+		public:
+			void clean();
+			bool is_empty()const;
+			wsize capacity() const;
+
+		public:
+			void copy(raw_str_t);
+			void concat(raw_str_t);
+
+			int compare(raw_str_t)const;
+			windex compare_until(raw_str_t)const;	
+			windex find(raw_str_t, windex start = 0, windex end = -1)const;
+			windex find_revert(raw_str_t, windex start = -1, windex end = 0)const;
+			wsize sub_string(raw_str_t, windex start, windex end)const;
+
+		protected:
+			void copy_at(raw_str_t, windex at);
+
+		public:
+			virtual comparision_result_t compare(object const& obj)const override;
+			virtual wsize serialize(streams::ibinary_output_stream_t stream)const override;
+			virtual wsize serialize(streams::itext_output_stream_t stream)const override;
+			virtual pointer buffer_ptr()const override;
+			virtual wsize buffer_size()const override;
+			virtual wsize mem_copy(wsize, pointer, text::encoding_t) override;
+			virtual ibuffer_view_t map_buffer(windex, wsize) override;
+			virtual bool unmap_buffer(ibuffer_view_t&, wsize) override;
+			virtual bool can_realloc_buffer()const override;
+			virtual bool realloc_buffer(wsize) override;		
+			virtual raw_str_t text_buffer()const override;
+
+			virtual wsize char_size()const pure;
+			
+		protected:
+			virtual text::encoder_interface& encoder()const pure;
+			//virtual text::encoding_t encoding()const pure;
+		};
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -24,6 +24,11 @@ using namespace ang::text;
 
 ////////////////////////////////////////////////////////////////////////
 
+text_format::text_format()
+	: flags(0)
+{
+}
+
 text_format::text_format(cstr_t format)
 	: flags(0)
 {
@@ -681,7 +686,7 @@ bool format_parser::parse_floating(cstr_t format, wsize& beg, qword& flag)
 					strMax[i++] = n;
 				else if (n == '.') {
 					dec = true;
-					nMax |= (byte)atoi(strMax) << 4;
+					nMax |= (byte)min(atoi(strMax),0XF) << 4;
 					i = 0;
 				}
 				else if (i == 0)
@@ -698,9 +703,9 @@ bool format_parser::parse_floating(cstr_t format, wsize& beg, qword& flag)
 				beg++;
 			}
 			if (dec)
-				nMax |= (byte)atoi(strMax);
+				nMax |= (byte)min(atoi(strMax), 0XF);
 			else
-				nMax |= (byte)atoi(strMax) << 4;
+				nMax |= (byte)min(atoi(strMax), 0XF) << 4;
 			flag |= FLAG_FLOATING_MAX(nMax);
 			waitForEnd = true;
 			continue;

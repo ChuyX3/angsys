@@ -73,8 +73,7 @@ namespace ang
 
 
 		template<> class LINK string_buffer<CURRENT_ENCODING>
-			: public object
-			, public text::itext_buffer
+			: public string_base_buffer
 		{
 		public:
 			static const text::encoding_enum ENCODING = CURRENT_ENCODING;
@@ -85,76 +84,65 @@ namespace ang
 			typedef safe_str<char_t> str_t;
 			typedef safe_str<char_t const> cstr_t;
 
-		protected:
-			str_data<ENCODING> _data;
-			wsize _map_index, _map_size;
-
 		public:
 			string_buffer();
 			string_buffer(wsize reserv);
+			string_buffer(raw_str_t const& str);
+			string_buffer(string_base_buffer const* str);
+
 			template<typename T>
-			string_buffer(safe_str<T> const& str) : string_buffer() {
-				copy(str);
+			string_buffer(safe_str<T> const& str) 
+				: string_buffer(raw_str(str)) {
 			}
-			template<encoding_enum OTHER_ENCODING>
-			string_buffer(string_buffer<OTHER_ENCODING> const* str) : string_buffer() {
-				if (str)copy(str->cstr());
-			}
+
 		protected:
 			virtual~string_buffer();
 
 		public:
 			ANG_DECLARE_INTERFACE();
-			bool is_local_data()const;
-			bool realloc(wsize new_size, bool save = true);
-			void length(wsize len);
-			wsize length() const;
 
 		public:
-			void clean();
-			bool is_empty()const;
 			str_t str();
 			cstr_t cstr() const;
-			wsize capacity() const;
 			void move(string_base<CURRENT_ENCODING>&);
 			void move(string_buffer<CURRENT_ENCODING>*);
 
 		public:
 			template<typename cstr_t>
 			inline int compare(cstr_t cstr)const {
-				return get_encoder<ENCODING>().compare(this->cstr().cstr(), (typename char_type_by_type<cstr_t>::cstr_t)cstr);
+				return string_base_buffer::compare(raw_str(cstr));
 			}
 			template<typename cstr_t>
 			inline windex compare_until(cstr_t cstr)const {
-				return get_encoder<ENCODING>().compare_until(this->cstr().cstr(), (typename char_type_by_type<cstr_t>::cstr_t)cstr);
+				return string_base_buffer::compare_until(raw_str(cstr));
 			}
 			template<typename cstr_t>
 			inline void copy(cstr_t cstr) {
-				copy((pointer)(typename char_type_by_type<cstr_t>::cstr_t)cstr, algorithms::string_length(cstr), encoding_by_type<typename char_type_by_type<cstr_t>::char_t>::encoding());
+				return string_base_buffer::copy(raw_str(cstr));
 			}
 			template<typename cstr_t>
 			inline void concat(cstr_t cstr) {
-				copy_at(length() ,(pointer)(typename char_type_by_type<cstr_t>::cstr_t)cstr, algorithms::string_length(cstr), encoding_by_type<typename char_type_by_type<cstr_t>::char_t>::encoding());
+				return string_base_buffer::concat(raw_str(cstr));
 			}
 
 			template<typename cstr_t>
 			inline windex find(cstr_t cstr, windex start = 0)const { 
-				return get_encoder<ENCODING>().find(this->cstr(), this->length(), (typename text::char_type_by_type<cstr_t>::cstr_t)cstr, algorithms::string_length(cstr), start);
+				return string_base_buffer::find(raw_str(cstr), start);
 			}
 
 			template<typename cstr_t>
 			inline windex find_revert(cstr_t cstr, windex start = -1)const {
-				return get_encoder<ENCODING>().find_revert(this->cstr(), this->length(), (typename text::char_type_by_type<cstr_t>::cstr_t)cstr, algorithms::string_length(cstr), start);
+				return string_base_buffer::find_revert(raw_str(cstr), start);
 			}
 
 			template<typename T>
 			inline wsize sub_string(wsize sz, T* ptr, windex start = 0, windex end = -1) {
-				return sub_string((pointer)ptr, start, start + min(sz, end - start), encoding_by_type<T>::encoding());
+				return string_base_buffer::sub_string(raw_str(ptr,sz), start, end);
 			}
 
 			template<typename T>
 			inline wsize sub_string(safe_str<T> ptr, windex start = 0, windex end = -1) {
-				return sub_string((pointer)ptr.get(), start, start + min(ptr.size(), end - start), encoding_by_type<T>::encoding());
+				return string_base_buffer::sub_string(raw_str(ptr), start, end);
 			}
 
 			template<encoding_enum OTHER_ENCODING>
@@ -163,29 +151,21 @@ namespace ang
 					str = new string_buffer<OTHER_ENCODING>();
 				str->realloc(min(end, length()) - start, false);
 				auto ptr = str->str();
-				str->length(sub_string((pointer)ptr.get(), start, min(end, length()), OTHER_ENCODING));
+				str->length(string_base_buffer::sub_string(raw_str((pointer)ptr.get(), min(end, length()) - start, OTHER_ENCODING), start, min(end, length())));
 				return str->length();
 			}
 
-			void copy(pointer raw, wsize sz, encoding_t);
-
-		protected:
-			void copy_at(windex, pointer raw, wsize sz, encoding_t);
-			wsize sub_string(pointer raw, windex start, windex end, encoding_t)const;
+			using string_base_buffer::compare;
+			using string_base_buffer::compare_until;
+			using string_base_buffer::copy;
+			using string_base_buffer::concat;
 
 		public:
-			virtual comparision_result_t compare(object const& obj)const override;
-			virtual wsize serialize(streams::ibinary_output_stream_t stream)const override;
-			virtual wsize serialize(streams::itext_output_stream_t stream)const override;
-			virtual pointer buffer_ptr()const override;
-			virtual wsize buffer_size()const override;
-			virtual wsize mem_copy(wsize, pointer, text::encoding_t = ENCODING) override;
-			virtual ibuffer_view_t map_buffer(windex, wsize) override;
-			virtual bool unmap_buffer(ibuffer_view_t&, wsize) override;
-			virtual bool can_realloc_buffer()const override;
-			virtual bool realloc_buffer(wsize) override;
 			virtual text::encoding_t encoding()const override;
-			virtual raw_str_t text_buffer() override;
+			virtual wsize char_size()const override;
+
+		protected:
+			virtual text::encoder_interface& encoder()const override;
 
 		public:
 			char_t& at(windex it);

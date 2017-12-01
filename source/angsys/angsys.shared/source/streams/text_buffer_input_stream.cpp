@@ -16,36 +16,28 @@ using namespace ang::streams;
 text_buffer_input_stream::text_buffer_input_stream()
 	: _buffer(null)
 	, _cursor(0)
-	, _format(text::encoding::unknown)
 {
 }
 
-text_buffer_input_stream::text_buffer_input_stream(text_buffer_input_stream* stream)
+text_buffer_input_stream::text_buffer_input_stream(text_buffer_input_stream const* stream)
 	: text_buffer_input_stream()
 {
 	if (stream)
 	{
-		attach(stream->_buffer, stream->_format);
+		attach(stream->_buffer.get());
 	}
 }
 
-text_buffer_input_stream::text_buffer_input_stream(text::itext_buffer* buff)
+text_buffer_input_stream::text_buffer_input_stream(text::itext_buffer_t buff)
 	: text_buffer_input_stream()
 {
 	attach(buff);
-}
-
-text_buffer_input_stream::text_buffer_input_stream(ibuffer_t buff, text::encoding_t f)
-	: text_buffer_input_stream()
-{
-	attach(buff, buff ? f.get() : text::encoding::unknown);
 }
 
 text_buffer_input_stream::~text_buffer_input_stream()
 {
 	_buffer = null;
 	_cursor = 0;
-	_format = text::encoding::unknown;
 }
 
 ANG_IMPLEMENT_CLASSNAME(ang::streams::text_buffer_input_stream);
@@ -53,23 +45,23 @@ ANG_IMPLEMENT_OBJECTNAME(ang::streams::text_buffer_input_stream);
 
 bool text_buffer_input_stream::is_kind_of(type_name_t type)const
 {
-	return (type == type_name<text_buffer_input_stream>())
+	return (type == type_of<text_buffer_input_stream>())
 		|| object::is_kind_of(type)
-		|| (type == type_name<itext_input_stream>());
+		|| (type == type_of<itext_input_stream>());
 }
 
-bool text_buffer_input_stream::is_child_of(type_name_t type)
+bool text_buffer_input_stream::is_inherited_of(type_name_t type)
 {
-	return (type == type_name<text_buffer_input_stream>())
-		|| object::is_child_of(type)
-		|| (type == type_name<itext_input_stream>());
+	return type == type_of<text_buffer_input_stream>()
+		|| object::is_inherited_of(type)
+		|| itext_input_stream::is_inherited_of(type);
 }
 
 bool text_buffer_input_stream::query_object(type_name_t type, unknown_ptr_t out)
 {
 	if (out == null)
 		return false;
-	if (type == type_name<text_buffer_input_stream>())
+	if (type == type_of<text_buffer_input_stream>())
 	{
 		*out = this;
 		return true;
@@ -78,14 +70,12 @@ bool text_buffer_input_stream::query_object(type_name_t type, unknown_ptr_t out)
 	{
 		return true;
 	}
-	else if (type == type_name<itext_input_stream>())
+	else if (itext_input_stream::query_object(type, out))
 	{
-		*out = static_cast<itext_input_stream*>(this);
 		return true;
 	}
-	else if (type == type_name<ibuffer>())
+	else if (!_buffer.is_empty() && _buffer->query_object(type, out))
 	{
-		*out = buffer();
 		return true;
 	}
 	return false;
@@ -103,7 +93,7 @@ stream_index_t text_buffer_input_stream::position()const
 
 stream_size_t text_buffer_input_stream::stream_size()const
 {
-	return _buffer.get() ? (_format.get() == text::encoding::unicode)? _buffer->buffer_size() *2: _buffer->buffer_size() : 0U;
+	return _buffer.get() ? _buffer->buffer_size() : 0U;
 }
 
 bool text_buffer_input_stream::end_of_stream()const
@@ -160,9 +150,9 @@ bool text_buffer_input_stream::backward(stream_index_t size)
 }
 
 
-text::encoding_t text_buffer_input_stream::text_encoding()const
+text::encoding_t text_buffer_input_stream::format()const
 {
-	return _format;
+	return _buffer.is_empty() ? _buffer->encoding().get() : text::encoding::none;
 }
 
 ibuffer* text_buffer_input_stream::buffer()const
@@ -170,55 +160,134 @@ ibuffer* text_buffer_input_stream::buffer()const
 	return _buffer.get();
 }
 
-bool text_buffer_input_stream::attach(text::itext_buffer* buff)
-{
-	_buffer = buff;
-	_format = buff ? buff->encoding().get() : text::encoding::unknown;
-	_cursor = 0;
+//static xml_encoding_t  xml_detect_encoding(raw_str_t text, windex& idx)
+//{
+//	if (text.size() < 4) return xml_encoding::none;
+//
+//	alignas(4) static byte utf8_bom[4] = { 0xef, 0xbb, 0xbf, 0x0 };
+//	alignas(4) static byte utf16_le_bom[4] = { 0xff, 0xfe, 0x0, 0x0 };
+//	alignas(4) static byte utf16_be_bom[4] = { 0xfe, 0xff, 0x0, 0x0 };
+//	alignas(4) static byte utf32_le_bom[8] = { 0xff, 0xfe, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
+//	alignas(4) static byte utf32_be_bom[8] = { 0x0, 0x0, 0xfe, 0xff, 0x0, 0x0, 0x0, 0x0 };
+//
+//	switch (text.encoding())
+//	{
+//	case text::encoding::auto_detect:
+//		if (text::UTF8().compare_until((utf8_char_t const*)text.ptr(), (utf8_char_t const*)utf8_bom) == 3)
+//		{
+//			idx += 3;
+//			return text::encoding::utf8;
+//		}
+//		else if (text::UTF32().compare_until((utf32_char_t const*)text.ptr(), (utf32_char_t const*)utf32_le_bom) == 1)
+//		{
+//			idx += 1;
+//			return text::native_encoding<text::encoding::utf32_le>();
+//		}
+//		else if (text::UTF32().compare_until((utf32_char_t const*)text.ptr(), (utf32_char_t const*)utf32_be_bom) == 1)
+//		{
+//			idx += 1;
+//			return text::native_encoding<text::encoding::utf16_be>();
+//		}
+//		else if (text::UTF16().compare_until((utf16_char_t const*)text.ptr(), (utf16_char_t const*)utf16_le_bom) == 1)
+//		{
+//			idx += 1;
+//			return text::native_encoding<text::encoding::utf16_le>();
+//		}
+//		else if (text::UTF16().compare_until((utf16_char_t const*)text.ptr(), (utf16_char_t const*)utf16_be_bom) == 1)
+//		{
+//			idx += 1;
+//			return text::native_encoding<text::encoding::utf16_be>();
+//		}
+//
+//		else if (text::UTF8().compare_until((utf8_char_t const*)text.ptr(), u8"<?xml"_sm.cstr()) == 5)
+//			return text::encoding::utf8;
+//		else if (text::UTF32().compare_until((utf32_char_t const*)text.ptr(), U"<?xml") == 5)
+//			return text::encoding::utf32;
+//		else if (text::UTF32_SE().compare_until((utf32_char_t const*)text.ptr(), U"<?xml") == 5)
+//			return text::encoding::utf32_se;
+//		else if (text::UTF16().compare_until((utf16_char_t const*)text.ptr(), u"<?xml") == 5)
+//			return text::encoding::utf16;
+//		else if (text::UTF16_SE().compare_until((utf16_char_t const*)text.ptr(), u"<?xml") == 5)
+//			return text::encoding::utf16_se;
+//
+//		return text::encoding::utf8;
+//
+//	case text::encoding::utf16_le: return text::native_encoding<text::encoding::utf16_le>();
+//	case text::encoding::utf16_be: return text::native_encoding<text::encoding::utf16_be>();
+//	case text::encoding::utf32_le: return text::native_encoding<text::encoding::utf32_le>();
+//	case text::encoding::utf32_be: return text::native_encoding<text::encoding::utf32_be>();
+//	default:
+//		return text.encoding();
+//	}
+//}
 
-	if (buff)
-	{
-		uint bom;
-		switch (buff->encoding().get())
-		{
-		case text::encoding::utf_8:
-			bom = 0X00FFFFFF& *(uint*)buff->buffer_ptr();
-			if (bom == mbyte::mbom || bom == mbyte::inv_mbom)
-				_cursor += 3;
-			break;
-		case text::encoding::utf_16:
-		case text::encoding::unicode:
-			bom = 0X0000FFFF & *(uint*)buff->buffer_ptr();
-			if (bom == mbyte::ubom || bom == mbyte::inv_ubom)
-				_cursor += 3;
-			break;
-		}
-	}
+template<text::encoding_enum ENCODING> wsize load_bom(pointer ptr) { return 0; }
 
-	return true;
+
+template<> wsize load_bom<text::encoding::utf8>(pointer ptr) {
+	alignas(4) static byte utf8_bom[4] = { 0xef, 0xbb, 0xbf, 0x0 };
+	return (text::UTF8().compare_until((utf8_char_t const*)ptr, (utf8_char_t const*)utf8_bom) == 3) ? 3 : 0;
 }
 
-bool text_buffer_input_stream::attach(ibuffer* buff, text::encoding_t format)
+template<> wsize load_bom<text::encoding::utf16_le>(pointer ptr) {
+	alignas(4) static byte utf16_le_bom[4] = { 0xff, 0xfe, 0x0, 0x0 };
+	return (text::UTF16_LE().compare_until((utf16_char_t const*)ptr, (utf16_char_t const*)utf16_le_bom) == 1) ? 2 : 0;
+}
+
+template<> wsize load_bom<text::encoding::utf16_be>(pointer ptr) {
+	alignas(4) static byte utf16_be_bom[4] = { 0xfe, 0xff, 0x0, 0x0 };
+	return (text::UTF16_BE().compare_until((utf16_char_t const*)ptr, (utf16_char_t const*)utf16_be_bom) == 1) ? 2 : 0;
+}
+
+template<> wsize load_bom<text::encoding::utf32_le>(pointer ptr) {
+	alignas(4) static byte utf32_le_bom[8] = { 0xff, 0xfe, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
+	return (text::UTF32_LE().compare_until((utf32_char_t const*)ptr, (utf32_char_t const*)utf32_le_bom) == 1) ? 4 : 0;
+}
+
+template<> wsize load_bom<text::encoding::utf32_be>(pointer ptr) {
+	alignas(4) static byte utf32_be_bom[8] = { 0x0, 0x0, 0xfe, 0xff, 0x0, 0x0, 0x0, 0x0 };
+	return (text::UTF32_BE().compare_until((utf32_char_t const*)ptr, (utf32_char_t const*)utf32_be_bom) == 1) ? 4 : 0;
+}
+
+template<> wsize load_bom<text::encoding::utf16>(pointer ptr) {
+	return text::is_little_endian() ? load_bom<text::encoding::utf16_le>(ptr) : load_bom<text::encoding::utf16_be>(ptr);
+}
+
+template<> wsize load_bom<text::encoding::utf16_se>(pointer ptr) {
+	return text::is_little_endian() ? load_bom<text::encoding::utf16_be>(ptr) : load_bom<text::encoding::utf16_le>(ptr);
+}
+
+template<> wsize load_bom<text::encoding::utf32>(pointer ptr) {
+	return text::is_little_endian() ? load_bom<text::encoding::utf32_le>(ptr) : load_bom<text::encoding::utf32_be>(ptr);
+}
+
+template<> wsize load_bom<text::encoding::utf32_se>(pointer ptr) {
+	return text::is_little_endian() ? load_bom<text::encoding::utf32_be>(ptr) : load_bom<text::encoding::utf32_le>(ptr);
+}
+
+template<> wsize load_bom<text::encoding::unicode>(pointer ptr) {
+	return load_bom<text::native_encoding<text::encoding::unicode>()>(ptr);
+}
+
+bool text_buffer_input_stream::attach(text::itext_buffer_t buff)
 {
 	_buffer = buff;
-	_format = buff ? format.get() : text::encoding::unknown;
 	_cursor = 0;
+
 	if (buff)
 	{
-		uint bom;
-		switch (format.get())
+		switch (buff->encoding().get())
 		{
-		case text::encoding::utf_8:
-			bom = 0X00FFFFFF & *(uint*)buff->buffer_ptr();
-			if (bom == mbyte::mbom || bom == mbyte::inv_mbom)
-				_cursor += 3;
-			break;
-		case text::encoding::utf_16:
-		case text::encoding::unicode:
-			bom = 0X0000FFFF & *(uint*)buff->buffer_ptr();
-			if (bom == mbyte::ubom || bom == mbyte::inv_ubom)
-				_cursor += 2;
-			break;
+		case text::encoding::utf8: _cursor += load_bom< text::encoding::utf8>(buff->buffer_ptr()); break;
+		case text::encoding::utf32: _cursor += load_bom< text::encoding::utf32>(buff->buffer_ptr()); break;
+		case text::encoding::utf32_se: _cursor += load_bom< text::encoding::utf32_se>(buff->buffer_ptr()); break;
+		case text::encoding::utf32_le: _cursor += load_bom< text::encoding::utf32_le>(buff->buffer_ptr()); break;
+		case text::encoding::utf32_be: _cursor += load_bom< text::encoding::utf32_be>(buff->buffer_ptr()); break;
+		case text::encoding::utf16: _cursor += load_bom< text::encoding::utf16>(buff->buffer_ptr()); break;
+		case text::encoding::utf16_se: _cursor += load_bom< text::encoding::utf16_se>(buff->buffer_ptr()); break;
+		case text::encoding::utf16_le: _cursor += load_bom< text::encoding::utf16_le>(buff->buffer_ptr()); break;
+		case text::encoding::utf16_be: _cursor += load_bom< text::encoding::utf16_be>(buff->buffer_ptr()); break;
+		case text::encoding::unicode: _cursor += load_bom< text::encoding::unicode>(buff->buffer_ptr()); break;
 		}
 	}
 

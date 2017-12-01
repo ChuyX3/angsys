@@ -245,29 +245,6 @@ wsize binary_buffer_input_stream::read(pointer ptr, wsize sz)
 	return sz;
 }
 
-wsize binary_buffer_input_stream::read(char& value) { return read(&value, sizeof(value)); }
-
-wsize binary_buffer_input_stream::read(byte& value) { return read(&value, sizeof(value)); }
-
-wsize binary_buffer_input_stream::read(short& value) { return read(&value, sizeof(value)); }
-
-wsize binary_buffer_input_stream::read(ushort& value) { return read(&value, sizeof(value)); }
-
-wsize binary_buffer_input_stream::read(int& value) { return read(&value, sizeof(value)); }
-
-wsize binary_buffer_input_stream::read(uint& value) { return read(&value, sizeof(value)); }
-
-wsize binary_buffer_input_stream::read(long& value) { return read(&value, sizeof(value)); }
-
-wsize binary_buffer_input_stream::read(ulong& value) { return read(&value, sizeof(value)); }
-
-wsize binary_buffer_input_stream::read(long64& value) { return read(&value, sizeof(value)); }
-
-wsize binary_buffer_input_stream::read(ulong64& value) { return read(&value, sizeof(value)); }
-
-wsize binary_buffer_input_stream::read(float& value) { return read(&value, sizeof(value)); }
-
-wsize binary_buffer_input_stream::read(double& value) { return read(&value, sizeof(value)); }
 
 //wsize binary_buffer_input_stream::read(string& out)
 //{

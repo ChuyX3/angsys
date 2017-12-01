@@ -519,7 +519,7 @@ namespace ang
 		operator xml::ixml_document const* (void)const;
 
 		xml::ixml_node_t operator[](raw_str_t)const;
-		template<typename T> xml::ixml_node_t operator[](safe_str<T> str)const { return operator[](raw_str(str)); }
+		template<typename T> xml::ixml_node_t operator[](safe_str<T> str)const;
 	};
 
 
@@ -689,7 +689,7 @@ namespace ang
 		operator xml::ixml_node_t()const;
 
 		xml::xml_text_t operator[](raw_str_t)const;
-		template<typename T> xml::xml_text_t operator[](safe_str<T> str)const { return operator[](raw_str(str)); }
+		template<typename T> xml::xml_text_t operator[](safe_str<T> str)const;
 	};
 
 	namespace xml
@@ -1382,8 +1382,8 @@ namespace ang
 		template<> LINK double xml::xml_text::xml_as<double>()const;
 		template<> LINK bool xml::xml_text::xml_as<bool>()const;
 		template<> LINK xml::xml_encoding_t xml::xml_text::xml_as<xml::xml_encoding_t>()const;
-	}
 
+	}
 
 	template<xml::xml_encoding ENCODING>
 	inline object_wrapper<xml::xml_text>::object_wrapper(strings::string_base<ENCODING> const& other) : _ptr(null) {
@@ -1393,6 +1393,33 @@ namespace ang
 	inline object_wrapper<xml::xml_text>::object_wrapper(safe_str<T> const& other) : _ptr(null) {
 		set(new xml::xml_text(other));
 	}
+
+	template<typename T>
+	inline xml::ixml_node_t intf_wrapper<xml::ixml_node>::operator[](safe_str<T> str)const {
+		return operator[](raw_str_t(str));
+	}
+
+	template<typename T>
+	inline xml::ixml_node_t intf_wrapper<xml::ixml_store>::operator[](safe_str<T> str)const {
+		return operator[](raw_str_t(str));
+	}
+
+
+	template<typename T>
+	inline xml::ixml_node_t intf_wrapper<xml::ixml_document>::operator[](safe_str<T> str)const {
+		return operator[](raw_str_t(str));
+	}
+
+	template<typename T>
+	inline xml::ixml_node_t object_wrapper<xml::xml_node>::operator[](safe_str<T> str)const {
+		return operator[](raw_str_t(str));
+	}
+
+	template<typename T>
+	inline xml::xml_text_t object_wrapper<xml::xml_header>::operator[](safe_str<T> str)const {
+		return operator[](raw_str_t(str));
+	}
+
 }
 
 #ifdef  LINK

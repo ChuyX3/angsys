@@ -943,8 +943,12 @@ namespace ang
 		inline const UTF8_t& UTF8() { return get_encoder<encoding::utf8>(); }
 		inline const UTF16_t& UTF16() { return get_encoder<encoding::utf16>(); }
 		inline const UTF16_SE_t& UTF16_SE() { return get_encoder<encoding::utf16_se>(); }
+		inline const UTF16_LE_t& UTF16_LE() { return get_encoder<encoding::utf16_le>(); }
+		inline const UTF16_BE_t& UTF16_BE() { return get_encoder<encoding::utf16_be>(); }
 		inline const UTF32_t& UTF32() { return get_encoder<encoding::utf32>(); }
 		inline const UTF32_SE_t& UTF32_SE() { return get_encoder<encoding::utf32_se>(); }
+		inline const UTF32_LE_t& UTF32_LE() { return get_encoder<encoding::utf32_le>(); }
+		inline const UTF32_BE_t& UTF32_BE() { return get_encoder<encoding::utf32_be>(); }
 
 		template<>
 		class encoder<encoding::auto_detect>
@@ -1060,6 +1064,8 @@ namespace ang
 		template<> inline bool is_endian_swapped<encoding::utf16_be>() { return is_little_endian(); }
 		template<> inline bool is_endian_swapped<encoding::utf32_le>() { return !is_little_endian(); }
 		template<> inline bool is_endian_swapped<encoding::utf32_be>() { return is_little_endian(); }
+
+		template<> inline constexpr encoding_enum native_encoding<encoding::unicode>() { return encoding_by_size<sizeof(wchar)>::encoding(); }
 
 		template<> inline encoding_enum native_encoding<encoding::utf16_le>() { return is_little_endian() ? encoding::utf16 : encoding::utf16_se; }
 		template<> inline encoding_enum native_encoding<encoding::utf16_be>() { return is_little_endian() ? encoding::utf16_se : encoding::utf16; }

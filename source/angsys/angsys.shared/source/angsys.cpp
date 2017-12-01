@@ -17,7 +17,7 @@
 
 #include <ang/xml.hpp>
 
-#include <ang/streams.hpp>
+//#include <ang/streams.hpp>
 
 using namespace ang;
 

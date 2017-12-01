@@ -81,19 +81,6 @@ namespace ang
 
 		ANG_BEGIN_INTERFACE(LINK, iinput_stream)
 			visible vcall wsize read(pointer, wsize)pure;
-			visible vcall wsize read(char&)pure;
-			visible vcall wsize read(byte&)pure;
-			visible vcall wsize read(short&)pure;
-			visible vcall wsize read(ushort&)pure;
-			visible vcall wsize read(int&)pure;
-			visible vcall wsize read(uint&)pure;
-			visible vcall wsize read(long&)pure;
-			visible vcall wsize read(ulong&)pure;
-			visible vcall wsize read(long64&)pure;
-			visible vcall wsize read(ulong64&)pure;
-			visible vcall wsize read(float&)pure;
-			visible vcall wsize read(double&)pure;
-
 			visible vcall text::encoding_t format()const pure;
 			visible vcall stream_index_t position()const pure;
 			visible vcall stream_size_t stream_size()const pure;
@@ -105,23 +92,6 @@ namespace ang
 
 		ANG_BEGIN_INTERFACE(LINK, ioutput_stream)
 			visible vcall wsize write(pointer, wsize)pure;
-			visible vcall wsize write(char)pure;
-			visible vcall wsize write(byte)pure;
-			visible vcall wsize write(short)pure;
-			visible vcall wsize write(ushort)pure;
-			visible vcall wsize write(int)pure;
-			visible vcall wsize write(uint)pure;
-			visible vcall wsize write(long)pure;
-			visible vcall wsize write(ulong)pure;
-			visible vcall wsize write(long64)pure;
-			visible vcall wsize write(ulong64)pure;
-			visible vcall wsize write(float)pure;
-			visible vcall wsize write(double)pure;
-			visible vcall wsize write(objptr)pure;
-			template<typename T> inline wsize write(object_wrapper<T> const& obj) {
-				return write(objptr(obj.get()));
-			}
-
 			visible vcall text::encoding_t format()const pure;
 			visible vcall stream_index_t position()const pure;
 			visible vcall stream_size_t stream_size()const pure;
@@ -136,13 +106,16 @@ namespace ang
 		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itext_input_stream, public iinput_stream)
 			visible using iinput_stream::read;
 			visible vcall wsize seek(raw_str_t)pure;
-			visible vcall wsize read(raw_str_t, wsize max)pure;
-			visible vcall wsize read_line(raw_str_t, wsize max, array_view<char32_t>)pure;
+			visible vcall wsize read(pointer, wsize, text::text_format_t)pure;
+			visible vcall wsize read(ibuffer_view_t, text::encoding_t, wsize max)pure;
+			visible vcall wsize read_line(ibuffer_view_t, text::encoding_t, wsize max, array_view<char32_t>)pure;
+
+			template<typename T> inline wsize read(T& value);
 
 			template<text::encoding_enum ENCODING>
 			inline wsize read(strings::string_base<ENCODING>& str, wsize max) {
 				ibuffer_view_t buff = str->map_buffer(0, max);
-				auto c = read(raw_str_t(buff->buffer_ptr(), buff->buffer_size(), ENCODING), max);
+				auto c = read(buff, ENCODING, max);
 				str->unmap_buffer(buff, c);
 				return c;
 			}
@@ -150,7 +123,7 @@ namespace ang
 			template<text::encoding_enum ENCODING>
 			inline wsize read_line(strings::string_base<ENCODING>& str, wsize max, array_view<char32_t> endline) {
 				ibuffer_view_t buff = str->map_buffer(0, max);
-				auto c = read_line(raw_str_t(buff->buffer_ptr(), buff->buffer_size(), ENCODING), max, endline);
+				auto c = read_line(buff, ENCODING, max, endline);
 				str->unmap_buffer(buff, c);
 				return c;
 			}
@@ -158,47 +131,108 @@ namespace ang
 
 
 		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itext_output_stream, public ioutput_stream)
-			visible vcall void enable_text_format(bool)pure;
+			visible vcall void enable_text_formating(bool)pure;
 			visible vcall bool is_text_format_enabled()const pure;
-			visible vcall void text_format(cstr_t)pure;
-			visible vcall void text_format(text::text_format_t)pure;
+			visible vcall void text_formating(cstr_t)pure;
+			visible vcall void text_formating(text::text_format_t)pure;
 			visible vcall bool command(special_command_t) pure;
+			visible vcall wsize write(pointer, wsize, text::text_format_t)pure;
 			visible vcall wsize write(raw_str_t)pure;
 			visible vcall wsize write_line(raw_str_t)pure;
 
-			template<typename T>
-			inline wsize write(safe_str<T> str) {
-				return write(raw_str_t(str));
-			}
-			template<typename T>
-			inline wsize write_line(safe_str<T> str) {
-				return write(raw_str_t(str));
-			}
-			template<text::encoding_enum ENCODING>
-			inline wsize write(strings::string_base<ENCODING>& str) {
-				return write(str->text_buffer());
-			}
-			template<text::encoding_enum ENCODING>
-			inline wsize write_line(strings::string_base<ENCODING>& str) {
-				return write_line(str->text_buffer());
-			}
-			using ioutput_stream::write;
+			template<typename T> inline wsize write(T const& str);
+			template<typename T> inline wsize write(T const& str, text::text_format_t);
+
 		ANG_END_INTERFACE();
 
 
 		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, ibinary_input_stream, public iinput_stream)
-			//visible vcall wsize read(string&)pure;
-			//visible vcall wsize read(wstring&)pure;
-			//using iinput_stream::read;
+			using iinput_stream::read;
+			template<typename T> inline wsize read(T& value);
 		ANG_END_INTERFACE();
 
 
 		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, ibinary_output_stream, public ioutput_stream)
-			//visible vcall wsize write(string)pure;
-			//visible vcall wsize write(wstring)pure;
-			//using ioutput_stream::write;
+			using ioutput_stream::write;
+			template<typename T> inline wsize write(T const& value);
 		ANG_END_INTERFACE();
 
+
+		template<typename T>
+		struct text_serializer {
+			static wsize serialize(itext_output_stream_t stream, T const& value, text::text_format_t format = text::default_text_format<T>::format()) {
+				return stream->write((pointer)&value, sizeof(T), format);
+			}
+		};
+
+		template<typename T>
+		struct text_deserializer {
+			static wsize deserialize(itext_input_stream_t stream, T& value) {
+				return stream->read((pointer)&value, sizeof(T), text::default_text_format<T>::format());
+			}
+		};
+
+
+		template<typename T>
+		struct text_serializer<safe_str<T>> {
+			static wsize serialize(itext_output_stream_t stream, safe_str<T> const& value) {
+				return stream->write((pointer)&value, sizeof(T), text::default_text_format<T>::format());
+			}
+		};
+
+		template<typename T>
+		struct text_serializer<object_wrapper<T>> {
+			static wsize serialize(itext_output_stream_t stream, object_wrapper<T> const& value) {
+				return value.is_empty() ? 0 : value->serialize(stream);
+			}
+		};
+
+
+		template<typename T>
+		struct binary_serializer {
+			static wsize serialize(ibinary_output_stream_t stream, T const& value) {
+				return stream->write((pointer)&value, sizeof(T));
+			}
+		};
+
+		template<typename T>
+		struct binary_deserializer {
+			static wsize deserialize(ibinary_input_stream_t stream, T& value) {
+				return stream->read(&value, sizeof(T));
+			}
+		};
+
+		template<typename T>
+		struct binary_serializer<object_wrapper<T>> {
+			static wsize serialize(ibinary_output_stream_t stream, object_wrapper<T> const& value) {
+				return value.is_empty() ? 0 : value->serialize(stream);
+			}
+		};
+
+
+
+		template<typename T>
+		inline wsize itext_input_stream::read(T& value) {
+			return text_deserializer<T>::deserialize(this, value);
+		}
+
+		template<typename T>
+		inline wsize itext_output_stream::write(T const& value) {
+			return text_serializer<T>::serialize(this, value);
+		}
+
+		template<typename T>
+		inline wsize itext_output_stream::write(T const& value, text::text_format_t format) {
+			return text_serializer<T>::serialize(this, value, format);
+		}
+
+		template<typename T> inline wsize ibinary_input_stream::read(T& value) {
+			return binary_deserializer<T>::deserialize(this, value);
+		}
+
+		template<typename T> inline wsize ibinary_output_stream::write(T const& value) {
+			return binary_serializer<T>::serialize(this, value);
+		}
 	}
 
 
@@ -438,20 +472,7 @@ namespace ang
 			ANG_DECLARE_INTERFACE();
 
 			virtual wsize read(pointer, wsize)override;
-			virtual wsize read(char&)override;
-			virtual wsize read(byte&)override;
-			virtual wsize read(short&)override;
-			virtual wsize read(ushort&)override;
-			virtual wsize read(int&)override;
-			virtual wsize read(uint&)override;
-			virtual wsize read(long&)override;
-			virtual wsize read(ulong&)override;
-			virtual wsize read(long64&)override;
-			virtual wsize read(ulong64&)override;
-			virtual wsize read(float&)override;
-			virtual wsize read(double&)override;
-			//virtual wsize read(string&)override;
-			//virtual wsize read(wstring&)override;
+			//virtual wsize read(objptr&)override;
 
 			virtual stream_index_t position()const override;
 			virtual stream_size_t stream_size()const override;
@@ -492,20 +513,7 @@ namespace ang
 			ANG_DECLARE_INTERFACE();
 
 			virtual wsize write(pointer, wsize)override;
-			virtual wsize write(char)override;
-			virtual wsize write(byte)override;
-			virtual wsize write(short)override;
-			virtual wsize write(ushort)override;
-			virtual wsize write(int)override;
-			virtual wsize write(uint)override;
-			virtual wsize write(long)override;
-			virtual wsize write(ulong)override;
-			virtual wsize write(long64)override;
-			virtual wsize write(ulong64)override;
-			virtual wsize write(float)override;
-			virtual wsize write(double)override;
-			virtual wsize write(objptr)override;
-			//virtual wsize write(wstring)override;
+			//virtual wsize write(objptr)override;
 
 			virtual text::encoding_t format()const override;
 			virtual stream_index_t position()const override;
@@ -527,6 +535,65 @@ namespace ang
 		private:
 			virtual~binary_buffer_output_stream();
 		};
+
+
+
+
+		class LINK text_buffer_input_stream final
+			: public object
+			, public itext_input_stream
+		{
+		private:
+			text::itext_buffer_t _buffer;
+			stream_index_t _cursor;
+
+		public:
+			text_buffer_input_stream();
+			text_buffer_input_stream(text_buffer_input_stream const*);
+			text_buffer_input_stream(text::itext_buffer_t);
+			template<text::encoding_enum ENCODING>
+			text_buffer_input_stream(ibuffer_t buff) 
+				: text_buffer_input_stream(new text::text_buffer_wrapper<ENCODING>(buff)) {
+			}
+
+		public: //overrides
+			ANG_DECLARE_INTERFACE();
+
+			using itext_input_stream::read;
+			using itext_input_stream::read_line;
+
+
+			virtual wsize seek(raw_str_t)override;
+			virtual wsize read(ibuffer_view_t, text::encoding_t, wsize max)override;
+			virtual wsize read_line(ibuffer_view_t, text::encoding_t, wsize max, array_view<char32_t>)override;
+
+			virtual text::encoding_t format()const override;
+			virtual stream_index_t position()const override;
+			virtual stream_size_t stream_size()const override;
+			virtual bool end_of_stream()const override;
+			virtual bool move_to(stream_index_t size, stream_reference_t ref)override;
+
+			bool is_valid()const;
+			ibuffer* buffer()const;
+			bool attach(text::itext_buffer_t);
+			template<text::encoding_enum ENCODING> bool attach(ibuffer_t buff) {
+				return attach(new text::text_buffer_wrapper<ENCODING>(buff));
+			}
+			bool can_move_to(stream_index_t size, stream_reference_t ref);
+			pointer pointer_at(stream_index_t);
+
+		private:
+			virtual wsize read(pointer, wsize)override;
+
+			bool forward(stream_index_t size);
+			bool backward(stream_index_t size);
+			bool can_forward(stream_index_t size);
+			bool can_backward(stream_index_t size);
+
+		private:
+			virtual~text_buffer_input_stream();
+		};
+
 
 
 		/*inline text_buffer_input_stream_t& operator >> (text_buffer_input_stream_t& stream, char& value) { stream->read(value); return stream; }

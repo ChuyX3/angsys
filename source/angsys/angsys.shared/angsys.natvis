@@ -203,11 +203,11 @@
       <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_buffer</Item>
       <ArrayItems Condition="_data._storage_type != -1">
         <Size>LOCAL_CAPACITY</Size>
-        <ValuePointer>_data._stack_buffer</ValuePointer>
+        <ValuePointer>(char*)_data._stack_buffer</ValuePointer>
       </ArrayItems>
       <ArrayItems Condition="_data._storage_type == -1">
         <Size>_data._allocated_capacity</Size>
-        <ValuePointer>_data._allocated_buffer</ValuePointer>
+        <ValuePointer>(char*)_data._allocated_buffer</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
@@ -227,11 +227,11 @@
       <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_buffer</Item>
       <ArrayItems Condition="_data._storage_type != -1">
         <Size>LOCAL_CAPACITY</Size>
-        <ValuePointer>_data._stack_buffer</ValuePointer>
+        <ValuePointer>(wchar_t*)_data._stack_buffer</ValuePointer>
       </ArrayItems>
       <ArrayItems Condition="_data._storage_type == -1">
         <Size>_data._allocated_capacity</Size>
-        <ValuePointer>_data._allocated_buffer</ValuePointer>
+        <ValuePointer>(wchar_t*)_data._allocated_buffer</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
@@ -251,11 +251,11 @@
       <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_buffer</Item>
       <ArrayItems Condition="_data._storage_type != -1">
         <Size>LOCAL_CAPACITY</Size>
-        <ValuePointer>_data._stack_buffer</ValuePointer>
+        <ValuePointer>(char*)_data._stack_buffer</ValuePointer>
       </ArrayItems>
       <ArrayItems Condition="_data._storage_type == -1">
         <Size>_data._allocated_capacity</Size>
-        <ValuePointer>_data._allocated_buffer</ValuePointer>
+        <ValuePointer>(char*)_data._allocated_buffer</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
@@ -275,11 +275,11 @@
       <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_buffer</Item>
       <ArrayItems Condition="_data._storage_type != -1">
         <Size>LOCAL_CAPACITY</Size>
-        <ValuePointer>_data._stack_buffer</ValuePointer>
+        <ValuePointer>(char16_t*)_data._stack_buffer</ValuePointer>
       </ArrayItems>
       <ArrayItems Condition="_data._storage_type == -1">
         <Size>_data._allocated_capacity</Size>
-        <ValuePointer>_data._allocated_buffer</ValuePointer>
+        <ValuePointer>(char16_t*)_data._allocated_buffer</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
@@ -299,11 +299,11 @@
       <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_buffer</Item>
       <ArrayItems Condition="_data._storage_type != -1">
         <Size>LOCAL_CAPACITY</Size>
-        <ValuePointer>_data._stack_buffer</ValuePointer>
+        <ValuePointer>(char32_t*)_data._stack_buffer</ValuePointer>
       </ArrayItems>
       <ArrayItems Condition="_data._storage_type == -1">
         <Size>_data._allocated_capacity</Size>
-        <ValuePointer>_data._allocated_buffer</ValuePointer>
+        <ValuePointer>(char32_t*)_data._allocated_buffer</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>

@@ -148,9 +148,12 @@ namespace ang
 		template<typename new_t, typename old_t>
 		inline bool interface_cast(const old_t* _old, const new_t*& _new);
 
+	
+
 		struct LINK runtime_data_base
 		{
 			static type_name_t regist_typename(string);
+			static type_name_t regist_type_info(string, dword& type_id);
 		};
 
 		template<typename T>

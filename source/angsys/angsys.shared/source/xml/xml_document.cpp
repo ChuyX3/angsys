@@ -1120,9 +1120,9 @@ bool xml_document::decode_header(text::string_util& code, windex& idx, wstring& 
 	beg = header->find("encoding"_s, beg);
 	if (beg != invalid_index)
 	{
-		beg = header->find("\"", beg);
+		beg = header->find("\""_s, beg);
 		beg++;
-		end = header->find("\"", beg);
+		end = header->find("\""_s, beg);
 		header->sub_string(value, beg, end);
 		encoding = xml_encoding_t::parse(value);
 	}
