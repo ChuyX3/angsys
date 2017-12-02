@@ -221,53 +221,6 @@ ibuffer* text_buffer_input_stream::buffer()const
 //	}
 //}
 
-template<text::encoding_enum ENCODING> wsize load_bom(pointer ptr) { return 0; }
-
-
-template<> wsize load_bom<text::encoding::utf8>(pointer ptr) {
-	alignas(4) static byte utf8_bom[4] = { 0xef, 0xbb, 0xbf, 0x0 };
-	return (text::UTF8().compare_until((utf8_char_t const*)ptr, (utf8_char_t const*)utf8_bom) == 3) ? 3 : 0;
-}
-
-template<> wsize load_bom<text::encoding::utf16_le>(pointer ptr) {
-	alignas(4) static byte utf16_le_bom[4] = { 0xff, 0xfe, 0x0, 0x0 };
-	return (text::UTF16_LE().compare_until((utf16_char_t const*)ptr, (utf16_char_t const*)utf16_le_bom) == 1) ? 2 : 0;
-}
-
-template<> wsize load_bom<text::encoding::utf16_be>(pointer ptr) {
-	alignas(4) static byte utf16_be_bom[4] = { 0xfe, 0xff, 0x0, 0x0 };
-	return (text::UTF16_BE().compare_until((utf16_char_t const*)ptr, (utf16_char_t const*)utf16_be_bom) == 1) ? 2 : 0;
-}
-
-template<> wsize load_bom<text::encoding::utf32_le>(pointer ptr) {
-	alignas(4) static byte utf32_le_bom[8] = { 0xff, 0xfe, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
-	return (text::UTF32_LE().compare_until((utf32_char_t const*)ptr, (utf32_char_t const*)utf32_le_bom) == 1) ? 4 : 0;
-}
-
-template<> wsize load_bom<text::encoding::utf32_be>(pointer ptr) {
-	alignas(4) static byte utf32_be_bom[8] = { 0x0, 0x0, 0xfe, 0xff, 0x0, 0x0, 0x0, 0x0 };
-	return (text::UTF32_BE().compare_until((utf32_char_t const*)ptr, (utf32_char_t const*)utf32_be_bom) == 1) ? 4 : 0;
-}
-
-template<> wsize load_bom<text::encoding::utf16>(pointer ptr) {
-	return text::is_little_endian() ? load_bom<text::encoding::utf16_le>(ptr) : load_bom<text::encoding::utf16_be>(ptr);
-}
-
-template<> wsize load_bom<text::encoding::utf16_se>(pointer ptr) {
-	return text::is_little_endian() ? load_bom<text::encoding::utf16_be>(ptr) : load_bom<text::encoding::utf16_le>(ptr);
-}
-
-template<> wsize load_bom<text::encoding::utf32>(pointer ptr) {
-	return text::is_little_endian() ? load_bom<text::encoding::utf32_le>(ptr) : load_bom<text::encoding::utf32_be>(ptr);
-}
-
-template<> wsize load_bom<text::encoding::utf32_se>(pointer ptr) {
-	return text::is_little_endian() ? load_bom<text::encoding::utf32_be>(ptr) : load_bom<text::encoding::utf32_le>(ptr);
-}
-
-template<> wsize load_bom<text::encoding::unicode>(pointer ptr) {
-	return load_bom<text::native_encoding<text::encoding::unicode>()>(ptr);
-}
 
 bool text_buffer_input_stream::attach(text::itext_buffer_t buff)
 {
@@ -276,6 +229,7 @@ bool text_buffer_input_stream::attach(text::itext_buffer_t buff)
 
 	if (buff)
 	{
+		text::encoder_interface::initialize_interface(&encoder, buff->encoding());
 		switch (buff->encoding().get())
 		{
 		case text::encoding::utf8: _cursor += load_bom< text::encoding::utf8>(buff->buffer_ptr()); break;
@@ -373,91 +327,47 @@ wsize text_buffer_input_stream::read(pointer ptr, wsize sz)
 	return 0;
 }
 
-bool text_buffer_input_stream::read(wchar& value)
+wsize text_buffer_input_stream::read(pointer ptr, wsize sz, text::text_format_t format)
 {
-	if (!is_valid() || (position()>= stream_size()))
+	if (!is_valid() || (position() >= stream_size()))
 		return false;
 	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
+	windex i = 0, j= 0;
 
-	switch (_format)
+	switch (format.format_target())
 	{
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		value = (wchar)(byte)text[0];
-		forward(sizeof(char));
-	}break;
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		value = text[0];
-		forward(sizeof(wchar));
-	}break;
-	case text::encoding::utf_8: {
-		mbyte mb;
-		mb.value = *reinterpret_cast<uint*>(buffer);
-		value = mb.convert();
-		forward(mb.size());
-	}break;
-	default:return false;
+	case text::text_format::character:
+		switch (sz)
+		{
+		case 1: //ascii - utf8
+			forward(text::ASCII().from_utf32(encoder._to_utf32(buffer, i), (char*)ptr, j));
+		case 2: //utf16
+			forward(text::UTF16().from_utf32(encoder._to_utf32(buffer, i), (char16_t*)ptr, j));
+		case 4: //utf32
+			forward(text::UTF32().from_utf32(encoder._to_utf32(buffer, i), (char32_t*)ptr, j));
+		default: return 0;
+		}
+
+	case text::text_format::signed_integer:
+		integer::parse();
+		switch (sz)
+		{
+		case 1: //ascii - utf8
+			forward(text::ASCII().from_utf32(encoder._to_utf32(buffer, i), (char*)ptr, j));
+		case 2: //utf16
+			forward(text::UTF16().from_utf32(encoder._to_utf32(buffer, i), (char16_t*)ptr, j));
+		case 4: //utf32
+			forward(text::UTF32().from_utf32(encoder._to_utf32(buffer, i), (char32_t*)ptr, j));
+		default: return 0;
+		}
+	case text::text_format::usigned_integer:
+	case text::text_format::floating:
+
+		default:
+			return 0;
 	}
-	return true;
-}
 
-bool text_buffer_input_stream::read(char& value)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	switch (_format)
-	{
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		value = text[0];
-		forward(sizeof(char));
-	}break;
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		value = (char)(byte)text[0];
-		forward(sizeof(wchar));
-	}break;
-	case text::encoding::utf_8: {
-		mbyte mb;
-		mb.value = *reinterpret_cast<uint*>(buffer);
-		value = (char)(byte)mb.convert();
-		forward(mb.size());
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read(byte& value)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	switch (_format)
-	{
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		value = text[0];
-		forward(sizeof(char));
-	}break;
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		value = (byte)text[0];
-		forward(sizeof(wchar));
-	}break;
-	case text::encoding::utf_8: {
-		mbyte mb;
-		mb.value = *reinterpret_cast<uint*>(buffer);
-		value = (byte)mb.convert();
-		forward(mb.size());
-	}break;
-	default:return false;
-	}
-	return true;
+	return 0;
 }
 
 bool text_buffer_input_stream::read(short& value)

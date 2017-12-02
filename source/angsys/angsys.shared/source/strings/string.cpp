@@ -222,7 +222,7 @@ void string_base_buffer::copy(raw_str_t str)
 	auto sz = str.count();
 	if (sz == 0U)
 		return;
-	auto lc = 128u * char_size();
+	auto lc = 128u / char_size();
 	if (sz < lc)
 	{
 		clean();
@@ -240,7 +240,7 @@ void string_base_buffer::concat(raw_str_t str)
 	auto sz = str.count();
 	if (sz == 0U)
 		return;
-	auto lc = 128u * char_size();
+	auto lc = 128u / char_size();
 	wsize my_len = length();
 	if ((my_len + sz) < lc)
 	{
@@ -258,7 +258,7 @@ void string_base_buffer::copy_at(raw_str_t str, windex at)
 	auto sz = str.count();
 	if (sz == 0U)
 		return;
-	auto lc = 128u * char_size();
+	auto lc = 128u / char_size();
 	wsize my_len = min(length(), at);
 	if ((my_len + sz) < lc)
 	{

@@ -53,6 +53,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\encoder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\format_parser.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\string_helper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\task.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\thread.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\xml_entity_values.hpp" />
@@ -83,7 +84,7 @@
       <ExcludedFromBuild>false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\text_buffer_input_stream.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
+      <ExcludedFromBuild>false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\text_buffer_output_stream.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>

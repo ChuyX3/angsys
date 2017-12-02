@@ -164,6 +164,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\xml_entity_values.hpp">
       <Filter>header files\include</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\string_helper.hpp">
+      <Filter>header files\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">

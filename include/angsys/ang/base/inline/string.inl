@@ -23,10 +23,10 @@ inline ang::raw_str::raw_str(raw_str const& str)
 }
 
 template<typename T>
-inline ang::raw_str::raw_str(safe_str<T> const& str)
+inline ang::raw_str::raw_str(safe_str<T> const& str, text::encoding_t e)
 	: _value((pointer)str.get())
 	, _size(str.size() * sizeof(T))
-	, _encoding(text::encoding_by_type<typename text::char_type_by_type<T>::char_t>::encoding()) {
+	, _encoding(e) {
 }
 
 inline pointer ang::raw_str::ptr()const { return _value; }

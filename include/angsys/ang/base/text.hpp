@@ -244,7 +244,7 @@ namespace ang
 		raw_str(pointer v, wsize s, text::encoding e);
 		raw_str(raw_str const& str);
 
-		template<typename T> inline raw_str(safe_str<T> const& str);
+		template<typename T> inline raw_str(safe_str<T> const& str, text::encoding_t e = text::encoding_by_type<typename text::char_type_by_type<T>::char_t>::encoding());
 
 		inline pointer ptr()const;
 		inline wsize size()const;
@@ -862,6 +862,7 @@ namespace ang
 			wsize(*_length)(pointer);
 			wsize(*_size)(pointer, encoding_t);
 			char32_t(*_to_utf32)(pointer, windex&);
+			wsize(*_from_utf32)(char32_t, pointer, windex&);
 			int(*_compare_string)(pointer, pointer, encoding_t);
 			wsize(*_compare_string_until)(pointer, pointer, encoding_t);
 			wsize(*_convert_string)(pointer, wsize, pointer, encoding_t, bool);
@@ -903,6 +904,11 @@ namespace ang
 			template<typename T> inline wsize convert(str_t dest, wsize maxsize, safe_str<T> src, bool end_of_string = true)const { return _convert_string((pointer)dest, maxsize, (pointer)src.get(), encoding_by_type<typename char_type_by_type<T>::char_t>::encoding(), end_of_string); }
 			inline wsize convert(str_t dest, wsize maxsize, raw_str_t src, bool end_of_string = true)const { return _convert_string((pointer)dest, maxsize, src.ptr(), src.encoding(), end_of_string); }
 			inline wsize convert(str_t dest, wsize maxsize, pointer src, text::encoding_t format, bool end_of_string = true)const { return _convert_string((pointer)dest, maxsize, src, format, end_of_string); }
+
+			char32_t to_utf32(char_t value)const { windex i = 0; return _to_utf32(&value, i); }
+			char32_t to_utf32(char_t* value, windex& i)const { return _to_utf32(&value, i); }
+			wsize from_utf32(char32_t value, char_t& out)const { windex i = 0; return _from_utf32(value, &out, i); }
+			wsize from_utf32(char32_t value, char_t* out, windex& i)const { return _from_utf32(value, out, i); }
 
 			template<typename T> windex find(cstr_t first, wsize s1, T const* second, wsize s2, windex start)const { return _find((pointer)first, s1, (pointer)second, s2, encoding_by_type<typename char_type_by_type<T>::char_t>::encoding(), start); }
 			template<typename T> windex find(cstr_t first, wsize s1, safe_str<T> second, windex start)const { return _find((pointer)first, s1, (pointer)second.get(), second.size(), encoding_by_type<typename char_type_by_type<T>::char_t>::encoding(), start); }

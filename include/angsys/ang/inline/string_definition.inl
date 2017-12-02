@@ -204,7 +204,7 @@ namespace ang
 	inline object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::object_wrapper(object_wrapper<strings::string_buffer<OTHER_ENCODING>> const& str)
 		: object_wrapper() {
 		if (!str.is_empty())
-			set(new strings::string_buffer<ENCODING>(str->cstr()));
+			set(new strings::string_buffer<ENCODING>(str->text_buffer()));
 	}
 
 	template<typename T, wsize N>
@@ -230,7 +230,7 @@ namespace ang
 	template<text::encoding_enum OTHER_ENCODING>
 	inline object_wrapper<strings::string_buffer<CURRENT_ENCODING>>& object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator = (object_wrapper<strings::string_buffer<OTHER_ENCODING>> const& str) {
 		if (is_empty()) set(new strings::string_buffer<ENCODING>(str.get()));
-		else if (!str.is_empty()) get()->copy(str->cstr());
+		else if (!str.is_empty()) get()->copy(str->text_buffer());
 		return*this;
 	}
 

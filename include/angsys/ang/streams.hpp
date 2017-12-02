@@ -113,20 +113,9 @@ namespace ang
 			template<typename T> inline wsize read(T& value);
 
 			template<text::encoding_enum ENCODING>
-			inline wsize read(strings::string_base<ENCODING>& str, wsize max) {
-				ibuffer_view_t buff = str->map_buffer(0, max);
-				auto c = read(buff, ENCODING, max);
-				str->unmap_buffer(buff, c);
-				return c;
-			}
-		
+			inline wsize read(strings::string_base<ENCODING>& str, wsize max);	
 			template<text::encoding_enum ENCODING>
-			inline wsize read_line(strings::string_base<ENCODING>& str, wsize max, array_view<char32_t> endline) {
-				ibuffer_view_t buff = str->map_buffer(0, max);
-				auto c = read_line(buff, ENCODING, max, endline);
-				str->unmap_buffer(buff, c);
-				return c;
-			}
+			inline wsize read_line(strings::string_base<ENCODING>& str, wsize max, array_view<char32_t> endline);
 		ANG_END_INTERFACE();
 
 
@@ -172,6 +161,23 @@ namespace ang
 			}
 		};
 
+		template<text::encoding_enum ENCODING>
+		struct text_deserializer<strings::string_base<ENCODING>> {
+			static wsize deserialize(itext_input_stream_t stream, strings::string_base<ENCODING>& str, wsize max) {
+				ibuffer_view_t buff = str->map_buffer(0, max);
+				auto c = stream->read(buff, ENCODING, max);
+				str->unmap_buffer(buff, c);
+				return c;
+			}
+
+			static wsize deserialize_until(itext_input_stream_t stream, strings::string_base<ENCODING>& str, wsize max, array_view<char32_t> endline) {
+				ibuffer_view_t buff = str->map_buffer(0, max);
+				auto c = read_line(buff, ENCODING, max, endline);
+				str->unmap_buffer(buff, c);
+				return c;
+			}
+		};
+
 
 		template<typename T>
 		struct text_serializer<safe_str<T>> {
@@ -186,7 +192,6 @@ namespace ang
 				return value.is_empty() ? 0 : value->serialize(stream);
 			}
 		};
-
 
 		template<typename T>
 		struct binary_serializer {
@@ -209,12 +214,21 @@ namespace ang
 			}
 		};
 
-
-
 		template<typename T>
 		inline wsize itext_input_stream::read(T& value) {
 			return text_deserializer<T>::deserialize(this, value);
 		}
+
+		template<text::encoding_enum ENCODING>
+		inline wsize read(strings::string_base<ENCODING>& str, wsize max) {
+			return text_deserializer<strings::string_base<ENCODING>>::deserialize(this, str, max);
+		}
+
+		template<text::encoding_enum ENCODING>
+		inline wsize read_line(strings::string_base<ENCODING>& str, wsize max, array_view<char32_t> endline) {
+			return text_deserializer<strings::string_base<ENCODING>>::deserialize(this, str, max, endline);
+		}
+
 
 		template<typename T>
 		inline wsize itext_output_stream::write(T const& value) {
@@ -546,6 +560,7 @@ namespace ang
 		private:
 			text::itext_buffer_t _buffer;
 			stream_index_t _cursor;
+			text::encoder_interface encoder;
 
 		public:
 			text_buffer_input_stream();
@@ -564,6 +579,7 @@ namespace ang
 
 
 			virtual wsize seek(raw_str_t)override;
+			virtual wsize read(pointer, wsize, text::text_format_t)override;
 			virtual wsize read(ibuffer_view_t, text::encoding_t, wsize max)override;
 			virtual wsize read_line(ibuffer_view_t, text::encoding_t, wsize max, array_view<char32_t>)override;
 
