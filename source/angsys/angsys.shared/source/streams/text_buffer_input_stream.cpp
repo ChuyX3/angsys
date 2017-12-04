@@ -9,6 +9,7 @@
 
 #include "pch.h"
 #include "ang/streams.hpp"
+#include "string_helper.hpp"
 
 using namespace ang;
 using namespace ang::streams;
@@ -152,7 +153,7 @@ bool text_buffer_input_stream::backward(stream_index_t size)
 
 text::encoding_t text_buffer_input_stream::format()const
 {
-	return _buffer.is_empty() ? _buffer->encoding().get() : text::encoding::none;
+	return !_buffer.is_empty() ? _buffer->encoding().get() : text::encoding::none;
 }
 
 ibuffer* text_buffer_input_stream::buffer()const
@@ -331,700 +332,115 @@ wsize text_buffer_input_stream::read(pointer ptr, wsize sz, text::text_format_t 
 {
 	if (!is_valid() || (position() >= stream_size()))
 		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
+	stream_index_t last_pos = position();
+	raw_str buffer = raw_str(pointer(wsize(_buffer->buffer_ptr()) + last_pos), stream_size() - last_pos, this->format());
 	windex i = 0, j= 0;
 
 	switch (format.format_target())
 	{
 	case text::text_format::character:
-		switch (sz)
-		{
-		case 1: //ascii - utf8
-			forward(text::ASCII().from_utf32(encoder._to_utf32(buffer, i), (char*)ptr, j));
-		case 2: //utf16
-			forward(text::UTF16().from_utf32(encoder._to_utf32(buffer, i), (char16_t*)ptr, j));
-		case 4: //utf32
-			forward(text::UTF32().from_utf32(encoder._to_utf32(buffer, i), (char32_t*)ptr, j));
+		switch (sz) {
+		case 1: forward(text::ASCII().from_utf32(encoder._to_utf32(buffer.ptr(), i), (char*)ptr, j)); break;//ascii - utf8
+		case 2: forward(text::UTF16().from_utf32(encoder._to_utf32(buffer.ptr(), i), (char16_t*)ptr, j)); break; //utf16
+		case 4: forward(text::UTF32().from_utf32(encoder._to_utf32(buffer.ptr(), i), (char32_t*)ptr, j)); break; //utf32
 		default: return 0;
 		}
 
-	case text::text_format::signed_integer:
-		integer::parse();
-		switch (sz)
-		{
-		case 1: //ascii - utf8
-			forward(text::ASCII().from_utf32(encoder._to_utf32(buffer, i), (char*)ptr, j));
-		case 2: //utf16
-			forward(text::UTF16().from_utf32(encoder._to_utf32(buffer, i), (char16_t*)ptr, j));
-		case 4: //utf32
-			forward(text::UTF32().from_utf32(encoder._to_utf32(buffer, i), (char32_t*)ptr, j));
-		default: return 0;
+	case text::text_format::signed_integer: {
+		long64 value = str_to_integer(buffer, i);
+		switch (sz) {
+		case 1: *(char*)ptr = (char)value; break;
+		case 2: *(short*)ptr = (short)value; break;
+		case 4: *(int*)ptr = (int)value; break;
+		case 8: *(long64*)ptr = value; break;
 		}
-	case text::text_format::usigned_integer:
-	case text::text_format::floating:
+		forward(i * buffer.char_size());
+	}	break;
+		
+	case text::text_format::usigned_integer: {
+		ulong64 value = str_to_uinteger(buffer, i);
+		switch (sz) {
+		case 1: *(uchar*)ptr = (uchar)value; break;
+		case 2: *(ushort*)ptr = (ushort)value; break;
+		case 4: *(uint*)ptr = (uint)value; break;
+		case 8: *(ulong64*)ptr = value; break;
+		}
+		forward(i * buffer.char_size());
+	}	break;
 
-		default:
-			return 0;
+	case text::text_format::floating: {
+		double value = str_to_float(buffer, i);
+		switch (sz) {
+		case 4: *(float*)ptr = (float)value; break;
+		case 8: *(double*)ptr = value; break;
+		}
+		forward(i * buffer.char_size());
+	}	break;
+
 	}
 
-	return 0;
+	return position() - last_pos;
 }
 
-bool text_buffer_input_stream::read(short& value)
+wsize text_buffer_input_stream::seek(raw_str_t cstr)
 {
 	if (position() >= stream_size())
 		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		char* end;
-		value = (short)strtol(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		wchar* end;
-		value = (short)wcstol(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-	default:return false;
-	}
-	return true;
+	stream_index_t last_pos = position();
+	raw_str buffer = raw_str(pointer(wsize(_buffer->buffer_ptr()) + last_pos), stream_size() - last_pos, this->format());
+	forward(encoder._compare_string_until(buffer.ptr(), cstr.ptr(), cstr.encoding()) * buffer.char_size());
+	return position() - last_pos;
 }
 
-bool text_buffer_input_stream::read(ushort& value)
+wsize text_buffer_input_stream::read(ibuffer_view_t out, text::encoding_t encoding, wsize max)
 {
 	if (position() >= stream_size())
 		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
+	windex i = 0, c = 0; char32_t val, val2; bool b = false;
+	array_view<const char32_t> end = U" \n\r\t";
+	stream_index_t last_pos = position();
+	raw_str buffer = raw_str(pointer(wsize(_buffer->buffer_ptr()) + last_pos), stream_size() - last_pos, this->format());
 
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		char* end;
-		value = (ushort)strtoul(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
+	text::encoder_interface _encoder;
+	text::encoder_interface::initialize_interface(&_encoder, encoding);
 
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		wchar* end;
-		value = (ushort)wcstoul(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-	default:return false;
-	}
-	return true;
-}
+LOOP:
+	if (i >= max) goto END;
+	val = encoder._to_utf32(buffer.ptr(), i);
+	c = 0;
+LOOP2:
+	if (c >= end.size()) goto LOOP;
+	if (val == end[c]) goto END;
+	c++;
+	goto LOOP2;
+END:
+	_encoder._convert_string(out->buffer_ptr(), max, buffer.ptr(), i, buffer.encoding(), true);
+	return i * buffer.char_size();
+} 
 
-bool text_buffer_input_stream::read(int& value)
+wsize text_buffer_input_stream::read_line(ibuffer_view_t out, text::encoding_t encoding, wsize max, array_view<const char32_t> end)
 {
 	if (position() >= stream_size())
 		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		char* end;
-		value = (int)strtol(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		wchar* end;
-		value = (int)wcstol(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read(uint& value)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		char* end;
-		value = (uint)strtoul(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		wchar* end;
-		value = (uint)wcstoul(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read(long& value)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		char* end;
-		value = strtol(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		wchar* end;
-		value = wcstol(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read(ulong& value)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		char* end;
-		value = strtoul(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		wchar* end;
-		value = wcstoul(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read(long64& value)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		char* end;
-		value = strtoll(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		wchar* end;
-		value = wcstoll(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read(ulong64& value)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		char* end;
-		value = strtoull(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		wchar* end;
-		value = wcstoull(text, &end, 10);
-		forward(wsize(end) - wsize(text));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-
-bool text_buffer_input_stream::read(float& value)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		char* end;
-		value = strtof(text, &end);
-		forward(wsize(end) - wsize(text));
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		wchar* end;
-		value = (float)wcstod(text, &end);
-		forward(wsize(end) - wsize(text));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read(double& value)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		char* end;
-		value = strtod(text, &end);
-		forward(wsize(end) - wsize(text));
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		wchar* end;
-		value = wcstod(text, &end);
-		forward(wsize(end) - wsize(text));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read(cstr_t cstr)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-	int c = 0;
-	switch (_format)
-	{
-
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		streams::stream_size_t max = stream_size() - position();		
-		while ((c < max) && (text[c] != 0) && (cstr[c] != 0) && ((byte)text[c] == (byte)cstr[c]))
-			c++;
-		forward(c);
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		streams::stream_size_t max = stream_size() - position();
-		while ((c < max) && (text[c] != 0) && (cstr[c] != 0) && (text[c] == cstr[c]))
-			c++;
-		forward(c * 2);
-	}break;
-
-	case text::encoding::utf_8: {
-		//auto text = reinterpret_cast<MStr>(buffer);
-
-	}break;
-	default:return false;
-	}
-	return c;
-}
-
-bool text_buffer_input_stream::read(cwstr_t cstr)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-	int c = 0;
-	switch (_format)
-	{
-
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		streams::stream_size_t max = stream_size() - position();
-		while ((c < max) && (text[c] != 0) && (cstr[c] != 0) && (text[c] == cstr[c]))
-			c++;
-		forward(c);
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		streams::stream_size_t max = stream_size() - position();
-		while ((c < max) && (text[c] != 0) && (cstr[c] != 0) && ((byte)text[c] == (byte)cstr[c]))
-			c++;
-		forward(c * 2);
-	}break;
-
-	case text::encoding::utf_8: {
-		//auto text = reinterpret_cast<MStr>(buffer);
-
-	}break;
-	default:return false;
-	}
-	return c;
-}
-
-bool text_buffer_input_stream::read(string& out, wsize _max)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	if (out.is_empty())
-		out = new strings::string_buffer();
-	static cstr_t stop = " \t\n\r";
-	switch (_format)
-	{
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, stream_size() - position());
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && stop.find(text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, (stream_size() - position()) / sizeof(wchar));
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && stop.find((char)(byte)text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-	}break;
-
-	case text::encoding::utf_8: {
-		auto text = reinterpret_cast<mchar*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, stream_size() - position());
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && (*((ushort*)&text[c]) != mbyte::inv_null) && stop.find(text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read(wstring& out, wsize _max)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	if (out.is_empty())
-		out = new strings::wstring_buffer();
-
-	static cwstr_t stop = L" \t\n\r";
-
-	switch (_format)
-	{
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, stream_size() - position());
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && stop.find(text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, (stream_size() - position()) / sizeof(wchar));
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && stop.find((char)(byte)text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-	}break;
-
-	case text::encoding::utf_8: {
-		auto text = reinterpret_cast<mchar*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, stream_size() - position());
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && (*((ushort*)&text[c]) != mbyte::inv_null) && stop.find(text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read(mstring& out, wsize _max)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	if (out.is_empty())
-		out = new strings::mstring_buffer();
-
-	static cstr_t stop = " \t\n\r";
-
-	switch (_format)
-	{
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, stream_size() - position());
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && stop.find(text[c], 0) == invalid_index)
-			c += mbyte(text[c]).size();
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, (stream_size() - position()) / sizeof(wchar));
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && stop.find((char)(byte)text[c], 0) == invalid_index)
-			c += mbyte(text[c]).size();
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-	}break;
-
-	case text::encoding::utf_8: {
-		auto text = reinterpret_cast<mchar*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, stream_size() - position());
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && (*((ushort*)&text[c]) != mbyte::inv_null) && stop.find(text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read_line(string& out, wsize _max, array<char> _stop)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	if (out.is_empty())
-		out = new strings::string_buffer();
-	auto stop = _stop.is_empty() ? cstr_t("\n\r") : cstr_t(_stop->data(), _stop->size());
-	switch (_format)
-	{
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, stream_size() - position());
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && stop.find(text[c], 0) == invalid_index)
-			c++;		
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		streams::stream_size_t max = min<ulong_t>(_max, (stream_size() - position()) / sizeof(wchar));
-		streams::stream_size_t c = 0;
-		while ((c < max) && (text[c] != 0) && stop.find((char)(byte)text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-	}break;
-
-	case text::encoding::utf_8: {
-		auto text = reinterpret_cast<mchar*>(buffer);
-		streams::stream_size_t max = min<ulong_t>(_max, stream_size() - position());
-		streams::stream_size_t c = 0;
-		while ((c < max) && (text[c] != 0) && (*((ushort*)&text[c]) != mbyte::inv_null) && stop.find(text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read_line(wstring& out, wsize _max, array<wchar> _stop)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	if (out.is_empty())
-		out = new strings::wstring_buffer();
-
-	auto stop = _stop.is_empty() ? cwstr_t(L"\n\r") : cwstr_t(_stop->data(), _stop->size());
-
-	switch (_format)
-	{
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, stream_size() - position());
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && stop.find(text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, (stream_size() - position()) / sizeof(wchar));
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && stop.find((char)(byte)text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-	}break;
-
-	case text::encoding::utf_8: {
-		auto text = reinterpret_cast<mchar*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, stream_size() - position());
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && (*((ushort*)&text[c]) != mbyte::inv_null) && stop.find(text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_input_stream::read_line(mstring& out, wsize _max, array<wchar> _stop)
-{
-	if (position() >= stream_size())
-		return false;
-	pointer buffer = pointer(wsize(_buffer->buffer_ptr()) + position());
-
-	if (out.is_empty())
-		out = new strings::mstring_buffer();
-
-	auto stop = _stop.is_empty() ? cwstr_t(L"\n\r") : cwstr_t(_stop->data(), _stop->size());
-
-	switch (_format)
-	{
-	case text::encoding::ascii: {
-		auto text = reinterpret_cast<char*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, stream_size() - position());
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && stop.find(text[c], 0) == invalid_index)
-			c += mbyte(text[c]).size();
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-	}break;
-
-	case text::encoding::unicode: {
-		auto text = reinterpret_cast<wchar*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, (stream_size() - position()) / sizeof(wchar));
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && stop.find((char)(byte)text[c], 0) == invalid_index)
-			c += mbyte(text[c]).size();
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-	}break;
-
-	case text::encoding::utf_8: {
-		auto text = reinterpret_cast<mchar*>(buffer);
-		streams::stream_size_t max = min<ulong>(_max, stream_size() - position());
-		index c = 0;
-		while ((c < max) && (text[c] != 0) && (*((ushort*)&text[c]) != mbyte::inv_null) && stop.find(text[c], 0) == invalid_index)
-			c++;
-		out->realloc((uint)c, false);
-		strings::algorithms::string_copy(out->str(), text, (uint)c);
-		out->length((uint)c);
-		forward(c);
-
-	}break;
-	default:return false;
-	}
-	return true;
+	windex i = 0, c = 0; char32_t val, val2; bool b = false;
+	if(end.size() == 0)
+		end = U"\n\r";
+	stream_index_t last_pos = position();
+	raw_str buffer = raw_str(pointer(wsize(_buffer->buffer_ptr()) + last_pos), stream_size() - last_pos, this->format());
+
+	text::encoder_interface _encoder;
+	text::encoder_interface::initialize_interface(&_encoder, encoding);
+
+LOOP:
+	if (i >= max) goto END;
+	val = encoder._to_utf32(buffer.ptr(), i);
+	c = 0;
+LOOP2:
+	if (c >= end.size()) goto LOOP;
+	if (val == end[c]) goto END;
+	c++;
+	goto LOOP2;
+END:
+	_encoder._convert_string(out->buffer_ptr(), max, buffer.ptr(), i, buffer.encoding(), true);
+	return i * buffer.char_size();
 }

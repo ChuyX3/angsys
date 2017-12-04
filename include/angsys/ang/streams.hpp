@@ -108,14 +108,14 @@ namespace ang
 			visible vcall wsize seek(raw_str_t)pure;
 			visible vcall wsize read(pointer, wsize, text::text_format_t)pure;
 			visible vcall wsize read(ibuffer_view_t, text::encoding_t, wsize max)pure;
-			visible vcall wsize read_line(ibuffer_view_t, text::encoding_t, wsize max, array_view<char32_t>)pure;
+			visible vcall wsize read_line(ibuffer_view_t, text::encoding_t, wsize max, array_view<const char32_t>)pure;
 
 			template<typename T> inline wsize read(T& value);
 
 			template<text::encoding_enum ENCODING>
 			inline wsize read(strings::string_base<ENCODING>& str, wsize max);	
 			template<text::encoding_enum ENCODING>
-			inline wsize read_line(strings::string_base<ENCODING>& str, wsize max, array_view<char32_t> endline);
+			inline wsize read_line(strings::string_base<ENCODING>& str, wsize max, array_view<const char32_t> endline);
 		ANG_END_INTERFACE();
 
 
@@ -164,13 +164,15 @@ namespace ang
 		template<text::encoding_enum ENCODING>
 		struct text_deserializer<strings::string_base<ENCODING>> {
 			static wsize deserialize(itext_input_stream_t stream, strings::string_base<ENCODING>& str, wsize max) {
+				max = min(max, stream->stream_size() - stream->position());
 				ibuffer_view_t buff = str->map_buffer(0, max);
 				auto c = stream->read(buff, ENCODING, max);
 				str->unmap_buffer(buff, c);
 				return c;
 			}
 
-			static wsize deserialize_until(itext_input_stream_t stream, strings::string_base<ENCODING>& str, wsize max, array_view<char32_t> endline) {
+			static wsize deserialize_until(itext_input_stream_t stream, strings::string_base<ENCODING>& str, wsize max, array_view<const char32_t> endline) {
+				max = min(max, stream->stream_size() - stream->position());
 				ibuffer_view_t buff = str->map_buffer(0, max);
 				auto c = read_line(buff, ENCODING, max, endline);
 				str->unmap_buffer(buff, c);
@@ -210,7 +212,7 @@ namespace ang
 		template<typename T>
 		struct binary_serializer<object_wrapper<T>> {
 			static wsize serialize(ibinary_output_stream_t stream, object_wrapper<T> const& value) {
-				return value.is_empty() ? 0 : value->serialize(stream);
+				return value.is_empty() ? 0u : value->serialize(stream);
 			}
 		};
 
@@ -225,7 +227,7 @@ namespace ang
 		}
 
 		template<text::encoding_enum ENCODING>
-		inline wsize read_line(strings::string_base<ENCODING>& str, wsize max, array_view<char32_t> endline) {
+		inline wsize read_line(strings::string_base<ENCODING>& str, wsize max, array_view<const char32_t> endline) {
 			return text_deserializer<strings::string_base<ENCODING>>::deserialize(this, str, max, endline);
 		}
 
@@ -282,7 +284,6 @@ namespace ang
 		operator type const* (void)const;
 	};
 
-
 	template<> class LINK intf_wrapper<streams::itext_output_stream>
 	{
 	public:
@@ -316,8 +317,7 @@ namespace ang
 		operator type const* (void)const;
 	};
 
-	template<>
-	class LINK intf_wrapper<streams::ibinary_input_stream>
+	template<> class LINK intf_wrapper<streams::ibinary_input_stream>
 	{
 	public:
 		typedef streams::ibinary_input_stream type;
@@ -350,8 +350,7 @@ namespace ang
 		operator type const* (void)const;
 	};
 
-	template<>
-	class LINK intf_wrapper<streams::ibinary_output_stream>
+	template<> class LINK intf_wrapper<streams::ibinary_output_stream>
 	{
 	public:
 		typedef streams::ibinary_output_stream type;
@@ -386,18 +385,11 @@ namespace ang
 
 	namespace streams
 	{
-		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, char& value) { stream->read(value); return stream; }
-		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, byte& value) { stream->read(value); return stream; }
-		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, short& value) { stream->read(value); return stream; }
-		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, ushort& value) { stream->read(value); return stream; }
-		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, int& value) { stream->read(value); return stream; }
-		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, uint& value) { stream->read(value); return stream; }
-		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, long& value) { stream->read(value); return stream; }
-		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, ulong& value) { stream->read(value); return stream; }
-		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, long64& value) { stream->read(value); return stream; }
-		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, ulong64& value) { stream->read(value); return stream; }
-		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, float& value) { stream->read(value); return stream; }
-		inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, double& value) { stream->read(value); return stream; }
+		template <typename T> inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, T& value) { stream->read(value); return stream; }
+		template <typename T> inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, safe_str<T> value) { stream->seek(value); return stream; }
+		template<text::encoding_enum ENCODING> inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, strings::string_base<ENCODING>& str) { stream->read(str, -1); return stream; }
+	
+		
 		//template<text::encoding_enum ENCODING> inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, strings::string_base<ENCODING>& value) { stream->read(value, -1); return stream; }
 		//inline itext_input_stream_t& operator >> (itext_input_stream_t& stream, safe_str<typename text::char_type_by_encoding::char_t const> const& value) { stream->seek(value); return stream; }
 
@@ -581,7 +573,7 @@ namespace ang
 			virtual wsize seek(raw_str_t)override;
 			virtual wsize read(pointer, wsize, text::text_format_t)override;
 			virtual wsize read(ibuffer_view_t, text::encoding_t, wsize max)override;
-			virtual wsize read_line(ibuffer_view_t, text::encoding_t, wsize max, array_view<char32_t>)override;
+			virtual wsize read_line(ibuffer_view_t, text::encoding_t, wsize max, array_view<const char32_t>)override;
 
 			virtual text::encoding_t format()const override;
 			virtual stream_index_t position()const override;

@@ -865,7 +865,7 @@ namespace ang
 			wsize(*_from_utf32)(char32_t, pointer, windex&);
 			int(*_compare_string)(pointer, pointer, encoding_t);
 			wsize(*_compare_string_until)(pointer, pointer, encoding_t);
-			wsize(*_convert_string)(pointer, wsize, pointer, encoding_t, bool);
+			wsize(*_convert_string)(pointer, wsize, pointer, wsize&, encoding_t, bool);
 			windex(*_find)(pointer, wsize, pointer, wsize, encoding_t, windex);
 			windex(*_find_revert)(pointer, wsize, pointer, wsize, encoding_t, windex);
 		};
@@ -881,6 +881,8 @@ namespace ang
 			typedef typename char_type_by_encoding<ENCODING>::cstr_t cstr_t;
 
 			encoder() { initialize_interface(this, ENCODING); }
+
+			encoder_interface const& get_base()const { return *this; }
 
 			inline text::encoding_t format()const { return _format(); }
 			inline wsize length(cstr_t str)const { return _length((pointer)str); }
@@ -900,10 +902,10 @@ namespace ang
 			inline wsize compare_until(cstr_t cstr1, raw_str_t cstr2)const { return _compare_string_until((pointer)cstr1, cstr2.ptr(), cstr2.encoding()); }
 			inline wsize compare_until(cstr_t cstr1, pointer cstr2, text::encoding_t format)const { return _compare_string_until((pointer)cstr1, cstr2, format); }
 
-			template<typename T> inline wsize convert(str_t dest, wsize maxsize, T const* src, bool end_of_string = true)const { return _convert_string((pointer)dest, maxsize, (pointer)src, encoding_by_type<typename char_type_by_type<T>::char_t>::encoding(), end_of_string); }
-			template<typename T> inline wsize convert(str_t dest, wsize maxsize, safe_str<T> src, bool end_of_string = true)const { return _convert_string((pointer)dest, maxsize, (pointer)src.get(), encoding_by_type<typename char_type_by_type<T>::char_t>::encoding(), end_of_string); }
-			inline wsize convert(str_t dest, wsize maxsize, raw_str_t src, bool end_of_string = true)const { return _convert_string((pointer)dest, maxsize, src.ptr(), src.encoding(), end_of_string); }
-			inline wsize convert(str_t dest, wsize maxsize, pointer src, text::encoding_t format, bool end_of_string = true)const { return _convert_string((pointer)dest, maxsize, src, format, end_of_string); }
+			template<typename T> inline wsize convert(str_t dest, wsize maxsize, T const* src, bool end_of_string = true)const { wsize i = 0; return _convert_string((pointer)dest, maxsize, (pointer)src, i, encoding_by_type<typename char_type_by_type<T>::char_t>::encoding(), end_of_string); }
+			template<typename T> inline wsize convert(str_t dest, wsize maxsize, safe_str<T> src, bool end_of_string = true)const { wsize i = 0; return _convert_string((pointer)dest, maxsize, (pointer)src.get(), i, encoding_by_type<typename char_type_by_type<T>::char_t>::encoding(), end_of_string); }
+			inline wsize convert(str_t dest, wsize maxsize, raw_str_t src, bool end_of_string = true)const { wsize i = 0; return _convert_string((pointer)dest, maxsize, src.ptr(), i, src.encoding(), end_of_string); }
+			inline wsize convert(str_t dest, wsize maxsize, pointer src, text::encoding_t format, bool end_of_string = true)const { wsize i = 0; return _convert_string((pointer)dest, maxsize, src, i, format, end_of_string); }
 
 			char32_t to_utf32(char_t value)const { windex i = 0; return _to_utf32(&value, i); }
 			char32_t to_utf32(char_t* value, windex& i)const { return _to_utf32(&value, i); }

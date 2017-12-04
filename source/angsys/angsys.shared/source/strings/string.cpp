@@ -154,7 +154,7 @@ bool string_base_buffer::realloc(wsize new_size, bool save)
 	if (capacity() >= new_size)
 		return true;
 
-	wsize cs = char_size(), size = 32U;
+	wsize cs = char_size(), size = 32U, i = 0;
 	while (size <= new_size)
 		size *= 2U;
 	auto new_buffer = memory::buffer_allocator<byte>::alloc(size * cs);
@@ -163,7 +163,7 @@ bool string_base_buffer::realloc(wsize new_size, bool save)
 	wsize len = 0U;
 	new_buffer[0] = 0;
 	if (save)
-		len = encoder()._convert_string(new_buffer, size - 1, text_buffer().ptr(), encoding(), true);
+		len = encoder()._convert_string(new_buffer, size - 1, text_buffer().ptr(), i,encoding(), true);
 
 	clean();
 	_data._allocated_length = len;
@@ -175,17 +175,17 @@ bool string_base_buffer::realloc(wsize new_size, bool save)
 
 void string_base_buffer::length(wsize len)
 {
-	dword end = 0;
+	dword end = 0; wsize i = 0;
 	if (is_local_data()) {
 		len = min(len, 128u / char_size() - 1);
 		_data._stack_length = len;
 
-		encoder()._convert_string(_data._stack_buffer + (len * char_size()), 1, &end, text::encoding::utf32, false); //set end of string
+		encoder()._convert_string(_data._stack_buffer + (len * char_size()), 1, &end, i, text::encoding::utf32, false); //set end of string
 	}
 	else {
 		len = min(len, _data._allocated_capacity - 1);
 		_data._allocated_length = len;
-		encoder()._convert_string((byte*)_data._allocated_buffer + (len * char_size()), 1, &end, text::encoding::utf32, false); //set end of string
+		encoder()._convert_string((byte*)_data._allocated_buffer + (len * char_size()), 1, &end, i, text::encoding::utf32, false); //set end of string
 	}
 }
 
@@ -219,55 +219,55 @@ void string_base_buffer::clean()
 
 void string_base_buffer::copy(raw_str_t str)
 {
-	auto sz = str.count();
+	wsize sz = str.count(), i = 0U;
 	if (sz == 0U)
 		return;
 	auto lc = 128u / char_size();
 	if (sz < lc)
 	{
 		clean();
-		_data._stack_length = encoder()._convert_string(_data._stack_buffer, min(sz, lc - 1), str.ptr(), str.encoding(), true);
+		_data._stack_length = encoder()._convert_string(_data._stack_buffer, min(sz, lc - 1), str.ptr(), i, str.encoding(), true);
 	}
 	else
 	{
 		realloc(sz, false);
-		_data._allocated_length = encoder()._convert_string(_data._allocated_buffer, min(_data._allocated_capacity - 1, sz), str.ptr(), str.encoding(), true);
+		_data._allocated_length = encoder()._convert_string(_data._allocated_buffer, min(_data._allocated_capacity - 1, sz), str.ptr(), i, str.encoding(), true);
 	}
 }
 
 void string_base_buffer::concat(raw_str_t str)
 {
-	auto sz = str.count();
+	wsize sz = str.count(), i = 0;
 	if (sz == 0U)
 		return;
 	auto lc = 128u / char_size();
 	wsize my_len = length();
 	if ((my_len + sz) < lc)
 	{
-		_data._stack_length = my_len + encoder()._convert_string(_data._stack_buffer + (my_len * char_size()), min(lc - my_len - 1, sz), str.ptr(), str.encoding(), true);
+		_data._stack_length = my_len + encoder()._convert_string(_data._stack_buffer + (my_len * char_size()), min(lc - my_len - 1, sz), str.ptr(), i, str.encoding(), true);
 	}
 	else
 	{
 		realloc(my_len + sz, true);
-		_data._allocated_length = my_len + encoder()._convert_string((byte*)_data._allocated_buffer + (my_len * char_size()), min(_data._allocated_capacity - my_len - 1, sz), str.ptr(), str.encoding(), true);
+		_data._allocated_length = my_len + encoder()._convert_string((byte*)_data._allocated_buffer + (my_len * char_size()), min(_data._allocated_capacity - my_len - 1, sz), str.ptr(), i, str.encoding(), true);
 	}
 }
 
 void string_base_buffer::copy_at(raw_str_t str, windex at)
 {
-	auto sz = str.count();
+	wsize sz = str.count(), i = 0;
 	if (sz == 0U)
 		return;
 	auto lc = 128u / char_size();
 	wsize my_len = min(length(), at);
 	if ((my_len + sz) < lc)
 	{
-		_data._stack_length = my_len + encoder()._convert_string(_data._stack_buffer + (my_len * char_size()), min(lc - my_len - 1, sz), str.ptr(), str.encoding(), true);
+		_data._stack_length = my_len + encoder()._convert_string(_data._stack_buffer + (my_len * char_size()), min(lc - my_len - 1, sz), str.ptr(), i, str.encoding(), true);
 	}
 	else
 	{
 		realloc(my_len + sz, true);
-		_data._allocated_length = my_len + encoder()._convert_string((byte*)_data._allocated_buffer + (my_len * char_size()), min(_data._allocated_capacity - my_len - 1, sz), str.ptr(), str.encoding(), true);
+		_data._allocated_length = my_len + encoder()._convert_string((byte*)_data._allocated_buffer + (my_len * char_size()), min(_data._allocated_capacity - my_len - 1, sz), str.ptr(), i, str.encoding(), true);
 	}
 }
 
@@ -296,13 +296,13 @@ windex string_base_buffer::find_revert(raw_str_t str, windex start, windex end)c
 wsize string_base_buffer::sub_string(raw_str_t raw, windex start, windex end)const
 {
 	if (start >= end || start > length()) return 0;
-	text::encoder_interface _encoder;
+	text::encoder_interface _encoder; wsize i = 0;
 	text::encoder_interface::initialize_interface(&_encoder, raw._encoding);
 
 	if (!_encoder._convert_string)
 		return 0;
 	auto my_data = text_buffer();
-	return _encoder._convert_string(raw.ptr(), end - start, my_data.ptr(), my_data.encoding(), true);
+	return _encoder._convert_string(raw.ptr(), end - start, my_data.ptr(), i, my_data.encoding(), true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////

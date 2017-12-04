@@ -123,18 +123,18 @@ void ang_text_encoder_interface_initialize_interface(encoder_interface* encoder)
 	encoder->_from_utf32 = 
 		is_endian_swapped<ENCODING>() ?	function_cast<wsize, char32_t, pointer, windex&>([](char32_t _value, pointer ptr, windex& idx)->wsize {
 		windex i = idx, j = 0; char32_t value[] = { _value , 0 };
-		converter<typename text::char_type_by_encoding<ENCODING>::char_t, char32_t>::template convert<true, false>((typename text::char_type_by_encoding<ENCODING>::char_t const*)ptr, idx, value, j);
+		converter<typename text::char_type_by_encoding<ENCODING>::char_t, char32_t>::template convert<true, false>((typename text::char_type_by_encoding<ENCODING>::char_t*)ptr, idx, value, j);
 		return (idx - i) * sizeof(typename text::char_type_by_encoding<ENCODING>::char_t);
 	}) : function_cast<wsize, char32_t, pointer, windex&>([](char32_t _value, pointer ptr, windex& idx)->wsize {
 			windex i = idx, j = 0; char32_t value[] = { _value , 0 };
-			converter<typename text::char_type_by_encoding<ENCODING>::char_t, char32_t>::template convert<true, false>((typename text::char_type_by_encoding<ENCODING>::char_t const*)ptr, idx, value, j);
+			converter<typename text::char_type_by_encoding<ENCODING>::char_t, char32_t>::template convert<true, false>((typename text::char_type_by_encoding<ENCODING>::char_t*)ptr, idx, value, j);
 			return (idx - i) * sizeof(typename text::char_type_by_encoding<ENCODING>::char_t); 
 	});
 
 
 
-	encoder->_convert_string = [](pointer dest, wsize sz, pointer src, encoding_t format, bool eos)->wsize {
-		return ang_text_encoder<ENCODING>::convert((typename ang::text::char_type_by_encoding<ENCODING>::str_t)dest, sz, src, format, eos);
+	encoder->_convert_string = [](pointer dest, wsize sz, pointer src, wsize& idx, encoding_t format, bool eos)->wsize {
+		return ang_text_encoder<ENCODING>::convert((typename ang::text::char_type_by_encoding<ENCODING>::str_t)dest, sz, src, idx, format, eos);
 	};
 	encoder->_compare_string = [](pointer dest, pointer src, encoding_t format)->int {
 		return ang_text_encoder<ENCODING>::compare((typename ang::text::char_type_by_encoding<ENCODING>::cstr_t)dest, src, format);

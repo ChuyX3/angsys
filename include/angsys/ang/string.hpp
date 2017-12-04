@@ -91,7 +91,36 @@ namespace ang
 		template<typename T>
 		struct default_text_format<const T&> : default_text_format<T> { };
 
+		template<> struct default_text_format<char> {
+			static text_format_t format() { text_format_t _format = "{char:}"; return _format; }
+		};
 
+		template<> struct default_text_format<mchar> :public default_text_format<char> {};
+		template<> struct default_text_format<wchar> :public default_text_format<char> {};
+		template<> struct default_text_format<char16_t> :public default_text_format<char> {};
+		template<> struct default_text_format<char32_t> :public default_text_format<char> {};
+
+		template<> struct default_text_format<int> {
+			static text_format_t format() { text_format_t _format = "{signed:}"; return _format; }
+		};
+
+		template<> struct default_text_format<short> :public default_text_format<int> {};
+		template<> struct default_text_format<long> :public default_text_format<int> {};
+		template<> struct default_text_format<long64> :public default_text_format<int> {};
+
+		template<> struct default_text_format<uint> {
+			static text_format_t format() { text_format_t _format = "{unsigned:}"; return _format; }
+		};
+
+		template<> struct default_text_format<ushort> :public default_text_format<uint> {};
+		template<> struct default_text_format<ulong> :public default_text_format<uint> {};
+		template<> struct default_text_format<ulong64> :public default_text_format<uint> {};
+
+		template<> struct default_text_format<float> {
+			static text_format_t format() { text_format_t _format = "{floating:}"; return _format; }
+		};
+
+		template<> struct default_text_format<double> :public default_text_format<float> {};
 
 		ANG_INTERFACE(itext_buffer); //template<encoding_enum ENCODING> struct itext_buffer;
 		//template<encoding_enum ENCODING> using itext_buffer_t = intf_wrapper<itext_buffer<ENCODING>>;
