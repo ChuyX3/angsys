@@ -15,113 +15,6 @@ namespace ang
 	namespace text
 	{
 
-		////text_format class////
-		// {char:[u|U]|[l|L][N|n]}
-		//	u = uppercase
-		//	l = lowercase
-		//  n = default, optional
-		// {text:[u|U]|[l|L]}
-		//	u = uppercase
-		//	l = lowercase
-		//  n = default, optional
-		// {signed:[n|N]xx,(F|f)c,[[x|X]|[b|B]],[S|s]}
-		//	N = Max Number of digits (xx = number),
-		//	F = Fill character (c)
-		//	X = Uppercase Hexadecimal format
-		//	x = Lowercase Hexadecimal format
-		//	B = Binary
-		//	S = +|-
-		// {unsigned:[n|N]xx,(F|f)c,[[x|X]|[b|B]]}
-		//	N = Max Number of digits (xx = number),
-		//	X = Hexadecimal format
-		//	F = Fill character (c)
-		//	B = Binary
-		// {floating:[n|N]xx,(F|f)c,[[x|X]|[b|B]],[E],[S|s]}
-		//	N = Max Number of decimals (xx = number)
-		//	X = Hexadecimal format
-		//	F = Fill character (c)
-		//	B = Binary
-		//	S = +|-
-		//	E = Cientific Notation
-		class LINK text_format
-		{
-		protected:
-			qword flags;
-
-		public:
-			enum target : byte
-			{
-				none = 0,
-				character,
-				text,
-				signed_integer,
-				usigned_integer,
-				floating,
-			};
-
-		public:
-			text_format();//default format-> bad format
-			text_format(cstr_t format);
-			text_format(const text_format&);
-			virtual~text_format();
-
-		public:
-			target format_target()const;
-			void format(ang::cstr_t format);
-			string format()const;
-			qword format_flags()const;
-			text_format& operator = (const text_format&);
-		};
-
-		typedef text_format text_format_t;
-
-		template<typename T>
-		struct default_text_format {
-			static text_format_t format() {
-				return text_format_t();
-			}
-		};
-
-		template<typename T>
-		struct default_text_format<const T> : default_text_format<T> { };
-
-		template<typename T>
-		struct default_text_format<T&> : default_text_format<T> { };
-
-		template<typename T>
-		struct default_text_format<const T&> : default_text_format<T> { };
-
-		template<> struct default_text_format<char> {
-			static text_format_t format() { text_format_t _format = "{char:}"; return _format; }
-		};
-
-		template<> struct default_text_format<mchar> :public default_text_format<char> {};
-		template<> struct default_text_format<wchar> :public default_text_format<char> {};
-		template<> struct default_text_format<char16_t> :public default_text_format<char> {};
-		template<> struct default_text_format<char32_t> :public default_text_format<char> {};
-
-		template<> struct default_text_format<int> {
-			static text_format_t format() { text_format_t _format = "{signed:}"; return _format; }
-		};
-
-		template<> struct default_text_format<short> :public default_text_format<int> {};
-		template<> struct default_text_format<long> :public default_text_format<int> {};
-		template<> struct default_text_format<long64> :public default_text_format<int> {};
-
-		template<> struct default_text_format<uint> {
-			static text_format_t format() { text_format_t _format = "{unsigned:}"; return _format; }
-		};
-
-		template<> struct default_text_format<ushort> :public default_text_format<uint> {};
-		template<> struct default_text_format<ulong> :public default_text_format<uint> {};
-		template<> struct default_text_format<ulong64> :public default_text_format<uint> {};
-
-		template<> struct default_text_format<float> {
-			static text_format_t format() { text_format_t _format = "{floating:}"; return _format; }
-		};
-
-		template<> struct default_text_format<double> :public default_text_format<float> {};
-
 		ANG_INTERFACE(itext_buffer); //template<encoding_enum ENCODING> struct itext_buffer;
 		//template<encoding_enum ENCODING> using itext_buffer_t = intf_wrapper<itext_buffer<ENCODING>>;
 		//template<encoding_enum ENCODING> using itext_buffer_ptr_t = intf_wrapper_ptr<itext_buffer<ENCODING>>;
@@ -147,7 +40,7 @@ namespace ang
 			ANG_DECLARE_INLINE_INTERFACE();
 
 			inline encoding_t encoding()const override { return ENCODING; }
-			raw_str_t text_buffer() override {
+			raw_str_t text_buffer()const override {
 				return _buffer.is_empty() ? raw_str_t{ null, 0, encoding::none } 
 				: raw_str_t{ _buffer->buffer_ptr(), _buffer->buffer_size(), ENCODING };
 			}

@@ -68,7 +68,7 @@ namespace ang
 		public:
 			typedef T* type;
 			typedef T const* ctype;
-			typedef T* element_type;
+			typedef T element_type;
 		private:
 			static constexpr wsize SIZE = _SIZE;
 			T _data[_SIZE];

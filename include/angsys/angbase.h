@@ -109,13 +109,13 @@ namespace ang
 	typedef safe_str<char>			str_t, ascii_str_t;
 	typedef safe_str<wchar>			wstr_t, unicode_str_t;
 	typedef safe_str<byte>			mstr_t, utf8_str_t;
-	typedef safe_str<char16_t>		utf16_str_t;
-	typedef safe_str<char32_t>		utf32_str_t;
+	typedef safe_str<char16_t>		u16str_t;
+	typedef safe_str<char32_t>		u32str_t;
 	typedef safe_str<char const>	cstr_t, ascii_cstr_t;
 	typedef safe_str<wchar const>	cwstr_t, unicode_cstr_t;
 	typedef safe_str<byte const>	cmstr_t, utf8_cstr_t;
-	typedef safe_str<char16_t const> utf16_cstr_t;
-	typedef safe_str<char32_t const> utf32_cstr_t;
+	typedef safe_str<char16_t const> cu16str_t;
+	typedef safe_str<char32_t const> cu32str_t;
 	typedef safe_str<char const>	type_name_t;
 
 	typedef char*				unsafe_ascii_str_t;

@@ -1,12 +1,138 @@
 #include "pch.h"
 #include <angsys.h>
 #include <ang/streams.hpp>
+#include "string_helper.hpp"
+#include "format_parser.h"
 
 using namespace ang;
 using namespace ang::strings;
 
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::text::itext_buffer, ang::ibuffer);
 
+
+namespace ang
+{
+	extern char hexl[] = { "0123456789abcdefx" };
+	extern char hexu[] = { "0123456789ABCDEFX" };
+}
+
+template<> wsize ang::load_bom<text::encoding::utf8>(pointer ptr) {
+	alignas(4) static byte utf8_bom[4] = { 0xef, 0xbb, 0xbf, 0x0 };
+	return (text::UTF8().compare_until((utf8_char_t const*)ptr, (utf8_char_t const*)utf8_bom) == 3) ? 3 : 0;
+}
+
+template<> wsize ang::load_bom<text::encoding::utf16_le>(pointer ptr) {
+	alignas(4) static byte utf16_le_bom[4] = { 0xff, 0xfe, 0x0, 0x0 };
+	return (text::UTF16_LE().compare_until((utf16_char_t const*)ptr, (utf16_char_t const*)utf16_le_bom) == 1) ? 2 : 0;
+}
+
+template<> wsize ang::load_bom<text::encoding::utf16_be>(pointer ptr) {
+	alignas(4) static byte utf16_be_bom[4] = { 0xfe, 0xff, 0x0, 0x0 };
+	return (text::UTF16_BE().compare_until((utf16_char_t const*)ptr, (utf16_char_t const*)utf16_be_bom) == 1) ? 2 : 0;
+}
+
+template<> wsize ang::load_bom<text::encoding::utf32_le>(pointer ptr) {
+	alignas(4) static byte utf32_le_bom[8] = { 0xff, 0xfe, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
+	return (text::UTF32_LE().compare_until((utf32_char_t const*)ptr, (utf32_char_t const*)utf32_le_bom) == 1) ? 4 : 0;
+}
+
+template<> wsize ang::load_bom<text::encoding::utf32_be>(pointer ptr) {
+	alignas(4) static byte utf32_be_bom[8] = { 0x0, 0x0, 0xfe, 0xff, 0x0, 0x0, 0x0, 0x0 };
+	return (text::UTF32_BE().compare_until((utf32_char_t const*)ptr, (utf32_char_t const*)utf32_be_bom) == 1) ? 4 : 0;
+}
+
+template<> wsize ang::load_bom<text::encoding::utf16>(pointer ptr) {
+	return text::is_little_endian() ? load_bom<text::encoding::utf16_le>(ptr) : load_bom<text::encoding::utf16_be>(ptr);
+}
+
+template<> wsize ang::load_bom<text::encoding::utf16_se>(pointer ptr) {
+	return text::is_little_endian() ? load_bom<text::encoding::utf16_be>(ptr) : load_bom<text::encoding::utf16_le>(ptr);
+}
+
+template<> wsize ang::load_bom<text::encoding::utf32>(pointer ptr) {
+	return text::is_little_endian() ? load_bom<text::encoding::utf32_le>(ptr) : load_bom<text::encoding::utf32_be>(ptr);
+}
+
+template<> wsize ang::load_bom<text::encoding::utf32_se>(pointer ptr) {
+	return text::is_little_endian() ? load_bom<text::encoding::utf32_be>(ptr) : load_bom<text::encoding::utf32_le>(ptr);
+}
+
+template<> wsize ang::load_bom<text::encoding::unicode>(pointer ptr) {
+	return load_bom<text::native_encoding<text::encoding::unicode>()>(ptr);
+}
+
+
+long64 ang::str_to_integer(raw_str_t str, windex& i, int base) {
+	switch (str.encoding())
+	{
+	case text::encoding::ascii: return str_to_integer<false>(str.to_cstr<char>(), i, base);
+	case text::encoding::utf8: return str_to_integer<false>(str.to_cstr<mchar>(), i, base);
+	case text::encoding::utf16_le: return text::is_little_endian() ? str_to_integer<false>(str.to_cstr<char16_t>(), i, base) : str_to_integer<true>(str.to_cstr<char16_t>(), i, base);
+	case text::encoding::utf16_be:return text::is_little_endian() ? str_to_integer<true>(str.to_cstr<char16_t>(), i, base) : str_to_integer<false>(str.to_cstr<char16_t>(), i, base);
+	case text::encoding::utf16_se:return str_to_integer<true>(str.to_cstr<char16_t>(), i, base);
+	case text::encoding::utf16: return str_to_integer<false>(str.to_cstr<char16_t>(), i, base);
+	case text::encoding::utf32_le: return text::is_little_endian() ? str_to_integer<false>(str.to_cstr<char32_t>(), i, base) : str_to_integer<true>(str.to_cstr<char32_t>(), i, base);
+	case text::encoding::utf32_be:return text::is_little_endian() ? str_to_integer<true>(str.to_cstr<char32_t>(), i, base) : str_to_integer<false>(str.to_cstr<char32_t>(), i, base);
+	case text::encoding::utf32_se:return str_to_integer<true>(str.to_cstr<char32_t>(), i, base);
+	case text::encoding::utf32: return str_to_integer<false>(str.to_cstr<char32_t>(), i, base);
+	default: return 0;
+	}
+}
+
+ulong64 ang::str_to_uinteger(raw_str_t str, windex& i, int base) {
+	switch (str.encoding())
+	{
+	case text::encoding::ascii: return str_to_uinteger<false>(str.to_cstr<char>(), i, base);
+	case text::encoding::utf8: return str_to_uinteger<false>(str.to_cstr<mchar>(), i, base);
+	case text::encoding::utf16_le: return text::is_little_endian() ? str_to_uinteger<false>(str.to_cstr<char16_t>(), i, base) : str_to_uinteger<true>(str.to_cstr<char16_t>(), i, base);
+	case text::encoding::utf16_be:return text::is_little_endian() ? str_to_uinteger<true>(str.to_cstr<char16_t>(), i, base) : str_to_uinteger<false>(str.to_cstr<char16_t>(), i, base);
+	case text::encoding::utf16_se:return str_to_uinteger<true>(str.to_cstr<char16_t>(), i, base);
+	case text::encoding::utf16: return str_to_uinteger<false>(str.to_cstr<char16_t>(), i, base);
+	case text::encoding::utf32_le: return text::is_little_endian() ? str_to_uinteger<false>(str.to_cstr<char32_t>(), i, base) : str_to_uinteger<true>(str.to_cstr<char32_t>(), i, base);
+	case text::encoding::utf32_be:return text::is_little_endian() ? str_to_uinteger<true>(str.to_cstr<char32_t>(), i, base) : str_to_uinteger<false>(str.to_cstr<char32_t>(), i, base);
+	case text::encoding::utf32_se:return str_to_uinteger<true>(str.to_cstr<char32_t>(), i, base);
+	case text::encoding::utf32: return str_to_uinteger<false>(str.to_cstr<char32_t>(), i, base);
+	default: return 0;
+	}
+}
+
+double ang::str_to_float(raw_str_t str, windex& i, bool exp) {
+	switch (str.encoding())
+	{
+	case text::encoding::ascii: return str_to_floating<false>(str.to_cstr<char>(), i, exp);
+	case text::encoding::utf8: return str_to_floating<false>(str.to_cstr<mchar>(), i, exp);
+	case text::encoding::utf16_le: return text::is_little_endian() ? str_to_floating<false>(str.to_cstr<char16_t>(), i, exp) : str_to_floating<true>(str.to_cstr<char16_t>(), i, exp);
+	case text::encoding::utf16_be:return text::is_little_endian() ? str_to_floating<true>(str.to_cstr<char16_t>(), i, exp) : str_to_floating<false>(str.to_cstr<char16_t>(), i, exp);
+	case text::encoding::utf16_se:return str_to_floating<true>(str.to_cstr<char16_t>(), i, exp);
+	case text::encoding::utf16: return str_to_floating<false>(str.to_cstr<char16_t>(), i, exp);
+	case text::encoding::utf32_le: return text::is_little_endian() ? str_to_floating<false>(str.to_cstr<char32_t>(), i, exp) : str_to_floating<true>(str.to_cstr<char32_t>(), i, exp);
+	case text::encoding::utf32_be:return text::is_little_endian() ? str_to_floating<true>(str.to_cstr<char32_t>(), i, exp) : str_to_floating<false>(str.to_cstr<char32_t>(), i, exp);
+	case text::encoding::utf32_se:return str_to_floating<true>(str.to_cstr<char32_t>(), i, exp);
+	case text::encoding::utf32: return str_to_floating<false>(str.to_cstr<char32_t>(), i, exp);
+	default: return 0;
+	}
+}
+
+char32_t ang::char_format(char32_t c, text::text_format_t f) {
+	qword format = f.format_flags();
+	if (GET_FLAG_TARGET(format) != text::text_format::character)
+		return c;
+
+	if ((FLAG_CHAR_LOWERCASE & format) == FLAG_CHAR_LOWERCASE)
+	{
+		if (c >= 'A' && c <= 'Z')
+			return 'a' + c - 'A';
+	}
+	else if ((FLAG_CHAR_UPPERCASE & format) == FLAG_CHAR_UPPERCASE)
+	{
+		if (c >= 'a' && c <= 'z')
+			return 'A' + c - 'a';
+	}
+	return c;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 string_base_buffer::string_base_buffer()
 {

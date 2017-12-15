@@ -17,7 +17,7 @@ namespace ang
 		/* enum ang::text::encoding :                                     */
 		/*  -> represents the text encoding                               */
 		/******************************************************************/
-		ANG_BEGIN_ENUM(LINK, encoding, uint)
+		ANG_BEGIN_ENUM(LINK, encoding, word)
 			none = 0,
 			binary = none,
 			ascii,
@@ -31,7 +31,7 @@ namespace ang
 			utf32_be,
 			utf32,
 			utf32_se,
-			auto_detect = 0XFFFFFFFF,
+			auto_detect = 0XFFFF,
 			ANG_END_ENUM(encoding);
 
 		ANG_BEGIN_ENUM(LINK, special_chars, char32_t)
@@ -276,6 +276,8 @@ namespace ang
 		safe_str(safe_str const& other);
 		safe_str(safe_str && other);
 		safe_str(ang::nullptr_t);
+		template<wsize N> safe_str(char(&ar)[N])
+			: safe_str(ar, N - 1U) { }
 
 	public: /*getters and setters*/
 		type & get();
@@ -855,6 +857,115 @@ namespace ang
 
 	namespace text
 	{
+		////text_format class////
+		// {char:[u|U]|[l|L][N|n]}
+		//	u = uppercase
+		//	l = lowercase
+		//  n = default, optional
+		// {text:[u|U]|[l|L]}
+		//	u = uppercase
+		//	l = lowercase
+		//  n = default, optional
+		// {signed:[n|N]xx,(F|f)c,[[x|X]|[b|B]],[S|s]}
+		//	N = Max Number of digits (xx = number),
+		//	F = Fill character (c)
+		//	X = Uppercase Hexadecimal format
+		//	x = Lowercase Hexadecimal format
+		//	B = Binary
+		//	S = +|-
+		// {unsigned:[n|N]xx,(F|f)c,[[x|X]|[b|B]]}
+		//	N = Max Number of digits (xx = number),
+		//	X = Hexadecimal format
+		//	F = Fill character (c)
+		//	B = Binary
+		// {floating:[n|N]xx,(F|f)c,[[x|X]|[b|B]],[E],[S|s]}
+		//	N = Max Number of decimals (xx = number)
+		//	X = Hexadecimal format
+		//	F = Fill character (c)
+		//	B = Binary
+		//	S = +|-
+		//	E = Cientific Notation
+		class LINK text_format
+		{
+		protected:
+			qword flags;
+
+		public:
+			enum target : byte
+			{
+				none = 0,
+				character,
+				text,
+				signed_integer,
+				usigned_integer,
+				floating,
+			};
+
+		public:
+			text_format();//default format-> bad format
+			text_format(cstr_t format);
+			text_format(const text_format&);
+			virtual~text_format();
+
+		public:
+			target format_target()const;
+			void format(ang::cstr_t format);
+			//string format()const;
+			qword format_flags()const;
+			text_format& operator = (const text_format&);
+		};
+
+		typedef text_format text_format_t;
+
+		template<typename T>
+		struct default_text_format {
+			static text_format_t format() {
+				return text_format_t();
+			}
+		};
+
+		template<typename T>
+		struct default_text_format<const T> : default_text_format<T> { };
+
+		template<typename T>
+		struct default_text_format<T&> : default_text_format<T> { };
+
+		template<typename T>
+		struct default_text_format<const T&> : default_text_format<T> { };
+
+		template<> struct default_text_format<char> {
+			static text_format_t format() { text_format_t _format = cstr_t("{char:}"); return _format; }
+		};
+
+		template<> struct default_text_format<mchar> :public default_text_format<char> {};
+		template<> struct default_text_format<wchar> :public default_text_format<char> {};
+		template<> struct default_text_format<char16_t> :public default_text_format<char> {};
+		template<> struct default_text_format<char32_t> :public default_text_format<char> {};
+
+		template<> struct default_text_format<int> {
+			static text_format_t format() { text_format_t _format = cstr_t("{signed:}"); return _format; }
+		};
+
+		template<> struct default_text_format<short> :public default_text_format<int> {};
+		template<> struct default_text_format<long> :public default_text_format<int> {};
+		template<> struct default_text_format<long64> :public default_text_format<int> {};
+
+		template<> struct default_text_format<uint> {
+			static text_format_t format() { text_format_t _format = cstr_t("{unsigned:}"); return _format; }
+		};
+
+		template<> struct default_text_format<ushort> :public default_text_format<uint> {};
+		template<> struct default_text_format<ulong> :public default_text_format<uint> {};
+		template<> struct default_text_format<ulong64> :public default_text_format<uint> {};
+
+		template<> struct default_text_format<float> {
+			static text_format_t format() { text_format_t _format = cstr_t("{floating:}"); return _format; }
+		};
+
+		template<> struct default_text_format<double> :public default_text_format<float> {};
+
+
+
 		struct encoder_interface
 		{
 			static LINK void initialize_interface(encoder_interface*, encoding_t);
@@ -868,6 +979,10 @@ namespace ang
 			wsize(*_convert_string)(pointer, wsize, pointer, wsize&, encoding_t, bool);
 			windex(*_find)(pointer, wsize, pointer, wsize, encoding_t, windex);
 			windex(*_find_revert)(pointer, wsize, pointer, wsize, encoding_t, windex);
+
+			raw_str_t(*_integer_to_string)(long64, pointer, wsize, text_format_t);
+			raw_str_t(*_uinteger_to_string)(ulong64, pointer, wsize, text_format_t);
+			raw_str_t(*_floating_to_string)(double, pointer, wsize, text_format_t);
 		};
 
 		template<encoding_enum ENCODING>
@@ -908,7 +1023,7 @@ namespace ang
 			inline wsize convert(str_t dest, wsize maxsize, pointer src, text::encoding_t format, bool end_of_string = true)const { wsize i = 0; return _convert_string((pointer)dest, maxsize, src, i, format, end_of_string); }
 
 			char32_t to_utf32(char_t value)const { windex i = 0; return _to_utf32(&value, i); }
-			char32_t to_utf32(char_t* value, windex& i)const { return _to_utf32(&value, i); }
+			char32_t to_utf32(char_t const* value, windex& i)const { return _to_utf32((pointer)value, i); }
 			wsize from_utf32(char32_t value, char_t& out)const { windex i = 0; return _from_utf32(value, &out, i); }
 			wsize from_utf32(char32_t value, char_t* out, windex& i)const { return _from_utf32(value, out, i); }
 
@@ -921,6 +1036,10 @@ namespace ang
 			template<typename T> windex find_revert(cstr_t first, wsize s1, safe_str<T> second, windex start)const { return _find_revert((pointer)first, s1, (pointer)second.get(), second.size(), encoding_by_type<typename char_type_by_type<T>::char_t>::encoding(), min(s1, start)); }
 			windex find_revert(cstr_t first, wsize s1, raw_str_t second, windex start)const { return _find_revert((pointer)first, s1, second.ptr(), second.count(), second.encoding(), min(s1, start)); }
 			windex find_revert(cstr_t first, wsize s1, pointer second, wsize s2, text::encoding_t format, windex start)const { return _find_revert((pointer)first, s1, second, s2, format, min(s1,start)); }
+
+			cstr_t integer_to_string(long64 value, array_view<char_t> out, text_format_t f = default_text_format<long64>::format()) { return _integer_to_string(value, out.get(), out.size(), f).template to_cstr<char_t>(); }
+			cstr_t uinteger_to_string(ulong64 value, array_view<char_t> out, text_format_t f = default_text_format<long64>::format()) { return _uinteger_to_string(value, out.get(), out.size(), f).template to_cstr<char_t>(); }
+			cstr_t floating_to_string(double value, array_view<char_t> out, text_format_t f = default_text_format<long64>::format()) { return floating_to_string(value, out.get(), out.size(), f).template to_cstr<char_t>(); }
 		};
 
 

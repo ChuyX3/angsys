@@ -52,6 +52,9 @@
     <Filter Include="source files\xml">
       <UniqueIdentifier>{1a9d08f3-a944-4ae9-9501-ad14f2e46806}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source files\files">
+      <UniqueIdentifier>{8aa62a41-96b8-4809-bbdb-dc6cb858b048}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis">
@@ -165,6 +168,12 @@
       <Filter>header files\include</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\string_helper.hpp">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\files.hpp">
+      <Filter>header files\angsys\ang</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\file_system.h">
       <Filter>header files\include</Filter>
     </ClInclude>
   </ItemGroup>

@@ -245,6 +245,14 @@ wsize binary_buffer_input_stream::read(pointer ptr, wsize sz)
 	return sz;
 }
 
+wsize binary_buffer_input_stream::read(pointer ptr, wsize sz, text::text_format_t)
+{
+	if (!can_forward(sz))
+		return 0;
+	memcpy(ptr, pointer_at(position()), sz);
+	forward(sz);
+	return sz;
+}
 
 //wsize binary_buffer_input_stream::read(string& out)
 //{

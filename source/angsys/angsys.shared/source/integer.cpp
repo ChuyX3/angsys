@@ -37,14 +37,12 @@ value<int> integer::parse(cwstr_t cstr, int base)
 
 string integer::to_string(value<int> value)
 {
-	static text::text_format_t format("{signed:}");
-	return ang::move(to_string(value, format));
+	return ang::move(to_string(value, text::default_text_format<int>::format()));
 }
 
 wstring integer::to_wstring(value<int> value)
 {
-	static text::text_format_t format("{signed:}");
-	return ang::move(to_wstring(value, format));
+	return ang::move(to_wstring(value, text::default_text_format<int>::format()));
 }
 
 string integer::to_string(value<int> value, text::text_format_t f)

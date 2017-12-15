@@ -21,6 +21,7 @@ using namespace ang;
 int main(int argc, char* argv[])
 {
 	FILE* file = fopen("angxml.xml", "r");
+
 	if (file)
 	{
 		fseek(file, 0, SEEK_END);

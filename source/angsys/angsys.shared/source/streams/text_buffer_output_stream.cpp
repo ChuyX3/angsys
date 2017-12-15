@@ -9,14 +9,19 @@
 
 #include "pch.h"
 #include "ang/streams.hpp"
+#include "string_helper.hpp"
+#include "format_parser.h"
 
 using namespace ang;
 using namespace ang::streams;
 
+
+
+/////////////////////////////////////////////////////////////////////
+
 text_buffer_output_stream::text_buffer_output_stream()
 	: _buffer(null)
 	, _cursor(0)
-	, _format(text::encoding::unknown)
 	, _is_formating_enabled(false)
 	, char_format("{char:}")
 	, string_format("{string:n}")
@@ -32,29 +37,20 @@ text_buffer_output_stream::text_buffer_output_stream(text_buffer_output_stream* 
 	if (stream)
 	{
 		_buffer = stream->_buffer;
-		_format = stream->_format;
 	}
 }
 
-text_buffer_output_stream::text_buffer_output_stream(text::itext_buffer* buff)
+text_buffer_output_stream::text_buffer_output_stream(text::itext_buffer_t buff)
 	: text_buffer_output_stream()
 {
 	_buffer = buff;
-	_format = buff ? buff->encoding().get() : text::encoding::unknown;
-}
 
-text_buffer_output_stream::text_buffer_output_stream(ibuffer_t buff, text::encoding_t f)
-	: text_buffer_output_stream()
-{
-	_buffer = buff;
-	_format = buff ? f.get() : text::encoding::unknown;
 }
 
 text_buffer_output_stream::~text_buffer_output_stream()
 {
 	_buffer = null;
 	_cursor = 0;
-	_format = text::encoding::unknown;
 }
 
 ANG_IMPLEMENT_CLASSNAME(ang::streams::text_buffer_output_stream);
@@ -62,23 +58,23 @@ ANG_IMPLEMENT_OBJECTNAME(ang::streams::text_buffer_output_stream);
 
 bool text_buffer_output_stream::is_kind_of(type_name_t type)const
 {
-	return (type == type_name<text_buffer_output_stream>())
+	return (type == type_of<text_buffer_output_stream>())
 		|| object::is_kind_of(type)
-		|| (type == type_name<itext_output_stream>());
+		|| itext_output_stream::is_kind_of(type);
 }
 
-bool text_buffer_output_stream::is_child_of(type_name_t type)
+bool text_buffer_output_stream::is_inherited_of(type_name_t type)
 {
-	return (type == type_name<text_buffer_output_stream>())
-		|| object::is_child_of(type)
-		|| (type == type_name<itext_output_stream>());
+	return (type == type_of<text_buffer_output_stream>())
+		|| object::is_inherited_of(type)
+		|| itext_output_stream::is_inherited_of(type);
 }
 
 bool text_buffer_output_stream::query_object(type_name_t type, unknown_ptr_t out)
 {
 	if (out == null)
 		return false;
-	if (type == type_name<text_buffer_output_stream>())
+	if (type == type_of<text_buffer_output_stream>())
 	{
 		*out = this;
 		return true;
@@ -87,12 +83,11 @@ bool text_buffer_output_stream::query_object(type_name_t type, unknown_ptr_t out
 	{
 		return true;
 	}
-	else if (type == type_name<itext_output_stream>())
+	else if (text_buffer_output_stream::query_object(type, out))
 	{
-		*out = static_cast<itext_output_stream*>(this);
 		return true;
 	}
-	else if (type == type_name<ibuffer>())
+	else if (type == type_of<ibuffer>())
 	{
 		*out = buffer();
 		return true;
@@ -146,22 +141,22 @@ bool text_buffer_output_stream::command(special_command_t command)
 	return true;
 }
 
-void text_buffer_output_stream::enable_text_format(bool value)
+void text_buffer_output_stream::enable_text_formating(bool value)
 {
 	_is_formating_enabled = value;
 }
 
-bool text_buffer_output_stream::is_text_format_enabled()const
+bool text_buffer_output_stream::is_text_formating_enabled()const
 {
 	return _is_formating_enabled;
 }
 
-void text_buffer_output_stream::text_format(cstr_t format)
+void text_buffer_output_stream::text_formating(cstr_t format)
 {
-	text_format(text::text_format(format));
+	text_formating(text::text_format(format));
 }
 
-void text_buffer_output_stream::text_format(text::text_format_t format)
+void text_buffer_output_stream::text_formating(text::text_format_t format)
 {
 	switch (format.format_target())
 	{
@@ -171,10 +166,10 @@ void text_buffer_output_stream::text_format(text::text_format_t format)
 	case text::text_format::text:
 		string_format = format;
 		break;
-	case text::text_format::signed_interger:
+	case text::text_format::signed_integer:
 		signed_format = format;
 		break;
-	case text::text_format::usigned_interger:
+	case text::text_format::usigned_integer:
 		unsigned_format = format;
 		break;
 	case text::text_format::floating:
@@ -240,7 +235,7 @@ bool text_buffer_output_stream::move_to(stream_index_t size, stream_reference_t 
 	return true;
 }
 
-bool text_buffer_output_stream::forward(pointer ptr, stream_index_t size)
+bool text_buffer_output_stream::forward(ibuffer_view_t view, stream_index_t size)
 {
 	stream_index_t maxPos = stream_size();
 
@@ -249,12 +244,12 @@ bool text_buffer_output_stream::forward(pointer ptr, stream_index_t size)
 	else
 		_cursor += size;
 
-	_buffer->unmap_buffer(ptr, (uint)size);
+	_buffer->unmap_buffer(view, (wsize)size);
 
 	return true;
 }
 
-bool text_buffer_output_stream::backward(pointer ptr, stream_index_t size)
+bool text_buffer_output_stream::backward(ibuffer_view_t view, stream_index_t size)
 {
 	auto curSize = stream_size();
 	stream_index_t maxPos = curSize - 1L;
@@ -268,29 +263,39 @@ bool text_buffer_output_stream::backward(pointer ptr, stream_index_t size)
 }
 
 
-text::encoding_t text_buffer_output_stream::text_encoding()const
+text::encoding_t text_buffer_output_stream::format()const
 {
-	return _format;
+	return _buffer.is_empty() ? text::encoding::none : _buffer->encoding().get();
 }
 
-ibuffer* text_buffer_output_stream::buffer()const
+text::itext_buffer* text_buffer_output_stream::buffer()const
 {
 	return _buffer.get();
 }
 
-bool text_buffer_output_stream::attach(text::itext_buffer* buff)
+bool text_buffer_output_stream::attach(text::itext_buffer_t buff)
 {
 	_buffer = buff;
-	_format = buff ? buff->encoding().get() : text::encoding::unknown;
 	_cursor = 0;
-	return true;
-}
 
-bool text_buffer_output_stream::attach(ibuffer* buff, text::encoding_t format)
-{
-	_buffer = buff;
-	_format = buff ? format.get() : text::encoding::unknown;
-	_cursor = 0;
+	if (buff)
+	{
+		text::encoder_interface::initialize_interface(&encoder, buff->encoding());
+		switch (buff->encoding().get())
+		{
+		case text::encoding::utf8: _cursor += load_bom< text::encoding::utf8>(buff->buffer_ptr()); break;
+		case text::encoding::utf32: _cursor += load_bom< text::encoding::utf32>(buff->buffer_ptr()); break;
+		case text::encoding::utf32_se: _cursor += load_bom< text::encoding::utf32_se>(buff->buffer_ptr()); break;
+		case text::encoding::utf32_le: _cursor += load_bom< text::encoding::utf32_le>(buff->buffer_ptr()); break;
+		case text::encoding::utf32_be: _cursor += load_bom< text::encoding::utf32_be>(buff->buffer_ptr()); break;
+		case text::encoding::utf16: _cursor += load_bom< text::encoding::utf16>(buff->buffer_ptr()); break;
+		case text::encoding::utf16_se: _cursor += load_bom< text::encoding::utf16_se>(buff->buffer_ptr()); break;
+		case text::encoding::utf16_le: _cursor += load_bom< text::encoding::utf16_le>(buff->buffer_ptr()); break;
+		case text::encoding::utf16_be: _cursor += load_bom< text::encoding::utf16_be>(buff->buffer_ptr()); break;
+		case text::encoding::unicode: _cursor += load_bom< text::encoding::unicode>(buff->buffer_ptr()); break;
+		}
+	}
+
 	return true;
 }
 
@@ -370,624 +375,121 @@ pointer text_buffer_output_stream::pointer_at(stream_index_t idx)
 	return pointer(wsize(_buffer->buffer_ptr()) + idx);
 }
 
-wsize text_buffer_output_stream::write(pointer ptr, wsize sz)
+wsize text_buffer_output_stream::write(pointer ptr, wsize sz, text::text_format_t format)
 {
-	return 0;
+	if (!is_valid() || (position() >= stream_size()))
+		return false;
+
+	alignas(4) stack_array<char, 480> _buff;
+	array_view<char32_t> _char(120, (char32_t*)_buff.get());
+
+	raw_str_t dest(_buff.get(), _buff.size(), encoder._format());
+	wsize i = 0, cs = dest.char_size();
+	
+	ibuffer_view_t view = null;
+
+	switch (format.format_target())
+	{
+	case text::text_format::character:
+		switch (sz) {
+		case 1: _char[0] = text::ASCII().to_utf32((char const*)ptr, i); break;//ascii - utf8
+		case 2: _char[0] = text::UTF16().to_utf32((char16_t const*)ptr, i); break; //utf16
+		case 4: _char[0] = text::UTF32().to_utf32((char32_t const*)ptr, i); break; //utf32
+		default: return 0;
+		}
+		_char[1] = 0;
+		i = encoder._size(_char.get(), text::encoding::utf32);
+		if (!can_forward(i * cs))
+			return false;
+		view = _buffer->map_buffer((windex)position(), i * cs);
+		i = encoder._convert_string(view->buffer_ptr(), view->buffer_size(), _char, i, text::encoding::utf32, false) * cs;
+		forward(view, i);
+		break;
+
+	case text::text_format::signed_integer: 
+		if (is_text_formating_enabled()) format = signed_format;
+		switch (sz) {
+		case 1: dest = encoder._integer_to_string(*(char*)ptr, dest.ptr(), dest.size() / cs, format); break;
+		case 2: dest = encoder._integer_to_string(*(short*)ptr, dest.ptr(), dest.size() / cs, format); break;
+		case 4: dest = encoder._integer_to_string(*(int*)ptr, dest.ptr(), dest.size() / cs, format); break;
+		case 8: dest = encoder._integer_to_string(*(long64*)ptr, dest.ptr(), dest.size() / cs, format); break;
+		}
+
+		if (!can_forward(dest.size()))
+			return false;
+
+		view = _buffer->map_buffer((windex)position(), i * cs);
+		memcpy(view->buffer_ptr(), dest.ptr(), dest.size());	
+		forward(view, dest.size());
+		break;
+
+	case text::text_format::usigned_integer:
+		if (is_text_formating_enabled()) format = unsigned_format;
+		switch (sz) {
+		case 1: dest = encoder._uinteger_to_string(*(uchar*)ptr, dest.ptr(), dest.size() / cs, format); break;
+		case 2: dest = encoder._uinteger_to_string(*(ushort*)ptr, dest.ptr(), dest.size() / cs, format); break;
+		case 4: dest = encoder._uinteger_to_string(*(uint*)ptr, dest.ptr(), dest.size() / cs, format); break;
+		case 8: dest = encoder._uinteger_to_string(*(ulong64*)ptr, dest.ptr(), dest.size() / cs, format); break;
+		}
+
+		if (!can_forward(dest.size()))
+			return false;
+
+		view = _buffer->map_buffer((windex)position(), i * cs);
+		memcpy(view->buffer_ptr(), dest.ptr(), dest.size());
+		forward(view, dest.size());
+		break;
+
+	case text::text_format::floating: 
+		if (is_text_formating_enabled()) format = floating_format;
+		switch (sz) {
+		case 4: dest = encoder._floating_to_string(*(float*)ptr, dest.ptr(), dest.size() / cs, format); break;
+		case 8: dest = encoder._floating_to_string(*(double*)ptr, dest.ptr(), dest.size() / cs, format); break;
+		}
+
+		if (!can_forward(dest.size()))
+			return false;
+
+		view = _buffer->map_buffer((windex)position(), i * cs);
+		memcpy(view->buffer_ptr(), dest.ptr(), dest.size());
+		forward(view, dest.size());
+		break;
+	}
+
+	return i;
 }
 
-bool text_buffer_output_stream::write(wchar value)
+
+wsize text_buffer_output_stream::write(raw_str_t value)
 {
 	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
 		return false;
+	wsize _size = encoder._size(value.ptr(), value.encoding())
+		, cs = raw_str(0, 0, encoder._format()).char_size();
 
-	switch (_format)
-	{
-	case text::encoding::ascii: {
-		if (!can_forward(sizeof(char)))
-			return false;
-		
-		pointer buffer = _buffer->map_buffer((uint)position(), sizeof(char));
-		auto text = reinterpret_cast<char*>(buffer);
-		text[0] = (char)(byte)value;
-		forward(buffer, sizeof(char));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		text[0] = value;
-		forward(buffer, sizeof(wchar));
-	}break;
-	case text::encoding::utf_8: {
-		if (!can_forward(4))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), sizeof(uint));
-		mbyte& mb = *reinterpret_cast<mbyte*>(buffer);
-		mb = value;
-		forward(buffer, mb.size());
-	}break;
-	default:return false;
-	}
-	return true;
+	if (!can_forward(_size * cs))
+		return false;
+	ibuffer_view_t view = _buffer->map_buffer((windex)position(), _size * cs);
+	_size = encoder._convert_string(view->buffer_ptr(), _size, value.ptr(), _size, value.encoding(), false);
+	forward(view, _size * cs);
+	return _size * cs;
 }
 
-bool text_buffer_output_stream::write(char value)
+wsize text_buffer_output_stream::write_line(raw_str_t value)
 {
 	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
 		return false;
+	char _endl[2] = "\n";
+	wsize _size = encoder._size(value.ptr(), value.encoding()) + 2
+		, cs = raw_str(0, 0, encoder._format()).char_size(), i = 0;
 
-	switch (_format)
-	{
-	case text::encoding::ascii: {
-		if (!can_forward(sizeof(char)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), sizeof(char));
-		auto text = reinterpret_cast<char*>(buffer);
-		text[0] = value;
-		forward(buffer, sizeof(char));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		text[0] = (wchar)(byte)value;
-		forward(buffer, sizeof(wchar));
-	}break;
-	case text::encoding::utf_8: {
-		if (!can_forward(2))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), sizeof(wchar));
-		mbyte& mb = *reinterpret_cast<mbyte*>(buffer);
-		mb = value;
-		forward(buffer, mb.size());
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(byte value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
+	if (!can_forward(_size * cs))
 		return false;
-
-	switch (_format)
-	{
-	case text::encoding::ascii: {
-		if (!can_forward(sizeof(char)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), sizeof(char));
-		auto text = reinterpret_cast<char*>(buffer);
-		text[0] = value;
-		forward(buffer, sizeof(char));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		text[0] = value;
-		forward(buffer, sizeof(wchar));
-	}break;
-	case text::encoding::utf_8: {
-		if (!can_forward(2))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), sizeof(wchar));
-		mbyte& mb = *reinterpret_cast<mbyte*>(buffer);
-		mb = (wchar)value;
-		forward(buffer, mb.size());
-	}break;
-	default:return false;
-	}
-	return true;
+	ibuffer_view_t view = _buffer->map_buffer((windex)position(), _size * cs);
+	i = encoder._convert_string(view->buffer_ptr(), _size, value.ptr(), i, value.encoding(), false);
+	encoder._convert_string((byte*)view->buffer_ptr() + (i * cs), _size - i, _endl, i, text::encoding::ascii, false);
+	forward(view, i * cs);
+	return i * cs;
 }
 
-bool text_buffer_output_stream::write(short value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	string str = ang::move(interger::to_string(value, signed_format));
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		if (!can_forward(str->length()))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length());
-		auto text = reinterpret_cast<char*>(buffer);	
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(str->length() * sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length() * sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(ushort value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	string str = ang::move(uinterger::to_string(value, unsigned_format));
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		if (!can_forward(str->length()))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length());
-		auto text = reinterpret_cast<char*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(str->length() * sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length() * sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(int value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	string str = ang::move(interger::to_string(value, signed_format));
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		if (!can_forward(str->length()))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length());
-		auto text = reinterpret_cast<char*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(str->length() * sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length() * sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(uint value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	string str = ang::move(uinterger::to_string(value, unsigned_format));
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		if (!can_forward(str->length()))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length());
-		auto text = reinterpret_cast<char*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(str->length() * sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length() * sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(long value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	string str = ang::move(interger::to_string(value, signed_format));
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		if (!can_forward(str->length()))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length());
-		auto text = reinterpret_cast<char*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(str->length() * sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length() * sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(ulong value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	string str = ang::move(uinterger::to_string(value, unsigned_format));
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		if (!can_forward(str->length()))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length());
-		auto text = reinterpret_cast<char*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(str->length() * sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length() * sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(long64 value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	string str = ang::move(interger64::to_string(value, signed_format));
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		if (!can_forward(str->length()))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length());
-		auto text = reinterpret_cast<char*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(str->length() * sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length() * sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(ulong64 value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	string str = ang::move(uinterger64::to_string(value, unsigned_format));
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		if (!can_forward(str->length()))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length());
-		auto text = reinterpret_cast<char*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(str->length() * sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length() * sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(float value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	string str = ang::move(floating::to_string(value, floating_format));
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		if (!can_forward(str->length()))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length());
-		auto text = reinterpret_cast<char*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(str->length() * sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length() * sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(double value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	string str = ang::move(floating64::to_string(value, floating_format));
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	case text::encoding::ascii: {
-		if (!can_forward(str->length()))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length());
-		auto text = reinterpret_cast<char*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	case text::encoding::unicode: {
-		if (!can_forward(str->length() * sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), str->length());
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, (cstr_t)str));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(cwstr_t value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	{
-		uint _size = strings::algorithms::string_size(value, text::encoding::utf_8);
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<mchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, value));
-	}break;
-	case text::encoding::ascii: {
-		uint _size = value.size();
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<char*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, value));
-	}break;
-
-	case text::encoding::unicode: {
-		uint _size = value.size() * sizeof(wchar);
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, value));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(cstr_t value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	{
-		uint _size = strings::algorithms::string_size(value, text::encoding::utf_8);
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<mchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, value));
-	}break;
-	case text::encoding::ascii: {
-		uint _size = value.size();
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<char*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, value));
-	}break;
-
-	case text::encoding::unicode: {
-		uint _size = value.size() * sizeof(wchar);
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, value));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write(cmstr_t value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	{
-		uint _size = value.size();
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<mchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, value));
-	}break;
-	case text::encoding::ascii: {
-		uint _size = strings::algorithms::string_size(value, text::encoding::ascii);
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<char*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, value));
-	}break;
-
-	case text::encoding::unicode: {
-		uint _size = strings::algorithms::string_size(value, text::encoding::unicode);
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<wchar*>(buffer);
-		forward(buffer, strings::algorithms::string_copy(text, value));
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-
-bool text_buffer_output_stream::write_line(cwstr_t value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	{
-		uint _size = strings::algorithms::string_size(value, text::encoding::utf_8) + 1;
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<mchar*>(buffer);
-		auto s = strings::algorithms::string_copy(text, value);
-		text = &text[s];
-		forward(buffer, strings::algorithms::string_copy(text, "\n") + s);
-	}break;
-	case text::encoding::ascii: {
-		if (!can_forward(value.size() + 1))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), value.size() + 1);
-		auto text = reinterpret_cast<char*>(buffer);
-		auto s = strings::algorithms::string_copy(text, value);
-		text = &text[s];
-		forward(buffer, strings::algorithms::string_copy(text, "\n") + s);
-	}break;
-
-	case text::encoding::unicode: {
-		if (!can_forward((value.size() + 1) * sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), (value.size() + 1) * sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		auto s = strings::algorithms::string_copy(text, value);
-		text = &text[s];
-		forward(buffer, strings::algorithms::string_copy(text, "\n") + s);
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write_line(cstr_t value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	{
-		uint _size = strings::algorithms::string_size(value, text::encoding::utf_8) + 1;
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<mchar*>(buffer);
-		auto s = strings::algorithms::string_copy(text, value);
-		text = &text[s];
-		forward(buffer, strings::algorithms::string_copy(text, "\n") + s);
-	}break;
-	case text::encoding::ascii: {
-		if (!can_forward(value.size() + 1))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), value.size() + 1);
-		auto text = reinterpret_cast<char*>(buffer);
-		auto s = strings::algorithms::string_copy(text, value);
-		text = &text[s];
-		forward(buffer, strings::algorithms::string_copy(text, "\n") + s);
-	}break;
-
-	case text::encoding::unicode: {
-		if (!can_forward((value.size() + 1) * sizeof(wchar)))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), (value.size() + 1) * sizeof(wchar));
-		auto text = reinterpret_cast<wchar*>(buffer);
-		auto s = strings::algorithms::string_copy(text, value);
-		text = &text[s];
-		forward(buffer, strings::algorithms::string_copy(text, "\n") + s);
-	}break;
-	default:return false;
-	}
-	return true;
-}
-
-bool text_buffer_output_stream::write_line(cmstr_t value)
-{
-	if (!is_valid() || (position() >= stream_size() && !_buffer->can_realloc_buffer()))
-		return false;
-	switch (_format)
-	{
-	case text::encoding::utf_8:
-	{
-		if (!can_forward(value.size() + 1))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), value.size() + 1);
-		auto text = reinterpret_cast<mchar*>(buffer);
-		auto s = strings::algorithms::string_copy(text, value);
-		text = &text[s];
-		forward(buffer, strings::algorithms::string_copy(text, "\n") + s);
-	}break;
-	case text::encoding::ascii: {
-		uint _size = strings::algorithms::string_size(value, text::encoding::ascii) + 1;
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<char*>(buffer);
-		auto s = strings::algorithms::string_copy(text, value);
-		text = &text[s];
-		forward(buffer, strings::algorithms::string_copy(text, "\n") + s);
-	}break;
-
-	case text::encoding::unicode: {
-		uint _size = strings::algorithms::string_size(value, text::encoding::unicode) + 2;
-		if (!can_forward(_size))
-			return false;
-		pointer buffer = _buffer->map_buffer((uint)position(), _size);
-		auto text = reinterpret_cast<wchar*>(buffer);
-		auto s = strings::algorithms::string_copy(text, value);
-		text = &text[s];
-		forward(buffer, strings::algorithms::string_copy(text, "\n") + s);
-	}break;
-	default:return false;
-	}
-	return true;
-}
 

@@ -8,6 +8,7 @@
 #include "inline/encoder_convert.inl"
 #include "inline/encoder_compare.inl"
 #include "inline/encoder_find.inl"
+#include "inline/encoder_value_to_string.inl"
 
 using namespace ang;
 using namespace ang::text;
@@ -112,26 +113,9 @@ template<ang::text::encoding_enum ENCODING>
 void ang_text_encoder_interface_initialize_interface(encoder_interface* encoder)
 {
 	
-
 	encoder->_format = &ang_text_encoder<ENCODING>::format;
 	encoder->_length = [](pointer ptr)->wsize { return ang_text_encoder<ENCODING>::length((typename ang::text::char_type_by_encoding<ENCODING>::cstr_t)ptr); };
 	encoder->_size = [](pointer ptr, encoding_t format)->wsize { return ang_text_encoder<ENCODING>::size(ptr, format); };
-	encoder->_to_utf32 = is_endian_swapped<ENCODING>()?
-		function_cast<char32_t, pointer, windex&>([](pointer ptr, windex& idx)->char32_t { return converter<char32_t, typename text::char_type_by_encoding<ENCODING>::char_t>::template convert<true>((typename text::char_type_by_encoding<ENCODING>::char_t const*)ptr, idx); }) :
-		function_cast<char32_t, pointer, windex&>([](pointer ptr, windex& idx)->char32_t { return converter<char32_t, typename text::char_type_by_encoding<ENCODING>::char_t>::template convert<false>((typename text::char_type_by_encoding<ENCODING>::char_t const*)ptr, idx); });
-
-	encoder->_from_utf32 = 
-		is_endian_swapped<ENCODING>() ?	function_cast<wsize, char32_t, pointer, windex&>([](char32_t _value, pointer ptr, windex& idx)->wsize {
-		windex i = idx, j = 0; char32_t value[] = { _value , 0 };
-		converter<typename text::char_type_by_encoding<ENCODING>::char_t, char32_t>::template convert<true, false>((typename text::char_type_by_encoding<ENCODING>::char_t*)ptr, idx, value, j);
-		return (idx - i) * sizeof(typename text::char_type_by_encoding<ENCODING>::char_t);
-	}) : function_cast<wsize, char32_t, pointer, windex&>([](char32_t _value, pointer ptr, windex& idx)->wsize {
-			windex i = idx, j = 0; char32_t value[] = { _value , 0 };
-			converter<typename text::char_type_by_encoding<ENCODING>::char_t, char32_t>::template convert<true, false>((typename text::char_type_by_encoding<ENCODING>::char_t*)ptr, idx, value, j);
-			return (idx - i) * sizeof(typename text::char_type_by_encoding<ENCODING>::char_t); 
-	});
-
-
 
 	encoder->_convert_string = [](pointer dest, wsize sz, pointer src, wsize& idx, encoding_t format, bool eos)->wsize {
 		return ang_text_encoder<ENCODING>::convert((typename ang::text::char_type_by_encoding<ENCODING>::str_t)dest, sz, src, idx, format, eos);
@@ -148,6 +132,40 @@ void ang_text_encoder_interface_initialize_interface(encoder_interface* encoder)
 	encoder->_find_revert = [](pointer first, wsize s1, pointer second, wsize s2, text::encoding_t format, windex start)->windex {
 		return ang_text_encoder<ENCODING>::find_revert((typename ang::text::char_type_by_encoding<ENCODING>::cstr_t)first, s1, second, s2, format, start);
 	};
+
+
+	if (is_endian_swapped<ENCODING>())
+	{
+		encoder->_to_utf32 = function_cast<char32_t, pointer, windex&>([](pointer ptr, windex& idx)->char32_t { return converter<char32_t, typename text::char_type_by_encoding<ENCODING>::char_t>::template convert<true>((typename text::char_type_by_encoding<ENCODING>::char_t const*)ptr, idx); });
+
+		encoder->_from_utf32 = function_cast<wsize, char32_t, pointer, windex&>([](char32_t _value, pointer ptr, windex& idx)->wsize {
+			windex i = idx, j = 0; char32_t value[] = { _value , 0 };
+			converter<typename text::char_type_by_encoding<ENCODING>::char_t, char32_t>::template convert<true, false>((typename text::char_type_by_encoding<ENCODING>::char_t*)ptr, idx, value, j);
+			return (idx - i) * sizeof(typename text::char_type_by_encoding<ENCODING>::char_t);
+		});
+
+		encoder->_integer_to_string = [](long64 value, pointer buff, wsize sz, text_format_t f) -> raw_str_t { return{ ang_integer_to_string<typename char_type_by_encoding<ENCODING>::char_t, true>(value, f, collections::to_array((typename char_type_by_encoding<ENCODING>::char_t*)buff, sz)), ENCODING }; };
+		encoder->_uinteger_to_string = [](ulong64 value, pointer buff, wsize sz, text_format_t f) -> raw_str_t { return{ ang_uinteger_to_string<typename char_type_by_encoding<ENCODING>::char_t, true>(value, f, collections::to_array((typename char_type_by_encoding<ENCODING>::char_t*)buff, sz)), ENCODING }; };
+		encoder->_floating_to_string = [](double value, pointer buff, wsize sz, text_format_t f) -> raw_str_t { return{ ang_floating_to_string<typename char_type_by_encoding<ENCODING>::char_t, true>(value, f, collections::to_array((typename char_type_by_encoding<ENCODING>::char_t*)buff, sz)), ENCODING }; };
+	}
+	else
+	{
+		encoder->_to_utf32 = function_cast<char32_t, pointer, windex&>([](pointer ptr, windex& idx)->char32_t { return converter<char32_t, typename text::char_type_by_encoding<ENCODING>::char_t>::template convert<false>((typename text::char_type_by_encoding<ENCODING>::char_t const*)ptr, idx); });
+
+		encoder->_from_utf32 =  function_cast<wsize, char32_t, pointer, windex&>([](char32_t _value, pointer ptr, windex& idx)->wsize {
+			windex i = idx, j = 0; char32_t value[] = { _value , 0 };
+			converter<typename text::char_type_by_encoding<ENCODING>::char_t, char32_t>::template convert<true, false>((typename text::char_type_by_encoding<ENCODING>::char_t*)ptr, idx, value, j);
+			return (idx - i) * sizeof(typename text::char_type_by_encoding<ENCODING>::char_t);
+		});
+
+		encoder->_integer_to_string = [](long64 value, pointer buff, wsize sz, text_format_t f) -> raw_str_t { return{ ang_integer_to_string<typename char_type_by_encoding<ENCODING>::char_t, false>(value, f, collections::to_array((typename char_type_by_encoding<ENCODING>::char_t*)buff, sz)), ENCODING }; };
+		encoder->_uinteger_to_string = [](ulong64 value, pointer buff, wsize sz, text_format_t f) -> raw_str_t { return{ ang_uinteger_to_string<typename char_type_by_encoding<ENCODING>::char_t, false>(value, f, collections::to_array((typename char_type_by_encoding<ENCODING>::char_t*)buff, sz)), ENCODING }; };
+		encoder->_floating_to_string = [](double value, pointer buff, wsize sz, text_format_t f) -> raw_str_t { return{ ang_floating_to_string<typename char_type_by_encoding<ENCODING>::char_t, false>(value, f, collections::to_array((typename char_type_by_encoding<ENCODING>::char_t*)buff, sz)), ENCODING }; };
+	}
+
+
+
+
 }
 
 void ang::text::encoder_interface::initialize_interface(encoder_interface* encoder, encoding_t format)

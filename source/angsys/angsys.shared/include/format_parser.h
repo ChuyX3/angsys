@@ -4,7 +4,7 @@
 #define FLAG_INVALID_FORMAT 0
 
 #define SET_FLAG_TARGET(out,target) (out = (out & 0XFFFFFFFFFFFFFF00) | (0X00000000000000FF & ((qword)target)))
-#define GET_FLAG_TARGET(flag) ((text::text_format_t::target)(0X00000000000000FF & flag))
+#define GET_FLAG_TARGET(flag) ((ang::text::text_format_t::target)(0X00000000000000FF & flag))
 
 #define GET_FLAG_FILL(flag) ((char)((0X0000000000FF0000&(flag))>>16))
 #define GET_FLAG_MAX(flag)	((uint)((0X00000000FF000000&(flag))>>24))

@@ -156,72 +156,10 @@ text::encoding_t text_buffer_input_stream::format()const
 	return !_buffer.is_empty() ? _buffer->encoding().get() : text::encoding::none;
 }
 
-ibuffer* text_buffer_input_stream::buffer()const
+text::itext_buffer* text_buffer_input_stream::buffer()const
 {
 	return _buffer.get();
 }
-
-//static xml_encoding_t  xml_detect_encoding(raw_str_t text, windex& idx)
-//{
-//	if (text.size() < 4) return xml_encoding::none;
-//
-//	alignas(4) static byte utf8_bom[4] = { 0xef, 0xbb, 0xbf, 0x0 };
-//	alignas(4) static byte utf16_le_bom[4] = { 0xff, 0xfe, 0x0, 0x0 };
-//	alignas(4) static byte utf16_be_bom[4] = { 0xfe, 0xff, 0x0, 0x0 };
-//	alignas(4) static byte utf32_le_bom[8] = { 0xff, 0xfe, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
-//	alignas(4) static byte utf32_be_bom[8] = { 0x0, 0x0, 0xfe, 0xff, 0x0, 0x0, 0x0, 0x0 };
-//
-//	switch (text.encoding())
-//	{
-//	case text::encoding::auto_detect:
-//		if (text::UTF8().compare_until((utf8_char_t const*)text.ptr(), (utf8_char_t const*)utf8_bom) == 3)
-//		{
-//			idx += 3;
-//			return text::encoding::utf8;
-//		}
-//		else if (text::UTF32().compare_until((utf32_char_t const*)text.ptr(), (utf32_char_t const*)utf32_le_bom) == 1)
-//		{
-//			idx += 1;
-//			return text::native_encoding<text::encoding::utf32_le>();
-//		}
-//		else if (text::UTF32().compare_until((utf32_char_t const*)text.ptr(), (utf32_char_t const*)utf32_be_bom) == 1)
-//		{
-//			idx += 1;
-//			return text::native_encoding<text::encoding::utf16_be>();
-//		}
-//		else if (text::UTF16().compare_until((utf16_char_t const*)text.ptr(), (utf16_char_t const*)utf16_le_bom) == 1)
-//		{
-//			idx += 1;
-//			return text::native_encoding<text::encoding::utf16_le>();
-//		}
-//		else if (text::UTF16().compare_until((utf16_char_t const*)text.ptr(), (utf16_char_t const*)utf16_be_bom) == 1)
-//		{
-//			idx += 1;
-//			return text::native_encoding<text::encoding::utf16_be>();
-//		}
-//
-//		else if (text::UTF8().compare_until((utf8_char_t const*)text.ptr(), u8"<?xml"_sm.cstr()) == 5)
-//			return text::encoding::utf8;
-//		else if (text::UTF32().compare_until((utf32_char_t const*)text.ptr(), U"<?xml") == 5)
-//			return text::encoding::utf32;
-//		else if (text::UTF32_SE().compare_until((utf32_char_t const*)text.ptr(), U"<?xml") == 5)
-//			return text::encoding::utf32_se;
-//		else if (text::UTF16().compare_until((utf16_char_t const*)text.ptr(), u"<?xml") == 5)
-//			return text::encoding::utf16;
-//		else if (text::UTF16_SE().compare_until((utf16_char_t const*)text.ptr(), u"<?xml") == 5)
-//			return text::encoding::utf16_se;
-//
-//		return text::encoding::utf8;
-//
-//	case text::encoding::utf16_le: return text::native_encoding<text::encoding::utf16_le>();
-//	case text::encoding::utf16_be: return text::native_encoding<text::encoding::utf16_be>();
-//	case text::encoding::utf32_le: return text::native_encoding<text::encoding::utf32_le>();
-//	case text::encoding::utf32_be: return text::native_encoding<text::encoding::utf32_be>();
-//	default:
-//		return text.encoding();
-//	}
-//}
-
 
 bool text_buffer_input_stream::attach(text::itext_buffer_t buff)
 {
@@ -323,10 +261,10 @@ pointer text_buffer_input_stream::pointer_at(stream_index_t idx)
 	return pointer(wsize(_buffer->buffer_ptr()) + idx);
 }
 
-wsize text_buffer_input_stream::read(pointer ptr, wsize sz)
-{
-	return 0;
-}
+//wsize text_buffer_input_stream::read(pointer ptr, wsize sz)
+//{
+//	return 0;
+//}
 
 wsize text_buffer_input_stream::read(pointer ptr, wsize sz, text::text_format_t format)
 {

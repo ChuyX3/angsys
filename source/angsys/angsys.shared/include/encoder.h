@@ -315,6 +315,114 @@ namespace ang
 				dest[i++] = swap_endian<xor_operator<SWAP1, SWAP2>()>(src[j++]);
 			}
 		};
+
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+		template<typename T, bool SWAP = false>
+		struct value_to_string
+		{
+			static safe_str<const T> integer_to_string(long64 value, text::text_format_t f, array_view<T> out) { return{ null,0 }; }
+			static safe_str<const T> uinteger_to_string(ulong64 value, text::text_format_t f, array_view<T> out) { return{ null,0 }; }
+			static safe_str<const T> floating_to_string(double value, text::text_format_t f, array_view<T> out) { return{ null,0 }; }
+		};
+
+		template<> struct value_to_string<char, true>
+		{
+			static safe_str<const char> integer_to_string(long64 value, text::text_format_t f, array_view<char> out);
+			static safe_str<const char> uinteger_to_string(ulong64 value, text::text_format_t f, array_view<char> out);
+			static safe_str<const char> floating_to_string(double value, text::text_format_t f, array_view<char> out);
+		};
+
+		template<> struct value_to_string<char, false>
+		{
+			static safe_str<const char> integer_to_string(long64 value, text::text_format_t f, array_view<char> out);
+			static safe_str<const char> uinteger_to_string(ulong64 value, text::text_format_t f, array_view<char> out);
+			static safe_str<const char> floating_to_string(double value, text::text_format_t f, array_view<char> out);
+		};
+
+		template<> struct value_to_string<mchar, true>
+		{
+			static safe_str<const mchar> integer_to_string(long64 value, text::text_format_t f, array_view<mchar> out);
+			static safe_str<const mchar> uinteger_to_string(ulong64 value, text::text_format_t f, array_view<mchar> out);
+			static safe_str<const mchar> floating_to_string(double value, text::text_format_t f, array_view<mchar> out);
+		};
+
+		template<> struct value_to_string<mchar, false>
+		{
+			static safe_str<const mchar> integer_to_string(long64 value, text::text_format_t f, array_view<mchar> out);
+			static safe_str<const mchar> uinteger_to_string(ulong64 value, text::text_format_t f, array_view<mchar> out);
+			static safe_str<const mchar> floating_to_string(double value, text::text_format_t f, array_view<mchar> out);
+		};
+
+		template<> struct value_to_string<wchar, true>
+		{
+			static safe_str<const wchar> integer_to_string(long64 value, text::text_format_t f, array_view<wchar> out);
+			static safe_str<const wchar> uinteger_to_string(ulong64 value, text::text_format_t f, array_view<wchar> out);
+			static safe_str<const wchar> floating_to_string(double value, text::text_format_t f, array_view<wchar> out);
+		};
+
+		template<> struct value_to_string<wchar, false>
+		{
+			static safe_str<const wchar> integer_to_string(long64 value, text::text_format_t f, array_view<wchar> out);
+			static safe_str<const wchar> uinteger_to_string(ulong64 value, text::text_format_t f, array_view<wchar> out);
+			static safe_str<const wchar> floating_to_string(double value, text::text_format_t f, array_view<wchar> out);
+		};
+
+		template<> struct value_to_string<char16_t, true>
+		{
+			static safe_str<const char16_t> integer_to_string(long64 value, text::text_format_t f, array_view<char16_t> out);
+			static safe_str<const char16_t> uinteger_to_string(ulong64 value, text::text_format_t f, array_view<char16_t> out);
+			static safe_str<const char16_t> floating_to_string(double value, text::text_format_t f, array_view<char16_t> out);
+		};
+
+		template<> struct value_to_string<char16_t, false>
+		{
+			static safe_str<const char16_t> integer_to_string(long64 value, text::text_format_t f, array_view<char16_t> out);
+			static safe_str<const char16_t> uinteger_to_string(ulong64 value, text::text_format_t f, array_view<char16_t> out);
+			static safe_str<const char16_t> floating_to_string(double value, text::text_format_t f, array_view<char16_t> out);
+		};
+
+		template<> struct value_to_string<char32_t, true>
+		{
+			static safe_str<const char32_t> integer_to_string(long64 value, text::text_format_t f, array_view<char32_t> out);
+			static safe_str<const char32_t> uinteger_to_string(ulong64 value, text::text_format_t f, array_view<char32_t> out);
+			static safe_str<const char32_t> floating_to_string(double value, text::text_format_t f, array_view<char32_t> out);
+		};
+
+		template<> struct value_to_string<char32_t, false>
+		{
+			static safe_str<const char32_t> integer_to_string(long64 value, text::text_format_t f, array_view<char32_t> out);
+			static safe_str<const char32_t> uinteger_to_string(ulong64 value, text::text_format_t f, array_view<char32_t> out);
+			static safe_str<const char32_t> floating_to_string(double value, text::text_format_t f, array_view<char32_t> out);
+		};
+
+
+	/*	template<bool SWAP>
+		struct value_to_string<void, SWAP>
+		{
+			static raw_str_t integer_to_string(long64 value, text::text_format_t f, raw_str_t out) {
+				switch (out.encoding())
+				{
+				case text::encoding::ascii:
+				case text::encoding::utf8: return value_to_string<char, SWAP>::integer_to_string(value, f, { (char*)out.ptr(), out.size() });
+
+				case text::encoding::utf16: return value_to_string<char, SWAP>::integer_to_string(value, f, { (char*)out.ptr(), out.size() });
+				case text::encoding::ascii: return value_to_string<char, SWAP>::integer_to_string(value, f, { (char*)out.ptr(), out.size() });
+				case text::encoding::ascii: return value_to_string<char, SWAP>::integer_to_string(value, f, { (char*)out.ptr(), out.size() });
+				case text::encoding::ascii: return value_to_string<char, SWAP>::integer_to_string(value, f, { (char*)out.ptr(), out.size() });
+				case text::encoding::ascii: return value_to_string<char, SWAP>::integer_to_string(value, f, { (char*)out.ptr(), out.size() });
+				case text::encoding::ascii: return value_to_string<char, SWAP>::integer_to_string(value, f, { (char*)out.ptr(), out.size() });
+				case text::encoding::ascii: return value_to_string<char, SWAP>::integer_to_string(value, f, { (char*)out.ptr(), out.size() });
+				}
+			}
+			static safe_str<const T> uinteger_to_string(ulong64 value, text::text_format_t f, raw_str_t out) { return{ null,0 }; }
+			static safe_str<const T> floating_to_string(double value, text::text_format_t f, raw_str_t out) { return{ null,0 }; }
+		};
+
+*/
 	}
 }
 

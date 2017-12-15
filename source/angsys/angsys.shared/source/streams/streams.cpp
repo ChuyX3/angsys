@@ -16,6 +16,7 @@ using namespace ang::streams;
 //ANG_IMPLEMENT_INTERFACE(ang::streams, iserializable);
 ANG_IMPLEMENT_INTERFACE(ang::streams, iinput_stream);
 ANG_IMPLEMENT_INTERFACE(ang::streams, ioutput_stream);
+ANG_IMPLEMENT_INTERFACE(ang::streams, istream);
 ANG_IMPLEMENT_INTERFACE(ang::streams, itext_input_stream);
 ANG_IMPLEMENT_INTERFACE(ang::streams, itext_output_stream);
 ANG_IMPLEMENT_INTERFACE(ang::streams, ibinary_input_stream);

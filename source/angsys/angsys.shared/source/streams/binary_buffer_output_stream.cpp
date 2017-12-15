@@ -287,3 +287,12 @@ wsize binary_buffer_output_stream::write(pointer ptr, wsize sz)
 	forward(sz);
 	return sz;
 }
+
+wsize binary_buffer_output_stream::write(pointer ptr, wsize sz, text::text_format_t)
+{
+	if (!can_forward(sz))
+		return 0;
+	memcpy(pointer_at(position()), ptr, sz);
+	forward(sz);
+	return sz;
+}

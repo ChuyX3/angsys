@@ -55,13 +55,13 @@ void text_format::format(cstr_t format)
 	flags = format_parser::parse(ang::move(format));
 }
 
-string text_format::format()const
-{
-	string out;
-	if (format_parser::format(flags, out))
-		return out;
-	return ""_s;
-}
+//string text_format::format()const
+//{
+//	string out;
+//	if (format_parser::format(flags, out))
+//		return out;
+//	return ""_s;
+//}
 
 qword text_format::format_flags()const
 {

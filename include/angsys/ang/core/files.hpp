@@ -125,14 +125,17 @@ namespace ang
 			ANG_BEGIN_FLAGS(LINK, open_flags, uint)
 				null = 0x0000,
 
-				type_binary = 0x0001,
-				type_text = 0x0002,
-				type_pack = 0x0003,
-
-				encoding_ascii = 0x0010,
-				encoding_mbyte = 0x0020,
-				encoding_unicode = 0x0030,
-
+				format_binary = 1,
+				format_packfile,
+				
+				format_text = 0X10, //autodetect format
+				format_ascii = 0X11,
+				format_utf8,
+				format_utf16_le,
+				format_utf16_be,
+				format_utf32_le,
+				format_utf32_be,
+		
 				access_in = 0x0100,
 				access_out = 0x0200,
 				access_inout = 0x0300,
@@ -156,24 +159,28 @@ namespace ang
 			//inline bool operator != (pack_file_info_t const& a1, pack_file_info_t const& a2) { return a1.path != a2.path; }
 
 
-			ANG_BEGIN_INTERFACE(LINK, ifile)
+			ANG_BEGIN_INTERFACE_WITH_BASE(LINK, ifile, public streams::istream)
 				visible vcall streams::stream_mode_t mode()const pure;
 				visible vcall path file_path()const pure;
-				visible vcall file_size_t file_size()const pure;
-				visible vcall bool file_size(file_size_t) pure;
-				visible vcall void encoding(text::encoding_t) pure;
-				visible vcall text::encoding_t encoding()const pure;
-				visible vcall void cursor(file_reference_t, file_cursor_t) pure;
-				visible vcall file_cursor_t cursor()const pure;
-				visible vcall wsize read(wsize size, pointer buffer)pure;
-				visible vcall wsize write(wsize size, pointer buffer)pure;
-				visible vcall wsize read(ibuffer_t buffer)pure;
-				visible vcall wsize write(ibuffer_t buffer)pure;
+				visible vcall void format(text::encoding_t)pure;
+				visible vcall bool stream_size(file_size_t)pure;
+				visible vcall wsize read(pointer buffer, wsize size, text::encoding_t = text::encoding::binary)pure;
+				visible vcall wsize read(ibuffer_view_t buffer, text::encoding_t = text::encoding::binary)pure;
+				visible vcall wsize write(pointer buffer, wsize size, text::encoding_t = text::encoding::binary)pure;
+				visible vcall wsize write(ibuffer_view_t buffer, text::encoding_t = text::encoding::binary)pure;
+
 				visible vcall ibuffer_t map(wsize size, file_cursor_t offset)pure;
-				visible vcall bool unmap(ibuffer_t)pure;
-				visible vcall bool set_mutex(core::async::mutex_t)pure;
-				//visible vcall core::async::iasync_t<ibuffer_t> read_async(uint size)pure;
-				//visible vcall core::async::iasync_t<uint> write_async(uint size, pointer buffer)pure;
+				visible vcall bool unmap(ibuffer_t, wsize)pure;
+				visible vcall bool set_mutex(core::async::mutex_t&)pure;
+
+				visible using streams::istream::format;
+				visible using streams::istream::stream_size;
+
+				visible using streams::istream::read;
+				visible using streams::istream::write;
+
+				//visible vcall core::async::iasync_t<ibuffer_t> read_async(wsize size)pure;
+				//visible vcall core::async::iasync_t<wsize> write_async(wsize size, pointer buffer)pure;
 			ANG_END_INTERFACE();
 
 
@@ -215,7 +222,7 @@ namespace ang
 				virtual~file();
 				bool create(path_view path, open_flags_t flags);
 				ibuffer_t map(wsize, file_cursor_t);
-				bool unmap(ibuffer_t);
+				bool unmap(ibuffer_t, wsize);
 
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
@@ -224,7 +231,7 @@ namespace ang
 				file_size_t file_size()const;
 				bool file_size(file_size_t);
 				streams::stream_mode_t mode()const;
-				bool set_mutex(core::async::mutex_t);
+				bool set_mutex(core::async::mutex_t&);
 				virtual bool close();		
 
 
@@ -326,9 +333,7 @@ namespace ang
 					}, { file , callback });
 				}
 
-				wsize write(cstr_t out);
-				wsize write(cwstr_t out);
-				wsize write(cmstr_t out);
+				wsize write(raw_str_t out);
 
 			private:
 				virtual~output_text_file();
