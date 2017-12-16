@@ -309,7 +309,7 @@ streams::stream_mode_t file::mode()const
 	return is_valid() ? hfile->mode().get() : streams::stream_mode::unknow;
 }
 
-bool file::set_mutex(core::async::mutex_t& mutex)
+bool file::set_mutex(core::async::mutex_ptr_t mutex)
 {
 	return is_valid() ? hfile->set_mutex(mutex) : false;
 }

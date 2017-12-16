@@ -167,7 +167,7 @@ bool cond::wait(mutex& mutex, dword ms)const
 	time.tv_nsec = ((long)ms - time.tv_sec * 1000) * 1000;
 	return pthread_cond_timedwait((pthread_cond_t*)_handle, (pthread_mutex_t*)mutex._handle, &time) == 0 ? ang_true : ang_false;
 #elif defined WINDOWS_PLATFORM
-	return scope_locker::lock(mutex, [&]() {
+	return scope_locker<mutex_t>::lock(mutex, [&]() {
 		return WaitForSingleObjectEx(this->_handle, ms, FALSE) == WAIT_OBJECT_0 ? true : false;
 	});
 #endif

@@ -232,7 +232,9 @@ namespace ang
 			/* calss ang::core::async::scope_locker                           */
 			/*  -> is a useful mutex locker limited to its cycle life         */
 			/******************************************************************/
-			struct scope_locker final
+			template<typename T> struct scope_locker;
+
+			template<> struct scope_locker<mutex> final
 			{
 			private:
 				mutex& _mutex;
@@ -247,6 +249,27 @@ namespace ang
 
 				template<typename func_t>
 				static auto lock(mutex_t& m, func_t func) -> decltype(func())
+				{
+					scope_locker _lock = m;
+					return func();
+				}
+			};
+			
+			template<> struct scope_locker<mutex_ptr_t> final
+			{
+			private:
+				mutex_ptr_t _mutex;
+
+			public:
+				inline scope_locker(mutex_ptr_t m) : _mutex(m) {
+					if(!_mutex.is_empty())_mutex->lock();
+				}
+				inline ~scope_locker() {
+					if (!_mutex.is_empty())_mutex->unlock();
+				}
+
+				template<typename func_t>
+				static auto lock(mutex_ptr_t m, func_t func) -> decltype(func())
 				{
 					scope_locker _lock = m;
 					return func();

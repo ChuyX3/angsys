@@ -171,7 +171,7 @@ namespace ang
 
 				visible vcall ibuffer_t map(wsize size, file_cursor_t offset)pure;
 				visible vcall bool unmap(ibuffer_t, wsize)pure;
-				visible vcall bool set_mutex(core::async::mutex_t&)pure;
+				visible vcall bool set_mutex(core::async::mutex_ptr_t)pure;
 
 				visible using streams::istream::format;
 				visible using streams::istream::stream_size;
@@ -231,7 +231,7 @@ namespace ang
 				file_size_t file_size()const;
 				bool file_size(file_size_t);
 				streams::stream_mode_t mode()const;
-				bool set_mutex(core::async::mutex_t&);
+				bool set_mutex(core::async::mutex_ptr_t);
 				virtual bool close();		
 
 

@@ -37,33 +37,42 @@ bool input_text_file::open(path_view path)
 	if (is_valid())
 		return false;
 
-	if (!create(path, open_flags::access_in + open_flags::open_exist + open_flags::type_text))
+	if (!create(path, open_flags::access_in + open_flags::open_exist + open_flags::format_text))
 		return false;
 	return true;
 }
 
 text::encoding_t input_text_file::format()const
 {
-	return hfile.is_empty() ? text::encoding::unknown : hfile->encoding().get();
+	return hfile.is_empty() ? text::encoding::none : hfile->format().get();
 }
 
 file_cursor_t input_text_file::cursor()const
 {
-	return hfile.is_empty() ? 0 : hfile->cursor();
+	return hfile.is_empty() ? 0 : hfile->position();
 }
 
 void input_text_file::cursor(file_cursor_t offset, file_reference_t ref)
 {
 	if (!hfile.is_empty())	
-		hfile->cursor(ref, offset);
+		hfile->move_to(offset, ref);
 }
 
 bool input_text_file::read(core::delegates::function<bool(streams::itext_input_stream_t)> func, file_cursor_t offset, wsize size)
 {
-		ibuffer_t buff = map(min<wsize>((wsize)size, wsize(hfile->file_size() - offset)), offset);
+		ibuffer_t buff = map(min<wsize>((wsize)size, wsize(hfile->stream_size() - offset)), offset);
 		if (buff.get() == null)
 			return false;	
-		return func(new streams::text_buffer_input_stream(buff, hfile->encoding()));
+		switch (hfile->format())
+		{
+		case text::encoding::ascii: return func(new streams::text_buffer_input_stream(new text::text_buffer_wrapper<text::encoding::ascii>(buff)));
+		case text::encoding::utf8: return func(new streams::text_buffer_input_stream(new text::text_buffer_wrapper<text::encoding::utf8>(buff)));
+		case text::encoding::utf16_le: return func(new streams::text_buffer_input_stream(new text::text_buffer_wrapper<text::encoding::utf16_le>(buff)));
+		case text::encoding::utf16_be: return func(new streams::text_buffer_input_stream(new text::text_buffer_wrapper<text::encoding::utf16_be>(buff)));
+		case text::encoding::utf32_le: return func(new streams::text_buffer_input_stream(new text::text_buffer_wrapper<text::encoding::utf32_le>(buff)));
+		case text::encoding::utf32_be: return func(new streams::text_buffer_input_stream(new text::text_buffer_wrapper<text::encoding::utf32_be>(buff)));
+		default: return nullptr;
+		}
 }
 
 //ang::core::async::iasync_t<bool> input_text_file::read_async(core::delegates::function<bool(streams::itext_input_stream_t)> func, file_cursor_t offset, wsize size)
@@ -85,7 +94,7 @@ wsize input_text_file::read(wstring& out, wsize count)
 {
 	if (hfile.is_empty())
 		return 0U;
-	switch (hfile->encoding())
+	switch (hfile->format())
 	{
 		case text::encoding::ascii: {
 			string temp = new strings::string_buffer(count);

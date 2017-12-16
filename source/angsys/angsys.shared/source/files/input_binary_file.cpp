@@ -37,25 +37,25 @@ bool input_binary_file::open(path_view path)
 	if (is_valid())
 		return false;
 
-	if (!create(path, open_flags::access_in + open_flags::open_exist + open_flags::type_binary))
+	if (!create(path, open_flags::access_in + open_flags::open_exist + open_flags::format_binary))
 		return false;
 	return true;
 }
 
 file_cursor_t input_binary_file::cursor()const
 {
-	return hfile.is_empty() ? 0 : hfile->cursor();
+	return hfile.is_empty() ? 0 : hfile->position();
 }
 
 void input_binary_file::cursor(file_cursor_t offset, file_reference_t ref)
 {
 	if (!hfile.is_empty())	
-		hfile->cursor(ref, offset);
+		hfile->move_to(offset, ref);
 }
 
 bool input_binary_file::read(core::delegates::function<bool(streams::ibinary_input_stream_t)> func, file_cursor_t offset, wsize size)
 {
-		ibuffer_t buff = map(min<wsize>((wsize)size, wsize(hfile->file_size() - offset)), offset);
+		ibuffer_t buff = map(min<wsize>((wsize)size, wsize(hfile->stream_size() - offset)), offset);
 		if (buff.get() == null)
 			return false;	
 		return func(new streams::binary_buffer_input_stream(buff));
@@ -80,5 +80,5 @@ wsize input_binary_file::read(pointer out, wsize count)
 {
 	if (hfile.is_empty() || out == null || count == 0)
 		return 0U;
-	return hfile->read(count, out);
+	return hfile->read(out, count);
 }

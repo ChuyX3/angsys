@@ -591,7 +591,7 @@ file_handle_t file_impl::map_handle(ulong64 _min)
 		_size = get_file_size(_hfile);
 	}
 
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	if (!is_created())
 		return 0;
 
@@ -647,7 +647,7 @@ bool file_impl::is_created()const
 
 bool file_impl::close()
 {
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 #ifdef WINAPI_FAMILY
 	if (_hfile == null)
 		return false;
@@ -688,7 +688,7 @@ file_size_t file_impl::stream_size()const
 
 bool file_impl::stream_size(file_size_t size)
 {
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	if (_size == size)
 		return true;
 	if (!_flags.is_active(open_flags::access_out))
@@ -755,7 +755,7 @@ void file_impl::format(text::encoding_t value)
 
 bool file_impl::move_to(file_cursor_t cur, file_reference_t ref)
 {
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 #ifdef WINDOWS_PLATFORM
 	LARGE_INTEGER lint;
 	_cursor = cur;
@@ -764,6 +764,7 @@ bool file_impl::move_to(file_cursor_t cur, file_reference_t ref)
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 	::lseek(_hfile, cur, (uint)ref.get());
 #endif
+	return true;
 }
 
 file_size_t file_impl::position()const
@@ -771,9 +772,28 @@ file_size_t file_impl::position()const
 	return _cursor;
 }
 
+static file_cursor_t read_file(file_handle_t hfile, pointer buffer, wsize size, dword& readed)
+{
+#ifdef WINAPI_FAMILY
+	if (!ReadFile(hfile, buffer, size, &readed, NULL)) {
+		readed = 0;
+		return 0;
+	}
+
+	LARGE_INTEGER lint;
+	LARGE_INTEGER cur;
+	lint.QuadPart = 0;
+	SetFilePointerEx(hfile, lint, &cur, FILE_CURRENT);
+	return cur.QuadPart;
+#elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
+	readed = ::read(hfile, buffer, size);
+	return ::lseek(hfile, 0, SEEK_CUR);
+#endif
+}
+
 wsize file_impl::read(pointer buffer, wsize size, text::text_format_t)
 {
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	if (buffer == null || size == 0 || !is_created())
 		return 0;
 	if (!_flags.is_active(open_flags::access_in))
@@ -797,7 +817,7 @@ wsize file_impl::read(pointer buffer, wsize size, text::text_format_t)
 
 wsize file_impl::read(pointer buffer, wsize size, text::encoding_t)
 {
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	if (buffer == null || size == 0 || !is_created())
 		return 0;
 	if (!_flags.is_active(open_flags::access_in))
@@ -821,7 +841,7 @@ wsize file_impl::read(pointer buffer, wsize size, text::encoding_t)
 
 wsize file_impl::read(ibuffer_view_t buffer, text::encoding_t)
 {
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	if (buffer == null || !is_created())
 		return 0;
 	if (!_flags.is_active(open_flags::access_in))
@@ -863,11 +883,9 @@ static file_cursor_t write_file(file_handle_t hfile,  pointer buffer, wsize size
 #endif
 }
 
-
-
 wsize file_impl::write(pointer buffer, wsize size, text::text_format_t format)
 {
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	if (buffer == null || size == 0 || !is_created())
 		return 0;
 	if (!_flags.is_active(open_flags::access_out))
@@ -911,49 +929,33 @@ wsize file_impl::write(pointer buffer, wsize size, text::text_format_t format)
 
 		case text::text_format::signed_integer:
 			switch (size) {
-			case 1: value = value_to_string<char, false>::integer_to_string(*(char*)buffer, format, _buff); break;
-			case 2: value = value_to_string<char, false>::integer_to_string(*(short*)buffer, format, _buff); break;
-			case 4: value = value_to_string<char, false>::integer_to_string(*(int*)buffer, format, _buff); break;
-			case 8: value = value_to_string<char, false>::integer_to_string(*(long64*)buffer, format, _buff); break;
+			case 1: dest = encoder._integer_to_string(*(char*)buffer, dest.ptr(), dest.size() / cs, format); break;
+			case 2: dest = encoder._integer_to_string(*(short*)buffer, dest.ptr(), dest.size() / cs, format); break;
+			case 4: dest = encoder._integer_to_string(*(int*)buffer, dest.ptr(), dest.size() / cs, format); break;
+			case 8: dest = encoder._integer_to_string(*(long64*)buffer, dest.ptr(), dest.size() / cs, format); break;
 			}
-
-			i = encoder._size((pointer)value.cstr(), text::encoding::ascii);
-			if (!can_forward(i * cs))
-				return false;
-			view = _buffer->map_buffer((windex)position(), i * cs);
-			i = encoder._convert_string(view->buffer_ptr(), view->buffer_size(), (pointer)value.cstr(), i, text::encoding::ascii, false) * cs;
-			forward(view, i);
+			cursor = write_file(_hfile, dest.ptr(), dest.size(), written);
+			_cursor = written ? cursor : _cursor;
 			break;
 
 		case text::text_format::usigned_integer:
-			if (is_text_formating_enabled()) format = signed_format;
-			switch (sz) {
-			case 1: value = value_to_string<char, false>::uinteger_to_string(*(uchar*)ptr, format, _buff); break;
-			case 2: value = value_to_string<char, false>::uinteger_to_string(*(ushort*)ptr, format, _buff); break;
-			case 4: value = value_to_string<char, false>::uinteger_to_string(*(uint*)ptr, format, _buff); break;
-			case 8: value = value_to_string<char, false>::uinteger_to_string(*(ulong64*)ptr, format, _buff); break;
+			switch (size) {
+			case 1: dest = encoder._uinteger_to_string(*(uchar*)buffer, dest.ptr(), dest.size() / cs, format); break;
+			case 2: dest = encoder._uinteger_to_string(*(ushort*)buffer, dest.ptr(), dest.size() / cs, format); break;
+			case 4: dest = encoder._uinteger_to_string(*(uint*)buffer, dest.ptr(), dest.size() / cs, format); break;
+			case 8: dest = encoder._uinteger_to_string(*(ulong64*)buffer, dest.ptr(), dest.size() / cs, format); break;
 			}
-
-			i = encoder._size((pointer)value.cstr(), text::encoding::ascii);
-			if (!can_forward(i * cs))
-				return false;
-			view = _buffer->map_buffer((windex)position(), i * cs);
-			i = encoder._convert_string(view->buffer_ptr(), view->buffer_size(), (pointer)value.cstr(), i, text::encoding::ascii, false) * cs;
-			forward(view, i);
+			cursor = write_file(_hfile, dest.ptr(), dest.size(), written);
+			_cursor = written ? cursor : _cursor;
 			break;
 
 		case text::text_format::floating:
-			switch (sz) {
-			case 4: value = floating_to_string(*(float*)ptr, format, _buff); break;
-			case 8:value = floating_to_string(*(double*)ptr, format, _buff); break;
+			switch (size) {
+			case 4: dest = encoder._floating_to_string(*(float*)buffer, dest.ptr(), dest.size() / cs, format); break;
+			case 8: dest = encoder._floating_to_string(*(double*)buffer, dest.ptr(), dest.size() / cs, format); break;
 			}
-
-			i = encoder._size((pointer)value.cstr(), text::encoding::ascii);
-			if (!can_forward(i * cs))
-				return false;
-			view = _buffer->map_buffer((windex)position(), i * cs);
-			i = encoder._convert_string(view->buffer_ptr(), view->buffer_size(), (pointer)value.cstr(), i, text::encoding::ascii, false) * cs;
-			forward(view, i);
+			cursor = write_file(_hfile, dest.ptr(), dest.size(), written);
+			_cursor = written ? cursor : _cursor;
 			break;
 		}
 
@@ -961,12 +963,11 @@ wsize file_impl::write(pointer buffer, wsize size, text::text_format_t format)
 	}
 }
 
-
 wsize file_impl::write(pointer buffer, wsize size, text::encoding_t encoding)
 {
 	raw_str_t cstr = { buffer , size, encoding };
 
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	if (buffer == null || size == 0 || !is_created())
 		return 0;
 	if (!_flags.is_active(open_flags::access_out))
@@ -1024,7 +1025,7 @@ wsize file_impl::write(ibuffer_view_t buffer, text::encoding_t encoding)
 
 	raw_str_t cstr = { buffer->buffer_ptr() , buffer->buffer_size(), encoding };
 
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	if (!is_created())
 		return 0;
 	if (!_flags.is_active(open_flags::access_out))
@@ -1085,7 +1086,7 @@ wsize file_impl::write(ibuffer_view_t buffer, text::encoding_t encoding)
 
 ibuffer_t file_impl::map(wsize size, file_cursor_t offset)
 {
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 
 	if (map_handle(size + offset) == 0)
 		return null;
@@ -1093,9 +1094,9 @@ ibuffer_t file_impl::map(wsize size, file_cursor_t offset)
 	return new mapped_file_buffer(this, _flags, size, offset);
 }
 
-bool file_impl::unmap(ibuffer_t buffer)
+bool file_impl::unmap(ibuffer_t buffer, wsize size)
 {
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	mapped_file_buffer_t mapped_buffer = interface_cast<mapped_file_buffer>(buffer.get());
 	if (mapped_buffer == null || mapped_buffer->original_source().get() != this)
 		return false;
@@ -1117,7 +1118,7 @@ bool file_impl::unmap(ibuffer_t buffer)
 
 bool file_impl::unmap(mapped_file_buffer* mapped_buffer)
 {
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	if (mapped_buffer == null || mapped_buffer->original_source().get() != this)
 		return false;
 	if (mapped_buffer->unmap())
@@ -1136,9 +1137,9 @@ bool file_impl::unmap(mapped_file_buffer* mapped_buffer)
 	return true;
 }
 
-bool file_impl::set_mutex(core::async::mutex_t mutex)
+bool file_impl::set_mutex(core::async::mutex_ptr_t mutex)
 {
-	core::async::scope_locker lock = _mutex;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	_mutex = mutex;
 	return true;
 }

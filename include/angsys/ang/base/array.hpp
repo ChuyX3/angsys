@@ -110,11 +110,11 @@ namespace ang
 				}
 			}
 
-			type data()const { return _data; }
+			type data()const { return (type)_data; }
 			constexpr wsize size()const { return _SIZE; }
 
-			type begin()const { return _data; }
-			type end()const { return _data + _SIZE; }
+			type begin()const { return (type)_data; }
+			type end()const { return (type)_data + _SIZE; }
 
 		public: /*operators*/
 			stack_array& operator = (stack_array && val) = default;

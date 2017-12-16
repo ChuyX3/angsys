@@ -119,7 +119,7 @@ namespace ang
 				file_flags_t _flags;
 				long64 _size;
 				long64 _cursor;
-				core::async::mutex_t _mutex;
+				core::async::mutex_ptr_t _mutex;
 				wsize _map_counter;
 
 			public:
@@ -154,7 +154,7 @@ namespace ang
 				virtual wsize write(ibuffer_view_t buffer, text::encoding_t = text::encoding::binary)override;
 				virtual ibuffer_t map(wsize size, file_cursor_t offset)override;
 				virtual bool unmap(ibuffer_t, wsize)override;
-				virtual bool set_mutex(core::async::mutex_t&)override;
+				virtual bool set_mutex(core::async::mutex_ptr_t)override;
 
 			//	virtual core::async::iasync_t<ibuffer_t> read_async(uint size)override;
 			//	virtual core::async::iasync_t<uint> write_async(uint size, pointer buffer)override;

@@ -87,6 +87,11 @@ bool binary_buffer_input_stream::is_valid()const
 	return _buffer.get() != null;
 }
 
+text::encoding_t binary_buffer_input_stream::format()const
+{
+	return text::encoding::binary;
+}
+
 stream_index_t binary_buffer_input_stream::position()const
 {
 	return _cursor;

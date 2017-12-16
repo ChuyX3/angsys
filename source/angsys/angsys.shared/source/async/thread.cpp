@@ -265,7 +265,7 @@ core_thread::core_thread(wsize flags, ibuffer_view_t data, bool alloc)
 	: _is_main(false)
 	, _join_request(false)
 {
-	scope_locker lock = core_thread_manager::instance()->main_mutex();
+	scope_locker<mutex> lock = core_thread_manager::instance()->main_mutex();
 
 	this->_state = async_action_status::initializing; //initializing
 	this->_is_main = false;
@@ -339,7 +339,7 @@ bool core_thread::start(delegates::function<void(icore_thread*, var_args_t)> cal
 {
 	mutex_t& mutex = core_thread_manager::instance()->main_mutex();
 	cond_t& cond = core_thread_manager::instance()->main_cond();
-	scope_locker lock = mutex;
+	scope_locker<mutex_t> lock = mutex;
 	if (is_current_thread())
 		return false;
 	while (_state < async_action_status::wait_for_start)
@@ -357,7 +357,7 @@ bool core_thread::then(delegates::function<void(icore_thread*, var_args_t)> call
 	if (callback.is_empty() || _join_request)return false;
 	cond_t& cond = core_thread_manager::instance()->main_cond();
 	mutex_t& mutex = core_thread_manager::instance()->main_mutex();
-	scope_locker lock = mutex;
+	scope_locker<mutex_t> lock = mutex;
 	if ((_state > async_action_status::wait_for_then)
 		|| (_state < async_action_status::running && _start_routine.is_empty()))
 		return false;
@@ -382,7 +382,7 @@ bool core_thread::wait(async_action_status_t state)const
 {
 	if (is_current_thread())
 		return false;
-	scope_locker lock = core_thread_manager::instance()->main_mutex();
+	scope_locker<mutex> lock = core_thread_manager::instance()->main_mutex();
 	if (_state > state)return false;
 	core_thread_manager::instance()->main_cond().waitfor(core_thread_manager::instance()->main_mutex(), 
 		[&]() { return !state.is_active(_state); });
@@ -399,7 +399,7 @@ bool core_thread::wait(async_action_status_t state, dword ms)const
 
 	cond_t& cond = core_thread_manager::instance()->main_cond();
 	mutex_t& mutex = core_thread_manager::instance()->main_mutex();
-	scope_locker lock = mutex;
+	scope_locker<mutex_t> lock = mutex;
 	if (_state > state)return false;
 	while (!state.is_active(_state))
 	{
@@ -416,7 +416,7 @@ bool core_thread::wait(async_action_status_t state, dword ms)const
 
 bool core_thread::cancel() 
 {
-	scope_locker lock = core_thread_manager::instance()->main_mutex();
+	scope_locker<mutex> lock = core_thread_manager::instance()->main_mutex();
 	if (_state & async_action_status::finished)
 		return false;
 	_state = async_action_status::canceled;
@@ -432,7 +432,7 @@ bool core_thread::join()const
 
 	cond_t& cond = core_thread_manager::instance()->main_cond();
 	mutex_t& mutex = core_thread_manager::instance()->main_mutex();
-	scope_locker lock = mutex;
+	scope_locker<mutex_t> lock = mutex;
 	_join_request = true;
 	cond.waitfor(core_thread_manager::instance()->main_mutex(),
 		[this]() { return _state == async_action_status::running || !_start_routine.is_empty(); });

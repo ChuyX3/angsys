@@ -110,7 +110,7 @@ void async_task::run(delegates::function <void(itask*)> _func)
 {
 	auto func = _func.get(); func->add_ref(); add_ref();
 	thread_routine_t callback = [func, this](icore_thread* thread_, var_args_t a) {
-		scope_locker lock = (mutex_t&)mutex_;
+		scope_locker<mutex_t> lock = (mutex_t&)mutex_;
 		if (status_ == async_action_status::canceled) {
 			//status_ = async_action_status::completed;
 			thread_->cancel();
@@ -146,7 +146,7 @@ void async_task::run(delegates::function <void(itask*)> _func)
 		release();
 	};
 
-	scope_locker lock = (mutex_t&)mutex_;
+	scope_locker<mutex_t> lock = (mutex_t&)mutex_;
 	if (worker_thread.is_empty())
 	{
 		worker_thread = thread::create_thread_suspended(0, null, false);
@@ -168,7 +168,7 @@ void async_task::run(delegates::function <void(itask*, var_args_t)> _func, var_a
 	auto args = _args.get(); args->add_ref();
 	auto func = _func.get(); func->add_ref(); add_ref();
 	thread_routine_t callback = [args, func,this](icore_thread* thread_, var_args_t a) {
-		scope_locker lock = (mutex_t&)mutex_;
+		scope_locker<mutex_t> lock = (mutex_t&)mutex_;
 		if (status_ == async_action_status::canceled) {
 			//status_ = async_action_status::completed;
 			thread_->cancel();
@@ -209,7 +209,7 @@ void async_task::run(delegates::function <void(itask*, var_args_t)> _func, var_a
 		release();
 	};
 
-	scope_locker lock = (mutex_t&)mutex_;
+	scope_locker<mutex_t> lock = (mutex_t&)mutex_;
 	if (worker_thread.is_empty())
 	{
 		worker_thread = thread::create_thread_suspended(0, null, false);
@@ -228,7 +228,7 @@ void async_task::run(delegates::function <void(itask*, var_args_t)> _func, var_a
 
 itask_t async_task::then(delegates::function<void(itask*)> _func)
 {
-	scope_locker lock = (mutex_t&)mutex_;
+	scope_locker<mutex_t> lock = (mutex_t&)mutex_;
 
 	if (worker_thread.is_empty() || !then_callback.is_empty())
 		return null;
@@ -263,7 +263,7 @@ itask_t async_task::then(delegates::function<void(itask*)> _func)
 
 bool async_task::join()const
 {
-	scope_locker lock = (mutex_t&)mutex_;
+	scope_locker<mutex_t> lock = (mutex_t&)mutex_;
 	if (worker_thread.is_empty())
 		return false;
 
@@ -295,7 +295,7 @@ bool async_task::wait(async_action_status_t state)const
 {
 	if (worker_thread.is_empty() || worker_thread->is_current_thread())
 		return false;
-	scope_locker lock = (mutex_t&)mutex_;
+	scope_locker<mutex_t> lock = (mutex_t&)mutex_;
 	if (status_ > state)return false;
 	cond_->waitfor((mutex_t&)mutex_,
 		[&]() { return !state.is_active(status_); });
@@ -309,7 +309,7 @@ bool async_task::wait(async_action_status_t state, dword ms)const
 	dword last_time = (dword)(ang_get_performance_time() / 1000.0);
 	dword current = 0;
 
-	scope_locker lock = (mutex_t&)mutex_;
+	scope_locker<mutex_t> lock = (mutex_t&)mutex_;
 	if (status_ > state)return false;
 	while (!state.is_active(status_))
 	{
@@ -331,7 +331,7 @@ async_action_status_t async_task::status()const
 
 bool async_task::cancel()
 {
-	scope_locker lock = (mutex_t&)mutex_;
+	scope_locker<mutex_t> lock = (mutex_t&)mutex_;
 	if (worker_thread.is_empty() || status_ & async_action_status::finished)
 		return false;
 	status_ = async_action_status::canceled;

@@ -37,20 +37,20 @@ bool output_binary_file::open(path_view path)
 	if (is_valid())
 		return false;
 
-	if (!create(path, open_flags::access_out + open_flags::open_alway + open_flags::type_binary))
+	if (!create(path, open_flags::access_out + open_flags::open_alway + open_flags::format_binary))
 		return false;
 	return true;
 }
 
 file_cursor_t output_binary_file::cursor()const
 {
-	return hfile.is_empty() ? 0 : hfile->cursor();
+	return hfile.is_empty() ? 0 : hfile->position();
 }
 
 void output_binary_file::cursor(file_cursor_t offset, file_reference_t ref)
 {
 	if (!hfile.is_empty())	
-		hfile->cursor(ref, offset);
+		hfile->move_to(offset, ref);
 }
 
 bool output_binary_file::write(core::delegates::function<bool(streams::ibinary_output_stream_t)> func, file_cursor_t offset, wsize size)
@@ -86,5 +86,5 @@ wsize output_binary_file::write(pointer out, wsize count)
 {
 	if (hfile.is_empty() || out == null || count == 0)
 		return 0U;
-	return hfile->write(count, out);
+	return hfile->write(out, count);
 }

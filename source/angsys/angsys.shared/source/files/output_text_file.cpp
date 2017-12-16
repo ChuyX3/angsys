@@ -75,9 +75,17 @@ void output_text_file::cursor(file_cursor_t offset, file_reference_t ref)
 bool output_text_file::write(core::delegates::function<bool(streams::itext_output_stream_t)> func, file_cursor_t offset, wsize size)
 {
 		ibuffer_t buff = map(min<wsize>((wsize)size, wsize(hfile->stream_size() - offset)), offset);
-		if (buff.get() == null)
-			return false;	
-		return func(new streams::text_buffer_output_stream(buff, hfile->format()));
+		if (buff.get() == null)	return false;	
+		switch (hfile->format())
+		{
+		case text::encoding::ascii: return func(new streams::text_buffer_output_stream(new text::text_buffer_wrapper<text::encoding::ascii>(buff)));
+		case text::encoding::utf8: return func(new streams::text_buffer_output_stream(new text::text_buffer_wrapper<text::encoding::utf8>(buff)));
+		case text::encoding::utf16_le: return func(new streams::text_buffer_output_stream(new text::text_buffer_wrapper<text::encoding::utf16_le>(buff)));
+		case text::encoding::utf16_be: return func(new streams::text_buffer_output_stream(new text::text_buffer_wrapper<text::encoding::utf16_be>(buff)));
+		case text::encoding::utf32_le: return func(new streams::text_buffer_output_stream(new text::text_buffer_wrapper<text::encoding::utf32_le>(buff)));
+		case text::encoding::utf32_be: return func(new streams::text_buffer_output_stream(new text::text_buffer_wrapper<text::encoding::utf32_be>(buff)));
+		default: return nullptr;
+		}		
 }
 
 //ang::core::async::iasync_t<bool> output_text_file::write_async(core::delegates::function<bool(streams::itext_output_stream_t)> func, file_cursor_t offset, wsize size)

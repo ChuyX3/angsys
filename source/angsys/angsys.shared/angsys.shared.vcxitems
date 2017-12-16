@@ -75,6 +75,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\delegates.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\exceptions.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\files.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\file_impl.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\file_system.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\input_binary_file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\input_text_file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\output_binary_file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\output_text_file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\floating.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\integer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\memory.cpp" />

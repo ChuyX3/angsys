@@ -39,12 +39,34 @@ namespace ang
 
 			ANG_DECLARE_INLINE_INTERFACE();
 
+
+
+			pointer buffer_ptr()const override {
+				return _buffer.is_empty() ? nullptr : _buffer->buffer_ptr();
+			}
+			wsize buffer_size()const override {
+				return _buffer.is_empty() ? 0 : _buffer->buffer_size();
+			}
+			wsize mem_copy(wsize sz, pointer ptr, text::encoding_t e = text::encoding::binary) override {
+				return _buffer.is_empty() ? 0 : _buffer->mem_copy(sz, ptr, e);
+			}
+			ibuffer_view_t map_buffer(windex idx, wsize sz) override {
+				return _buffer.is_empty() ? nullptr : _buffer->map_buffer(idx, sz);
+			}
+			bool unmap_buffer(ibuffer_view_t& buff, wsize used) override {
+				return _buffer.is_empty() ? false : _buffer->unmap_buffer(buff, used);
+			}
+			bool can_realloc_buffer()const override {
+				return _buffer.is_empty() ? false : _buffer->can_realloc_buffer();
+			}
+			bool realloc_buffer(wsize sz) override {
+				return _buffer.is_empty() ? false : _buffer->realloc_buffer(sz);
+			}
 			inline encoding_t encoding()const override { return ENCODING; }
 			raw_str_t text_buffer()const override {
-				return _buffer.is_empty() ? raw_str_t{ null, 0, encoding::none } 
+				return _buffer.is_empty() ? raw_str_t{ null, 0, encoding::none }
 				: raw_str_t{ _buffer->buffer_ptr(), _buffer->buffer_size(), ENCODING };
 			}
-
 		private:
 			inline~text_buffer_wrapper() {}
 		};

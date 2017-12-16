@@ -441,6 +441,7 @@ namespace ang
 			virtual wsize read(pointer, wsize, text::text_format_t /*unused*/)override;
 			//virtual wsize read(objptr&)override;
 
+			virtual text::encoding_t format()const override;
 			virtual stream_index_t position()const override;
 			virtual stream_size_t stream_size()const override;
 			virtual bool end_of_stream()const override;
@@ -519,10 +520,6 @@ namespace ang
 			text_buffer_input_stream();
 			text_buffer_input_stream(text_buffer_input_stream const*);
 			text_buffer_input_stream(text::itext_buffer_t);
-			template<text::encoding_enum ENCODING>
-			text_buffer_input_stream(ibuffer_t buff) 
-				: text_buffer_input_stream(new text::text_buffer_wrapper<ENCODING>(buff)) {
-			}
 
 		public: //overrides
 			ANG_DECLARE_INTERFACE();
@@ -580,10 +577,6 @@ namespace ang
 			text_buffer_output_stream();
 			text_buffer_output_stream(text_buffer_output_stream*);
 			text_buffer_output_stream(text::itext_buffer_t);
-			template<text::encoding_enum ENCODING>
-			text_buffer_output_stream(ibuffer_t buff)
-				: text_buffer_output_stream(new text::text_buffer_wrapper<ENCODING>(buff)) {
-			}
 
 		public: //overrides
 			ANG_DECLARE_INTERFACE();
