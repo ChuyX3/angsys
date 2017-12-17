@@ -90,86 +90,9 @@ bool input_text_file::read(core::delegates::function<bool(streams::itext_input_s
 //	});
 //}
 
-wsize input_text_file::read(wstring& out, wsize count)
+wsize input_text_file::read(raw_str_t& out)
 {
 	if (hfile.is_empty())
 		return 0U;
-	switch (hfile->format())
-	{
-		case text::encoding::ascii: {
-			string temp = new strings::string_buffer(count);
-			temp->length(hfile->read(count, temp->str()));
-			out = temp;
-		} return out->length();
-		case text::encoding::unicode: {
-			if (out.is_empty())
-				out = new strings::wstring_buffer(count);
-			else
-				out->realloc(count, false);
-			out->length(hfile->read(count * sizeof(wchar), out->str()) / sizeof(wchar));
-		} return out->length();
-		case text::encoding::utf_8: {
-			mstring temp = new strings::mstring_buffer(count);
-			temp->length(hfile->read(count, temp->str()));
-			out = temp;
-		} return out->length();
-	default:
-		return 0U;
-	}
-}
-
-wsize input_text_file::read(string& out, wsize count)
-{
-	if (hfile.is_empty())
-		return 0U;
-	switch (hfile->encoding())
-	{
-	case text::encoding::unicode: {
-		wstring temp = new strings::wstring_buffer(count);
-		temp->length(hfile->read(count * sizeof(wchar), temp->str()) / sizeof(wchar));
-		out = temp;
-	} return out->length();
-	case text::encoding::ascii: {
-		if (out.is_empty())
-			out = new strings::string_buffer(count);
-		else
-			out->realloc(count, false);
-		out->length(hfile->read(count , out->str()));
-	} return out->length();
-	case text::encoding::utf_8: {
-		mstring temp = new strings::mstring_buffer(count);
-		temp->length(hfile->read(count, temp->str()));
-		out = temp;
-	} return out->length();
-	default:
-		return 0U;
-	}
-}
-
-wsize input_text_file::read(mstring& out, wsize count)
-{
-	if (hfile.is_empty())
-		return 0U;
-	switch (hfile->encoding())
-	{
-	case text::encoding::unicode: {
-		wstring temp = new strings::wstring_buffer(count);
-		temp->length(hfile->read(count * sizeof(char_t), temp->str()) / sizeof(char_t));
-		out = temp;
-	} return out->length();
-	case text::encoding::utf_8: {
-		if (out.is_empty())
-			out = new strings::mstring_buffer(count);
-		else
-			out->realloc(count, false);
-		out->length(hfile->read(count, out->str()));
-	} return out->length();
-	case text::encoding::ascii: {
-		mstring temp = new strings::mstring_buffer(count);
-		temp->length(hfile->read(count, temp->str()));
-		out = temp;
-	} return out->length();
-	default:
-		return 0U;
-	}
+	return hfile->read(out.ptr(), out.size(), out.encoding());
 }

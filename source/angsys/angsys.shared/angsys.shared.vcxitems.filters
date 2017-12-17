@@ -295,5 +295,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\output_text_file.cpp">
       <Filter>source files\files</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\pack_file.cpp">
+      <Filter>source files\files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
