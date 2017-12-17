@@ -19,8 +19,6 @@ namespace ang
 		//template<encoding_enum ENCODING> using itext_buffer_t = intf_wrapper<itext_buffer<ENCODING>>;
 		//template<encoding_enum ENCODING> using itext_buffer_ptr_t = intf_wrapper_ptr<itext_buffer<ENCODING>>;
 
-	
-
 		ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itext_buffer, public ibuffer)
 			visible vcall raw_str_t text_buffer()const pure;
 		ANG_END_INTERFACE();
@@ -37,9 +35,7 @@ namespace ang
 		public:
 			inline text_buffer_wrapper(ibuffer_t buffer) : _buffer(buffer) {}
 
-			ANG_DECLARE_INLINE_INTERFACE();
-
-
+			//ANG_DECLARE_INLINE_INTERFACE();
 
 			pointer buffer_ptr()const override {
 				return _buffer.is_empty() ? nullptr : _buffer->buffer_ptr();

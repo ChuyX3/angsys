@@ -512,3 +512,61 @@ ang::intf_wrapper<ibuffer>::operator ibuffer const* (void)const
 	return get();
 }
 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+ang_void_ptr_t dummy_buffer::operator new(wsize size)
+{
+	if(size) return ang::memory::object_allocator<byte>::alloc(size);
+	else return null;
+}
+
+void dummy_buffer::operator delete(ang_void_ptr_t ptr)
+{
+	if(ptr) ang::memory::object_allocator<byte>::free((byte*)ptr);
+}
+
+
+dummy_buffer::dummy_buffer(pointer ptr, wsize sz)
+	: _ptr(ptr)
+	, _size(sz)
+{
+}
+
+dummy_buffer::~dummy_buffer()
+{
+}
+
+ANG_IMPLEMENT_BASIC_INTERFACE(ang::dummy_buffer, ibuffer);
+
+text::encoding_t dummy_buffer::encoding()const { return text::encoding::binary; }
+
+pointer dummy_buffer::buffer_ptr()const { return _ptr; }
+
+wsize dummy_buffer::buffer_size()const { return _size; }
+
+wsize dummy_buffer::mem_copy(wsize size, pointer ptr, text::encoding_t) {
+	wsize sz = min(size, buffer_size());
+	memcpy(BUFFER_HANDLER(wsize(this) + sizeof(aligned_buffer))->get_buffer(), ptr, sz);
+	return sz;
+}
+
+ibuffer_view_t dummy_buffer::map_buffer(windex start, wsize size)
+{
+	if ((start + size) > buffer_size())
+		return null;
+	return new buffer_view(this, start, size);
+}
+
+bool dummy_buffer::unmap_buffer(ibuffer_view_t& view, wsize)
+{
+	buffer_view_t buff = interface_cast<buffer_view_t>(view.get());
+	if (buff == null && buff->parent().get() != this)
+		return false;
+	view = null;
+	return true;
+}
+
+bool dummy_buffer::can_realloc_buffer()const { return false; }
+
+bool dummy_buffer::realloc_buffer(wsize) { return false; }

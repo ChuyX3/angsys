@@ -21,6 +21,10 @@ using namespace ang::core;
 using namespace ang::core::files;
 
 
+core::files::ifile_system_t core::files::ifile_system::get_file_system() {
+	return ang::singleton<core::files::file_system_t>::instance();
+}
+
 bool ifile_system::register_file_system(ifile_system* fs, file_system_priority_t prio)
 {
 	return file_system::instance()->register_file_system(fs, prio);
@@ -336,3 +340,4 @@ bool folder_file_system::open(path_view path, output_binary_file_t& out)
 	return true;
 }
 
+///////////////////////////////////////////////////////////////

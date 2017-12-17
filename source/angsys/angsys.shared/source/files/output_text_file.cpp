@@ -88,51 +88,11 @@ bool output_text_file::write(core::delegates::function<bool(streams::itext_outpu
 		}		
 }
 
-//ang::core::async::iasync_t<bool> output_text_file::write_async(core::delegates::function<bool(streams::itext_output_stream_t)> func, file_cursor_t offset, wsize size)
-//{
-//	add_ref();
-//	return core::async::async_task<bool>::run_async([=](async::iasync<bool>*, var_args_t)->bool
-//	{
-//		output_text_file_t _this = this;
-//		release();
-//
-//		ibuffer_t buff = map(size, offset);
-//		if (buff.get() == null)
-//			return false;
-//		return func(new streams::text_buffer_output_stream(buff, hfile->encoding()));
-//	});
-//}
-
 wsize output_text_file::write(raw_str_t cstr)
 {
 	if (hfile.is_empty())
 		return 0U;
 
-	if (hfile->format() == text::encoding::binary)
-	{
-		hfile->write(cstr.ptr(), cstr.size(), text::text_format());
-	}
-	//else if (hfile->format() == cstr.encoding())
-	//{
-	//	hfile->write(cstr.ptr(), cstr.size() + cstr.char_size(), text::text_format());
-	//}
-	else
-	{
-		text::encoder_interface encoder;
-		text::encoder_interface::initialize_interface(&encoder, hfile->format());
-	
-		alignas(16) stack_array<byte, 100> buffer;
-		raw_str_t dest = { buffer.begin(), 100, hfile->format() };
-		wsize t = 0, i = 0, c = 0, idx = 0, count = cstr.count(), cs = cstr.char_size(), cs2 = dest.char_size();
-
-		while (idx <= count)
-		{
-			i = encoder._convert_string(dest.ptr(), dest.count() - 1, (byte*)cstr.ptr() + idx*cs, c, cstr.encoding(), true);
-			idx += c; c = 0; t += i;
-			hfile->write(dest.ptr(), i * cs2, text::text_format());
-			
-		}
-		return t * cs2;
-	}
+	hfile->write(cstr.ptr(), cstr.size(), cstr.encoding());
 }
 

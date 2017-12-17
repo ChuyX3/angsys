@@ -356,6 +356,9 @@ wsize object::serialize(streams::itext_output_stream_t stream)const
 	return stream->write(object_name());
 }
 
+
+///////////////////////////////////////////////////////////////////////////
+
 ang::object_wrapper<object>::object_wrapper() : _ptr(null) {
 
 }

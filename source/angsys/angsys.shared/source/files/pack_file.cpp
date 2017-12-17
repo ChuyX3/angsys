@@ -51,16 +51,21 @@ namespace ang
 			public: //Methos
 				virtual streams::stream_mode_t mode()const override;
 				virtual path file_path()const override;
-				virtual file_size_t file_size()const override;
-				virtual text::encoding_t encoding()const override;
-				virtual void cursor(file_reference_t, file_cursor_t) override;
-				virtual file_size_t cursor()const override;
-				virtual wsize read(wsize size, pointer buffer)override;
-				virtual wsize write(wsize size, pointer buffer)override;
-				virtual wsize read(ibuffer_t buffer)override;
-				virtual wsize write(ibuffer_t buffer)override;
-				virtual ibuffer_t map(wsize size, file_size_t offset)override;
-				virtual bool unmap(ibuffer_t)override;
+				virtual file_size_t stream_size()const override;
+				virtual bool stream_size(file_size_t) override;
+				virtual void format(text::encoding_t)override;
+				virtual text::encoding_t format()const override;
+				virtual bool move_to(file_cursor_t, file_reference_t) override;
+				virtual file_size_t position()const override;
+				virtual wsize read(pointer buffer, wsize size, text::text_format_t)override;
+				virtual wsize write(pointer buffer, wsize size, text::text_format_t)override;
+				virtual wsize read(pointer buffer, wsize size, text::encoding_t)override;
+				virtual wsize write(pointer buffer, wsize size, text::encoding_t)override;
+				virtual wsize read(ibuffer_view_t buffer, text::encoding_t = text::encoding::binary)override;
+				virtual wsize write(ibuffer_view_t buffer, text::encoding_t = text::encoding::binary)override;
+				virtual ibuffer_t map(wsize size, file_cursor_t offset)override;
+				virtual bool unmap(ibuffer_t, wsize)override;
+				virtual bool set_mutex(core::async::mutex_ptr_t)override;
 
 			};
 

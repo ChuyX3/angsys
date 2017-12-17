@@ -52,7 +52,7 @@ namespace ang
 		object_wrapper& operator = (object_wrapper &&);
 		object_wrapper& operator = (object_wrapper const&);
 
-		object_wrapper_ptr<object> operator & (void);
+		object_wrapper_ptr<core::files::file_impl> operator & (void);
 		core::files::file_impl * operator -> (void);
 		core::files::file_impl const* operator -> (void)const;
 		operator core::files::file_impl * (void);
@@ -228,8 +228,8 @@ namespace ang
 		}
 	}
 
-	template<> ang::core::files::file_system* ang::singleton<ang::core::files::file_system_t>::instance();
-	template<> bool ang::singleton<ang::core::files::file_system_t>::release_instance();
+	//template<> ang::core::files::file_system* ang::singleton<ang::core::files::file_system_t>::instance();
+	//template<> bool ang::singleton<ang::core::files::file_system_t>::release_instance();
 }
 
 #endif//__ANG_FILE_SYSTEM_H__

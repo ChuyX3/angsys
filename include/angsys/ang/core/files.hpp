@@ -164,10 +164,6 @@ namespace ang
 				visible vcall path file_path()const pure;
 				visible vcall void format(text::encoding_t)pure;
 				visible vcall bool stream_size(file_size_t)pure;
-				visible vcall wsize read(pointer buffer, wsize size, text::encoding_t = text::encoding::binary)pure;
-				visible vcall wsize read(ibuffer_view_t buffer, text::encoding_t = text::encoding::binary)pure;
-				visible vcall wsize write(pointer buffer, wsize size, text::encoding_t = text::encoding::binary)pure;
-				visible vcall wsize write(ibuffer_view_t buffer, text::encoding_t = text::encoding::binary)pure;
 
 				visible vcall ibuffer_t map(wsize size, file_cursor_t offset)pure;
 				visible vcall bool unmap(ibuffer_t, wsize)pure;
@@ -287,19 +283,35 @@ namespace ang
 				bool read(core::delegates::function<bool(streams::itext_input_stream_t)> , file_cursor_t offset = 0, wsize size = -1);
 				template<typename T> inline core::async::iasync_t<T> read_async(core::delegates::function<T(streams::itext_input_stream_t)> callback, file_cursor_t offset = 0, wsize size = -1) {
 					input_text_file_t file = this;
-					return core::async::async_task<T>::run_async([=](core::async::iasync<T>* async, var_args_t args)->T {
+					return core::async::task::template run_async<T>([=](core::async::iasync<T>*, var_args_t)->T {
 						T result;
 						this->read([&](streams::itext_input_stream_t stream) {
 							result = ang::move(callback(stream));
 							return true;
 						}, offset, size);
 						return ang::move(result);
-					}, { file , callback });
+					}, var_args_t{ file , callback });
 				}
 
-				wsize read(string& out, wsize count);
-				wsize read(wstring& out, wsize count);
-				wsize read(mstring& out, wsize count);
+				//wsize read(string& out, wsize count);
+				//wsize read(wstring& out, wsize count);
+
+				template<typename T>
+				wsize read(T& value, text::text_format_t f = text::default_text_format<T>::format()) {
+					return streams::text_deserializer<T>::deserialize(hfile.get(), value, f);
+				}
+
+				template<typename T>
+				wsize read(safe_str<T>& value) {
+					return streams::text_deserializer<safe_str<T>>::deserialize(hfile.get(), value);
+				}
+
+				template<text::encoding_enum ENCODING>
+				wsize read(strings::string_base<ENCODING>& value, wsize max) {
+					return streams::text_deserializer<strings::string_base<ENCODING>>::deserialize(hfile.get(), value, max);
+				}
+
+				wsize read(raw_str_t& out);
 
 			private:
 				virtual~input_text_file();
@@ -323,14 +335,20 @@ namespace ang
 				bool write(core::delegates::function<bool(streams::itext_output_stream_t)> , file_cursor_t offset = 0, wsize size = -1);			
 				template<typename T> inline core::async::iasync_t<T> write_async(core::delegates::function<T(streams::itext_output_stream_t)> callback, file_cursor_t offset = 0, wsize size = -1) {
 					output_text_file_t file = this;
-					return core::async::async_task<T>::run_async([=](core::async::iasync<T>* async, var_args_t args)->T {
+					
+					return core::async::task::template run_async<T>([=](core::async::iasync<T>*, var_args_t)->T {
 						T result;
 						this->write([&](streams::itext_output_stream_t stream) {
 							result = ang::move(callback(stream));
 							return true;
 						}, offset, size);
 						return ang::move(result);
-					}, { file , callback });
+					}, var_args_t{ file , callback });
+				}
+
+				template<typename T>
+				wsize write(T const& value, text::text_format_t f = text::default_text_format<T>::format()) {
+					return streams::text_serializer<T>::serialize(hfile.get(), value, f);
 				}
 
 				wsize write(raw_str_t out);

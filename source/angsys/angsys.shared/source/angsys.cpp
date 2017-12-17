@@ -14,6 +14,7 @@
 
 #include <ang/collections/vector.hpp>
 #include "thread.hpp"
+#include "file_system.h"
 
 #include <ang/xml.hpp>
 
@@ -184,11 +185,14 @@ public:
 		thread_manager = memory::object_allocator<core::async::core_thread_manager>::construct(thread_manager);
 		ang::runtime::runtime_data_base::regist_typename(type_of<object>());
 		core::async::core_thread_manager::instance();
+		core::files::file_system::instance();
 	}
 	~ang_initializer()
 	{
+		core::files::file_system::release_instance();
 		memory::object_allocator<core::async::core_thread_manager>::destruct_and_free(thread_manager);
 		thread_manager = null;
+		
 	}
 
 

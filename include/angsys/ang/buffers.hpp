@@ -153,7 +153,7 @@ namespace ang
 	};
 
 	template<wsize _SIZE>
-	class LINK stack_buffer
+	class stack_buffer
 		: public ibuffer
 	{
 	private:
@@ -181,6 +181,33 @@ namespace ang
 		virtual bool realloc_buffer(wsize) override;
 	};
 
+	class LINK dummy_buffer
+		: public ibuffer
+	{
+	private:
+		wsize _size;
+		pointer _ptr;
+
+	private:
+		pointer operator new(wsize)throw();
+		void operator delete(void*)throw();
+
+	public:
+		dummy_buffer(pointer ptr, wsize sz);
+		virtual ~dummy_buffer();
+
+	public: //overrides
+		ANG_DECLARE_INLINE_INTERFACE();
+
+		virtual text::encoding_t encoding()const override;
+		virtual pointer buffer_ptr()const override;
+		virtual wsize buffer_size()const override;
+		virtual wsize mem_copy(wsize, pointer, text::encoding_t = text::encoding::binary) override;
+		virtual ibuffer_view_t map_buffer(windex, wsize) override;
+		virtual bool unmap_buffer(ibuffer_view_t&, wsize) override;
+		virtual bool can_realloc_buffer()const override;
+		virtual bool realloc_buffer(wsize) override;
+	};
 }
 
 

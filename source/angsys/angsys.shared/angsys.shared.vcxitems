@@ -82,6 +82,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\input_text_file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\output_binary_file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\output_text_file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\pack_file.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\floating.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\integer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\memory.cpp" />

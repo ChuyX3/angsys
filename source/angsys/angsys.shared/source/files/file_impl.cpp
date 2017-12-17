@@ -791,7 +791,7 @@ static file_cursor_t read_file(file_handle_t hfile, pointer buffer, wsize size, 
 #endif
 }
 
-wsize file_impl::read(pointer buffer, wsize size, text::text_format_t)
+wsize file_impl::read(pointer buffer, wsize size, text::text_format_t f)
 {
 	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	if (buffer == null || size == 0 || !is_created())
@@ -799,68 +799,138 @@ wsize file_impl::read(pointer buffer, wsize size, text::text_format_t)
 	if (!_flags.is_active(open_flags::access_in))
 		return 0;
 	dword readed = 0;
-#ifdef WINAPI_FAMILY
-	if (!ReadFile(_hfile, buffer, (dword)size, &readed, NULL))
+	if (format() == text::encoding::binary)
+	{
+		auto cursor = read_file(_hfile, buffer, size, readed);
+		_cursor = readed ? cursor : _cursor;
+		return readed;
+	}
+	else
+	{
 		return 0;
-	LARGE_INTEGER lint;
-	LARGE_INTEGER cur;
-	lint.QuadPart = 0;
-	SetFilePointerEx(_hfile, lint, &cur, FILE_CURRENT);
-	_cursor = cur.QuadPart;
-
-#elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-	readed = ::read(_hfile, buffer, size);
-	_cursor = ::lseek(_hfile, 0, SEEK_CUR);
-#endif
-	return readed;
+	}
+//
+//#ifdef WINAPI_FAMILY
+//	if (!ReadFile(_hfile, buffer, (dword)size, &readed, NULL))
+//		return 0;
+//	LARGE_INTEGER lint;
+//	LARGE_INTEGER cur;
+//	lint.QuadPart = 0;
+//	SetFilePointerEx(_hfile, lint, &cur, FILE_CURRENT);
+//	_cursor = cur.QuadPart;
+//
+//#elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
+//	readed = ::read(_hfile, buffer, size);
+//	_cursor = ::lseek(_hfile, 0, SEEK_CUR);
+//#endif
+//	return readed;
 }
 
-wsize file_impl::read(pointer buffer, wsize size, text::encoding_t)
+wsize file_impl::read(pointer buffer, wsize size, text::encoding_t encoding)
 {
+	raw_str_t dest = { buffer , size, encoding };
+
 	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	if (buffer == null || size == 0 || !is_created())
 		return 0;
 	if (!_flags.is_active(open_flags::access_in))
 		return 0;
 	dword readed = 0;
-#ifdef WINAPI_FAMILY
-	if (!ReadFile(_hfile, buffer, (dword)size, &readed, NULL))
-		return 0;
-	LARGE_INTEGER lint;
-	LARGE_INTEGER cur;
-	lint.QuadPart = 0;
-	SetFilePointerEx(_hfile, lint, &cur, FILE_CURRENT);
-	_cursor = cur.QuadPart;
 
+	if (format() == text::encoding::binary)
+	{
+		auto cursor = read_file(_hfile, buffer, size, readed);
+		_cursor = readed ? cursor : _cursor;
+		return readed;
+	}
+	else
+	{
+		text::encoder_interface encoder;
+		text::encoder_interface::initialize_interface(&encoder, encoding);
+
+		alignas(16) stack_array<byte, 128> buffer;
+		raw_str_t src = { buffer.begin(), 124, format() };
+		wsize t = 0, c = 0, idx = 0, count = dest.count() - 1, cs = dest.char_size(), cs2 = src.char_size();
+
+		while (idx <= count)
+		{
+#ifdef WINAPI_FAMILY
+			if (!ReadFile(_hfile, src.ptr(), src.size(), &readed, NULL))
+				break;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-	readed = ::read(_hfile, buffer, size);
-	_cursor = ::lseek(_hfile, 0, SEEK_CUR);
+			written = ::read(_hfile, src.ptr(), src.size());
 #endif
-	return readed;
+			idx += encoder._convert_string((byte*)dest.ptr() + (idx * cs), (dest.size() / cs) - idx - 1, src.ptr(), c, src.encoding(), true);
+
+			c = min(c * cs2, readed);
+			t += c;
+#ifdef WINAPI_FAMILY
+		
+			LARGE_INTEGER lint;
+			LARGE_INTEGER cur;
+			lint.QuadPart = _cursor + c;
+			SetFilePointerEx(_hfile, lint, &cur, FILE_BEGIN);
+			_cursor = cur.QuadPart;
+#elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
+			_cursor = ::lseek(_hfile, _cursor + c, SEEK_SET);
+#endif
+		}
+		return t;
+	}
 }
 
-wsize file_impl::read(ibuffer_view_t buffer, text::encoding_t)
+wsize file_impl::read(ibuffer_view_t buffer, text::encoding_t encoding)
 {
-	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
-	if (buffer == null || !is_created())
+	if (buffer.is_empty())
 		return 0;
+	raw_str_t dest = { buffer->buffer_ptr() , buffer->buffer_size(), encoding };
+
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
+
 	if (!_flags.is_active(open_flags::access_in))
 		return 0;
 	dword readed = 0;
-#ifdef WINAPI_FAMILY
-	if (!ReadFile(_hfile, buffer->buffer_ptr(), buffer->buffer_size(), &readed, NULL))
-		return 0;
-	LARGE_INTEGER lint;
-	LARGE_INTEGER cur;
-	lint.QuadPart = 0;
-	SetFilePointerEx(_hfile, lint, &cur, FILE_CURRENT);
-	_cursor = cur.QuadPart;
 
+	if (format() == text::encoding::binary)
+	{
+		auto cursor = read_file(_hfile, buffer->buffer_ptr(), buffer->buffer_size(), readed);
+		_cursor = readed ? cursor : _cursor;
+		return readed;
+	}
+	else
+	{
+		text::encoder_interface encoder;
+		text::encoder_interface::initialize_interface(&encoder, encoding);
+
+		alignas(16) stack_array<byte, 128> buffer;
+		raw_str_t src = { buffer.begin(), 124, format() };
+		wsize t = 0, c = 0, idx = 0, count = dest.count() - 1, cs = dest.char_size(), cs2 = src.char_size();
+
+		while (idx <= count)
+		{
+#ifdef WINAPI_FAMILY
+			if (!ReadFile(_hfile, src.ptr(), src.size(), &readed, NULL))
+				break;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-	readed = ::read(_hfile, buffer->buffer_ptr(), buffer->buffer_size());
-	_cursor = ::lseek(_hfile, 0, SEEK_CUR);
+			written = ::read(_hfile, src.ptr(), src.size());
 #endif
-	return readed;
+			idx += encoder._convert_string((byte*)dest.ptr() + (idx * cs), (dest.size() / cs) - idx - 1, src.ptr(), c, src.encoding(), true);
+
+			c = min(c * cs2, readed);
+			t += c;
+#ifdef WINAPI_FAMILY
+
+			LARGE_INTEGER lint;
+			LARGE_INTEGER cur;
+			lint.QuadPart = _cursor + c;
+			SetFilePointerEx(_hfile, lint, &cur, FILE_BEGIN);
+			_cursor = cur.QuadPart;
+#elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
+			_cursor = ::lseek(_hfile, _cursor + c, SEEK_SET);
+#endif
+		}
+		return t;
+	}
 }
 
 
@@ -976,7 +1046,6 @@ wsize file_impl::write(pointer buffer, wsize size, text::encoding_t encoding)
 
 	if (format() == text::encoding::binary)
 	{
-		dword written = 0;
 		auto cursor = write_file(_hfile, buffer, size, written);
 		_cursor = written ? cursor : _cursor;
 		return written;
@@ -1142,4 +1211,116 @@ bool file_impl::set_mutex(core::async::mutex_ptr_t mutex)
 	core::async::scope_locker<core::async::mutex_ptr_t> lock = _mutex;
 	_mutex = mutex;
 	return true;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+ang::object_wrapper<file_impl>::object_wrapper() : _ptr(null) {
+
+}
+
+ang::object_wrapper<file_impl>::object_wrapper(file_impl* ptr) : _ptr(null) {
+	set(ptr);
+}
+
+ang::object_wrapper<file_impl>::object_wrapper(object_wrapper && other) : _ptr(null) {
+	file_impl * temp = other._ptr;
+	other._ptr = null;
+	_ptr = temp;
+}
+
+ang::object_wrapper<file_impl>::object_wrapper(object_wrapper const& other) : _ptr(null) {
+	set(other._ptr);
+}
+
+ang::object_wrapper<file_impl>::object_wrapper(ang::nullptr_t const&) : _ptr(null) {
+}
+
+ang::object_wrapper<file_impl>::~object_wrapper()
+{
+	clean();
+}
+
+void ang::object_wrapper<file_impl>::clean()
+{
+	if (_ptr)_ptr->release();
+	_ptr = null;
+}
+
+void ang::object_wrapper<file_impl>::clean_unsafe()
+{
+	_ptr = null;
+}
+
+bool ang::object_wrapper<file_impl>::is_empty()const
+{
+	return _ptr == null;
+}
+
+file_impl* ang::object_wrapper<file_impl>::get(void)const
+{
+	return _ptr;
+}
+
+void ang::object_wrapper<file_impl>::set(file_impl* ptr)
+{
+	file_impl * temp = _ptr;
+	if (ptr == _ptr) return;
+	_ptr = ptr;
+	if (_ptr)_ptr->add_ref();
+	if (temp)temp->release();
+}
+
+ang::object_wrapper<file_impl>& ang::object_wrapper<file_impl>::operator = (file_impl* ptr)
+{
+	set(ptr);
+	return*this;
+}
+
+ang::object_wrapper<file_impl>& ang::object_wrapper<file_impl>::operator = (ang::object_wrapper<file_impl> && other)
+{
+	if (this == (object_wrapper<file_impl>*)&other)
+		return *this;
+	clean();
+	_ptr = other._ptr;
+	other._ptr = null;
+	return*this;
+}
+
+ang::object_wrapper<file_impl>& ang::object_wrapper<file_impl>::operator = (ang::object_wrapper<file_impl> const& other)
+{
+	set(other._ptr);
+	return*this;
+}
+
+file_impl ** ang::object_wrapper<file_impl>::addres_of(void)
+{
+	return &_ptr;
+}
+
+ang::object_wrapper_ptr<file_impl> ang::object_wrapper<file_impl>::operator& (void)
+{
+	return this;
+}
+
+file_impl * ang::object_wrapper<file_impl>::operator -> (void)
+{
+	return get();
+}
+
+file_impl const* ang::object_wrapper<file_impl>::operator -> (void)const
+{
+	return get();
+}
+
+ang::object_wrapper<file_impl>::operator file_impl * (void)
+{
+	return get();
+}
+
+ang::object_wrapper<file_impl>::operator file_impl const* (void)const
+{
+	return get();
 }

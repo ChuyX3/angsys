@@ -45,6 +45,7 @@ namespace ang
 		typedef object_wrapper<binary_buffer_input_stream> binary_buffer_input_stream_t;
 		typedef object_wrapper<binary_buffer_output_stream> binary_buffer_output_stream_t;
 
+		ANG_INTERFACE(istream);
 
 		//struct iserializable;
 
@@ -97,6 +98,10 @@ namespace ang
 		ANG_END_INTERFACE();
 
 		ANG_BEGIN_INTERFACE(LINK, istream)
+			visible vcall wsize read(pointer, wsize, text::encoding_t = text::encoding::binary)pure;
+			visible vcall wsize read(ibuffer_view_t, text::encoding_t = text::encoding::binary)pure;
+			visible vcall wsize write(pointer, wsize, text::encoding_t = text::encoding::binary)pure;
+			visible vcall wsize write(ibuffer_view_t, text::encoding_t = text::encoding::binary)pure;
 			visible vcall wsize read(pointer, wsize, text::text_format_t)pure;
 			visible vcall wsize write(pointer, wsize, text::text_format_t)pure;
 			visible vcall text::encoding_t format()const pure;
@@ -293,12 +298,62 @@ namespace ang
 			static wsize serialize(itext_output_stream_t stream, T const& value, text::text_format_t format = text::default_text_format<T>::format()) {
 				return stream->write((pointer)&value, sizeof(T), format);
 			}
+			static wsize serialize(istream_t stream, T const& value, text::text_format_t format = text::default_text_format<T>::format()) {
+				return stream->write((pointer)&value, sizeof(T), format);
+			}
 		};
 
 		template<typename T>
 		struct text_deserializer {
 			static wsize deserialize(itext_input_stream_t stream, T& value) {
 				return stream->read((pointer)&value, sizeof(T), text::default_text_format<T>::format());
+			}
+			static wsize deserialize(istream_t stream, T& value) {
+				return stream->read((pointer)&value, sizeof(T), text::default_text_format<T>::format());
+			}
+		};
+
+		template<typename T>
+		struct text_serializer<safe_str<T>> {
+			static wsize serialize(itext_output_stream_t stream, safe_str<T> const& value) {
+				return stream->write((pointer)&value, sizeof(T), text::default_text_format<T>::format());
+			}
+			static wsize serialize(istream_t stream, safe_str<T> const& value) {
+				return stream->write((pointer)&value, sizeof(T), text::default_text_format<T>::format());
+			}
+		};
+
+		template<typename T>
+		struct text_serializer<object_wrapper<T>> {
+			static wsize serialize(itext_output_stream_t stream, object_wrapper<T> const& value) {
+				return value.is_empty() ? 0 : value->serialize(stream);
+			}
+			static wsize serialize(istream_t stream, object_wrapper<T> const& value) {
+				return value.is_empty() ? 0 : value->serialize(stream);
+			}
+		};
+
+		template<typename T>
+		struct text_deserializer<safe_str<T>> {
+			static wsize deserialize(itext_input_stream_t stream, safe_str<T>& str) {
+				wsize max = min(str.size(), stream->stream_size() - stream->position());
+				dummy_buffer buff(str.get(), str.size() * sizeof(T));
+				auto c = stream->read(&buff, text::encoding_by_type<T>::encoding(), max);
+				str.set(str.get(), c);
+				return c;
+			}
+			static wsize deserialize(istream_t stream, safe_str<T>& str) {
+				wsize max = min(str.size(), stream->stream_size() - stream->position());
+				auto c = stream->read(str.get(), str.size(), text::encoding_by_type<T>::encoding());
+				str.set(str.get(), c);
+				return c;
+			}
+			static wsize deserialize_until(itext_input_stream_t stream, safe_str<T>& str, array_view<const char32_t> endline) {
+				wsize max = min(str.size(), stream->stream_size() - stream->position());
+				dummy_buffer buff(str.get(), str.size() * sizeof(T));
+				auto c = stream->read_line(&buff, text::encoding_by_type<T>::encoding(), max, endline);
+				str.set(str.get(), c);
+				return c;
 			}
 		};
 
@@ -311,7 +366,13 @@ namespace ang
 				str->unmap_buffer(buff, c);
 				return c;
 			}
-
+			static wsize deserialize(istream_t stream, strings::string_base<ENCODING>& str, wsize max) {
+				max = min(max, stream->stream_size() - stream->position());
+				ibuffer_view_t buff = str->map_buffer(0, max);
+				auto c = stream->read(buff, max, ENCODING);
+				str->unmap_buffer(buff, c);
+				return c;
+			}
 			static wsize deserialize_until(itext_input_stream_t stream, strings::string_base<ENCODING>& str, wsize max, array_view<const char32_t> endline) {
 				max = min(max, stream->stream_size() - stream->position());
 				ibuffer_view_t buff = str->map_buffer(0, max);
@@ -321,20 +382,6 @@ namespace ang
 			}
 		};
 
-
-		template<typename T>
-		struct text_serializer<safe_str<T>> {
-			static wsize serialize(itext_output_stream_t stream, safe_str<T> const& value) {
-				return stream->write((pointer)&value, sizeof(T), text::default_text_format<T>::format());
-			}
-		};
-
-		template<typename T>
-		struct text_serializer<object_wrapper<T>> {
-			static wsize serialize(itext_output_stream_t stream, object_wrapper<T> const& value) {
-				return value.is_empty() ? 0 : value->serialize(stream);
-			}
-		};
 
 		template<typename T>
 		struct binary_serializer {
