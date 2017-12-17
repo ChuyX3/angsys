@@ -5,7 +5,7 @@
 /*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
 /*********************************************************************************************************************/
 
-#ifndef __ANGSYS_H__
+#ifndef __ANGSYS_HPP__
 #error ...
 #elif !defined __ANG_EXCEPTIONS_H__
 #define __ANG_EXCEPTIONS_H__

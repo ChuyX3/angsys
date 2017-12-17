@@ -8,7 +8,7 @@
 #ifndef __ANG_DELEGATES_HPP__
 #define __ANG_DELEGATES_HPP__
 
-#include <angsys.h>
+#include <angsys.hpp>
 #include<ang/collections/vector.hpp>
 
 #ifdef  LINK

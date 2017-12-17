@@ -1,5 +1,5 @@
 /*********************************************************************************************************************/
-/*   File Name: angsys.h                                                                                             */
+/*   File Name: angsys.hpp                                                                                             */
 /*   Autor: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                    */
 /*   File description: this file declare all functions and clases for dynamic type naming and types conversions.     */
 /*   Also it defines useful macros for the use of this functions and clases.                                         */

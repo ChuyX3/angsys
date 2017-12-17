@@ -1,5 +1,5 @@
 /*********************************************************************************************************************/
-/*   File Name: angsys.h                                                                                             */
+/*   File Name: angsys.hpp                                                                                             */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
 /*   File description: this file is the base for all library, it exposes the "object" class which is the class       */
 /*   base for many other clases.                                                                                     */
@@ -11,10 +11,10 @@
 /*                                                                                                                   */
 /*********************************************************************************************************************/
 
-#ifndef __ANGSYS_H__
-#define __ANGSYS_H__
+#ifndef __ANGSYS_HPP__
+#define __ANGSYS_HPP__
 
-#include "angbase.h"
+#include <angbase.hpp>
 
 #ifdef  LINK
 #undef  LINK
@@ -641,4 +641,4 @@ namespace ang
 
 
 
-#endif //__ANGSYS_H__
+#endif //__ANGSYS_HPP__

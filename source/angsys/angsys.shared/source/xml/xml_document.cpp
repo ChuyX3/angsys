@@ -1328,7 +1328,7 @@ bool xml_document::decode_elements(xml_document_t doc, text::string_util& code, 
 
 					//get element name
 					bool same = true;
-					wchar _c = 0;
+					char32_t _c = 0;
 					cwstr_t temp = current->xml_name();
 					wsize length = current->xml_name()->length();
 					c = 0;

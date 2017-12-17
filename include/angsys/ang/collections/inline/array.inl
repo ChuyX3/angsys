@@ -8,7 +8,7 @@
 /*                                                                                                                   */
 /*********************************************************************************************************************/
 
-#ifndef __ANGSYS_H__
+#ifndef __ANGSYS_HPP__
 #error Can't include array.inl, please include angsys.h inside
 #elif !defined __ANG_COLLECTIONS_ARRAY_INL__
 #define __ANG_COLLECTIONS_ARRAY_INL__

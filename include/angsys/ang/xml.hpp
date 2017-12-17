@@ -13,7 +13,7 @@
 #ifndef __ANGXML_HPP__
 #define __ANGXML_HPP__
 
-#include <angsys.h>
+#include <angsys.hpp>
 //#include <ang/core/files.h>
 
 #ifdef  LINK
@@ -260,6 +260,90 @@ namespace ang
 
 namespace ang
 {
+	template<>
+	class LINK weak_ptr<xml::ixml_node>
+		: public safe_pointer
+	{
+	public:
+		weak_ptr();
+		weak_ptr(weak_ptr&& other);
+		weak_ptr(weak_ptr const& other);
+		weak_ptr(ang::nullptr_t const&);
+		weak_ptr(xml::ixml_node* obj);
+		weak_ptr(xml::ixml_node_t obj);
+		~weak_ptr();
+
+	public: //properties
+		xml::ixml_node_t lock();
+
+		weak_ptr& operator = (xml::ixml_node_t obj);
+		weak_ptr& operator = (xml::ixml_node* obj);
+		weak_ptr& operator = (weak_ptr&& other);
+		weak_ptr& operator = (weak_ptr const& other);
+		weak_ptr& operator = (ang::nullptr_t const&);
+	};
+
+	template<> 
+	class LINK weak_ptr<xml::ixml_document>
+		: public safe_pointer
+	{
+	public:
+		weak_ptr();
+		weak_ptr(weak_ptr&& other);
+		weak_ptr(weak_ptr const& other);
+		weak_ptr(ang::nullptr_t const&);
+		weak_ptr(xml::ixml_document* obj);
+		weak_ptr(xml::ixml_document_t obj);
+		~weak_ptr();
+
+	public: //properties
+		xml::ixml_document_t lock();
+
+		weak_ptr& operator = (xml::ixml_document_t obj);
+		weak_ptr& operator = (xml::ixml_document* obj);
+		weak_ptr& operator = (weak_ptr&& other);
+		weak_ptr& operator = (weak_ptr const& other);
+		weak_ptr& operator = (ang::nullptr_t const&);
+	};
+
+	template<> class LINK intf_wrapper<xml::ixml_object>
+	{
+	public:
+		typedef xml::ixml_object type;
+
+	private:
+		xml::ixml_object* _ptr;
+
+	public:
+		intf_wrapper();
+		intf_wrapper(xml::ixml_object*);
+		intf_wrapper(intf_wrapper &&);
+		intf_wrapper(intf_wrapper const&);
+		intf_wrapper(std::nullptr_t const&);
+		~intf_wrapper();
+
+	public:
+		void clean();
+		void clean_unsafe();
+		bool is_empty()const;
+		xml::ixml_object* get(void)const;
+		void set(xml::ixml_object*);
+		xml::ixml_object ** addres_of(void);
+
+
+	public:
+		intf_wrapper& operator = (xml::ixml_object*);
+		intf_wrapper& operator = (intf_wrapper &&);
+		intf_wrapper& operator = (intf_wrapper const&);
+
+		intf_wrapper_ptr<xml::ixml_object> operator & (void);
+		xml::ixml_object * operator -> (void);
+		xml::ixml_object const* operator -> (void)const;
+
+		operator xml::ixml_object * (void);
+		operator xml::ixml_object const* (void)const;
+	
+	};
 
 	template<> class LINK intf_wrapper<xml::ixml_node>
 	{

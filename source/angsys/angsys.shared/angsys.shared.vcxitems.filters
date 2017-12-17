@@ -62,13 +62,7 @@
     </Natvis>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angbase.h">
-      <Filter>header files\angsys</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angplatform.h">
-      <Filter>header files\angsys</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angsys.h">
       <Filter>header files\angsys</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angtypes.h">
@@ -175,6 +169,12 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\files.hpp">
       <Filter>header files\angsys\ang\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angsys.hpp">
+      <Filter>header files\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angbase.hpp">
+      <Filter>header files\angsys</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

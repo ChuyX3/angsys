@@ -8,7 +8,7 @@
 #ifndef __ANG_STREAMS_HPP__
 #define __ANG_STREAMS_HPP__
 
-#include <angsys.h>
+#include <angsys.hpp>
 
 #ifdef LINK
 #undef LINK

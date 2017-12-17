@@ -8,7 +8,7 @@
 #ifndef __ANG_FILES_H__
 #define __ANG_FILES_H__
 
-#include <angsys.h>
+#include <angsys.hpp>
 #include <ang/streams.hpp>
 #include <ang/core/async.hpp>
 

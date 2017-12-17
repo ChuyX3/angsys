@@ -8,7 +8,7 @@
 /*                                                                                                                   */
 /*********************************************************************************************************************/
 
-#ifndef __ANGSYS_H__
+#ifndef __ANGSYS_HPP__
 #error Can't include string.inl, please include angsys.h inside
 #elif !defined __STRING_INL__
 #define __STRING_INL__

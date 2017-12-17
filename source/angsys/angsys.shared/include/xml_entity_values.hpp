@@ -32,7 +32,7 @@ namespace ang
 				|| (at == U'\n')
 				|| (at == U'\t')
 				|| (at == U'\r')) c++;
-			return c - begin;
+			return int(c - begin);
 		}
 
 		inline int xml_get_element_name(text::string_util code, windex begin)
@@ -45,7 +45,7 @@ namespace ang
 				&& (at != U'\r')
 				&& (at != U'/')
 				&& (at != U'>')) c++;
-			return c - begin;
+			return int(c - begin);
 		}
 
 
@@ -58,7 +58,7 @@ namespace ang
 				&& (at != U'\t')
 				&& (at != U'\r')
 				&& (at != U'=')) c++;
-			return c - begin;
+			return int(c - begin);
 		}
 
 

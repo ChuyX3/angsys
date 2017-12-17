@@ -8,7 +8,7 @@
 /*                                                                                                                   */
 /*********************************************************************************************************************/
 
-#ifndef __ANGSYS_H__
+#ifndef __ANGSYS_HPP__
 #error ...
 #elif !defined __OBJECT_WRAPPER_HPP__
 #define __OBJECT_WRAPPER_HPP__

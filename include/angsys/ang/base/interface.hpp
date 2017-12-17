@@ -202,4 +202,4 @@ namespace ang
 
 }
 
-#endif//__ANGSYS_H__
+#endif//__ANGSYS_HPP__

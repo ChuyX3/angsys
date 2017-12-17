@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "angsys.h"
+#include "angsys.hpp"
 #include "encoder.h"
 
 #include "inline/encoder.inl"

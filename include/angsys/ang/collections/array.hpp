@@ -1,4 +1,4 @@
-#ifndef __ANGSYS_H__
+#ifndef __ANGSYS_HPP__
 #elif !defined __ANG_COLLECTIONS_ARRAY_HPP__
 #define __ANG_COLLECTIONS_ARRAY_HPP__
 

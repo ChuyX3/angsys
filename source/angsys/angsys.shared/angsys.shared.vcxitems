@@ -21,9 +21,9 @@
     </Natvis>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angbase.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angbase.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angplatform.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angsys.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angsys.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angtypes.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\allocator.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\array.hpp" />

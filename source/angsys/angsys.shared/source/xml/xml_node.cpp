@@ -612,6 +612,7 @@ bool xml_node::push_attributes(ixml_store_t attributes)
 	auto doc = xml_parent_doc();
 	for (auto it = attributes->begin(); it != attributes->end(); it++)
 		store->push(it->xml_clone(doc));
+	return true;
 }
 
 
@@ -649,4 +650,5 @@ bool xml_node::push_children(ixml_store_t children)
 	auto doc = xml_parent_doc();
 	for (auto it = children->begin(); it != children->end(); it++)
 		store->push(it->xml_clone(doc));
+	return true;
 }

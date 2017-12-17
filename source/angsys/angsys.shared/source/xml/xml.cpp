@@ -223,3 +223,142 @@ template<> typename smart_ptr_type<ixml_document>::smart_ptr_t  ixml_object::xml
 template<> typename smart_ptr_type<xml_document>::smart_ptr_t  ixml_object::xml_as<xml_document>() {
 	return xml_is_type_of(xml_type::document) ? static_cast<xml_document*>(this) : null;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+weak_ptr<ixml_node>::weak_ptr() : safe_pointer() {}
+weak_ptr<ixml_node>::weak_ptr(weak_ptr&& other) : safe_pointer((safe_pointer&&)other) {}
+weak_ptr<ixml_node>::weak_ptr(weak_ptr const& other) : safe_pointer((safe_pointer const&)other) {}
+weak_ptr<ixml_node>::weak_ptr(ang::nullptr_t const&) : safe_pointer(null) {}
+weak_ptr<ixml_node>::weak_ptr(ixml_node* obj) : safe_pointer(obj) {}
+weak_ptr<ixml_node>::weak_ptr(ixml_node_t obj) : safe_pointer(obj.get()) {}
+weak_ptr<ixml_node>::~weak_ptr() { }
+weak_ptr<ixml_node>& weak_ptr<ixml_node>::operator = (ixml_node_t obj) { safe_pointer::operator=(obj.get()); return *this; }
+weak_ptr<ixml_node>& weak_ptr<ixml_node>::operator = (ixml_node* obj) { safe_pointer::operator=(obj);  return *this; }
+weak_ptr<ixml_node>& weak_ptr<ixml_node>::operator = (weak_ptr&& other) { safe_pointer::operator=(other); return *this; }
+weak_ptr<ixml_node>& weak_ptr<ixml_node>::operator = (weak_ptr const& other) { safe_pointer::operator=(other);  return *this; }
+weak_ptr<ixml_node>& weak_ptr<ixml_node>::operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }
+ixml_node_t weak_ptr<ixml_node>::lock() {
+	auto ptr = safe_pointer::lock<intfptr>();
+	return reinterpret_cast<ixml_node*>(ptr.get());
+}
+
+
+weak_ptr<ixml_document>::weak_ptr() : safe_pointer() {}
+weak_ptr<ixml_document>::weak_ptr(weak_ptr&& other) : safe_pointer((safe_pointer&&)other) {}
+weak_ptr<ixml_document>::weak_ptr(weak_ptr const& other) : safe_pointer((safe_pointer const&)other) {}
+weak_ptr<ixml_document>::weak_ptr(ang::nullptr_t const&) : safe_pointer(null) {}
+weak_ptr<ixml_document>::weak_ptr(ixml_document* obj) : safe_pointer(obj) {}
+weak_ptr<ixml_document>::weak_ptr(ixml_document_t obj) : safe_pointer(obj.get()) {}
+weak_ptr<ixml_document>::~weak_ptr() { }
+weak_ptr<ixml_document>& weak_ptr<ixml_document>::operator = (ixml_document_t obj) { safe_pointer::operator=(obj.get()); return *this; }
+weak_ptr<ixml_document>& weak_ptr<ixml_document>::operator = (ixml_document* obj) { safe_pointer::operator=(obj);  return *this; }
+weak_ptr<ixml_document>& weak_ptr<ixml_document>::operator = (weak_ptr&& other) { safe_pointer::operator=(other); return *this; }
+weak_ptr<ixml_document>& weak_ptr<ixml_document>::operator = (weak_ptr const& other) { safe_pointer::operator=(other);  return *this; }
+weak_ptr<ixml_document>& weak_ptr<ixml_document>::operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }
+ixml_document_t weak_ptr<ixml_document>::lock() {
+	auto ptr = safe_pointer::lock<intfptr>();
+	return reinterpret_cast<ixml_document*>(ptr.get());
+}
+
+
+ang::intf_wrapper<ixml_object>::intf_wrapper() : _ptr(null) {
+
+}
+
+ang::intf_wrapper<ixml_object>::intf_wrapper(ixml_object* ptr) : _ptr(null) {
+	set(ptr);
+}
+
+ang::intf_wrapper<ixml_object>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
+	ixml_object * temp = other._ptr;
+	other._ptr = null;
+	_ptr = temp;
+}
+
+ang::intf_wrapper<ixml_object>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
+	set(other._ptr);
+}
+
+ang::intf_wrapper<ixml_object>::intf_wrapper(std::nullptr_t const&)
+	: _ptr(null)
+{
+}
+
+ang::intf_wrapper<ixml_object>::~intf_wrapper() {
+	clean();
+}
+
+void ang::intf_wrapper<ixml_object>::clean()
+{
+	iobject * _obj = interface_cast<iobject>(_ptr);
+	if (_obj)_obj->release();
+	_ptr = null;
+}
+
+bool ang::intf_wrapper<ixml_object>::is_empty()const
+{
+	return _ptr == null;
+}
+
+ixml_object* ang::intf_wrapper<ixml_object>::get(void)const
+{
+	return _ptr;
+}
+
+void ang::intf_wrapper<ixml_object>::set(ixml_object* ptr)
+{
+	if (ptr == _ptr) return;
+	iobject * _old = interface_cast<iobject>(_ptr);
+	iobject * _new = interface_cast<iobject>(ptr);
+	_ptr = ptr;
+	if (_new)_new->add_ref();
+	if (_old)_old->release();
+}
+
+ang::intf_wrapper<ixml_object>& ang::intf_wrapper<ixml_object>::operator = (ixml_object* ptr)
+{
+	set(ptr);
+	return*this;
+}
+
+ang::intf_wrapper<ixml_object>& ang::intf_wrapper<ixml_object>::operator = (ang::intf_wrapper<ixml_object> && other)
+{
+	if (this == &other)
+		return *this;
+	clean();
+	_ptr = other._ptr;
+	other._ptr = null;
+	return*this;
+}
+
+ang::intf_wrapper<ixml_object>& ang::intf_wrapper<ixml_object>::operator = (ang::intf_wrapper<ixml_object> const& other)
+{
+	set(other._ptr);
+	return*this;
+}
+
+ixml_object ** ang::intf_wrapper<ixml_object>::addres_of(void)
+{
+	return &_ptr;
+}
+
+ang::intf_wrapper_ptr<ixml_object> ang::intf_wrapper<ixml_object>::operator & (void)
+{
+	return this;
+}
+
+ixml_object * ang::intf_wrapper<ixml_object>::operator -> (void)
+{
+	return get();
+}
+
+ixml_object const* ang::intf_wrapper<ixml_object>::operator -> (void)const
+{
+	return get();
+}
+
+ang::intf_wrapper<ixml_object>::operator xml::ixml_object * (void) { return _ptr; }
+
+ang::intf_wrapper<ixml_object>::operator xml::ixml_object const* (void)const { return _ptr; }

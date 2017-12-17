@@ -8,7 +8,7 @@
 /*                                                                                                                   */
 /*********************************************************************************************************************/
 
-#ifndef __ANGSYS_H__
+#ifndef __ANGSYS_HPP__
 #error Can't include convertible.inl, please include angsys.h inside
 #elif !defined __CONVERTIBLE_INL__
 #define __CONVERTIBLE_INL__

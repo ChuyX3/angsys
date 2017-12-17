@@ -14,7 +14,7 @@
 #ifndef __ANG_QUEUE_HPP__
 #define __ANG_QUEUE_HPP__
 
-#include <angsys.h>
+#include <angsys.hpp>
 
 
 #ifdef  LINK

@@ -7,9 +7,9 @@
 
 #ifndef __ANG_SINGLETON_HPP__
 #define __ANG_SINGLETON_HPP__
-#ifndef __ANGSYS_H__
-#include <angsys.h>
-#endif//__ANGSYS_H__
+#ifndef __ANGSYS_HPP__
+#include <angsys.hpp>
+#endif//__ANGSYS_HPP__
 
 
 namespace ang
