@@ -5,38 +5,14 @@ using namespace ang;
 using namespace ang::core;
 using namespace ang::core::async;
 
-ANG_IMPLEMENT_INTERFACE(ang::core::async, itask);
+ANG_IMPLEMENT_INTERFACE(ang::core::async, ioperation<void>);
+ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::async::itask, ioperation<void>);
 //ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::async::iasync<void>, itask)
 
 ANG_IMPLEMENT_FLAGS(async, async_action_status, uint);
 
 
-extern "C" ulong64 ang_get_performance_time()
-{
-#if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-	struct timespec ts;
-	ulong64 theTick = 0;
-	clock_gettime(CLOCK_REALTIME, &ts);
-	theTick = (ulong64)ts.tv_nsec / 1000.0;
-	theTick += (ulong64)ts.tv_sec * 1000000.0;
-	return theTick;
-#else
-	static struct PerformanceFrequency {
-		ulong64 QuadPart;
-		PerformanceFrequency() {
-			LARGE_INTEGER _frec;
-			QueryPerformanceFrequency(&_frec);
-			QuadPart = (ulong64)_frec.QuadPart;
-		}
-	}frec;
-
-	LARGE_INTEGER count;
-	QueryPerformanceCounter(&count);
-	return count.QuadPart / frec.QuadPart;
-#endif
-}
-
-
+extern "C" ulong64 ang_get_performance_time();
 
 ////////////////////////////////////////////////////////////////
 
@@ -157,6 +133,22 @@ bool cond::wait(mutex& mutex)const
 #endif
 }
 
+bool cond::wait(mutex_ptr_t mutex)const
+{
+	if (_handle == NULL)
+		return false;
+#if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
+	if (mutex.is_empty())
+		return false;
+	return pthread_cond_wait((pthread_cond_t*)_handle, (pthread_mutex_t*)mutex->_handle) == 0 ? true : false;
+#elif defined WINDOWS_PLATFORM
+	if(!mutex.is_empty())mutex->unlock();
+	auto res = WaitForSingleObjectEx(this->_handle, INFINITE, FALSE) == WAIT_OBJECT_0 ? true : false;
+	if (!mutex.is_empty())mutex->lock();
+	return res;
+#endif
+}
+
 bool cond::wait(mutex& mutex, dword ms)const
 {
 	if (_handle == NULL)
@@ -165,11 +157,31 @@ bool cond::wait(mutex& mutex, dword ms)const
 	timespec time;
 	time.tv_sec = (long)ms / 1000;
 	time.tv_nsec = ((long)ms - time.tv_sec * 1000) * 1000;
-	return pthread_cond_timedwait((pthread_cond_t*)_handle, (pthread_mutex_t*)mutex._handle, &time) == 0 ? ang_true : ang_false;
+	return pthread_cond_timedwait((pthread_cond_t*)_handle, (pthread_mutex_t*)mutex._handle, &time) == 0 ? true : false;
 #elif defined WINDOWS_PLATFORM
-	return scope_locker<mutex_t>::lock(mutex, [&]() {
-		return WaitForSingleObjectEx(this->_handle, ms, FALSE) == WAIT_OBJECT_0 ? true : false;
-	});
+	mutex.unlock();
+	auto res = WaitForSingleObjectEx(this->_handle, ms, FALSE) == WAIT_OBJECT_0 ? true : false;
+	mutex.lock();
+	return res;
+#endif
+}
+
+bool cond::wait(mutex_ptr_t mutex, dword ms)const
+{
+	if (_handle == NULL)
+		return false;
+#if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
+	if (mutex.is_empty())
+		return false;
+	timespec time;
+	time.tv_sec = (long)ms / 1000;
+	time.tv_nsec = ((long)ms - time.tv_sec * 1000) * 1000;
+	return pthread_cond_timedwait((pthread_cond_t*)_handle, (pthread_mutex_t*)mutex->_handle, &time) == 0 ? true : false;
+#elif defined WINDOWS_PLATFORM
+	if (!mutex.is_empty())mutex->unlock();
+	auto res = WaitForSingleObjectEx(this->_handle, ms, FALSE) == WAIT_OBJECT_0 ? true : false;
+	if (!mutex.is_empty())mutex->lock();
+	return res;
 #endif
 }
 

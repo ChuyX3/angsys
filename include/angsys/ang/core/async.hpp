@@ -41,6 +41,7 @@ namespace ang
 			class waiter;
 			class thread;
 			template<typename result_t>struct iasync;
+			template<typename result_t>struct ioperation;
 			//template<typename return_t>class async_task;
 			template<typename result_t> class task_handler;
 
@@ -60,6 +61,9 @@ namespace ang
 
 			template <typename result_t>
 			using iasync_t = intf_wrapper<iasync<result_t>>;
+
+			template <typename result_t>
+			using ioperation_t = intf_wrapper<ioperation<result_t>>;
 
 			//template <typename result_t>
 			//using async_task_t = object_wrapper<async_task<result_t>>;
@@ -92,15 +96,6 @@ namespace ang
 				error = 0XFF00,
 			ANG_END_FLAGS(async_action_status);
 
-			ANG_BEGIN_INTERFACE(LINK, itask)
-				visible vcall bool wait(async_action_status_t)const pure;
-				visible vcall bool wait(async_action_status_t, dword)const pure;
-				visible vcall async_action_status_t status()const pure;
-				visible vcall bool cancel()pure;
-				visible vcall bool join()const pure;
-				visible vcall itask_t then(delegates::function<void(itask*)>)pure;
-			ANG_END_INTERFACE();
-
 			ANG_BEGIN_INTERFACE(LINK, icore_thread)
 				visible vcall bool is_main_thread()const pure;
 				visible vcall bool is_current_thread()const pure;
@@ -120,6 +115,33 @@ namespace ang
 
 
 			/******************************************************************/
+			/* interface ang::core::async::iasync_operation< result_t >       */
+			/*  -> represents a asynchronous operation, it can be waited for  */
+			/*     its result or any status change                            */
+			/******************************************************************/
+			template<typename result_t>
+			ANG_BEGIN_INLINE_INTERFACE(ioperation)
+				visible vcall bool wait(async_action_status_t)const pure;
+				visible vcall bool wait(async_action_status_t, dword)const pure;
+				visible vcall async_action_status_t status()const pure;
+				visible vcall bool cancel()pure;
+				visible vcall result_t result()const pure;
+			ANG_END_INTERFACE();
+
+			template<>
+			ANG_BEGIN_INTERFACE(LINK, ioperation<void>)
+				visible vcall bool wait(async_action_status_t)const pure;
+				visible vcall bool wait(async_action_status_t, dword)const pure;
+				visible vcall async_action_status_t status()const pure;
+				visible vcall bool cancel()pure;
+				visible vcall bool join()const pure;
+			ANG_END_INTERFACE();
+
+			ANG_BEGIN_INTERFACE_WITH_BASE(LINK, itask, public ioperation<void>)
+				visible vcall itask_t then(delegates::function<void(itask*)>)pure;
+			ANG_END_INTERFACE();
+
+			/******************************************************************/
 			/* interface ang::core::async::iasync< result_t >                 */
 			/*  -> represents a asynchronous operation, it can be waited for  */
 			/*     its result or any status change                            */
@@ -128,7 +150,6 @@ namespace ang
 			ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(iasync, public itask)
 				visible vcall result_t result()const pure;
 				visible vcall itask_t then(delegates::function<void(iasync<result_t>*)>)pure;
-				//inherit using itask::then;
 				inherit using itask::join;
 			ANG_END_INTERFACE();
 
@@ -295,18 +316,33 @@ namespace ang
 
 			public: //Properties
 				bool wait(mutex_t& mutex)const;
+				bool wait(mutex_ptr_t mutex)const;
 				bool wait(mutex_t& mutex, dword ms)const;
+				bool wait(mutex_ptr_t mutex, dword ms)const;
 				bool signal()const;
+
+				template<typename func_t>
+				void waitfor(mutex_t& mutex, func_t f) {
+					while (f()) { wait(mutex); }
+				}
+
+				template<typename func_t>
+				void waitfor(mutex_ptr_t mutex, func_t f) {
+					while (f()) { wait(mutex); }
+				}
 
 				template<typename func_t>
 				bool waitfor(mutex_t& mutex, dword ms, func_t f) {
 					if (f()) { wait(mutex, ms); }
 					return !f();
 				}
+
 				template<typename func_t>
-				void waitfor(mutex_t& mutex, func_t f) {
-					while (f()) { wait(mutex); }
+				bool waitfor(mutex_ptr_t mutex, dword ms, func_t f) {
+					if (f()) { wait(mutex, ms); }
+					return !f();
 				}
+			
 			};
 		}
 	}

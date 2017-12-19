@@ -22,7 +22,6 @@
 
 using namespace ang;
 
-
 template<class K>
 inline uint _create_hash_index(K const& k, ang_uint64_t const TS)
 {
@@ -219,11 +218,6 @@ ANG_EXTERN void ang_throw_exception(dword code, const char* message)
 #endif // _DEBUG
 
 }
-
-
-
-
-
 
 
 extern "C" void ang_debug_output_verbose(const char* format, ...)

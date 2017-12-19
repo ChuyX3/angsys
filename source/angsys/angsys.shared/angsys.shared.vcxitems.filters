@@ -176,6 +176,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angbase.hpp">
       <Filter>header files\angsys</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\time.hpp">
+      <Filter>header files\angsys\ang\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
@@ -297,6 +300,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\pack_file.cpp">
       <Filter>source files\files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\timer.cpp">
+      <Filter>source files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

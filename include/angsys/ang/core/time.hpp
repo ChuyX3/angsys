@@ -8,7 +8,7 @@
 #ifndef __ANG_TIME_H__
 #define __ANG_TIME_H__
 
-#include <angsys.h>
+#include <angsys.hpp>
 
 #ifdef LINK
 #undef LINK
@@ -34,8 +34,8 @@ namespace ang
 	{
 		namespace time
 		{
-			class timer;
-			class delta_time;
+			//class timer;
+			//class delta_time;
 
 			LINK double get_performance_time();
 		}
@@ -49,7 +49,7 @@ namespace ang
 	{
 		namespace time
 		{
-			class LINK timer
+			class LINK step_timer
 			{
 			private:
 				double _total;
@@ -57,8 +57,8 @@ namespace ang
 				double _curr_time;
 
 			public:
-				timer();
-				~timer();
+				step_timer();
+				~step_timer();
 
 			public: //Properties
 				double total()const;
@@ -79,7 +79,7 @@ namespace ang
 	}
 }
 
-ANG_REGISTER_RUNTIME_TYPENAME(ang::core::time::timer)
+ANG_REGISTER_RUNTIME_TYPENAME(ang::core::time::step_timer)
 
 #ifdef LINK
 #undef LINK

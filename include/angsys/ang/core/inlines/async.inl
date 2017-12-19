@@ -11,6 +11,46 @@
 #define NEW_ARGS(...) new(__VA_ARGS__)
 #endif
 
+template<typename T>
+inline ang::type_name_t ang::core::async::ioperation<T>::class_name()
+{
+	static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::core::async::ioperation<"_o += type_of<T>()) += ">"_s));
+	return name;
+}
+
+template<typename T>
+inline bool ang::core::async::ioperation<T>::is_inherited_of(ang::type_name_t name)
+{
+	return name == class_name();
+}
+
+template<typename T>
+inline ang::type_name_t ang::core::async::ioperation<T>::object_name()const
+{
+	return class_name();
+}
+
+template<typename T>
+inline bool ang::core::async::ioperation<T>::is_kind_of(ang::type_name_t name)const
+{
+	return name == class_name();
+}
+
+template<typename T>
+inline bool ang::core::async::ioperation<T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+{
+	if (out == null)
+		return false;
+	if (name == class_name())
+	{
+		*out = static_cast<ang::core::async::ioperation<T>*>(this);
+		return true;
+	}
+
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 template<typename T>
 inline ang::type_name_t ang::core::async::iasync<T>::class_name()
@@ -216,7 +256,7 @@ ang::core::async::iasync_t<T> ang::core::async::task_handler<T>::create_task(ang
 	if (func.is_empty()) return null;
 	task_handler_t<T> _async = NEW task_handler<T>();
 	_async->_task = task::run_async([=](itask* t, var_args_t a) {
-		_async->_result = func(_async.get(), args);
+		_async.get()->_result = func(_async.get(), args);
 	}, { _async.get(), args });
 	return _async;
 }

@@ -597,6 +597,21 @@ namespace ang
 		virtual~value_wrapper();
 	};
 
+
+
+	inline integer_t operator "" _i(ulong64 value) { return new integer((int)value); }
+	inline uinteger_t operator "" _ui(ulong64 value) { return new uinteger((uint)value); }
+	inline integer64_t operator "" _l(ulong64 value) { return new integer64((long64)value); }
+	inline integer64_t operator "" _li(ulong64 value) { return new integer64((long64)value); }
+	inline uinteger64_t operator "" _ul(ulong64 value) { return new uinteger64((ulong64)value); }
+	inline uinteger64_t operator "" _uli(ulong64 value) { return new uinteger64((ulong64)value); }
+
+	inline floating_t operator "" _f(ulong64 value) { return new floating((float)(long64)value); }
+	inline floating_t operator "" _f(long double value) { return new floating((float)value); }
+
+	inline floating64_t operator "" _lf(ulong64 value) { return new floating64((double)(long64)value); }
+	inline floating64_t operator "" _lf(long double value) { return new floating64((double)value); }
+
 	namespace runtime
 	{
 		template<class T>

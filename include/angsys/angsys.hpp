@@ -54,7 +54,7 @@ namespace ang
 	/* interface ang::interface_t :                                   */
 	/*  -> implements basic methods for dynamic naming and conversion */
 	/******************************************************************/
-	typedef struct _interface
+	typedef struct LINK _interface
 	{
 		visible static type_name_t class_name();
 		visible static bool is_inherited_of(type_name_t);
@@ -81,6 +81,9 @@ namespace ang
 	template<typename T> class value_wrapper;
 	template<typename T> using wrapper = object_wrapper<value_wrapper<T>>;
 	template<class T> using shared_ptr = object_wrapper<value_wrapper<T>>;
+	template<typename T, typename... Ts> shared_ptr<T> make_shared(Ts const& ... args) {
+		return new value_wrapper<T>(args...);
+	}
 }
 
 #include <ang/istream.hpp>
@@ -407,6 +410,16 @@ namespace ang
 		object const* operator -> (void)const;
 		operator object * (void);
 		operator object const* (void)const;
+
+		template<typename T>
+		explicit operator T& () {
+			return (T&)as<T>();
+		}
+
+		template<typename T>
+		explicit operator T const& ()const {
+			return (T const&)const_cast<objptr*>(this)->as<T>();
+		}
 
 		friend class safe_pointer;
 	};

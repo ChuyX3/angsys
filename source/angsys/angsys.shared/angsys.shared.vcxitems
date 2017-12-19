@@ -40,6 +40,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\async.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\delegates.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\files.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\time.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\exceptions.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\ibuffer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\istream.hpp" />
@@ -103,6 +104,7 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\text_format.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\timer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_attribute.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_comment.cpp" />
