@@ -287,7 +287,7 @@ const message_t& update_event_args::msg_info()const
 
 shared_ptr<core::time::step_timer> update_event_args::step_timer()const
 {
-	return msg->arg(0).as<core::time::step_timer>();
+	return reinterpret_cast<value_wrapper<core::time::step_timer>*>(msg->lparam());
 }
 
 void update_event_args::handled(bool value)

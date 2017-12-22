@@ -284,26 +284,26 @@ namespace ang
 				virtual~window();
 
 			public: //Events
-				events::event_listener createdEvent;
-				events::event_listener destroyedEvent;
-				events::event_listener drawEvent;
-				events::event_listener updateEvent;
+				events::event_listener created_event;
+				events::event_listener destroyed_event;
+				events::event_listener draw_event;
+				events::event_listener update_event;
 
-				events::event_listener orientationEvent;
-				events::event_listener activateEvent;
-				events::event_listener sizeEvent;
+				events::event_listener orientation_event;
+				events::event_listener activate_event;
+				events::event_listener size_event;
 
-				events::event_listener charEvent;
-				events::event_listener keyPressedEvent;
-				events::event_listener keyReleasedEvent;
+				events::event_listener char_event;
+				events::event_listener key_pressed_event;
+				events::event_listener key_released_event;
 
-				events::event_listener pointerMovedEvent;
-				events::event_listener pointerPressedEvent;
-				events::event_listener pointerReleasedEvent;
+				events::event_listener pointer_moved_event;
+				events::event_listener pointer_pressed_event;
+				events::event_listener pointer_released_event;
 
-				events::event_listener mouseMovedEvent;
-				events::event_listener mouseButtonPressedEvent;
-				events::event_listener mouseButtonReleasedEvent;
+				events::event_listener mouse_moved_event;
+				events::event_listener mouse_button_pressed_event;
+				events::event_listener mouse_button_released_event;
 
 			public: //properties
 				window_t parent();
@@ -405,7 +405,7 @@ namespace ang
 				bool update();
 				void destroy();
 				dword on_message_dispatcher(events::message_t);
-
+				events::event_trigger<process>const& trigger(events::event_listener const& listener)const;
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
 
@@ -431,8 +431,8 @@ namespace ang
 				array<string> command_line_args()const;
 
 			public: //Events
-				events::event_listener startAppEvent;
-				events::event_listener exitAppEvent;
+				events::event_listener start_app_event;
+				events::event_listener exit_app_event;
 
 			public: //Custom Implementation
 				virtual bool init_app(array<string> cmdl);
@@ -449,6 +449,7 @@ namespace ang
 				static app_t current_app();
 
 			protected:
+				bool _enable_update;
 				window_t _main_wnd;
 
 			public:
@@ -475,10 +476,12 @@ namespace ang
 
 			public: //Properties
 				window_t main_wnd()const;
+				bool enable_update()const { return _enable_update; }
+				void enable_update(bool value) { _enable_update = value; }
 
 			public: //Events
-				events::event_listener mainWndCreatedEvent;
-				events::event_listener mainWndDestroyedEvent;
+				events::event_listener main_wnd_created_event;
+				events::event_listener main_wnd_destroyed_event;
 
 			};
 

@@ -103,6 +103,7 @@ event_listener::listener(object* parent, function_type<bool, platform::events::c
 	, _comp(func)
 	, _functions(new collections::vector_buffer<function>())
 {
+
 }
 
 //event_listener::listener(listener&& other)
@@ -125,7 +126,7 @@ event_listener::listener(object* parent, function_type<bool, platform::events::c
 
 event_listener::~listener()
 {
-
+	_functions.clean();
 }
 
 void event_listener::empty()
@@ -140,7 +141,7 @@ bool event_listener::is_empty()const
 
 index event_listener::append(events::event_t func)
 {
-	_functions += ang::move(func);
+	_functions += func;
 	return _functions.get()->size() - 1;
 }
 
@@ -167,7 +168,7 @@ bool event_listener::remove(events::event_t func)
 
 event_listener& event_listener::operator += (platform::events::event_t func)
 {
-	append(ang::move(func));
+	append(func);
 	return *this;
 }
 

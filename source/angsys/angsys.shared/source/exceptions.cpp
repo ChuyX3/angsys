@@ -12,6 +12,10 @@
 #include "angsys.hpp"
 //#include "ang/xml.h"
 
+#if defined _DEBUG
+#define new new(__FILE__, __LINE__)
+#endif
+
 using namespace ang;
 
 static collections::pair<except_code_enum, cstr_t> def_except[] = {

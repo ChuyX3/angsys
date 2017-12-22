@@ -15,7 +15,6 @@ namespace ang
 		object_wrapper(object_wrapper const&);
 		object_wrapper(strings::string_buffer<ENCODING>*);
 		object_wrapper(ang::nullptr_t const&);
-		//template<typename T> object_wrapper(T const* str);
 		template<typename T> object_wrapper(safe_str<T> const& str);
 		template<text::encoding_enum OTHER_ENCODING> object_wrapper(object_wrapper<strings::string_buffer<OTHER_ENCODING>> const& str);
 		template<typename T, wsize N> object_wrapper(const T(&ar)[N]);

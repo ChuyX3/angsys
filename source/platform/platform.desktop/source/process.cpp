@@ -41,8 +41,8 @@ process::process()
 	: _process(null)
 	, mutex(make_shared<core::async::mutex>())
 	, cond(make_shared<core::async::cond>())
-	, startAppEvent(this, [](events::core_msg_t code) { return code == events::win_msg_enum::start_app; })
-	, exitAppEvent(this, [](events::core_msg_t code) { return code == events::win_msg_enum::exit_app; })
+	, start_app_event(this, [](events::core_msg_t code) { return code == events::win_msg_enum::start_app; })
+	, exit_app_event(this, [](events::core_msg_t code) { return code == events::win_msg_enum::exit_app; })
 {
 	if (_current_process != null)
 		throw(exception_t(except_code::two_singleton));
@@ -54,6 +54,8 @@ process::~process()
 {
 	close();
 	_current_process = null;
+	static_cast<events::event_trigger<process>&>(start_app_event).empty();
+	static_cast<events::event_trigger<process>&>(exit_app_event).empty();
 }
 
 ANG_IMPLEMENT_CLASSNAME(ang::platform::windows::process);
@@ -166,6 +168,11 @@ array<string> process::command_line_args()const
 	return cmd_args;
 }
 
+events::event_trigger<process>const& process::trigger(events::event_listener const& listener)const
+{
+	return static_cast<events::event_trigger<process>const&>(listener);
+}
+
 dword process::run()
 {
 	if (!create(null))
@@ -208,8 +215,13 @@ bool process::update()
 	return !hprocess_t(_process)->close_request;
 }
 
-bool process::init_app(array<string>)
+bool process::init_app(array<string> cmd)
 {
+	platform::events::message_t m = new platform::events::message(events::win_msg_enum::start_app,0,0);
+	m->push_arg(this);
+	m->push_arg(cmd.get());
+	try { trigger(start_app_event).invoke(new platform::events::app_status_event_args(m)); }
+	catch (...) {}
 	return true;
 }
 
@@ -220,6 +232,10 @@ void process::update_app()
 
 bool process::exit_app()
 {
+	platform::events::message_t m = new platform::events::message(events::win_msg_enum::start_app, 0, 0);
+	m->push_arg(this);
+	try { trigger(exit_app_event).invoke(new platform::events::app_status_event_args(m)); }
+	catch (...) {}
 	return close();
 }
 

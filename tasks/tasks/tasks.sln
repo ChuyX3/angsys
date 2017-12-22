@@ -13,14 +13,24 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "angsys.shared", "..\..\sour
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tasks", "tasks", "{D8E16DF2-4CE5-4BCF-877A-7426A8EC9E4C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "platform", "platform", "{5A2C9F9F-6D40-4D41-8EEB-49966DD848B1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "platform.shared", "..\..\source\platform\platform.shared\platform.shared.vcxitems", "{4FB1207C-A338-4FCE-BD5F-43C85EF1173B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "platform.desktop", "..\..\source\platform\platform.desktop\platform.desktop.vcxproj", "{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\..\source\angsys\angsys.shared\angsys.shared.vcxitems*{4d105416-0867-47f0-8320-3f0e6b233d73}*SharedItemsImports = 9
+		..\..\source\platform\platform.shared\platform.shared.vcxitems*{4fb1207c-a338-4fce-bd5f-43c85ef1173b}*SharedItemsImports = 9
 		..\..\source\angsys\angsys.shared\angsys.shared.vcxitems*{6e24f0d8-08fb-4df2-9e07-d208c4faace3}*SharedItemsImports = 4
+		..\..\source\platform\platform.shared\platform.shared.vcxitems*{ccd7293a-0ab3-4987-a9c9-d6202df87def}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Develop|x64 = Develop|x64
+		Develop|x86 = Develop|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
@@ -29,6 +39,10 @@ Global
 		{D9E8681E-FF8F-4C71-9866-F4EB0F43305C}.Debug|x64.Build.0 = Debug|x64
 		{D9E8681E-FF8F-4C71-9866-F4EB0F43305C}.Debug|x86.ActiveCfg = Debug|Win32
 		{D9E8681E-FF8F-4C71-9866-F4EB0F43305C}.Debug|x86.Build.0 = Debug|Win32
+		{D9E8681E-FF8F-4C71-9866-F4EB0F43305C}.Develop|x64.ActiveCfg = Debug|x64
+		{D9E8681E-FF8F-4C71-9866-F4EB0F43305C}.Develop|x64.Build.0 = Debug|x64
+		{D9E8681E-FF8F-4C71-9866-F4EB0F43305C}.Develop|x86.ActiveCfg = Debug|Win32
+		{D9E8681E-FF8F-4C71-9866-F4EB0F43305C}.Develop|x86.Build.0 = Debug|Win32
 		{D9E8681E-FF8F-4C71-9866-F4EB0F43305C}.Release|x64.ActiveCfg = Release|x64
 		{D9E8681E-FF8F-4C71-9866-F4EB0F43305C}.Release|x64.Build.0 = Release|x64
 		{D9E8681E-FF8F-4C71-9866-F4EB0F43305C}.Release|x86.ActiveCfg = Release|Win32
@@ -37,10 +51,26 @@ Global
 		{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3}.Debug|x64.Build.0 = Debug|x64
 		{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3}.Debug|x86.ActiveCfg = Debug|Win32
 		{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3}.Debug|x86.Build.0 = Debug|Win32
+		{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3}.Develop|x64.ActiveCfg = Debug|x64
+		{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3}.Develop|x64.Build.0 = Debug|x64
+		{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3}.Develop|x86.ActiveCfg = Debug|Win32
+		{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3}.Develop|x86.Build.0 = Debug|Win32
 		{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3}.Release|x64.ActiveCfg = Release|x64
 		{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3}.Release|x64.Build.0 = Release|x64
 		{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3}.Release|x86.ActiveCfg = Release|Win32
 		{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3}.Release|x86.Build.0 = Release|Win32
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}.Debug|x64.ActiveCfg = Debug|x64
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}.Debug|x64.Build.0 = Debug|x64
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}.Debug|x86.ActiveCfg = Debug|Win32
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}.Debug|x86.Build.0 = Debug|Win32
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}.Develop|x64.ActiveCfg = Develop|x64
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}.Develop|x64.Build.0 = Develop|x64
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}.Develop|x86.ActiveCfg = Develop|Win32
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}.Develop|x86.Build.0 = Develop|Win32
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}.Release|x64.ActiveCfg = Release|x64
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}.Release|x64.Build.0 = Release|x64
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}.Release|x86.ActiveCfg = Release|Win32
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,5 +79,7 @@ Global
 		{D9E8681E-FF8F-4C71-9866-F4EB0F43305C} = {D8E16DF2-4CE5-4BCF-877A-7426A8EC9E4C}
 		{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3} = {03377881-D548-4FCD-B403-B5FFCC5A36E4}
 		{4D105416-0867-47F0-8320-3F0E6B233D73} = {03377881-D548-4FCD-B403-B5FFCC5A36E4}
+		{4FB1207C-A338-4FCE-BD5F-43C85EF1173B} = {5A2C9F9F-6D40-4D41-8EEB-49966DD848B1}
+		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF} = {5A2C9F9F-6D40-4D41-8EEB-49966DD848B1}
 	EndGlobalSection
 EndGlobal

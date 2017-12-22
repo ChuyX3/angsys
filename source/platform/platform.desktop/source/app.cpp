@@ -9,9 +9,9 @@ using namespace ang::core;
 using namespace ang::platform;
 using namespace ang::platform::windows;
 
-//#if defined _DEBUG
-//#define new ANG_DEBUG_NEW()
-//#endif
+#if defined _DEBUG
+#define new new(__FILE__, __LINE__)
+#endif
 
 namespace ang {
 	namespace platform {
@@ -41,15 +41,18 @@ icore_app_t icore_app::get_core_app()
 }
 
 app::app()
-	: _main_wnd(null)
-	, mainWndCreatedEvent(this, [](events::core_msg_t code) { return events::win_msg_enum::created == code; })
-	, mainWndDestroyedEvent(this, [](events::core_msg_t code) { return events::win_msg_enum::destroyed == code; })
+	: _enable_update(true)
+	, _main_wnd(null)
+	, main_wnd_created_event(this, [](events::core_msg_t code) { return events::win_msg_enum::created == code; })
+	, main_wnd_destroyed_event(this, [](events::core_msg_t code) { return events::win_msg_enum::destroyed == code; })
 {
 
 }
 
 app::~app()
 {
+	static_cast<events::event_trigger<app>&>(main_wnd_created_event).empty();
+	static_cast<events::event_trigger<app>&>(main_wnd_destroyed_event).empty();
 }
 
 ANG_IMPLEMENT_CLASSNAME(ang::platform::windows::app);
@@ -93,8 +96,6 @@ bool app::query_object(type_name_t name, unknown_ptr_t out)
 
 void app::set_main_wnd(window_t mainView)
 {
-	//ObjectPtr::Set(dynamic_cast<Window*>(mainView));
-
 	if (!_main_wnd.is_empty() || mainView == null)
 		return;
 	_main_wnd = mainView;
@@ -197,11 +198,13 @@ dword app::on_run_async(core::async::iasync_t<dword> action, window_t wnd)
 			}
 		}
 
-		timer->update();
-		events::message_t msg = new events::message(events::win_msg_enum::update, 0,0);
-		msg->push_arg(timer.get());
-		wnd->send_msg(msg);
-		wnd->send_msg(new events::message(events::win_msg_enum::draw));
+		if (_enable_update) {
+			timer->update();
+			long64 lprm = (LPARAM)(void*)timer.get();
+			wnd->send_msg(new events::message(events::win_msg_enum::update, 0, lprm));
+			wnd->send_msg(new events::message(events::win_msg_enum::draw));
+		}
+		
 	}
 	return 0;
 }

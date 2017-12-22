@@ -1,6 +1,10 @@
 #include "pch.h"
 #include <ang/core/delegates.hpp>
 
+#if defined _DEBUG
+#define new new(__FILE__, __LINE__)
+#endif
+
 using namespace ang;
 using namespace ang::core;
 using namespace ang::core::delegates;

@@ -152,7 +152,7 @@ xml_header_t xml_header::create_new(ixml_document_t doc, const xml_header* head)
 	}
 	else
 	{
-		header->version("1.0");
+		header->version("1.0"_s);
 		header->encoding(xml_encoding::utf8);
 		header->is_stand_alone(true);
 	}

@@ -44,6 +44,25 @@ namespace ang
 			}
 		};
 
+
+		template<ang_memory_hint_t HINT>
+		struct managed_allocator<void, HINT >
+		{
+			static void* alloc(wsize sz) {
+				return ang_alloc_managed_memory(sz, HINT);
+			}
+#ifdef _DEBUG
+			static void* alloc(wsize sz, const char* file, int line) {
+				return ang_alloc_managed_memory_debug(sz, HINT, file, line);
+			}
+#endif // _DEBUG
+
+			static void free(void* ptr) {
+				ang_free_managed_memory(ptr, HINT);
+			}
+		};
+
+
 		template<typename T, wsize ALIGNMENT>
 		struct aligned_allocator
 		{

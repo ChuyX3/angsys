@@ -8,10 +8,6 @@ using namespace ang::platform;
 using namespace ang::platform::events;
 using namespace ang::platform::windows;
 
-//#if defined _DEBUG
-//#define new ANG_DEBUG_NEW()
-//#endif
-
 LRESULT WINAPI window_procedure(HWND hWnd, UINT m, WPARAM wprm, LPARAM lprm);
 
 ////////////////////////////////////////////////////////////////////
@@ -170,10 +166,23 @@ namespace ang
 				core::async::cond_ptr_t cond = make_shared<core::async::cond>();
 				//display::orientation_t current_orientation;
 				var_args_t user_args = null;
+#ifdef _DEBUG
+				void* operator new (wsize sz, const char* file, int line) {
+					return memory::default_allocator<void>::alloc(sz, file, line);
+				}
+
+				void operator delete (void* ptr) {
+					return memory::default_allocator<void>::free(ptr);
+				}
+#endif
 			}*HWnd;
 		}
 	}
 }
+
+#if defined _DEBUG
+#define new new(__FILE__, __LINE__)
+#endif
 
 void window::adjust_window_rect(graphics::rect<float>& rect, wnd_style_t style, bool hasMenu)
 {
@@ -246,23 +255,23 @@ window::window(wnd_create_args_t args)
 
 window::window()
 	: _handle(null)
-	, createdEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::created; })
-	, destroyedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::destroyed; })
-	, drawEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::draw; })
-	, updateEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::update; })
-	, orientationEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::orientation; })
-	, activateEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::got_focus || msg == win_msg_enum::lost_focus; })
-	, sizeEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::size; })
-	, charEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::put_char; })
-	, keyPressedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::key_down; })
-	, keyReleasedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::key_up; })
-	, pointerMovedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::pointer_moved; })
-	, pointerPressedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::pointer_pressed; })
-	, pointerReleasedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::pointer_pressed; })
-	, mouseMovedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::mouse_move; })
-	, mouseButtonPressedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::lbutton_down
+	, created_event(this, [](core_msg_t msg) { return msg == win_msg_enum::created; })
+	, destroyed_event(this, [](core_msg_t msg) { return msg == win_msg_enum::destroyed; })
+	, draw_event(this, [](core_msg_t msg) { return msg == win_msg_enum::draw; })
+	, update_event(this, [](core_msg_t msg) { return msg == win_msg_enum::update; })
+	, orientation_event(this, [](core_msg_t msg) { return msg == win_msg_enum::orientation; })
+	, activate_event(this, [](core_msg_t msg) { return msg == win_msg_enum::got_focus || msg == win_msg_enum::lost_focus; })
+	, size_event(this, [](core_msg_t msg) { return msg == win_msg_enum::size; })
+	, char_event(this, [](core_msg_t msg) { return msg == win_msg_enum::put_char; })
+	, key_pressed_event(this, [](core_msg_t msg) { return msg == win_msg_enum::key_down; })
+	, key_released_event(this, [](core_msg_t msg) { return msg == win_msg_enum::key_up; })
+	, pointer_moved_event(this, [](core_msg_t msg) { return msg == win_msg_enum::pointer_moved; })
+	, pointer_pressed_event(this, [](core_msg_t msg) { return msg == win_msg_enum::pointer_pressed; })
+	, pointer_released_event(this, [](core_msg_t msg) { return msg == win_msg_enum::pointer_pressed; })
+	, mouse_moved_event(this, [](core_msg_t msg) { return msg == win_msg_enum::mouse_move; })
+	, mouse_button_pressed_event(this, [](core_msg_t msg) { return msg == win_msg_enum::lbutton_down
 		|| msg == win_msg_enum::rbutton_down || msg == win_msg_enum::mbutton_down; })
-	, mouseButtonReleasedEvent(this, [](core_msg_t msg) { return msg == win_msg_enum::lbutton_up
+	, mouse_button_released_event(this, [](core_msg_t msg) { return msg == win_msg_enum::lbutton_up
 		|| msg == win_msg_enum::rbutton_up || msg == win_msg_enum::mbutton_up; })
 {
 
@@ -270,22 +279,22 @@ window::window()
 
 window::~window()
 {
-	owner(createdEvent).empty();
-	owner(destroyedEvent).empty();
-	owner(drawEvent).empty();
-	owner(updateEvent).empty();
-	owner(orientationEvent).empty();
-	owner(activateEvent).empty();
-	owner(sizeEvent).empty();
-	owner(charEvent).empty();
-	owner(keyPressedEvent).empty();
-	owner(keyReleasedEvent).empty();
-	owner(pointerMovedEvent).empty();
-	owner(pointerPressedEvent).empty();
-	owner(pointerReleasedEvent).empty();
-	owner(mouseMovedEvent).empty();
-	owner(mouseButtonPressedEvent).empty();
-	owner(mouseButtonReleasedEvent).empty();
+	owner(created_event).empty();
+	owner(destroyed_event).empty();
+	owner(draw_event).empty();
+	owner(update_event).empty();
+	owner(orientation_event).empty();
+	owner(activate_event).empty();
+	owner(size_event).empty();
+	owner(char_event).empty();
+	owner(key_pressed_event).empty();
+	owner(key_released_event).empty();
+	owner(pointer_moved_event).empty();
+	owner(pointer_pressed_event).empty();
+	owner(pointer_released_event).empty();
+	owner(mouse_moved_event).empty();
+	owner(mouse_button_pressed_event).empty();
+	owner(mouse_button_released_event).empty();
 }
 
 ANG_IMPLEMENT_CLASSNAME(ang::platform::windows::window);
@@ -491,28 +500,28 @@ bool window::listen_to(event_t event)
 	switch ((core_msg_t)event.get()->msg_type())
 	{
 	case win_msg_enum::created:
-		createdEvent += event;
+		created_event += event;
 		return true;
 	case win_msg_enum::destroyed:
-		destroyedEvent += event;
+		destroyed_event += event;
 		return true;
 	case win_msg_enum::draw:
-		drawEvent += event;
+		draw_event += event;
 		return true;
 	case win_msg_enum::update:
-		updateEvent += event;
+		update_event += event;
 		return true;
 	case win_msg_enum::size:
-		sizeEvent += event;
+		size_event += event;
 		return true;
 	case win_msg_enum::pointer_moved:
-		pointerMovedEvent += event;
+		pointer_moved_event += event;
 		return true;
 	case win_msg_enum::pointer_pressed:
-		pointerPressedEvent += event;
+		pointer_pressed_event += event;
 		return true;
 	case win_msg_enum::pointer_released:
-		pointerReleasedEvent += event;
+		pointer_released_event += event;
 		return true;
 	default:
 		return false;
@@ -793,11 +802,11 @@ dword window::on_created(message_t m)
 
 	icreated_event_args_t args = new created_event_args(m);
 	if (app::current_app()->main_wnd().get() == this) {
-		try { trigger(app::current_app()->mainWndCreatedEvent)(args.get()); }
-		catch (const exception_t& e) { ANG_LOGE("%s::on_created: %s", class_name(), (cstr_t)e->what()); }
+		try { trigger(app::current_app()->main_wnd_created_event)(args.get()); }
+		catch (const exception_t& e) { ANG_LOGE("%s::on_created: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	}
-	try { trigger(createdEvent)(args.get()); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_created: %s", class_name(), (cstr_t)e->what()); }
+	try { trigger(created_event)(args.get()); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_created: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	if (m->result() == 0)
 		def_window_proc(m);
 	return m->result();
@@ -809,11 +818,11 @@ dword window::on_destroyed(message_t m)
 	app_t app = app::current_app();
 
 	if (!app.is_empty() && app->main_wnd().get() == this) {
-		try { trigger(app->mainWndDestroyedEvent)(args.get()); }
-		catch (const exception_t& e) { ANG_LOGE("%s::on_destroyed: %s", class_name(), (cstr_t)e->what()); }
+		try { trigger(app->main_wnd_destroyed_event)(args.get()); }
+		catch (const exception_t& e) { ANG_LOGE("%s::on_destroyed: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	}
-	try { trigger(destroyedEvent)(args.get()); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_destroyed: %s", class_name(), (cstr_t)e->what()); }
+	try { trigger(destroyed_event)(args.get()); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_destroyed: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	def_window_proc(m);
 	close();
 
@@ -832,8 +841,8 @@ dword window::on_paint(message_t m)
 	m->push_arg(dc.get());
 	//message_t msg = new message(m->msg(), this, dc.get());
 	idraw_event_args_t args = new draw_event_args(m);
-	try { trigger(drawEvent)(args.get()); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_paint: %s", class_name(), (cstr_t)e->what()); }
+	try { trigger(draw_event)(args.get()); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_paint: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	m->result(m->result());
 	return m->result();
 }
@@ -841,8 +850,8 @@ dword window::on_paint(message_t m)
 dword window::on_update(message_t m)
 {
 	iupdate_event_args_t args = new update_event_args(m);
-	try { trigger(updateEvent)(args.get()); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_update: %s", class_name(), (cstr_t)e->what()); }
+	try { trigger(update_event)(args.get()); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_update: %s", class_name().cstr(), cstr_t(e->what()).cstr()); }
 	return m->result();
 }
 
@@ -853,8 +862,8 @@ dword window::on_activate(message_t m)
 	//message_t msg = new message(m->msg(), &status);
 	m->result(-1);
 	iactivate_event_args_t args = new activate_event_args(m);
-	try { trigger(activateEvent)(args.get()); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_activate: %s", class_name(), (cstr_t)e->what()); }
+	try { trigger(activate_event)(args.get()); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_activate: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	if (m->result() != 0)
 		def_window_proc(m);
 	return m->result();
@@ -910,8 +919,8 @@ dword window::on_size_change(message_t m)
 
 	m->result(-1);
 	idisplay_info_event_args_t args = new display_info_event_args(m);
-	try { trigger(sizeEvent)(args.get()); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_size_change: %s", class_name(), (cstr_t)e->what()); }
+	try { trigger(size_event)(args.get()); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_size_change: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	if (m->result() != 0)
 		def_window_proc(m);
 	return m->result();
@@ -950,8 +959,8 @@ dword window::on_pointer_moved(message_t m)
 	m->push_arg(info.get());
 	ipointer_event_args_t args = new pointer_event_args(m);
 	uint count = 0;
-	try { count = trigger(pointerMovedEvent)(args.get()); m->result(0); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_pointer_moved: %s", class_name(), (cstr_t)e->what()); }
+	try { count = trigger(pointer_moved_event)(args.get()); m->result(0); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_pointer_moved: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	if (count == 0)
 		def_window_proc(m);
 	return m->result();
@@ -989,8 +998,8 @@ dword window::on_pointer_pressed(message_t m)
 	m->push_arg(info.get());
 	ipointer_event_args_t args = new pointer_event_args(m);
 	uint count = 0;
-	try { count = trigger(pointerPressedEvent)(args.get()); m->result(0); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_pointer_pressed: %s", class_name(), (cstr_t)e->what()); }
+	try { count = trigger(pointer_pressed_event)(args.get()); m->result(0); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_pointer_pressed: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	if (count == 0)
 		def_window_proc(m);
 	return m->result();
@@ -1029,8 +1038,8 @@ dword window::on_pointer_released(message_t m)
 	m->push_arg(info.get());
 	ipointer_event_args_t args = new pointer_event_args(m);
 	uint count = 0;
-	try { count = trigger(pointerReleasedEvent)(args.get()); m->result(0); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_pointer_released: %s", class_name(), (cstr_t)e->what()); }
+	try { count = trigger(pointer_released_event)(args.get()); m->result(0); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_pointer_released: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	if (count == 0)
 		def_window_proc(m);
 	return m->result();
@@ -1065,8 +1074,8 @@ dword window::on_mouse_moved(message_t m)
 	m->push_arg(info.get());
 	ipointer_event_args_t args = new pointer_event_args(m);
 	uint count = 0;
-	try { count = trigger(mouseMovedEvent)(args.get()); m->result(0); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_mouse_moved: %s", class_name(), (cstr_t)e->what()); }
+	try { count = trigger(mouse_moved_event)(args.get()); m->result(0); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_mouse_moved: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	if (count == 0)
 		def_window_proc(m);
 	return m->result();
@@ -1101,8 +1110,8 @@ dword window::on_mouse_button_pressed(message_t m)
 	m->push_arg(info.get());
 	ipointer_event_args_t args = new pointer_event_args(m);
 	uint count = 0;
-	try { count = trigger(mouseButtonPressedEvent)(args.get()); m->result(0); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_mouse_button_pressed: %s", class_name(), (cstr_t)e->what()); }
+	try { count = trigger(mouse_button_pressed_event)(args.get()); m->result(0); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_mouse_button_pressed: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	if (count == 0)
 		def_window_proc(m);
 	return m->result();
@@ -1137,8 +1146,8 @@ dword window::on_mouse_button_released(message_t m)
 	m->push_arg(info.get());
 	ipointer_event_args_t args = new pointer_event_args(m);
 	uint count = 0;
-	try { count = trigger(mouseButtonReleasedEvent)(args.get()); m->result(0); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_mouse_button_released: %s", class_name(), (cstr_t)e->what()); }
+	try { count = trigger(mouse_button_released_event)(args.get()); m->result(0); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_mouse_button_released: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	if (count == 0)
 		def_window_proc(m);
 	return m->result();
@@ -1148,8 +1157,8 @@ dword window::on_key_pressed(message_t m)
 {
 	ikey_event_args_t args = new key_event_args(m);
 	m->result(-1);
-	try { trigger(keyPressedEvent)(args.get()); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_key_pressed: %s", class_name(), (cstr_t)e->what()); }
+	try { trigger(key_pressed_event)(args.get()); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_key_pressed: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	if (m->result() != 0)
 		def_window_proc(m);
 	return m->result();
@@ -1159,8 +1168,8 @@ dword window::on_char(message_t m)
 {
 	ikey_event_args_t args = new key_event_args(m);
 	m->result(-1);
-	try { trigger(charEvent)(args.get()); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_char: %s", class_name(), (cstr_t)e->what()); }
+	try { trigger(char_event)(args.get()); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_char: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	if (m->result() != 0)
 		def_window_proc(m);
 	return m->result();
@@ -1170,8 +1179,8 @@ dword window::on_key_released(message_t m)
 {
 	ikey_event_args_t args = new key_event_args(m);
 	m->result(-1);
-	try { trigger(keyReleasedEvent)(args.get()); }
-	catch (const exception_t& e) { ANG_LOGE("%s::on_key_released: %s", class_name(), (cstr_t)e->what()); }
+	try { trigger(key_released_event)(args.get()); }
+	catch (const exception_t& e) { ANG_LOGE("%s::on_key_released: %s",  class_name().cstr(), cstr_t(e->what()).cstr()); }
 	if (m->result() != 0)
 		def_window_proc(m);
 	return m->result();

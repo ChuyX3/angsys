@@ -47,6 +47,27 @@ namespace ang
 				}
 			};
 
+			template<typename calleable_t, typename args_t>
+			class static_event_function<calleable_t, intf_wrapper<args_t>>
+				: public ievent_function
+			{
+			public:
+				typedef calleable_t function_type;
+
+			private:
+				function_type _function;
+
+			public:
+				inline static_event_function(function_type f) :_function(f) {}
+				inline virtual~static_event_function() {}
+				inline void invoke(objptr caller, imsg_event_args_t args)const override {
+					_function(caller, static_cast<args_t*>(args.get()));
+				}
+				inline ievent_function* clone()const override {
+					return new static_event_function(_function);
+				}
+			};
+
 			template<typename obj_t, bool IS_OBJECT, typename args_t>
 			class member_event_function 
 				: public ievent_function

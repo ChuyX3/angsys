@@ -12,6 +12,10 @@
 #include "file_system.h"
 #include "string_helper.hpp"
 
+#if defined _DEBUG
+#define new new(__FILE__, __LINE__)
+#endif
+
 using namespace ang;
 using namespace ang::core;
 using namespace ang::core::files;
