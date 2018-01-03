@@ -161,10 +161,16 @@ namespace ang
 
 			ANG_BEGIN_INTERFACE(LINK, idispatcher)
 				visible vcall icore_thread_t worker_thread()const pure;
-				visible vcall itask_t post_task(delegates::function<void(void)>()) pure;
-				//visible template<typename T> iasync_t<T> run_async(delegates::function<T(iasync<T>*, var_args_t)> callback, var_args_t args);
-				//visible template<typename T, typename... Ts> iasync_t<T> run_async(delegates::function<T(iasync<T>*, var_args_t)> callback, Ts... args);
-				visible	delegates::listener<void(idispatcher_t)> start_event;
+				visible vcall bool resume() pure;
+				visible vcall bool pause() pure;
+				visible vcall bool stop() pure;
+				visible vcall itask_t post_task(delegates::function <void(itask*)>) pure;
+				visible vcall itask_t post_task(delegates::function <void(itask*, var_args_t)>, var_args_t) pure;
+				template<typename T> iasync_t<T> run_async(delegates::function <T(iasync<T>*)>);
+				template<typename T> iasync_t<T> run_async(delegates::function <T(iasync<T>*, var_args_t)>, var_args_t);
+
+				visible delegates::listener<void(idispatcher_t)> start_event;
+				visible delegates::listener<void(idispatcher_t)> update_event;
 				visible delegates::listener<void(idispatcher_t)> end_event;
 			ANG_END_INTERFACE();
 
@@ -411,7 +417,9 @@ namespace ang
 			{
 			public:
 				static iasync_t<T> create_task(delegates::function <T(iasync<T>*)>);
+				static iasync_t<T> create_task(idispatcher_t, delegates::function <T(iasync<T>*)>);
 				static iasync_t<T> create_task(delegates::function <T(iasync<T>*, var_args_t)>, var_args_t);
+				static iasync_t<T> create_task(idispatcher_t, delegates::function <T(iasync<T>*, var_args_t)>, var_args_t);
 				template<typename U> static iasync_t<T> handle_then(iasync_t<U>, delegates::function <T(iasync<U>*)>);
 
 			protected:

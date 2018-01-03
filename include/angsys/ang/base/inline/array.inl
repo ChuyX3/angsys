@@ -158,7 +158,7 @@ void ang::collections::scope_array<T, allocator>::copy(ang::array_view<U> const&
 
 	for (windex i = 0; i < _size; ++i)
 		allocator<T>::template construct<U const&>(&_data[i], other[i]);
-	other.set(null, 0);
+	//other.set(null, 0);
 }
 
 template<typename T, template <typename> class allocator>

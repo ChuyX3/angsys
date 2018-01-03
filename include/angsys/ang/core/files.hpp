@@ -373,7 +373,7 @@ namespace ang
 				bool read(core::delegates::function<bool(streams::ibinary_input_stream_t)> , file_cursor_t offset = 0, wsize size = -1);
 				template<typename T> inline core::async::iasync_t<T> read_async(core::delegates::function<T(streams::ibinary_input_stream_t)> callback, file_cursor_t offset = 0, wsize size = -1) {
 					input_binary_file_t file = this;
-					return core::async::async_task<T>::run_async([=](core::async::iasync<T>* async, var_args_t args)->T {
+					return core::async::task::run_async<T>([=](core::async::iasync<T>* async, var_args_t args)->T {
 						T result;
 						this->read([&](streams::ibinary_input_stream_t stream) {
 							result = ang::move(callback(stream));
@@ -405,7 +405,7 @@ namespace ang
 				bool write(core::delegates::function<bool(streams::ibinary_output_stream_t)> , file_cursor_t offset = 0, wsize size = -1);
 				template<typename T> inline core::async::iasync_t<T> write_async(core::delegates::function<T(streams::ibinary_output_stream_t)> callback, file_cursor_t offset = 0, wsize size = -1) {
 					output_binary_file_t file = this;
-					return core::async::async_task<T>::run_async([=](core::async::iasync<T>* async, var_args_t args)->T {
+					return core::async::task::run_async<T>([=](core::async::iasync<T>* async, var_args_t args)->T {
 						T result;
 						this->write([&](streams::ibinary_output_stream_t stream) {
 							result = ang::move(callback(stream));
@@ -439,7 +439,7 @@ namespace ang
 
 				template<typename T> inline core::async::iasync_t<T> write_async(core::delegates::function<T(streams::ibinary_output_stream_t)> callback, file_cursor_t offset = 0, wsize size = -1) {
 					binary_file_t file = this;
-					return core::async::async_task<T>::run_async([=](core::async::iasync<T>* async, var_args_t args)->T {
+					return core::async::task::run_async<T>([=](core::async::iasync<T>* async, var_args_t args)->T {
 						T result;
 						this->write([&](streams::ibinary_output_stream_t stream) {
 							result = ang::move(callback(stream));
@@ -451,7 +451,7 @@ namespace ang
 
 				template<typename T> inline core::async::iasync_t<T> read_async(core::delegates::function<T(streams::ibinary_input_stream_t)> callback, file_cursor_t offset = 0, wsize size = -1) {
 					binary_file_t file = this;
-					return core::async::async_task<T>::run_async([=](core::async::iasync<T>* async, var_args_t args)->T {
+					return core::async::task::run_async<T>([=](core::async::iasync<T>* async, var_args_t args)->T {
 						T result;
 						this->read([&](streams::ibinary_input_stream_t stream) {
 							result = ang::move(callback(stream));

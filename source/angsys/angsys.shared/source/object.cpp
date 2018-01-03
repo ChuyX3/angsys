@@ -128,7 +128,7 @@ bool safe_pointer::is_valid()const
 }
 
 template<>
-intfptr safe_pointer::lock<intfptr>()
+intfptr safe_pointer::lock<intfptr>()const
 {
 	return is_valid() ? (interface_t*)(wsize(smart_ptr_info_ptr_t(_info)->_object) + _offset) : null;
 }

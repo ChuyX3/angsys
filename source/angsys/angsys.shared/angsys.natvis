@@ -57,6 +57,14 @@
     </Expand>
   </Type>
 
+  <Type Name="ang::collections::pair&lt;*&gt;">
+    <DisplayString>pair[{key},{value}]</DisplayString>
+    <Expand>
+      <Item Name="[key]" ExcludeView="simple">key</Item>
+      <Item Name="[value]" ExcludeView="simple">value</Item>
+    </Expand>
+  </Type>
+
   <Type Name="ang::safe_str&lt;*&gt;">
     <DisplayString Condition="_value != 0">{_value, s}</DisplayString>
     <DisplayString>null</DisplayString>
@@ -335,6 +343,60 @@
         <NextPointer>_xml_next</NextPointer>
         <ValueNode>*this</ValueNode>
       </LinkedListItems>
+    </Expand>
+  </Type>
+
+
+  <Type Name="ang::collections::hash_table_node&lt;*&gt;">
+    <DisplayString>node[{pair.value}]</DisplayString>
+    <Expand>
+      <Item Name="[key]" ExcludeView="simple">pair.key</Item>
+      <Item Name="[value]" ExcludeView="simple">pair.value</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::collections::hash_table_object&lt;*&gt;">
+    <DisplayString>map[{_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <CustomListItems MaxItemsPerView="5000" ExcludeView="Test">
+        <Variable Name="i_" InitialValue="0" />
+        <Variable Name="node_" InitialValue="_table == nullptr ? nullptr : *_table" />
+        <Size>_size</Size>
+        <Loop Condition="i_ &lt; _capacity">
+          <If Condition="node_ == nullptr">
+            <Exec>i_++</Exec>
+            <Exec>node_ = _table[i_]</Exec>
+          </If>
+          <Else>
+            <Item>*node_</Item>
+            <Exec>node_ = node_->next</Exec>
+          </Else>
+        </Loop>
+      </CustomListItems>
+    </Expand>
+  </Type>
+
+
+  <Type Name="ang::collections::binary_tree_node&lt;*&gt;">
+    <DisplayString>node[{_pair.value}]</DisplayString>
+    <Expand>
+      <Item Name="[key]" ExcludeView="simple">_pair.key</Item>
+      <Item Name="[value]" ExcludeView="simple">_pair.value</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::binary_tree_object&lt;*&gt;">
+    <DisplayString>map[{_count}]</DisplayString>
+    <Expand>
+      <Item Name="[count]" ExcludeView="simple" >_count</Item>
+      <TreeItems>
+        <Size>_count</Size>
+        <HeadPointer>_root</HeadPointer>
+        <LeftPointer>_left</LeftPointer>
+        <RightPointer>_right</RightPointer>
+        <ValueNode>_pair</ValueNode>
+      </TreeItems>
     </Expand>
   </Type>
 

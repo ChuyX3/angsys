@@ -3,6 +3,7 @@
 #include <ang/streams.hpp>
 #include "string_helper.hpp"
 #include "format_parser.h"
+#include "ang/collections/vector.hpp"
 
 using namespace ang;
 using namespace ang::strings;
@@ -431,9 +432,14 @@ wsize string_base_buffer::sub_string(raw_str_t raw, windex start, windex end)con
 	return _encoder._convert_string(raw.ptr(), end - start, my_data.ptr(), i, my_data.encoding(), true);
 }
 
+#define MY_ALLOCATOR ang::memory::default_allocator
+
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING encoding::ascii
 #include "string_impl.inl"
+#define MY_TYPE ang::strings::string_base<CURRENT_ENCODING>
+#include <ang/collections/inline/array_object_specialization.inl>
+#undef MY_TYPE
 #undef CURRENT_ENCODING
 
 void string_buffer<encoding::ascii>::format(cstr_t format, ...)
@@ -486,6 +492,9 @@ void string_buffer<encoding::ascii>::concat_format(cstr_t format, ...)
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING encoding::unicode
 #include "string_impl.inl"
+#define MY_TYPE ang::strings::string_base<CURRENT_ENCODING>
+#include <ang/collections/inline/array_object_specialization.inl>
+#undef MY_TYPE
 #undef CURRENT_ENCODING
 
 void string_buffer<encoding::unicode>::format(cstr_t format, ...)
@@ -538,6 +547,9 @@ void string_buffer<encoding::unicode>::concat_format(cstr_t format, ...)
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING encoding::utf8
 #include "string_impl.inl"
+#define MY_TYPE ang::strings::string_base<CURRENT_ENCODING>
+#include <ang/collections/inline/array_object_specialization.inl>
+#undef MY_TYPE
 #undef CURRENT_ENCODING
 
 void string_buffer<encoding::utf8>::format(cstr_t format, ...)
@@ -553,36 +565,73 @@ void string_buffer<encoding::utf8>::concat_format(cstr_t format, ...)
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING encoding::utf16
 #include "string_impl.inl"
+#define MY_TYPE ang::strings::string_base<CURRENT_ENCODING>
+#include <ang/collections/inline/array_object_specialization.inl>
+#undef MY_TYPE
+#undef CURRENT_ENCODING
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+#define CURRENT_ENCODING encoding::utf16_se
+#include "string_impl.inl"
+#define MY_TYPE ang::strings::string_base<CURRENT_ENCODING>
+#include <ang/collections/inline/array_object_specialization.inl>
+#undef MY_TYPE
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING encoding::utf16_le
 #include "string_impl.inl"
+#define MY_TYPE ang::strings::string_base<CURRENT_ENCODING>
+#include <ang/collections/inline/array_object_specialization.inl>
+#undef MY_TYPE
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING encoding::utf16_be
 #include "string_impl.inl"
+#define MY_TYPE ang::strings::string_base<CURRENT_ENCODING>
+#include <ang/collections/inline/array_object_specialization.inl>
+#undef MY_TYPE
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING encoding::utf32
 #include "string_impl.inl"
+#define MY_TYPE ang::strings::string_base<CURRENT_ENCODING>
+#include <ang/collections/inline/array_object_specialization.inl>
+#undef MY_TYPE
+#undef CURRENT_ENCODING
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+#define CURRENT_ENCODING encoding::utf32_se
+#include "string_impl.inl"
+#define MY_TYPE ang::strings::string_base<CURRENT_ENCODING>
+#include <ang/collections/inline/array_object_specialization.inl>
+#undef MY_TYPE
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING encoding::utf32_le
 #include "string_impl.inl"
+#define MY_TYPE ang::strings::string_base<CURRENT_ENCODING>
+#include <ang/collections/inline/array_object_specialization.inl>
+#undef MY_TYPE
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING encoding::utf32_be
 #include "string_impl.inl"
+#define MY_TYPE ang::strings::string_base<CURRENT_ENCODING>
+#include <ang/collections/inline/array_object_specialization.inl>
+#undef MY_TYPE
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
+#undef MY_ALLOCATOR

@@ -168,6 +168,11 @@ namespace ang
 			}
 		};
 
+		template<typename T>
+		struct runtime_type_builder<weak_ptr<T>>
+			: public runtime_type_builder<typename smart_ptr_type<T>::smart_ptr_t> {
+		};
+
 		template<class T, class... Ts>
 		struct runtime_type_builder<T(Ts...)>
 		{

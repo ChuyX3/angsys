@@ -98,6 +98,15 @@ inline bool ang::core::async::iasync<T>::query_object(ang::type_name_t name, ang
 
 //////////////////////////////////////////////////////////////////////////
 
+template<typename T> inline ang::core::async::iasync_t<T> ang::core::async::idispatcher::run_async(delegates::function<T(iasync<T>*)> func) {
+	return task_handler<T>::create_task(this, move(func));
+}
+
+template<typename T> inline ang::core::async::iasync_t<T> ang::core::async::idispatcher::run_async(delegates::function<T(iasync<T>*, var_args_t)> func, var_args_t args) {
+	return task_handler<T>::create_task(this, move(func), move(args));
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 template<typename T>
 inline ang::type_name_t ang::core::async::task_handler<T>::class_name()
@@ -243,8 +252,19 @@ template<typename T>
 ang::core::async::iasync_t<T> ang::core::async::task_handler<T>::create_task(ang::core::delegates::function<T(iasync<T>*)> func)
 {
 	if (func.is_empty()) return null;
-	task_handler_t<T> _async = NEW task_handler<T>();
+	task_handler_t<T> _async = NEW ang::core::async::task_handler<T>();
 	_async->_task = task::run_async([=](itask* t, var_args_t a) {
+		_async.get()->_result = func(_async.get());
+	}, { _async.get() });
+	return _async;
+}
+
+template<typename T>
+ang::core::async::iasync_t<T> ang::core::async::task_handler<T>::create_task(ang::core::async::idispatcher_t dispatcher, ang::core::delegates::function<T(iasync<T>*)> func)
+{
+	if (func.is_empty()) return null;
+	task_handler_t<T> _async = NEW ang::core::async::task_handler<T>();
+	_async->_task = dispatcher->post_task([=](itask* t, var_args_t a) {
 		_async.get()->_result = func(_async.get());
 	}, { _async.get() });
 	return _async;
@@ -254,8 +274,19 @@ template<typename T>
 ang::core::async::iasync_t<T> ang::core::async::task_handler<T>::create_task(ang::core::delegates::function<T(iasync<T>*,var_args_t)> func, ang::var_args_t args)
 {
 	if (func.is_empty()) return null;
-	task_handler_t<T> _async = NEW task_handler<T>();
+	task_handler_t<T> _async = NEW ang::core::async::task_handler<T>();
 	_async->_task = task::run_async([=](itask* t, var_args_t a) {
+		_async.get()->_result = func(_async.get(), args);
+	}, { _async.get(), args });
+	return _async;
+}
+
+template<typename T>
+ang::core::async::iasync_t<T> ang::core::async::task_handler<T>::create_task(ang::core::async::idispatcher_t dispatcher, ang::core::delegates::function<T(iasync<T>*, var_args_t)> func, ang::var_args_t args)
+{
+	if (func.is_empty()) return null;
+	task_handler_t<T> _async = NEW task_handler<T>();
+	_async->_task = dispatcher->post_task([=](itask* t, var_args_t a) {
 		_async.get()->_result = func(_async.get(), args);
 	}, { _async.get(), args });
 	return _async;
@@ -265,7 +296,7 @@ template<typename T> template<typename U>
 ang::core::async::iasync_t<T> ang::core::async::task_handler<T>::handle_then(ang::core::async::iasync_t<U> task, ang::core::delegates::function<T(iasync<U>*)> func)
 {
 	if (func.is_empty()) return null;
-	task_handler_t<T> _async = NEW task_handler<T>();
+	task_handler_t<T> _async = NEW ang::core::async::task_handler<T>();
 	_async->_task = task->then([=](iasync<U>* t) {
 		_async.get()->_result = func(task.get());
 	});

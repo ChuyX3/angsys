@@ -510,7 +510,7 @@ namespace ang
 	public: //properties
 		bool is_valid()const;
 		template<typename T>
-		typename smart_ptr_type<T>::smart_ptr_t lock() {
+		typename smart_ptr_type<T>::smart_ptr_t lock()const {
 			return lock<intfptr>().as<T>();
 		}
 		template<typename T>
@@ -526,7 +526,7 @@ namespace ang
 		safe_pointer& operator = (ang::nullptr_t const&);
 	};
 
-	template<> intfptr LINK safe_pointer::lock<intfptr>();
+	template<> intfptr LINK safe_pointer::lock<intfptr>()const;
 
 	template<class T>
 	class weak_ptr : public safe_pointer
@@ -541,7 +541,7 @@ namespace ang
 		~weak_ptr() {}
 
 	public: //properties
-		typename smart_ptr_type<T>::smart_ptr_t lock() {
+		typename smart_ptr_type<T>::smart_ptr_t lock()const {
 			auto ptr = safe_pointer::lock<intfptr>();
 			return reinterpret_cast<T*>(ptr.get());
 		}

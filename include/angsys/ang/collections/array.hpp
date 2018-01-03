@@ -91,6 +91,8 @@ namespace ang
 			inline forward_iterator_t end() override;
 			inline const_forward_iterator_t begin()const override;
 			inline const_forward_iterator_t end()const override;
+			inline forward_iterator_t last() override;
+			inline const_forward_iterator_t last()const override;
 
 			inline backward_iterator_t rbegin() override;
 			inline backward_iterator_t rend() override;
@@ -251,5 +253,39 @@ namespace ang
 	}
 }//ang
 
+#include <ang/collections/array_definition.hpp>
+
+
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, byte, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, wchar, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char16_t, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char32_t, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, short, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ushort, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, int, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, uint, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, long, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ulong, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, long64, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ulong64, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, float, ang::memory::default_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, double, ang::memory::default_allocator)
+
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, byte, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, wchar, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char16_t, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char32_t, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, short, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ushort, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, int, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, uint, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, long, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ulong, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, long64, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ulong64, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, float, ang::memory::aligned16_allocator)
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, double, ang::memory::aligned16_allocator)
 
 #endif //__ANG_COLLECTIONS_ARRAY_HPP__

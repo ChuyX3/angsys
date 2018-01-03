@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ang/core/async.hpp"
-#include "task.hpp"
+#include "thread.hpp"
 
 using namespace ang;
 using namespace ang::core;
@@ -79,7 +79,8 @@ itask_t task::run_async(delegates::function <void(itask*, var_args_t)> func, var
 }
 
 async_task::async_task()
-	: handled(false)
+	: dispatched(false)
+	, handled(false)
 	, cond_(new value_wrapper<cond_t>())
 	, mutex_(new value_wrapper<mutex_t>())
 	, status_(async_action_status::initializing)
@@ -90,11 +91,24 @@ async_task::async_task()
 }
 
 async_task::async_task(async_task_t parent)
-	: handled(false)
+	: dispatched(parent->dispatched)
+	, handled(false)
 	, cond_(parent->cond_.get())
 	, mutex_(parent->mutex_.get())
 	, status_(async_action_status::initializing)
 	, worker_thread(parent->worker_thread.get())
+	, then_callback(null)
+{
+
+}
+
+async_task::async_task(dispatcher_thread_t thread)
+	: dispatched(true)
+	, handled(false)
+	, cond_(new value_wrapper<cond_t>())
+	, mutex_(new value_wrapper<mutex_t>())
+	, status_(async_action_status::initializing)
+	, worker_thread(thread.get())
 	, then_callback(null)
 {
 
@@ -113,8 +127,8 @@ void async_task::run(delegates::function <void(itask*)> _func)
 		scope_locker<mutex_t> lock = (mutex_t&)mutex_;
 		if (status_ == async_action_status::canceled) {
 			//status_ = async_action_status::completed;
-			thread_->cancel();
-			cond_.get();
+			if(!dispatched) thread_->cancel();
+			cond_->signal();
 			return;
 		}
 		status_ = async_action_status::running;
@@ -127,21 +141,25 @@ void async_task::run(delegates::function <void(itask*)> _func)
 
 		if (status_ == async_action_status::canceled) {
 			//status_ = async_action_status::completed;
-			thread_->cancel();
+			if (!dispatched) thread_->cancel();
 			cond_->signal();
 			return;
 		}
-		if (worker_thread.is_empty())
+		if (then_callback.is_empty())
 		{
 			status_ = async_action_status::wait_for_then;
+			cond_->signal();
 		}
 		else
 		{
 			status_ = async_action_status::completed;
 			worker_thread->then(then_callback, null);
 			cond_->signal();
+			mutex_->unlock();
+			mutex_->lock();
+			join();
 		}
-		cond_->signal();
+
 		func->release();
 		release();
 	};
@@ -171,8 +189,8 @@ void async_task::run(delegates::function <void(itask*, var_args_t)> _func, var_a
 		scope_locker<mutex_t> lock = (mutex_t&)mutex_;
 		if (status_ == async_action_status::canceled) {
 			//status_ = async_action_status::completed;
-			thread_->cancel();
-			cond_.get();
+			if (!dispatched)thread_->cancel();
+			cond_->signal();
 			return;
 		}
 		status_ = async_action_status::running;
@@ -185,13 +203,14 @@ void async_task::run(delegates::function <void(itask*, var_args_t)> _func, var_a
 
 		if (status_ == async_action_status::canceled) {
 			//status_ = async_action_status::completed;
-			thread_->cancel();
+			if (!dispatched) thread_->cancel();
 			cond_->signal();
 			return;
 		}
-		if (worker_thread.is_empty())
+		if (then_callback.is_empty())
 		{
 			status_ = async_action_status::wait_for_then;
+			cond_->signal();
 		}
 		else
 		{
@@ -203,7 +222,7 @@ void async_task::run(delegates::function <void(itask*, var_args_t)> _func, var_a
 			join();
 			//then_callback = null;
 		}
-		cond_->signal();
+		
 		func->release();
 		args->release();
 		release();
@@ -283,7 +302,7 @@ bool async_task::join()const
 	else
 	{	
 		status_ = async_action_status::completed;
-		if (then_callback.is_empty()) {
+		if (then_callback.is_empty() && !dispatched) {
 			const_cast<async_task*>(this)->worker_thread->cancel();
 		}
 	}

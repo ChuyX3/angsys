@@ -23,6 +23,11 @@ thread_t thread::create_thread(thread_routine_t routine, var_args_t args, uint f
 	return thread.get();
 }
 
+idispatcher_t thread::create_dispatcher()
+{
+	return new dispatcher_thread();
+}
+
 
 void thread::sleep(dword ms)
 {
@@ -231,8 +236,12 @@ dword core_thread::core_thread_start_routine(pointer args)
 		manager->main_cond().signal();
 		manager->main_mutex().unlock();
 
-		 routine(thread.get(), user_args);
-		 result = 0;
+		try {
+			routine(thread.get(), user_args);
+			result = 0;
+		}
+		catch (...) {}
+		result = 0;
 		manager->main_mutex().lock();
 		if (thread->_state & async_action_status::finished)//cancel
 		{
@@ -280,13 +289,21 @@ core_thread::core_thread(wsize flags, ibuffer_view_t data, bool alloc)
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, flags);
-	pthread_create(&this->_thread, &attr, [](pointer args)->pointer { return (pointer)core_thread::core_thread_start_routine(args); }, this);
+	pthread_create(&this->_thread, &attr, [](pointer args)->pointer {
+			auto result = (pointer)core_thread::core_thread_start_routine(args); 
+			core_thread_manager::instance()->unregist_thread((core_thread*)args);
+			return result;
+		}, this);
 	pthread_attr_destroy(&attr);
 	if (this->_thread == 0)
 		throw_exception(except_code::invalid_memory);
 #elif defined WINDOWS_PLATFORM
 	this->_hthread = CreateThread(NULL, 0
-		, [](pointer args)->dword { return core_thread::core_thread_start_routine(args); }
+		, [](pointer args)->dword {
+			auto result = core_thread::core_thread_start_routine(args);
+			core_thread_manager::instance()->unregist_thread((core_thread*)args);
+			return result;
+		}
 		, this, CREATE_SUSPENDED, &this->_id);
 	SetThreadPriority(this->_hthread, flags);
 	if (this->_hthread == null)
@@ -439,4 +456,253 @@ bool core_thread::join()const
 	_state = async_action_status::completed;
 	cond.signal();
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+dword dispatcher_thread::core_thread_start_routine(pointer args)
+{
+	auto manager = core_thread_manager::instance();
+	dispatcher_thread_t thread = (dispatcher_thread*)(args);
+	manager->main_mutex().lock();
+	manager->main_mutex().unlock();
+
+	thread->mutex_->lock();
+	thread->_state = async_action_status::wait_for_start; //wait for start routine
+	thread->cond_->signal();
+	thread->mutex_->unlock();
+	thread->sleep(1);
+	dword result = -1;
+
+	while (true)
+	{
+		thread->sleep(1);
+		thread->mutex_->lock();
+		switch (thread->_state.value())
+		{
+		case async_action_status::canceled:
+		case async_action_status::completed:
+			thread->_state = async_action_status::completed;
+			thread->end_event(thread.get(), null);
+			thread->cond_->signal();
+			thread->mutex_->unlock();
+			return result;
+
+		case async_action_status::wait_for_start: 
+			if (thread->_start_routine.is_empty())
+			{
+				thread->cond_->wait(thread->mutex_);
+				thread->mutex_->unlock();
+			}
+			else
+			{		
+				thread->_start_routine = null;
+				thread->_state = async_action_status::running; //running worker thread
+				thread->cond_->signal();
+				thread->mutex_->unlock();
+				thread->start_event(thread.get(), null);
+				result = 0;
+			}
+			break;
+		
+		case async_action_status::wait_for_then:
+			thread->cond_->wait(thread->mutex_);
+			thread->mutex_->unlock();
+			break;
+
+		case async_action_status::running:
+			while (thread->task_queue_->counter() > 0) {
+				thread_routine_t routine;
+				thread->task_queue_->pop(routine);
+				thread->mutex_->unlock();
+				routine(thread.get(), null);
+				thread->mutex_->lock();
+			}
+			if (thread->_join_request)	
+				thread->_state = async_action_status::completed;
+			thread->mutex_->unlock();
+			thread->update_event(thread.get());
+			break;
+
+		default:
+			thread->mutex_->unlock();
+			break;
+		}
+	}
+}
+
+
+dispatcher_thread::dispatcher_thread()
+	: core_thread()
+{
+	scope_locker<mutex> lock = core_thread_manager::instance()->main_mutex();
+
+	this->cond_ = make_shared<cond_t>();
+	this->mutex_ = make_shared<mutex_t>();
+	this->_state = async_action_status::initializing; //initializing
+	this->_is_main = false;
+	this->task_queue_ = new collections::queue_object<thread_routine_t>();
+#if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, 0);
+	pthread_create(&this->_thread, &attr, [](pointer args)->pointer {
+			auto result = (pointer)dispatcher_thread::core_thread_start_routine(args);
+			core_thread_manager::instance()->unregist_thread((core_thread*)args);
+			return result;
+		}, this);
+	pthread_attr_destroy(&attr);
+	if (this->_thread == 0)
+		throw_exception(except_code::invalid_memory);
+#elif defined WINDOWS_PLATFORM
+	this->_hthread = CreateThread(NULL, 0
+		, [](pointer args)->dword {
+			auto result = dispatcher_thread::core_thread_start_routine(args);
+			core_thread_manager::instance()->unregist_thread((core_thread*)args);
+			return result;
+		}
+	, this, CREATE_SUSPENDED, &this->_id);
+	SetThreadPriority(this->_hthread, 0);
+	if (this->_hthread == null)
+		throw_exception(except_code::invalid_memory);
+	ResumeThread(this->_hthread);
+#endif
+	core_thread_manager::instance()->regist_thread(this);
+}
+
+dispatcher_thread::~dispatcher_thread()
+{
+	
+}
+
+
+void dispatcher_thread::start_event(icore_thread*, var_args_t)
+{
+	idispatcher::start_event(this);
+}
+
+void dispatcher_thread::end_event(icore_thread*, var_args_t)
+{
+	idispatcher::end_event(this);
+}
+
+
+icore_thread_t dispatcher_thread::worker_thread()const
+{
+	return const_cast<dispatcher_thread*>(this);
+}
+
+bool dispatcher_thread::resume()
+{
+	return start(null, null);
+}
+
+bool dispatcher_thread::pause()
+{
+	scope_locker<mutex_ptr_t> lock = mutex_;
+	if (_state != async_action_status::running)
+		return false;
+	_state = async_action_status::wait_for_then;
+	cond_->signal();
+	return true;
+}
+
+bool dispatcher_thread::stop()
+{
+	scope_locker<mutex_ptr_t> lock = mutex_;
+	if (_state > async_action_status::working)
+		return false;
+	_state = async_action_status::running;
+	_join_request = true;
+	cond_->signal();
+	return true;
+}
+
+bool dispatcher_thread::start(delegates::function<void(icore_thread*, var_args_t)>, var_args_t)
+{
+	scope_locker<mutex_ptr_t> lock = mutex_;
+	if (is_current_thread())
+		return false;
+	while (_state < async_action_status::wait_for_start)
+		cond_->wait(mutex_);
+	if (_state == async_action_status::wait_for_then)
+	{
+		_state = async_action_status::running;
+		cond_->signal();
+		return true;
+	}
+	else if (_state > async_action_status::wait_for_start)
+		return false;
+	
+	_start_routine = bind(this, &dispatcher_thread::start_event);
+
+	cond_->signal();
+	return true;
+}
+
+itask_t dispatcher_thread::post_task(delegates::function <void(itask*)> func)
+{
+	async_task_t task = new async_task(this);
+	task->run(func);
+	return task.get();
+}
+
+itask_t dispatcher_thread::post_task(delegates::function <void(itask*, var_args_t)> func, var_args_t args)
+{
+	async_task_t task = new async_task(this);
+	task->run(func, args);
+	return task.get();
+}
+
+bool dispatcher_thread::then(delegates::function<void(icore_thread*, var_args_t)> callback, var_args_t args)
+{
+	scope_locker<mutex_ptr_t> lock = mutex_;
+	task_queue_ += callback;
+	return true;
+}
+
+bool dispatcher_thread::wait(async_action_status_t state)const
+{
+	if (is_current_thread())
+		return false;
+	scope_locker<mutex_ptr_t> lock = mutex_;
+	if (_state > state)return false;
+	cond_->waitfor(mutex_,[&]() { 
+		return !state.is_active(_state); 
+	});
+	return true;
+}
+
+bool dispatcher_thread::wait(async_action_status_t state, dword ms)const
+{
+	if (is_current_thread())
+		return false;
+
+	dword last_time = (dword)(ang_get_performance_time() / 1000);
+	dword current = 0;
+
+	scope_locker<mutex_ptr_t> lock = mutex_;
+	if (_state > state)return false;
+	while (!state.is_active(_state))
+	{
+		cond_->wait(mutex_, ms);
+		sleep(1);
+		current = (dword)(ang_get_performance_time() / 1000);
+		if (ms <= (current - last_time))
+			break;
+		else ms -= (current - last_time);
+		last_time = current;
+	}
+	return state.is_active(_state);
+}
+
+
+bool dispatcher_thread::cancel()
+{
+	return stop();
+}
+
+bool dispatcher_thread::join()const
+{
+	return const_cast<dispatcher_thread*>(this)->stop();
 }

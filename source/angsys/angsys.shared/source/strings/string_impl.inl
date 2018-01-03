@@ -392,3 +392,88 @@ void string_buffer<CURRENT_ENCODING>::lowercase()
 			buff[i] = char((long)buff[i] + 97 - 65);
 	}
 }
+
+
+array<string_base<CURRENT_ENCODING>> string_buffer<CURRENT_ENCODING>::split(typename string_buffer<CURRENT_ENCODING>::char_t val)const
+{
+	collections::vector<string> list;
+
+	const char_t str_val[] = { val, 0 };
+
+	windex beg = 0, end = 0;
+	string _word;
+	cstr_t data = cstr();
+	wsize l = length();
+	const text::encoder<CURRENT_ENCODING>& encoder_ = get_encoder<CURRENT_ENCODING>();
+
+	end = encoder_.find(data, l, str_val, 1, 0);
+	if (end == invalid_index)
+		return array<string>({ cstr() });
+
+	do {
+
+		if (sub_string(_word, beg, end) > 0)
+		{
+			list += string();
+			list->last()->set(_word.get());
+			_word = null;
+		}
+		beg = end + 1;
+		end = end = encoder_.find(data.get() + beg, l - beg, str_val, 1, 0);
+	} while (end != invalid_index);
+
+	if (sub_string(_word, beg, l) > 0)
+	{
+		list += string();
+		list->last()->set(_word.get());
+		_word = null;
+	}
+
+	array<string> arr = new collections::array_buffer<string>(list->size());
+	windex i = 0;
+	for (string& str : list)
+		arr[i++] = ang::move(str);
+	return arr.get();
+}
+
+
+array<string_base<CURRENT_ENCODING>> string_buffer<CURRENT_ENCODING>::split(typename string_buffer<CURRENT_ENCODING>::cstr_t val)const
+{
+	collections::vector<string> list;
+
+	windex beg = 0, end = 0;
+	string _word;
+	cstr_t data = cstr();
+	wsize l = length();
+	const text::encoder<CURRENT_ENCODING>& encoder_ = get_encoder<CURRENT_ENCODING>();
+
+	end = encoder_.find(data, l, val.cstr(), val.size(), 0);
+	if (end == invalid_index)
+		return array<string>({ cstr() });
+
+
+	do {
+
+		if (sub_string(_word, beg, end) > 0)
+		{
+			list += string();
+			list->last()->set(_word.get());
+			_word = null;
+		}
+		beg = end + val.size();
+		end = end = encoder_.find(data.get() + beg, l - beg, val.cstr(), val.size(), 0);
+	} while (end != invalid_index);
+
+	if (sub_string(_word, beg, l) > 0)
+	{
+		list += string();
+		list->last()->set(_word.get());
+		_word = null;
+	}
+
+	array<string> arr = new collections::array_buffer<string>(list->size());
+	windex i = 0;
+	for (string& str : list)
+		arr[i++] = ang::move(str);
+	return arr.get();
+}

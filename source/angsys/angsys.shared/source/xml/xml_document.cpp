@@ -522,6 +522,16 @@ xml_const_forward_iterator_t xml_document::end()const
 	return xml_iterator_t(const_cast<xml_document*>(this), null);
 }
 
+xml_forward_iterator_t xml_document::last()
+{
+	return xml_iterator_t(const_cast<xml_document*>(this), (ixml_node*)xml_last());
+}
+
+xml_const_forward_iterator_t xml_document::last()const
+{
+	return xml_iterator_t(const_cast<xml_document*>(this), (ixml_node*)xml_last());
+}
+
 xml_backward_iterator_t xml_document::rbegin()
 {
 	ixml_node* child, *node = xml_last();

@@ -82,6 +82,7 @@ namespace ang
 			typedef typename char_type_by_encoding<ENCODING>::cstr_t unsafe_cstr_t;
 			typedef safe_str<char_t> str_t;
 			typedef safe_str<char_t const> cstr_t;
+			typedef string_base<CURRENT_ENCODING> string;
 
 		public:
 			string_buffer();
@@ -135,17 +136,17 @@ namespace ang
 			}
 
 			template<typename T>
-			inline wsize sub_string(wsize sz, T* ptr, windex start = 0, windex end = -1) {
+			inline wsize sub_string(wsize sz, T* ptr, windex start = 0, windex end = -1)const {
 				return string_base_buffer::sub_string(raw_str(ptr,sz), start, end);
 			}
 
 			template<typename T>
-			inline wsize sub_string(safe_str<T> ptr, windex start = 0, windex end = -1) {
+			inline wsize sub_string(safe_str<T> ptr, windex start = 0, windex end = -1)const {
 				return string_base_buffer::sub_string(raw_str(ptr), start, end);
 			}
 
 			template<encoding_enum OTHER_ENCODING>
-			inline wsize sub_string(string_base<OTHER_ENCODING>& str, windex start = 0, windex end = -1) {
+			inline wsize sub_string(string_base<OTHER_ENCODING>& str, windex start = 0, windex end = -1)const {
 				if (str.is_empty())
 					str = new string_buffer<OTHER_ENCODING>();
 				str->realloc(min(end, length()) - start, false);
@@ -180,6 +181,9 @@ namespace ang
 			void uppercase();
 			void lowercase();
 
+			array<string> split(char_t val = ' ')const;
+			array<string> split(collections::array_view<char_t> arr)const;
+			array<string> split(cstr_t val)const;
 		};
 
 		template<> inline int string_buffer<CURRENT_ENCODING>::compare(raw_str_t cstr)const {
@@ -301,3 +305,4 @@ namespace ang
 		return stream;
 	}
 }
+

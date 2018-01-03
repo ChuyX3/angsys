@@ -123,6 +123,8 @@ namespace ang
 			visible vcall forward_iterator<xml::ixml_node> end() pure;
 			visible vcall const_forward_iterator<xml::ixml_node> begin()const pure;
 			visible vcall const_forward_iterator<xml::ixml_node> end()const pure;
+			visible vcall forward_iterator<xml::ixml_node> last() pure;
+			visible vcall const_forward_iterator<xml::ixml_node> last()const pure;
 
 			visible vcall backward_iterator<xml::ixml_node> rbegin() pure;
 			visible vcall backward_iterator<xml::ixml_node> rend() pure;
@@ -949,6 +951,8 @@ namespace ang
 				xml_forward_iterator_t end() override;
 				xml_const_forward_iterator_t begin()const override;
 				xml_const_forward_iterator_t end()const override;
+				xml_forward_iterator_t last() override;
+				xml_const_forward_iterator_t last()const override;
 
 				xml_backward_iterator_t rbegin() override;
 				xml_backward_iterator_t rend() override;
@@ -1324,6 +1328,8 @@ namespace ang
 			virtual xml_forward_iterator_t end() override;
 			virtual xml_const_forward_iterator_t begin()const override;
 			virtual xml_const_forward_iterator_t end()const override;
+			inline xml_forward_iterator_t last() override;
+			inline xml_const_forward_iterator_t last()const override;
 
 			virtual xml_backward_iterator_t rbegin() override;
 			virtual xml_backward_iterator_t rend() override;

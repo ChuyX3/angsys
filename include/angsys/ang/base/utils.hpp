@@ -173,6 +173,7 @@ namespace ang
 	template<typename T>
 	inline void move(typename remove_reference<T>::type& dest, typename remove_reference<T>::type&& src) { dest = move(src); }
 
+	
 	template<typename T> inline
 		constexpr T&& forward(
 			typename remove_reference<T>::type& _Arg)
@@ -188,7 +189,6 @@ namespace ang
 		return (static_cast<T&&>(_Arg));
 	}
 
-	
 
 	template<typename>
 	struct integer_value

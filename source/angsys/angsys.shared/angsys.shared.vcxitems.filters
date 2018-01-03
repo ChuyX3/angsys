@@ -55,6 +55,12 @@
     <Filter Include="source files\files">
       <UniqueIdentifier>{8aa62a41-96b8-4809-bbdb-dc6cb858b048}</UniqueIdentifier>
     </Filter>
+    <Filter Include="header files\angsys\ang\maths">
+      <UniqueIdentifier>{003a47cc-f512-40aa-888b-06e762c77821}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\collections">
+      <UniqueIdentifier>{56f4472b-12d9-480f-ac04-2cd4ef7bfc31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis">
@@ -143,9 +149,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\streams.hpp">
       <Filter>header files\angsys\ang</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\task.hpp">
-      <Filter>header files\include</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\queue.hpp">
       <Filter>header files\angsys\ang\collections</Filter>
     </ClInclude>
@@ -178,6 +181,18 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\time.hpp">
       <Filter>header files\angsys\ang\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\hash_table.hpp">
+      <Filter>header files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\map.hpp">
+      <Filter>header files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\binary_tree.hpp">
+      <Filter>header files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\array_definition.hpp">
+      <Filter>header files\angsys\ang\collections</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -303,6 +318,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\timer.cpp">
       <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\collections\array.cpp">
+      <Filter>source files\collections</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -394,6 +394,18 @@ inline ang::collections::forward_iterator<const T> ang::collections::vector_buff
 }
 
 template<typename T, template<typename> class allocator>
+inline ang::collections::forward_iterator<T> ang::collections::vector_buffer<T, allocator>::last()
+{
+	return _size ? forward_iterator_t(const_cast<vector_buffer*>(this), position_t(_data), _size - 1) : end();
+}
+
+template<typename T, template<typename> class allocator>
+inline ang::collections::forward_iterator<const T> ang::collections::vector_buffer<T, allocator>::last()const
+{
+	return _size ? const_forward_iterator_t(const_cast<vector_buffer*>(this), position_t(_data), _size - 1) : end();
+}
+
+template<typename T, template<typename> class allocator>
 inline ang::collections::backward_iterator<T> ang::collections::vector_buffer<T, allocator>::rbegin()
 {
 	return backward_iterator_t(const_cast<vector_buffer*>(this), position_t(_data), _size - 1);

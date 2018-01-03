@@ -47,7 +47,6 @@ namespace ang
 		template<typename T>
 		ANG_BEGIN_INLINE_INTERFACE(ienum)
 			visible vcall wsize counter()const pure;
-
 			visible vcall T& at(base_iterator<T> const&) pure;
 			visible vcall bool increase(base_iterator<T>&)const pure;
 			visible vcall bool increase(base_iterator<T>&, int offset)const pure;
@@ -58,6 +57,8 @@ namespace ang
 			visible vcall forward_iterator<T> end() pure;
 			visible vcall const_forward_iterator<T> begin()const pure;
 			visible vcall const_forward_iterator<T> end()const pure;
+			visible vcall forward_iterator<T> last() pure;
+			visible vcall const_forward_iterator<T> last()const pure;
 
 			visible vcall backward_iterator<T> rbegin() pure;
 			visible vcall backward_iterator<T> rend() pure;
@@ -128,9 +129,6 @@ namespace ang
 		/******************************************************************/
 		template<typename K, typename T>
 		ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(imap, public ienum<pair<K, T>>)
-			using ienum<T>::at;
-			visible vcall iterator<T> at(K const&) pure;
-			visible vcall const_iterator<T> at(K const&)const pure;
 			visible vcall bool copy(const ienum<pair<K, T>>*) pure;
 			visible vcall void extend(const ienum<pair<K, T>>*) pure;
 			visible vcall bool insert(K, T) pure;
@@ -146,7 +144,33 @@ namespace ang
 			visible vcall const_iterator<pair<K, T>> find(const K&)const pure;
 		ANG_END_INTERFACE();
 
-		template<class K, class T> using imap_t = intf_wrapper<imap<K,T>>;
+
+		template<text::encoding_enum ENCODING, typename T>
+		ang_interface imap<strings::string_base<ENCODING>, T> : public ienum<pair<strings::string_base<ENCODING>, T>> ANG_BEGIN()
+			inline ANG_DECLARE_CLASSNAME() 
+			inline ANG_DECLARE_ISINHERITEDOF() 
+			inline ANG_DECLARE_OBJECTNAME() 
+			inline ANG_DECLARE_ISKINDOF() 
+			inline ANG_DECLARE_QUERYOBJECT()
+
+			visible vcall bool copy(const ienum<pair<strings::string_base<ENCODING>, T>>*) pure;
+			visible vcall void extend(const ienum<pair<strings::string_base<ENCODING>, T>>*) pure;
+			visible vcall bool insert(strings::string_base<ENCODING>, T) pure;
+			visible vcall bool insert(pair<strings::string_base<ENCODING>, T>) pure;
+			visible vcall bool update(strings::string_base<ENCODING>, T) pure;
+			visible vcall bool update(pair<strings::string_base<ENCODING>, T>) pure;
+			visible vcall bool remove(base_iterator<pair<strings::string_base<ENCODING>, T>> it) pure;
+			visible vcall bool remove(base_iterator<pair<strings::string_base<ENCODING>, T>> it, T&) pure;
+
+			visible vcall bool remove(raw_str_t) pure;
+			visible vcall bool remove(raw_str_t, T&) pure;
+			visible vcall bool has_key(raw_str_t)const pure;
+			visible vcall iterator<pair<strings::string_base<ENCODING>, T>> find(raw_str_t) pure;
+			visible vcall const_iterator<pair<strings::string_base<ENCODING>, T>> find(raw_str_t)const pure;
+		
+		ANG_END_INTERFACE();
+
+		template<typename K, typename T> using imap_t = intf_wrapper<imap<K,T>>;
 		typedef pointer position_t;
 
 	}
@@ -290,16 +314,20 @@ namespace ang
 			public: //overrides
 				iteration_callback_t begin;
 				iteration_callback_t end;
-				iteration_callback_t next;
-				iteration_callback_t prev;
+				iteration_callback_t rbegin;
+				iteration_callback_t rend;
+				iteration_callback_t increase;
+				iteration_callback_t decrease;
 				iteration_callback_t most_left;
 				iteration_callback_t most_right;
 
 				iteration_algorithm(iteration_algorithm const& algorithm) {
 					begin = algorithm.begin;
 					end = algorithm.end;
-					next = algorithm.next;
-					prev = algorithm.prev;
+					rbegin = algorithm.rbegin;
+					rend = algorithm.rend;
+					increase = algorithm.increase;
+					decrease = algorithm.decrease;
 					most_left = algorithm.most_left;
 					most_right = algorithm.most_right;
 				}
@@ -307,8 +335,10 @@ namespace ang
 				iteration_algorithm& operator = (iteration_algorithm const& algorithm) {
 					begin = algorithm.begin;
 					end = algorithm.end;
-					next = algorithm.next;
-					prev = algorithm.prev;
+					rbegin = algorithm.rbegin;
+					rend = algorithm.rend;
+					increase = algorithm.increase;
+					decrease = algorithm.decrease;
 					most_left = algorithm.most_left;
 					most_right = algorithm.most_right;
 					return*this;
@@ -318,8 +348,10 @@ namespace ang
 				iteration_algorithm() {
 					begin = null;
 					end = null;
-					next = null;
-					prev = null;
+					rbegin = null;
+					rend = null;
+					increase = null;
+					decrease = null;
 					most_left = null;
 					most_right = null;
 				}

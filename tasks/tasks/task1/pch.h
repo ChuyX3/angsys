@@ -11,6 +11,14 @@
 
 #define ANG_NO_RUNTIME_ERRORS
 #define ANGSYS_DYNAMIC_LIBRARY
-#include <angsys.h>
+#include <angsys.hpp>
+#include <ang/platform/angwin/angwin.hpp>
 #pragma comment(lib, "angsys.lib")
+#pragma comment(lib, "angsys.platform.lib")
 // TODO: reference additional headers your program requires here
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+#define VK_NO_PROTOTYPES
+#include <vulkan\vulkan.h>

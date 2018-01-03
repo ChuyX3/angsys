@@ -12,6 +12,8 @@ namespace ang
 		{
 			
 			typedef object_wrapper<class core_thread> core_thread_t;
+			typedef object_wrapper<class dispatcher_thread> dispatcher_thread_t;
+			typedef object_wrapper<class async_task> async_task_t;
 
 			class core_thread
 				: public thread
@@ -39,7 +41,7 @@ namespace ang
 				virtual bool cancel() override;
 				virtual bool join()const override;
 
-			private:
+			protected:
 				bool _is_main;
 				mutable bool _join_request;
 				ibuffer_view_t _tle_data;
@@ -56,7 +58,6 @@ namespace ang
 			protected:
 				virtual~core_thread();
 			};
-			
 
 			class core_thread_manager
 				: public singleton<core_thread_manager>
@@ -88,13 +89,84 @@ namespace ang
 				core_thread_t unregist_thread(core_thread_t thread);
 			};
 
+			class dispatcher_thread
+				: public core_thread
+				, public idispatcher
+			{
+				friend async_task;
+				friend class core_thread_manager;
+				static dword core_thread_start_routine(pointer);
 
-			typedef object_wrapper<class dispatched_task> dispatched_task_t;
+			public:
+				dispatcher_thread();
 
-	
+			public: //overrides
+				//ANG_DECLARE_INTERFACE();
+				virtual icore_thread_t worker_thread()const override;
+				virtual bool resume()override;
+				virtual bool pause()override;
+				virtual bool stop()override;
+				virtual bool wait(async_action_status_t)const override;
+				virtual bool wait(async_action_status_t, dword ms)const override;
+				virtual bool cancel() override;
+				virtual bool join()const override;
 
+				virtual itask_t post_task(delegates::function <void(itask*)>) override;
+				virtual itask_t post_task(delegates::function <void(itask*, var_args_t)>, var_args_t) override;
+
+				virtual bool start(thread_routine_t callback, var_args_t args) override;
+				virtual bool then(thread_routine_t callback, var_args_t args) override;
+
+				void start_event(icore_thread*, var_args_t);
+				void end_event(icore_thread*, var_args_t);
+
+			protected:
+				mutable cond_ptr_t cond_;
+				mutable mutex_ptr_t mutex_;
+				collections::queue<thread_routine_t> task_queue_;
+
+				
+			protected:
+				virtual~dispatcher_thread();
+			};
+
+			class async_task
+				: public task
+			{
+			private:
+				friend task;
+
+				bool dispatched;
+				mutable bool handled;
+				mutable shared_ptr<cond_t> cond_;
+				mutable shared_ptr<mutex_t> mutex_;
+				mutable async_action_status_t status_;
+
+				icore_thread_t worker_thread;
+				delegates::function<void(icore_thread*, var_args_t)> then_callback;
+				//async_task_t then_task;	
+
+			public:
+				async_task();
+				async_task(dispatcher_thread_t dispatcher);
+				async_task(async_task_t parent);
+
+				void run(delegates::function <void(itask*)> func);
+				void run(delegates::function <void(itask*, var_args_t)> func, var_args_t args);
+
+			public: //overrides
+					//ANG_DECLARE_INTERFACE();
+
+				bool wait(async_action_status_t)const override;
+				bool wait(async_action_status_t, dword)const override;
+				async_action_status_t status()const override;
+				bool cancel()override;
+				bool join()const override;
+				itask_t then(delegates::function<void(itask*)>)override;
+
+			protected:
+				virtual~async_task();
+			};
 		}
-
-
 	}
 }

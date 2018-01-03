@@ -182,66 +182,77 @@ namespace ang
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING ang::text::encoding::ascii
 #include <ang/inline/string_definition.inl>
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<CURRENT_ENCODING>, ang::memory::default_allocator)
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING ang::text::encoding::unicode
 #include <ang/inline/string_definition.inl>
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<CURRENT_ENCODING>, ang::memory::default_allocator)
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING ang::text::encoding::utf8
 #include <ang/inline/string_definition.inl>
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<CURRENT_ENCODING>, ang::memory::default_allocator)
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING ang::text::encoding::utf16
 #include <ang/inline/string_definition.inl>
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<CURRENT_ENCODING>, ang::memory::default_allocator)
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING ang::text::encoding::utf16_se
 #include <ang/inline/string_definition.inl>
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<CURRENT_ENCODING>, ang::memory::default_allocator)
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING ang::text::encoding::utf16_le
 #include <ang/inline/string_definition.inl>
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<CURRENT_ENCODING>, ang::memory::default_allocator)
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING ang::text::encoding::utf16_be
 #include <ang/inline/string_definition.inl>
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<CURRENT_ENCODING>, ang::memory::default_allocator)
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING ang::text::encoding::utf32
 #include <ang/inline/string_definition.inl>
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<CURRENT_ENCODING>, ang::memory::default_allocator)
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING ang::text::encoding::utf32_se
 #include <ang/inline/string_definition.inl>
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<CURRENT_ENCODING>, ang::memory::default_allocator)
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING ang::text::encoding::utf32_le
 #include <ang/inline/string_definition.inl>
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<CURRENT_ENCODING>, ang::memory::default_allocator)
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 #define CURRENT_ENCODING ang::text::encoding::utf32_be
 #include <ang/inline/string_definition.inl>
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<CURRENT_ENCODING>, ang::memory::default_allocator)
 #undef CURRENT_ENCODING
 /////////////////////////////////////////////////////////////////////////////////
 

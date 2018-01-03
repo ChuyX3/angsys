@@ -17,7 +17,7 @@
 #include "file_system.h"
 
 #include <ang/xml.hpp>
-
+#include <ang/collections/map.hpp>
 //#include <ang/streams.hpp>
 
 using namespace ang;

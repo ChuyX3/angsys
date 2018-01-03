@@ -360,6 +360,17 @@ inline ang::collections::forward_iterator<const T> ang::collections::array_buffe
 	return const_forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size());
 }
 
+template<typename T, template<typename> class allocator>
+inline ang::collections::forward_iterator<T> ang::collections::array_buffer<T, allocator>::last()
+{
+	return _data.size() ? forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size() - 1) : end();
+}
+
+template<typename T, template<typename> class allocator>
+inline ang::collections::forward_iterator<const T> ang::collections::array_buffer<T, allocator>::last()const
+{
+	return _data.size() ? const_forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size() - 1) : end();
+}
 
 template<typename T, template <typename> class allocator>
 inline ang::collections::backward_iterator<T> ang::collections::array_buffer<T, allocator>::rbegin()

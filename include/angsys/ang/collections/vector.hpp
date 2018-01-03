@@ -138,6 +138,8 @@ namespace ang
 			inline forward_iterator_t end() override;
 			inline const_forward_iterator_t begin()const override;
 			inline const_forward_iterator_t end()const override;
+			inline forward_iterator_t last() override;
+			inline const_forward_iterator_t last()const override;
 
 			inline backward_iterator_t rbegin() override;
 			inline backward_iterator_t rend() override;
@@ -311,8 +313,8 @@ namespace ang
 		void set(collections::vector_buffer<object_wrapper<T>, allocator>*);
 		collections::vector_buffer<object_wrapper<T>, allocator>** addres_of(void);
 
-		collections::forward_iterator<object_wrapper<T>> begin() { return _ptr ? _ptr->begin() : collections::forward_iterator<T>(); }
-		collections::forward_iterator<object_wrapper<T>> end() { return _ptr ? _ptr->end() : collections::forward_iterator<T>(); }
+		collections::forward_iterator<object_wrapper<T>> begin() { return _ptr ? _ptr->begin() : collections::forward_iterator<object_wrapper<T>>(); }
+		collections::forward_iterator<object_wrapper<T>> end() { return _ptr ? _ptr->end() : collections::forward_iterator<object_wrapper<T>>(); }
 		collections::forward_iterator<const object_wrapper<T>> begin()const { return _ptr ? ((type const*)_ptr)->begin() : collections::forward_iterator<const object_wrapper<T>>(); }
 		collections::forward_iterator<const object_wrapper<T>> end()const { return _ptr ? ((type const*)_ptr)->end() : collections::forward_iterator<const object_wrapper<T>>(); }
 

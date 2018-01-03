@@ -862,7 +862,7 @@ wsize file_impl::read(pointer buffer, wsize size, text::encoding_t encoding)
 			if (!ReadFile(_hfile, src.ptr(), src.size(), &readed, NULL))
 				break;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-			written = ::read(_hfile, src.ptr(), src.size());
+			readed = ::read(_hfile, src.ptr(), src.size());
 #endif
 			idx += encoder._convert_string((byte*)dest.ptr() + (idx * cs), (dest.size() / cs) - idx - 1, src.ptr(), c, src.encoding(), true);
 
@@ -916,7 +916,7 @@ wsize file_impl::read(ibuffer_view_t buffer, text::encoding_t encoding)
 			if (!ReadFile(_hfile, src.ptr(), src.size(), &readed, NULL))
 				break;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-			written = ::read(_hfile, src.ptr(), src.size());
+			readed = ::read(_hfile, src.ptr(), src.size());
 #endif
 			idx += encoder._convert_string((byte*)dest.ptr() + (idx * cs), (dest.size() / cs) - idx - 1, src.ptr(), c, src.encoding(), true);
 
@@ -1071,7 +1071,7 @@ wsize file_impl::write(pointer buffer, wsize size, text::encoding_t encoding)
 			if (!WriteFile(_hfile, dest.ptr(), i * cs2, &written, NULL))
 				return t * cs2;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-			written = ::read(_hfile, buffer, size);
+			written = ::write(_hfile, dest.ptr(), i * cs2);
 #endif
 			idx += c; c = 0; t += i;
 		}
@@ -1116,7 +1116,7 @@ wsize file_impl::write(ibuffer_view_t buffer, text::encoding_t encoding)
 		SetFilePointerEx(_hfile, lint, &cur, FILE_CURRENT);
 		_cursor = cur.QuadPart;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-		written = ::read(_hfile, buffer, size);
+		written = ::write(_hfile, cstr.ptr(), cstr.size());
 		_cursor = ::lseek(_hfile, 0, SEEK_CUR);
 #endif
 	}
@@ -1137,7 +1137,7 @@ wsize file_impl::write(ibuffer_view_t buffer, text::encoding_t encoding)
 			if (!WriteFile(_hfile, dest.ptr(), i * cs2, &written, NULL))
 				return t * cs2;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-			written = ::read(_hfile, buffer, size);
+			written = ::write(_hfile, dest.ptr(), dest.size());
 #endif
 			idx += c; c = 0; t += i;
 		}

@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="header files">
+      <UniqueIdentifier>{18613372-ef6d-44ce-a948-a0ba12a980d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang">
+      <UniqueIdentifier>{dddf02f9-d102-4589-86cd-6cafbb3afb69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang\platform">
+      <UniqueIdentifier>{fb058f2a-0ac5-457f-97e6-361ca70bbe95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang\platform\android">
+      <UniqueIdentifier>{b4c364b5-b3a2-474c-b21f-c4af6cd8f617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files">
+      <UniqueIdentifier>{ca912b06-43ae-4566-aecf-921a693e764b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include">
+      <UniqueIdentifier>{dde9927d-567f-4743-8ad2-9b810c18b161}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\async_msg_task.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\android\android_events.hpp">
+      <Filter>header files\ang\platform\android</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\android\android_platform.hpp">
+      <Filter>header files\ang\platform\android</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\native_callbacks.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\activity.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core_view.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\async_msg_task.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\android_events.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

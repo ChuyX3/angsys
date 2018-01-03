@@ -128,6 +128,21 @@ window_t app::main_wnd()const
 	return _main_wnd;
 }
 
+bool app::init_app(array<string> cmdl)
+{
+	return process::init_app(move(cmdl));
+}
+
+void app::update_app()
+{
+
+}
+
+bool app::exit_app()
+{
+	return process::exit_app();
+}
+
 async::iasync_t<dword> app::run_async(window_t wnd, wnd_create_args_t args)
 {
 	using namespace async;

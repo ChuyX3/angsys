@@ -489,6 +489,17 @@ xml_const_forward_iterator_t xml_node::xml_store::end()const
 	return xml_iterator_t(const_cast<xml_store*>(this), null);
 }
 
+xml_forward_iterator_t xml_node::xml_store::last()
+{
+	return xml_iterator_t(const_cast<xml_node::xml_store*>(this), (ixml_node*)xml_last());
+}
+
+xml_const_forward_iterator_t xml_node::xml_store::last()const
+{
+	return xml_iterator_t(const_cast<xml_node::xml_store*>(this), (ixml_node*)xml_last());
+}
+
+
 xml_backward_iterator_t xml_node::xml_store::rbegin()
 {
 	return xml_iterator_t(const_cast<xml_store*>(this), (ixml_node*)xml_last());

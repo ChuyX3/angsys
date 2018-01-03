@@ -664,112 +664,112 @@ safe_str<const char32_t> safe_str<const char32_t>::operator -- (int) {
 
 //
 //
-//static_array<char>::static_array() : _value(null), _size(0) {}
-//static_array<char>::static_array(type val, wsize size) : _value(val), _size(size == -1 ? strings::algorithms::string_length(val) : size) {}
-//static_array<char>::static_array(ang::nullptr_t, wsize) : _value(null), _size(0) {}
-//static_array<char>::static_array(str_t val) : _value(val.get()), _size(val.size()) {}
-//static_array<char>::static_array(static_array const& other) : _value(other._value), _size(other._size) {}
-//static_array<char>::static_array(static_array && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
-//static_array<char>::~static_array() {}
-//char* & static_array<char>::get() { return _value; }
-//char* const& static_array<char>::get()const { return _value; }
-//void static_array<char>::set(type val, wsize size) { _value = ang::move(val); _size = ang::move(size); }
-//char* static_array<char>::data()const { return _value; }
-//wsize static_array<char>::size()const { return _size; }
-//static_array<char>& static_array<char>::operator = (type val) { set(ang::move(val), strings::algorithms::string_length(val)); return*this; }
-//static_array<char>& static_array<char>::operator = (safe_str<char> const& val) { set(val.get(), strings::algorithms::string_length(val.get())); return*this; }
-//static_array<char>& static_array<char>::operator = (static_array const& val) { set(val._value, val._size); return*this; }
-//static_array<char>& static_array<char>::operator = (static_array && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
+//array_view<char>::array_view() : _value(null), _size(0) {}
+//array_view<char>::array_view(type val, wsize size) : _value(val), _size(size == -1 ? strings::algorithms::string_length(val) : size) {}
+//array_view<char>::array_view(ang::nullptr_t, wsize) : _value(null), _size(0) {}
+//array_view<char>::array_view(str_t val) : _value(val.get()), _size(val.size()) {}
+//array_view<char>::array_view(array_view const& other) : _value(other._value), _size(other._size) {}
+//array_view<char>::array_view(array_view && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
+//array_view<char>::~array_view() {}
+//char* & array_view<char>::get() { return _value; }
+//char* const& array_view<char>::get()const { return _value; }
+//void array_view<char>::set(type val, wsize size) { _value = ang::move(val); _size = ang::move(size); }
+//char* array_view<char>::data()const { return _value; }
+//wsize array_view<char>::size()const { return _size; }
+//array_view<char>& array_view<char>::operator = (type val) { set(ang::move(val), strings::algorithms::string_length(val)); return*this; }
+//array_view<char>& array_view<char>::operator = (safe_str<char> const& val) { set(val.get(), strings::algorithms::string_length(val.get())); return*this; }
+//array_view<char>& array_view<char>::operator = (array_view const& val) { set(val._value, val._size); return*this; }
+//array_view<char>& array_view<char>::operator = (array_view && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
 //
-//static_array<const char>::static_array() : _value(null), _size(0) {}
-//static_array<const char>::static_array(type val, wsize size) : _value(val), _size(size) {}
-//static_array<const char>::static_array(ang::nullptr_t, wsize size) : _value(null), _size(0) {}
-//static_array<const char>::static_array(cstr_t val) : _value(val.get()), _size(val.size()) {}
-//static_array<const char>::static_array(static_array<char> const& val) : _value(val.get()), _size(val.size()) {}
-//static_array<const char>::static_array(static_array const& other) : _value(other._value), _size(other._size) {}
-//static_array<const char>::static_array(static_array && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
-//static_array<const char>::~static_array() {}
-//char const* & static_array<const char>::get() { return _value; }
-//char const* const& static_array<const char>::get()const { return _value; }
-//void static_array<const char>::set(type val, wsize size) { _value = ang::move(val); _size = ang::move(size); }
-//char const* static_array<const char>::data()const { return _value; }
-//wsize static_array<const char>::size()const { return _size; }
-//static_array<const char>& static_array<const char>::operator = (type val) { set(ang::move(val), 1); return*this; }
-//static_array<const char>& static_array<const char>::operator = (safe_str<char const> const& val) { set(val.get(), 1); return*this; }
-//static_array<const char>& static_array<const char>::operator = (static_array const& val) { set(val._value, val._size); return*this; }
-//static_array<const char>& static_array<const char>::operator = (static_array && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
+//array_view<const char>::array_view() : _value(null), _size(0) {}
+//array_view<const char>::array_view(type val, wsize size) : _value(val), _size(size) {}
+//array_view<const char>::array_view(ang::nullptr_t, wsize size) : _value(null), _size(0) {}
+//array_view<const char>::array_view(cstr_t val) : _value(val.get()), _size(val.size()) {}
+//array_view<const char>::array_view(array_view<char> const& val) : _value(val.get()), _size(val.size()) {}
+//array_view<const char>::array_view(array_view const& other) : _value(other._value), _size(other._size) {}
+//array_view<const char>::array_view(array_view && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
+//array_view<const char>::~array_view() {}
+//char const* & array_view<const char>::get() { return _value; }
+//char const* const& array_view<const char>::get()const { return _value; }
+//void array_view<const char>::set(type val, wsize size) { _value = ang::move(val); _size = ang::move(size); }
+//char const* array_view<const char>::data()const { return _value; }
+//wsize array_view<const char>::size()const { return _size; }
+//array_view<const char>& array_view<const char>::operator = (type val) { set(ang::move(val), 1); return*this; }
+//array_view<const char>& array_view<const char>::operator = (safe_str<char const> const& val) { set(val.get(), 1); return*this; }
+//array_view<const char>& array_view<const char>::operator = (array_view const& val) { set(val._value, val._size); return*this; }
+//array_view<const char>& array_view<const char>::operator = (array_view && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
 //
-//static_array<byte>::static_array() : _value(null), _size(0) {}
-//static_array<byte>::static_array(type val, wsize size) : _value(val), _size(size == -1 ? strings::algorithms::string_length(val) : size) {}
-//static_array<byte>::static_array(ang::nullptr_t, wsize) : _value(null), _size(0) {}
-//static_array<byte>::static_array(str_t val) : _value((byte*)val.get()), _size(val.size()) {}
-//static_array<byte>::static_array(mstr_t val) : _value(val.get()), _size(val.size()) {}
-//static_array<byte>::static_array(static_array const& other) : _value(other._value), _size(other._size) {}
-//static_array<byte>::static_array(static_array && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
-//static_array<byte>::~static_array() {}
-//byte* & static_array<byte>::get() { return _value; }
-//byte* const& static_array<byte>::get()const { return _value; }
-//void static_array<byte>::set(type val, wsize size) { _value = ang::move(val); _size = ang::move(size); }
-//byte* static_array<byte>::data()const { return _value; }
-//wsize static_array<byte>::size()const { return _size; }
-//static_array<byte>& static_array<byte>::operator = (type val) { set(ang::move(val), strings::algorithms::string_length(val)); return*this; }
-//static_array<byte>& static_array<byte>::operator = (safe_str<byte> const& val) { set(val.get(), strings::algorithms::string_length(val.get())); return*this; }
-//static_array<byte>& static_array<byte>::operator = (static_array const& val) { set(val._value, val._size); return*this; }
-//static_array<byte>& static_array<byte>::operator = (static_array && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
+//array_view<byte>::array_view() : _value(null), _size(0) {}
+//array_view<byte>::array_view(type val, wsize size) : _value(val), _size(size == -1 ? strings::algorithms::string_length(val) : size) {}
+//array_view<byte>::array_view(ang::nullptr_t, wsize) : _value(null), _size(0) {}
+//array_view<byte>::array_view(str_t val) : _value((byte*)val.get()), _size(val.size()) {}
+//array_view<byte>::array_view(mstr_t val) : _value(val.get()), _size(val.size()) {}
+//array_view<byte>::array_view(array_view const& other) : _value(other._value), _size(other._size) {}
+//array_view<byte>::array_view(array_view && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
+//array_view<byte>::~array_view() {}
+//byte* & array_view<byte>::get() { return _value; }
+//byte* const& array_view<byte>::get()const { return _value; }
+//void array_view<byte>::set(type val, wsize size) { _value = ang::move(val); _size = ang::move(size); }
+//byte* array_view<byte>::data()const { return _value; }
+//wsize array_view<byte>::size()const { return _size; }
+//array_view<byte>& array_view<byte>::operator = (type val) { set(ang::move(val), strings::algorithms::string_length(val)); return*this; }
+//array_view<byte>& array_view<byte>::operator = (safe_str<byte> const& val) { set(val.get(), strings::algorithms::string_length(val.get())); return*this; }
+//array_view<byte>& array_view<byte>::operator = (array_view const& val) { set(val._value, val._size); return*this; }
+//array_view<byte>& array_view<byte>::operator = (array_view && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
 //
-//static_array<const byte>::static_array() : _value(null), _size(0) {}
-//static_array<const byte>::static_array(type val, wsize size) : _value(val), _size(size) {}
-//static_array<const byte>::static_array(ang::nullptr_t, wsize size) : _value(null), _size(0) {}
-//static_array<const byte>::static_array(cstr_t val) : _value((byte const*)val.get()), _size(val.size()) {}
-//static_array<const byte>::static_array(cmstr_t val) : _value(val.get()), _size(val.size()) {}
-//static_array<const byte>::static_array(static_array<byte> const& val) : _value(val.get()), _size(val.size()) {}
-//static_array<const byte>::static_array(static_array const& other) : _value(other._value), _size(other._size) {}
-//static_array<const byte>::static_array(static_array && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
-//static_array<const byte>::~static_array() {}
-//byte const* & static_array<const byte>::get() { return _value; }
-//byte const* const& static_array<const byte>::get()const { return _value; }
-//void static_array<const byte>::set(type val, wsize size) { _value = ang::move(val); _size = ang::move(size); }
-//byte const* static_array<const byte>::data()const { return _value; }
-//wsize static_array<const byte>::size()const { return _size; }
-//static_array<const byte>& static_array<const byte>::operator = (type val) { set(ang::move(val), 1); return*this; }
-//static_array<const byte>& static_array<const byte>::operator = (safe_str<byte const> const& val) { set(val.get(), 1); return*this; }
-//static_array<const byte>& static_array<const byte>::operator = (static_array const& val) { set(val._value, val._size); return*this; }
-//static_array<const byte>& static_array<const byte>::operator = (static_array && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
+//array_view<const byte>::array_view() : _value(null), _size(0) {}
+//array_view<const byte>::array_view(type val, wsize size) : _value(val), _size(size) {}
+//array_view<const byte>::array_view(ang::nullptr_t, wsize size) : _value(null), _size(0) {}
+//array_view<const byte>::array_view(cstr_t val) : _value((byte const*)val.get()), _size(val.size()) {}
+//array_view<const byte>::array_view(cmstr_t val) : _value(val.get()), _size(val.size()) {}
+//array_view<const byte>::array_view(array_view<byte> const& val) : _value(val.get()), _size(val.size()) {}
+//array_view<const byte>::array_view(array_view const& other) : _value(other._value), _size(other._size) {}
+//array_view<const byte>::array_view(array_view && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
+//array_view<const byte>::~array_view() {}
+//byte const* & array_view<const byte>::get() { return _value; }
+//byte const* const& array_view<const byte>::get()const { return _value; }
+//void array_view<const byte>::set(type val, wsize size) { _value = ang::move(val); _size = ang::move(size); }
+//byte const* array_view<const byte>::data()const { return _value; }
+//wsize array_view<const byte>::size()const { return _size; }
+//array_view<const byte>& array_view<const byte>::operator = (type val) { set(ang::move(val), 1); return*this; }
+//array_view<const byte>& array_view<const byte>::operator = (safe_str<byte const> const& val) { set(val.get(), 1); return*this; }
+//array_view<const byte>& array_view<const byte>::operator = (array_view const& val) { set(val._value, val._size); return*this; }
+//array_view<const byte>& array_view<const byte>::operator = (array_view && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
 //
 //
-//static_array<wchar>::static_array() : _value(null), _size(0) {}
-//static_array<wchar>::static_array(type val, wsize size) : _value(val), _size(size == -1 ? strings::algorithms::string_length(val) : size) {}
-//static_array<wchar>::static_array(ang::nullptr_t, wsize) : _value(null), _size(0) {}
-//static_array<wchar>::static_array(wstr_t val) : _value(val.get()), _size(val.size()) {}
-//static_array<wchar>::static_array(static_array const& other) : _value(other._value), _size(other._size) {}
-//static_array<wchar>::static_array(static_array && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
-//static_array<wchar>::~static_array() {}
-//wchar* & static_array<wchar>::get() { return _value; }
-//wchar* const& static_array<wchar>::get()const { return _value; }
-//void static_array<wchar>::set(type val, wsize size) { _value = ang::move(val); _size = ang::move(size); }
-//wchar* static_array<wchar>::data()const { return _value; }
-//wsize static_array<wchar>::size()const { return _size; }
-//static_array<wchar>& static_array<wchar>::operator = (type val) { set(ang::move(val), strings::algorithms::string_length(val)); return*this; }
-//static_array<wchar>& static_array<wchar>::operator = (safe_str<wchar> const& val) { set(val.get(), strings::algorithms::string_length(val.get())); return*this; }
-//static_array<wchar>& static_array<wchar>::operator = (static_array const& val) { set(val._value, val._size); return*this; }
-//static_array<wchar>& static_array<wchar>::operator = (static_array && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
+//array_view<wchar>::array_view() : _value(null), _size(0) {}
+//array_view<wchar>::array_view(type val, wsize size) : _value(val), _size(size == -1 ? strings::algorithms::string_length(val) : size) {}
+//array_view<wchar>::array_view(ang::nullptr_t, wsize) : _value(null), _size(0) {}
+//array_view<wchar>::array_view(wstr_t val) : _value(val.get()), _size(val.size()) {}
+//array_view<wchar>::array_view(array_view const& other) : _value(other._value), _size(other._size) {}
+//array_view<wchar>::array_view(array_view && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
+//array_view<wchar>::~array_view() {}
+//wchar* & array_view<wchar>::get() { return _value; }
+//wchar* const& array_view<wchar>::get()const { return _value; }
+//void array_view<wchar>::set(type val, wsize size) { _value = ang::move(val); _size = ang::move(size); }
+//wchar* array_view<wchar>::data()const { return _value; }
+//wsize array_view<wchar>::size()const { return _size; }
+//array_view<wchar>& array_view<wchar>::operator = (type val) { set(ang::move(val), strings::algorithms::string_length(val)); return*this; }
+//array_view<wchar>& array_view<wchar>::operator = (safe_str<wchar> const& val) { set(val.get(), strings::algorithms::string_length(val.get())); return*this; }
+//array_view<wchar>& array_view<wchar>::operator = (array_view const& val) { set(val._value, val._size); return*this; }
+//array_view<wchar>& array_view<wchar>::operator = (array_view && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
 //
-//static_array<const wchar>::static_array() : _value(null), _size(0) {}
-//static_array<const wchar>::static_array(type val, wsize size) : _value(val), _size(size) {}
-//static_array<const wchar>::static_array(ang::nullptr_t, wsize size) : _value(null), _size(0) {}
-//static_array<const wchar>::static_array(cwstr_t val) : _value(val.get()), _size(val.size()) {}
-//static_array<const wchar>::static_array(static_array<wchar> const& val) : _value(val.get()), _size(val.size()) {}
-//static_array<const wchar>::static_array(static_array const& other) : _value(other._value), _size(other._size) {}
-//static_array<const wchar>::static_array(static_array && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
-//static_array<const wchar>::~static_array() {}
-//wchar const* & static_array<const wchar>::get() { return _value; }
-//wchar const* const& static_array<const wchar>::get()const { return _value; }
-//void static_array<const wchar>::set(type val, wsize size) { _value = ang::move(val); _size = ang::move(size); }
-//wchar const* static_array<const wchar>::data()const { return _value; }
-//wsize static_array<const wchar>::size()const { return _size; }
-//static_array<const wchar>& static_array<const wchar>::operator = (type val) { set(ang::move(val), 1); return*this; }
-//static_array<const wchar>& static_array<const wchar>::operator = (safe_str<wchar const> const& val) { set(val.get(), 1); return*this; }
-//static_array<const wchar>& static_array<const wchar>::operator = (static_array const& val) { set(val._value, val._size); return*this; }
-//static_array<const wchar>& static_array<const wchar>::operator = (static_array && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
+//array_view<const wchar>::array_view() : _value(null), _size(0) {}
+//array_view<const wchar>::array_view(type val, wsize size) : _value(val), _size(size) {}
+//array_view<const wchar>::array_view(ang::nullptr_t, wsize size) : _value(null), _size(0) {}
+//array_view<const wchar>::array_view(cwstr_t val) : _value(val.get()), _size(val.size()) {}
+//array_view<const wchar>::array_view(array_view<wchar> const& val) : _value(val.get()), _size(val.size()) {}
+//array_view<const wchar>::array_view(array_view const& other) : _value(other._value), _size(other._size) {}
+//array_view<const wchar>::array_view(array_view && other) : _value(ang::move(other._value)), _size(ang::move(other._size)) {}
+//array_view<const wchar>::~array_view() {}
+//wchar const* & array_view<const wchar>::get() { return _value; }
+//wchar const* const& array_view<const wchar>::get()const { return _value; }
+//void array_view<const wchar>::set(type val, wsize size) { _value = ang::move(val); _size = ang::move(size); }
+//wchar const* array_view<const wchar>::data()const { return _value; }
+//wsize array_view<const wchar>::size()const { return _size; }
+//array_view<const wchar>& array_view<const wchar>::operator = (type val) { set(ang::move(val), 1); return*this; }
+//array_view<const wchar>& array_view<const wchar>::operator = (safe_str<wchar const> const& val) { set(val.get(), 1); return*this; }
+//array_view<const wchar>& array_view<const wchar>::operator = (array_view const& val) { set(val._value, val._size); return*this; }
+//array_view<const wchar>& array_view<const wchar>::operator = (array_view && val) { set(ang::move(val._value), ang::move(val._size)); return*this; }
 
 

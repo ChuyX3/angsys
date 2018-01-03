@@ -31,12 +31,12 @@ namespace ang
 
 			template<typename... args_t>
 			static T* construct(T* obj, args_t... args) {
-				return new(obj) T(args...);
+				return new(obj) T(ang::forward<args_t>(args)...);
 			}
 
 			template<typename... args_t>
 			static T* alloc_and_construct(args_t... args) {
-				return construct<args_t...>(reinterpret_cast<T*>(ang_alloc_managed_memory(sizeof(T), HINT)), args...);
+				return construct<args_t...>(reinterpret_cast<T*>(ang_alloc_managed_memory(sizeof(T), HINT)), ang::forward<args_t>(args)...);
 			}
 
 			static void destruct(T* obj) {

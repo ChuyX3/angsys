@@ -479,6 +479,11 @@ namespace ang
 				bool enable_update()const { return _enable_update; }
 				void enable_update(bool value) { _enable_update = value; }
 
+			public: //Custom Implementation
+				virtual bool init_app(array<string> cmdl) override;
+				virtual void update_app() override;
+				virtual bool exit_app() override;
+
 			public: //Events
 				events::event_listener main_wnd_created_event;
 				events::event_listener main_wnd_destroyed_event;

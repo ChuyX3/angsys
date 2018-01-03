@@ -201,8 +201,8 @@ inline bool ang::collections::ilist<T>::is_inherited_of(ang::type_name_t name)
 template<class T>
 inline ang::type_name_t ang::collections::ilist<T>::class_name()
 {
-	static string _type_name = ang::move("ang::collections::ilist<"_o + type_of<T>() + ">"_s);
-	return _type_name->cstr();
+	static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::collections::ilist<"_o += type_of<T>()) += ">"_s));
+	return name;
 }
 
 template<class T>
@@ -245,8 +245,8 @@ inline bool ang::collections::imap<K, T>::is_inherited_of(ang::type_name_t name)
 template<class K, class T>
 inline ang::type_name_t ang::collections::imap<K, T>::class_name()
 {
-	static string _type_name = ang::move("ang::collections::imap<"_o + type_of<K>() + ","_s + type_of<T>() + ">"_s);
-	return _type_name->cstr();
+	static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::collections::imap<"_o += args_list_type_of<K, T>()) += ">"_s));
+	return name;
 }
 
 template<class K, class T>
@@ -265,7 +265,7 @@ inline bool ang::collections::imap<K, T>::query_object(ang::type_name_t name, an
 		*out = static_cast<ang::collections::imap<K, T>*>(this);
 		return true;
 	}
-	else if (ang::collections::iarray<pair<K,T>>::query_object(name, out))
+	else if (ang::collections::ienum<pair<K,T>>::query_object(name, out))
 	{
 		return true;
 	}
