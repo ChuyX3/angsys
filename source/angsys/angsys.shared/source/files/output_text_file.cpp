@@ -93,6 +93,6 @@ wsize output_text_file::write(raw_str_t cstr)
 	if (hfile.is_empty())
 		return 0U;
 
-	hfile->write(cstr.ptr(), cstr.size(), cstr.encoding());
+	return hfile->write(cstr.ptr(), cstr.size(), cstr.encoding());
 }
 

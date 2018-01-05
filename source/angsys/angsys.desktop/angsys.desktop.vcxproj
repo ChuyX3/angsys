@@ -22,7 +22,7 @@
     <ProjectGuid>{6E24F0D8-08FB-4DF2-9E07-D208C4FAACE3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>angsys</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

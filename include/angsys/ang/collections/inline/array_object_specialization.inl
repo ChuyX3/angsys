@@ -272,9 +272,18 @@ bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::unmap_buffer(ang::ib
 	return false;
 }
 
-bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::can_realloc_buffer()const { return false; };
+bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::can_realloc_buffer()const { return true; }
 
-bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::realloc_buffer(wsize) { return false; };
+bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::realloc_buffer(wsize sz) {
+	if (sz <= _data.size() * sizeof(MY_TYPE))
+		return true;
+	scope_array<MY_TYPE, MY_ALLOCATOR> old = ang::move(_data);
+	_data.alloc(sz / sizeof(MY_TYPE));
+	//memcpy(_data.get(), old.get(), old.size() * sizeof(MY_TYPE));
+	for (wsize i = 0; i < old.size(); i++)
+		_data[i] = ang::move(old[i]);
+	return true;
+}
 
 bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::move(ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>& ar)
 {

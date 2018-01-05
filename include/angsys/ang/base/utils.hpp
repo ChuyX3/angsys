@@ -60,6 +60,7 @@
 
 #define TEMPLATE(...) template<ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPENAME, __VA_ARGS__))>
 
+#define COMA ,
 
 namespace ang
 {

@@ -334,7 +334,7 @@ wsize text_buffer_input_stream::read(ibuffer_view_t out, text::encoding_t encodi
 {
 	if (position() >= stream_size())
 		return false;
-	windex i = 0, c = 0; char32_t val, val2; bool b = false;
+	windex i = 0, c = 0; char32_t val; bool b = false;
 	array_view<const char32_t> end = U" \n\r\t";
 	stream_index_t last_pos = position();
 	raw_str buffer = raw_str(pointer(wsize(_buffer->buffer_ptr()) + last_pos), stream_size() - last_pos, this->format());
@@ -360,7 +360,7 @@ wsize text_buffer_input_stream::read_line(ibuffer_view_t out, text::encoding_t e
 {
 	if (position() >= stream_size())
 		return false;
-	windex i = 0, c = 0; char32_t val, val2; bool b = false;
+	windex i = 0, c = 0; char32_t val; bool b = false;
 	if(end.size() == 0)
 		end = U"\n\r";
 	stream_index_t last_pos = position();

@@ -305,7 +305,7 @@ core_thread::core_thread(wsize flags, ibuffer_view_t data, bool alloc)
 			return result;
 		}
 		, this, CREATE_SUSPENDED, &this->_id);
-	SetThreadPriority(this->_hthread, flags);
+	SetThreadPriority(this->_hthread, (int)flags);
 	if (this->_hthread == null)
 		throw_exception(except_code::invalid_memory);
 	ResumeThread(this->_hthread);

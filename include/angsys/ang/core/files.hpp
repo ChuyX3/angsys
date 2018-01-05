@@ -199,7 +199,7 @@ namespace ang
 }
 
 ANG_REGISTER_RUNTIME_TYPENAME(ang::core::files::pack_file_info_t);
-//ANG_DECLARE_ARRAY_DATA_SPECIALIZATION(LINK, ang::core::files::pack_file_info);
+ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::collections::pair<ang::core::files::path COMA ang::core::files::pack_file_info>, ang::memory::default_allocator)
 
 namespace ang
 {

@@ -70,8 +70,6 @@ namespace ang
 
 	using ang::core::delegates::var_args;
 	using ang::core::delegates::var_args_t;
-	//using ang::core::delegates::function_cast;
-	//using ang::core::delegates::function_type;
 }
 
 namespace ang
@@ -210,7 +208,6 @@ namespace ang
 				inline virtual~pseudo_member_function() {}
 			};
 
-
 		}
 	}
 
@@ -286,7 +283,6 @@ namespace ang
 
 		friend safe_pointer;
 	};
-
 
 	template<typename... args_t>
 	class object_wrapper <core::delegates::function_data<void(args_t...)>>
@@ -563,8 +559,8 @@ namespace ang
 	};
 }
 
-//ANG_DECLARE_OBJECT_VECTOR_SPECIALIZATION(LINK, ang::core::delegates::function_data<dword(pointer)>);
-//ANG_DECLARE_OBJECT_VECTOR_SPECIALIZATION(LINK, ang::core::delegates::function_data<void(ang::objptr, pointer)>);
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::core::delegates::function<dword(pointer)>, ang::memory::default_allocator);
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::core::delegates::function<void(ang::objptr, pointer)>, ang::memory::default_allocator);
 
 namespace ang
 {

@@ -33,6 +33,7 @@ core::async::idispatcher_t dispatcher;
 void on_start_app_event(objptr caller, platform::events::iapp_status_event_args_t args)
 {
 	window_t wnd = new window();
+	platform::windows::app::current_app()->set_main_wnd(wnd);
 
 	wnd->created_event += new events::created_event(&on_create_event);
 	wnd->draw_event += new events::draw_event(&on_draw_event);
@@ -40,11 +41,8 @@ void on_start_app_event(objptr caller, platform::events::iapp_status_event_args_
 	wnd->destroyed_event += new events::destroyed_event(&on_close_event);
 
 	wnd->create(new wnd_create_args("test"_s, "test"_s));
-	
-	platform::windows::app::current_app()->set_main_wnd(wnd);
 	wnd->show(showing_flag::show);
 	wnd->update_wnd();
-
 }
 
 void on_create_event(objptr caller, events::icreated_event_args_t args)

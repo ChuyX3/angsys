@@ -194,6 +194,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\array_definition.hpp">
       <Filter>header files\angsys\ang\collections</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\vector_definition.hpp">
+      <Filter>header files\angsys\ang\collections</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
@@ -320,6 +323,9 @@
       <Filter>source files</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\collections\array.cpp">
+      <Filter>source files\collections</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\collections\vector.cpp">
       <Filter>source files\collections</Filter>
     </ClCompile>
   </ItemGroup>

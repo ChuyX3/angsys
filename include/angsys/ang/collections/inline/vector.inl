@@ -203,7 +203,7 @@ inline void ang::collections::vector_buffer<T, allocator>::copy(ang::stack_array
 template<typename T, template<typename> class allocator> template<typename U>
 inline void ang::collections::vector_buffer<T, allocator>::expand(ang::array_view<U> const& ar)
 {
-	capacity(size() + ar.size());
+	capacity(size() + ar.size(), true);
 	wsize l = ar.size();
 	for (wsize i = 0U; i < l; i++)
 		push(ar[i]);
@@ -212,7 +212,7 @@ inline void ang::collections::vector_buffer<T, allocator>::expand(ang::array_vie
 template<typename T, template<typename> class allocator>  template<typename U, template<typename> class allocator2>
 inline void ang::collections::vector_buffer<T, allocator>::expand(ang::scope_array<U, allocator2> const& ar)
 {
-	capacity(size() + ar.size());
+	capacity(size() + ar.size(), true);
 	wsize l = ar.size();
 	for (wsize i = 0U; i < l; i++)
 		push(ar[i]);
@@ -221,7 +221,7 @@ inline void ang::collections::vector_buffer<T, allocator>::expand(ang::scope_arr
 template<typename T, template<typename> class allocator>  template<typename U, wsize SIZE>
 inline void ang::collections::vector_buffer<T, allocator>::expand(ang::stack_array<U, SIZE> const& ar)
 {
-	capacity(size() + SIZE);
+	capacity(size() + SIZE, true);
 	for (wsize i = 0U; i < SIZE; i++)
 		push(ar[i]);
 }

@@ -357,7 +357,54 @@ namespace ang
 
 }
 
-//#include<ang/collections/vector_specialization.h>
+#include <ang/collections/vector_definition.hpp>
+
+
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, char, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, byte, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, wchar, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, char16_t, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, char32_t, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, short, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ushort, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, int, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, uint, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, long, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ulong, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, long64, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ulong64, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, float, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, double, ang::memory::default_allocator)
+
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, char, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, byte, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, wchar, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, char16_t, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, char32_t, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, short, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ushort, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, int, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, uint, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, long, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ulong, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, long64, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ulong64, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, float, ang::memory::aligned16_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, double, ang::memory::aligned16_allocator)
+
+
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<ang::text::encoding::ascii>, ang::memory::default_allocator);
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<ang::text::encoding::unicode>, ang::memory::default_allocator);
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<ang::text::encoding::utf8>, ang::memory::default_allocator);
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<ang::text::encoding::utf16>, ang::memory::default_allocator);
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<ang::text::encoding::utf16_se>, ang::memory::default_allocator);
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<ang::text::encoding::utf16_le>, ang::memory::default_allocator);
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<ang::text::encoding::utf16_be>, ang::memory::default_allocator);
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<ang::text::encoding::utf32>, ang::memory::default_allocator);
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<ang::text::encoding::utf32_se>, ang::memory::default_allocator);
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<ang::text::encoding::utf32_le>, ang::memory::default_allocator);
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::strings::string_base<ang::text::encoding::utf32_be>, ang::memory::default_allocator);
+
 
 #ifdef  LINK
 #undef  LINK

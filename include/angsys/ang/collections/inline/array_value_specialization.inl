@@ -257,24 +257,38 @@ wsize ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::buffer_size()const
 
 wsize ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::mem_copy(wsize _s, pointer _p, text::encoding_t)
 {
-	throw(exception_t(except_code::unsupported));
-	return 0;
+	_s = min(_s, _data.size() * sizeof(MY_TYPE));
+	memcpy(_data.get(), _p, _s);
+	return _s;
 }
 
 ang::ibuffer_view_t ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::map_buffer(windex start, wsize size)
 {
-	throw(exception_t(except_code::unsupported));
-	return null;
+	return new buffer_view(this, start, size);
 }
 
-bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::unmap_buffer(ang::ibuffer_view_t&, wsize used)
+bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::unmap_buffer(ang::ibuffer_view_t& view, wsize)
 {
-	return false;
+	auto myptr = (wsize)buffer_ptr();
+	auto ptr = (wsize)view->buffer_ptr();
+	if (ptr < myptr || ptr >(myptr + buffer_size()))
+		return false;
+	view = null;
+	return true;
 }
 
-bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::can_realloc_buffer()const { return false; };
+bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::can_realloc_buffer()const { return true; }
 
-bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::realloc_buffer(wsize) { return false; };
+bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::realloc_buffer(wsize sz) {
+	if (sz <= _data.size() * sizeof(MY_TYPE))
+		return true;
+	scope_array<MY_TYPE, MY_ALLOCATOR> old = ang::move(_data);
+	_data.alloc(sz / sizeof(MY_TYPE));
+	memcpy(_data.get(), old.get(), old.size() * sizeof(MY_TYPE));
+	//for (wsize i = 0; i < old.size(); i++)
+	//	_data[i] = ang::move(old[i]);
+	return true;
+}
 
 bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::move(ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>& ar)
 {

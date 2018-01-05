@@ -79,7 +79,7 @@ namespace ang
 				file_flags_t _access_flag;
 
 			public:
-				mapped_file_buffer(system_file_t file, file_flags_t access, uint size, ulong64 offset);
+				mapped_file_buffer(system_file_t file, file_flags_t access, wsize size, ulong64 offset);
 				
 			private:
 				virtual~mapped_file_buffer();

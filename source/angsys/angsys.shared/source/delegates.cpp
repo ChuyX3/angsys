@@ -9,6 +9,17 @@ using namespace ang;
 using namespace ang::core;
 using namespace ang::core::delegates;
 
+#define MY_ALLOCATOR ang::memory::default_allocator
+
+#define MY_TYPE ang::core::delegates::function<dword(pointer)>
+#include <ang/collections/inline/vector_value_specialization.inl>
+#undef MY_TYPE
+
+#define MY_TYPE ang::core::delegates::function<void(ang::objptr, pointer)>
+#include <ang/collections/inline/vector_value_specialization.inl>
+#undef MY_TYPE
+
+#undef MY_ALLOCATOR
 
 ang::object_wrapper<ang::core::delegates::function_data<void(void)>>::object_wrapper()
 	: _ptr(null)

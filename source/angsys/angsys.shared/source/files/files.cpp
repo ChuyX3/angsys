@@ -21,6 +21,12 @@ ANG_IMPLEMENT_INTERFACE(ang::core::files, ifile_system);
 
 ANG_IMPLEMENT_ENUM(ang::core::files, file_system_priority, uint, file_system_priority::lowest);
 
+#define  MY_TYPE ang::collections::pair<ang::core::files::path, ang::core::files::pack_file_info>
+#define MY_ALLOCATOR ang::memory::default_allocator
+#include <ang/collections/inline/array_object_specialization.inl>
+#undef MY_TYPE
+#undef MY_ALLOCATOR
+
 cstr_t file_system_priority_t::to_string()const
 {
 	switch (_value)

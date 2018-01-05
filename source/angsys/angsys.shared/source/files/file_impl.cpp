@@ -23,7 +23,7 @@ using namespace ang::core::files;
 
 ////////////////////////////////////////////////////////////////////////
 
-mapped_file_buffer::mapped_file_buffer(system_file_t file, file_flags_t access, uint size, ulong64 offset)
+mapped_file_buffer::mapped_file_buffer(system_file_t file, file_flags_t access, wsize size, ulong64 offset)
 	: _original_source(null)
 	, _buffer_ptr(null)
 	, _buffer_size(0)
@@ -343,7 +343,7 @@ void file_impl::set_file_encoding(file_handle_t handle, text::encoding_t encodin
 		LARGE_INTEGER cur;
 		lint.QuadPart = 0;
 		SetFilePointerEx(handle, lint, &cur, FILE_BEGIN);
-		WriteFile(handle, ptr, sz, &overlapped, NULL);
+		WriteFile(handle, ptr, (dword)sz, &overlapped, NULL);
 		lint.QuadPart = sz;
 		SetFilePointerEx(handle, lint, &cur, FILE_BEGIN);
 		SetEndOfFile(handle);
@@ -779,7 +779,7 @@ file_size_t file_impl::position()const
 static file_cursor_t read_file(file_handle_t hfile, pointer buffer, wsize size, dword& readed)
 {
 #ifdef WINAPI_FAMILY
-	if (!ReadFile(hfile, buffer, size, &readed, NULL)) {
+	if (!ReadFile(hfile, buffer, (dword)size, &readed, NULL)) {
 		readed = 0;
 		return 0;
 	}
@@ -859,7 +859,7 @@ wsize file_impl::read(pointer buffer, wsize size, text::encoding_t encoding)
 		while (idx <= count)
 		{
 #ifdef WINAPI_FAMILY
-			if (!ReadFile(_hfile, src.ptr(), src.size(), &readed, NULL))
+			if (!ReadFile(_hfile, src.ptr(), (dword)src.size(), &readed, NULL))
 				break;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 			readed = ::read(_hfile, src.ptr(), src.size());
@@ -913,7 +913,7 @@ wsize file_impl::read(ibuffer_view_t buffer, text::encoding_t encoding)
 		while (idx <= count)
 		{
 #ifdef WINAPI_FAMILY
-			if (!ReadFile(_hfile, src.ptr(), src.size(), &readed, NULL))
+			if (!ReadFile(_hfile, src.ptr(), (dword)src.size(), &readed, NULL))
 				break;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 			readed = ::read(_hfile, src.ptr(), src.size());
@@ -941,7 +941,7 @@ wsize file_impl::read(ibuffer_view_t buffer, text::encoding_t encoding)
 static file_cursor_t write_file(file_handle_t hfile,  pointer buffer, wsize size, dword& written)
 {
 #ifdef WINAPI_FAMILY
-	if (!WriteFile(hfile, buffer, size, &written, NULL)) {
+	if (!WriteFile(hfile, buffer, (dword)size, &written, NULL)) {
 		written = 0;
 		return 0;
 	}
@@ -1068,7 +1068,7 @@ wsize file_impl::write(pointer buffer, wsize size, text::encoding_t encoding)
 			i = encoder._convert_string(dest.ptr(), dest.count() - 1, (byte*)cstr.ptr() + idx*cs, c, cstr.encoding(), true);
 			write(dest.ptr(), i * cs2, text::text_format());
 #ifdef WINAPI_FAMILY
-			if (!WriteFile(_hfile, dest.ptr(), i * cs2, &written, NULL))
+			if (!WriteFile(_hfile, dest.ptr(), (dword)(i * cs2), &written, NULL))
 				return t * cs2;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 			written = ::write(_hfile, dest.ptr(), i * cs2);
@@ -1108,7 +1108,7 @@ wsize file_impl::write(ibuffer_view_t buffer, text::encoding_t encoding)
 	if (format() == text::encoding::binary)
 	{
 #ifdef WINAPI_FAMILY
-		if (!WriteFile(_hfile, cstr.ptr(), cstr.size(), &written, NULL))
+		if (!WriteFile(_hfile, cstr.ptr(), (dword)cstr.size(), &written, NULL))
 			return 0;
 		LARGE_INTEGER lint;
 		LARGE_INTEGER cur;
@@ -1119,6 +1119,7 @@ wsize file_impl::write(ibuffer_view_t buffer, text::encoding_t encoding)
 		written = ::write(_hfile, cstr.ptr(), cstr.size());
 		_cursor = ::lseek(_hfile, 0, SEEK_CUR);
 #endif
+		return written;
 	}
 	else
 	{
@@ -1134,7 +1135,7 @@ wsize file_impl::write(ibuffer_view_t buffer, text::encoding_t encoding)
 			i = encoder._convert_string(dest.ptr(), dest.count() - 1, (byte*)cstr.ptr() + idx*cs, c, cstr.encoding(), true);
 			write(dest.ptr(), i * cs2, text::text_format());
 #ifdef WINAPI_FAMILY
-			if (!WriteFile(_hfile, dest.ptr(), i * cs2, &written, NULL))
+			if (!WriteFile(_hfile, dest.ptr(), dword(i * cs2), &written, NULL))
 				return t * cs2;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 			written = ::write(_hfile, dest.ptr(), dest.size());

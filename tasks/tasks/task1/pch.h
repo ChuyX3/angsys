@@ -20,5 +20,5 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#define VK_NO_PROTOTYPES
-#include <vulkan\vulkan.h>
+//#define VK_NO_PROTOTYPES
+//#include <vulkan\vulkan.h>

@@ -41,6 +41,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\map.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\queue.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\vector.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\vector_definition.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\async.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\delegates.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\files.hpp" />
@@ -78,6 +79,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\boolean.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\collections\array.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\collections\vector.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\delegates.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\exceptions.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\files.cpp" />

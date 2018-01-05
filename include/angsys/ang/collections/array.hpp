@@ -255,7 +255,6 @@ namespace ang
 
 #include <ang/collections/array_definition.hpp>
 
-
 ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char, ang::memory::default_allocator)
 ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, byte, ang::memory::default_allocator)
 ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, wchar, ang::memory::default_allocator)
