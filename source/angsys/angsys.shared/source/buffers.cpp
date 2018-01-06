@@ -18,6 +18,26 @@ ANG_IMPLEMENT_INTERFACE(ang, ibuffer_view);
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::ibuffer, ang::ibuffer_view);
 //ANG_IMPLEMENT_BASIC_INTERFACE(ang::text::itext_buffer, ibuffer);
 
+#define MY_TYPE ibuffer_view
+#include <ang/inline/intf_wrapper_specialization.inl>
+#undef MY_TYPE
+
+#define MY_TYPE ibuffer
+#include <ang/inline/intf_wrapper_specialization.inl>
+#undef MY_TYPE
+
+#define MY_TYPE buffer
+#include <ang/inline/object_wrapper_specialization.inl>
+#undef MY_TYPE
+
+#define MY_TYPE buffer_view
+#include <ang/inline/object_wrapper_specialization.inl>
+#undef MY_TYPE
+
+#define MY_TYPE aligned_buffer
+#include <ang/inline/object_wrapper_specialization.inl>
+#undef MY_TYPE
+
 ANG_EXTERN ang_uint64_t ang_create_hash_index_cstr(ang_cstr_t key, ang_uint64_t TS);
 
 wsize ibuffer::serialize(ibuffer_t buffer, streams::ibinary_output_stream_t stream)
@@ -400,116 +420,6 @@ pointer buffer_view::buffer_ptr()const
 wsize buffer_view::buffer_size()const
 {
 	return _size;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-
-
-
-ang::intf_wrapper<ibuffer>::intf_wrapper() : _ptr(null) {
-
-}
-
-ang::intf_wrapper<ibuffer>::intf_wrapper(ibuffer* ptr) : _ptr(null) {
-	set(ptr);
-}
-
-ang::intf_wrapper<ibuffer>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
-	ibuffer * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
-}
-
-ang::intf_wrapper<ibuffer>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
-	set(other._ptr);
-}
-
-ang::intf_wrapper<ibuffer>::intf_wrapper(std::nullptr_t const&)
-	: _ptr(null)
-{
-}
-
-ang::intf_wrapper<ibuffer>::~intf_wrapper() {
-	clean();
-}
-
-void ang::intf_wrapper<ibuffer>::clean()
-{
-	iobject * _obj = interface_cast<iobject>(_ptr);
-	if (_obj)_obj->release();
-	_ptr = null;
-}
-
-bool ang::intf_wrapper<ibuffer>::is_empty()const
-{
-	return _ptr == null;
-}
-
-ibuffer* ang::intf_wrapper<ibuffer>::get(void)const
-{
-	return _ptr;
-}
-
-void ang::intf_wrapper<ibuffer>::set(ibuffer* ptr)
-{
-	if (ptr == _ptr) return;
-	iobject * _old = interface_cast<iobject>(_ptr);
-	iobject * _new = interface_cast<iobject>(ptr);
-	_ptr = ptr;
-	if (_new)_new->add_ref();
-	if (_old)_old->release();
-}
-
-ang::intf_wrapper<ibuffer>& ang::intf_wrapper<ibuffer>::operator = (ibuffer* ptr)
-{
-	set(ptr);
-	return*this;
-}
-
-ang::intf_wrapper<ibuffer>& ang::intf_wrapper<ibuffer>::operator = (ang::intf_wrapper<ibuffer> && other)
-{
-	if (this == &other)
-		return *this;
-	clean();
-	_ptr = other._ptr;
-	other._ptr = null;
-	return*this;
-}
-
-ang::intf_wrapper<ibuffer>& ang::intf_wrapper<ibuffer>::operator = (ang::intf_wrapper<ibuffer> const& other)
-{
-	set(other._ptr);
-	return*this;
-}
-
-ibuffer ** ang::intf_wrapper<ibuffer>::addres_of(void)
-{
-	return &_ptr;
-}
-
-ang::intf_wrapper_ptr<ibuffer> ang::intf_wrapper<ibuffer>::operator & (void)
-{
-	return this;
-}
-
-ibuffer * ang::intf_wrapper<ibuffer>::operator -> (void)
-{
-	return get();
-}
-
-ibuffer const* ang::intf_wrapper<ibuffer>::operator -> (void)const
-{
-	return get();
-}
-
-ang::intf_wrapper<ibuffer>::operator ibuffer * (void)
-{
-	return get();
-}
-
-ang::intf_wrapper<ibuffer>::operator ibuffer const* (void)const
-{
-	return get();
 }
 
 //////////////////////////////////////////////////////////////////////////////////

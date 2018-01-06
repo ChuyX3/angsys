@@ -51,11 +51,12 @@
 #define ANG_OVERRIDE_ISKINDOF() virtual bool is_kind_of(ang::type_name_t)const override;
 #define ANG_OVERRIDE_QUERYOBJECT() virtual bool query_object(ang::type_name_t, ang::unknown_ptr_t) override;
 
-#define ANG_BEGIN()	{
-#define ANG_END()	};
+#define ANG_BEGIN_(...)	__VA_ARGS__ {
+#define ANG_BEGIN(...)	ANG_BEGIN_(__VA_ARGS__)
+#define ANG_END()	}
 
 #define ANG_BEGIN_INTERFACE(_LINK, _CLASS) \
-	ang_interface _LINK _CLASS ANG_BEGIN() \
+	ang_interface _LINK ANG_BEGIN(_CLASS) \
 		ANG_DECLARE_CLASSNAME() \
 		ANG_DECLARE_ISINHERITEDOF() \
 		ANG_DECLARE_OBJECTNAME() \
@@ -63,7 +64,7 @@
 		ANG_DECLARE_QUERYOBJECT()
 
 #define ANG_BEGIN_INLINE_INTERFACE(_CLASS) \
-	ang_interface _CLASS ANG_BEGIN() \
+	ang_interface ANG_BEGIN(_CLASS) \
 		inline ANG_DECLARE_CLASSNAME() \
 		inline ANG_DECLARE_ISINHERITEDOF() \
 		inline ANG_DECLARE_OBJECTNAME() \
@@ -71,7 +72,7 @@
 		inline ANG_DECLARE_QUERYOBJECT()
 
 #define ANG_BEGIN_INTERFACE_SPECIALIZATION(_CLASS, ...) \
-	ang_interface _CLASS<__VA_ARGS__> ANG_BEGIN() \
+	ang_interface ANG_BEGIN(_CLASS<__VA_ARGS__>) \
 		inline ANG_DECLARE_CLASSNAME() \
 		inline ANG_DECLARE_ISINHERITEDOF() \
 		inline ANG_DECLARE_OBJECTNAME() \
@@ -79,7 +80,7 @@
 		inline ANG_DECLARE_QUERYOBJECT()
 
 #define ANG_BEGIN_INTERFACE_FULL_SPECIALIZATION(_LINK, _CLASS, ...) \
-	ang_interface _LINK _CLASS<__VA_ARGS__> ANG_BEGIN() \
+	ang_interface _LINK  ANG_BEGIN(_CLASS<__VA_ARGS__>) \
 		ANG_DECLARE_CLASSNAME() \
 		ANG_DECLARE_ISINHERITEDOF() \
 		ANG_DECLARE_OBJECTNAME() \
@@ -87,7 +88,7 @@
 		ANG_DECLARE_QUERYOBJECT()
 
 #define ANG_BEGIN_INTERFACE_WITH_BASE(_LINK, _CLASS, ...) \
-	ang_interface _LINK _CLASS : __VA_ARGS__ ANG_BEGIN() \
+	ang_interface _LINK ANG_BEGIN(_CLASS : __VA_ARGS__) \
 		ANG_DECLARE_CLASSNAME() \
 		ANG_DECLARE_ISINHERITEDOF() \
 		ANG_DECLARE_OBJECTNAME() \
@@ -95,14 +96,14 @@
 		ANG_DECLARE_QUERYOBJECT()
 
 #define ANG_BEGIN_INLINE_INTERFACE_WITH_BASE(_CLASS, ...) \
-	ang_interface _CLASS : __VA_ARGS__ ANG_BEGIN() \
+	ang_interface  ANG_BEGIN(_CLASS : __VA_ARGS__) \
 		inline ANG_DECLARE_CLASSNAME() \
 		inline ANG_DECLARE_ISINHERITEDOF() \
 		inline ANG_DECLARE_OBJECTNAME() \
 		inline ANG_DECLARE_ISKINDOF() \
 		inline ANG_DECLARE_QUERYOBJECT()
 
-#define ANG_END_INTERFACE()	ANG_END()
+#define ANG_END_INTERFACE()	ANG_END();
 
 #define ANG_DECLARE_INTERFACE() visible \
 	ANG_OVERRIDE_CLASSNAME() \

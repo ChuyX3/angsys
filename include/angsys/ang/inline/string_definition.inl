@@ -1,52 +1,21 @@
 namespace ang
 {
-	template<> class LINK object_wrapper<strings::string_buffer<CURRENT_ENCODING>>
-	{
-
-	public:
-		static const text::encoding_enum ENCODING = CURRENT_ENCODING;
-		typedef strings::string_buffer<ENCODING> type;
-	private:
-		strings::string_buffer<ENCODING>* _ptr;
-
-	public:
-		object_wrapper();
-		object_wrapper(object_wrapper &&);
-		object_wrapper(object_wrapper const&);
-		object_wrapper(strings::string_buffer<ENCODING>*);
-		object_wrapper(ang::nullptr_t const&);
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, strings::string_buffer<CURRENT_ENCODING>)
+		visible static const text::encoding_enum ENCODING = CURRENT_ENCODING;
 		template<typename T> object_wrapper(safe_str<T> const& str);
 		template<text::encoding_enum OTHER_ENCODING> object_wrapper(object_wrapper<strings::string_buffer<OTHER_ENCODING>> const& str);
 		template<typename T, wsize N> object_wrapper(const T(&ar)[N]);
-		~object_wrapper();
 
-	public:
-		void clean();
-		void clean_unsafe();
-		bool is_empty()const;
-		strings::string_buffer<ENCODING>* get(void)const;
-		void set(strings::string_buffer<ENCODING>*);
-		strings::string_buffer<ENCODING> ** addres_of(void);
-
-	public:
-		object_wrapper& operator = (ang::nullptr_t const&);
-		object_wrapper& operator = (strings::string_buffer<ENCODING>*);
-		object_wrapper& operator = (object_wrapper<strings::string_buffer<ENCODING>> &&);
-		object_wrapper& operator = (object_wrapper<strings::string_buffer<ENCODING>> const&);
 		template<typename T> object_wrapper& operator = (safe_str<T> const& str);
 		template<typename T, wsize N> object_wrapper& operator = (const T(&ar)[N]);
 		template<text::encoding_enum OTHER_ENCODING> object_wrapper& operator = (object_wrapper<strings::string_buffer<OTHER_ENCODING>> const&);
 		template<typename T> object_wrapper& operator += (safe_str<T> const& str);
 		template<typename T, wsize N> object_wrapper& operator += (const T(&ar)[N]);
 		template<text::encoding_enum OTHER_ENCODING> object_wrapper& operator += (object_wrapper<strings::string_buffer<OTHER_ENCODING>> const&);
-		inline operator objptr()const;
-		object_wrapper_ptr<strings::string_buffer<ENCODING>> operator & (void);
-		strings::string_buffer<ENCODING> * operator -> (void);
-		strings::string_buffer<ENCODING> const* operator -> (void)const;
-		explicit operator strings::string_buffer<ENCODING> * (void);
-		explicit operator strings::string_buffer<ENCODING> const* (void)const;
+
 		operator safe_str<typename text::char_type_by_encoding<ENCODING>::char_t>(void);
 		operator safe_str<typename text::char_type_by_encoding<ENCODING>::char_t const>(void)const;
+		explicit operator raw_str_t (void)const;
 		typename text::char_type_by_encoding<ENCODING>::char_t& operator [] (int);
 		typename text::char_type_by_encoding<ENCODING>::char_t operator [] (int)const;
 		template<text::encoding_enum OTHER_ENCODING>
@@ -65,7 +34,8 @@ namespace ang
 
 		template<typename T> friend object_wrapper<strings::string_buffer<ENCODING>>& operator <<
 			(object_wrapper<strings::string_buffer<ENCODING>>&, safe_str<T> const&);
-	};
+	ANG_END_OBJECT_WRAPPER();
+
 
 	namespace strings
 	{

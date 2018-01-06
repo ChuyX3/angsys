@@ -16,9 +16,14 @@ ANG_IMPLEMENT_ENUM(ang::graphics::reflect, var_class, uint, var_class::none);
 ANG_IMPLEMENT_ENUM(ang::graphics::reflect, var_semantic, uint, var_semantic::none);
 
 
-//ANG_IMPLEMENT_VECTOR_DATA_OBJECT_SPECIALIZATION(ang::graphics::reflect::variable_desc)
-//ANG_IMPLEMENT_VECTOR_DATA_OBJECT_SPECIALIZATION(ang::graphics::reflect::attribute_desc)
-
+#define MY_ALLOCATOR ang::memory::default_allocator
+#define MY_TYPE ang::graphics::reflect::variable_desc_t
+#include <ang/collections/inline/vector_object_specialization.inl>
+#undef MY_TYPE
+#define MY_TYPE ang::graphics::reflect::attribute_desc_t
+#include <ang/collections/inline/vector_object_specialization.inl>
+#undef MY_TYPE
+#undef MY_ALLOCATOR
 
 static ang_pair<graphics::reflect::var_type, cstr_t> to_string_var_type_map[] =
 {

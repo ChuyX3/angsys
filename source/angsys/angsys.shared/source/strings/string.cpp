@@ -10,6 +10,9 @@ using namespace ang::strings;
 
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::text::itext_buffer, ang::ibuffer);
 
+#define MY_TYPE ang::text::itext_buffer
+#include <ang/inline/intf_wrapper_specialization.inl>
+#undef MY_TYPE
 
 namespace ang
 {

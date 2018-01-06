@@ -197,8 +197,9 @@ namespace ang
 			visible vcall void draw_indexed(uint count, primitive_t) pure;
 
 			visible vcall core::async::mutex_ptr_t driver_guard()const pure;
-			template<typename f_t> inline auto execute_on_thread_safe(f_t f)const {
-				return forward(core::async::scope_locker<core::async::mutex_ptr_t>::lock(driver_guard(), forward(f)));
+			template<typename f_t> inline auto execute_on_thread_safe(f_t func)const -> decltype(func()) {
+				core::async::scope_locker<core::async::mutex_ptr_t> _lock = driver_guard();
+				return func();
 			}
 		ANG_END_INTERFACE();
 

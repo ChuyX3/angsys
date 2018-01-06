@@ -25,41 +25,6 @@ namespace ang
 	typedef object_wrapper<buffer> buffer_t;
 	typedef object_wrapper<buffer_view> buffer_view_t;
 
-	template<> class LINK intf_wrapper<ibuffer>
-	{
-	public:
-		typedef ibuffer	type;
-
-	protected:
-		ibuffer* _ptr;
-
-	public:
-		intf_wrapper();
-		intf_wrapper(ibuffer*);
-		intf_wrapper(ibuffer_t &&);
-		intf_wrapper(ibuffer_t const&);
-		intf_wrapper(nullptr_t const&);
-		~intf_wrapper();
-	public:
-		void clean();
-		bool is_empty()const;
-		ibuffer* get(void)const;
-		void set(ibuffer*);
-		ibuffer ** addres_of(void);
-
-	public:
-		ibuffer_t& operator = (ibuffer*);
-		ibuffer_t& operator = (ibuffer_t &&);
-		ibuffer_t& operator = (ibuffer_t const&);
-
-		ibuffer_ptr_t operator & (void);
-		ibuffer * operator -> (void);
-		ibuffer const* operator -> (void)const;
-		operator ibuffer * (void);
-		operator ibuffer const* (void)const;
-	};
-
-
 	class LINK buffer
 		: public object
 		, public ibuffer
@@ -208,6 +173,10 @@ namespace ang
 		virtual bool can_realloc_buffer()const override;
 		virtual bool realloc_buffer(wsize) override;
 	};
+
+	ANG_OBJECT_WRAPPER_DECLARATION(LINK, buffer);
+	ANG_OBJECT_WRAPPER_DECLARATION(LINK, aligned_buffer);
+	ANG_OBJECT_WRAPPER_DECLARATION(LINK, buffer_view);
 }
 
 

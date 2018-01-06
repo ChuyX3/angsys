@@ -23,7 +23,7 @@
 using namespace ang;
 
 template<class K>
-inline uint _create_hash_index(K const& k, ang_uint64_t const TS)
+inline ang_uint64_t _create_hash_index(K const& k, ang_uint64_t const TS)
 {
 	union {
 		K k;
@@ -32,6 +32,18 @@ inline uint _create_hash_index(K const& k, ang_uint64_t const TS)
 	key.val = 0;
 	key.k = k;
 	return (uint)((2475825 + key.val + 1) % TS);
+}
+
+ang_uint64_t ang_create_hash_index_raw_str(raw_str_t const& k, ang_uint64_t const TS)
+{
+	ulong64 h = 75025;
+	text::encoder_interface encoder;
+	windex i = 0, c = k.count();
+	char32_t n;
+	text::encoder_interface::initialize_interface(&encoder, k.encoding());
+	for (i = 0; i < c;)
+		h = (h << 5) + h + encoder._to_utf32(k.ptr(), i) + 1;
+	return ang_uint64_t(h % TS);
 }
 
 ANG_EXTERN ang_uint64_t ang_create_hash_index_int32(ang_int32_t key, ang_uint64_t TS) {
@@ -101,7 +113,7 @@ namespace ang
 {
 	namespace collections
 	{
-		ulong64 hash_table_get_next_size(wsize size) { return ang_hash_table_get_next_size(size); }
+		wsize hash_table_get_next_size(wsize size) { return ang_hash_table_get_next_size(size); }
 		ulong64 create_hash_index(int value, ulong64 TS) { return _create_hash_index(value, TS); }
 		ulong64 create_hash_index(uint value, ulong64 TS) { return _create_hash_index(value, TS); }
 		ulong64 create_hash_index(long value, ulong64 TS) { return _create_hash_index(value, TS); }
@@ -111,6 +123,7 @@ namespace ang
 		ulong64 create_hash_index(float value, ulong64 TS) { return _create_hash_index(value, TS); }
 		ulong64 create_hash_index(double value, ulong64 TS) { return _create_hash_index(value, TS); }
 		ulong64 create_hash_index(pointer value, ulong64 TS) { return _create_hash_index(value, TS); }
+		ulong64 create_hash_index(raw_str_t value, ulong64 TS) { return ang_create_hash_index_raw_str(value, TS); }
 		//uint create_hash_index(cstr_t value, wsize TS) { return ang_create_hash_index(value, TS); }
 		//uint create_hash_index(cwstr_t value, wsize TS) { return ang_create_hash_index(value, TS); }
 	}

@@ -109,7 +109,7 @@ strings::string_buffer<CURRENT_ENCODING> const* object_wrapper<strings::string_b
 
 object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator strings::string_buffer<CURRENT_ENCODING> * (void) { return get(); }
 
-object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator objptr (void)const { return get(); }
+//object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator objptr (void)const { return get(); }
 
 object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator strings::string_buffer<CURRENT_ENCODING> const* (void)const { return get(); }
 
@@ -121,6 +121,11 @@ object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator safe_str<type
 object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator safe_str<typename text::char_type_by_encoding<CURRENT_ENCODING>::char_t const>(void)const
 {
 	return is_empty() ? safe_str<typename text::char_type_by_encoding<CURRENT_ENCODING>::char_t const>(null, 0) : get()->cstr();
+}
+
+object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator ang::raw_str_t (void)const
+{
+	return is_empty() ? ang::raw_str_t() : ang::raw_str_t(get()->cstr());
 }
 
 typename text::char_type_by_encoding<CURRENT_ENCODING>::char_t& object_wrapper<strings::string_buffer<CURRENT_ENCODING>>::operator [] (int idx)

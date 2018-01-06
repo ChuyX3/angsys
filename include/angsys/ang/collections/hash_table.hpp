@@ -256,23 +256,23 @@ namespace ang
 
 		protected: //Memory Operations
 			void increase_capacity();
-			inline wsize hash_index(key_t const&)const;
-			inline node_ptr_t find_node(key_t const&)const;
+			inline wsize hash_index(raw_str_t)const;
+			inline node_ptr_t find_node(raw_str_t)const;
 		};
 
 
 
 		wsize LINK hash_table_get_next_size(wsize);
-		wsize LINK create_hash_index(int, wsize);
-		wsize LINK create_hash_index(wsize, wsize);
-		wsize LINK create_hash_index(long, wsize);
-		wsize LINK create_hash_index(ulong, wsize);
-		wsize LINK create_hash_index(long64, wsize);
-		wsize LINK create_hash_index(ulong64, wsize);
-		wsize LINK create_hash_index(float, wsize);
-		wsize LINK create_hash_index(double, wsize);
-		wsize LINK create_hash_index(pointer, wsize);
-		wsize LINK create_hash_index(raw_str_t, wsize);
+		ulong64 LINK create_hash_index(int, ulong64);
+		ulong64 LINK create_hash_index(uint, ulong64);
+		ulong64 LINK create_hash_index(long, ulong64);
+		ulong64 LINK create_hash_index(ulong, ulong64);
+		ulong64 LINK create_hash_index(long64, ulong64);
+		ulong64 LINK create_hash_index(ulong64, ulong64);
+		ulong64 LINK create_hash_index(float, ulong64);
+		ulong64 LINK create_hash_index(double, ulong64);
+		ulong64 LINK create_hash_index(pointer, ulong64);
+		ulong64 LINK create_hash_index(raw_str_t, ulong64);
 	}
 
 
@@ -326,6 +326,62 @@ namespace ang
 
 		T& operator [] (K const&);
 		T operator [] (K const&)const;
+	};
+
+
+	template<text::encoding_enum ENCODING, typename T, template<typename> class allocator>
+	class object_wrapper<collections::hash_table_object<strings::string_base<ENCODING>, T, allocator>>
+	{
+	public:
+		typedef collections::hash_table_object<strings::string_base<ENCODING>, T, allocator> type;
+
+	private:
+		collections::hash_table_object<strings::string_base<ENCODING>, T, allocator>* _ptr;
+
+	public:
+		object_wrapper();
+		object_wrapper(ang::nullptr_t const&);
+		object_wrapper(collections::hash_table_object<strings::string_base<ENCODING>, T, allocator>*);
+		object_wrapper(collections::ienum<collections::pair<strings::string_base<ENCODING>, T>> const* store);
+		object_wrapper(ang::initializer_list_t<collections::pair<strings::string_base<ENCODING>, T>>);
+		object_wrapper(object_wrapper<collections::hash_table_object<strings::string_base<ENCODING>, T, allocator>> &&);
+		object_wrapper(object_wrapper<collections::hash_table_object<strings::string_base<ENCODING>, T, allocator>> const&);
+		~object_wrapper();
+
+	public:
+		void clean();
+		bool is_empty()const;
+		collections::hash_table_object<strings::string_base<ENCODING>, T, allocator>* get(void)const;
+		void set(collections::hash_table_object<strings::string_base<ENCODING>, T, allocator>*);
+		collections::hash_table_object<strings::string_base<ENCODING>, T, allocator> ** addres_of(void);
+
+		collections::forward_iterator<object_wrapper<T>> begin() { return _ptr ? _ptr->begin() : collections::forward_iterator<T>(); }
+		collections::forward_iterator<object_wrapper<T>> end() { return _ptr ? _ptr->end() : collections::forward_iterator<T>(); }
+		collections::forward_iterator<const object_wrapper<T>> begin()const { return _ptr ? ((type const*)_ptr)->begin() : collections::forward_iterator<const object_wrapper<T>>(); }
+		collections::forward_iterator<const object_wrapper<T>> end()const { return _ptr ? ((type const*)_ptr)->end() : collections::forward_iterator<const object_wrapper<T>>(); }
+
+	public:
+		object_wrapper& operator = (object_wrapper<collections::hash_table_object<strings::string_base<ENCODING>, T, allocator>> &&);
+		object_wrapper& operator = (object_wrapper<collections::hash_table_object<strings::string_base<ENCODING>, T, allocator>> const&);
+		object_wrapper& operator = (ang::nullptr_t const&);
+		object_wrapper& operator = (collections::hash_table_object<strings::string_base<ENCODING>, T, allocator>*);
+		object_wrapper& operator = (collections::ienum<collections::pair<strings::string_base<ENCODING>, T>> const* store);
+
+		object_wrapper& operator += (collections::pair<strings::string_base<ENCODING>, T>);
+
+		inline operator objptr()const;
+
+		object_wrapper_ptr<collections::hash_table_object<strings::string_base<ENCODING>, T, allocator>> operator & (void);
+		collections::hash_table_object<strings::string_base<ENCODING>, T, allocator> * operator -> (void);
+		collections::hash_table_object<strings::string_base<ENCODING>, T, allocator> const* operator -> (void)const;
+		explicit operator collections::hash_table_object<strings::string_base<ENCODING>, T, allocator> * (void);
+		explicit operator collections::hash_table_object<strings::string_base<ENCODING>, T, allocator> const* (void)const;
+
+		//T& operator [] (raw_str_t);
+		//T operator [] (raw_str_t)const;
+
+		template<typename K> T& operator [] (safe_str<K> const&);
+		template<typename K> T operator [] (safe_str<K> const&)const;
 	};
 
 }

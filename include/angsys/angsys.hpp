@@ -15,6 +15,7 @@
 #define __ANGSYS_HPP__
 
 #include <angbase.hpp>
+#include <ang/wrapper_specialization_definition.hpp>
 
 #ifdef  LINK
 #undef  LINK
@@ -84,17 +85,10 @@ namespace ang
 	template<typename T, typename... Ts> shared_ptr<T> make_shared(Ts const& ... args) {
 		return new value_wrapper<T>(args...);
 	}
-}
 
-#include <ang/istream.hpp>
-#include <ang/ibuffer.hpp>
-#include <ang/collections.hpp>
-
-namespace ang
-{
 	template<bool VALUE, typename T>
 	struct rule<VALUE, object_wrapper<T>> {
-		 static_assert(VALUE, "T is not inherited from object class...");
+		static_assert(VALUE, "T is not inherited from object class...");
 	};
 
 	template<bool VALUE, typename T>
@@ -103,7 +97,7 @@ namespace ang
 	};
 
 	template<typename T> struct is_object_type
-		: public integer_constant<bool, or_expression<is_same<object,T>::value, is_base_of<object, T>::value>::value> {
+		: public integer_constant<bool, or_expression<is_same<object, T>::value, is_base_of<object, T>::value>::value> {
 	};
 
 	template<typename T> struct is_interface_type
@@ -117,7 +111,9 @@ namespace ang
 
 
 	template<typename T, bool IS_OBJECT = is_object_type<T>::value, bool IS_INTERFACE = is_interface_type<T>::value> struct smart_ptr_type
-	{ static_assert(is_smart_ptr_type<T>::value, "T is not a smart type");  typedef T* smart_ptr_t; };
+	{
+		static_assert(is_smart_ptr_type<T>::value, "T is not a smart type");  typedef T* smart_ptr_t;
+	};
 	template<typename T> struct smart_ptr_type<T, true, false> { typedef object_wrapper<T> smart_ptr_t; typedef typename smart_ptr_t::type type; };
 	template<typename T> struct smart_ptr_type<T, false, true> { typedef intf_wrapper<T> smart_ptr_t; typedef typename smart_ptr_t::type type; };
 
@@ -183,7 +179,6 @@ namespace ang
 		return operator == (obj1, obj2);
 	}
 
-
 	/******************************************************************/
 	/* template class ang::object_wrapper_ptr :                       */
 	/*  -> reprecents a object_wrapper pointer                        */
@@ -206,13 +201,12 @@ namespace ang
 		operator T**()const { return _ptr->addres_of(); }
 	};
 
-
 	/******************************************************************/
 	/* template class ang::intf_wrapper :                             */
 	/*  -> implements handling of smart pointers for intercafes       */
 	/******************************************************************/
 
-	template<class T> class intf_wrapper : rule<is_interface_type<T>::value , intf_wrapper<T>>
+	template<class T> class intf_wrapper : rule<is_interface_type<T>::value, intf_wrapper<T>>
 	{
 	public:
 		typedef T				type;
@@ -247,7 +241,6 @@ namespace ang
 		operator type const* (void)const;
 	};
 
-
 	/******************************************************************/
 	/* template class ang::intf_wrapper_ptr :                         */
 	/*  -> reprecents a intf_wrapper pointer                          */
@@ -266,85 +259,16 @@ namespace ang
 		intf_wrapper<T>* operator ->()const { return _ptr; }
 		operator intf_wrapper<T>*()const { return _ptr; }
 		operator T**()const { return _ptr->addres_of(); }
-		operator unknown_ptr_t()const {	return _ptr->addres_of(); }
+		operator unknown_ptr_t()const { return _ptr->addres_of(); }
 		intf_wrapper<T>& operator *() { return *_ptr; }
 	};
 
-	/******************************************************************/
-	/* class ang::object :                                            */
-	/*  -> implements the base class for all library's objects        */
-	/******************************************************************/
-	class LINK object
-		: public iobject
-	{
-	private:
-		dword& ref_count;
-
-	public:
-		object(bool inc_ref = false);
-
-	protected:
-		virtual~object();
-
-		object(object &&) = delete;
-		object(object const&) = delete;
-		object& operator = (object &&) = delete;
-		object& operator = (object const&) = delete;
-
-	public:
-		virtual comparision_result_t compare(object const& obj)const;
-		virtual string to_string()const;
-		virtual wsize serialize(streams::itext_output_stream_t)const;
-		virtual wsize serialize(streams::ibinary_output_stream_t)const;
-
-	protected:
-		virtual bool auto_release();
-		virtual bool auto_release(ushort alignment);
-
-	public:
-		ANG_DECLARE_INTERFACE();
-
-	public:
-		virtual dword add_ref() override;
-		virtual dword release() override;
-
-	public:
-		pointer operator new(wsize);
-		void operator delete(pointer);
-
-#ifdef _DEBUG
-		pointer operator new(wsize, const char*, int);
-		void operator delete(pointer, const char*, int);
-#endif//_DEBUG
-
-	protected: //for aligned objects
-		pointer operator new(wsize, ushort alignment);
-		void operator delete(pointer, ushort alignment);
-
-	protected:
-		pointer operator new[](wsize)noexcept;
-		void operator delete[](pointer)noexcept;
-
-	public:
-
-		bool operator == (object const& obj)const;
-
-		bool operator != (object const& obj)const;
-
-		template<typename T>
-		typename smart_ptr_type<T>::smart_ptr_t as();
-
-		template<typename T>
-		bool as(T*& out);
-
-	};
 
 	/******************************************************************/
 	/* template class ang::object_wrapper<object> :                   */
 	/*  -> specialization of object_wrapper<object> -> objptr         */
 	/******************************************************************/
-	template<>
-	class LINK object_wrapper<object>
+	template<> class LINK object_wrapper<object>
 	{
 	public:
 		typedef object type;
@@ -381,8 +305,8 @@ namespace ang
 		inline object_wrapper(float); //float convertible
 		inline object_wrapper(double); //double convertible
 
-		//template<typename T>//object convertible
-		//inline object_wrapper(T const&);
+									   //template<typename T>//object convertible
+									   //inline object_wrapper(T const&);
 
 		template<typename T>//object convertible
 		inline object_wrapper(object_wrapper<T>);
@@ -391,7 +315,7 @@ namespace ang
 		inline object_wrapper(initializer_list_t<T>);
 
 		template<typename T> typename smart_ptr_type<T>::smart_ptr_t as();
-	
+
 	public:
 		void clean();
 		void clean_unsafe();
@@ -466,8 +390,84 @@ namespace ang
 		operator type * (void);
 		operator type const* (void)const;
 
+	};
+}
+
+#include <ang/istream.hpp>
+#include <ang/ibuffer.hpp>
+#include <ang/collections.hpp>
+
+namespace ang
+{
+	/******************************************************************/
+	/* class ang::object :                                            */
+	/*  -> implements the base class for all library's objects        */
+	/******************************************************************/
+	class LINK object
+		: public iobject
+	{
+	private:
+		dword& ref_count;
+
+	public:
+		object(bool inc_ref = false);
+
+	protected:
+		virtual~object();
+
+		object(object &&) = delete;
+		object(object const&) = delete;
+		object& operator = (object &&) = delete;
+		object& operator = (object const&) = delete;
+
+	public:
+		virtual comparision_result_t compare(object const& obj)const;
+		virtual string to_string()const;
+		virtual wsize serialize(streams::itext_output_stream_t)const;
+		virtual wsize serialize(streams::ibinary_output_stream_t)const;
+
+	protected:
+		virtual bool auto_release();
+		virtual bool auto_release(ushort alignment);
+
+	public:
+		ANG_DECLARE_INTERFACE();
+
+	public:
+		virtual dword add_ref() override;
+		virtual dword release() override;
+
+	public:
+		pointer operator new(wsize);
+		void operator delete(pointer);
+
+#ifdef _DEBUG
+		pointer operator new(wsize, const char*, int);
+		void operator delete(pointer, const char*, int);
+#endif//_DEBUG
+
+	protected: //for aligned objects
+		pointer operator new(wsize, ushort alignment);
+		void operator delete(pointer, ushort alignment);
+
+	protected:
+		pointer operator new[](wsize)noexcept;
+		void operator delete[](pointer)noexcept;
+
+	public:
+
+		bool operator == (object const& obj)const;
+
+		bool operator != (object const& obj)const;
+
+		template<typename T>
+		typename smart_ptr_type<T>::smart_ptr_t as();
+
+		template<typename T>
+		bool as(T*& out);
 
 	};
+
 
 	/******************************************************************/
 	/* class ang::safe_pointer :                                      */

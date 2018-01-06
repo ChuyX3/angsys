@@ -11,6 +11,10 @@ using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
 
+#define MY_TYPE ang::graphics::d3d11::d3d11_frame_buffer
+#include <ang/inline/object_wrapper_specialization.inl>
+#undef MY_TYPE
+
 d3d11_frame_buffer::d3d11_frame_buffer(d3d11_driver* driver)
 	: _parent_driver(driver)
 {

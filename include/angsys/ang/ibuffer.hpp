@@ -27,6 +27,9 @@ namespace ang
 		visible vcall wsize buffer_size()const pure;
 	ANG_END_INTERFACE();
 
+	ANG_INTF_WRAPPER_DECLARATION(LINK, ibuffer_view);
+
+
 	ANG_BEGIN_INTERFACE_WITH_BASE(LINK, ibuffer, ibuffer_view)
 		visible static wsize serialize(ibuffer_t, streams::ibinary_output_stream_t stream);
 		visible static wsize serialize(ibuffer_t, streams::itext_output_stream_t stream);
@@ -38,6 +41,7 @@ namespace ang
 		visible vcall bool realloc_buffer(wsize) pure;
 	ANG_END_INTERFACE();
 
+	ANG_INTF_WRAPPER_DECLARATION(LINK, ibuffer);
 }
 
 

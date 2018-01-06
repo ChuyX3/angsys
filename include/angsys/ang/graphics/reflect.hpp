@@ -2,8 +2,8 @@
 #elif !defined __ANGRAPH_REFLECT_HPP__
 #define __ANGRAPH_REFLECT_HPP__
 
-//ANG_DECLARE_VECTOR_DATA_SPECIALIZATION(LINK, ang::graphics::reflect::variable_desc)
-//ANG_DECLARE_VECTOR_DATA_SPECIALIZATION(LINK, ang::graphics::reflect::attribute_desc)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::graphics::reflect::variable_desc_t, ang::memory::default_allocator)
+ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::graphics::reflect::attribute_desc_t, ang::memory::default_allocator)
 
 namespace ang
 {

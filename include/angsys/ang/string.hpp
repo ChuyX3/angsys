@@ -68,6 +68,8 @@ namespace ang
 		};
 	}
 
+	ANG_INTF_WRAPPER_DECLARATION(LINK, text::itext_buffer);
+
 	namespace strings
 	{
 		template<encoding_enum _ENCODING>

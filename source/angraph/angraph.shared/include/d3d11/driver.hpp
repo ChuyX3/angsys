@@ -3,7 +3,7 @@
 #include <ang/graphics/angraph.hpp>
 
 #if DIRECTX_SUPPORT
-
+//ANG_OBJECT_WRAPPER_DECLARATION
 namespace ang
 {
 	namespace graphics
@@ -14,7 +14,7 @@ namespace ang
 			class d3d11_surface;
 			class d3d11_frame_buffer;
 
-			
+
 			class d3d11_texture;
 
 			typedef object_wrapper<d3d11_driver> d3d11_driver_t;
@@ -40,117 +40,9 @@ namespace ang
 		}
 	}
 
-	template<> class object_wrapper<graphics::d3d11::d3d11_driver>
-	{
-	public:
-		typedef graphics::d3d11::d3d11_driver type;
-
-	private:
-		graphics::d3d11::d3d11_driver* _ptr;
-
-	public:
-		object_wrapper();
-		object_wrapper(object_wrapper &&);
-		object_wrapper(object_wrapper const&);
-		object_wrapper(graphics::d3d11::d3d11_driver*);
-		object_wrapper(ang::nullptr_t const&);
-		~object_wrapper();
-
-	public:
-		void clean();
-		void clean_unsafe();
-		bool is_empty()const;
-		graphics::d3d11::d3d11_driver* get(void)const;
-		void set(graphics::d3d11::d3d11_driver*);
-		graphics::d3d11::d3d11_driver ** addres_of(void);
-
-	public:
-		object_wrapper& operator = (ang::nullptr_t const&);
-		object_wrapper& operator = (graphics::d3d11::d3d11_driver*);
-		object_wrapper& operator = (object_wrapper<graphics::d3d11::d3d11_driver> &&);
-		object_wrapper& operator = (object_wrapper<graphics::d3d11::d3d11_driver> const&);
-		inline operator objptr()const;
-		object_wrapper_ptr<graphics::d3d11::d3d11_driver> operator & (void);
-		graphics::d3d11::d3d11_driver * operator -> (void);
-		graphics::d3d11::d3d11_driver const* operator -> (void)const;
-		explicit operator graphics::d3d11::d3d11_driver * (void);
-		explicit operator graphics::d3d11::d3d11_driver const* (void)const;
-	};
-
-	template<> class object_wrapper<graphics::d3d11::d3d11_surface>
-	{
-	public:
-		typedef graphics::d3d11::d3d11_surface type;
-
-	private:
-		graphics::d3d11::d3d11_surface* _ptr;
-
-	public:
-		object_wrapper();
-		object_wrapper(object_wrapper &&);
-		object_wrapper(object_wrapper const&);
-		object_wrapper(graphics::d3d11::d3d11_surface*);
-		object_wrapper(ang::nullptr_t const&);
-		~object_wrapper();
-
-	public:
-		void clean();
-		void clean_unsafe();
-		bool is_empty()const;
-		graphics::d3d11::d3d11_surface* get(void)const;
-		void set(graphics::d3d11::d3d11_surface*);
-		graphics::d3d11::d3d11_surface ** addres_of(void);
-
-	public:
-		object_wrapper& operator = (ang::nullptr_t const&);
-		object_wrapper& operator = (graphics::d3d11::d3d11_surface*);
-		object_wrapper& operator = (object_wrapper<graphics::d3d11::d3d11_surface> &&);
-		object_wrapper& operator = (object_wrapper<graphics::d3d11::d3d11_surface> const&);
-		inline operator objptr()const;
-		object_wrapper_ptr<graphics::d3d11::d3d11_surface> operator & (void);
-		graphics::d3d11::d3d11_surface * operator -> (void);
-		graphics::d3d11::d3d11_surface const* operator -> (void)const;
-		explicit operator graphics::d3d11::d3d11_surface * (void);
-		explicit operator graphics::d3d11::d3d11_surface const* (void)const;
-	};
-
-	template<> class object_wrapper<graphics::d3d11::d3d11_frame_buffer>
-	{
-	public:
-		typedef graphics::d3d11::d3d11_frame_buffer type;
-
-	private:
-		graphics::d3d11::d3d11_frame_buffer* _ptr;
-
-	public:
-		object_wrapper();
-		object_wrapper(object_wrapper &&);
-		object_wrapper(object_wrapper const&);
-		object_wrapper(graphics::d3d11::d3d11_frame_buffer*);
-		object_wrapper(ang::nullptr_t const&);
-		~object_wrapper();
-
-	public:
-		void clean();
-		void clean_unsafe();
-		bool is_empty()const;
-		graphics::d3d11::d3d11_frame_buffer* get(void)const;
-		void set(graphics::d3d11::d3d11_frame_buffer*);
-		graphics::d3d11::d3d11_frame_buffer ** addres_of(void);
-
-	public:
-		object_wrapper& operator = (ang::nullptr_t const&);
-		object_wrapper& operator = (graphics::d3d11::d3d11_frame_buffer*);
-		object_wrapper& operator = (object_wrapper<graphics::d3d11::d3d11_frame_buffer> &&);
-		object_wrapper& operator = (object_wrapper<graphics::d3d11::d3d11_frame_buffer> const&);
-		inline operator objptr()const;
-		object_wrapper_ptr<graphics::d3d11::d3d11_frame_buffer> operator & (void);
-		graphics::d3d11::d3d11_frame_buffer * operator -> (void);
-		graphics::d3d11::d3d11_frame_buffer const* operator -> (void)const;
-		explicit operator graphics::d3d11::d3d11_frame_buffer * (void);
-		explicit operator graphics::d3d11::d3d11_frame_buffer const* (void)const;
-	};
-
+	ANG_OBJECT_WRAPPER_DECLARATION(, graphics::d3d11::d3d11_driver);
+	ANG_OBJECT_WRAPPER_DECLARATION(, graphics::d3d11::d3d11_surface);
+	ANG_OBJECT_WRAPPER_DECLARATION(, graphics::d3d11::d3d11_frame_buffer);
 
 	template<> class weak_ptr<graphics::d3d11::d3d11_driver> : public safe_pointer
 	{
@@ -172,8 +64,6 @@ namespace ang
 		weak_ptr& operator = (weak_ptr const& other) { safe_pointer::operator=(other);  return *this; }
 		weak_ptr& operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }
 	};
-
-
 }
 
 #include "d3d11/buffers.hpp" 
