@@ -201,8 +201,8 @@ namespace ang { \
 		collections::array_buffer<MY_TYPE, MY_ALLOCATOR>** addres_of(void); \
 		inline collections::forward_iterator<MY_TYPE> begin() { return _ptr ? _ptr->begin() : collections::iterator<MY_TYPE>(); } \
 		inline collections::forward_iterator<MY_TYPE> end() { return _ptr ? _ptr->end() : collections::iterator<MY_TYPE>(); } \
-		inline collections::forward_iterator<const MY_TYPE> begin()const { return _ptr ? _ptr->begin() : collections::iterator<const MY_TYPE>(); } \
-		inline collections::forward_iterator<const MY_TYPE> end()const { return _ptr ? _ptr->end() : collections::iterator<const MY_TYPE>(); } \
+		inline collections::forward_iterator<const MY_TYPE> begin()const { return _ptr ? ((type const*)_ptr)->begin() : collections::iterator<const MY_TYPE>(); } \
+		inline collections::forward_iterator<const MY_TYPE> end()const { return _ptr ? ((type const*)_ptr)->end() : collections::iterator<const MY_TYPE>(); } \
 	public: \
 		object_wrapper& operator = (collections::array_buffer<MY_TYPE, MY_ALLOCATOR>*); \
 		object_wrapper& operator = (const ang::nullptr_t&); \

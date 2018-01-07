@@ -413,7 +413,7 @@ array<string_base<CURRENT_ENCODING>> string_buffer<CURRENT_ENCODING>::split(type
 
 	end = encoder_.find(data, l, str_val, 1, 0);
 	if (end == invalid_index)
-		return array<string>({ cstr() });
+		return collections::to_array(&data,1);
 
 	do {
 
@@ -454,7 +454,7 @@ array<string_base<CURRENT_ENCODING>> string_buffer<CURRENT_ENCODING>::split(type
 
 	end = encoder_.find(data, l, val.cstr(), val.size(), 0);
 	if (end == invalid_index)
-		return array<string>({ cstr() });
+		return collections::to_array(&data, 1);
 
 
 	do {

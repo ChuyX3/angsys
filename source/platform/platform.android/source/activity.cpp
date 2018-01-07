@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ang/platform/android/android_platform.h"
+#include "ang/platform/android/android_platform.hpp"
 #include "async_msg_task.h"
 
 using namespace ang;

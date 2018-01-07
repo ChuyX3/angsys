@@ -39,9 +39,7 @@ namespace ang
 			public:
 				inline static_event_function(function_type f) :_function(f) {}
 				inline virtual~static_event_function() {}
-				inline void invoke(objptr caller, imsg_event_args_t args)const override {
-					_function(caller, static_cast<args_t*>(args.get()));
-				}
+				inline void invoke(objptr caller, imsg_event_args_t args)const override;
 				inline ievent_function* clone()const override {
 					return new static_event_function(_function);
 				}
@@ -60,9 +58,7 @@ namespace ang
 			public:
 				inline static_event_function(function_type f) :_function(f) {}
 				inline virtual~static_event_function() {}
-				inline void invoke(objptr caller, imsg_event_args_t args)const override {
-					_function(caller, static_cast<args_t*>(args.get()));
-				}
+				inline void invoke(objptr caller, imsg_event_args_t args)const override;
 				inline ievent_function* clone()const override {
 					return new static_event_function(_function);
 				}
@@ -82,9 +78,7 @@ namespace ang
 			public:
 				inline member_event_function(obj_t * o, function_type f) : _obj(o), _function(f) {}
 				inline virtual~member_event_function() {}
-				inline void invoke(objptr caller, imsg_event_args_t args)const override {
-					(_obj->*_function)(caller, static_cast<args_t*>(args.get()));
-				}
+				inline void invoke(objptr caller, imsg_event_args_t args)const override;
 				inline ievent_function* clone()const override {
 					return new member_event_function(_obj, _function);
 				}
@@ -104,11 +98,7 @@ namespace ang
 			public:
 				inline member_event_function(object* o, function_type f) : _obj(o), _function(f) {}
 				inline virtual~member_event_function() {}
-				inline void invoke(objptr caller, imsg_event_args_t args)const override {
-					objptr _lock = _obj.lock<object>();
-					auto lock = interface_cast<obj_t>(_lock.get());
-					if (lock != null)(lock->*_function)(caller, static_cast<args_t*>(args.get()));
-				}
+				inline void invoke(objptr caller, imsg_event_args_t args)const override;
 				inline ievent_function* clone()const override {
 					return new member_event_function(_obj.lock<object>(), _function);
 				}

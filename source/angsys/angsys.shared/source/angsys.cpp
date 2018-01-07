@@ -39,7 +39,6 @@ ang_uint64_t ang_create_hash_index_raw_str(raw_str_t const& k, ang_uint64_t cons
 	ulong64 h = 75025;
 	text::encoder_interface encoder;
 	windex i = 0, c = k.count();
-	char32_t n;
 	text::encoder_interface::initialize_interface(&encoder, k.encoding());
 	for (i = 0; i < c;)
 		h = (h << 5) + h + encoder._to_utf32(k.ptr(), i) + 1;

@@ -366,6 +366,36 @@ template<typename T> inline ang::graphics::rect<T> ang::graphics::operator * (co
 template<typename T> inline ang::graphics::rect<T> ang::graphics::operator * (T k, const ang::graphics::rect<T>& a2) { return{ a2.left * k, a2.top * k, a2.right * k, a2.bottom * k }; }
 template<typename T> inline ang::graphics::rect<T> ang::graphics::operator / (const ang::graphics::rect<T>& a1, T k) { return{ a1.left / k, a1.top / k, a1.right / k, a1.bottom / k }; }
 
+////////////////////////////////////////
 
+
+//ang::events
+
+
+template<typename calleable_t, typename args_t>
+inline void ang::platform::events::static_event_function<calleable_t, args_t>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
+{
+	_function(caller, static_cast<args_t*>(args));
+}
+
+template<typename calleable_t, typename args_t>
+inline void ang::platform::events::static_event_function<calleable_t, ang::intf_wrapper<args_t>>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
+{
+	_function(caller, static_cast<args_t*>(args.get()));
+}
+
+template<typename obj_t, bool IS_OBJECT, typename args_t>
+inline void ang::platform::events::member_event_function<obj_t, IS_OBJECT, args_t>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
+{
+	(_obj->*_function)(caller, static_cast<args_t*>(args.get()));
+}
+
+template<typename obj_t, typename args_t>
+inline void ang::platform::events::member_event_function<obj_t, true, args_t>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
+{
+	objptr _lock = _obj.lock<object>();
+	auto lock = interface_cast<obj_t>(_lock.get());
+	if (lock != null)(lock->*_function)(caller, static_cast<args_t*>(args.get()));
+}
 
 #endif//__ANG_FOUNDATION_HPP__

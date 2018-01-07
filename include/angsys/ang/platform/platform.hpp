@@ -581,6 +581,7 @@ namespace ang
 #include <ang/platform/events.hpp>
 #include <ang/platform/core_msg.hpp>
 
+
 namespace ang
 {
 	namespace platform
@@ -637,6 +638,6 @@ ANG_REGISTER_RUNTIME_VALUE_TYPE_INFORMATION(ang::platform::input::pointer_hardwa
 #undef  LINK
 #endif//LINK
 
-#include <ang/platform/inlines/graphics.inl>
+#include <ang/platform/inlines/platform.inl>
 
 #endif//__ANG_PLATFORM_HPP__
