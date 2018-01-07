@@ -120,6 +120,8 @@ namespace ang
 				void start_event(icore_thread*, var_args_t);
 				void end_event(icore_thread*, var_args_t);
 
+				virtual dword release()override;
+
 			protected:
 				mutable cond_ptr_t cond_;
 				mutable mutex_ptr_t mutex_;

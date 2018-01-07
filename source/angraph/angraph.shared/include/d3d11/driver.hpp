@@ -56,7 +56,10 @@ namespace ang
 		~weak_ptr() {}
 
 	public: //properties
-		graphics::d3d11::d3d11_driver_t lock()const;
+		graphics::d3d11::d3d11_driver_t lock()const {
+			auto ptr = safe_pointer::lock<intfptr>();
+			return reinterpret_cast<graphics::d3d11::d3d11_driver*>(ptr.get());
+		}
 
 		weak_ptr& operator = (graphics::d3d11::d3d11_driver_t obj) { safe_pointer::operator=(obj.get()); return *this; }
 		weak_ptr& operator = (graphics::d3d11::d3d11_driver* obj) { safe_pointer::operator=(obj);  return *this; }

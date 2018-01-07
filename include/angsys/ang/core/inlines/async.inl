@@ -278,7 +278,7 @@ ang::core::async::iasync_t<T> ang::core::async::task_handler<T>::create_task(ang
 	_async->_task = task::run_async([=](itask* t, var_args_t a) {
 		_async.get()->_result = func(_async.get(), args);
 	}, { _async.get(), args });
-	return _async;
+	return _async.get();
 }
 
 template<typename T>

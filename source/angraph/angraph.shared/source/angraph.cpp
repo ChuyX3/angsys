@@ -1,5 +1,10 @@
 #include "pch.h"
 
+#if defined _DEBUG
+#define new new(__FILE__, __LINE__)
+#endif
+
+
 #include <ang/graphics/angraph.hpp>
 #if DIRECTX_SUPPORT
 #include "d3d11/driver.hpp"

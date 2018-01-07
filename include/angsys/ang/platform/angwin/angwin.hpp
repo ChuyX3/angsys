@@ -9,6 +9,7 @@
 //#include <ang/xml.hpp>
 #include <ang/core/async.hpp>
 #include <ang/platform/platform.hpp>
+#include <ang/collections/map.hpp>
 
 #ifdef  LINK
 #undef  LINK
@@ -386,10 +387,12 @@ namespace ang
 				static process_t current_process();
 
 			protected:
-				mutable core::async::mutex_ptr_t mutex;
-				mutable core::async::cond_ptr_t cond;
-				array<string> cmd_args;
 				hprocces_t _process;
+				collections::unordered_map<string, objptr> properties;
+				//mutable core::async::mutex_ptr_t mutex;
+				//mutable core::async::cond_ptr_t cond;
+				//array<string> cmd_args;
+			
 
 			public:
 				process();
@@ -429,6 +432,9 @@ namespace ang
 				core::async::cond_ptr_t main_cond()const;
 				core::async::thread_t main_worker_thread()const;
 				array<string> command_line_args()const;
+
+				objptr property(cstr_t)const;
+				void property(cstr_t, objptr);
 
 			public: //Events
 				events::event_listener start_app_event;

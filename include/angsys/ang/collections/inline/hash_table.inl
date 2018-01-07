@@ -188,7 +188,7 @@ void ang::collections::hash_table_object<K, T, allocator>::increase_capacity()
 			node_ptr_t temp = _table[i];
 			_table[i] = null;
 			while (temp) {
-				index idx = create_hash_index(temp->pair.key, new_size);
+				windex idx = create_hash_index(temp->pair.key, new_size);
 				node_ptr_t entry = temp;
 				temp = temp->next;
 				entry->next = new_data[idx];
@@ -218,7 +218,7 @@ inline ang::collections::hash_table_node<K, T>* ang::collections::hash_table_obj
 	node_ptr_t temp = _table[idx];
 	while (temp != null)
 	{
-		if (comparision_operations<K,K>::template compare<comparision_same>(key, temp->pair.key))
+		if (comparision_operations<K,K>::template compare<comparision_same>(key, (raw_str_t)temp->pair.key))
 			return temp;
 		temp = temp->next;
 	}
@@ -263,6 +263,38 @@ inline ang::collections::const_forward_iterator<ang::collections::pair<K, T>> an
 	{
 		if (_table[i] != null)
 			return iterator_t(const_cast<hash_table_object*>(this), _table[i], i);
+	}
+	return iterator_t(const_cast<hash_table_object*>(this), null, 0);
+}
+
+template<typename K, typename T, template<typename> class allocator>
+inline ang::collections::forward_iterator<ang::collections::pair<K, T>> ang::collections::hash_table_object<K, T, allocator>::last()
+{
+	for (int i = (int)_capacity - 1; i >= 0; --i)
+	{
+		if (_table[i] != null)
+		{
+			node_ptr_t node = _table[i];
+			while (node->next != null)
+				node = node->next;
+			return iterator_t(const_cast<hash_table_object*>(this), node, i);
+		}
+	}
+	return iterator_t(const_cast<hash_table_object*>(this), null, 0);
+}
+
+template<typename K, typename T, template<typename> class allocator>
+inline ang::collections::const_forward_iterator<ang::collections::pair<K, T>> ang::collections::hash_table_object<K, T, allocator>::last()const
+{
+	for (int i = (int)_capacity - 1; i >= 0; --i)
+	{
+		if (_table[i] != null)
+		{
+			node_ptr_t node = _table[i];
+			while (node->next != null)
+				node = node->next;
+			return iterator_t(const_cast<hash_table_object*>(this), node, i);
+		}
 	}
 	return iterator_t(const_cast<hash_table_object*>(this), null, 0);
 }
@@ -612,7 +644,7 @@ inline bool ang::collections::hash_table_object<K, T, allocator>::remove(K const
 
 	while (temp != nullptr)
 	{
-		if (comparision_operations<K, K>::template compare<comparision_same>(temp->pair.key, key))
+		if (comparision_operations<K, K>::template compare<comparision_same>((raw_str_t)temp->pair.key, key))
 		{
 			if (temp->prev)
 			{
@@ -646,7 +678,7 @@ inline bool ang::collections::hash_table_object<K, T, allocator>::remove(K const
 
 	while (temp != nullptr)
 	{
-		if (comparision_operations<K, K>::template compare<comparision_same>(temp->pair.key, key))
+		if (comparision_operations<K, K>::template compare<comparision_same>((raw_str_t)temp->pair.key, key))
 		{
 			if (temp->prev)
 			{
@@ -701,7 +733,7 @@ inline ang::collections::iterator<ang::collections::pair<K, T>> ang::collections
 	node_ptr_t temp = _table[idx];
 	while (temp != null)
 	{
-		if (comparision_operations<K, K>::template compare<comparision_same>(key, temp->pair.key))
+		if (comparision_operations<K, K>::template compare<comparision_same>(key, (raw_str_t)temp->pair.key))
 			return iterator_t(const_cast<hash_table_object*>(this), temp, idx);
 		temp = temp->next;
 	}	
@@ -719,7 +751,7 @@ inline ang::collections::const_iterator<ang::collections::pair<K, T>> ang::colle
 	node_ptr_t temp = _table[idx];
 	while (temp != null)
 	{
-		if (comparision_operations<K, K>::template compare<comparision_same>(key, temp->pair.key))
+		if (comparision_operations<K, K>::template compare<comparision_same>(key, (raw_str_t)temp->pair.key))
 			return iterator_t(const_cast<hash_table_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -1110,7 +1142,7 @@ void ang::collections::hash_table_object<ang::strings::string_base<ENCODING>, T,
 			node_ptr_t temp = _table[i];
 			_table[i] = null;
 			while (temp) {
-				index idx = create_hash_index(temp->pair.key, new_size);
+				windex idx = create_hash_index(temp->pair.key, new_size);
 				node_ptr_t entry = temp;
 				temp = temp->next;
 				entry->next = new_data[idx];
@@ -1140,7 +1172,7 @@ inline ang::collections::hash_table_node<ang::strings::string_base<ENCODING>, T>
 	node_ptr_t temp = _table[idx];
 	while (temp != null)
 	{
-		if (comparision_operations<ang::strings::string_base<ENCODING>, ang::strings::string_base<ENCODING>>::template compare<comparision_same>(key, temp->pair.key))
+		if (comparision_operations<raw_str_t, raw_str_t>::template compare<comparision_same>(key, (raw_str_t)temp->pair.key))
 			return temp;
 		temp = temp->next;
 	}
@@ -1185,6 +1217,38 @@ inline ang::collections::const_forward_iterator<ang::collections::pair<ang::stri
 	{
 		if (_table[i] != null)
 			return iterator_t(const_cast<hash_table_object*>(this), _table[i], i);
+	}
+	return iterator_t(const_cast<hash_table_object*>(this), null, 0);
+}
+
+template<ang::text::encoding_enum ENCODING, typename T, template<typename> class allocator>
+inline ang::collections::forward_iterator<ang::collections::pair<ang::strings::string_base<ENCODING>, T>> ang::collections::hash_table_object<ang::strings::string_base<ENCODING>, T, allocator>::last()
+{
+	for (int i = (int)_capacity - 1; i >= 0; --i)
+	{
+		if (_table[i] != null)
+		{
+			node_ptr_t node = _table[i];
+			while (node->next != null)
+				node = node->next;
+			return iterator_t(const_cast<hash_table_object*>(this), node, i);
+		}
+	}
+	return iterator_t(const_cast<hash_table_object*>(this), null, 0);
+}
+
+template<ang::text::encoding_enum ENCODING, typename T, template<typename> class allocator>
+inline ang::collections::const_forward_iterator<ang::collections::pair<ang::strings::string_base<ENCODING>, T>> ang::collections::hash_table_object<ang::strings::string_base<ENCODING>, T, allocator>::last()const
+{
+	for (int i = (int)_capacity - 1; i >= 0; --i)
+	{
+		if (_table[i] != null)
+		{
+			node_ptr_t node = _table[i];
+			while (node->next != null)
+				node = node->next;
+			return iterator_t(const_cast<hash_table_object*>(this), node, i);
+		}
 	}
 	return iterator_t(const_cast<hash_table_object*>(this), null, 0);
 }
@@ -1424,9 +1488,9 @@ inline bool ang::collections::hash_table_object<ang::strings::string_base<ENCODI
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
 
-	if (find_node(key) != null)
+	if (find_node((raw_str_t)key) != null)
 		return false;
-	wsize idx = hash_index(key);
+	wsize idx = hash_index((raw_str_t)key);
 	node_ptr_t entry = allocator<node_t>::template alloc_and_construct<ang::strings::string_base<ENCODING>&&, T&&>(
 		ang::move(key),
 		ang::move(value)
@@ -1448,9 +1512,9 @@ inline bool ang::collections::hash_table_object<ang::strings::string_base<ENCODI
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
 
-	if (find_node(pair.key) != null)
+	if (find_node((raw_str_t)pair.key) != null)
 		return false;
-	wsize idx = hash_index(pair.key);
+	wsize idx = hash_index((raw_str_t)pair.key);
 	node_ptr_t entry = allocator<node_t>::template alloc_and_construct<ang::strings::string_base<ENCODING>&&, T&&>(
 		ang::move(pair.key),
 		ang::move(pair.value)
@@ -1471,10 +1535,10 @@ inline bool ang::collections::hash_table_object<ang::strings::string_base<ENCODI
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
 
-	node_ptr_t node = find_node(key);
+	node_ptr_t node = find_node((raw_str_t)key);
 	if (node == null)
 	{
-		wsize idx = hash_index(key);
+		wsize idx = hash_index((raw_str_t)key);
 		node = allocator<node_t>::template alloc_and_construct<ang::strings::string_base<ENCODING>&&, T&&>(
 			ang::move(key),
 			ang::move(value)
@@ -1500,10 +1564,10 @@ inline bool ang::collections::hash_table_object<ang::strings::string_base<ENCODI
 	if (_size > (_capacity * 0.75))
 		increase_capacity();
 
-	node_ptr_t node = find_node(pair.key);
+	node_ptr_t node = find_node((raw_str_t)pair.key);
 	if (node == null)
 	{
-		wsize idx = hash_index(pair.key);
+		wsize idx = hash_index((raw_str_t)pair.key);
 		node = allocator<node_t>::template alloc_and_construct<ang::strings::string_base<ENCODING>&&, T&&>(
 			ang::move(pair.key),
 			ang::move(pair.value)
@@ -1534,7 +1598,7 @@ inline bool ang::collections::hash_table_object<ang::strings::string_base<ENCODI
 
 	while (temp != nullptr)
 	{
-		if (comparision_operations<ang::strings::string_base<ENCODING>, ang::strings::string_base<ENCODING>>::template compare<comparision_same>(temp->pair.key, key))
+		if (comparision_operations<raw_str_t, raw_str_t>::template compare<comparision_same>((raw_str_t)temp->pair.key, key))
 		{
 			if (temp->prev)
 			{
@@ -1568,7 +1632,7 @@ inline bool ang::collections::hash_table_object<ang::strings::string_base<ENCODI
 
 	while (temp != nullptr)
 	{
-		if (comparision_operations<ang::strings::string_base<ENCODING>, ang::strings::string_base<ENCODING>>::template compare<comparision_same>(temp->pair.key, key))
+		if (comparision_operations<raw_str_t, raw_str_t>::template compare<comparision_same>((raw_str_t)temp->pair.key, key))
 		{
 			if (temp->prev)
 			{
@@ -1623,7 +1687,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::strings::string_ba
 	node_ptr_t temp = _table[idx];
 	while (temp != null)
 	{
-		if (comparision_operations<ang::strings::string_base<ENCODING>, ang::strings::string_base<ENCODING>>::template compare<comparision_same>(key, temp->pair.key))
+		if (comparision_operations<raw_str_t, raw_str_t>::template compare<comparision_same>(key, (raw_str_t)temp->pair.key))
 			return iterator_t(const_cast<hash_table_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -1641,7 +1705,7 @@ inline ang::collections::const_iterator<ang::collections::pair<ang::strings::str
 	node_ptr_t temp = _table[idx];
 	while (temp != null)
 	{
-		if (comparision_operations<ang::strings::string_base<ENCODING>, ang::strings::string_base<ENCODING>>::template compare<comparision_same>(key, temp->pair.key))
+		if (comparision_operations<raw_str_t, raw_str_t>::template compare<comparision_same>(key, (raw_str_t)temp->pair.key))
 			return iterator_t(const_cast<hash_table_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -1837,9 +1901,32 @@ inline T& ang::object_wrapper<ang::collections::hash_table_object<ang::strings::
 	return it->value;
 }
 
+template<ang::text::encoding_enum ENCODING, typename T, template<typename> class allocator> template<typename K, wsize N>
+inline T& ang::object_wrapper<ang::collections::hash_table_object<ang::strings::string_base<ENCODING>, T, allocator>>::operator [] (const K(&key_)[N])
+{
+	safe_str<const K> key = key_;
+	if (is_empty()) set(new collections::hash_table_object<ang::strings::string_base<ENCODING>, T, allocator>());
+	auto it = _ptr->find(key);
+	if (!it.is_valid()) {
+		_ptr->insert(key, T());
+		it = _ptr->find(key);
+	}// throw(exception_t(except_code::array_overflow));
+	return it->value;
+}
+
 template<ang::text::encoding_enum ENCODING, typename T, template<typename> class allocator> template<typename K>
 inline T ang::object_wrapper<ang::collections::hash_table_object<ang::strings::string_base<ENCODING>, T, allocator>>::operator [] (ang::safe_str<K> const& key)const
 {
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	auto it = get()->find(key);
+	if (!it.is_valid()) throw(exception_t(except_code::array_overflow));
+	return it->value;
+}
+
+template<ang::text::encoding_enum ENCODING, typename T, template<typename> class allocator> template<typename K, wsize N>
+inline T ang::object_wrapper<ang::collections::hash_table_object<ang::strings::string_base<ENCODING>, T, allocator>>::operator [] (const K(&key_)[N])const
+{
+	safe_str<const K> key = key_;
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = get()->find(key);
 	if (!it.is_valid()) throw(exception_t(except_code::array_overflow));

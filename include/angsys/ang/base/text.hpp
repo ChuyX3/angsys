@@ -1060,6 +1060,24 @@ namespace ang
 			static encoder<ENCODING> _encoder; return _encoder;
 		}
 
+		inline encoder_interface const& get_encoder(text::encoding_t encoding) {
+			switch (encoding.get())
+			{
+			default:
+			case text::encoding::ascii: return *(encoder_interface*)(void*)&get_encoder<encoding::ascii>();
+			case text::encoding::utf8: return *(encoder_interface*)(void*)&get_encoder<encoding::utf8>();
+			case text::encoding::unicode: return *(encoder_interface*)(void*)&get_encoder<encoding::unicode>();
+			case text::encoding::utf16: return *(encoder_interface*)(void*)&get_encoder<encoding::utf16>();
+			case text::encoding::utf16_be: return *(encoder_interface*)(void*)&get_encoder<encoding::utf16_be>();
+			case text::encoding::utf16_le: return *(encoder_interface*)(void*)&get_encoder<encoding::utf16_le>();
+			case text::encoding::utf16_se: return *(encoder_interface*)(void*)&get_encoder<encoding::utf16_se>();
+			case text::encoding::utf32: return *(encoder_interface*)(void*)&get_encoder<encoding::utf32>();
+			case text::encoding::utf32_be: return *(encoder_interface*)(void*)&get_encoder<encoding::utf32_be>();
+			case text::encoding::utf32_le: return *(encoder_interface*)(void*)&get_encoder<encoding::utf32_le>();
+			case text::encoding::utf32_se: return *(encoder_interface*)(void*)&get_encoder<encoding::utf32_se>();
+			}
+		}
+
 		template<typename T>
 		inline encoder<encoding_by_type<T>::encoding()> const& get_encoder_by_type() {
 			return get_encoder<encoding_by_type<T>::encoding()>();
@@ -1314,6 +1332,62 @@ namespace ang
 	using strings::mstring;
 	using strings::u16string;
 	using strings::u32string;
+
+	template<> struct comparision_operation<raw_str_t, raw_str_t, comparision_same, true> { static bool compare(const raw_str_t& a1, const raw_str_t& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), a2.ptr(), a2.encoding()) == 0; } };
+	template<> struct comparision_operation<raw_str_t, raw_str_t, comparision_same, false> { static bool compare(const raw_str_t& a1, const raw_str_t& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), a2.ptr(), a2.encoding()) == 0; } };
+
+	template<> struct comparision_operation<raw_str_t, raw_str_t, comparision_diferent, true> { static bool compare(const raw_str_t& a1, const raw_str_t& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), a2.ptr(), a2.encoding()) != 0; } };
+	template<> struct comparision_operation<raw_str_t, raw_str_t, comparision_diferent, false> { static bool compare(const raw_str_t& a1, const raw_str_t& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), a2.ptr(), a2.encoding()) != 0; } };
+
+	template<> struct comparision_operation<raw_str_t, raw_str_t, comparision_same_or_minor, true> { static bool compare(const raw_str_t& a1, const raw_str_t& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), a2.ptr(), a2.encoding()) <= 0; } };
+	template<> struct comparision_operation<raw_str_t, raw_str_t, comparision_same_or_minor, false> { static bool compare(const raw_str_t& a1, const raw_str_t& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), a2.ptr(), a2.encoding()) <= 0; } };
+
+	template<> struct comparision_operation<raw_str_t, raw_str_t, comparision_same_or_major, true> { static bool compare(const raw_str_t& a1, const raw_str_t& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), a2.ptr(), a2.encoding()) >= 0; } };
+	template<> struct comparision_operation<raw_str_t, raw_str_t, comparision_same_or_major, false> { static bool compare(const raw_str_t& a1, const raw_str_t& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), a2.ptr(), a2.encoding()) >= 0; } };
+
+	template<> struct comparision_operation<raw_str_t, raw_str_t, comparision_minor, true> { static bool compare(const raw_str_t& a1, const raw_str_t& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), a2.ptr(), a2.encoding()) < 0; } };
+	template<> struct comparision_operation<raw_str_t, raw_str_t, comparision_minor, false> { static bool compare(const raw_str_t& a1, const raw_str_t& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), a2.ptr(), a2.encoding()) < 0; } };
+
+	template<> struct comparision_operation<raw_str_t, raw_str_t, comparision_major, true> { static bool compare(const raw_str_t& a1, const raw_str_t& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), a2.ptr(), a2.encoding()) > 0; } };
+	template<> struct comparision_operation<raw_str_t, raw_str_t, comparision_major, false> { static bool compare(const raw_str_t& a1, const raw_str_t& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), a2.ptr(), a2.encoding()) > 0; } };
+
+
+	template<typename T> struct comparision_operation<raw_str_t, safe_str<T>, comparision_same, true> { static bool compare(const raw_str_t& a1, const safe_str<T>& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), (void*)a2.cstr(), text::encoding_by_type<T>::encoding()) == 0; } };
+	template<typename T> struct comparision_operation<raw_str_t, safe_str<T>, comparision_same, false> { static bool compare(const raw_str_t& a1, const safe_str<T>& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), (void*)a2.cstr(), text::encoding_by_type<T>::encoding()) == 0; } };
+
+	template<typename T> struct comparision_operation<raw_str_t, safe_str<T>, comparision_diferent, true> { static bool compare(const raw_str_t& a1, const safe_str<T>& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), (void*)a2.cstr(), text::encoding_by_type<T>::encoding()) != 0; } };
+	template<typename T> struct comparision_operation<raw_str_t, safe_str<T>, comparision_diferent, false> { static bool compare(const raw_str_t& a1, const safe_str<T>& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), (void*)a2.cstr(), text::encoding_by_type<T>::encoding()) != 0; } };
+
+	template<typename T> struct comparision_operation<raw_str_t, safe_str<T>, comparision_same_or_minor, true> { static bool compare(const raw_str_t& a1, const safe_str<T>& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), (void*)a2.cstr(), text::encoding_by_type<T>::encoding()) <= 0; } };
+	template<typename T> struct comparision_operation<raw_str_t, safe_str<T>, comparision_same_or_minor, false> { static bool compare(const raw_str_t& a1, const safe_str<T>& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), (void*)a2.cstr(), text::encoding_by_type<T>::encoding()) <= 0; } };
+
+	template<typename T> struct comparision_operation<raw_str_t, safe_str<T>, comparision_same_or_major, true> { static bool compare(const raw_str_t& a1, const safe_str<T>& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), (void*)a2.cstr(), text::encoding_by_type<T>::encoding()) >= 0; } };
+	template<typename T> struct comparision_operation<raw_str_t, safe_str<T>, comparision_same_or_major, false> { static bool compare(const raw_str_t& a1, const safe_str<T>& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), (void*)a2.cstr(), text::encoding_by_type<T>::encoding()) >= 0; } };
+
+	template<typename T> struct comparision_operation<raw_str_t, safe_str<T>, comparision_minor, true> { static bool compare(const raw_str_t& a1, const safe_str<T>& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), (void*)a2.cstr(), text::encoding_by_type<T>::encoding()) < 0; } };
+	template<typename T> struct comparision_operation<raw_str_t, safe_str<T>, comparision_minor, false> { static bool compare(const raw_str_t& a1, const safe_str<T>& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), (void*)a2.cstr(), text::encoding_by_type<T>::encoding()) < 0; } };
+
+	template<typename T> struct comparision_operation<raw_str_t, safe_str<T>, comparision_major, true> { static bool compare(const raw_str_t& a1, const safe_str<T>& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), (void*)a2.cstr(), text::encoding_by_type<T>::encoding()) > 0; } };
+	template<typename T> struct comparision_operation<raw_str_t, safe_str<T>, comparision_major, false> { static bool compare(const raw_str_t& a1, const safe_str<T>& a2) { return text::get_encoder(a1.encoding())._compare_string(a1.ptr(), (void*)a2.cstr(), text::encoding_by_type<T>::encoding()) > 0; } };
+
+
+	template<typename T> struct comparision_operation<safe_str<T>, raw_str_t, comparision_same, true> { static bool compare(const safe_str<T>& a1, const raw_str_t& a2) { return text::get_encoder_by_type<T>().compare(a1.cstr(), a2) == 0; } };
+	template<typename T> struct comparision_operation<safe_str<T>, raw_str_t, comparision_same, false> { static bool compare(const safe_str<T>& a1, const raw_str_t& a2) { return text::get_encoder_by_type<T>().compare(a1.cstr(), a2) == 0; } };
+
+	template<typename T> struct comparision_operation<safe_str<T>, raw_str_t, comparision_diferent, true> { static bool compare(const safe_str<T>& a1, const raw_str_t& a2) { return text::get_encoder_by_type<T>().compare(a1.cstr(), a2) != 0; } };
+	template<typename T> struct comparision_operation<safe_str<T>, raw_str_t, comparision_diferent, false> { static bool compare(const safe_str<T>& a1, const raw_str_t& a2) { return text::get_encoder_by_type<T>().compare(a1.cstr(), a2) != 0; } };
+
+	template<typename T> struct comparision_operation<safe_str<T>, raw_str_t, comparision_same_or_minor, true> { static bool compare(const safe_str<T>& a1, const raw_str_t& a2) { return text::get_encoder_by_type<T>().compare(a1.cstr(), a2) <= 0; } };
+	template<typename T> struct comparision_operation<safe_str<T>, raw_str_t, comparision_same_or_minor, false> { static bool compare(const safe_str<T>& a1, const raw_str_t& a2) { return text::get_encoder_by_type<T>().compare(a1.cstr(), a2) <= 0; } };
+
+	template<typename T> struct comparision_operation<safe_str<T>, raw_str_t, comparision_same_or_major, true> { static bool compare(const safe_str<T>& a1, const raw_str_t& a2) { return text::get_encoder_by_type<T>().compare(a1.cstr(), a2) >= 0; } };
+	template<typename T> struct comparision_operation<safe_str<T>, raw_str_t, comparision_same_or_major, false> { static bool compare(const safe_str<T>& a1, const raw_str_t& a2) { return text::get_encoder_by_type<T>().compare(a1.cstr(), a2) >= 0; } };
+
+	template<typename T> struct comparision_operation<safe_str<T>, raw_str_t, comparision_minor, true> { static bool compare(const safe_str<T>& a1, const raw_str_t& a2) { return text::get_encoder_by_type<T>().compare(a1.cstr(), a2) < 0; } };
+	template<typename T> struct comparision_operation<safe_str<T>, raw_str_t, comparision_minor, false> { static bool compare(const safe_str<T>& a1, const raw_str_t& a2) { return text::get_encoder_by_type<T>().compare(a1.cstr(), a2) < 0; } };
+
+	template<typename T> struct comparision_operation<safe_str<T>, raw_str_t, comparision_major, true> { static bool compare(const safe_str<T>& a1, const raw_str_t& a2) { return text::get_encoder_by_type<T>().compare(a1.cstr(), a2) > 0; } };
+	template<typename T> struct comparision_operation<safe_str<T>, raw_str_t, comparision_major, false> { static bool compare(const safe_str<T>& a1, const raw_str_t& a2) { return text::get_encoder_by_type<T>().compare(a1.cstr(), a2) > 0; } };
 
 }
 

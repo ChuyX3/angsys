@@ -30,6 +30,9 @@ namespace ang
 		, public ibuffer
 	{
 	public:
+		static buffer_t new_buffer(wsize);
+
+	public:
 		pointer operator new (wsize, ulong64)throw();
 		void operator delete(pointer, ulong64)throw();
 

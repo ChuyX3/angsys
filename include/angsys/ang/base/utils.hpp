@@ -237,6 +237,7 @@ namespace ang
 		comparision_same_or_major,
 		comparision_minor,
 		comparision_major,
+		comparision_compare
 	};
 
 	template<typename T1, typename T2, comparision_type, typename = void>

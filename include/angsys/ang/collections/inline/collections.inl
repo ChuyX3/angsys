@@ -272,6 +272,54 @@ inline bool ang::collections::imap<K, T>::query_object(ang::type_name_t name, an
 	return false;
 }
 
+
+
+template<ang::text::encoding_enum ENCODING, class T>
+inline bool ang::collections::imap<ang::strings::string_base<ENCODING>, T>::is_kind_of(ang::type_name_t name)const
+{
+	return (name == ang::collections::imap<ang::strings::string_base<ENCODING>, T>::class_name())
+		|| (name == ang::collections::ienum<pair<ang::strings::string_base<ENCODING>, T>>::class_name());
+}
+
+template<ang::text::encoding_enum ENCODING, class T>
+inline bool ang::collections::imap<ang::strings::string_base<ENCODING>, T>::is_inherited_of(ang::type_name_t name)
+{
+	return (name == ang::collections::imap<ang::strings::string_base<ENCODING>, T>::class_name())
+		|| (name == ang::collections::ienum<pair<ang::strings::string_base<ENCODING>, T>>::class_name());
+}
+
+template<ang::text::encoding_enum ENCODING, class T>
+inline ang::type_name_t ang::collections::imap<ang::strings::string_base<ENCODING>, T>::class_name()
+{
+	static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::collections::imap<"_o += args_list_type_of<ang::strings::string_base<ENCODING>, T>()) += ">"_s));
+	return name;
+}
+
+template<ang::text::encoding_enum ENCODING, class T>
+inline ang::type_name_t ang::collections::imap<ang::strings::string_base<ENCODING>, T>::object_name()const
+{
+	return ang::collections::imap<ang::strings::string_base<ENCODING>, T>::class_name();
+}
+
+template<ang::text::encoding_enum ENCODING, class T>
+inline bool ang::collections::imap<ang::strings::string_base<ENCODING>, T>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+{
+	if (out == null)
+		return false;
+	if (name == ang::collections::imap<ang::strings::string_base<ENCODING>, T>::class_name())
+	{
+		*out = static_cast<ang::collections::imap<ang::strings::string_base<ENCODING>, T>*>(this);
+		return true;
+	}
+	else if (ang::collections::ienum<pair<ang::strings::string_base<ENCODING>, T>>::query_object(name, out))
+	{
+		return true;
+	}
+	return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 template<class T>

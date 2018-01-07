@@ -3,9 +3,23 @@
   <ItemGroup>
     <ClInclude Include="targetver.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="include\engine.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="source\engine.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{71e4b9bf-27c0-442f-b8d9-e735c6fbf223}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{9ab038ba-0abc-43a9-b385-da1456a10750}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

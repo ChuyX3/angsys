@@ -2,6 +2,11 @@
 #include "ang/core/async.hpp"
 #include "thread.hpp"
 
+#if defined _DEBUG
+#define new new(__FILE__, __LINE__)
+#endif
+
+
 using namespace ang;
 using namespace ang::core;
 using namespace ang::core::async;
@@ -134,7 +139,7 @@ core_thread_t core_thread_manager::attach_this_thread(core_thread_t thread, bool
 	thread->_state = async_action_status::attached; //initializing
 	thread->_is_main = is_main;
 	if (alloc && !data.is_empty()) {
-		thread->_tle_data = new(data->buffer_size()) buffer();
+		thread->_tle_data = buffer::new_buffer(data->buffer_size());
 		memcpy(thread->_tle_data->buffer_ptr(), data->buffer_ptr(), data->buffer_size());
 	}
 	else {
@@ -206,7 +211,7 @@ core_thread_t core_thread_manager::unregist_thread(core_thread_t thread)
 dword core_thread::core_thread_start_routine(pointer args)
 {
 	auto manager = core_thread_manager::instance();
-	core_thread_t thread = (core_thread*)(args);
+	core_thread* thread = (core_thread*)(args);
 
 	manager->main_mutex().lock();
 	thread->_state = async_action_status::wait_for_start; //wait for start routine
@@ -237,7 +242,7 @@ dword core_thread::core_thread_start_routine(pointer args)
 		manager->main_mutex().unlock();
 
 		try {
-			routine(thread.get(), user_args);
+			routine(thread, user_args);
 			result = 0;
 		}
 		catch (...) {}
@@ -279,7 +284,7 @@ core_thread::core_thread(wsize flags, ibuffer_view_t data, bool alloc)
 	this->_state = async_action_status::initializing; //initializing
 	this->_is_main = false;
 	if (alloc && !data.is_empty()) {
-		this->_tle_data = new(data->buffer_size()) buffer();
+		this->_tle_data = buffer::new_buffer(data->buffer_size());
 		memcpy(this->_tle_data->buffer_ptr(), data->buffer_ptr(), data->buffer_size());
 	}
 	else {
@@ -331,7 +336,7 @@ ibuffer_view_t core_thread::tle_buffer()const { return _tle_data; }
 
 void core_thread::set_tle_data(ibuffer_view_t data, bool alloc) {
 	if (alloc && !data.is_empty()) {
-		this->_tle_data = new(data->buffer_size()) buffer();
+		this->_tle_data = buffer::new_buffer(data->buffer_size());
 		memcpy(this->_tle_data->buffer_ptr(), data->buffer_ptr(), data->buffer_size());
 	}
 	else {
@@ -463,7 +468,8 @@ bool core_thread::join()const
 dword dispatcher_thread::core_thread_start_routine(pointer args)
 {
 	auto manager = core_thread_manager::instance();
-	dispatcher_thread_t thread = (dispatcher_thread*)(args);
+	dispatcher_thread* thread = (dispatcher_thread*)(args);
+
 	manager->main_mutex().lock();
 	manager->main_mutex().unlock();
 
@@ -471,19 +477,20 @@ dword dispatcher_thread::core_thread_start_routine(pointer args)
 	thread->_state = async_action_status::wait_for_start; //wait for start routine
 	thread->cond_->signal();
 	thread->mutex_->unlock();
-	thread->sleep(1);
+	//thread->sleep(1);
 	dword result = -1;
 
 	while (true)
 	{
-		thread->sleep(1);
+		//thread->sleep(1);
 		thread->mutex_->lock();
 		switch (thread->_state.value())
 		{
 		case async_action_status::canceled:
 		case async_action_status::completed:
+	COMPLETED:
 			thread->_state = async_action_status::completed;
-			thread->end_event(thread.get(), null);
+			thread->end_event(thread, null);
 			thread->cond_->signal();
 			thread->mutex_->unlock();
 			return result;
@@ -500,7 +507,7 @@ dword dispatcher_thread::core_thread_start_routine(pointer args)
 				thread->_state = async_action_status::running; //running worker thread
 				thread->cond_->signal();
 				thread->mutex_->unlock();
-				thread->start_event(thread.get(), null);
+				thread->start_event(thread, null);
 				result = 0;
 			}
 			break;
@@ -515,13 +522,12 @@ dword dispatcher_thread::core_thread_start_routine(pointer args)
 				thread_routine_t routine;
 				thread->task_queue_->pop(routine);
 				thread->mutex_->unlock();
-				routine(thread.get(), null);
+				routine(thread, null);
 				thread->mutex_->lock();
 			}
-			if (thread->_join_request)	
-				thread->_state = async_action_status::completed;
+			if (thread->_join_request) goto COMPLETED;// thread->_state = async_action_status::completed;
 			thread->mutex_->unlock();
-			thread->update_event(thread.get());
+			thread->update_event(thread);
 			break;
 
 		default:
@@ -575,6 +581,10 @@ dispatcher_thread::~dispatcher_thread()
 	
 }
 
+dword dispatcher_thread::release()
+{
+	return object::release();
+}
 
 void dispatcher_thread::start_event(icore_thread*, var_args_t)
 {

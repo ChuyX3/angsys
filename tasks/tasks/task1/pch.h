@@ -13,7 +13,10 @@
 #define ANGSYS_DYNAMIC_LIBRARY
 #include <angsys.hpp>
 #include <ang/platform/angwin/angwin.hpp>
+#include <ang/graphics/angraph.hpp>
+
 #pragma comment(lib, "angsys.lib")
+#pragma comment(lib, "angraph.lib")
 #pragma comment(lib, "angsys.platform.lib")
 // TODO: reference additional headers your program requires here
 

@@ -39,10 +39,10 @@ namespace ang
 
 			public: //properties
 				core_msg_t msg()const;
-				index push_arg(objptr);
+				windex push_arg(objptr);
 				ulong64 wparam()const;
 				long64 lparam()const;
-				objptr arg(index i)const;
+				objptr arg(windex i)const;
 				array_view<objptr> args()const;
 				dword result()const;
 				void result(dword)const;

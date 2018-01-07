@@ -3,6 +3,7 @@
 #include "ang/core/time.hpp"
 #include "ang/platform/angwin/angwin.hpp"
 #include "async_msg_task.h"
+#include <ang/collections/map.hpp>
 
 using namespace ang;
 using namespace ang::core;
@@ -24,6 +25,7 @@ namespace ang {
 				events::message_t nonqueue_msg;
 				core::async::thread_t main_thread;
 			}*hprocess_t;
+			typedef const _hprocess* const_hprocess_t;
 
 			process* _current_process = null;
 		}
@@ -39,15 +41,19 @@ process_t process::current_process()
 
 process::process()
 	: _process(null)
-	, mutex(make_shared<core::async::mutex>())
-	, cond(make_shared<core::async::cond>())
+	, properties(new collections::unordered_map_object<string, objptr>())
+	//, cond(make_shared<core::async::cond>())
 	, start_app_event(this, [](events::core_msg_t code) { return code == events::win_msg_enum::start_app; })
 	, exit_app_event(this, [](events::core_msg_t code) { return code == events::win_msg_enum::exit_app; })
 {
 	if (_current_process != null)
 		throw(exception_t(except_code::two_singleton));
 	_current_process = this;
-//	ang::instance_manager::regist_instance(class_name(), this);
+	
+	properties["cmd_args"] = null;
+	properties["main_cond"] = make_shared<core::async::cond_t>();
+	properties["main_mutex"] = make_shared<core::async::mutex_t>();
+	properties["main_step_timer"] = make_shared<core::time::step_timer>();
 }
 
 process::~process()
@@ -107,15 +113,11 @@ bool process::is_created()const
 
 bool process::create(pointer a)
 {
-	if (a != null)
-		cmd_args = reinterpret_cast<collections::array_buffer<string>*>(a);
-
 	auto handle = new _hprocess();
 	handle->close_request = false;
 	handle->nonqueue_msg = null;
 	handle->main_thread = core::async::thread::main_thread();
 	handle->hmodule = GetModuleHandle(NULL);
-
 	attach(handle);
 
 	return true;
@@ -139,33 +141,32 @@ void process::detach()
 	_process = null;
 }
 
-bool process::is_worker_thread()const
-{
-	if (!is_created())
-		return false;
-	return hprocess_t(_process)->main_thread->is_current_thread();
+bool process::is_worker_thread()const {
+	return (!is_created()) ? false : hprocess_t(_process)->main_thread->is_current_thread();
 }
 
-core::async::mutex_ptr_t process::main_mutex()const
-{
-	return mutex;
+core::async::mutex_ptr_t process::main_mutex()const {
+	return properties["main_mutex"].as<core::async::mutex_t>();
 }
 
-core::async::cond_ptr_t process::main_cond()const
-{
-	return cond;
+core::async::cond_ptr_t process::main_cond()const {
+	return properties["main_cond"].as<core::async::cond_t>();
 }
 
-core::async::thread_t process::main_worker_thread()const
-{
-	if (!is_created())
-		return null;
-	return hprocess_t(_process)->main_thread;
+core::async::thread_t process::main_worker_thread()const {
+	return (!is_created()) ? null : const_hprocess_t(_process)->main_thread;
 }
 
-array<string> process::command_line_args()const
-{
-	return cmd_args;
+array<string> process::command_line_args()const {
+	return properties["cmd_args"].as<array<string>>();
+}
+
+objptr process::property(cstr_t key)const {
+	return properties[key];
+}
+
+void process::property(cstr_t key, objptr obj) {
+	properties[key] = obj;
 }
 
 events::event_trigger<process>const& process::trigger(events::event_listener const& listener)const
@@ -177,7 +178,7 @@ dword process::run()
 {
 	if (!create(null))
 		return false;
-	if (!init_app(cmd_args))
+	if (!init_app(command_line_args()))
 	{
 		close();
 		return -1;
@@ -191,7 +192,7 @@ dword process::run(array<string> args)
 {
 	if (!create(args.get()))
 		return false;
-	if (!init_app(cmd_args))
+	if (!init_app(command_line_args()))
 	{
 		close();
 		return -1;
@@ -203,8 +204,15 @@ dword process::run(array<string> args)
 
 bool process::update()
 {
+	double total = 8000.0; // 8 mS
+	core::time::step_timer timer;
+	timer.reset();
 	try {
-		dispatch_msg();
+		while (total > 0 && dispatch_msg())
+		{	
+			timer.update();
+			total -= timer.delta();
+		}
 		update_app();
 	}
 	catch (exception_t e)
@@ -222,12 +230,13 @@ bool process::init_app(array<string> cmd)
 	m->push_arg(cmd.get());
 	try { trigger(start_app_event).invoke(new platform::events::app_status_event_args(m)); }
 	catch (...) {}
+	properties["main_step_timer"].as<core::time::step_timer>()->reset();
 	return true;
 }
 
 void process::update_app()
 {
-
+	properties["main_step_timer"].as<core::time::step_timer>()->update();
 }
 
 bool process::exit_app()
@@ -236,6 +245,7 @@ bool process::exit_app()
 	m->push_arg(this);
 	try { trigger(exit_app_event).invoke(new platform::events::app_status_event_args(m)); }
 	catch (...) {}
+
 	return close();
 }
 
@@ -252,6 +262,7 @@ dword process::on_message_dispatcher(events::message_t msg)
 			dword res = 0;
 			auto task = reinterpret_cast<async_msg_task*>(msg->wparam());
 			auto reciever = reinterpret_cast<imessage_reciever*>(msg->lparam());
+			auto mutex = main_mutex();
 			core::async::scope_locker<core::async::mutex_ptr_t> locker(mutex);
 			if (task->status_ != core::async::async_action_status::canceled)
 			{
@@ -276,7 +287,7 @@ dword process::on_message_dispatcher(events::message_t msg)
 		{
 			HANDLE hEvent = reinterpret_cast<HANDLE>(msg->wparam());
 			uint command = uint(msg->lparam());
-			core::async::scope_locker<core::async::mutex_ptr_t> locker(mutex);
+			core::async::scope_locker<core::async::mutex_ptr_t> locker(main_mutex());
 			SetEvent(hEvent);
 		}
 		break;
@@ -299,7 +310,8 @@ void process::send_msg(events::message_t msg)
 		msg->result(on_message_dispatcher(msg));
 		return;
 	}
-
+	auto cond = main_cond();
+	auto mutex = main_mutex();
 	core::async::scope_locker<core::async::mutex_ptr_t> locker(mutex);
 	//Waiting for dispatch previous message
 	cond->waitfor(mutex, [&]()->bool
@@ -320,7 +332,7 @@ core::async::ioperation_t<dword> process::post_msg(events::message_t msg)
 	if (!is_created())
 		return null;
 
-	auto task = new async_msg_task(this, cond, mutex, msg);
+	auto task = new async_msg_task(this, main_cond(), main_mutex(), msg);
 	task->add_ref();
 	if (PostThreadMessageW(hprocess_t(_process)->main_thread->thread_id()
 		, events::win_msg_enum::system_reserved_event, (WPARAM)task
@@ -341,9 +353,9 @@ bool process::dispatch_msg()
 	if (hprocess_t(_process)->nonqueue_msg != null)
 	{
 		hprocess_t(_process)->nonqueue_msg->result(on_message_dispatcher(hprocess_t(_process)->nonqueue_msg));
-		core::async::scope_locker<core::async::mutex_ptr_t> locker(mutex);
+		core::async::scope_locker<core::async::mutex_ptr_t> locker(main_mutex());
 		hprocess_t(_process)->nonqueue_msg = null;
-		cond->signal();
+		main_cond()->signal();
 		result = true;
 	}
 

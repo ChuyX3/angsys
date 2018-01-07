@@ -381,7 +381,9 @@ namespace ang
 		//T operator [] (raw_str_t)const;
 
 		template<typename K> T& operator [] (safe_str<K> const&);
+		template<typename K, wsize N> T& operator [] (const K(&ar)[N]);
 		template<typename K> T operator [] (safe_str<K> const&)const;
+		template<typename K, wsize N> T operator [] (const K(&ar)[N])const;
 	};
 
 }

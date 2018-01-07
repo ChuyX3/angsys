@@ -135,7 +135,14 @@ bool app::init_app(array<string> cmdl)
 
 void app::update_app()
 {
+	process::update_app();
 
+	if (_enable_update && !_main_wnd.is_empty())
+	{
+		_main_wnd->send_msg(new events::message(events::core_msg_enum::update, 0, (LPARAM)(pointer)property("main_step_timer").get()));
+		_main_wnd->send_msg(new events::message(events::core_msg_enum::draw));
+	}
+	
 }
 
 bool app::exit_app()
@@ -168,7 +175,7 @@ dword app::on_run_async(core::async::iasync_t<dword> action, window_t wnd)
 	if (wnd == null || !wnd->is_created())
 		return -1;
 	MSG msg;
-
+	auto mutex = main_mutex();
 	auto timer = make_shared<core::time::step_timer>();
 	timer->reset();
 	while (wnd->is_created())
@@ -189,7 +196,8 @@ dword app::on_run_async(core::async::iasync_t<dword> action, window_t wnd)
 					dword result = 0;
 					auto task = reinterpret_cast<async_msg_task*>(msg.wParam);
 					auto reciever = reinterpret_cast<imessage_reciever*>(msg.lParam);
-					core::async::scope_locker<core::async::mutex_ptr_t> locker(mutex);
+					
+					core::async::scope_locker<core::async::mutex_ptr_t> locker(main_mutex());
 					if (task->status_ != core::async::async_action_status::canceled)
 					{
 						task->status_ = core::async::async_action_status::running;

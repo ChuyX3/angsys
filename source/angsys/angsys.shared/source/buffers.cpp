@@ -127,6 +127,9 @@ void buffer::operator delete(pointer ptr)throw()
 	object::operator delete(ptr);
 }
 
+buffer_t buffer::new_buffer(wsize sz) {
+	return new(sz)buffer();
+}
 
 buffer::buffer()
 {
