@@ -36,6 +36,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "angraph.shared", "..\..\sou
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "angraph.desktop", "..\..\source\angraph\angraph.desktop\angraph.desktop.vcxproj", "{4D356A4C-688C-4E90-9EA0-872336DB7C27}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "task2", "task2\task2.vcxproj", "{D25909A8-8C27-45A3-8263-A1CC76B4D179}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\..\source\angsys\angsys.shared\angsys.shared.vcxitems*{4d105416-0867-47f0-8320-3f0e6b233d73}*SharedItemsImports = 9
@@ -102,6 +104,18 @@ Global
 		{4D356A4C-688C-4E90-9EA0-872336DB7C27}.Release|x64.Build.0 = Release|x64
 		{4D356A4C-688C-4E90-9EA0-872336DB7C27}.Release|x86.ActiveCfg = Release|Win32
 		{4D356A4C-688C-4E90-9EA0-872336DB7C27}.Release|x86.Build.0 = Release|Win32
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Debug|x64.ActiveCfg = Debug|x64
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Debug|x64.Build.0 = Debug|x64
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Debug|x86.ActiveCfg = Debug|Win32
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Debug|x86.Build.0 = Debug|Win32
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Develop|x64.ActiveCfg = Debug|x64
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Develop|x64.Build.0 = Debug|x64
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Develop|x86.ActiveCfg = Debug|Win32
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Develop|x86.Build.0 = Debug|Win32
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Release|x64.ActiveCfg = Release|x64
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Release|x64.Build.0 = Release|x64
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Release|x86.ActiveCfg = Release|Win32
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -114,5 +128,6 @@ Global
 		{CCD7293A-0AB3-4987-A9C9-D6202DF87DEF} = {5A2C9F9F-6D40-4D41-8EEB-49966DD848B1}
 		{BDBB14FA-4E36-4404-9D51-A5F8C879C650} = {2E854E66-D1E8-44D4-9E86-ACA5E531CD12}
 		{4D356A4C-688C-4E90-9EA0-872336DB7C27} = {2E854E66-D1E8-44D4-9E86-ACA5E531CD12}
+		{D25909A8-8C27-45A3-8263-A1CC76B4D179} = {D8E16DF2-4CE5-4BCF-877A-7426A8EC9E4C}
 	EndGlobalSection
 EndGlobal
