@@ -296,6 +296,13 @@ bool xml_document::xml_document_iterator::forward()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+xml_document_t xml_document::from_file(core::files::input_text_file_t file)
+{
+	xml_document_t doc = new xml_document();
+	doc->load(file);
+	return doc;
+}
+
 xml_document::xml_document()
 	: _count(0)
 	, _xml_first(null)
@@ -1066,6 +1073,30 @@ static xml_encoding_t  xml_detect_encoding(raw_str_t text, windex& idx)
 		return text.encoding();
 	}
 }
+
+
+void xml_document::load(core::files::input_text_file_t file)
+{
+	ang::exception_t ex;
+	if (!file->read([&](streams::itext_input_stream_t stream)
+	{
+		ibuffer_t buffer = interface_cast<ibuffer>(stream.get());
+		if (buffer.is_empty()) return false;
+		raw_str_t text(buffer->buffer_ptr(), buffer->buffer_size(), stream->format());
+		try { parse(text); return true; }
+		catch (ang::exception_t e) { ex = e; return false; }
+	})) {
+
+		if (ex.is_empty())throw_exception(except_code::unknown);
+		else throw ex;
+	}
+}
+
+void xml_document::save(core::files::output_text_file_t file)const
+{
+
+}
+
 
 void xml_document::parse(raw_str_t text)
 {

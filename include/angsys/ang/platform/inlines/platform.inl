@@ -372,30 +372,29 @@ template<typename T> inline ang::graphics::rect<T> ang::graphics::operator / (co
 //ang::events
 
 
-template<typename calleable_t, typename args_t>
-inline void ang::platform::events::static_event_function<calleable_t, args_t>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
+template<typename F, typename A>
+inline void ang::platform::events::static_event_function<F, A>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
 {
-	_function(caller, static_cast<args_t*>(args));
+	_function(caller, static_cast<A*>(args));
 }
 
-template<typename calleable_t, typename args_t>
-inline void ang::platform::events::static_event_function<calleable_t, ang::intf_wrapper<args_t>>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
+template<typename F, typename A>
+inline void ang::platform::events::static_event_function<F, ang::intf_wrapper<A>>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
 {
-	_function(caller, static_cast<args_t*>(args.get()));
+	_function(caller, static_cast<A*>(args.get()));
 }
 
-template<typename obj_t, bool IS_OBJECT, typename args_t>
-inline void ang::platform::events::member_event_function<obj_t, IS_OBJECT, args_t>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
+template<typename T, bool IS_OBJECT, typename A>
+inline void ang::platform::events::member_event_function<T, IS_OBJECT, A>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
 {
-	(_obj->*_function)(caller, static_cast<args_t*>(args.get()));
+	(_obj->*_function)(caller, static_cast<A*>(args.get()));
 }
 
-template<typename obj_t, typename args_t>
-inline void ang::platform::events::member_event_function<obj_t, true, args_t>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
+template<typename T, typename A>
+inline void ang::platform::events::member_event_function<T, true, A>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
 {
-	objptr _lock = _obj.lock<object>();
-	auto lock = interface_cast<obj_t>(_lock.get());
-	if (lock != null)(lock->*_function)(caller, static_cast<args_t*>(args.get()));
+	auto lock = _obj.lock();
+	if (lock != null)(lock->*_function)(caller, static_cast<A*>(args.get()));
 }
 
 #endif//__ANG_FOUNDATION_HPP__

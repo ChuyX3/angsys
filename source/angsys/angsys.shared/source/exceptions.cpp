@@ -199,6 +199,11 @@ object_wrapper<exception>::object_wrapper(ang::nullptr_t const&)
 {
 }
 
+object_wrapper<exception>::~object_wrapper()
+{
+	clean();
+}
+
 void object_wrapper<exception>::clean()
 {
 	if (_ptr)_ptr->release();

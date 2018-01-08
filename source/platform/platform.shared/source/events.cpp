@@ -142,7 +142,7 @@ bool event_listener::is_empty()const
 index event_listener::append(events::event_t func)
 {
 	_functions += func;
-	return _functions.get()->size() - 1;
+	return (uint)_functions.get()->size() - 1;
 }
 
 bool event_listener::remove(events::event_t func)

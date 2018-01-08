@@ -9,7 +9,7 @@
 
 #define ANG_NO_RUNTIME_ERRORS
 
-#include <angsys.h>
+#include <angsys.hpp>
 #include <ang/core/async.hpp>
 
 #include <jni.h>

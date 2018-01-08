@@ -105,7 +105,7 @@ bool d3d11_frame_buffer::create(array_view<textures::tex_format_t> color_format,
 	com_wrapper<ID3D11RenderTargetView> render_target = null;
 	float clear_color[4] = { 0,0,0,0 };
 
-	for (index i = 0, c = min(color_format.size(), 4U); i < c; ++i)
+	for (index i = 0, c = min((uint)color_format.size(), 4U); i < c; ++i)
 	{
 		view = null;
 		texture = null;
@@ -309,7 +309,7 @@ graphics::size<float> d3d11_frame_buffer::dimentions()const
 
 uint d3d11_frame_buffer::color_buffer_count()const
 {
-	return d3d_render_target.is_empty() ? 0 : d3d_render_target->counter();
+	return d3d_render_target.is_empty() ? 0 : (uint)d3d_render_target->counter();
 }
 
 textures::itexture_t d3d11_frame_buffer::color_buffer(index idx)const

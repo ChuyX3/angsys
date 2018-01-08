@@ -210,7 +210,7 @@ bool mapped_file_buffer::realloc_buffer(wsize size)
 		return false;
 
 	file_size_t new_size = 128UL;
-	while (new_size < size)
+	while (new_size < (file_size_t)size)
 		new_size *= 2;
 
 	auto _old_ptr = _buffer_ptr;

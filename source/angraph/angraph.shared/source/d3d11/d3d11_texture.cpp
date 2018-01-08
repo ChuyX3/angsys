@@ -206,7 +206,7 @@ graphics::size<float> d3d11_texture::tex_dimentions()const { return _tex_dimenti
 
 
 d3d11_texture_loader::d3d11_texture_loader(d3d11_driver_t parent)
-	: main_mutex()
+	: main_mutex(make_shared<core::async::mutex_t>())
 	, _driver(parent)
 {
 	
@@ -216,9 +216,11 @@ d3d11_texture_loader::d3d11_texture_loader(d3d11_driver_t parent)
 
 d3d11_texture_loader::~d3d11_texture_loader()
 {
+	auto thread = _work_thead->worker_thread();
 	_work_thead->stop();
-	_work_thead->worker_thread()->wait(core::async::async_action_status::completed, -1);
+	thread->wait(core::async::async_action_status::completed, -1);
 	_work_thead = null;
+	thread = null;
 	main_mutex->lock();
 	_textures.clean();
 	_texture_info_map.clean();

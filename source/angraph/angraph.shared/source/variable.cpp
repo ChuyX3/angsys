@@ -97,10 +97,10 @@ variable variable::field(cwstr_t name)
 index variable::find_field(cstr_t name)const
 {
 	if (_descriptor.var_type() != var_type::block)
-		return invalid_index;
+		return (index)invalid_index;
 	uniform_fields_t const& fields = _descriptor.fields();
 	if (fields.is_empty())
-		return invalid_index;
+		return (index)invalid_index;
 	index i = 0;
 	for (auto it = fields->begin(); it.is_valid(); ++it, ++i) {
 		cstr_t _name = it->var_name();
@@ -108,7 +108,7 @@ index variable::find_field(cstr_t name)const
 			return i;
 	}
 	
-	return invalid_index;
+	return (index)invalid_index;
 }
 
 index variable::find_field(cwstr_t name)const

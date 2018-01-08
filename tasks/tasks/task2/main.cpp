@@ -93,12 +93,12 @@ bool d3d11::main_app::init_app(ang::array<ang::string> cmdl)
 
 	window_t wnd = new d3d11::main_wnd();
 
-	wnd->created_event += new events::created_event(_engine.get(), &engine::on_create_event);
-	wnd->destroyed_event += new events::destroyed_event(_engine.get(), &engine::on_destroy_event);
-	wnd->size_event += new events::display_size_change_event(_engine.get(), &engine::on_size_changed_event);
-	wnd->mouse_moved_event += new events::pointer_moved_event(_engine.get(), &engine::on_pointer_moved_event);
-	wnd->mouse_button_pressed_event += new events::pointer_moved_event(_engine.get(), &engine::on_pointer_pressed_event);
-	wnd->mouse_button_released_event += new events::pointer_moved_event(_engine.get(), &engine::on_pointer_released_event);
+	wnd->created_event += new events::created_event(_engine, &engine::on_create_event);
+	wnd->destroyed_event += new events::destroyed_event(_engine, &engine::on_destroy_event);
+	wnd->size_event += new events::display_size_change_event(_engine, &engine::on_size_changed_event);
+	wnd->mouse_moved_event += new events::pointer_moved_event(_engine, &engine::on_pointer_moved_event);
+	wnd->mouse_button_pressed_event += new events::pointer_moved_event(_engine, &engine::on_pointer_pressed_event);
+	wnd->mouse_button_released_event += new events::pointer_moved_event(_engine, &engine::on_pointer_released_event);
 
 	if (!wnd->create(new wnd_create_args(
 		"d3d11_core_view_wnd", "d3d11 Task1", { 100,100, 1124, 900 }

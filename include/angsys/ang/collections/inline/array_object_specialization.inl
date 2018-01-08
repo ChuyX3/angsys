@@ -32,7 +32,7 @@ ang::collections::scope_array<MY_TYPE, MY_ALLOCATOR>::scope_array(wsize sz, MY_T
 	if (_size > 0) {
 		_data = MY_ALLOCATOR<MY_TYPE>::alloc(_size);
 		for (index i = 0; i < _size; ++i)
-			MY_ALLOCATOR<MY_TYPE>::template construct<MY_TYPE const&>((MY_TYPE*)&_data[i], val[i]);
+			MY_ALLOCATOR<MY_TYPE>::template construct<MY_TYPE const&>((MY_TYPE*)(_data + i), val[i]);
 	}
 }
 
@@ -42,7 +42,7 @@ ang::collections::scope_array<MY_TYPE, MY_ALLOCATOR>::scope_array(scope_array co
 	if (_size > 0) {
 		_data = MY_ALLOCATOR<MY_TYPE>::alloc(_size);
 		for (index i = 0; i < _size; ++i)
-			MY_ALLOCATOR<MY_TYPE>::template construct<MY_TYPE const&>((MY_TYPE*)&_data[i], other._data[i]);
+			MY_ALLOCATOR<MY_TYPE>::template construct<MY_TYPE const&>((MY_TYPE*)(_data + i), other._data[i]);
 	}
 }
 
@@ -56,7 +56,7 @@ void ang::collections::scope_array<MY_TYPE, MY_ALLOCATOR>::clean()
 	if (_data)
 	{
 		for (index i = 0; i < _size; ++i)
-			MY_ALLOCATOR<MY_TYPE>::destruct((MY_TYPE*)&_data[i]);
+			MY_ALLOCATOR<MY_TYPE>::destruct((MY_TYPE*)(_data + i));
 		MY_ALLOCATOR<MY_TYPE>::free(_data);
 	}
 	_size = 0;
@@ -71,7 +71,7 @@ MY_TYPE* ang::collections::scope_array<MY_TYPE, MY_ALLOCATOR>::alloc(wsize size)
 		_size = size;
 		_data = MY_ALLOCATOR<MY_TYPE>::alloc(_size);
 		for (index i = 0; i < _size; ++i)
-			MY_ALLOCATOR<MY_TYPE>::template construct<MY_TYPE const&>((MY_TYPE*)&_data[i], MY_TYPE());
+			MY_ALLOCATOR<MY_TYPE>::template construct<MY_TYPE const&>((MY_TYPE*)(_data + i), MY_TYPE());
 	}
 	return _data;
 }
@@ -83,7 +83,7 @@ void ang::collections::scope_array<MY_TYPE, MY_ALLOCATOR>::set(MY_TYPE* val, wsi
 	if (_size > 0) {
 		_data = MY_ALLOCATOR<MY_TYPE>::alloc(_size);
 		for (index i = 0; i < _size; ++i)
-			MY_ALLOCATOR<MY_TYPE>::template construct<MY_TYPE const&>((MY_TYPE*)&_data[i], val[i]);
+			MY_ALLOCATOR<MY_TYPE>::template construct<MY_TYPE const&>((MY_TYPE*)(_data + i), val[i]);
 	}
 }
 
@@ -106,7 +106,7 @@ void ang::collections::scope_array<MY_TYPE, MY_ALLOCATOR>::move(ang::array_view<
 	_size = other.size();
 
 	for (windex i = 0; i < _size; ++i)
-		MY_ALLOCATOR<MY_TYPE>::template construct<MY_TYPE&&>(&_data[i], ang::move(other.get()[i]));
+		MY_ALLOCATOR<MY_TYPE>::template construct<MY_TYPE&&>((_data + i), ang::move(other.get()[i]));
 	other.set(null, 0);
 }
 
@@ -326,14 +326,14 @@ ang::collections::iterator<MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_A
 {
 	if (idx >= _data.size())
 		return  iterator_t(const_cast<self_t*>(this), null, 0);
-	return iterator_t(const_cast<self_t*>(this), (pointer)&_data, idx);
+	return iterator_t(const_cast<self_t*>(this), (pointer)_data.get(), idx);
 }
 
 ang::collections::iterator<const MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::at(windex idx)const
 {
 	if (idx >= _data.size())
 		return  const_iterator_t(const_cast<self_t*>(this), null, 0);
-	return const_iterator_t(const_cast<self_t*>(this), (pointer)&_data, idx);
+	return const_iterator_t(const_cast<self_t*>(this), (pointer)_data.get(), idx);
 }
 
 ang::collections::iterator<MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::find(MY_TYPE const& datum, bool invert)const
@@ -374,52 +374,52 @@ ang::collections::iterator<MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_A
 
 ang::collections::forward_iterator<MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::begin()
 {
-	return forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data));
+	return forward_iterator_t(const_cast<array_buffer*>(this), position_t(_data.get()));
 }
 
 ang::collections::forward_iterator<MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::end()
 {
-	return forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size());
+	return forward_iterator_t(const_cast<array_buffer*>(this), position_t(_data.get()), _data.size());
 }
 
 ang::collections::forward_iterator<const MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::begin()const
 {
-	return const_forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data));
+	return const_forward_iterator_t(const_cast<array_buffer*>(this), position_t(_data.get()));
 }
 
 ang::collections::forward_iterator<const MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::end()const
 {
-	return const_forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size());
+	return const_forward_iterator_t(const_cast<array_buffer*>(this), position_t(_data.get()), _data.size());
 }
 
 ang::collections::forward_iterator<MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::last()
 {
-	return _data.size() ? forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size() - 1) : end();
+	return _data.size() ? forward_iterator_t(const_cast<array_buffer*>(this), position_t(_data.get()), _data.size() - 1) : end();
 }
 
 ang::collections::forward_iterator<const MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::last()const
 {
-	return _data.size() ? const_forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size() - 1) : end();
+	return _data.size() ? const_forward_iterator_t(const_cast<array_buffer*>(this), position_t(_data.get()), _data.size() - 1) : end();
 }
 
 ang::collections::backward_iterator<MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::rbegin()
 {
-	return backward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size() - 1);
+	return backward_iterator_t(const_cast<array_buffer*>(this), position_t(_data.get()), _data.size() - 1);
 }
 
 ang::collections::backward_iterator<MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::rend()
 {
-	return backward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), invalid_index);
+	return backward_iterator_t(const_cast<array_buffer*>(this), position_t(_data.get()), invalid_index);
 }
 
 ang::collections::backward_iterator<const MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::rbegin()const
 {
-	return const_backward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size() - 1);
+	return const_backward_iterator_t(const_cast<array_buffer*>(this), position_t(_data.get()), _data.size() - 1);
 }
 
 ang::collections::backward_iterator<const MY_TYPE> ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::rend()const
 {
-	return const_backward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), invalid_index);
+	return const_backward_iterator_t(const_cast<array_buffer*>(this), position_t(_data.get()), invalid_index);
 }
 
 bool ang::collections::array_buffer<MY_TYPE, MY_ALLOCATOR>::increase(ang::collections::base_iterator<MY_TYPE>& it)const

@@ -120,7 +120,7 @@ bool file_system::create_file_handle(path_view path, open_flags_t flags, ifile_p
 	if (out.is_empty())
 		return false;
 
-	for(auto it = highest_priority->begin(); it.is_valid(); ++it) 
+	for(auto it = highest_priority->begin(), end = highest_priority->end(); it != end; ++it)
 	{
 		if ((*it)->create_file_handle(path, flags, out))
 			return true;
@@ -135,7 +135,7 @@ bool file_system::create_file_handle(path_view path, open_flags_t flags, ifile_p
 	}
 	else
 	{
-		for (auto it = _paths->begin(); it.is_valid(); ++it)
+		for (auto it = _paths->begin(), end = _paths->end(); it != end; ++it)
 		{
 			files::path _path = ((*it) + "/"_s) += path;
 			file->create(_path, flags);
@@ -147,7 +147,7 @@ bool file_system::create_file_handle(path_view path, open_flags_t flags, ifile_p
 		}
 	}
 
-	for (auto it = lowest_priority->begin(); it.is_valid(); ++it)
+	for (auto it = lowest_priority->begin(), end = lowest_priority->end(); it != end; ++it)
 	{
 		if ((*it)->create_file_handle(path, flags, out))
 			return true;
@@ -214,7 +214,8 @@ folder_file_system::folder_file_system(path root)
 
 folder_file_system::~folder_file_system()
 {
-
+	_root_path = null;
+	_paths = null;
 }
 
 ANG_IMPLEMENT_CLASSNAME(ang::core::files::folder_file_system);
@@ -286,7 +287,7 @@ bool folder_file_system::create_file_handle(path_view path, open_flags_t flags, 
 	}
 	else
 	{
-		for (auto it = _paths->begin(); it.is_valid(); ++it)
+		for (auto it = _paths->begin(), end = _paths->end(); it != end; ++it)
 		{
 			_path = (((_root_path + "\\"_s) += (*it)) += "\\"_s) += path;
 			file->create(_path, flags);

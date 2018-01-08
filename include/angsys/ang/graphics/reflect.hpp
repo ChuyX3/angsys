@@ -142,7 +142,7 @@ namespace ang
 				explicit variable(); //empty
 				variable(variable &&);
 				variable(variable const&);
-				variable(array_view<byte> bytes, variable_desc desc, uint aligment = invalid_index);
+				variable(array_view<byte> bytes, variable_desc desc, uint aligment = (uint)invalid_index);
 
 				uint aligment()const;
 				array_view<byte> raw_data()const;
@@ -180,13 +180,13 @@ namespace ang
 
 			template<typename T> variable_desc type_desc(cstr_t);
 
-			inline wsize get_memory_size_aligned(wsize size, uint aligment)
+			inline wsize get_memory_size_aligned(wsize size, wsize aligment)
 			{
 				wsize res = (size % aligment);
 				if (res == 0u) return size;
 				return size + aligment - res;
 			}
-			inline wsize get_memory_size_aligned_less(wsize size, uint aligment)
+			inline wsize get_memory_size_aligned_less(wsize size, wsize aligment)
 			{
 				wsize res = (size % aligment);
 				if (res == 0u) return size;

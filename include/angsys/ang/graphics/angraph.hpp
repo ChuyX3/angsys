@@ -7,6 +7,7 @@
 #include <ang/maths/maths.hpp>
 #include <ang/maths/vectors.hpp>
 #include <ang/platform/platform.hpp>
+#include <ang/collections/map.hpp>
 #include <ang/collections/vector.hpp>
 
 #ifdef  LINK

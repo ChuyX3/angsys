@@ -274,7 +274,7 @@ inline T& ang::collections::array_buffer<T, allocator>::at(ang::collections::bas
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty())
 		throw(exception_t(except_code::invalid_memory));
-	if (_data.get() != it.current())
+	if (&_data != it.current())
 		throw(exception_t(except_code::invalid_param));
 	if (it.offset() >= _data.size())
 		throw(exception_t(except_code::array_overflow));
@@ -400,7 +400,7 @@ template<typename T, template <typename> class allocator>
 inline bool ang::collections::array_buffer<T, allocator>::increase(ang::collections::base_iterator<T>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
-	if (it.parent() != this || it.current() != _data.get())
+	if (it.parent() != this || it.current() != &_data)
 		throw(exception_t(except_code::invalid_param));
 	if (it.offset() >= _data.size())
 		throw(exception_t(except_code::array_overflow));
@@ -414,7 +414,7 @@ template<typename T, template <typename> class allocator>
 inline bool ang::collections::array_buffer<T, allocator>::increase(ang::collections::base_iterator<T>& it, int val)const
 {
 #ifdef DEBUG_SAFE_CODE
-	if (it.parent() != this || it.current() != _data.get())
+	if (it.parent() != this || it.current() != &_data)
 		throw(exception_t(except_code::invalid_param));
 	if (it.offset() >= _data.size())
 		throw(exception_t(except_code::array_overflow));
@@ -429,7 +429,7 @@ template<typename T, template <typename> class allocator>
 inline bool ang::collections::array_buffer<T, allocator>::decrease(ang::collections::base_iterator<T>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
-	if (it.parent() != this || it.current() != _data.get())
+	if (it.parent() != this || it.current() != &_data)
 		throw(exception_t(except_code::invalid_param));
 	if (it.offset() >= _data.size())
 		throw(exception_t(except_code::array_overflow));
@@ -444,7 +444,7 @@ template<typename T, template <typename> class allocator>
 inline bool ang::collections::array_buffer<T, allocator>::decrease(ang::collections::base_iterator<T>& it, int val)const
 {
 #ifdef DEBUG_SAFE_CODE
-	if (it.parent() != this || it.current() != _data.get())
+	if (it.parent() != this || it.current() != &_data)
 		throw(exception_t(except_code::invalid_param));
 	if (it.offset() >= _data.size())
 		throw(exception_t(except_code::array_overflow));

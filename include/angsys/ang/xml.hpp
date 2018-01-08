@@ -14,7 +14,7 @@
 #define __ANGXML_HPP__
 
 #include <angsys.hpp>
-//#include <ang/core/files.h>
+#include <ang/core/files.hpp>
 
 #ifdef  LINK
 #undef  LINK
@@ -250,7 +250,9 @@ namespace ang
 			visible vcall bool push_attribute(wstring name, wstring value) pure;
 			visible vcall bool push_comment(wstring value) pure;
 
-	
+			visible vcall void load(core::files::input_text_file_t) pure;
+			visible vcall void save(core::files::output_text_file_t)const pure;
+
 			visible vcall void parse(raw_str_t text)pure;
 			template<typename T> inline void parse(safe_str<T> const& text) { parse(raw_str(text)); }
 			template<text::encoding_enum ENCODING> inline void parse(strings::string_base<ENCODING> const& text) { parse(text.is_empty() ? raw_str() : raw_str(text->cstr())); }
@@ -1254,6 +1256,9 @@ namespace ang
 			: public object
 			, public ixml_document
 		{
+		public:
+			static xml_document_t from_file(core::files::input_text_file_t);
+
 		private:
 			class LINK xml_document_iterator
 			{
@@ -1366,7 +1371,8 @@ namespace ang
 			virtual bool push_attribute(wstring name, wstring value) override;
 			virtual bool push_comment(wstring value) override;
 
-
+			virtual void load(core::files::input_text_file_t) override;
+			virtual void save(core::files::output_text_file_t)const override;
 			virtual void parse(raw_str_t text)override;
 			using ixml_document::parse;
 

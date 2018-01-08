@@ -71,12 +71,14 @@ namespace ang
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
 		object_wrapper(ang::nullptr_t const&);
-
+		~object_wrapper();
 	private:
 		void clean();
-		bool is_empty()const;
 		type* get(void)const;
 		void set(exception*);
+
+	public:
+		bool is_empty()const;
 
 	public:
 		object_wrapper& operator = (object_wrapper &&);

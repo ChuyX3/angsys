@@ -312,8 +312,9 @@ namespace ang
 	template<typename T, text::encoding_enum ENCODING2>
 	bool operator < (safe_str<T> const&, object_wrapper<strings::string_buffer<ENCODING2>> const&);
 
-
 	inline string operator "" _o(const char* str, wsize sz) { return new strings::string_buffer < text::encoding::ascii>(cstr_t(str, sz)); }
 	inline wstring operator "" _o(const wchar_t* str, wsize sz) { return new strings::string_buffer < text::encoding::unicode>(cwstr_t(str, sz)); }
+	inline u16string operator "" _o(const char16_t* str, wsize sz) { return new strings::string_buffer < text::encoding::utf16>(cu16str_t(str, sz)); }
+	inline u32string operator "" _o(const char32_t* str, wsize sz) { return new strings::string_buffer < text::encoding::utf32>(cu32str_t(str, sz)); }
 }
 #endif//__ANG_STRINGS_HPP__

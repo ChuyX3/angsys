@@ -7,7 +7,7 @@ struct ang_text_encoder_convert
 	template<bool SWAP1, bool SWAP2>
 	static wsize convert(typename ang::text::char_type_by_encoding<ENCODING>::str_t dest, wsize sz, typename ang::text::char_type_by_encoding<OTHER_ENCODING>::cstr_t src, wsize& j, bool eos)
 	{
-		wsize i = 0; j = 0;
+		wsize i = 0;// j = 0;
 		if (src == null)
 			goto END;
 

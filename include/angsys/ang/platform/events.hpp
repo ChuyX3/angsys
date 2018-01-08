@@ -26,12 +26,12 @@ namespace ang
 				void operator delete(void*);
 			};
 
-			template<typename calleable_t, typename args_t>
+			template<typename F, typename A>
 			class static_event_function
 				: public ievent_function
 			{
 			public:
-				typedef calleable_t function_type;
+				typedef F function_type;
 
 			private:
 				function_type _function;
@@ -45,12 +45,12 @@ namespace ang
 				}
 			};
 
-			template<typename calleable_t, typename args_t>
-			class static_event_function<calleable_t, intf_wrapper<args_t>>
+			template<typename F, typename A>
+			class static_event_function<F, intf_wrapper<A>>
 				: public ievent_function
 			{
 			public:
-				typedef calleable_t function_type;
+				typedef F function_type;
 
 			private:
 				function_type _function;
@@ -64,19 +64,19 @@ namespace ang
 				}
 			};
 
-			template<typename obj_t, bool IS_OBJECT, typename args_t>
+			template<typename T, bool IS_OBJECT, typename A>
 			class member_event_function 
 				: public ievent_function
 			{
 			public:
-				typedef void(obj_t::*function_type)(objptr, intf_wrapper<args_t>);
+				typedef void(T::*function_type)(objptr, intf_wrapper<A>);
 
 			private:
-				obj_t * _obj;
+				T * _obj;
 				function_type _function;
 
 			public:
-				inline member_event_function(obj_t * o, function_type f) : _obj(o), _function(f) {}
+				inline member_event_function(T * o, function_type f) : _obj(o), _function(f) {}
 				inline virtual~member_event_function() {}
 				inline void invoke(objptr caller, imsg_event_args_t args)const override;
 				inline ievent_function* clone()const override {
@@ -84,23 +84,24 @@ namespace ang
 				}
 			};
 
-			template<typename obj_t, typename args_t>
-			class member_event_function<obj_t, true, args_t>
+			template<typename T, typename A>
+			class member_event_function<T, true, A>
 				: public ievent_function
 			{
 			public:
-				typedef void(obj_t::*function_type)(objptr, intf_wrapper<args_t>);
+				typedef void(T::*function_type)(objptr, intf_wrapper<A>);
 
 			private:
-				mutable safe_pointer _obj;
+				mutable weak_ptr<T> _obj;
 				function_type _function;
 
 			public:
-				inline member_event_function(object* o, function_type f) : _obj(o), _function(f) {}
+				inline member_event_function(T* o, function_type f) : _obj(o), _function(f) {}
+				inline member_event_function(typename smart_ptr_type<T>::smart_ptr_t o, function_type f) : _obj(o), _function(f) {}
 				inline virtual~member_event_function() {}
 				inline void invoke(objptr caller, imsg_event_args_t args)const override;
 				inline ievent_function* clone()const override {
-					return new member_event_function(_obj.lock<object>(), _function);
+					return new member_event_function(_obj.lock(), _function);
 				}
 			};
 		}
@@ -127,14 +128,19 @@ namespace ang
 				function_data(platform::events::core_msg_t _msg);
 			
 
-				template<typename args_t, typename calleable_t>
-				inline void set(calleable_t const& f) {
-					_function = new platform::events::static_event_function<calleable_t, args_t>(f);
+				template<typename A, typename F>
+				inline void set(F const& f) {
+					_function = new platform::events::static_event_function<F, A>(f);
 				}
 
-				template<typename args_t, typename obj_t>
-				inline void set(obj_t* obj, void(obj_t::*f)(objptr, intf_wrapper<args_t>)) {
-					_function = new platform::events::member_event_function<obj_t, is_base_of<object, obj_t>::value, args_t>(obj, f);
+				template<typename A, typename T>
+				inline void set(T* obj, void(T::*f)(objptr, intf_wrapper<A>)) {
+					_function = new platform::events::member_event_function<T, has_runtime_type_info<T>::value, A>(obj, f);
+				}
+
+				template<typename A, typename T>
+				inline void set(typename smart_ptr_type<T>::smart_ptr_t obj, void(T::*f)(objptr, intf_wrapper<A>)) {
+					_function = new platform::events::member_event_function<T, has_runtime_type_info<T>::value, A>(obj, f);
 				}
 
 			public: // Overrides

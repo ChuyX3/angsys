@@ -19,6 +19,17 @@ void engine::init()
 
 	effect_library = driver->create_effect_library();
 	texture_loader = driver->create_texture_loader();
+
+	core::files::input_text_file_t file = new core::files::input_text_file();
+	file->open(L"resources/fx_library.xml"_s);
+	xml::xml_document_t doc = xml::xml_document::from_file(file);
+	file->close();
+	effect_library->load_library(doc->xml_root_element());
+
+	file->open(L"resources/texture_apex.xml"_s);
+	doc = xml::xml_document::from_file(file);
+	file->close();
+	texture_loader->load_library(doc->xml_root_element());
 }
 
 void engine::update(shared_ptr<core::time::step_timer> timer)
@@ -40,7 +51,10 @@ void engine::draw()
 
 void engine::exit()
 {
-	
+	driver->bind_shaders(null);
+	driver->bind_frame_buffer(null);
+	surface = null;
+	effect_library = null;
 }
 
 void engine::on_size_changed_event(objptr sender, platform::events::idisplay_info_event_args_t args)
@@ -96,6 +110,7 @@ void engine::on_create_event(objptr caller, platform::events::icreated_event_arg
 		}
 		timer->reset();
 		_is_running = true;
+		init();
 	};
 
 	dispatcher->update_event += [this](core::async::idispatcher_t) {

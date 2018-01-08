@@ -232,6 +232,9 @@
     <ProjectReference Include="..\..\..\..\source\angsys\angsys.android\angsys.android.vcxproj">
       <Project>{d63cbd44-cc1a-414d-ab24-ddc25ead9c15}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\source\platform\platform.android\platform.android.vcxproj">
+      <Project>{09b9c216-9660-40ab-95e1-ca554fb328b5}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

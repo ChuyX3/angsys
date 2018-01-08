@@ -466,7 +466,7 @@ array<string_base<CURRENT_ENCODING>> string_buffer<CURRENT_ENCODING>::split(type
 			_word = null;
 		}
 		beg = end + val.size();
-		end = end = encoder_.find(data.get() + beg, l - beg, val.cstr(), val.size(), 0);
+		end =  encoder_.find(data.get(), l, val.cstr(), val.size(), beg);
 	} while (end != invalid_index);
 
 	if (sub_string(_word, beg, l) > 0)

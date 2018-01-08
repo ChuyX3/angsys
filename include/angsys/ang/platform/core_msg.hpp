@@ -125,13 +125,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				start_app_event(obj_t* o, void(obj_t::*f)(object_t, iapp_status_event_args_t))
+				template<class T>
+				start_app_event(T* o, void(T::*f)(object_t, iapp_status_event_args_t))
 					: event((core_msg_t)core_msg_enum::start_app) {
 					set<iapp_status_event_args_t>(o, f);
 				}
-				template<class calleable_t>
-				start_app_event(calleable_t f)
+				template<class T>
+				start_app_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, iapp_status_event_args_t))
+					: event((core_msg_t)core_msg_enum::start_app) {
+					set<iapp_status_event_args_t>(o, f);
+				}
+				template<class F>
+				start_app_event(F f)
 					: event((core_msg_t)core_msg_enum::start_app) {
 					set<iapp_status_event_args_t>(f);
 				}
@@ -141,13 +146,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				exit_app_event(obj_t* o, void(obj_t::*f)(object_t, iapp_status_event_args_t))
+				template<class T>
+				exit_app_event(T* o, void(T::*f)(object_t, iapp_status_event_args_t))
 					: event((core_msg_t)core_msg_enum::exit_app) {
 					set<iapp_status_event_args_t>(o, f);
 				}
-				template<class calleable_t>
-				exit_app_event(calleable_t f)
+				template<class T>
+				exit_app_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, iapp_status_event_args_t))
+					: event((core_msg_t)core_msg_enum::exit_app) {
+					set<iapp_status_event_args_t>(o, f);
+				}
+				template<class F>
+				exit_app_event(F f)
 					: event((core_msg_t)core_msg_enum::exit_app) {
 					set<iapp_status_event_args_t>(f);
 				}
@@ -159,13 +169,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				created_event(obj_t* o, void(obj_t::*f)(object_t, icreated_event_args_t))
+				template<class T>
+				created_event(T* o, void(T::*f)(object_t, icreated_event_args_t))
 					: event((core_msg_t)core_msg_enum::created) {
 					set<icreated_event_args>(o, f);
 				}
-				template<class calleable_t>
-				created_event(calleable_t f)
+				template<class T>
+				created_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, icreated_event_args_t))
+					: event((core_msg_t)core_msg_enum::created) {
+					set<icreated_event_args>(o, f);
+				}
+				template<class F>
+				created_event(F f)
 					: event((core_msg_t)core_msg_enum::created) {
 					set<icreated_event_args>(f);
 				}
@@ -175,13 +190,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				destroyed_event(obj_t* o, void(obj_t::*f)(object_t, imsg_event_args_t))
+				template<class T>
+				destroyed_event(T* o, void(T::*f)(object_t, imsg_event_args_t))
 					: event((core_msg_t)core_msg_enum::destroyed) {
 					set<imsg_event_args>(o, f);
 				}
-				template<class calleable_t>
-				destroyed_event(calleable_t f)
+				template<class T>
+				destroyed_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, imsg_event_args_t))
+					: event((core_msg_t)core_msg_enum::destroyed) {
+					set<imsg_event_args>(o, f);
+				}
+				template<class F>
+				destroyed_event(F f)
 					: event((core_msg_t)core_msg_enum::destroyed) {
 					set<imsg_event_args>(f);
 				}
@@ -193,13 +213,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				update_event(obj_t* o, void(obj_t::*f)(object_t, iupdate_event_args_t))
+				template<class T>
+				update_event(T* o, void(T::*f)(object_t, iupdate_event_args_t))
 					: event((core_msg_t)core_msg_enum::update) {
 					set<iupdate_event_args>(o, f);
 				}
-				template<class calleable_t>
-				update_event(calleable_t f)
+				template<class T>
+				update_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, iupdate_event_args_t))
+					: event((core_msg_t)core_msg_enum::update) {
+					set<iupdate_event_args>(o, f);
+				}
+				template<class F>
+				update_event(F f)
 					: event((core_msg_t)core_msg_enum::update) {
 					set<iupdate_event_args>(f);
 				}
@@ -211,13 +236,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				draw_event(obj_t* o, void(obj_t::*f)(object_t, idraw_event_args_t))
+				template<class T>
+				draw_event(T* o, void(T::*f)(object_t, idraw_event_args_t))
 					: event((core_msg_t)core_msg_enum::draw) {
 					set<idraw_event_args>(o, f);
 				}
-				template<class calleable_t>
-				draw_event(calleable_t f)
+				template<class T>
+				draw_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, idraw_event_args_t))
+					: event((core_msg_t)core_msg_enum::draw) {
+					set<idraw_event_args>(o, f);
+				}
+				template<class F>
+				draw_event(F f)
 					: event((core_msg_t)core_msg_enum::draw) {
 					set<idraw_event_args>(f);
 				}
@@ -229,13 +259,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				activate_event(obj_t* o, void(obj_t::*f)(object_t, iactivate_event_args_t))
+				template<class T>
+				activate_event(T* o, void(T::*f)(object_t, iactivate_event_args_t))
 					: event((core_msg_t)core_msg_enum::activate) {
 					set<iactivate_event_args>(o, f);
 				}
-				template<class calleable_t>
-				activate_event(calleable_t f)
+				template<class T>
+				activate_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, iactivate_event_args_t))
+					: event((core_msg_t)core_msg_enum::activate) {
+					set<iactivate_event_args>(o, f);
+				}
+				template<class F>
+				activate_event(F f)
 					: event((core_msg_t)core_msg_enum::activate) {
 					set<iactivate_event_args>(f);
 				}
@@ -247,13 +282,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				display_size_change_event(obj_t* o, void(obj_t::*f)(object_t, idisplay_info_event_args_t))
+				template<class T>
+				display_size_change_event(T* o, void(T::*f)(object_t, idisplay_info_event_args_t))
 					: event((core_msg_t)core_msg_enum::size) {
 					set<idisplay_info_event_args>(o, f);
 				}
-				template<class calleable_t>
-				display_size_change_event(calleable_t f)
+				template<class T>
+				display_size_change_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, idisplay_info_event_args_t))
+					: event((core_msg_t)core_msg_enum::size) {
+					set<idisplay_info_event_args>(o, f);
+				}
+				template<class F>
+				display_size_change_event(F f)
 					: event((core_msg_t)core_msg_enum::size) {
 					set<idisplay_info_event_args>(f);
 				}
@@ -263,13 +303,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				display_orientation_change_event(obj_t* o, void(obj_t::*f)(object_t, idisplay_info_event_args_t))
+				template<class T>
+				display_orientation_change_event(T* o, void(T::*f)(object_t, idisplay_info_event_args_t))
 					: event((core_msg_t)core_msg_enum::orientation) {
 					set<idisplay_info_event_args>(o, f);
 				}
-				template<class calleable_t>
-				display_orientation_change_event(calleable_t f)
+				template<class T>
+				display_orientation_change_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, idisplay_info_event_args_t))
+					: event((core_msg_t)core_msg_enum::orientation) {
+					set<idisplay_info_event_args>(o, f);
+				}
+				template<class F>
+				display_orientation_change_event(F f)
 					: event((core_msg_t)core_msg_enum::orientation) {
 					set<idisplay_info_event_args>(f);
 				}
@@ -279,13 +324,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				display_invalidate_event(obj_t* o, void(obj_t::*f)(object_t, idisplay_info_event_args_t))
+				template<class T>
+				display_invalidate_event(T* o, void(T::*f)(object_t, idisplay_info_event_args_t))
 					: event((core_msg_t)core_msg_enum::display_change) {
 					set<idisplay_info_event_args>(o, f);
 				}
-				template<class calleable_t>
-				display_invalidate_event(calleable_t f)
+				template<class T>
+				display_invalidate_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, idisplay_info_event_args_t))
+					: event((core_msg_t)core_msg_enum::display_change) {
+					set<idisplay_info_event_args>(o, f);
+				}
+				template<class F>
+				display_invalidate_event(F f)
 					: event((core_msg_t)core_msg_enum::display_change) {
 					set<idisplay_info_event_args>(f);
 				}
@@ -297,13 +347,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				key_pressed_event(obj_t* o, void(obj_t::*f)(object_t, ikey_event_args_t))
+				template<class T>
+				key_pressed_event(T* o, void(T::*f)(object_t, ikey_event_args_t))
 					: event((core_msg_t)core_msg_enum::key_down) {
 					set<ikey_event_args>(o, f);
 				}
-				template<class calleable_t>
-				key_pressed_event(calleable_t f)
+				template<class T>
+				key_pressed_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, ikey_event_args_t))
+					: event((core_msg_t)core_msg_enum::key_down) {
+					set<ikey_event_args>(o, f);
+				}
+				template<class F>
+				key_pressed_event(F f)
 					: event((core_msg_t)core_msg_enum::key_down) {
 					set<ikey_event_args>(f);
 				}
@@ -313,13 +368,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				key_released_event(obj_t* o, void(obj_t::*f)(object_t, ikey_event_args_t))
+				template<class T>
+				key_released_event(T* o, void(T::*f)(object_t, ikey_event_args_t))
 					: event((core_msg_t)core_msg_enum::key_up) {
 					set<ikey_event_args>(o, f);
 				}
-				template<class calleable_t>
-				key_released_event(calleable_t f)
+				template<class T>
+				key_released_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, ikey_event_args_t))
+					: event((core_msg_t)core_msg_enum::key_up) {
+					set<ikey_event_args>(o, f);
+				}
+				template<class F>
+				key_released_event(F f)
 					: event((core_msg_t)core_msg_enum::key_up) {
 					set<ikey_event_args>(f);
 				}
@@ -332,13 +392,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				pointer_moved_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
+				template<class T>
+				pointer_moved_event(T* o, void(T::*f)(object_t, ipointer_event_args_t))
 					: event((core_msg_t)core_msg_enum::pointer_moved) {
 					set<ipointer_event_args>(o, f);
 				}
-				template<class calleable_t>
-				pointer_moved_event(calleable_t f)
+				template<class T>
+				pointer_moved_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, ipointer_event_args_t))
+					: event((core_msg_t)core_msg_enum::pointer_moved) {
+					set<ipointer_event_args>(o, f);
+				}
+				template<class F>
+				pointer_moved_event(F f)
 					: event((core_msg_t)core_msg_enum::pointer_moved) {
 					set<ipointer_event_args>(f);
 				}
@@ -348,13 +413,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				pointer_pressed_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
+				template<class T>
+				pointer_pressed_event(T* o, void(T::*f)(object_t, ipointer_event_args_t))
 					: event((core_msg_t)core_msg_enum::pointer_pressed) {
 					set<ipointer_event_args>(o, f);
 				}
-				template<class calleable_t>
-				pointer_pressed_event(calleable_t f)
+				template<class T>
+				pointer_pressed_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, ipointer_event_args_t))
+					: event((core_msg_t)core_msg_enum::pointer_pressed) {
+					set<ipointer_event_args>(o, f);
+				}
+				template<class F>
+				pointer_pressed_event(F f)
 					: event((core_msg_t)core_msg_enum::pointer_pressed) {
 					set<ipointer_event_args>(f);
 				}
@@ -364,13 +434,18 @@ namespace ang
 				: public event
 			{
 			public:
-				template<class obj_t>
-				pointer_released_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
+				template<class T>
+				pointer_released_event(T* o, void(T::*f)(object_t, ipointer_event_args_t))
 					: event((core_msg_t)core_msg_enum::pointer_released) {
 					set<ipointer_event_args>(o, f);
 				}
-				template<class calleable_t>
-				pointer_released_event(calleable_t f)
+				template<class T>
+				pointer_released_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(object_t, ipointer_event_args_t))
+					: event((core_msg_t)core_msg_enum::pointer_released) {
+					set<ipointer_event_args>(o, f);
+				}
+				template<class F>
+				pointer_released_event(F f)
 					: event((core_msg_t)core_msg_enum::pointer_released) {
 					set<iupdate_event_args>(f);
 				}

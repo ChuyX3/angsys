@@ -426,7 +426,7 @@ windex string_base_buffer::find_revert(raw_str_t str, windex start, windex end)c
 wsize string_base_buffer::sub_string(raw_str_t raw, windex start, windex end)const
 {
 	if (start >= end || start > length()) return 0;
-	text::encoder_interface _encoder; wsize i = 0;
+	text::encoder_interface _encoder; wsize i = start;
 	text::encoder_interface::initialize_interface(&_encoder, raw._encoding);
 
 	if (!_encoder._convert_string)

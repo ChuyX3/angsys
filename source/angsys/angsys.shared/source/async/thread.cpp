@@ -488,9 +488,11 @@ dword dispatcher_thread::core_thread_start_routine(pointer args)
 		{
 		case async_action_status::canceled:
 		case async_action_status::completed:
-	COMPLETED:
-			thread->_state = async_action_status::completed;
+		COMPLETED:
+			thread->mutex_->unlock();
 			thread->end_event(thread, null);
+			thread->mutex_->lock();
+			thread->_state = async_action_status::completed;
 			thread->cond_->signal();
 			thread->mutex_->unlock();
 			return result;

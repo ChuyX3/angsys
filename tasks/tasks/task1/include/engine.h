@@ -30,6 +30,8 @@ namespace d3d11
 		shared_ptr<core::time::step_timer> timer;
 		core::async::idispatcher_t dispatcher;
 
+
+
 	public:
 		engine();
 		ANG_DECLARE_INTERFACE();
@@ -47,7 +49,6 @@ namespace d3d11
 
 		void init();
 		void update(shared_ptr<core::time::step_timer>);
-		void update_controller(float delta);
 		void draw();
 		void exit();
 

@@ -6,6 +6,12 @@
     <ClInclude Include="include\engine.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\scenes\model_loader.h">
+      <Filter>include\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scenes\scenes.h">
+      <Filter>include\scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -25,11 +31,17 @@
       <UniqueIdentifier>{a34408e4-b4a7-4839-9309-76e06184cda0}</UniqueIdentifier>
     </Filter>
     <Filter Include="resources\shaders">
-      <UniqueIdentifier>{d2083b0d-e165-4314-969f-a95b22d78373}</UniqueIdentifier>
+      <UniqueIdentifier>{eb86f7e3-fda4-48da-bad8-91a0d11993b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\scenes">
+      <UniqueIdentifier>{04a5c6de-a3dc-4bce-aa4b-fb230a4a3751}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\fx_library.xml">
+      <Filter>resources</Filter>
+    </Xml>
+    <Xml Include="resources\texture_apex.xml">
       <Filter>resources</Filter>
     </Xml>
   </ItemGroup>
