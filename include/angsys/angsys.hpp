@@ -425,6 +425,8 @@ namespace ang
 		virtual string to_string()const;
 		virtual wsize serialize(streams::itext_output_stream_t)const;
 		virtual wsize serialize(streams::ibinary_output_stream_t)const;
+		virtual wsize deserialize(streams::itext_input_stream_t);
+		virtual wsize deserialize(streams::ibinary_input_stream_t);
 
 	protected:
 		virtual bool auto_release();

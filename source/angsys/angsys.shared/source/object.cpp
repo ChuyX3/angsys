@@ -356,6 +356,17 @@ wsize object::serialize(streams::itext_output_stream_t stream)const
 	return stream->write(object_name());
 }
 
+wsize object::deserialize(streams::ibinary_input_stream_t stream)
+{
+	string txt;
+	return txt->deserialize(stream);
+}
+
+wsize object::deserialize(streams::itext_input_stream_t stream)
+{
+	string txt;
+	return txt->deserialize(stream);
+}
 
 ///////////////////////////////////////////////////////////////////////////
 

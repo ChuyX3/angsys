@@ -1,5 +1,5 @@
 #pragma once
-#include <ang/graphics/angraph.h>
+#include <ang/graphics/angraph.hpp>
 
 namespace ang
 {
@@ -87,7 +87,7 @@ namespace ang
 				struct model_element
 				{
 					string material;
-					collections::vector<vertex> vertices;
+					collections::vector<vertex, memory::aligned16_allocator> vertices;
 
 					bool operator == (const model_element&)const { return false; }//dummy
 					bool operator != (const model_element&)const { return false; }//dummy
@@ -138,14 +138,14 @@ namespace ang
 
 				ANG_DECLARE_INTERFACE();
 
-				collections::vector<model_element> load(xml::xml_node_t);
-				core::async::iasync_t<collections::vector<model_element>> load_async(xml::xml_node_t);
+				collections::vector<model_element> load(xml::ixml_node_t);
+				core::async::iasync_t<collections::vector<model_element>> load_async(xml::ixml_node_t);
 
 			private:
-				bool load_element(xml::xml_node_t, indexed_model::model_element& out);
-				bool load_material(xml::xml_node_t, indexed_model::model_element& out);
-				bool load_index_buffer(xml::xml_node_t, indexed_model::model_element& out);
-				bool load_vertex_buffer(xml::xml_node_t, indexed_model::model_element& out);
+				bool load_element(xml::ixml_node_t, indexed_model::model_element& out);
+				bool load_material(xml::ixml_node_t, indexed_model::model_element& out);
+				bool load_index_buffer(xml::ixml_node_t, indexed_model::model_element& out);
+				bool load_vertex_buffer(xml::ixml_node_t, indexed_model::model_element& out);
 
 
 			private:
@@ -154,6 +154,9 @@ namespace ang
 
 		}
 	}
+
+	ANG_OBJECT_WRAPPER_DECLARATION(, graphics::scenes::ordered_model);
+	ANG_OBJECT_WRAPPER_DECLARATION(, graphics::scenes::indexed_model);
 }
 
 ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::scenes::ordered_model::vertex);

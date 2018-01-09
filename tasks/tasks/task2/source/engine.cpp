@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "engine.h"
+#include "scenes/model_loader.h"
 
 #if defined _DEBUG
 #define new new(__FILE__, __LINE__)
@@ -26,10 +27,17 @@ void engine::init()
 	file->close();
 	effect_library->load_library(doc->xml_root_element());
 
-	file->open(L"resources/texture_apex.xml"_s);
+	effect_library->find_technique("solid_color_fx"_s);
+
+	graphics::scenes::indexed_model_t model = new graphics::scenes::indexed_model();
+	file->open(L"resources/models/cube.xml"_s);
 	doc = xml::xml_document::from_file(file);
 	file->close();
-	texture_loader->load_library(doc->xml_root_element());
+	model->load(doc->xml_root_element());
+	//file->open(L"resources/texture_apex.xml"_s);
+	//doc = xml::xml_document::from_file(file);
+	//file->close();
+	//texture_loader->load_library(doc->xml_root_element());
 }
 
 void engine::update(shared_ptr<core::time::step_timer> timer)

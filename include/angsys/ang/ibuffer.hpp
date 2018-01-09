@@ -33,6 +33,8 @@ namespace ang
 	ANG_BEGIN_INTERFACE_WITH_BASE(LINK, ibuffer, ibuffer_view)
 		visible static wsize serialize(ibuffer_t, streams::ibinary_output_stream_t stream);
 		visible static wsize serialize(ibuffer_t, streams::itext_output_stream_t stream);
+		visible static wsize deserialize(ibuffer_t&, streams::ibinary_input_stream_t stream);
+		visible static wsize deserialize(ibuffer_t&, streams::itext_input_stream_t stream);
 		visible vcall text::encoding_t encoding()const pure;
 		visible vcall wsize mem_copy(wsize, pointer, text::encoding_t = text::encoding::binary) pure;
 		visible vcall ibuffer_view_t map_buffer(windex, wsize) pure;

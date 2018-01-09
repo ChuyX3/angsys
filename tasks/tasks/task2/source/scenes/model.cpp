@@ -2,43 +2,47 @@
 #include "scenes/scenes.h"
 
 #if defined _DEBUG
-#define new ANG_DEBUG_NEW()
+#define new new(__FILE__,__LINE__)
 #endif
 
 using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::scenes;
 
-template<> inline ang::maths::float2 ang::xml::xml_value::as<ang::maths::float2>()const
+template<> inline ang::maths::float2 ang::xml::xml_text::xml_as<ang::maths::float2>()const
 {
-	if (get() == null)
+	if (this == null || cstr() == null)
 		return{ 0,0 };
-	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(get());
+	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(const_cast<xml::xml_text*>(this));
 	float temp[2];
 	stream >> "[" >> temp[0] >> "," >> temp[1];
 	return{ temp[0], temp[1] };
 }
 
-template<> inline ang::maths::float3 ang::xml::xml_value::as<ang::maths::float3>()const
+template<> inline ang::maths::float3 ang::xml::xml_text::xml_as<ang::maths::float3>()const
 {
-	if (get() == null)
+	if (this == null || cstr() == null)
 		return{ 0,0,0 };
-	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(get());
+	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(const_cast<xml::xml_text*>(this));
 	float temp[3];
 	stream >> "[" >> temp[0] >> "," >> temp[1] >> "," >> temp[2];
 	return{ temp[0], temp[1], temp[2] };
 }
 
-template<> inline ang::maths::float4 ang::xml::xml_value::as<ang::maths::float4>()const
+template<> inline ang::maths::float4 ang::xml::xml_text::xml_as<ang::maths::float4>()const
 {
-	if (get() == null)
+	if (this == null || cstr() == null)
 		return{ 0,0,0,0 };
-	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(get());
+	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(const_cast<xml::xml_text*>(this));
 	float temp[4];
 	stream >> "[" >> temp[0] >> "," >> temp[1] >> "," >> temp[2] >> "," >> temp[2];
 	return{ temp[0], temp[1], temp[2], temp[3] };
 }
 
+
+#define MY_TYPE model
+#include <ang/inline/object_wrapper_specialization.inl>
+#undef MY_TYPE
 
 #define M_PI 3.141592f
 
@@ -55,34 +59,34 @@ model::~model()
 
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::scenes::model, scene_object);
 
-bool model::load(scene_t scene, xml::xml_node_t node)
+bool model::load(scene_t scene, xml::ixml_node_t node)
 {
 	if (scene.is_empty() || node.is_empty() || !node->xml_has_children())
 		return false;
 
-	auto pos = node["position"];
+	auto pos = node["position"_s];
 	if (pos.is_empty())
 		_position = { 0, 0, 0, 1 };
 	else
-		_position = { pos->xml_value().as<maths::float3>() , 1 };
+		_position = { pos->xml_value()->xml_as<maths::float3>() , 1 };
 
-	auto rot = node["rotation"];
+	auto rot = node["rotation"_s];
 	if (rot.is_empty())
 		_rotation = { 0, 0, 0, 1 };
 	else
-		_rotation = { rot->xml_value().as<maths::float3>() , 1 };
+		_rotation = { rot->xml_value()->xml_as<maths::float3>() , 1 };
 
-	auto scale = node["scale"];
+	auto scale = node["scale"_s];
 	if (scale.is_empty())
 		_scale = { 0, 0, 0, 1 };
 	else
-		_scale = { scale->xml_value().as<maths::float3>() , 1 };
+		_scale = { scale->xml_value()->xml_as<maths::float3>() , 1 };
 
-	auto source = node["source"];
+	auto source = node["source"_s];
 	if (!source.is_empty())
 	{
 		wstring filename = source->xml_value();
-		auto _filename = scene->find_file(filename);
+		auto _filename = scene->find_file((cwstr_t)filename);
 		core::files::input_text_file_t _txt_file;
 		core::files::input_binary_file_t _bin_file;
 		if (_filename.is_empty())
@@ -97,9 +101,9 @@ bool model::load(scene_t scene, xml::xml_node_t node)
 		}
 
 
-		auto type = source->xml_attributes()["type"].as<cwstr_t>();
+		auto type = source->xml_attributes()["type"_s]->xml_as<cwstr_t>();
 
-		if (type == "indexed")
+		if (type == "indexed"_s)
 		{
 			if (_bin_file->is_valid())
 			{
@@ -110,8 +114,8 @@ bool model::load(scene_t scene, xml::xml_node_t node)
 				if (_txt_file->is_valid())
 				{
 					indexed_model_t _loader = new indexed_model();
-					xml::xml_document_t doc = new xml::xml_document(_txt_file);
-					_loader->load_async(doc->xml_root().get()).then<bool>([this, _loader, scene](core::async::iasync<collections::vector<indexed_model::model_element>>* task)->bool
+					xml::xml_document_t doc = xml::xml_document::from_file(_txt_file);
+					_loader->load_async(doc->xml_root_element()).then<bool>([this, _loader, scene](core::async::iasync<collections::vector<indexed_model::model_element>>* task)->bool
 					{
 						textures::itexture_loader_t texloader = scene->texture_loader();
 						effects::ieffect_library_t fxlibrary = scene->effect_library();
@@ -129,28 +133,28 @@ bool model::load(scene_t scene, xml::xml_node_t node)
 
 						model_element element;
 
-						foreach(data, [&](indexed_model::model_element& _element)
+						for(indexed_model::model_element& _element : data)
 						{
 							if (_element.vertex_data.is_empty() || _element.vertex_data->buffer_size() == 0)
-								return;
+								continue;
 							//if (_element.material == "_ea80e0f_dds"_s)
-							//	return;
+							//	continue;
 							auto stride = reflect::attribute_desc::get_size_in_bytes(_element.vertex_desc);
 							element.vertex_buffer = driver->create_vertex_buffer(
 								graphics::buffers::buffer_usage::dynamic,
 								_element.vertex_desc,
 								_element.vertex_data->buffer_size() / stride,
-								static_array<byte>((byte*)_element.vertex_data->buffer_ptr(), _element.vertex_data->buffer_size()));
+								collections::to_array((byte*)_element.vertex_data->buffer_ptr(), _element.vertex_data->buffer_size()));
 
 							element.index_buffer = driver->create_index_buffer(
 								graphics::buffers::buffer_usage::dynamic,
 								_element.index_type,
 								_element.index_data->buffer_size() / reflect::variable_desc(_element.index_type, reflect::var_class::scalar).get_size_in_bytes(),
-								static_array<byte>((byte*)_element.index_data->buffer_ptr(), _element.index_data->buffer_size()));
+								collections::to_array((byte*)_element.index_data->buffer_ptr(), _element.index_data->buffer_size()));
 
 							element.technique = fxlibrary->find_technique(_element.technique_name);
 
-							foreach(_element.textures, [&](string& texture)
+							for(string& texture : _element.textures)
 							{
 								auto res = texloader->load_texture(texture);
 								driver->execute_on_thread_safe([&]()
@@ -158,31 +162,13 @@ bool model::load(scene_t scene, xml::xml_node_t node)
 									if (!res.is_empty()) element.textures += res;
 								});
 
-							});
+							}
 
 							driver->execute_on_thread_safe([&]()
 							{
 								model_elements += element;
 							});
-
-							//index idx = model_elements->counter() - 1;
-							/*texloader->load_texture_async(_element.material).then<bool>([=](core::async::iasync<graphics::textures::itexture_t>* result)
-							{
-							driver->execute_on_thread_safe([&]()
-							{
-							try {
-							auto res = result->result();
-							if (!res.is_empty())
-							model_elements[idx].textures += res;
-							}
-							catch (exception_t)
-							{
-
-							}
-							});
-							return true;
-							});*/
-						});
+						}
 						return true;
 					});
 					return true;
@@ -239,16 +225,16 @@ bool model::load(scene_t scene, xml::xml_node_t node)
 							{ reflect::var_type::f32, reflect::var_class::vec2, "texcoord"_s, reflect::var_semantic::tex_coord, 0 }
 						};
 
-						foreach(data, [&](ordered_model::model_element& _element)
+						for(ordered_model::model_element& _element : data)
 						{
 							if (_element.vertices.is_empty() || _element.vertices->counter() == 0)
-								return;
+								continue;
 
 							element.vertex_buffer = driver->create_vertex_buffer(
 								graphics::buffers::buffer_usage::dynamic,
-								static_array<reflect::attribute_desc>(desc, 3),
+								collections::to_array(desc),
 								_element.vertices->counter(),
-								static_array<byte>((byte*)_element.vertices->data(), _element.vertices->counter() * sizeof(ordered_model::vertex)));
+								collections::to_array((byte*)_element.vertices->data(), _element.vertices->counter() * sizeof(ordered_model::vertex)));
 
 							element.technique = fxlibrary->find_technique("character_lighting_fx"_s);
 
@@ -274,7 +260,7 @@ bool model::load(scene_t scene, xml::xml_node_t node)
 								});
 								return true;
 							});
-						});
+						}
 						return true;
 					}))
 						return true;
@@ -290,16 +276,16 @@ bool model::load(scene_t scene, xml::xml_node_t node)
 						{ reflect::var_type::f32, reflect::var_class::vec2, "texcoord"_s, reflect::var_semantic::tex_coord, 0 }
 					};
 
-					foreach(data, [&](ordered_model::model_element& _element)
+					for(ordered_model::model_element& _element : data)
 					{
 						if (_element.vertices.is_empty() || _element.vertices->counter() == 0)
-							return;
+							continue;
 
 						element.vertex_buffer = driver->create_vertex_buffer(
 							graphics::buffers::buffer_usage::dynamic,
-							static_array<reflect::attribute_desc>(desc, 3),
+							collections::to_array(desc),
 							_element.vertices->counter(),
-							static_array<byte>((byte*)_element.vertices->data(), _element.vertices->counter() * sizeof(ordered_model::vertex)));
+							collections::to_array((byte*)_element.vertices->data(), _element.vertices->counter() * sizeof(ordered_model::vertex)));
 
 						element.technique = fxlibrary->find_technique("character_lighting_fx"_s);
 
@@ -325,7 +311,7 @@ bool model::load(scene_t scene, xml::xml_node_t node)
 							});
 							return true;
 						});
-					});
+					}
 					return true;
 				}
 			}))
@@ -362,18 +348,18 @@ bool model::load(idriver_t driver, effects::ieffect_library_t fxlibrary, texture
 			{ reflect::var_type::f32, reflect::var_class::vec2, "texcoord"_s, reflect::var_semantic::tex_coord, 0 }
 		};
 		
-		foreach(data, [&](ordered_model::model_element& _element)
+		for(ordered_model::model_element& _element : data)
 		{
 			if (_element.vertices.is_empty() || _element.vertices->counter() == 0)
-				return;
+				continue;
 			//if (_element.material == "_ea80e0f_dds"_s)
-			//	return;
+			//	continue;
 
 			element.vertex_buffer = driver->create_vertex_buffer(
 				graphics::buffers::buffer_usage::dynamic,
-				static_array<reflect::attribute_desc>(desc, 3),
+				collections::to_array(desc),
 				_element.vertices->counter(),
-				static_array<byte>((byte*)_element.vertices->data(), _element.vertices->counter() * sizeof(ordered_model::vertex)));
+				collections::to_array((byte*)_element.vertices->data(), _element.vertices->counter() * sizeof(ordered_model::vertex)));
 
 			element.technique = fxlibrary->find_technique("character_lighting_fx"_s);
 
@@ -399,7 +385,7 @@ bool model::load(idriver_t driver, effects::ieffect_library_t fxlibrary, texture
 				});
 				return true;
 			});
-		});
+		}
 
 	
 		return true;
@@ -408,9 +394,8 @@ bool model::load(idriver_t driver, effects::ieffect_library_t fxlibrary, texture
 	return true;
 }
 
-bool model::load(idriver_t driver, effects::ieffect_library_t fxlibrary, textures::itexture_loader_t texloader, xml::xml_node_t model_info)
+bool model::load(idriver_t driver, effects::ieffect_library_t fxlibrary, textures::itexture_loader_t texloader, xml::ixml_node_t model_info)
 {
-
 	return true;
 }
 
@@ -447,7 +432,7 @@ void model::draw(scene_t scene) {
 	driver->execute_on_thread_safe([&]()
 	{
 		effects::ishaders_t shaders = null;
-		foreach(model_elements, [&](model_element& _element)
+		for(model_element& _element : model_elements)
 		{
 			if (shaders.get() != _element.technique.get())
 			{
@@ -466,7 +451,7 @@ void model::draw(scene_t scene) {
 					lights_info[0 /*"ambient"*/].cast<maths::float4>() = { scene->ambient_color(), 0.5f };
 					lights_info[1 /*"lights_count"*/].cast<uint>() = scene_lights.size();
 					lights_info[2 /*"specular_power"*/].cast<float>() = 10;
-					auto lights = lights_info[3 /*"lights"*/].cast<static_array<reflect::variable>>();
+					auto lights = lights_info[3 /*"lights"*/].cast<array_view<reflect::variable>>();
 					for (index i = 0; i < scene_lights.size(); ++i)
 					{
 						lights[i][0 /*"color"*/].cast<maths::float4>() = maths::float4(scene_lights[i].color, 1.0f);
@@ -481,10 +466,8 @@ void model::draw(scene_t scene) {
 			}
 
 			index i = 0;
-			foreach(_element.textures, [&](textures::itexture_t& tex) 
-			{
+			for(textures::itexture_t& tex : _element.textures)
 				driver->bind_texture(tex, i++);
-			});
 
 			driver->bind_vertex_buffer(_element.vertex_buffer);
 			if (_element.index_buffer.is_empty())
@@ -500,7 +483,7 @@ void model::draw(scene_t scene) {
 
 			for(index i = 0, c = _element.textures.is_empty()? 1 : _element.textures->counter(); i < c; ++i)
 				driver->bind_texture(null, i);
-		});
+		}
 		driver->bind_vertex_buffer(null);
 		driver->bind_shaders(null);
 	});

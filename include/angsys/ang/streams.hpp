@@ -314,6 +314,17 @@ namespace ang
 		};
 
 		template<typename T>
+		struct text_deserializer<object_wrapper<T>> {
+			static wsize deserialize(itext_input_stream_t stream, object_wrapper<T>& value) {
+				if (value.is_empty()) value = new T();
+				return value->deserialize(stream);
+			}
+			//static wsize deserialize(istream_t stream, T& value) {
+			//	return stream->read((pointer)&value, sizeof(T), text::default_text_format<T>::format());
+			//}
+		};
+
+		template<typename T>
 		struct text_serializer<safe_str<T>> {
 			static wsize serialize(itext_output_stream_t stream, safe_str<T> const& value) {
 				return stream->write((pointer)&value, sizeof(T), text::default_text_format<T>::format());
@@ -394,6 +405,14 @@ namespace ang
 		struct binary_deserializer {
 			static wsize deserialize(ibinary_input_stream_t stream, T& value) {
 				return stream->read(&value, sizeof(T));
+			}
+		};
+
+		template<typename T>
+		struct binary_deserializer<object_wrapper<T>> {
+			static wsize deserialize(ibinary_input_stream_t stream, object_wrapper<T>& value) {
+				if (value.get() == null) value = new T();
+				return value->deserialize(stream);
 			}
 		};
 

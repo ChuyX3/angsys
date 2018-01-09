@@ -165,6 +165,11 @@
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="source\engine.cpp" />
+    <ClCompile Include="source\scenes\camera.cpp" />
+    <ClCompile Include="source\scenes\indexed_model.cpp" />
+    <ClCompile Include="source\scenes\model.cpp" />
+    <ClCompile Include="source\scenes\ordered_model.cpp" />
+    <ClCompile Include="source\scenes\scenes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\source\angraph\angraph.desktop\angraph.desktop.vcxproj">
@@ -181,6 +186,10 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DeploymentContent>
     </Xml>
+    <Xml Include="resources\models\cube.xml" />
+    <Xml Include="resources\models\cube2.xml" />
+    <Xml Include="resources\models\skybox.xml" />
+    <Xml Include="resources\models\woman.xml" />
     <Xml Include="resources\texture_apex.xml">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DeploymentContent>
@@ -195,6 +204,20 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DeploymentContent>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\basic_shader.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="resources\shaders\character2.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="resources\shaders\postfx_gray_scale.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="resources\shaders\sky_box.hlsl">
+      <FileType>Document</FileType>
     </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

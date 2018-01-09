@@ -1,40 +1,47 @@
 #include "pch.h"
 #include "scenes/scenes.h"
 
+#if defined _DEBUG
+#define new new(__FILE__,__LINE__)
+#endif
+
 using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::scenes;
 
-template<> inline ang::maths::float2 ang::xml::xml_value::as<ang::maths::float2>()const
+template<> inline ang::maths::float2 ang::xml::xml_text::xml_as<ang::maths::float2>()const
 {
-	if (get() == null)
+	if (this == null || cstr() == null)
 		return{ 0,0 };
-	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(get());
+	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(const_cast<xml::xml_text*>(this));
 	float temp[2];
 	stream >> "[" >> temp[0] >> "," >> temp[1];
 	return{ temp[0], temp[1] };
 }
 
-template<> inline ang::maths::float3 ang::xml::xml_value::as<ang::maths::float3>()const
+template<> inline ang::maths::float3 ang::xml::xml_text::xml_as<ang::maths::float3>()const
 {
-	if (get() == null)
+	if (this == null || cstr() == null)
 		return{ 0,0,0 };
-	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(get());
+	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(const_cast<xml::xml_text*>(this));
 	float temp[3];
 	stream >> "[" >> temp[0] >> "," >> temp[1] >> "," >> temp[2];
 	return{ temp[0], temp[1], temp[2] };
 }
 
-template<> inline ang::maths::float4 ang::xml::xml_value::as<ang::maths::float4>()const
+template<> inline ang::maths::float4 ang::xml::xml_text::xml_as<ang::maths::float4>()const
 {
-	if (get() == null)
+	if (this == null || cstr() == null)
 		return{ 0,0,0,0 };
-	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(get());
+	streams::itext_input_stream_t stream = new streams::text_buffer_input_stream(const_cast<xml::xml_text*>(this));
 	float temp[4];
 	stream >> "[" >> temp[0] >> "," >> temp[1] >> "," >> temp[2] >> "," >> temp[2];
 	return{ temp[0], temp[1], temp[2], temp[3] };
 }
 
+#define MY_TYPE camera
+#include <ang/inline/object_wrapper_specialization.inl>
+#undef MY_TYPE
 
 #define M_PI 3.141592f
 
@@ -51,27 +58,27 @@ camera::~camera()
 
 ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::scenes::camera, scene_object);
 
-bool camera::load(scene_t scene, xml::xml_node_t node)
+bool camera::load(scene_t scene, xml::ixml_node_t node)
 {
-	auto pos = node["position"];
+	auto pos = node["position"_s];
 	if (pos.is_empty())
 		_position = { 0, 0, 0, 1 };
 	else 
-		_position = { pos->xml_value().as<maths::float3>() , 1 };
+		_position = { pos->xml_value()->xml_as<maths::float3>() , 1 };
 
-	auto rot = node["rotation"];
+	auto rot = node["rotation"_s];
 	if (rot.is_empty())
 		_rotation = { 0, 0, 0, 1 };
 	else
-		_rotation = { rot->xml_value().as<maths::float3>() , 1 };
+		_rotation = { rot->xml_value()->xml_as<maths::float3>() , 1 };
 
-	auto near_plane_node = node["near_plane"];
-	auto far_plane_node = node["far_plane"];
-	auto fvo_node = node["fvo"];
+	auto near_plane_node = node["near_plane"_s];
+	auto far_plane_node = node["far_plane"_s];
+	auto fvo_node = node["fvo"_s];
 
-	float near_plane = near_plane_node.is_empty() ? 0.001f : near_plane_node->xml_value().as<float>();
-	float far_plane = far_plane_node.is_empty() ? 0.001f : far_plane_node->xml_value().as<float>();
-	float fvo = fvo_node.is_empty() ? 0.001f : fvo_node->xml_value().as<float>();
+	float near_plane = near_plane_node.is_empty() ? 0.001f : near_plane_node->xml_value()->xml_as<float>();
+	float far_plane = far_plane_node.is_empty() ? 0.001f : far_plane_node->xml_value()->xml_as<float>();
+	float fvo = fvo_node.is_empty() ? 0.001f : fvo_node->xml_value()->xml_as<float>();
 	auto size = scene->current_size();
 	projection(fvo, size.width / size.height , near_plane, far_plane);
 

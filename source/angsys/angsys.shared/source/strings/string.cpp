@@ -255,6 +255,19 @@ wsize string_base_buffer::serialize(streams::itext_output_stream_t stream)const
 	return ibuffer::serialize(const_cast<string_base_buffer*>(this), stream);
 }
 
+wsize string_base_buffer::deserialize(streams::ibinary_input_stream_t stream)
+{
+	//return ibuffer::deserialize(this, stream);
+	return 0;
+}
+
+wsize string_base_buffer::deserialize(streams::itext_input_stream_t stream)
+{
+	//return ibuffer::deserialize(this, stream);
+	return 0;
+}
+
+
 
 /////////////////////////////////////////////////////////////////////////
 

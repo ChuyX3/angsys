@@ -2,7 +2,7 @@
 #include "scenes/model_loader.h"
 
 #if defined _DEBUG
-#define new ANG_DEBUG_NEW()
+#define new new(__FILE__,__LINE__)
 #endif
 
 using namespace ang;
@@ -12,6 +12,9 @@ using namespace ang::graphics::scenes;
 
 static const uint _magic_word = 'MDLO';
 
+#define MY_TYPE ordered_model
+#include <ang/inline/object_wrapper_specialization.inl>
+#undef MY_TYPE
 
 ordered_model::ordered_model()
 {
@@ -33,11 +36,11 @@ collections::vector<ordered_model::model_element> ordered_model::load(core::file
 		return file->read([&](streams::itext_input_stream_t stream)->bool
 		{
 			ibuffer_t _buffer = interface_cast<ibuffer>(stream.get());
-			cstr_t data;
+			
 			if (_buffer.is_empty())
 				return false;
-			data.set((char*)_buffer->buffer_ptr(), _buffer->buffer_size() - 1);
 
+			text::string_util data(raw_str(_buffer->buffer_ptr(), _buffer->buffer_size() - 1, text::encoding::ascii));
 			index idx = 0;
 			maths::unaligned_float3 temp1;
 
@@ -50,8 +53,7 @@ collections::vector<ordered_model::model_element> ordered_model::load(core::file
 
 			string material;
 			model_element model;
-			model.vertices = new collections::vector_buffer<vertex>();
-			model.vertices->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
+			model.vertices = new collections::vector_buffer<vertex, memory::aligned16_allocator>();
 
 			collections::vector<maths::unaligned_float3> vertices;
 			collections::vector<maths::unaligned_float3> normals;
@@ -61,7 +63,7 @@ collections::vector<ordered_model::model_element> ordered_model::load(core::file
 
 			cstr_t debug_view;
 
-			while (data.size() > idx)
+			while (data.data().size() > idx)
 			{
 				//debug_view.set(&data[idx], data.size() - idx);
 				if (data.find(v_s, idx, idx + v_s.size()) == idx)
@@ -148,26 +150,26 @@ collections::vector<ordered_model::model_element> ordered_model::load(core::file
 					{
 						model.material = ang::move(material);
 						_elements += ang::move(model);
-						model.vertices = new collections::vector_buffer<vertex>();
-						model.vertices->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
+						model.vertices = new collections::vector_buffer<vertex, memory::aligned16_allocator>();
 					}
 
-					auto end = data.find('\n', idx);
+					auto end = data.find("\n"_s, idx);
 					if (end == invalid_index)
 						break; //error
 
 					data.sub_string(material, idx + usemtl_s.size(), end - idx - usemtl_s.size() - 1);
+
+
 				}
 
-				idx = data.find('\n', idx);
+				idx = data.find("\n"_s, idx);
 				if (idx != invalid_index)idx++;
 			}
 			if (!material.is_empty())
 			{
 				model.material = ang::move(material);
 				_elements += ang::move(model);
-				model.vertices = new collections::vector_buffer<vertex>();
-				model.vertices->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
+				model.vertices = new collections::vector_buffer<vertex, memory::aligned16_allocator>();
 			}
 			return true;
 		}) ? _elements.get() : null;
@@ -187,11 +189,11 @@ core::async::iasync_t<collections::vector<ordered_model::model_element>> ordered
 		return file->read_async<collections::vector<ordered_model::model_element>>([&](streams::itext_input_stream_t stream)->collections::vector<ordered_model::model_element>
 		{
 			ibuffer_t _buffer = interface_cast<ibuffer>(stream.get());
-			cstr_t data;
+		
 			if (_buffer.is_empty())
 				return null;
-			data.set((char*)_buffer->buffer_ptr(), _buffer->buffer_size() - 1);
-
+			
+			text::string_util data(raw_str(_buffer->buffer_ptr(), _buffer->buffer_size() - 1, text::encoding::ascii));
 			index idx = 0;
 			maths::unaligned_float3 temp1;
 
@@ -205,8 +207,7 @@ core::async::iasync_t<collections::vector<ordered_model::model_element>> ordered
 			string material;
 			collections::vector<string> material_lib;
 			model_element model;
-			model.vertices = new collections::vector_buffer<vertex>();
-			model.vertices->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
+			model.vertices = new collections::vector_buffer<vertex, memory::aligned16_allocator>();
 
 			collections::vector<maths::unaligned_float3> vertices;
 			collections::vector<maths::unaligned_float3> normals;
@@ -218,7 +219,7 @@ core::async::iasync_t<collections::vector<ordered_model::model_element>> ordered
 
 			maths::matrix4 world = maths::matrix::identity() * maths::matrix::rotation_x(3.141592f * -90.0f / 180.0f);
 
-			while (data.size() > idx)
+			while (data.data().size() > idx)
 			{
 				//debug_view.set(&data[idx], data.size() - idx);
 				if (data.find(v_s, idx, idx + v_s.size()) == idx)
@@ -321,11 +322,10 @@ core::async::iasync_t<collections::vector<ordered_model::model_element>> ordered
 					{
 						model.material = ang::move(material);
 						_elements += ang::move(model);
-						model.vertices = new collections::vector_buffer<vertex>();
-						model.vertices->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
+						model.vertices = new collections::vector_buffer<vertex, memory::aligned16_allocator>();
 					}
 
-					auto end = data.find('\n', idx);
+					auto end = data.find("\n"_s, idx);
 					if (end == invalid_index)
 						break; //error
 
@@ -333,22 +333,21 @@ core::async::iasync_t<collections::vector<ordered_model::model_element>> ordered
 				}
 				else if (data.find(mtllib_s, idx, idx + mtllib_s.size()) == idx)
 				{
-					auto end = data.find('\n', idx);
+					auto end = data.find("\n"_s, idx);
 					if (end == invalid_index)
 						break; //error
 					material_lib += ""_s;
 					data.sub_string(*material_lib->end(), idx + mtllib_s.size(), end - idx - usemtl_s.size() - 1);
 				}
 
-				idx = data.find('\n', idx);
+				idx = data.find("\n"_s, idx);
 				if (idx != invalid_index)idx++;
 			}
 			if (!material.is_empty())
 			{
 				model.material = ang::move(material);
 				_elements += ang::move(model);
-				model.vertices = new collections::vector_buffer<vertex>();
-				model.vertices->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
+				model.vertices = new collections::vector_buffer<vertex, memory::aligned16_allocator>();
 			}
 			return _elements.get();
 		});
@@ -365,7 +364,7 @@ collections::vector<ordered_model::model_element> ordered_model::load(core::file
 	ulong64 _size = 0;
 	file->read([&](streams::ibinary_input_stream_t stream) 
 	{
-		uint info;
+		uint info, temp;
 		_elements = null;
 
 		stream >> info;
@@ -378,10 +377,14 @@ collections::vector<ordered_model::model_element> ordered_model::load(core::file
 		{
 			vertex _v;
 			uint vertex_count = 0;
-			stream >> element.material;
+			
+			stream >> temp;
+			element.material = new strings::string_buffer<text::encoding::ascii>(temp);
+			auto view = element.material->map_buffer(0, temp);
+			temp = stream->read(view->buffer_ptr(), temp);
+			element.material->unmap_buffer(view, temp);
 			stream >> vertex_count;
-			element.vertices = new collections::vector_buffer<vertex>();
-			element.vertices->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
+			element.vertices = new collections::vector_buffer<vertex, memory::aligned16_allocator>();
 			for (index j = 0; j < vertex_count; ++j)
 			{
 				stream->read(&_v, sizeof(vertex));
@@ -422,8 +425,7 @@ core::async::iasync_t<collections::vector<ordered_model::model_element>> ordered
 				uint vertex_count = 0;
 				stream >> element.material;
 				stream >> vertex_count;
-				element.vertices = new collections::vector_buffer<vertex>();
-				element.vertices->set_allocator(memory::allocator_manager::get_allocator(memory::allocator_manager::aligned_allocator));
+				element.vertices = new collections::vector_buffer<vertex, memory::aligned16_allocator>();
 				for (index j = 0; j < vertex_count; ++j)
 				{
 					stream->read(&_v, sizeof(vertex));
@@ -452,19 +454,19 @@ bool ordered_model::save(core::files::output_binary_file_t file)
 			return false;
 		stream << _magic_word << _elements->counter();
 
-		foreach(_elements, [&](model_element& element)
+		for(model_element& element : _elements)
 		{
 			stream << element.material;
 			if (element.vertices.is_empty())
 				stream << 0U;
 			else {
 				stream << element.vertices->counter();
-				foreach(element.vertices, [&](vertex& v)
+				for(vertex& v : element.vertices)
 				{
 					stream->write(&v, sizeof(vertex));
-				});
+				}
 			}
-		});
+		}
 		_size = (ulong64)stream->position();
 		return true;
 	}, 0, 8)) return false;

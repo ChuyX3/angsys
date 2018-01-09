@@ -17,12 +17,16 @@ namespace ang
 			class camera;
 			typedef object_wrapper<camera> camera_t;
 
+			class model;
+			typedef object_wrapper<model> model_t;
+
 		}
 	}
 
 //	ANG_OBJECT_WRAPPER_DECLARATION(, graphics::scenes::scene_object);
-//	ANG_OBJECT_WRAPPER_DECLARATION(, graphics::scenes::scene);
-//	ANG_OBJECT_WRAPPER_DECLARATION(, graphics::scenes::camera);
+	ANG_OBJECT_WRAPPER_DECLARATION(, graphics::scenes::scene);
+	ANG_OBJECT_WRAPPER_DECLARATION(, graphics::scenes::camera);
+	ANG_OBJECT_WRAPPER_DECLARATION(, graphics::scenes::model);
 
 	namespace graphics
 	{
@@ -195,12 +199,6 @@ namespace ang
 			protected:
 				virtual~scene();
 			};
-
-
-
-
-			class model;
-			typedef object_wrapper<model> model_t;
 
 			class model
 				: public scene_object

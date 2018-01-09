@@ -1,5 +1,7 @@
 #pragma once
 
+#include "scenes/model_loader.h"
+
 namespace d3d11
 {
 	using namespace ang;
@@ -26,6 +28,10 @@ namespace d3d11
 		platform::icore_view_t core_view;
 		graphics::idriver_t driver;
 		graphics::isurface_t surface;
+
+		graphics::effects::ishaders_t shaders;
+		graphics::buffers::iindex_buffer_t index_buffer;
+		graphics::buffers::ivertex_buffer_t vertex_buffer;
 
 		graphics::effects::ieffect_library_t effect_library;
 		graphics::textures::itexture_loader_t texture_loader;

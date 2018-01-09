@@ -102,7 +102,7 @@ namespace ang
 	{
 		class LINK string_base_buffer
 			: public object
-				, public text::itext_buffer
+			, public text::itext_buffer
 		{
 		protected:
 			struct _str_data
@@ -163,6 +163,8 @@ namespace ang
 			virtual comparision_result_t compare(object const& obj)const override;
 			virtual wsize serialize(streams::ibinary_output_stream_t stream)const override;
 			virtual wsize serialize(streams::itext_output_stream_t stream)const override;
+			virtual wsize deserialize(streams::ibinary_input_stream_t stream) override;
+			virtual wsize deserialize(streams::itext_input_stream_t stream) override;
 			virtual pointer buffer_ptr()const override;
 			virtual wsize buffer_size()const override;
 			virtual wsize mem_copy(wsize, pointer, text::encoding_t) override;
