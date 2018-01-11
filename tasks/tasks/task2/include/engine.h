@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scenes/model_loader.h"
+#include "scenes/scenes.h"
 
 namespace d3d11
 {
@@ -29,12 +29,14 @@ namespace d3d11
 		graphics::idriver_t driver;
 		graphics::isurface_t surface;
 
-		graphics::effects::ishaders_t shaders;
-		graphics::buffers::iindex_buffer_t index_buffer;
-		graphics::buffers::ivertex_buffer_t vertex_buffer;
+		graphics::effects::ishaders_t shader;
+		graphics::buffers::iindex_buffer_t indices;
+		graphics::buffers::ivertex_buffer_t vertices;
 
 		graphics::effects::ieffect_library_t effect_library;
 		graphics::textures::itexture_loader_t texture_loader;
+
+		graphics::scenes::camera_t camera;
 
 		shared_ptr<core::time::step_timer> timer;
 		core::async::idispatcher_t dispatcher;

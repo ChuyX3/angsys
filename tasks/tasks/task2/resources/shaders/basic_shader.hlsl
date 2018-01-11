@@ -26,6 +26,7 @@ struct vs_input
 ps_input main_vs(vs_input input)
 {
     ps_input output;
+    // matrix wvp = proj * (view * world );
     output.vposition =mul(mul(mul(float4(input.position.xyz, 1), world), view), proj);
     output.vcolor = float4(input.color.xyz, 1);
     return output;

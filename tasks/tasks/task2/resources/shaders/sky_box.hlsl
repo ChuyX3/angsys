@@ -1,6 +1,6 @@
 
-#define VERTEX_SHADER
-#define PIXEL_SHADER
+//#define VERTEX_SHADER
+//#define PIXEL_SHADER
 
 struct ps_input
 {

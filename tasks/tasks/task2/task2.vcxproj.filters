@@ -57,6 +57,9 @@
     <Filter Include="resources\models">
       <UniqueIdentifier>{d476837b-1fb6-43f7-a250-04b4c06cf0b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\scenes">
+      <UniqueIdentifier>{24b3183a-2c66-414f-9d4f-8502c4bef7da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\fx_library.xml">
@@ -76,6 +79,9 @@
     </Xml>
     <Xml Include="resources\models\woman.xml">
       <Filter>resources\models</Filter>
+    </Xml>
+    <Xml Include="resources\scenes\scenes.xml">
+      <Filter>resources\scenes</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>

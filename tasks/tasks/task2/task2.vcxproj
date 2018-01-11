@@ -190,6 +190,7 @@
     <Xml Include="resources\models\cube2.xml" />
     <Xml Include="resources\models\skybox.xml" />
     <Xml Include="resources\models\woman.xml" />
+    <Xml Include="resources\scenes\scenes.xml" />
     <Xml Include="resources\texture_apex.xml">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DeploymentContent>

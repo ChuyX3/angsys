@@ -202,10 +202,28 @@ namespace ang
 				core::async::scope_locker<core::async::mutex_ptr_t> _lock = driver_guard();
 				return func();
 			}
+
+			template<typename T> inline buffers::iindex_buffer_t create_index_buffer(buffers::buffer_usage_t usage, array_view<T> init_data)const { return null; }
+			template<typename T, wsize N> inline buffers::iindex_buffer_t create_index_buffer(buffers::buffer_usage_t usage, T(&init_data)[N])const { return create_index_buffer(usage, collections::to_array(init_data)); }
 		ANG_END_INTERFACE();
 
 		LINK idriver_t create_graphic_driver(graph_driver_type_t, platform::icore_view_t = null, isurface_ptr_t = null);
 
+
+		
+
+		template<> inline buffers::iindex_buffer_t idriver::create_index_buffer(buffers::buffer_usage_t usage, array_view<short> init_data)const {
+			return create_index_buffer(usage, reflect::var_type::s16, init_data.size(), collections::to_array((byte*)init_data.get(), sizeof(short) * init_data.size()));
+		}
+		template<> inline buffers::iindex_buffer_t idriver::create_index_buffer(buffers::buffer_usage_t usage, array_view<ushort> init_data)const {
+			return create_index_buffer(usage, reflect::var_type::u16, init_data.size(), collections::to_array((byte*)init_data.get(), sizeof(ushort) * init_data.size()));
+		}
+		template<> inline buffers::iindex_buffer_t idriver::create_index_buffer(buffers::buffer_usage_t usage, array_view<int> init_data)const {
+			return create_index_buffer(usage, reflect::var_type::s32, init_data.size(), collections::to_array((byte*)init_data.get(), sizeof(int) * init_data.size()));
+		}
+		template<> inline buffers::iindex_buffer_t idriver::create_index_buffer(buffers::buffer_usage_t usage, array_view<uint> init_data)const {
+			return create_index_buffer(usage, reflect::var_type::u32, init_data.size(), collections::to_array((byte*)init_data.get(), sizeof(uint) * init_data.size()));
+		}
 	}
 }
 

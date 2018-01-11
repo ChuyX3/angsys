@@ -3,6 +3,7 @@
   <sources>
     <file sid="BASIC_SHADER_HLSL">resources/shaders/basic_shader.hlsl</file>
     <file sid="CHARACTER_HLSL">resources/shaders/character.hlsl</file>
+    <file sid="SKYBOX_HLSL">resources/shaders/sky_box.hlsl</file>
   </sources>
 
   <technique name="solid_color_fx">
@@ -21,9 +22,6 @@
       <compile_config>-DVERTEX_SHADER</compile_config>
     </vertex_shader>
     <pixel_shader>
-      <samplers>
-        <sampler type="linear" wrap="clamp"/>
-      </samplers>
       <entry>main_ps</entry>
       <file>BASIC_SHADER_HLSL</file>
       <compile_config>-DPIXEL_SHADER</compile_config>
@@ -127,6 +125,40 @@
       <entry>main_ps</entry>
       <file>CHARACTER_HLSL</file>
       <compile_config>-DPIXEL_SHADER-DLIGHTING-DUSE_NORMAL_MAP</compile_config>
+    </pixel_shader>
+  </technique>
+
+  <technique name="sky_box_fx">
+    <vertex_shader>
+      <uniforms name="wvp">
+        <var type="f32" class="mat4" name="world"/>
+        <var type="f32" class="mat4" name="view"/>
+        <var type="f32" class="mat4" name="proj"/>
+      </uniforms>
+      <input_layout>
+        <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+      </input_layout>
+      <entry>main_vs</entry>
+      <file>SKYBOX_HLSL</file>
+      <compile_config>-DVERTEX_SHADER</compile_config>
+    </vertex_shader>
+    <pixel_shader>
+      <uniforms name="lights">
+        <var type="f32" class="vec4" name="ambient" />
+        <var type="u32" class="scalar" name="lights_count" />
+        <var type="f32" class="scalar" name="specular_power" />
+        <block array="10" name="lights" >
+          <var type="f32" class="vec4" name="color" />
+          <var type="f32" class="vec3" name="position" />
+          <var type="u32" class="scalar" name="type" />
+        </block>
+      </uniforms>
+      <samplers>
+        <sampler type="linear" wrap="clamp"/>
+      </samplers>
+      <entry>main_ps</entry>
+      <file>SKYBOX_HLSL</file>
+      <compile_config>-DPIXEL_SHADER</compile_config>
     </pixel_shader>
   </technique>
 
