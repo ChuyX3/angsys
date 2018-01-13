@@ -324,9 +324,22 @@ wsize text_buffer_input_stream::seek(raw_str_t cstr)
 {
 	if (position() >= stream_size())
 		return false;
+
 	stream_index_t last_pos = position();
-	raw_str buffer = raw_str(pointer(wsize(_buffer->buffer_ptr()) + last_pos), stream_size() - last_pos, this->format());
-	forward(encoder._compare_string_until(buffer.ptr(), cstr.ptr(), cstr.encoding()) * buffer.char_size());
+	raw_str buffer = raw_str(pointer((byte*)_buffer->buffer_ptr() + last_pos), stream_size() - last_pos, this->format());
+	wsize i = 0, j = 0, c = 0;
+	char32_t c1 = 0, c2 = 0;
+	array_view<const char32_t> end = U" \n\r\t";
+	text::encoder_interface _encoder;
+	text::encoder_interface::initialize_interface(&_encoder, cstr.encoding());
+
+	do {
+		c += i;
+		do c1 = encoder._to_utf32(buffer.ptr(), i); while (c1 == U' ' || c1 == U'\t' || c1 == U'\n' || c1 == U'\r');
+		do c2 = encoder._to_utf32(cstr.ptr(), j); while (c2 == U' ' || c2 == U'\t' || c2 == U'\n' || c2 == U'\r');
+	} while (c1 == c2 && c1 != 0);
+
+	forward(c * buffer.char_size());
 	return position() - last_pos;
 }
 

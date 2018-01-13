@@ -32,11 +32,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "maths", "maths", "{FA5D0A26
 		..\..\include\angsys\ang\maths\vectors.hpp = ..\..\include\angsys\ang\maths\vectors.hpp
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "angraph.shared", "..\..\source\angraph\angraph.shared\angraph.shared.vcxitems", "{BDBB14FA-4E36-4404-9D51-A5F8C879C650}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "angraph.shared", "..\..\source\angraph\angraph.shared\angraph.Shared.vcxitems", "{BDBB14FA-4E36-4404-9D51-A5F8C879C650}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "angraph.desktop", "..\..\source\angraph\angraph.desktop\angraph.desktop.vcxproj", "{4D356A4C-688C-4E90-9EA0-872336DB7C27}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "task2", "task2\task2.vcxproj", "{D25909A8-8C27-45A3-8263-A1CC76B4D179}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "task3", "task3\task3.vcxproj", "{FA6B43E3-F506-4973-ABA5-4B5E1419A394}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -116,6 +118,18 @@ Global
 		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Release|x64.Build.0 = Release|x64
 		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Release|x86.ActiveCfg = Release|Win32
 		{D25909A8-8C27-45A3-8263-A1CC76B4D179}.Release|x86.Build.0 = Release|Win32
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394}.Debug|x64.ActiveCfg = Debug|x64
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394}.Debug|x64.Build.0 = Debug|x64
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394}.Debug|x86.ActiveCfg = Debug|Win32
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394}.Debug|x86.Build.0 = Debug|Win32
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394}.Develop|x64.ActiveCfg = Debug|x64
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394}.Develop|x64.Build.0 = Debug|x64
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394}.Develop|x86.ActiveCfg = Debug|Win32
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394}.Develop|x86.Build.0 = Debug|Win32
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394}.Release|x64.ActiveCfg = Release|x64
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394}.Release|x64.Build.0 = Release|x64
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394}.Release|x86.ActiveCfg = Release|Win32
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -129,5 +143,6 @@ Global
 		{BDBB14FA-4E36-4404-9D51-A5F8C879C650} = {2E854E66-D1E8-44D4-9E86-ACA5E531CD12}
 		{4D356A4C-688C-4E90-9EA0-872336DB7C27} = {2E854E66-D1E8-44D4-9E86-ACA5E531CD12}
 		{D25909A8-8C27-45A3-8263-A1CC76B4D179} = {D8E16DF2-4CE5-4BCF-877A-7426A8EC9E4C}
+		{FA6B43E3-F506-4973-ABA5-4B5E1419A394} = {D8E16DF2-4CE5-4BCF-877A-7426A8EC9E4C}
 	EndGlobalSection
 EndGlobal

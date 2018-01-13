@@ -70,6 +70,7 @@ long64 ang::str_to_integer(raw_str_t str, windex& i, int base) {
 	switch (str.encoding())
 	{
 	case text::encoding::ascii: return str_to_integer<false>(str.to_cstr<char>(), i, base);
+	case text::encoding::unicode: return str_to_integer<false>(str.to_cstr<wchar>(), i, base);
 	case text::encoding::utf8: return str_to_integer<false>(str.to_cstr<mchar>(), i, base);
 	case text::encoding::utf16_le: return text::is_little_endian() ? str_to_integer<false>(str.to_cstr<char16_t>(), i, base) : str_to_integer<true>(str.to_cstr<char16_t>(), i, base);
 	case text::encoding::utf16_be:return text::is_little_endian() ? str_to_integer<true>(str.to_cstr<char16_t>(), i, base) : str_to_integer<false>(str.to_cstr<char16_t>(), i, base);
@@ -87,6 +88,7 @@ ulong64 ang::str_to_uinteger(raw_str_t str, windex& i, int base) {
 	switch (str.encoding())
 	{
 	case text::encoding::ascii: return str_to_uinteger<false>(str.to_cstr<char>(), i, base);
+	case text::encoding::unicode: return str_to_uinteger<false>(str.to_cstr<wchar>(), i, base);
 	case text::encoding::utf8: return str_to_uinteger<false>(str.to_cstr<mchar>(), i, base);
 	case text::encoding::utf16_le: return text::is_little_endian() ? str_to_uinteger<false>(str.to_cstr<char16_t>(), i, base) : str_to_uinteger<true>(str.to_cstr<char16_t>(), i, base);
 	case text::encoding::utf16_be:return text::is_little_endian() ? str_to_uinteger<true>(str.to_cstr<char16_t>(), i, base) : str_to_uinteger<false>(str.to_cstr<char16_t>(), i, base);
@@ -104,6 +106,7 @@ double ang::str_to_float(raw_str_t str, windex& i, bool exp) {
 	switch (str.encoding())
 	{
 	case text::encoding::ascii: return str_to_floating<false>(str.to_cstr<char>(), i, exp);
+	case text::encoding::unicode: return str_to_floating<false>(str.to_cstr<wchar>(), i, exp);
 	case text::encoding::utf8: return str_to_floating<false>(str.to_cstr<mchar>(), i, exp);
 	case text::encoding::utf16_le: return text::is_little_endian() ? str_to_floating<false>(str.to_cstr<char16_t>(), i, exp) : str_to_floating<true>(str.to_cstr<char16_t>(), i, exp);
 	case text::encoding::utf16_be:return text::is_little_endian() ? str_to_floating<true>(str.to_cstr<char16_t>(), i, exp) : str_to_floating<false>(str.to_cstr<char16_t>(), i, exp);

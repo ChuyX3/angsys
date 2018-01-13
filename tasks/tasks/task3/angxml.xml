@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="ang::xml::xml_value">
+    <DisplayString>{_value}</DisplayString>
+    <Expand>
+      <ExpandedItem>_value</ExpandedItem>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::xml::xml_node">
+    <DisplayString Condition="_xml_type._value == 8U">{_xml_name} = {*_xml_content.unknown._ptr}</DisplayString>
+    <DisplayString Condition="_xml_type._value == 7U">&lt;!--{*_xml_content.unknown._ptr}--&gt;</DisplayString>
+    <DisplayString Condition="_xml_type._value == 6U &amp;&amp; _xml_content.data_type._value == 1U">&lt;{_xml_name}&gt;{*_xml_content.unknown._ptr}&lt;/{_xml_name}&gt;</DisplayString>
+    <DisplayString Condition="_xml_type._value == 6U &amp;&amp; _xml_content.data_type._value == 9U">&lt;{_xml_name}&gt;...&lt;/{_xml_name}&gt;</DisplayString>
+    <DisplayString Condition="_xml_type._value == 6U">&lt;{_xml_name}/&gt;</DisplayString>
+    <DisplayString Condition="_xml_type._value == 5U">&lt;?xml?&gt;</DisplayString>
+    <DisplayString>xml_node</DisplayString>
+    <Expand>
+      <Item Name="[Name]" ExcludeView="simple" Condition="_xml_name._ptr != 0">_xml_name</Item>
+      <Item Name="[Attributes]" ExcludeView="simple" Condition="_xml_attributes._ptr != 0">_xml_attributes</Item>
+      <Item Name="[Value]" ExcludeView="simple" Condition="_xml_content.data_type._value == 1U">*_xml_content.unknown._ptr</Item>
+      <Item Name="[Children]" ExcludeView="simple" Condition="_xml_content.data_type._value == 9U">*_xml_content.unknown._ptr</Item>
+      <Item Name="[Prev]" ExcludeView="simple">_xml_prev</Item>
+      <Item Name="[Next]" ExcludeView="simple">_xml_next</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::xml::xml_collection">
+    <DisplayString Condition="_xml_type._value == 10U">Attributes[Counter = {_count}]</DisplayString>
+    <DisplayString Condition="_xml_type._value == 9U">Elements[Counter = {_count}];</DisplayString>
+    <DisplayString>xml_collection</DisplayString>
+    <Expand>
+      <Item Name="[Counter]" ExcludeView="simple">_count</Item>
+      <LinkedListItems>
+        <Size>_count</Size>
+        <HeadPointer>_xml_first._ptr</HeadPointer>
+        <NextPointer>_xml_next._ptr</NextPointer>
+        <ValueNode>*this</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+  
+</AutoVisualizer>

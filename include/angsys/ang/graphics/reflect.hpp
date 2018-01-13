@@ -142,7 +142,7 @@ namespace ang
 				explicit variable(); //empty
 				variable(variable &&);
 				variable(variable const&);
-				variable(array_view<byte> bytes, variable_desc desc, uint aligment = (uint)invalid_index);
+				variable(array_view<byte> bytes, variable_desc desc, wsize aligment = (wsize)invalid_index);
 
 				uint aligment()const;
 				array_view<byte> raw_data()const;

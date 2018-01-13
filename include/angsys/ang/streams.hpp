@@ -348,7 +348,7 @@ namespace ang
 		struct text_deserializer<safe_str<T>> {
 			static wsize deserialize(itext_input_stream_t stream, safe_str<T>& str) {
 				wsize max = min(str.size(), stream->stream_size() - stream->position());
-				dummy_buffer buff(str.get(), str.size() * sizeof(T));
+				dummy_buffer buff((pointer)str.get(), str.size() * sizeof(T));
 				auto c = stream->read(&buff, text::encoding_by_type<T>::encoding(), max);
 				str.set(str.get(), c);
 				return c;
@@ -365,6 +365,28 @@ namespace ang
 				auto c = stream->read_line(&buff, text::encoding_by_type<T>::encoding(), max, endline);
 				str.set(str.get(), c);
 				return c;
+			}
+		};
+
+		template<typename T>
+		struct text_deserializer<safe_str<const T>> {
+			static wsize deserialize(itext_input_stream_t stream, safe_str<const T> str) {
+				return stream->seek(str);
+			}
+			static wsize deserialize(istream_t stream, safe_str<const T> str) {
+				return stream->seek(str);
+			}
+		};
+
+		template<typename T, wsize N>
+		struct text_deserializer<T const[N]> {
+			static wsize deserialize(itext_input_stream_t stream, const T(&ar)[N]) {
+				safe_str<const T> str = ar;
+				return stream->seek(str);
+			}
+			static wsize deserialize(istream_t stream, const T(&ar)[N]) {
+				safe_str<const T> str = ar;
+				return stream->seek(str);
 			}
 		};
 

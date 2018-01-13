@@ -34,7 +34,7 @@ namespace ang
 
 		space = text::swap_endian<SWAP>(str[i]);
 		while (space == ' ' || space == '\t' || space == '\n' || space == '\r')
-			space = text::swap_endian<SWAP>(str[i++]);
+			space = text::swap_endian<SWAP>(str[++i]);
 
 		if (text::swap_endian<SWAP>(str[i]) == '-') {
 			sig = -1; i++;
@@ -85,7 +85,7 @@ namespace ang
 
 		space = text::swap_endian<SWAP>(str[i]);
 		while (space == ' ' || space == '\t' || space == '\n' || space == '\r')
-			space = text::swap_endian<SWAP>(str[i++]);
+			space = text::swap_endian<SWAP>(str[++i]);
 
 		switch (base)
 		{
@@ -125,7 +125,7 @@ namespace ang
 
 		space = text::swap_endian<SWAP>(str[i]);
 		while (space == ' ' || space == '\t' || space == '\n' || space == '\r')
-			space = text::swap_endian<SWAP>(str[i++]);
+			space = text::swap_endian<SWAP>(str[++i]);
 
 		if (text::swap_endian<SWAP>(str[i]) == '-') {
 			sig = -1; i++;

@@ -192,6 +192,7 @@ void ang::collections::hash_table_object<K, T, allocator>::increase_capacity()
 				node_ptr_t entry = temp;
 				temp = temp->next;
 				entry->next = new_data[idx];
+				if (new_data[idx])new_data[idx]->prev = entry;
 				new_data[idx] = entry;
 				s--;
 			}
@@ -1131,7 +1132,7 @@ inline bool ang::collections::hash_table_object<ang::strings::string_base<ENCODI
 template<ang::text::encoding_enum ENCODING, typename T, template<typename> class allocator>
 void ang::collections::hash_table_object<ang::strings::string_base<ENCODING>, T, allocator>::increase_capacity()
 {
-	auto new_size = hash_table_get_next_size(_capacity);
+	wsize new_size = hash_table_get_next_size(_capacity);
 	node_ptr_t* new_data = allocator<node_ptr_t>::alloc(new_size);
 	memset(new_data, 0, sizeof(node_ptr_t) * new_size);
 
@@ -1142,10 +1143,11 @@ void ang::collections::hash_table_object<ang::strings::string_base<ENCODING>, T,
 			node_ptr_t temp = _table[i];
 			_table[i] = null;
 			while (temp) {
-				windex idx = create_hash_index(temp->pair.key, new_size);
+				windex idx = create_hash_index((raw_str_t)temp->pair.key, new_size);
 				node_ptr_t entry = temp;
 				temp = temp->next;
 				entry->next = new_data[idx];
+				if (new_data[idx])new_data[idx]->prev = entry;
 				new_data[idx] = entry;
 				s--;
 			}

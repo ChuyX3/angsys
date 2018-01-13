@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="include\engine.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scenes\model_loader.h">
+      <Filter>include\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scenes\scenes.h">
+      <Filter>include\scenes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="source\engine.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scenes\camera.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scenes\indexed_model.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scenes\model.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scenes\ordered_model.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scenes\scenes.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{71e4b9bf-27c0-442f-b8d9-e735c6fbf223}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{9ab038ba-0abc-43a9-b385-da1456a10750}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{a34408e4-b4a7-4839-9309-76e06184cda0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\shaders">
+      <UniqueIdentifier>{eb86f7e3-fda4-48da-bad8-91a0d11993b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\scenes">
+      <UniqueIdentifier>{04a5c6de-a3dc-4bce-aa4b-fb230a4a3751}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\scenes">
+      <UniqueIdentifier>{efe4cd80-fb85-49bf-b30d-ab91f7b4d05e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\models">
+      <UniqueIdentifier>{d476837b-1fb6-43f7-a250-04b4c06cf0b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\scenes">
+      <UniqueIdentifier>{24b3183a-2c66-414f-9d4f-8502c4bef7da}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="resources\fx_library.xml">
+      <Filter>resources</Filter>
+    </Xml>
+    <Xml Include="resources\texture_apex.xml">
+      <Filter>resources</Filter>
+    </Xml>
+    <Xml Include="resources\models\cube.xml">
+      <Filter>resources\models</Filter>
+    </Xml>
+    <Xml Include="resources\models\cube2.xml">
+      <Filter>resources\models</Filter>
+    </Xml>
+    <Xml Include="resources\models\skybox.xml">
+      <Filter>resources\models</Filter>
+    </Xml>
+    <Xml Include="resources\models\woman.xml">
+      <Filter>resources\models</Filter>
+    </Xml>
+    <Xml Include="resources\scenes\scenes.xml">
+      <Filter>resources\scenes</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\character.hlsl" />
+    <None Include="resources\shaders\basic_shader.hlsl">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="resources\shaders\character2.hlsl">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="resources\shaders\postfx_gray_scale.hlsl">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="resources\shaders\sky_box.hlsl">
+      <Filter>resources\shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -29,7 +29,7 @@ variable::variable(variable const& other)
 {
 }
 
-variable::variable(array_view<byte> bytes, variable_desc desc, uint aligment)
+variable::variable(array_view<byte> bytes, variable_desc desc, wsize aligment)
 	: _raw_data(ang::move(bytes))
 	, _descriptor(ang::move(desc))
 {
