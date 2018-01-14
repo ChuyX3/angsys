@@ -28,6 +28,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\driver.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\shaders.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\textures.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\buffers.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\driver.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\shaders.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\textures.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\driver.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\VulkanSDK.hpp" />
   </ItemGroup>
@@ -43,6 +47,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture_loader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\draw_context.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\brush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\GL\gl_driver.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\reflect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\textures.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\variable.cpp" />

@@ -21,10 +21,47 @@
     <far_plane>10000.0</far_plane>
     <fvo>0.99</fvo>
   </camera>
+
+
   <object>
-    <position>0.0,0.0,-3.0</position>
-    <rotation>-1.570,0.0,0.0</rotation>
+    <position>-2.0,0.0,-3.0</position>
+    <rotation>0.0,0.0,0.0</rotation>
     <scale>0.254,0.254,0.254</scale>
     <source type="ordered">GIRL_MODEL_OBJ</source>
+  </object>
+
+  <object>
+    <position>-1.0,0.0,-3.0</position>
+    <rotation>0.0,0.0,0.0</rotation>
+    <scale>0.254,0.254,0.254</scale>
+    <source type="ordered">GIRL_MODEL_OBJ</source>
+  </object>
+
+  <object>
+    <position>0.0,0.0,-3.0</position>
+    <rotation>0.0,0.0,0.0</rotation>
+    <scale>0.254,0.254,0.254</scale>
+    <source type="ordered">GIRL_MODEL_OBJ</source>
+  </object>
+
+  <object>
+    <position>1.0,0.0,-3.0</position>
+    <rotation>0.0,0.0,0.0</rotation>
+    <scale>0.254,0.254,0.254</scale>
+    <source type="ordered">GIRL_MODEL_OBJ</source>
+  </object>
+
+  <object>
+    <position>2.0,0.0,-3.0</position>
+    <rotation>0.0,0.0,0.0</rotation>
+    <scale>0.254,0.254,0.254</scale>
+    <source type="ordered">GIRL_MODEL_OBJ</source>
+  </object>
+
+  <object>
+    <position>0.0,0.0,0.0</position>
+    <rotation>0.0,0.0,0.0</rotation>
+    <scale>10,10,10</scale>
+    <source type="indexed">SKYBOX_XML</source>
   </object>
 </scene>

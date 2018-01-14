@@ -33,4 +33,13 @@
   <texture name="_376b488_dds" type="tex2D" >_376b488_dds</texture>
   <texture name="d117864b_dds" type="tex2D" >d117864b_dds</texture>
 
+  <texture name="Material__25" type="tex2D" >12c14c70_dds</texture>
+  <texture name="Material__26" type="tex2D" >13932ef0_dds</texture>
+  <texture name="Material__27" type="tex2D" >19d89130_dds</texture>
+  <texture name="Material__28" type="tex2D" >16cecd10_dds</texture>
+  <texture name="Material__29" type="tex2D" >16c2e0d0_dds</texture>
+  <texture name="Material__30" type="tex2D" >12dbd6d0_dds</texture>
+  
+  <texture name="textures_skybox_tga" type="texCube" >textures_skybox2_tga</texture>
+
 </texture_library>

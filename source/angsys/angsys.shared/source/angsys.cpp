@@ -153,6 +153,20 @@ namespace ang
 		}
 		~runtime_data_base_imp()
 		{
+			clean();
+		}
+
+		type_name_t insert(string name) {
+			node_ptr_t node = memory::unmanaged_allocator<node_t>::construct(memory::unmanaged_allocator<node_t>::alloc(1));
+			node->type_name = ang::move(name);
+			node->_next = null;
+			if (_tail)_tail->_next = node;
+			else _head = node;
+			_tail = node;
+			return _tail->type_name;
+		}
+
+		void clean() {
 			node_ptr_t temp, node = _head;
 			while (node)
 			{
@@ -164,36 +178,24 @@ namespace ang
 			_head = null;
 			_tail = null;
 		}
-
-		type_name_t insert(string name) {
-			_tail = insert(_tail, ang::move(name));
-			if (_head == null) _head = _tail;
-			return _tail->type_name;
-		}
-
-		node_ptr_t insert(node_ptr_t node, string name) {
-			if (node == null) {
-				node = memory::unmanaged_allocator<node_t>::construct(memory::unmanaged_allocator<node_t>::alloc(1));
-				node->type_name = ang::move(name);
-				node->_next = null;
-				return node;
-			}
-			return insert(node->_next, ang::move(name));
-		}
 	};
 }
 
-ang::type_name_t ang::runtime::runtime_data_base::regist_typename(ang::string name)
+
+template<>
+struct hash_table_context<object*>
 {
-	static runtime_data_base_imp _runtime_data_base;
-	return _runtime_data_base.insert(ang::move(name));
-}
+	static ulong64 hash_table_context_create_hash_number(object* key, ulong64 size) { return wsize(key) % size; }
+	static void hash_table_context_delete_data(ang_hash_table_pair_t pair) { 
+		auto obj = (object*)pointer(pair.value);
+		pair.value = 0; pair.key = 0;
+	}
+};
 
 class ang_initializer
 {
-
 public:
-	ang_initializer() {
+	ang_initializer() : runtime_data_base_(){
 		thread_manager = memory::object_allocator<core::async::core_thread_manager>::alloc(1);
 		thread_manager = memory::object_allocator<core::async::core_thread_manager>::construct(thread_manager);
 		ang::runtime::runtime_data_base::regist_typename(type_of<object>());
@@ -205,13 +207,17 @@ public:
 		core::files::file_system::release_instance();
 		memory::object_allocator<core::async::core_thread_manager>::destruct_and_free(thread_manager);
 		thread_manager = null;
-		
+		runtime_data_base_.clean();
 	}
 
-
+	runtime_data_base_imp runtime_data_base_;
 	core::async::core_thread_manager* thread_manager;
 }initializer;
 
+ang::type_name_t ang::runtime::runtime_data_base::regist_typename(ang::string name)
+{
+	return initializer.runtime_data_base_.insert(ang::move(name));
+}
 
 //template<>
 //core::async::core_thread_manager* singleton<core::async::core_thread_manager>::instance_manager(core::async::core_thread_manager* ptr, bool write, bool del)

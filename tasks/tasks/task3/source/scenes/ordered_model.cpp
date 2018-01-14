@@ -64,6 +64,8 @@ collections::vector<ordered_model::model_element> ordered_model::load(core::file
 
 			cstr_t debug_view;
 
+			maths::matrix4 rotation = maths::matrix::rotation_x(-M_PI / 2.0f);
+
 			while (data.data().size() >= idx)
 			{
 				//debug_view.set(&data[idx], data.size() - idx);
@@ -71,7 +73,8 @@ collections::vector<ordered_model::model_element> ordered_model::load(core::file
 				{
 					stream->move_to(idx + v_s.size(), streams::stream_reference::begin);
 					stream >> temp1._vector.x >> temp1._vector.y >> temp1._vector.z;
-					vertices += temp1;
+					auto vec = maths::float4(temp1._vector.x, temp1._vector.y, temp1._vector.z, 1) * rotation;
+					vertices += {vec.get<0>(), vec.get<1>(), vec.get<2>()};
 				}
 				else if (data.find(vn_s, idx, idx + vn_s.size()) == idx)
 				{
@@ -89,60 +92,71 @@ collections::vector<ordered_model::model_element> ordered_model::load(core::file
 				{
 					stream->move_to(idx + f_s.size(), streams::stream_reference::begin);
 					index face[3] = { 0,0,0 };
-					vertex vertex;
+					vertex vertex[3];
+					bool has_normal = false;
 					stream >> face[0] >> "/" >> face[1] >> "/" >> face[2];
 					if (face[0] > 0)
 					{
 						temp1 = vertices[face[0] - 1];
-						vertex.position = { temp1.get<0>(), temp1.get<1>(), temp1.get<2>(), 1 };
+						vertex[0].position = { temp1.get<0>(), temp1.get<1>(), temp1.get<2>(), 1 };	
 					}
 					if (face[1] > 0)
 					{
 						temp1 = { texcoords[face[1] - 1], 0 };
-						vertex.texcoord = { temp1.get<0>(), temp1.get<1>() };
+						vertex[0].texcoord = { temp1.get<0>(), temp1.get<1>() };
 					}
 					if (face[2] > 0)
 					{
+						has_normal = true;
 						temp1 = normals[face[2] - 1];
-						vertex.normal = { temp1.get<0>(), temp1.get<1>(), temp1.get<2>(), 0 };
+						vertex[0].normal = { temp1.get<0>(), temp1.get<1>(), temp1.get<2>(), 0 };
 					}
-					model.vertices += vertex;
 
 					stream >> face[0] >> "/" >> face[1] >> "/" >> face[2];
 					if (face[0] > 0)
 					{
 						temp1 = vertices[face[0] - 1];
-						vertex.position = { temp1.get<0>(), temp1.get<1>(), temp1.get<2>(), 1 };
+						vertex[1].position = { temp1.get<0>(), temp1.get<1>(), temp1.get<2>(), 1 };
 					}
 					if (face[1] > 0)
 					{
 						temp1 = { texcoords[face[1] - 1], 0 };
-						vertex.texcoord = { temp1.get<0>(), temp1.get<1>() };
+						vertex[1].texcoord = { temp1.get<0>(), temp1.get<1>() };
 					}
 					if (face[2] > 0)
 					{
+						has_normal = true;
 						temp1 = normals[face[2] - 1];
-						vertex.normal = { temp1.get<0>(), temp1.get<1>(), temp1.get<2>(), 0 };
+						vertex[1].normal = { temp1.get<0>(), temp1.get<1>(), temp1.get<2>(), 0 };
 					}
-					model.vertices += vertex;
 
 					stream >> face[0] >> "/" >> face[1] >> "/" >> face[2];
 					if (face[0] > 0)
 					{
 						temp1 = vertices[face[0] - 1];
-						vertex.position = { temp1.get<0>(), temp1.get<1>(), temp1.get<2>(), 1 };
+						vertex[2].position = { temp1.get<0>(), temp1.get<1>(), temp1.get<2>(), 1 };
 					}
 					if (face[1] > 0)
 					{
 						temp1 = { texcoords[face[1] - 1], 0 };
-						vertex.texcoord = { temp1.get<0>(), temp1.get<1>() };
+						vertex[2].texcoord = { temp1.get<0>(), temp1.get<1>() };
 					}
 					if (face[2] > 0)
 					{
+						has_normal = true;
 						temp1 = normals[face[2] - 1];
-						vertex.normal = { temp1.get<0>(), temp1.get<1>(), temp1.get<2>(), 0 };
+						vertex[2].normal = { temp1.get<0>(), temp1.get<1>(), temp1.get<2>(), 0 };
 					}
-					model.vertices += vertex;
+					
+					if (!has_normal)
+					{
+						maths::float3 normal = maths::float3(vertex[2].position - vertex[1].position) % maths::float3(vertex[1].position - vertex[0].position);
+						vertex[0].normal = vertex[1].normal = vertex[2].normal = maths::float4(maths::norm(normal), 0);
+					}
+
+					model.vertices += vertex[0];
+					model.vertices += vertex[1];
+					model.vertices += vertex[2];
 
 				}
 				else if (data.find(usemtl_s, idx, idx + usemtl_s.size()) == idx)

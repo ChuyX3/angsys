@@ -23,7 +23,6 @@
 #pragma comment(lib, "angsys.platform.lib")
 
 
-
 #include <mmreg.h>
 #include <mfidl.h>
 #include <mfapi.h>
@@ -35,7 +34,7 @@ namespace ang
 	inline void throw_if_failed(HRESULT hr) { if (FAILED(hr)) throw exception_t((uint)hr, "ang::exception: COM ERROR"); }
 }
 
-
+#if DIRECTX11_SUPPORT
 #include <d3d11.h>
 #include <d3d11_2.h>
 #include <d3dcompiler.h>
@@ -50,6 +49,16 @@ namespace ang
 #pragma comment(lib, "d2d1.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dwrite.lib")
+
+#endif
+
+#if OPENGL_SUPPORT
+#if OPENGLES_SUPPORT
+#include <EGL\egl.h>
+#include <GLES2\gl2.h>
+#else
+#endif
+#endif
 
 
 //ANG_DECLARE_MEMORYMANAGER()

@@ -33,9 +33,14 @@ namespace ang
 			ibuffer_t _buffer;
 
 		public:
-			inline text_buffer_wrapper(ibuffer_t buffer) : _buffer(buffer) {}
+			inline text_buffer_wrapper(ibuffer_t buffer) : _buffer(buffer) {
+			}
 
-			//ANG_DECLARE_INLINE_INTERFACE();
+			inline static type_name_t class_name();
+			inline static bool is_inherited_of(type_name_t);
+			inline type_name_t object_name()const override;
+			inline bool is_kind_of(type_name_t)const override;
+			inline bool query_object(type_name_t, unknown_ptr_t) override;
 
 			pointer buffer_ptr()const override {
 				return _buffer.is_empty() ? nullptr : _buffer->buffer_ptr();
@@ -64,7 +69,8 @@ namespace ang
 				: raw_str_t{ _buffer->buffer_ptr(), _buffer->buffer_size(), ENCODING };
 			}
 		private:
-			inline~text_buffer_wrapper() {}
+			inline~text_buffer_wrapper() {
+			}
 		};
 	}
 
@@ -272,6 +278,49 @@ namespace ang
 			auto ptr = str->str();
 			str->length(get_encoder<ENCODING>().convert(str->str(), min(_data.size() / _char_size, end) - start, (byte*)_data.ptr() + start * _char_size, _data.encoding(), true));
 			return str->length();
+
+		}
+
+		template<text::encoding_enum ENCODING>
+		inline type_name_t text_buffer_wrapper<ENCODING>::class_name() {
+			static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::text_buffer_wrapper<"_o += encoding_t(ENCODING).to_string()) += ">"_s));
+			return name;
+		}
+		template<text::encoding_enum ENCODING>
+		inline type_name_t text_buffer_wrapper<ENCODING>::object_name()const { return class_name(); }
+
+		template<text::encoding_enum ENCODING>
+		inline bool text_buffer_wrapper<ENCODING>::is_inherited_of(type_name_t name)
+		{
+			return name == type_of<text_buffer_wrapper<ENCODING>>()
+				|| object::is_inherited_of(name) 
+				|| itext_buffer::is_inherited_of(name);
+		}
+
+		template<text::encoding_enum ENCODING>
+		inline bool text_buffer_wrapper<ENCODING>::is_kind_of(type_name_t name)const
+		{
+			return name == type_of<text_buffer_wrapper<ENCODING>>()
+				|| object::is_kind_of(name)
+				|| itext_buffer::is_kind_of(name);
+		}
+
+		template<text::encoding_enum ENCODING>
+		inline bool text_buffer_wrapper<ENCODING>::query_object(type_name_t name, unknown_ptr_t out)
+		{
+			if (out == null) return false;
+			if (name == type_of<text_buffer_wrapper<ENCODING>>()) {
+
+				*out = static_cast<text_buffer_wrapper<ENCODING>*>(this);
+				return true;
+			}
+			else if (object::query_object(name, out)) {
+				return true;
+			}
+			else if (itext_buffer::query_object(name, out)) {
+				return true;
+			}
+			return false;
 		}
 	}
 

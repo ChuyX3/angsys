@@ -37,6 +37,12 @@
     <Filter Include="source files\d3d11\drawing">
       <UniqueIdentifier>{c0668f95-5390-4530-b89c-d64b8265a5d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source files\GL">
+      <UniqueIdentifier>{84c13b02-d054-448d-b94e-5a5b8bcad779}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include\GL">
+      <UniqueIdentifier>{335fd74d-037f-4ed9-b1e8-84eabc6d256c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
@@ -83,6 +89,18 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\textures.hpp">
       <Filter>header files\include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\buffers.hpp">
+      <Filter>header files\include\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\driver.hpp">
+      <Filter>header files\include\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\shaders.hpp">
+      <Filter>header files\include\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\textures.hpp">
+      <Filter>header files\include\GL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +154,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\brush.cpp">
       <Filter>source files\d3d11\drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\GL\gl_driver.cpp">
+      <Filter>source files\GL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

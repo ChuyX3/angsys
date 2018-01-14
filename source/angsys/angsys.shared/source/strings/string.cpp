@@ -14,6 +14,10 @@ ANG_IMPLEMENT_BASIC_INTERFACE(ang::text::itext_buffer, ang::ibuffer);
 #include <ang/inline/intf_wrapper_specialization.inl>
 #undef MY_TYPE
 
+#if defined _DEBUG
+#define new new(__FILE__, __LINE__)
+#endif
+
 namespace ang
 {
 	extern char hexl[] = { "0123456789abcdefx" };
