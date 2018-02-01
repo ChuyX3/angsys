@@ -48,7 +48,7 @@ mutex::mutex(bool _lock)
 	//this->_handle = CreateMutexExW(NULL, NULL, 0, SYNCHRONIZE);
 	_handle = memory::default_allocator<CRITICAL_SECTION>::alloc(1);
 	InitializeCriticalSection((LPCRITICAL_SECTION)_handle);
-	if (_lock)WaitForSingleObjectEx(this->_handle, INFINITE, FALSE);
+	if (_lock)EnterCriticalSection(LPCRITICAL_SECTION(_handle));
 #endif
 	
 }
