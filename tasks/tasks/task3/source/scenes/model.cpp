@@ -115,7 +115,14 @@ bool model::load(scene_t scene, xml::ixml_node_t node)
 				{
 					indexed_model_t _loader = new indexed_model();
 					xml::xml_document_t doc = xml::xml_document::from_file(_txt_file);
-					_loader->load_async(doc->xml_root_element()).then<bool>([this, _loader, scene](core::async::iasync<collections::vector<indexed_model::model_element>>* task)->bool
+					xml::ixml_node_t node = doc->xml_root_element().get();
+					//_loader->load_async(doc->xml_root_element())
+					scene->run_async<collections::vector<indexed_model::model_element>>([this, _loader, scene, node]
+					(core::async::iasync<collections::vector<indexed_model::model_element>>* task)
+					{ 
+						return _loader.get()->load(node);
+					}).then<bool>([this, _loader, scene]
+					(core::async::iasync<collections::vector<indexed_model::model_element>>* task)->bool
 					{
 						textures::itexture_loader_t texloader = scene->texture_loader();
 						effects::ieffect_library_t fxlibrary = scene->effect_library();
@@ -156,12 +163,19 @@ bool model::load(scene_t scene, xml::ixml_node_t node)
 
 							for(string& texture : _element.textures)
 							{
-								auto res = texloader->load_texture(texture);
-								driver->execute_on_thread_safe([&]()
+								texloader->load_texture_async(texture).then<void>([driver, &element](core::async::iasync<textures::itexture_t>* task)
 								{
-									if (!res.is_empty()) element.textures += res;
+									try {
+										auto res = task->result();
+										driver->execute_on_thread_safe([&]()
+										{
+											if (!res.is_empty()) element.textures += res;
+										});
+									}
+									catch (...) {
+									}
 								});
-
+				
 							}
 
 							driver->execute_on_thread_safe([&]()
@@ -185,7 +199,14 @@ bool model::load(scene_t scene, xml::ixml_node_t node)
 
 		if (!_bin_file->is_valid()) return false;
 
-		_loader->load_async(_bin_file).then<bool>([this, _loader, scene, _bin_file, _txt_file](core::async::iasync<collections::vector<ordered_model::model_element>>* task)->bool
+		//_loader->load_async(_bin_file)
+
+		scene->run_async<collections::vector<ordered_model::model_element>>([this, _loader, _bin_file]
+		(core::async::iasync<collections::vector<ordered_model::model_element>>* task) 
+		{
+			return _loader.get()->load(_bin_file);
+		}).then<bool>([this, _loader, scene, _bin_file, _txt_file]
+		(core::async::iasync<collections::vector<ordered_model::model_element>>* task)->bool
 		{
 			textures::itexture_loader_t texloader = scene->texture_loader();
 			effects::ieffect_library_t fxlibrary = scene->effect_library();
@@ -230,7 +251,8 @@ bool model::load(scene_t scene, xml::ixml_node_t node)
 					});
 
 					index idx = model_elements->counter() - 1;
-					texloader->load_texture_async(_element.material).then<bool>([=](core::async::iasync<graphics::textures::itexture_t>* result)
+					texloader->load_texture_async(_element.material).then<bool>([=]
+					(core::async::iasync<graphics::textures::itexture_t>* result)
 					{
 						driver->execute_on_thread_safe([&]()
 						{
@@ -250,7 +272,8 @@ bool model::load(scene_t scene, xml::ixml_node_t node)
 				return true;
 			}
 			return false;
-		}).then<collections::vector<ordered_model::model_element>>([this, _loader, scene, _txt_file](core::async::iasync<bool>* task)->collections::vector<ordered_model::model_element>
+		}).then<collections::vector<ordered_model::model_element>>([this, _loader, scene, _txt_file]
+		(core::async::iasync<bool>* task)->collections::vector<ordered_model::model_element>
 		{
 			try {
 				if (ang::move(task->result()))//binary model was loaded

@@ -452,6 +452,43 @@ namespace ang
 				inline itask_t then(delegates::function<void(itask*)>)override;
 			};
 
+			template<> class LINK task_handler<void>
+				: public object
+				, public iasync<void>
+			{
+			public:
+				static iasync_t<void> create_task(delegates::function <void(iasync<void>*)>);
+				static iasync_t<void> create_task(idispatcher_t, delegates::function <void(iasync<void>*)>);
+				static iasync_t<void> create_task(delegates::function <void(iasync<void>*, var_args_t)>, var_args_t);
+				static iasync_t<void> create_task(idispatcher_t, delegates::function <void(iasync<void>*, var_args_t)>, var_args_t);
+				template<typename U> static iasync_t<void> handle_then(iasync_t<U>, delegates::function <void(iasync<U>*)>);
+
+			protected:
+				itask_t _task;
+
+			protected:
+				task_handler();
+				task_handler(itask* task);
+				//inline task_handler(thread_t, mutex_t, cond_t);
+
+			protected:
+				virtual~task_handler();
+
+				task_handler(const task_handler<void>&) = delete;
+				task_handler& operator =(const task_handler<void>&) = delete;
+
+			public:
+				ANG_DECLARE_INTERFACE();
+
+				bool wait(async_action_status_t)const override;
+				bool wait(async_action_status_t, dword)const override;
+				async_action_status_t status()const override;
+				bool cancel()override;
+				itask_t then(delegates::function<void(itask*)>)override;
+
+			protected:
+				bool join()const override;
+			};
 	
 		}
 	}

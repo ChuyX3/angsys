@@ -695,7 +695,7 @@ void d3d11_shaders::unmap_ps_uniform(idriver_t _driver, reflect::variable& var)
 
 d3d11_effect_library::d3d11_effect_library(d3d11_driver_t parent)
 	: main_mutex(make_shared<core::async::mutex>())
-	, _driver(parent)
+	, _driver(ang::move(parent))
 {
 
 }

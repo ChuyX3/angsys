@@ -143,6 +143,13 @@ ang::object_wrapper<ang::core::delegates::function_data<return_t(args_t...)>>::o
 }
 
 template<typename return_t, typename... args_t>
+ang::object_wrapper<ang::core::delegates::function_data<return_t(args_t...)>>::object_wrapper(ang::core::delegates::function_data<return_t(args_t...)>* ptr)
+	: _ptr(null)
+{
+	set(ptr);
+}
+
+template<typename return_t, typename... args_t>
 ang::object_wrapper<ang::core::delegates::function_data<return_t(args_t...)>>::object_wrapper(object_wrapper&& other)
 	: object_wrapper()
 {

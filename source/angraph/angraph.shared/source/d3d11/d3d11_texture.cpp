@@ -207,7 +207,7 @@ graphics::size<float> d3d11_texture::tex_dimentions()const { return _tex_dimenti
 
 d3d11_texture_loader::d3d11_texture_loader(d3d11_driver_t parent)
 	: main_mutex(make_shared<core::async::mutex_t>())
-	, _driver(parent)
+	, _driver(ang::move(parent))
 {
 	
 	_work_thead = core::async::thread::create_dispatcher();

@@ -119,7 +119,7 @@ namespace ang
 				}
 				
 				inline return_t invoke(args_t... args)const override {
-					return _function(ang::move(args)...);
+					return _function(ang::forward<args_t>(args)...);
 				}
 
 				inline ifunction<return_t(args_t...)>* clone()const override {
@@ -222,6 +222,7 @@ namespace ang
 
 	public:
 		object_wrapper();
+		object_wrapper(core::delegates::function_data<return_t(args_t...)>*);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
 		object_wrapper(std::nullptr_t const&);

@@ -124,6 +124,7 @@ void async_task::run(delegates::function <void(itask*)> _func)
 {
 	auto func = _func.get(); func->add_ref(); add_ref();
 	thread_routine_t callback = [func, this](icore_thread* thread_, var_args_t a) {
+		async_task_t this_ = this;
 		scope_locker<mutex_t> lock = (mutex_t&)mutex_;
 		if (status_ == async_action_status::canceled) {
 			//status_ = async_action_status::completed;
@@ -359,4 +360,137 @@ bool async_task::cancel()
 	return true;
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+
+
+ang::type_name_t ang::core::async::task_handler<void>::class_name()
+{
+	return "ang::core::async::task_handler<void>"_s;
+}
+
+bool ang::core::async::task_handler<void>::is_inherited_of(ang::type_name_t name)
+{
+	return name == class_name()
+		|| iasync<void>::is_inherited_of(name);
+}
+
+ang::type_name_t ang::core::async::task_handler<void>::object_name()const
+{
+	return class_name();
+}
+
+bool ang::core::async::task_handler<void>::is_kind_of(ang::type_name_t name)const
+{
+	return name == class_name()
+		|| iasync<void>::is_kind_of(name);
+}
+
+bool ang::core::async::task_handler<void>::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+{
+	if (out == null)
+		return false;
+	if (name == class_name())
+	{
+		*out = static_cast<ang::core::async::task_handler<void>*>(this);
+		return true;
+	}
+	else if (object::query_object(name, out))
+	{
+		return true;
+	}
+	else if (iasync<void>::query_object(name, out))
+	{
+		return true;
+	}
+	return false;
+}
+
+ang::core::async::task_handler<void>::task_handler()
+	: _task(null)
+{
+
+}
+
+ang::core::async::task_handler<void>::task_handler(ang::core::async::itask* task)
+	: _task(task)
+{
+
+}
+
+ang::core::async::task_handler<void>::~task_handler()
+{
+	if (!_task.is_empty())_task->join();
+}
+
+
+bool ang::core::async::task_handler<void>::wait(ang::core::async::async_action_status_t status)const
+{
+	return _task.is_empty() ? false : _task->wait(status);
+}
+
+bool ang::core::async::task_handler<void>::wait(ang::core::async::async_action_status_t status, dword ms)const
+{
+	return _task.is_empty() ? false : _task->wait(status, ms);
+}
+
+ang::core::async::async_action_status_t ang::core::async::task_handler<void>::status()const
+{
+	return _task.is_empty() ? async_action_status::error : _task->status();
+}
+
+bool ang::core::async::task_handler<void>::cancel()
+{
+	return _task.is_empty() ? false : _task->cancel();
+}
+
+bool ang::core::async::task_handler<void>::join()const
+{
+	return _task.is_empty() ? false : _task->join();
+}
+
+ang::core::async::itask_t ang::core::async::task_handler<void>::then(delegates::function<void(ang::core::async::itask*)> func)
+{
+	return _task.is_empty() ? null : _task->then(func);
+}
+
+ang::core::async::iasync_t<void> ang::core::async::task_handler<void>::create_task(ang::core::delegates::function<void(iasync<void>*)> func)
+{
+	if (func.is_empty()) return null;
+	task_handler_t<void> _async = new ang::core::async::task_handler<void>();
+	_async->_task = task::run_async([=](itask* t, var_args_t a) {
+		func(_async.get());
+	}, { _async.get() });
+	return _async.get();
+}
+
+ang::core::async::iasync_t<void> ang::core::async::task_handler<void>::create_task(ang::core::async::idispatcher_t dispatcher, ang::core::delegates::function<void(iasync<void>*)> func)
+{
+	if (func.is_empty()) return null;
+	task_handler_t<void> _async = new ang::core::async::task_handler<void>();
+	_async->_task = dispatcher->post_task([=](itask* t, var_args_t a) {
+		func(_async.get());
+	}, { _async.get() });
+	return _async.get();
+}
+
+ang::core::async::iasync_t<void> ang::core::async::task_handler<void>::create_task(ang::core::delegates::function<void(iasync<void>*, var_args_t)> func, ang::var_args_t args)
+{
+	if (func.is_empty()) return null;
+	task_handler_t<void> _async = new ang::core::async::task_handler<void>();
+	_async->_task = task::run_async([=](itask* t, var_args_t a) {
+		func(_async.get(), args);
+	}, { _async.get(), args });
+	return _async.get();
+}
+
+ang::core::async::iasync_t<void> ang::core::async::task_handler<void>::create_task(ang::core::async::idispatcher_t dispatcher, ang::core::delegates::function<void(iasync<void>*, var_args_t)> func, ang::var_args_t args)
+{
+	if (func.is_empty()) return null;
+	task_handler_t<void> _async = new task_handler<void>();
+	_async->_task = dispatcher->post_task([=](itask* t, var_args_t a) {
+		func(_async.get(), args);
+	}, { _async.get(), args });
+	return _async;
+}
 

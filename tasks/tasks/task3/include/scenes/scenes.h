@@ -150,6 +150,8 @@ namespace ang
 			protected:
 				maths::float3 _ambient_color;
 				collections::vector<light_info> _lights;
+				core::async::idispatcher_t _dispatcher;
+
 				idriver_t _driver;
 				effects::ieffect_library_t _effect_library;
 				textures::itexture_loader_t _texture_loader;
@@ -192,6 +194,10 @@ namespace ang
 						return L""_o;
 					auto it = _source_map->find(sid);
 					return it.is_valid() ? it->value : L""_o;
+				}
+
+				template<typename T> core::async::iasync_t<T> run_async(core::delegates::function<T(core::async::iasync<T>*)> func) {
+					return _dispatcher->run_async<T>(func.get());
 				}
 
 				inline maths::float3 ambient_color()const { return _ambient_color; }

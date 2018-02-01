@@ -303,6 +303,18 @@ ang::core::async::iasync_t<T> ang::core::async::task_handler<T>::handle_then(ang
 	return _async;
 }
 
+
+template<typename U>
+inline ang::core::async::iasync_t<void> ang::core::async::task_handler<void>::handle_then(ang::core::async::iasync_t<U> task, ang::core::delegates::function<void(iasync<U>*)> func)
+{
+	if (func.is_empty()) return null;
+	task_handler_t<void> _async = NEW ang::core::async::task_handler<void>();
+	_async->_task = task->then([=](iasync<U>* t) {
+		func(task.get());
+	});
+	return _async;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename result_t>
@@ -445,7 +457,7 @@ ang::core::async::iasync_t<then_result_t> ang::intf_wrapper<ang::core::async::ia
 
 	return core::async::task_handler<then_result_t>::template handle_then<result_t>(_ptr, [=](core::async::iasync<result_t>* task)->then_result_t 
 	{
-		return ang::move(func(task));
+		return func(task);
 	});
 
 }

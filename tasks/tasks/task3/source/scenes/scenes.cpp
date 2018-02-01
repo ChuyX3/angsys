@@ -119,6 +119,9 @@ scene::scene()
 {
 	_camera = new scenes::camera();
 	_current_size = { 800,600 };
+
+	_dispatcher = core::async::thread::create_dispatcher();
+	_dispatcher->resume();
 }
 
 scene::~scene()

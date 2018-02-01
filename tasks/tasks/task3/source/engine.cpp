@@ -71,8 +71,10 @@ void engine::exit()
 {
 	driver->bind_shaders(null);
 	driver->bind_frame_buffer(null);
-	surface = null;
+	scene = null;
+	texture_loader = null;
 	effect_library = null;
+
 }
 
 void engine::on_size_changed_event(objptr sender, platform::events::idisplay_info_event_args_t args)
