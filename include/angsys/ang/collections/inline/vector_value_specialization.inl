@@ -120,6 +120,14 @@ wsize ang::collections::vector_buffer<MY_TYPE, MY_ALLOCATOR>::size()const
 	return _size;
 }
 
+void ang::collections::vector_buffer<MY_TYPE, MY_ALLOCATOR>::size(wsize size)
+{
+	clean();
+	capacity(size, false);
+	for (windex i = 0; i < size; i++)
+		push(constructor<MY_TYPE>::default_value);
+}
+
 wsize ang::collections::vector_buffer<MY_TYPE, MY_ALLOCATOR>::capacity()const
 {
 	return _capacity;

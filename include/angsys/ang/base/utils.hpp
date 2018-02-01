@@ -410,6 +410,59 @@ namespace ang
 		return (VALUE % ALIGMENT) && VALUE ? VALUE + (ALIGMENT - (VALUE % ALIGMENT)) : VALUE;
 	}
 
+
+
+	template<typename T>
+	struct constructor {
+		static const T default_value = T();
+	};
+
+	template<typename T>
+	struct constructor<T*> {
+		static constexpr T* default_value = nullptr;
+	};
+
+
+	template<> struct constructor<ang_int8_t> {
+		static constexpr ang_int8_t default_value = 0;
+	};
+
+	template<> struct constructor<ang_uint8_t> {
+		static constexpr ang_uint8_t default_value = 0;
+	};
+
+	template<> struct constructor<ang_int16_t> {
+		static constexpr ang_int16_t default_value = 0;
+	};
+
+	template<> struct constructor<ang_uint16_t> {
+		static constexpr ang_uint16_t default_value = 0;
+	};
+
+	template<> struct constructor<ang_int32_t> {
+		static constexpr ang_int32_t default_value = 0;
+	};
+
+	template<> struct constructor<ang_uint32_t> {
+		static constexpr ang_uint32_t default_value = 0;
+	};
+
+	template<> struct constructor<ang_int64_t> {
+		static constexpr ang_int64_t default_value = 0;
+	};
+
+	template<> struct constructor<ang_uint64_t> {
+		static constexpr ang_uint64_t default_value = 0;
+	};
+
+	template<> struct constructor<ang_float32_t> {
+		static constexpr ang_float32_t default_value = 0.0f;
+	};
+
+	template<> struct constructor<ang_float64_t> {
+		static constexpr ang_float64_t default_value = 0.0;
+	};
+
 }//ang
 
 

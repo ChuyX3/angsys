@@ -7,12 +7,7 @@ namespace ang
 	namespace graphics
 	{
 		namespace textures
-		{		
-			struct itexture;
-			struct itexture_loader;
-
-			typedef intf_wrapper<itexture> itexture_t;
-			typedef intf_wrapper<itexture_loader> itexture_loader_t;
+		{
 
 			ANG_BEGIN_ENUM(LINK, tex_type, uint)
 				null,

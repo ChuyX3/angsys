@@ -275,9 +275,9 @@ bool d3d11_solid_brush::create(d3d11_draw_context_t context, color_t color, colo
 {
 	_diffuse_color = color;
 	_additive_color = additive;
-	_technique = context->effect_library()->find_technique("solid_color_fx"_s);
+	_technique = context->effect_library()->find_shaders("solid_color_fx"_s);
 	if (_technique.is_empty())	
-		_technique = context->effect_library()->load_technique(create_tecnique_template(L"solid_color_fx"_s, _solid_color_vertex_shader, _solid_color_pixel_shader));
+		_technique = context->effect_library()->load_shaders(create_tecnique_template(L"solid_color_fx"_s, _solid_color_vertex_shader, _solid_color_pixel_shader));
 	return !_technique.is_empty();
 }
 
@@ -383,9 +383,9 @@ bool d3d11_linear_gradient_brush::create(d3d11_draw_context_t context, drawing::
 	_start_point = gradients.start_point;
 	_end_point = gradients.end_point;
 	_gradients = new collections::array_buffer<drawing::gradient_info::stop_color_info_t>(collections::to_array(gradients.stop_colors.data(), gradients.stop_colors.size()));
-	_technique = context->effect_library()->find_technique("linear_gradient_fx"_s);
+	_technique = context->effect_library()->find_shaders("linear_gradient_fx"_s);
 	if (_technique.is_empty())
-		_technique = context->effect_library()->load_technique(create_tecnique_template(L"linear_gradient_fx"_s, _linear_gradient_vertex_shader, _linear_gradient_pixel_shader));
+		_technique = context->effect_library()->load_shaders(create_tecnique_template(L"linear_gradient_fx"_s, _linear_gradient_vertex_shader, _linear_gradient_pixel_shader));
 	return !_technique.is_empty();
 }
 
@@ -473,9 +473,9 @@ bool d3d11_texturing_brush::create(d3d11_draw_context_t context, drawing::textur
 	_texture = info.texture;
 	_tilling = info.tiling_factor;
 	_stretch = info.stretch_mode;
-	_technique = context->effect_library()->find_technique("texturing_fx"_s);
+	_technique = context->effect_library()->find_shaders("texturing_fx"_s);
 	if (_technique.is_empty())
-		_technique = context->effect_library()->load_technique(create_tecnique_texturing_template(L"texturing_fx"_s, info.wrap_mode, _texturing_vertex_shader, _texturing_pixel_shader));
+		_technique = context->effect_library()->load_shaders(create_tecnique_texturing_template(L"texturing_fx"_s, info.wrap_mode, _texturing_vertex_shader, _texturing_pixel_shader));
 	return !_technique.is_empty();
 }
 
@@ -591,9 +591,9 @@ bool d3d11_linear_gradient_texturing_brush::create(d3d11_draw_context_t context,
 	_tilling = texture.tiling_factor;
 	_stretch = texture.stretch_mode;
 	_gradients = new collections::array_buffer<drawing::gradient_info::stop_color_info_t>(collections::to_array(gradients.stop_colors.data(), gradients.stop_colors.size()));
-	_technique = context->effect_library()->find_technique("linear_gradient_texturing_fx"_s);
+	_technique = context->effect_library()->find_shaders("linear_gradient_texturing_fx"_s);
 	if (_technique.is_empty())
-		_technique = context->effect_library()->load_technique(create_tecnique_texturing_template(L"linear_gradient_fx"_s, texture.wrap_mode, _linear_gradient_texturing_vertex_shader, _linear_gradient_texturing_pixel_shader));
+		_technique = context->effect_library()->load_shaders(create_tecnique_texturing_template(L"linear_gradient_fx"_s, texture.wrap_mode, _linear_gradient_texturing_vertex_shader, _linear_gradient_texturing_pixel_shader));
 	return !_technique.is_empty();
 }
 

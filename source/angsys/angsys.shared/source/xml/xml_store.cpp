@@ -528,7 +528,7 @@ xml_iterator_t xml_node::xml_store::find(raw_str_t value, bool invert)const
 		for (node = xml_last();
 			(node != null);
 			node = node->xml_prev_sibling()) {
-			if (text::UNICODE().compare((cwstr_t)(wstring)node->xml_name(), value._value, value._encoding) == 0)
+			if (text::UNIC().compare((cwstr_t)(wstring)node->xml_name(), value._value, value._encoding) == 0)
 				break;
 		}
 	}
@@ -537,7 +537,7 @@ xml_iterator_t xml_node::xml_store::find(raw_str_t value, bool invert)const
 		for (node = xml_first();
 			(node != null);
 			node = node->xml_next_sibling()) {
-			if (text::UNICODE().compare((cwstr_t)(wstring)node->xml_name(), value._value, value._encoding) == 0)
+			if (text::UNIC().compare((cwstr_t)(wstring)node->xml_name(), value._value, value._encoding) == 0)
 				break;
 		}
 	}
@@ -556,7 +556,7 @@ xml_iterator_t xml_node::xml_store::find(raw_str_t value, xml_iterator_t nextTo,
 			node = xml_last();
 		for (; (node != null);
 			node = node->xml_prev_sibling()) {
-			if (text::UNICODE().compare((cwstr_t)(wstring)node->xml_name(), value._value, value._encoding) == 0)
+			if (text::UNIC().compare((cwstr_t)(wstring)node->xml_name(), value._value, value._encoding) == 0)
 				break;
 		}
 	}
@@ -566,7 +566,7 @@ xml_iterator_t xml_node::xml_store::find(raw_str_t value, xml_iterator_t nextTo,
 			node = xml_first();
 		for (; (node != null);
 			node = node->xml_next_sibling()) {
-			if (text::UNICODE().compare((cwstr_t)(wstring)node->xml_name(), value._value, value._encoding) == 0)
+			if (text::UNIC().compare((cwstr_t)(wstring)node->xml_name(), value._value, value._encoding) == 0)
 				break;
 		}
 	}

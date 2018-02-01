@@ -3,6 +3,7 @@
 //#define PIXEL_SHADER
 //#define LIGHTING
 //#define USE_NORMAL_MAP
+//#define CEL
 
 //#undef LIGHTING
 
@@ -93,7 +94,20 @@ float3 get_light_difusse(float3 normal, float3 world_pos)
 	{
 		float3 light_dir = get_light_direction(world_pos, light_data[i].position, light_data[i].type);
         float3 reflection = reflect(light_dir, normal);
-        difusse += light_data[i].color.xyz * max(dot(reflection, normal), 0.0);
+        float intensity = max(dot(reflection, normal), 0.0);
+#ifdef CEL
+      // Discretize the intensity, based on a few cutoff points
+        if (intensity > 0.95)
+            difusse = float3(1, 1, 1) * light_data[i].color.xyz;
+        else if (intensity > 0.5)
+            difusse = float3(0.7, 0.7, 0.7) * light_data[i].color.xyz;
+        else if (intensity > 0.05)
+            difusse = float3(0.35, 0.35, 0.35) * light_data[i].color.xyz;
+        else
+            difusse = float3(0.1, 0.1, 0.1) * light_data[i].color.xyz;
+#else
+        difusse += light_data[i].color.xyz * intensity;
+#endif
     }
 	return difusse;
 }
@@ -128,6 +142,7 @@ float4 main_ps(ps_input input ) : SV_Target
         total = total + get_light_specular(normal, input.vpos_world.xyz);
     color.xyz = total;
 #endif
+
     return color;
 }
 

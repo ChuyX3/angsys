@@ -37,6 +37,30 @@ ANG_IMPLEMENT_ENUM(ang::graphics, blend_mode, uint, blend_mode::disable);
 ANG_IMPLEMENT_INTERFACE(ang::graphics::drawing, idraw_context)
 ANG_IMPLEMENT_INTERFACE(ang::graphics::drawing, ibrush)
 
+#define MY_TYPE ang::graphics::idriver
+#include <ang/inline/intf_wrapper_specialization.inl>
+#undef MY_TYPE
+
+#define MY_TYPE ang::graphics::isurface
+#include <ang/inline/intf_wrapper_specialization.inl>
+#undef MY_TYPE
+
+#define MY_TYPE ang::graphics::iframe_buffer
+#include <ang/inline/intf_wrapper_specialization.inl>
+#undef MY_TYPE
+
+#define MY_TYPE ang::graphics::effects::ishaders
+#include <ang/inline/intf_wrapper_specialization.inl>
+#undef MY_TYPE
+
+#define MY_TYPE ang::graphics::effects::ieffect
+#include <ang/inline/intf_wrapper_specialization.inl>
+#undef MY_TYPE
+
+#define MY_TYPE ang::graphics::effects::ieffect_library
+#include <ang/inline/intf_wrapper_specialization.inl>
+#undef MY_TYPE
+
 
 idriver_t graphics::create_graphic_driver(graph_driver_type_t type, platform::icore_view_t view, isurface_ptr_t surface)
 {

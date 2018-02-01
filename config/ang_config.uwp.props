@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
@@ -22,7 +22,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
     <ClCompile>
-      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).Shared\header;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
     </ClCompile>
     <Link>
       <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\uwp\$(Configuration)\x86\</AdditionallibraryDirectories>
@@ -31,16 +31,16 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='ARM'">
     <ClCompile>
-      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).Shared\header;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
     </ClCompile>
     <Link>
       <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\uwp\$(Configuration)\ARM\</AdditionallibraryDirectories>
       <Importlibrary>$(SolutionDir)binaries\lib\uwp\$(Configuration)\ARM\$(TargetName).lib</Importlibrary>
     </Link>
   </ItemDefinitionGroup>
-    <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+  <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
     <ClCompile>
-      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).Shared\header;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
     </ClCompile>
     <Link>
       <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\uwp\$(Configuration)\x64\</AdditionallibraryDirectories>

@@ -35,17 +35,9 @@ namespace ang
 {
 	namespace graphics
 	{
-		struct idriver;
-		struct isurface;
-		struct iframe_buffer;
-
-		typedef intf_wrapper<idriver> idriver_t;
-		typedef intf_wrapper<isurface> isurface_t;
-		typedef intf_wrapper<iframe_buffer> iframe_buffer_t;
-
-		typedef intf_wrapper_ptr<idriver> idriver_ptr_t;
-		typedef intf_wrapper_ptr<isurface> isurface_ptr_t;
-		typedef intf_wrapper_ptr<iframe_buffer> iframe_buffer_ptr_t;
+		ANG_INTERFACE(idriver);
+		ANG_INTERFACE(isurface);
+		ANG_INTERFACE(iframe_buffer);
 
 		namespace reflect
 		{
@@ -94,23 +86,49 @@ namespace ang
 			ANG_END_ENUM(var_semantic);
 		}
 
-		//namespace scenes
-		//{
-		//	struct iscene;
-		//	struct iscene_object;
-		//	struct iscene_manager;
+		namespace buffers
+		{
+			ANG_INTERFACE(igpu_buffer);
+			ANG_INTERFACE(iindex_buffer);
+			ANG_INTERFACE(ivertex_buffer);
+		}
 
-		//	typedef intf_wrapper<iscene> iscene_t;
-		//	typedef intf_wrapper<iscene_object> iscene_object_t;
-		//	typedef intf_wrapper<iscene_manager> iscene_manager_t;
-		//}
+		namespace textures
+		{
+			ANG_INTERFACE(itexture);
+			ANG_INTERFACE(itexture_loader);
+		}
+
+		namespace effects
+		{
+			ANG_INTERFACE(ishaders);
+			ANG_INTERFACE(ieffect);
+			ANG_INTERFACE(ieffect_library);
+		}
 	}
+
+	ANG_INTF_WRAPPER_DECLARATION(LINK, graphics::idriver);
+	ANG_INTF_WRAPPER_DECLARATION(LINK, graphics::isurface);
+	ANG_INTF_WRAPPER_DECLARATION(LINK, graphics::iframe_buffer);
+
+	ANG_INTF_WRAPPER_DECLARATION(LINK, graphics::buffers::igpu_buffer);
+	ANG_INTF_WRAPPER_DECLARATION(LINK, graphics::buffers::iindex_buffer);
+	ANG_INTF_WRAPPER_DECLARATION(LINK, graphics::buffers::ivertex_buffer);
+
+	ANG_INTF_WRAPPER_DECLARATION(LINK, graphics::textures::itexture);
+	ANG_INTF_WRAPPER_DECLARATION(LINK, graphics::textures::itexture_loader);
+
+	ANG_INTF_WRAPPER_DECLARATION(LINK, graphics::effects::ishaders);
+	ANG_INTF_WRAPPER_DECLARATION(LINK, graphics::effects::ieffect);
+	ANG_INTF_WRAPPER_DECLARATION(LINK, graphics::effects::ieffect_library);
+
 }
 
 #include <ang/graphics/reflect.hpp>
 #include <ang/graphics/buffers.hpp>
 #include <ang/graphics/textures.hpp>
 #include <ang/graphics/effects.hpp>
+//#include <ang/graphics/geometry.hpp>
 
 namespace ang
 {
@@ -207,10 +225,7 @@ namespace ang
 			template<typename T, wsize N> inline buffers::iindex_buffer_t create_index_buffer(buffers::buffer_usage_t usage, T(&init_data)[N])const { return create_index_buffer(usage, collections::to_array(init_data)); }
 		ANG_END_INTERFACE();
 
-		LINK idriver_t create_graphic_driver(graph_driver_type_t, platform::icore_view_t = null, isurface_ptr_t = null);
-
-
-		
+		LINK idriver_t create_graphic_driver(graph_driver_type_t, platform::icore_view_t = null, isurface_ptr_t = null);	
 
 		template<> inline buffers::iindex_buffer_t idriver::create_index_buffer(buffers::buffer_usage_t usage, array_view<short> init_data)const {
 			return create_index_buffer(usage, reflect::var_type::s16, init_data.size(), collections::to_array((byte*)init_data.get(), sizeof(short) * init_data.size()));

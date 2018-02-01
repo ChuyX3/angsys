@@ -101,7 +101,7 @@ bool d3d11::main_app::init_app(ang::array<ang::string> cmdl)
 	wnd->mouse_button_released_event += new events::pointer_moved_event(_engine, &engine::on_pointer_released_event);
 
 	if (!wnd->create(new wnd_create_args(
-		"d3d11_core_view_wnd", "d3d11 Task1", { 100,100, 1124, 900 }
+		"d3d11_core_view_wnd", "d3d11 Task3", { 100,100, 1124, 900 }
 	)))
 		return false;
 	set_main_wnd(wnd);

@@ -369,7 +369,8 @@ namespace ang
 		object_wrapper();
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
-		object_wrapper(std::nullptr_t const&);
+		object_wrapper(ang::nullptr_t const&);
+		object_wrapper(core::delegates::function_data<void(void)>*);
 		~object_wrapper();
 
 		template<typename calleable_t>

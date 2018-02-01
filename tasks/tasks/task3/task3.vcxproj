@@ -180,6 +180,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="resources\character.xml">
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="resources\fx_library.xml">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DeploymentContent>

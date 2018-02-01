@@ -754,8 +754,8 @@ bool d3d11_effect_library::load_library(xml::ixml_node_t library)
 		auto name = node->xml_name()->xml_as<cwstr_t>();
 		if (name == "sources"_s)
 			load_sources(node);
-		else if (name == "technique"_s)
-			load_technique(node);//hack load_effect(driver, node);
+		else if (name == "shaders"_s)
+			load_shaders(node);//hack load_effect(driver, node);
 	}
 	return true;
 }
@@ -775,8 +775,8 @@ core::async::iasync_t<effects::ieffect_library_t> d3d11_effect_library::load_lib
 			auto name = node->xml_name()->xml_as<cwstr_t>();
 			if (name == "sources"_s)
 				load_sources(node);
-			else if (name == "technique"_s)
-				load_technique(node);//hack load_effect(driver, node);
+			else if (name == "shaders"_s)
+				load_shaders(node);//hack load_effect(driver, node);
 		}
 		return this;
 	});
@@ -811,33 +811,33 @@ core::async::iasync_t<effects::ieffect_t> d3d11_effect_library::load_effect_asyn
 	return null;
 }
 
-effects::ishaders_t d3d11_effect_library::load_technique(xml::ixml_node_t node)
+effects::ishaders_t d3d11_effect_library::load_shaders(xml::ixml_node_t node)
 {
 	if (!node->xml_has_children())
 		return null;
-	d3d11_shaders_t technique = new d3d11_shaders();
-	if (!technique->load(this, node))
+	d3d11_shaders_t shaders = new d3d11_shaders();
+	if (!shaders->load(this, node))
 		return null;
 	main_mutex->lock();
-	_shaders += {node->xml_attributes()["name"_s]->xml_as<cwstr_t>(), technique.get() };
+	_shaders += {node->xml_attributes()["name"_s]->xml_as<cwstr_t>(), shaders.get() };
 	main_mutex->unlock();
-	return technique.get();
+	return shaders.get();
 }
 
 
-core::async::iasync_t<effects::ishaders_t> d3d11_effect_library::load_technique_async(xml::ixml_node_t node)
+core::async::iasync_t<effects::ishaders_t> d3d11_effect_library::load_shaders_async(xml::ixml_node_t node)
 {
 	return core::async::task::run_async<effects::ishaders_t>([=](core::async::iasync<effects::ishaders_t>* async)->effects::ishaders*
 	{
 		if (!node->xml_has_children())
 			return null;
-		d3d11_shaders_t technique = new d3d11_shaders();
-		if (!technique->load(this, node))
+		d3d11_shaders_t shaders = new d3d11_shaders();
+		if (!shaders->load(this, node))
 			return null;
 		main_mutex->lock();
-		_shaders += {node->xml_attributes()["name"_s]->xml_as<cwstr_t>(), technique.get() };
+		_shaders += {node->xml_attributes()["name"_s]->xml_as<cwstr_t>(), shaders.get() };
 		main_mutex->unlock();
-		return technique.get();
+		return shaders.get();
 	});
 }
 
@@ -852,7 +852,7 @@ effects::ieffect_t d3d11_effect_library::find_effect(cwstr_t name)const
 	return null;
 }
 
-effects::ishaders_t d3d11_effect_library::find_technique(cstr_t name)const
+effects::ishaders_t d3d11_effect_library::find_shaders(cstr_t name)const
 {
 	if (_shaders.is_empty())
 		return null;
@@ -860,7 +860,7 @@ effects::ishaders_t d3d11_effect_library::find_technique(cstr_t name)const
 	return it.is_valid() ? it->value.get() : null;
 }
 
-effects::ishaders_t d3d11_effect_library::find_technique(cwstr_t name)const
+effects::ishaders_t d3d11_effect_library::find_shaders(cwstr_t name)const
 {
 	if (_shaders.is_empty())
 		return null;

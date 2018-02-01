@@ -219,17 +219,17 @@ aligned_allocator_internal::~aligned_allocator_internal() {}
 
 pointer aligned_allocator_internal::memory_alloc(wsize size)
 {
-	return _mm_malloc(size, 16);
+	return _aligned_malloc(size, 16);
 }
 
 pointer aligned_allocator_internal::aligned_memory_alloc(wsize size, wsize alignment)
 {
-	return _mm_malloc(size, alignment);
+	return _aligned_malloc(size, alignment);
 }
 
 void aligned_allocator_internal::memory_release(pointer ptr)
 {
-	if (ptr)_mm_free(ptr);
+	if (ptr)_aligned_free(ptr);
 }
 
 #ifdef _DEBUG

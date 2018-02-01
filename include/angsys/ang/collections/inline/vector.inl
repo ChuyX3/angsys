@@ -163,6 +163,15 @@ inline wsize ang::collections::vector_buffer<T, allocator>::size()const
 }
 
 template<typename T, template<typename> class allocator>
+inline void ang::collections::vector_buffer<T, allocator>::size(wsize size)
+{
+	clean();
+	capacity(size, false);
+	for (windex i = 0; i < size; i++)
+		push(constructor<T>::default_value);
+}
+
+template<typename T, template<typename> class allocator>
 inline wsize ang::collections::vector_buffer<T, allocator>::capacity()const
 {
 	return _capacity;

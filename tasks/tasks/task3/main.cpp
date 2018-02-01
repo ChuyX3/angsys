@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "engine.h"
+#include "scenes/model_loader.h"
 
 #if defined _DEBUG
 #define new new(__FILE__, __LINE__)
@@ -57,6 +58,12 @@ namespace d3d11
 
 int main(int argc, char* argv[])
 {
+	using namespace ang;
+
+	core::files::ifile_system* fs = core::files::ifile_system::get_file_system();
+	fs->register_paths(L"../../../third_party"_s);
+
+
 	d3d11::main_app_t app = new d3d11::main_app();
 	return (int)app->run();
 }
@@ -115,3 +122,6 @@ bool d3d11::main_app::exit_app()
 {
 	return app::exit_app();
 }
+
+
+

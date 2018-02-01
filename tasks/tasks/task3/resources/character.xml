@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<effect name="character_fx">
+  
+  <technique name="default" target="D3D11">
+    <render_targets>
+
+    </render_targets>
+    <render_state>
+      
+    </render_state>
+    
+    <pass idx="0" target="default">
+      <vertex_shader>
+        <uniforms name="wvp">
+          <var type="f32" class="mat4" name="world"/>
+          <var type="f32" class="mat4" name="view"/>
+          <var type="f32" class="mat4" name="proj"/>
+        </uniforms>
+        <input_layout>
+          <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+          <var type="f32" class="vec3" name="normal" semantic="NORMAL" semantic_idx="0"/>
+          <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
+        </input_layout>
+        <entry>main_vs</entry>
+        <file>CHARACTER_HLSL</file>
+        <compile_config>-DVERTEX_SHADER</compile_config>
+      </vertex_shader>
+      <pixel_shader>
+        <samplers>
+          <sampler type="linear" wrap="clamp"/>
+        </samplers>
+        <entry>main_ps</entry>
+        <file>CHARACTER_HLSL</file>
+        <compile_config>-DPIXEL_SHADER</compile_config>
+      </pixel_shader>
+    </pass>
+  </technique>
+
+  <technique name="lighting" target="D3D11">
+    <pass idx="0">
+      <vertex_shader>
+        <uniforms name="wvp">
+          <var type="f32" class="mat4" name="world"/>
+          <var type="f32" class="mat4" name="view"/>
+          <var type="f32" class="mat4" name="proj"/>
+        </uniforms>
+        <input_layout>
+          <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+          <var type="f32" class="vec3" name="normal" semantic="NORMAL" semantic_idx="0"/>
+          <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
+        </input_layout>
+        <entry>main_vs</entry>
+        <file>CHARACTER_HLSL</file>
+        <compile_config>-DVERTEX_SHADER-DLIGHTING</compile_config>
+      </vertex_shader>
+      <pixel_shader>
+        <uniforms name="lights">
+          <var type="f32" class="vec4" name="ambient" />
+          <var type="u32" class="scalar" name="lights_count" />
+          <var type="f32" class="scalar" name="specular_power" />
+          <block array="10" name="lights" >
+            <var type="f32" class="vec4" name="color" />
+            <var type="f32" class="vec3" name="position" />
+            <var type="u32" class="scalar" name="type" />
+          </block>
+        </uniforms>
+        <samplers>
+          <sampler type="linear" wrap="clamp"/>
+        </samplers>
+        <entry>main_ps</entry>
+        <file>CHARACTER_HLSL</file>
+        <compile_config>-DPIXEL_SHADER-DLIGHTING</compile_config>
+      </pixel_shader>
+    </pass>
+  </technique>
+
+  <technique name="lighting_normal_map" target="D3D11">
+    <pass idx="0">
+      <vertex_shader>
+        <uniforms name="wvp">
+          <var type="f32" class="mat4" name="world"/>
+          <var type="f32" class="mat4" name="view"/>
+          <var type="f32" class="mat4" name="proj"/>
+        </uniforms>
+        <input_layout>
+          <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+          <var type="f32" class="vec3" name="normal" semantic="NORMAL" semantic_idx="0"/>
+          <var type="f32" class="vec3" name="binormal" semantic="BINORMAL" semantic_idx="0"/>
+          <var type="f32" class="vec3" name="tangent" semantic="TANGENT" semantic_idx="0"/>
+          <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
+        </input_layout>
+        <entry>main_vs</entry>
+        <file>CHARACTER_HLSL</file>
+        <compile_config>-DVERTEX_SHADER-DLIGHTING-DUSE_NORMAL_MAP</compile_config>
+      </vertex_shader>
+      <pixel_shader>
+        <uniforms name="lights">
+          <var type="f32" class="vec4" name="ambient" />
+          <var type="u32" class="scalar" name="lights_count" />
+          <var type="f32" class="scalar" name="specular_power" />
+          <block array="10" name="lights" >
+            <var type="f32" class="vec4" name="color" />
+            <var type="f32" class="vec3" name="position" />
+            <var type="u32" class="scalar" name="type" />
+          </block>
+        </uniforms>
+        <samplers>
+          <sampler type="linear" wrap="clamp"/>
+        </samplers>
+        <entry>main_ps</entry>
+        <file>CHARACTER_HLSL</file>
+        <compile_config>-DPIXEL_SHADER-DLIGHTING-DUSE_NORMAL_MAP</compile_config>
+      </pixel_shader>
+    </pass>
+  </technique>
+
+  <technique name="cartoon" target="D3D11">
+    <pass idx="0">
+      <vertex_shader>
+        <uniforms name="wvp">
+          <var type="f32" class="mat4" name="world"/>
+          <var type="f32" class="mat4" name="view"/>
+          <var type="f32" class="mat4" name="proj"/>
+        </uniforms>
+        <input_layout>
+          <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+          <var type="f32" class="vec3" name="normal" semantic="NORMAL" semantic_idx="0"/>
+          <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
+        </input_layout>
+        <entry>main_vs</entry>
+        <file>CHARACTER_HLSL</file>
+        <compile_config>-DVERTEX_SHADER-DLIGHTING-DCEL</compile_config>
+      </vertex_shader>
+      <pixel_shader>
+        <uniforms name="lights">
+          <var type="f32" class="vec4" name="ambient" />
+          <var type="u32" class="scalar" name="lights_count" />
+          <var type="f32" class="scalar" name="specular_power" />
+          <block array="10" name="lights" >
+            <var type="f32" class="vec4" name="color" />
+            <var type="f32" class="vec3" name="position" />
+            <var type="u32" class="scalar" name="type" />
+          </block>
+        </uniforms>
+        <samplers>
+          <sampler type="linear" wrap="clamp"/>
+        </samplers>
+        <entry>main_ps</entry>
+        <file>CHARACTER_HLSL</file>
+        <compile_config>-DPIXEL_SHADER-DLIGHTING-DCEL</compile_config>
+      </pixel_shader>
+    </pass>
+    
+    <pass idx="1">
+      <vertex_shader>
+        <uniforms name="wvp">
+          <var type="f32" class="mat4" name="world"/>
+          <var type="f32" class="mat4" name="view"/>
+          <var type="f32" class="mat4" name="proj"/>
+        </uniforms>
+        <input_layout>
+          <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+          <var type="f32" class="vec3" name="normal" semantic="NORMAL" semantic_idx="0"/>
+          <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
+        </input_layout>
+        <entry>main_vs</entry>
+        <file>CHARACTER_HLSL</file>
+        <compile_config>-DVERTEX_SHADER-DOUTLINE</compile_config>
+      </vertex_shader>
+      <pixel_shader>
+        <uniforms name="lights">
+          <var type="f32" class="vec4" name="ambient" />
+          <var type="u32" class="scalar" name="lights_count" />
+          <var type="f32" class="scalar" name="specular_power" />
+          <block array="10" name="lights" >
+            <var type="f32" class="vec4" name="color" />
+            <var type="f32" class="vec3" name="position" />
+            <var type="u32" class="scalar" name="type" />
+          </block>
+        </uniforms>
+        <samplers>
+          <sampler type="linear" wrap="clamp"/>
+        </samplers>
+        <entry>main_ps</entry>
+        <file>CHARACTER_HLSL</file>
+        <compile_config>-DPIXEL_SHADER-DOUTLINE</compile_config>
+      </pixel_shader>
+    </pass>
+  </technique>
+
+</effect>

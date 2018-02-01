@@ -152,7 +152,7 @@ bool model::load(scene_t scene, xml::ixml_node_t node)
 								_element.index_data->buffer_size() / reflect::variable_desc(_element.index_type, reflect::var_class::scalar).get_size_in_bytes(),
 								collections::to_array((byte*)_element.index_data->buffer_ptr(), _element.index_data->buffer_size()));
 
-							element.technique = fxlibrary->find_technique(_element.technique_name);
+							element.technique = fxlibrary->find_shaders(_element.technique_name);
 
 							for(string& texture : _element.textures)
 							{
@@ -222,7 +222,7 @@ bool model::load(scene_t scene, xml::ixml_node_t node)
 						_element.vertices->counter(),
 						collections::to_array((byte*)_element.vertices->data(), _element.vertices->counter() * sizeof(ordered_model::vertex)));
 
-					element.technique = fxlibrary->find_technique("character_lighting_fx"_s);
+					element.technique = fxlibrary->find_shaders("character_lighting_fx"_s);
 
 					driver->execute_on_thread_safe([&]()
 					{
@@ -297,7 +297,7 @@ bool model::load(scene_t scene, xml::ixml_node_t node)
 					_element.vertices->counter(),
 					collections::to_array((byte*)_element.vertices->data(), _element.vertices->counter() * sizeof(ordered_model::vertex)));
 
-				element.technique = fxlibrary->find_technique("character_lighting_fx"_s);
+				element.technique = fxlibrary->find_shaders("character_lighting_fx"_s);
 
 				driver->execute_on_thread_safe([&]()
 				{
@@ -371,7 +371,7 @@ bool model::load(idriver_t driver, effects::ieffect_library_t fxlibrary, texture
 				_element.vertices->counter(),
 				collections::to_array((byte*)_element.vertices->data(), _element.vertices->counter() * sizeof(ordered_model::vertex)));
 
-			element.technique = fxlibrary->find_technique("character_lighting_fx"_s);
+			element.technique = fxlibrary->find_shaders("character_lighting_fx"_s);
 
 			driver->execute_on_thread_safe([&]()
 			{

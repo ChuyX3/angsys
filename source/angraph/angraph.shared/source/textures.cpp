@@ -16,6 +16,14 @@ ANG_IMPLEMENT_ENUM(ang::graphics::textures, tex_type, uint, textures::tex_type::
 ANG_IMPLEMENT_ENUM(ang::graphics::textures, tex_format, uint, textures::tex_format::null);
 ANG_IMPLEMENT_ENUM(ang::graphics::textures, tex_wrap_mode, uint, textures::tex_wrap_mode::def);
 
+#define MY_TYPE ang::graphics::textures::itexture
+#include <ang/inline/intf_wrapper_specialization.inl>
+#undef MY_TYPE
+
+#define MY_TYPE ang::graphics::textures::itexture_loader
+#include <ang/inline/intf_wrapper_specialization.inl>
+#undef MY_TYPE
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static ang_pair<graphics::textures::tex_type, cstr_t> to_string_tex_type_map[] =

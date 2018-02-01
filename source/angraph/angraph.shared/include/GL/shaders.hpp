@@ -111,12 +111,12 @@ namespace ang
 				core::async::iasync_t<effects::ieffect_library_t> load_library_async(xml::ixml_node_t) override;
 				effects::ieffect_t load_effect(xml::ixml_node_t) override;
 				core::async::iasync_t<effects::ieffect_t> load_effect_async(xml::ixml_node_t) override;
-				effects::ishaders_t load_shaders(xml::ixml_node_t) override;
-				core::async::iasync_t<effects::ishaders_t> load_shaders_async(xml::ixml_node_t) override;
+				effects::ishaders_t load_technique(xml::ixml_node_t) override;
+				core::async::iasync_t<effects::ishaders_t> load_technique_async(xml::ixml_node_t) override;
 				effects::ieffect_t find_effect(cstr_t)const override;
 				effects::ieffect_t find_effect(cwstr_t)const override;
-				effects::ishaders_t find_shaders(cstr_t)const override;
-				effects::ishaders_t find_shaders(cwstr_t)const override;
+				effects::ishaders_t find_technique(cstr_t)const override;
+				effects::ishaders_t find_technique(cwstr_t)const override;
 
 			public:
 				inline core::files::ifile_system* get_file_system()const {

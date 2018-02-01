@@ -17,7 +17,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
     <ClCompile>
-      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\libraries\include\angsys;$(ProjectDir)..\..\libraries\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).Shared\header;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\libraries\include\angsys;$(ProjectDir)..\..\libraries\include\;$(ProjectDir)..\$(RootNamespace).Shared\header;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
       <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;</PreprocessorDefinitions>
 	</ClCompile>
     <lib>
@@ -26,7 +26,7 @@
   </ItemDefinitionGroup>
     <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
     <ClCompile>
-      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\libraries\include\angsys;$(ProjectDir)..\..\libraries\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).Shared\header;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\libraries\include\angsys;$(ProjectDir)..\..\libraries\include\;$(ProjectDir)..\$(RootNamespace).Shared\header;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
       <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;</PreprocessorDefinitions>
 	</ClCompile>
     <lib>

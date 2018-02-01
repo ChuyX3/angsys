@@ -1084,7 +1084,7 @@ namespace ang
 		}
 
 		inline const ASCII_t& ASCII() { return get_encoder<encoding::ascii>(); }
-		inline const UNICODE_t& UNICODE() { return get_encoder<encoding::unicode>(); }
+		inline const UNICODE_t& UNIC() { return get_encoder<encoding::unicode>(); }
 		inline const UTF8_t& UTF8() { return get_encoder<encoding::utf8>(); }
 		inline const UTF16_t& UTF16() { return get_encoder<encoding::utf16>(); }
 		inline const UTF16_SE_t& UTF16_SE() { return get_encoder<encoding::utf16_se>(); }

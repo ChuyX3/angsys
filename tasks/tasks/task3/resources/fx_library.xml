@@ -6,7 +6,7 @@
     <file sid="SKYBOX_HLSL">resources/shaders/sky_box.hlsl</file>
   </sources>
 
-  <technique name="solid_color_fx">
+  <shaders name="solid_color_fx">
     <vertex_shader>
       <uniforms name="wvp">
         <var type="f32" class="mat4" name="world"/>
@@ -26,9 +26,9 @@
       <file>BASIC_SHADER_HLSL</file>
       <compile_config>-DPIXEL_SHADER</compile_config>
     </pixel_shader>
-  </technique>
-  
-  <technique name="character_fx">
+  </shaders>
+
+  <shaders name="character_fx">
     <vertex_shader>
       <uniforms name="wvp">
         <var type="f32" class="mat4" name="world"/>
@@ -52,9 +52,9 @@
       <file>CHARACTER_HLSL</file>
       <compile_config>-DPIXEL_SHADER</compile_config>
     </pixel_shader>
-  </technique>
+  </shaders>
 
-  <technique name="character_lighting_fx">
+  <shaders name="character_lighting_fx">
     <vertex_shader>
       <uniforms name="wvp">
         <var type="f32" class="mat4" name="world"/>
@@ -88,9 +88,9 @@
       <file>CHARACTER_HLSL</file>
       <compile_config>-DPIXEL_SHADER-DLIGHTING</compile_config>
     </pixel_shader>
-  </technique>
+  </shaders>
 
-  <technique name="character_normal_map_fx">
+  <shaders name="character_normal_map_fx">
     <vertex_shader>
       <uniforms name="wvp">
         <var type="f32" class="mat4" name="world"/>
@@ -126,9 +126,9 @@
       <file>CHARACTER_HLSL</file>
       <compile_config>-DPIXEL_SHADER-DLIGHTING-DUSE_NORMAL_MAP</compile_config>
     </pixel_shader>
-  </technique>
+  </shaders>
 
-  <technique name="sky_box_fx">
+  <shaders name="sky_box_fx">
     <vertex_shader>
       <uniforms name="wvp">
         <var type="f32" class="mat4" name="world"/>
@@ -160,6 +160,6 @@
       <file>SKYBOX_HLSL</file>
       <compile_config>-DPIXEL_SHADER</compile_config>
     </pixel_shader>
-  </technique>
+  </shaders>
 
 </effect_library>

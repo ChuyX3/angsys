@@ -46,6 +46,7 @@ namespace ang { \
 			bool is_empty()const; \
 			MY_TYPE* data()const; \
 			wsize size()const; \
+			void size(wsize); \
 			wsize capacity()const; \
 			void capacity(wsize size, bool save = false); \
 			void clean(); \

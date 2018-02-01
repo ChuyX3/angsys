@@ -541,7 +541,7 @@ xml_const_forward_iterator_t xml_document::last()const
 
 xml_backward_iterator_t xml_document::rbegin()
 {
-	ixml_node* child, *node = xml_last();
+	ixml_node* child = null, *node = xml_last();
 	while (node && (child = node->xml_last_child())) node = child;
 	return xml_iterator_t(const_cast<xml_document*>(this), (ixml_node*)node);
 }
@@ -553,7 +553,7 @@ xml_backward_iterator_t xml_document::rend()
 
 xml_const_backward_iterator_t xml_document::rbegin()const
 {
-	ixml_node* child, *node = xml_last();
+	ixml_node* child = null, *node = xml_last();
 	while (node && (child = node->xml_last_child())) node = child;
 	return xml_iterator_t(const_cast<xml_document*>(this), (ixml_node*)node);
 }
@@ -592,7 +592,7 @@ xml_iterator_t xml_document::find(raw_str_t name, bool invert)const
 	{
 		for (xml_const_backward_iterator_t it = rbegin(); it != rend(); it++)
 		{
-			if(text::UNICODE().compare((cwstr_t)it->xml_name(), name) == 0)
+			if(text::UNIC().compare((cwstr_t)it->xml_name(), name) == 0)
 				return it;
 		}
 	}
@@ -600,7 +600,7 @@ xml_iterator_t xml_document::find(raw_str_t name, bool invert)const
 	{
 		for (xml_const_forward_iterator_t it = begin(); it != end(); it++)
 		{
-			if (text::UNICODE().compare((cwstr_t)it->xml_name(), name) == 0)
+			if (text::UNIC().compare((cwstr_t)it->xml_name(), name) == 0)
 				return it;
 		}
 	}
@@ -616,7 +616,7 @@ xml_iterator_t xml_document::find(raw_str_t name, xml_iterator_t nextTo, bool in
 	{
 		for (xml_const_backward_iterator_t it = nextTo; it != rend(); it--)
 		{
-			if (text::UNICODE().compare((cwstr_t)it->xml_name(), name) == 0)
+			if (text::UNIC().compare((cwstr_t)it->xml_name(), name) == 0)
 				return it;
 		}
 	}
@@ -624,7 +624,7 @@ xml_iterator_t xml_document::find(raw_str_t name, xml_iterator_t nextTo, bool in
 	{
 		for (xml_const_forward_iterator_t it = nextTo; it != end(); it++)
 		{
-			if (text::UNICODE().compare((cwstr_t)it->xml_name(), name) == 0)
+			if (text::UNIC().compare((cwstr_t)it->xml_name(), name) == 0)
 				return it;
 		}
 	}

@@ -8,13 +8,6 @@ namespace ang
 	{
 		namespace effects
 		{
-			struct ishaders;
-			struct ieffect;
-			struct ieffect_library;
-
-			typedef intf_wrapper<ishaders> ishaders_t;
-			typedef intf_wrapper<ieffect> ieffect_t;
-			typedef intf_wrapper<ieffect_library> ieffect_library_t;
 
 			ANG_BEGIN_INTERFACE(LINK, ishaders)
 				visible vcall string resource_name()const pure;
@@ -32,7 +25,8 @@ namespace ang
 			ANG_END_INTERFACE();
 
 			ANG_BEGIN_INTERFACE(LINK, ieffect)
-				visible vcall ishaders_t technique(index)const pure;
+				visible vcall void draw(iframe_buffer_t)pure;
+				visible vcall ishaders_t pass(index)const pure;
 			ANG_END_INTERFACE();
 
 			ANG_BEGIN_INTERFACE(LINK, ieffect_library)
@@ -42,12 +36,12 @@ namespace ang
 				visible vcall core::async::iasync_t<ieffect_library_t> load_library_async(xml::ixml_node_t) pure;
 				visible vcall ieffect_t load_effect(xml::ixml_node_t) pure;
 				visible vcall core::async::iasync_t<ieffect_t> load_effect_async(xml::ixml_node_t) pure;	
-				visible vcall ishaders_t load_technique(xml::ixml_node_t) pure;
-				visible vcall core::async::iasync_t<ishaders_t> load_technique_async(xml::ixml_node_t) pure;
+				visible vcall ishaders_t load_shaders(xml::ixml_node_t) pure;
+				visible vcall core::async::iasync_t<ishaders_t> load_shaders_async(xml::ixml_node_t) pure;
 				visible vcall ieffect_t find_effect(cstr_t)const pure;
 				visible vcall ieffect_t find_effect(cwstr_t)const pure;
-				visible vcall ishaders_t find_technique(cstr_t)const pure;
-				visible vcall ishaders_t find_technique(cwstr_t)const pure;
+				visible vcall ishaders_t find_shaders(cstr_t)const pure;
+				visible vcall ishaders_t find_shaders(cwstr_t)const pure;
 			ANG_END_INTERFACE();
 		}
 	}

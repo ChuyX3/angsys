@@ -262,10 +262,38 @@ wsize string_base_buffer::serialize(streams::itext_output_stream_t stream)const
 	return ibuffer::serialize(const_cast<string_base_buffer*>(this), stream);
 }
 
+ANG_EXTERN ang_uint64_t ang_create_hash_index_cstr(ang_cstr_t key, ang_uint64_t TS);
+
 wsize string_base_buffer::deserialize(streams::ibinary_input_stream_t stream)
 {
-	//return ibuffer::deserialize(this, stream);
-	return 0;
+	ang_uint64_t hash = ang_create_hash_index_cstr(ibuffer::class_name(), 0X7FFFFFFFFFFFFFFF);
+
+	struct
+	{
+		qword hash;
+		dword encoding;
+		dword length;
+	}info;
+
+	byte buffer[512];
+
+	auto pos = stream->position();
+	stream->read(&info, sizeof(info));
+	if (info.hash != hash)
+	{
+		stream->move_to(pos, streams::stream_reference::begin);
+		return 0;
+	}
+
+	wsize readed = 0, total = 0;
+	while (total < info.length && !stream->end_of_stream())
+	{
+		readed = stream->read(buffer, min(array_size(buffer), info.length));
+		concat(raw_str(buffer, readed, (text::encoding)info.encoding));
+		total += readed;
+	}
+	
+	return total + sizeof(info);
 }
 
 wsize string_base_buffer::deserialize(streams::itext_input_stream_t stream)

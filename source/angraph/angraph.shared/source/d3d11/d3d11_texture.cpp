@@ -393,6 +393,7 @@ core::async::iasync_t<textures::itexture_t>  d3d11_texture_loader::load_texture_
 	//return core::async::async_task<textures::itexture_t>::run_async([=](core::async::iasync<textures::itexture_t>* async, var_args_t args)->textures::itexture_t
 	return _work_thead->run_async<textures::itexture_t>([=](core::async::iasync<textures::itexture_t>* async)->textures::itexture_t
 	{
+		xml::ixml_node_t node;
 		{	core::async::scope_locker<core::async::mutex_ptr_t> lock = main_mutex;
 			if (!_textures.is_empty())
 			{
@@ -404,9 +405,7 @@ core::async::iasync_t<textures::itexture_t>  d3d11_texture_loader::load_texture_
 						return tex.get();
 				}
 			}
-		}
-		xml::ixml_node_t node;
-		{	core::async::scope_locker<core::async::mutex_ptr_t> lock = main_mutex;
+		
 			if (_texture_info_map.is_empty())
 				return null;
 			auto it = _texture_info_map->find(name);

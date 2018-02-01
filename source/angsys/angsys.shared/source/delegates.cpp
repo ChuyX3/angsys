@@ -45,6 +45,13 @@ ang::object_wrapper<ang::core::delegates::function_data<void(void)>>::object_wra
 {
 }
 
+ang::object_wrapper<ang::core::delegates::function_data<void(void)>>::object_wrapper(ang::core::delegates::function_data<void(void)> * func)
+	: object_wrapper()
+{
+	set(func);
+}
+
+
 ang::object_wrapper<ang::core::delegates::function_data<void(void)>>::~object_wrapper()
 {
 }

@@ -385,28 +385,26 @@ collections::vector<ordered_model::model_element> ordered_model::load(core::file
 	ulong64 _size = 0;
 	file->read([&](streams::ibinary_input_stream_t stream) 
 	{
-		uint info, temp;
+		uint info;
 		_elements = null;
 
 		stream >> info;
 		if (info != _magic_word)
 			return false;
-		uint element_count = 0;
+		wsize element_count = 0;
 		stream >> element_count;
 		model_element element;
-		for (index i = 0; i < element_count; ++i)
+		for (wsize i = 0; i < element_count; ++i)
 		{
 			vertex _v;
-			uint vertex_count = 0;
+			wsize vertex_count = 0;
 			
-			stream >> temp;
-			element.material = new strings::string_buffer<text::encoding::ascii>(temp);
-			auto view = element.material->map_buffer(0, temp);
-			temp = stream->read(view->buffer_ptr(), temp);
-			element.material->unmap_buffer(view, temp);
+			element.material = new strings::string_buffer<text::encoding::ascii>();
+			stream >> element.material;
+			
 			stream >> vertex_count;
 			element.vertices = new collections::vector_buffer<vertex, memory::aligned16_allocator>();
-			for (index j = 0; j < vertex_count; ++j)
+			for (wsize j = 0; j < vertex_count; ++j)
 			{
 				stream->read(&_v, sizeof(vertex));
 				element.vertices += _v;
@@ -437,17 +435,17 @@ core::async::iasync_t<collections::vector<ordered_model::model_element>> ordered
 				return null;
 			}
 				
-			uint element_count = 0;
+			wsize element_count = 0;
 			stream >> element_count;
 			model_element element;
-			for (index i = 0; i < element_count; ++i)
+			for (wsize i = 0; i < element_count; ++i)
 			{
 				vertex _v;
-				uint vertex_count = 0;
+				wsize vertex_count = 0;
 				stream >> element.material;
 				stream >> vertex_count;
 				element.vertices = new collections::vector_buffer<vertex, memory::aligned16_allocator>();
-				for (index j = 0; j < vertex_count; ++j)
+				for (wsize j = 0; j < vertex_count; ++j)
 				{
 					stream->read(&_v, sizeof(vertex));
 					element.vertices += _v;

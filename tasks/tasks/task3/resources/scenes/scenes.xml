@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <scene>
   <sources>
-    <file sid="GIRL_MODEL_OBJ">resources/Girl/girl.obj</file>
+    <file sid="GIRL_MODEL_OBJ">resources/Girl/girl.bom</file>
     <file sid="BEAUTIFULGIRL_MODEL_OBJ">resources/BeautifulGirl/Beautiful Girl.obj</file>
     <file sid="SKYBOX_XML">resources/models/skybox.xml</file>
   </sources>
@@ -22,37 +22,8 @@
     <fvo>0.99</fvo>
   </camera>
 
-
   <object>
-    <position>-2.0,0.0,-3.0</position>
-    <rotation>0.0,0.0,0.0</rotation>
-    <scale>0.254,0.254,0.254</scale>
-    <source type="ordered">GIRL_MODEL_OBJ</source>
-  </object>
-
-  <object>
-    <position>-1.0,0.0,-3.0</position>
-    <rotation>0.0,0.0,0.0</rotation>
-    <scale>0.254,0.254,0.254</scale>
-    <source type="ordered">GIRL_MODEL_OBJ</source>
-  </object>
-
-  <object>
-    <position>0.0,0.0,-3.0</position>
-    <rotation>0.0,0.0,0.0</rotation>
-    <scale>0.254,0.254,0.254</scale>
-    <source type="ordered">GIRL_MODEL_OBJ</source>
-  </object>
-
-  <object>
-    <position>1.0,0.0,-3.0</position>
-    <rotation>0.0,0.0,0.0</rotation>
-    <scale>0.254,0.254,0.254</scale>
-    <source type="ordered">GIRL_MODEL_OBJ</source>
-  </object>
-
-  <object>
-    <position>2.0,0.0,-3.0</position>
+    <position>0.0,0.0,-1.0</position>
     <rotation>0.0,0.0,0.0</rotation>
     <scale>0.254,0.254,0.254</scale>
     <source type="ordered">GIRL_MODEL_OBJ</source>

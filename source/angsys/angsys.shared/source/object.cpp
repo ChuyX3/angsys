@@ -165,7 +165,8 @@ safe_pointer& safe_pointer::operator = (ang::nullptr_t const&)
 
 ang_void_ptr_t object::operator new(wsize size)
 {
-	smart_ptr_info_ptr_t ptr = (smart_ptr_info_ptr_t)ANG_ALLOCATOR_ALLOC(size + sizeof(smart_ptr_info_t));
+	size += sizeof(smart_ptr_info_t);
+	smart_ptr_info_ptr_t ptr = (smart_ptr_info_ptr_t)ANG_ALLOCATOR_ALLOC(size);
 	ptr->_shared_counter = 0;
 	ptr->_ref_counter = 0;
 	ptr->_object = (interface_t*)ang_void_ptr_t(wsize(ptr) + sizeof(smart_ptr_info_t));
@@ -235,7 +236,6 @@ object::object(bool inc_ref)
 
 object::~object()
 {
-
 }
 
 ANG_IMPLEMENT_CLASSNAME(ang::object);

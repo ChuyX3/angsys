@@ -27,7 +27,9 @@ mutex::mutex()
 	pthread_mutex_init((pthread_mutex_t*)_handle, &attr);
 	pthread_mutexattr_destroy(&attr);
 #elif defined WINDOWS_PLATFORM
-	this->_handle = CreateMutexExW(NULL, NULL, 0, SYNCHRONIZE);
+	_handle = memory::default_allocator<CRITICAL_SECTION>::alloc(1);
+	InitializeCriticalSection((LPCRITICAL_SECTION)_handle);
+	//this->_handle = CreateMutexExW(NULL, NULL, 0, SYNCHRONIZE);
 #endif
 }
 
@@ -43,7 +45,9 @@ mutex::mutex(bool _lock)
 	pthread_mutexattr_destroy(&attr);
 	if (_lock)pthread_mutex_lock((pthread_mutex_t*)_handle);
 #elif defined WINDOWS_PLATFORM
-	this->_handle = CreateMutexExW(NULL, NULL, 0, SYNCHRONIZE);
+	//this->_handle = CreateMutexExW(NULL, NULL, 0, SYNCHRONIZE);
+	_handle = memory::default_allocator<CRITICAL_SECTION>::alloc(1);
+	InitializeCriticalSection((LPCRITICAL_SECTION)_handle);
 	if (_lock)WaitForSingleObjectEx(this->_handle, INFINITE, FALSE);
 #endif
 	
@@ -55,7 +59,9 @@ mutex::~mutex()
 	pthread_mutex_destroy((pthread_mutex_t*)_handle);
 	memory::default_allocator<pthread_mutex_t>::free((pthread_mutex_t*)_handle);
 #elif defined WINDOWS_PLATFORM
-	::CloseHandle(this->_handle);
+	//::CloseHandle(this->_handle);
+	DeleteCriticalSection((LPCRITICAL_SECTION)_handle);
+	memory::default_allocator<CRITICAL_SECTION>::free((LPCRITICAL_SECTION)_handle);
 #endif
 }
 
@@ -63,9 +69,11 @@ bool mutex::lock()const
 {
 	if (_handle != NULL)
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-		return pthread_mutex_lock((pthread_mutex_t*)_handle) == 0 ? ang_true : ang_false;
+		return pthread_mutex_lock((pthread_mutex_t*)_handle) == 0 ? true : false;
 #elif defined WINDOWS_PLATFORM
-		return WaitForSingleObjectEx(this->_handle, INFINITE, FALSE) == WAIT_OBJECT_0 ? true : false;
+		//return WaitForSingleObjectEx(this->_handle, INFINITE, FALSE) == WAIT_OBJECT_0 ? true : false;
+		EnterCriticalSection(LPCRITICAL_SECTION(_handle));
+	return true;
 #endif
 	return false;
 }
@@ -74,9 +82,10 @@ bool mutex::trylock()const
 {
 	if (_handle != NULL)
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-		return pthread_mutex_trylock((pthread_mutex_t*)_handle) == 0 ? ang_true : ang_false;
+		return pthread_mutex_trylock((pthread_mutex_t*)_handle) == 0 ? true : false;
 #elif defined WINDOWS_PLATFORM
-		return WaitForSingleObjectEx(this->_handle, 0, FALSE) == WAIT_OBJECT_0 ? true : false;
+		//return WaitForSingleObjectEx(this->_handle, 0, FALSE) == WAIT_OBJECT_0 ? true : false;
+		return TryEnterCriticalSection(LPCRITICAL_SECTION(_handle)) ? true : false;
 #endif
 	return false;
 }
@@ -87,7 +96,9 @@ bool mutex::unlock()const
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 		return pthread_mutex_unlock((pthread_mutex_t*)_handle) == 0 ? ang_true : ang_false;
 #elif defined WINDOWS_PLATFORM
-		return ReleaseMutex(this->_handle) ? true : false;
+		LeaveCriticalSection(LPCRITICAL_SECTION(_handle));
+	return true;
+		//return ReleaseMutex(this->_handle) ? true : false;
 #endif
 	return false;
 }

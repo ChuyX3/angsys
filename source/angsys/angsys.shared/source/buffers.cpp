@@ -42,10 +42,10 @@ ANG_EXTERN ang_uint64_t ang_create_hash_index_cstr(ang_cstr_t key, ang_uint64_t 
 
 wsize ibuffer::serialize(ibuffer_t buffer, streams::ibinary_output_stream_t stream)
 {
-	ang_uint64_t hash = ang_create_hash_index_cstr(buffer->object_name(), 0X7FFFFFFFFFFFFFFF);
-	if (text::itext_buffer_t buffer = interface_cast<text::itext_buffer>(buffer.get()))
+	ang_uint64_t hash = ang_create_hash_index_cstr(ibuffer::class_name(), 0X7FFFFFFFFFFFFFFF);
+	if (text::itext_buffer_t text_buffer = interface_cast<text::itext_buffer>(buffer.get()))
 	{
-		auto str = buffer->text_buffer();
+		auto str = text_buffer->text_buffer();
 
 		struct
 		{
@@ -54,7 +54,7 @@ wsize ibuffer::serialize(ibuffer_t buffer, streams::ibinary_output_stream_t stre
 			dword length;
 		}info;
 		info.hash = hash;
-		info.encoding = buffer->encoding();
+		info.encoding = text_buffer->encoding();
 		info.length = str._size;
 
 		auto sz = stream->write(&info, sizeof(info));

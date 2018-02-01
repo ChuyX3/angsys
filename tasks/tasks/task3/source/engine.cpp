@@ -24,9 +24,6 @@ struct vertex_t
 
 void engine::init()
 {
-	core::files::ifile_system* fs = core::files::ifile_system::get_file_system();
-	fs->register_paths(L"../../../third_party/"_s);
-
 	effect_library = driver->create_effect_library();
 	texture_loader = driver->create_texture_loader();
 
@@ -50,6 +47,7 @@ void engine::init()
 
 	scene->load(driver, effect_library, texture_loader, doc->xml_root_element());
 
+	driver->blend_mode(graphics::blend_mode::enable);
 }
 
 void engine::update(shared_ptr<core::time::step_timer> timer)

@@ -8,13 +8,6 @@ namespace ang
 	{
 		namespace buffers
 		{		
-			struct igpu_buffer;
-			struct iindex_buffer;
-			struct ivertex_buffer;
-
-			typedef intf_wrapper<igpu_buffer> igpu_buffer_t;
-			typedef intf_wrapper<iindex_buffer> iindex_buffer_t;
-			typedef intf_wrapper<ivertex_buffer> ivertex_buffer_t;
 
 			ANG_BEGIN_ENUM(LINK, buffer_type, uint)
 				none,

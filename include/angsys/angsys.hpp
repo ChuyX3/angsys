@@ -165,6 +165,13 @@ namespace ang
 		friend class safe_pointer;
 	};
 
+	template<typename T>
+	struct constructor<object_wrapper<T>> {
+		static const object_wrapper<T> default_value;
+	};
+
+	template<typename T> const object_wrapper<T> constructor<object_wrapper<T>>::default_value = nullptr;
+
 	template<typename T1, typename T2>
 	bool operator == (object_wrapper<T1> const& obj1, object_wrapper<T2> const& obj2) {
 		if ((pointer)obj1.get() == (pointer)obj2.get())
@@ -240,6 +247,14 @@ namespace ang
 		operator type * (void);
 		operator type const* (void)const;
 	};
+
+
+	template<typename T>
+	struct constructor<intf_wrapper<T>> {
+		static const intf_wrapper<T> default_value;
+	};
+
+	template<typename T> const intf_wrapper<T> constructor<intf_wrapper<T>>::default_value = nullptr;
 
 	/******************************************************************/
 	/* template class ang::intf_wrapper_ptr :                         */

@@ -29,10 +29,6 @@ namespace d3d11
 		graphics::idriver_t driver;
 		graphics::isurface_t surface;
 
-		graphics::effects::ishaders_t shader;
-		graphics::buffers::iindex_buffer_t indices;
-		graphics::buffers::ivertex_buffer_t vertices;
-
 		graphics::effects::ieffect_library_t effect_library;
 		graphics::textures::itexture_loader_t texture_loader;
 
