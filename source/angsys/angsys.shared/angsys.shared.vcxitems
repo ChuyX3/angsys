@@ -69,6 +69,7 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angc\ang_core_hash_table.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\async\async.cpp" />

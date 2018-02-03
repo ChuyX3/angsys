@@ -71,7 +71,7 @@ bool input_text_file::read(core::delegates::function<bool(streams::itext_input_s
 		case text::encoding::utf16_be: return func(new streams::text_buffer_input_stream(new text::text_buffer_wrapper<text::encoding::utf16_be>(buff)));
 		case text::encoding::utf32_le: return func(new streams::text_buffer_input_stream(new text::text_buffer_wrapper<text::encoding::utf32_le>(buff)));
 		case text::encoding::utf32_be: return func(new streams::text_buffer_input_stream(new text::text_buffer_wrapper<text::encoding::utf32_be>(buff)));
-		default: return nullptr;
+		default: return false;
 		}
 }
 

@@ -84,7 +84,7 @@ bool output_text_file::write(core::delegates::function<bool(streams::itext_outpu
 		case text::encoding::utf16_be: return func(new streams::text_buffer_output_stream(new text::text_buffer_wrapper<text::encoding::utf16_be>(buff)));
 		case text::encoding::utf32_le: return func(new streams::text_buffer_output_stream(new text::text_buffer_wrapper<text::encoding::utf32_le>(buff)));
 		case text::encoding::utf32_be: return func(new streams::text_buffer_output_stream(new text::text_buffer_wrapper<text::encoding::utf32_be>(buff)));
-		default: return nullptr;
+		default: return false;
 		}		
 }
 

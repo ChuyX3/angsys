@@ -628,8 +628,17 @@ namespace ang
 
 	namespace interop
 	{
-		template<class To, class From>
-		To string_cast(From const&);
+		template<typename To, typename From>
+		struct __string_cast_impl {
+			static To string_cast(From const& str) {
+				return srt;
+			}
+		};
+
+		template<typename To, typename From>
+		To string_cast(From const& str) {
+			return ang::move(__string_cast_impl<To, From>::string_cast(str));
+		}
 
 #ifdef _MANAGED //Microsoft CLR
 		template<> inline ang::string string_cast<ang::string>(System::String^ const& text) {
@@ -665,6 +674,33 @@ namespace ang
 			auto cstr = (ang::cwstr_t)text;
 			return gcnew System::String(cstr.cstr(), 0, cstr.size());
 		}
+#endif
+
+#ifdef _WINRT //Windows Runtime
+
+		template<text::encoding_enum ENCODING>
+		struct __string_cast_impl<strings::string_base<ENCODING>, Platform::String^> {
+			static strings::string_base<ENCODING> string_cast(Platform::String^ const& str) {
+				return cwstr_t(str->Data(), str->Length());
+			}
+		};
+
+		template<text::encoding_enum ENCODING>
+		struct __string_cast_impl<Platform::String^, strings::string_base<ENCODING>> {
+			static Platform::String^ string_cast(strings::string_base<ENCODING> const& str) {
+				wstring wstr = str;
+				return ref new Platform::String(wstr->cstr());
+			}
+		};
+
+		template<typename T>
+		struct __string_cast_impl<Platform::String^, safe_str<T>> {
+			static Platform::String^ string_cast(safe_str<T> const& str) {
+				wstring wstr = str;
+				return ref new Platform::String(wstr->cstr());
+			}
+		};
+
 #endif
 	}
 }

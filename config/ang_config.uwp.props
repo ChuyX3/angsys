@@ -23,28 +23,37 @@
   <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
     <ClCompile>
       <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\uwp\$(Configuration)\x86\</AdditionallibraryDirectories>
+      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\uwp\$(Configuration)\x86; $(VCInstallDir)\lib\store; $(VCInstallDir)\lib; %(AdditionalLibraryDirectories)</AdditionallibraryDirectories>
       <Importlibrary>$(SolutionDir)binaries\lib\uwp\$(Configuration)\x86\$(TargetName).lib</Importlibrary>
+      <AdditionalOptions Condition="'$(Configuration)'=='Debug'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlibd.lib msvcrtd.lib</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)'=='Release'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='ARM'">
     <ClCompile>
       <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\uwp\$(Configuration)\ARM\</AdditionallibraryDirectories>
+      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\uwp\$(Configuration)\ARM; $(VCInstallDir)\lib\store\arm; $(VCInstallDir)\lib\arm; %(AdditionalLibraryDirectories)</AdditionallibraryDirectories>
       <Importlibrary>$(SolutionDir)binaries\lib\uwp\$(Configuration)\ARM\$(TargetName).lib</Importlibrary>
+      <AdditionalOptions Condition="'$(Configuration)'=='Debug'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlibd.lib msvcrtd.lib</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)'=='Release'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
     <ClCompile>
       <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\uwp\$(Configuration)\x64\</AdditionallibraryDirectories>
+      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\uwp\$(Configuration)\x64; $(VCInstallDir)\lib\store\amd64; $(VCInstallDir)\lib\amd64; %(AdditionalLibraryDirectories)</AdditionallibraryDirectories>
       <Importlibrary>$(SolutionDir)binaries\lib\uwp\$(Configuration)\x64\$(TargetName).lib</Importlibrary>
+      <AdditionalOptions Condition="'$(Configuration)'=='Debug'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlibd.lib msvcrtd.lib</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)'=='Release'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
