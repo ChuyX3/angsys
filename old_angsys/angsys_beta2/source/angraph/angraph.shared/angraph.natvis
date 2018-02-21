@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="ang::graphics::reflect::variable_desc">
+    <DisplayString Condition="_var_type._value == 13 &amp;&amp; _var_name._ptr != 0">struct:{_var_name}</DisplayString>
+    <DisplayString Condition="_var_type._value == 13">struct{{}}</DisplayString>
+    <DisplayString Condition="_var_name._ptr != 0" >var:{_var_name}=&gt;{_var_class._value}({_var_type._value})</DisplayString>
+    <DisplayString>{_var_class._value}({_var_type._value})</DisplayString>
+    <Expand>
+      <Item Name="[var_type]" ExcludeView="simple" Condition="_var_type._value != 13">_var_type._value</Item>
+      <Item Name="[var_class]" ExcludeView="simple" Condition="_var_type._value != 13">_var_class._value</Item>
+      <Item Name="[var_name]" ExcludeView="simple" Condition="_var_name._ptr != 0">_var_name</Item>
+      <Item Name="[array_count]" ExcludeView="simple" Condition="_array_count &gt; 1">_array_count</Item>
+      <Item Name="[aligment]" ExcludeView="simple" >_aligment</Item>
+      <Item Name="[position]" ExcludeView="simple" >_position</Item>
+      <Item Name="[fields]" ExcludeView="simple" Condition="_fields._ptr != 0">_fields</Item>
+    </Expand>
+  </Type>
+</AutoVisualizer>

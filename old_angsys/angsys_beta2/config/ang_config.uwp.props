@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <ConfigurationType>Dynamiclibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='Win32'">
+    <OutDir>$(SolutionDir)binaries\bin\uwp\$(Configuration)\x86\</OutDir>
+    <IntDir>$(SolutionDir)binaries\obj\uwp\$(Configuration)\x86\$(RootNamespace)\</IntDir>
+    <TargetName>$(RootNamespace)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='ARM'">
+    <OutDir>$(SolutionDir)binaries\bin\uwp\$(Configuration)\ARM\</OutDir>
+    <IntDir>$(SolutionDir)binaries\obj\uwp\$(Configuration)\ARM\$(RootNamespace)\</IntDir>
+    <TargetName>$(RootNamespace)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <OutDir>$(SolutionDir)binaries\bin\uwp\$(Configuration)\x64\</OutDir>
+    <IntDir>$(SolutionDir)binaries\obj\uwp\$(Configuration)\x64\$(RootNamespace)\</IntDir>
+    <TargetName>$(RootNamespace)</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\uwp\$(Configuration)\x86; $(VCInstallDir)\lib\store; $(VCInstallDir)\lib; %(AdditionalLibraryDirectories)</AdditionallibraryDirectories>
+      <Importlibrary>$(SolutionDir)binaries\lib\uwp\$(Configuration)\x86\$(TargetName).lib</Importlibrary>
+      <AdditionalOptions Condition="'$(Configuration)'=='Debug'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlibd.lib msvcrtd.lib</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)'=='Release'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='ARM'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\uwp\$(Configuration)\ARM; $(VCInstallDir)\lib\store\arm; $(VCInstallDir)\lib\arm; %(AdditionalLibraryDirectories)</AdditionallibraryDirectories>
+      <Importlibrary>$(SolutionDir)binaries\lib\uwp\$(Configuration)\ARM\$(TargetName).lib</Importlibrary>
+      <AdditionalOptions Condition="'$(Configuration)'=='Debug'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlibd.lib msvcrtd.lib</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)'=='Release'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\uwp\$(Configuration)\x64; $(VCInstallDir)\lib\store\amd64; $(VCInstallDir)\lib\amd64; %(AdditionalLibraryDirectories)</AdditionallibraryDirectories>
+      <Importlibrary>$(SolutionDir)binaries\lib\uwp\$(Configuration)\x64\$(TargetName).lib</Importlibrary>
+      <AdditionalOptions Condition="'$(Configuration)'=='Debug'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlibd.lib msvcrtd.lib</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)'=='Release'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

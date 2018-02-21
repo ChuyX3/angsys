@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+  <Type Name="ang::collections::array_view&lt;*&gt;">
+    <DisplayString>array[{_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::stack_array&lt;*&gt;">
+    <DisplayString>array[{SIZE}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">SIZE</Item>
+      <ArrayItems>
+        <Size>SIZE</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::collections::scope_array&lt;*&gt;">
+    <DisplayString>array[{_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::array_buffer&lt;*&gt;">
+    <DisplayString>array[{_data._size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_data._size</Item>
+      <ArrayItems>
+        <Size>_data._size</Size>
+        <ValuePointer>_data._data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::vector_buffer&lt;*&gt;">
+    <DisplayString>vector[{_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <Item Name="[capacity]" ExcludeView="simple">_capacity</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::pair&lt;*&gt;">
+    <DisplayString>pair[{key},{value}]</DisplayString>
+    <Expand>
+      <Item Name="[key]" ExcludeView="simple">key</Item>
+      <Item Name="[value]" ExcludeView="simple">value</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::safe_str&lt;*&gt;">
+    <DisplayString Condition="_value != 0">{_value, s}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::safe_str&lt;wchar_t&gt;">
+    <DisplayString Condition="_value != 0">{_value, su}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::safe_str&lt;wchar_t const&gt;">
+    <DisplayString Condition="_value != 0">{_value, su}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::safe_str&lt;unsigned char&gt;">
+    <DisplayString Condition="_value != 0">{_value, s8}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::safe_str&lt;unsigned char const&gt;">
+    <DisplayString Condition="_value != 0">{_value, s8}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::safe_str&lt;char16_t&gt;">
+    <DisplayString Condition="_value != 0">{_value, su}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::safe_str&lt;char16_t const&gt;">
+    <DisplayString Condition="_value != 0">{_value, su}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::safe_str&lt;char32_t&gt;">
+    <DisplayString Condition="_value != 0">{_value, s32}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::safe_str&lt;char32_t const&gt;">
+    <DisplayString Condition="_value != 0">{_value, s32}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_value</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::raw_str">
+    <DisplayString Condition="_value != 0 &amp;&amp; _encoding == 1">{_value, s}</DisplayString>
+    <DisplayString Condition="_value != 0 &amp;&amp; _encoding == 2">{_value, su}</DisplayString>
+    <DisplayString Condition="_value != 0 &amp;&amp; _encoding == 3">{_value, s8}</DisplayString>
+    <DisplayString Condition="_value != 0 &amp;&amp; _encoding == 6">{_value, su}</DisplayString>
+    <DisplayString Condition="_value != 0 &amp;&amp; _encoding == 10">{_value, s32}</DisplayString>
+    <DisplayString Condition="_value != 0">undefined:{_value}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <Item Name="[ptr]" ExcludeView="simple">_value</Item>
+      <Item Name="[encoding]" ExcludeView="simple">_encoding</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::object_wrapper&lt;*&gt;">
+    <DisplayString Condition="_ptr != 0">{*_ptr}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <ExpandedItem>_ptr</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::strings::string_buffer&lt;1&gt;">
+    <DisplayString Condition="_data._storage_type != -1">{_data._stack_buffer,s}</DisplayString>
+    <DisplayString Condition="_data._storage_type == -1">{_data._allocated_buffer,s}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <StringView Condition="_data._storage_type != -1">_data._stack_buffer,s</StringView>
+    <StringView Condition="_data._storage_type == -1">_data._allocated_buffer,s</StringView>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type != -1">_data._stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type != -1">LOCAL_CAPACITY - 1</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_capacity - 1</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type != -1">_data._stack_buffer</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_buffer</Item>
+      <ArrayItems Condition="_data._storage_type != -1">
+        <Size>LOCAL_CAPACITY</Size>
+        <ValuePointer>(char*)_data._stack_buffer</ValuePointer>
+      </ArrayItems>
+      <ArrayItems Condition="_data._storage_type == -1">
+        <Size>_data._allocated_capacity</Size>
+        <ValuePointer>(char*)_data._allocated_buffer</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::strings::string_buffer&lt;2&gt;">
+    <DisplayString Condition="_data._storage_type != -1">{_data._stack_buffer,su}</DisplayString>
+    <DisplayString Condition="_data._storage_type == -1">{_data._allocated_buffer,su}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <StringView Condition="_data._storage_type != -1">_data._stack_buffer,su</StringView>
+    <StringView Condition="_data._storage_type == -1">_data._allocated_buffer,su</StringView>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type != -1">_data._stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type != -1">LOCAL_CAPACITY - 1</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_capacity - 1</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type != -1">_data._stack_buffer</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_buffer</Item>
+      <ArrayItems Condition="_data._storage_type != -1">
+        <Size>LOCAL_CAPACITY</Size>
+        <ValuePointer>(wchar_t*)_data._stack_buffer</ValuePointer>
+      </ArrayItems>
+      <ArrayItems Condition="_data._storage_type == -1">
+        <Size>_data._allocated_capacity</Size>
+        <ValuePointer>(wchar_t*)_data._allocated_buffer</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::strings::string_buffer&lt;3&gt;">
+    <DisplayString Condition="_data._storage_type != -1">{_data._stack_buffer,s8}</DisplayString>
+    <DisplayString Condition="_data._storage_type == -1">{_data._allocated_buffer,s8}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <StringView Condition="_data._storage_type != -1">_data._stack_buffer,s8</StringView>
+    <StringView Condition="_data._storage_type == -1">_data._allocated_buffer,s8</StringView>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type != -1">_data._stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type != -1">LOCAL_CAPACITY - 1</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_capacity - 1</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type != -1">_data._stack_buffer</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_buffer</Item>
+      <ArrayItems Condition="_data._storage_type != -1">
+        <Size>LOCAL_CAPACITY</Size>
+        <ValuePointer>(char*)_data._stack_buffer</ValuePointer>
+      </ArrayItems>
+      <ArrayItems Condition="_data._storage_type == -1">
+        <Size>_data._allocated_capacity</Size>
+        <ValuePointer>(char*)_data._allocated_buffer</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::strings::string_buffer&lt;6&gt;">
+    <DisplayString Condition="_data._storage_type != -1">{_data._stack_buffer,su}</DisplayString>
+    <DisplayString Condition="_data._storage_type == -1">{_data._allocated_buffer,su}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <StringView Condition="_data._storage_type != -1">_data._stack_buffer,su</StringView>
+    <StringView Condition="_data._storage_type == -1">_data._allocated_buffer,su</StringView>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type != -1">_data._stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type != -1">LOCAL_CAPACITY - 1</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_capacity - 1</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type != -1">_data._stack_buffer</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_buffer</Item>
+      <ArrayItems Condition="_data._storage_type != -1">
+        <Size>LOCAL_CAPACITY</Size>
+        <ValuePointer>(char16_t*)_data._stack_buffer</ValuePointer>
+      </ArrayItems>
+      <ArrayItems Condition="_data._storage_type == -1">
+        <Size>_data._allocated_capacity</Size>
+        <ValuePointer>(char16_t*)_data._allocated_buffer</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::strings::string_buffer&lt;10&gt;">
+    <DisplayString Condition="_data._storage_type != -1">{_data._stack_buffer,s32}</DisplayString>
+    <DisplayString Condition="_data._storage_type == -1">{_data._allocated_buffer,s32}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <StringView Condition="_data._storage_type != -1">_data._stack_buffer,s32</StringView>
+    <StringView Condition="_data._storage_type == -1">_data._allocated_buffer,s32</StringView>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type != -1">_data._stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type != -1">LOCAL_CAPACITY - 1</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_capacity - 1</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type != -1">_data._stack_buffer</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_buffer</Item>
+      <ArrayItems Condition="_data._storage_type != -1">
+        <Size>LOCAL_CAPACITY</Size>
+        <ValuePointer>(char32_t*)_data._stack_buffer</ValuePointer>
+      </ArrayItems>
+      <ArrayItems Condition="_data._storage_type == -1">
+        <Size>_data._allocated_capacity</Size>
+        <ValuePointer>(char32_t*)_data._allocated_buffer</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::xml::xml_node">
+    <DisplayString Condition="_xml_type._value == 10U">{_xml_name} = {*_xml_content._ptr,na}</DisplayString>
+    <DisplayString Condition="_xml_type._value == 9U">&lt;!--{*_xml_content._ptr,na}--&gt;</DisplayString>
+    <DisplayString Condition="_xml_type._value == 8U">&lt;{_xml_name}/&gt;</DisplayString>
+    <DisplayString Condition="_xml_type._value == 7U">&lt;?xml?&gt;</DisplayString>
+    <DisplayString>xml_node</DisplayString>
+    <Expand>
+      <Item Name="[name]" ExcludeView="simple" Condition="_xml_name._ptr != 0">_xml_name</Item>
+      <Item Name="[attributes]" ExcludeView="simple" Condition="_xml_attributes._ptr != 0">*_xml_attributes._ptr</Item>
+      <Item Name="[content]" ExcludeView="simple" Condition="_xml_content._ptr != 0">*_xml_content._ptr</Item>
+      <Item Name="[prev]" ExcludeView="simple" Condition="_xml_prev != 0">*_xml_prev</Item>
+      <Item Name="[next]" ExcludeView="simple" Condition="_xml_next != 0">*_xml_next</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::xml::xml_node::xml_store">
+    <DisplayString Condition="_xml_type._value == 12U">attributes[counter = {_count}]</DisplayString>
+    <DisplayString Condition="_xml_type._value == 11U">elements[counter = {_count}];</DisplayString>
+    <DisplayString>xml_collection</DisplayString>
+    <Expand>
+      <Item Name="[counter]" ExcludeView="simple">_count</Item>
+      <LinkedListItems>
+        <Size>_count</Size>
+        <HeadPointer>_xml_first</HeadPointer>
+        <NextPointer>_xml_next</NextPointer>
+        <ValueNode>*this</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+
+
+  <Type Name="ang::collections::hash_table_node&lt;*&gt;">
+    <DisplayString>node[{pair.value}]</DisplayString>
+    <Expand>
+      <Item Name="[key]" ExcludeView="simple">pair.key</Item>
+      <Item Name="[value]" ExcludeView="simple">pair.value</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::collections::hash_table_object&lt;*&gt;">
+    <DisplayString>map[{_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <CustomListItems MaxItemsPerView="5000" ExcludeView="Test">
+        <Variable Name="i_" InitialValue="0" />
+        <Variable Name="node_" InitialValue="_table == nullptr ? nullptr : *_table" />
+        <Size>_size</Size>
+        <Loop Condition="i_ &lt; _capacity">
+          <If Condition="node_ == nullptr">
+            <Exec>i_++</Exec>
+            <Exec>node_ = _table[i_]</Exec>
+          </If>
+          <Else>
+            <Item>*node_</Item>
+            <Exec>node_ = node_->next</Exec>
+          </Else>
+        </Loop>
+      </CustomListItems>
+    </Expand>
+  </Type>
+
+
+  <Type Name="ang::collections::binary_tree_node&lt;*&gt;">
+    <DisplayString>node[{_pair.value}]</DisplayString>
+    <Expand>
+      <Item Name="[key]" ExcludeView="simple">_pair.key</Item>
+      <Item Name="[value]" ExcludeView="simple">_pair.value</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::binary_tree_object&lt;*&gt;">
+    <DisplayString>map[{_count}]</DisplayString>
+    <Expand>
+      <Item Name="[count]" ExcludeView="simple" >_count</Item>
+      <TreeItems>
+        <Size>_count</Size>
+        <HeadPointer>_root</HeadPointer>
+        <LeftPointer>_left</LeftPointer>
+        <RightPointer>_right</RightPointer>
+        <ValueNode>_pair</ValueNode>
+      </TreeItems>
+    </Expand>
+  </Type>
+
+</AutoVisualizer>

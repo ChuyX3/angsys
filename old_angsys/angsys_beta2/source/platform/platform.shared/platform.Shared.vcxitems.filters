@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source files">
+      <UniqueIdentifier>{fec6256f-149e-4c7e-8b56-a6ab22707d5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files">
+      <UniqueIdentifier>{4938110e-ee36-4b56-9132-3f07069687ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include">
+      <UniqueIdentifier>{927d6e6b-6ed6-4dde-8429-610a404f4c69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang">
+      <UniqueIdentifier>{d57e8f97-e529-40b8-9046-7ae7d9f860a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include\platform">
+      <UniqueIdentifier>{a556f21a-2a0f-45d1-a1e0-940a403e8491}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\platform\platform.hpp">
+      <Filter>header files\include\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\platform\core_msg.hpp">
+      <Filter>header files\include\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\platform\events.hpp">
+      <Filter>header files\include\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\platform\input.hpp">
+      <Filter>header files\include\platform</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\events.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\message.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\platform.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\graphics.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

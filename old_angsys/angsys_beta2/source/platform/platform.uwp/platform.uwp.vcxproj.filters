@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="header files">
+      <UniqueIdentifier>{6fb3d595-964f-4c53-9161-e57c018103ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files">
+      <UniqueIdentifier>{eb3a7787-f71f-4809-a234-12e037bab9ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang">
+      <UniqueIdentifier>{3fad4bb9-6974-4567-ae7a-fe2609c1aca1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang\platform">
+      <UniqueIdentifier>{f621cd09-af8b-4df5-b5db-c2824a42e4ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang\platform\uwp">
+      <UniqueIdentifier>{a0d6963a-6d4b-466e-92ec-7470308d99d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include">
+      <UniqueIdentifier>{4d087619-97c3-4f87-a155-3a5d4f683bc5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="source\angwin.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\FrameworkView.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\framework.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\win_events.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\uwp\angwin.hpp">
+      <Filter>header files\ang\platform\uwp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FrameworkView.hpp">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\uwp\win_events.hpp">
+      <Filter>header files\ang\platform\uwp</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

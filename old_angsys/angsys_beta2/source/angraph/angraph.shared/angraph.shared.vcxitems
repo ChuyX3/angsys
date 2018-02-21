@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{bdbb14fa-4e36-4404-9d51-a5f8c879c650}</ItemsProjectGuid>
+    <ItemsProjectName>angraph.shared</ItemsProjectName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\angraph.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\buffers.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\drawing.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\effects.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\geometry.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\reflect.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\textures.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_inlines.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\buffers.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\drawing\draw_context.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\driver.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\shaders.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\textures.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\buffers.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\driver.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\shaders.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\textures.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\driver.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\VulkanSDK.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\angraph.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_driver.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_frame_buffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_shaders.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_surface.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture_loader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\draw_context.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\brush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\GL\gl_driver.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\reflect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\textures.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variable.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\VulkanSDK.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\vulkan_driver.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\vulkan_surface.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)angraph.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)include\vulkan\VulkanSDK.inl" />
+  </ItemGroup>
+</Project>

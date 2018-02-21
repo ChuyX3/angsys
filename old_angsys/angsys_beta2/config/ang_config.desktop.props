@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <ConfigurationType>Dynamiclibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='Win32'">
+    <OutDir>$(SolutionDir)binaries\bin\desktop\$(Configuration)\x86\</OutDir>
+    <IntDir>$(SolutionDir)binaries\obj\desktop\$(Configuration)\x86\$(RootNamespace)\</IntDir>
+    <TargetName>$(RootNamespace)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <OutDir>$(SolutionDir)binaries\bin\desktop\$(Configuration)\x64\</OutDir>
+    <IntDir>$(SolutionDir)binaries\obj\desktop\$(Configuration)\x64\$(RootNamespace)\</IntDir>
+    <TargetName>$(RootNamespace)</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\;$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;_DEVELOPPER</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+    <Link>
+      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\Desktop\$(Configuration)\x86\</AdditionallibraryDirectories>
+      <Importlibrary>$(SolutionDir)binaries\lib\Desktop\$(Configuration)\x86\$(TargetName).lib</Importlibrary>
+    </Link>
+  </ItemDefinitionGroup>
+    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Develop|Win32'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\;$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;_DEVELOPPER</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+    <Link>
+      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\Desktop\$(Configuration)\x86\</AdditionallibraryDirectories>
+      <Importlibrary>$(SolutionDir)binaries\lib\Desktop\$(Configuration)\x86\$(TargetName).lib</Importlibrary>
+    </Link>
+  </ItemDefinitionGroup>
+    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\;$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+    <Link>
+      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\Desktop\$(Configuration)\x86\</AdditionallibraryDirectories>
+      <Importlibrary>$(SolutionDir)binaries\lib\Desktop\$(Configuration)\x86\$(TargetName).lib</Importlibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\;$(ProjectDir)..\$(RootNamespace).Shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;_DEVELOPPER</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+    <Link>
+      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\desktop\$(Configuration)\x64\</AdditionallibraryDirectories>
+      <Importlibrary>$(SolutionDir)binaries\lib\desktop\$(Configuration)\x64\$(TargetName).lib</Importlibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\;$(ProjectDir)..\$(RootNamespace).Shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;_DEVELOPPER</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+    <Link>
+      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\desktop\$(Configuration)\x64\</AdditionallibraryDirectories>
+      <Importlibrary>$(SolutionDir)binaries\lib\desktop\$(Configuration)\x64\$(TargetName).lib</Importlibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\;$(ProjectDir)..\$(RootNamespace).Shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+    <Link>
+      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\desktop\$(Configuration)\x64\</AdditionallibraryDirectories>
+      <Importlibrary>$(SolutionDir)binaries\lib\desktop\$(Configuration)\x64\$(TargetName).lib</Importlibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="header files">
+      <UniqueIdentifier>{72ac3241-5e9f-4421-8bbf-c4e9a9cdb0c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files">
+      <UniqueIdentifier>{5f1f1e3e-5277-4d88-a674-5f91b99d5b28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include">
+      <UniqueIdentifier>{890098c8-5178-47ee-9021-88e66d351b0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang">
+      <UniqueIdentifier>{6edd5292-5762-4691-b81e-c4155691e0e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang\graphics">
+      <UniqueIdentifier>{27837a58-8bae-4da2-8b27-7a42543b3f87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debug info">
+      <UniqueIdentifier>{06ab3994-3382-4c12-b338-da9e360c97bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include\d3d11">
+      <UniqueIdentifier>{4df0de67-11ce-4af6-a0a6-1abef92b8dda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\d3d11">
+      <UniqueIdentifier>{122a07e8-8bb2-46c7-a38c-12ed39b58534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\vulkan">
+      <UniqueIdentifier>{ec07d75e-8899-477b-802b-ae4325335f32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include\vulkan">
+      <UniqueIdentifier>{e4aa9f22-2807-44cd-bad8-7c537e77065e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include\d3d11\drawing">
+      <UniqueIdentifier>{5f773b96-491d-4a3f-9376-592678b38bec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\d3d11\drawing">
+      <UniqueIdentifier>{c0668f95-5390-4530-b89c-d64b8265a5d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\GL">
+      <UniqueIdentifier>{84c13b02-d054-448d-b94e-5a5b8bcad779}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include\GL">
+      <UniqueIdentifier>{335fd74d-037f-4ed9-b1e8-84eabc6d256c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_inlines.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\angraph.hpp">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\buffers.hpp">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\drawing.hpp">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\effects.hpp">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\reflect.hpp">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\textures.hpp">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\driver.hpp">
+      <Filter>header files\include\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\vulkan\VulkanSDK.hpp">
+      <Filter>header files\include\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\drawing\draw_context.hpp">
+      <Filter>header files\include\d3d11\drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\buffers.hpp">
+      <Filter>header files\include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\driver.hpp">
+      <Filter>header files\include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\shaders.hpp">
+      <Filter>header files\include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\textures.hpp">
+      <Filter>header files\include\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\buffers.hpp">
+      <Filter>header files\include\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\driver.hpp">
+      <Filter>header files\include\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\shaders.hpp">
+      <Filter>header files\include\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\textures.hpp">
+      <Filter>header files\include\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\geometry.hpp">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\angraph.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\reflect.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variable.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\textures.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_buffers.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_driver.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_frame_buffer.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_shaders.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_surface.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture_loader.cpp">
+      <Filter>source files\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\VulkanSDK.cpp">
+      <Filter>source files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\vulkan_driver.cpp">
+      <Filter>source files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\vulkan\vulkan_surface.cpp">
+      <Filter>source files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\draw_context.cpp">
+      <Filter>source files\d3d11\drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\brush.cpp">
+      <Filter>source files\d3d11\drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\GL\gl_driver.cpp">
+      <Filter>source files\GL</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)angraph.natvis">
+      <Filter>debug info</Filter>
+    </Natvis>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)include\vulkan\VulkanSDK.inl">
+      <Filter>header files\include\vulkan</Filter>
+    </None>
+  </ItemGroup>
+</Project>
