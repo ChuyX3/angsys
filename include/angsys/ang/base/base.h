@@ -47,6 +47,11 @@
 #include <ang/base/utils.h>
 #include <ang/base/memory.h>
 
+namespace
+{
+
+}
+
 
 #ifdef LINK
 #undef LINK

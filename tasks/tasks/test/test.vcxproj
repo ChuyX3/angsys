@@ -162,11 +162,6 @@
     </ClCompile>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\source\angsys\angsys.desktop\angsys.desktop.vcxproj">
-      <Project>{6e24f0d8-08fb-4df2-9e07-d208c4faace3}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

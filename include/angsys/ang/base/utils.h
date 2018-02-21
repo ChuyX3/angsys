@@ -119,12 +119,66 @@ namespace ang //comparision
 
 	template<typename T1, typename T2> inline auto min(T1 a, T2 b) { typedef decltype(a + b) r_t; return (a < b ? r_t(a) : r_t(b)); }
 	template<typename T1, typename T2> inline auto max(T1 a, T2 b) { typedef decltype(a + b) r_t; return (a > b ? r_t(a) : r_t(b)); }
+
+	template<wsize ALIGMENT, wsize VALUE> constexpr wsize align_up() {
+		static_assert(ALIGMENT != 0, "Error: align_to<0>(...)");
+		return (VALUE % ALIGMENT) && VALUE ? VALUE + ALIGMENT - (VALUE % ALIGMENT) : VALUE;
+	}
+
+	template<wsize ALIGMENT> wsize align_up(wsize VALUE) {
+		static_assert(ALIGMENT != 0, "Error: align_to<0>(...)");
+		return (VALUE % ALIGMENT) && VALUE ? VALUE + ALIGMENT - (VALUE % ALIGMENT) : VALUE;
+	}
+
+	template<typename T1, typename T2> inline auto align_up(T1 ALIGMENT, T2 VALUE) -> decltype(VALUE + ALIGMENT) {
+		NN_ASSERT(ALIGMENT != 0, "Error: align_to<0>(...)");
+		return (VALUE % ALIGMENT) && VALUE ? VALUE + ALIGMENT - (VALUE % ALIGMENT) : VALUE;
+	}
+
+	template<wsize ALIGMENT, wsize VALUE> constexpr wsize align_down() {
+		static_assert(ALIGMENT != 0, "Error: align_to<0>(...)");
+		return (VALUE % ALIGMENT) && VALUE ? VALUE - (VALUE % ALIGMENT) : VALUE;
+	}
+
+	template<wsize ALIGMENT> wsize align_down(wsize VALUE) {
+		static_assert(ALIGMENT != 0, "Error: align_to<0>(...)");
+		return (VALUE % ALIGMENT) && VALUE ? VALUE - (VALUE % ALIGMENT) : VALUE;
+	}
+
+	template<typename T1, typename T2> inline auto align_down(T1 ALIGMENT, T2 VALUE) -> decltype(VALUE + ALIGMENT) {
+		NN_ASSERT(ALIGMENT != 0, "Error: align_to<0>(...)");
+		return (VALUE % ALIGMENT) && VALUE ? VALUE - (VALUE % ALIGMENT) : VALUE;
+	}
+
+}
+
+namespace ang //testing
+{
+	template<typename T1, typename T2> struct is_same_type : false_type { };
+	template<typename T> struct is_same_type<T,T> : true_type { };
+
+	template<typename base_type, typename child_type>
+	struct is_base_of : public yes_expression<__is_base_of(base_type, child_type)> { };
+
+	template<typename child_type, typename base_type>
+	struct is_inherited_from : public yes_expression<__is_base_of(base_type, child_type)> { };
+
+	template<typename T, typename = void> struct is_functor : false_type { };
+	template<typename T> struct is_functor<T, void_t<decltype(&T::operator())>> : true_type { };
+
+	template<typename T> struct is_function : is_functor<T> { };
+	template<typename T, typename... Ts> struct is_function<T(Ts...)> : true_type { };
+	template<typename T, typename... Ts> struct is_function<T(*)(Ts...)> : true_type { };
+	template<typename T, typename O, typename... Ts> struct is_function<T(O::*)(Ts...)> : true_type { };
+
+
 }
 
 namespace ang //operations
 {
 	typedef enum class logic_operation_type : uint
 	{
+		not,
 		same,
 		diferent,
 		same_or_minor,
@@ -155,6 +209,63 @@ namespace ang //operations
 
 	template<logic_operation_t TYPE, typename T1, typename T2> struct logic_operation;
 
+	template<logic_operation_type TYPE, typename T1, typename T2 = T1, typename = void> struct has_logic_operation : false_type { };
+	template<typename T> struct has_logic_operation<logic_operation_type::not, T, T, void_t<decltype(!declval<T>())>> : true_type { };
+	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::same, T1, T2, void_t<decltype(declval<T1>() == declval<T2>())>> : true_type { };
+	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::diferent, T1, T2, void_t<decltype(declval<T1>() != declval<T2>())>> : true_type { };
+	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::same_or_minor, T1, T2, void_t<decltype(declval<T1>() <= declval<T2>())>> : true_type { };
+	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::same_or_major, T1, T2, void_t<decltype(declval<T1>() >= declval<T2>())>> : true_type { };
+	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::minor, T1, T2, void_t<decltype(declval<T1>() < declval<T2>())>> : true_type { };
+	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::major, T1, T2, void_t<decltype(declval<T1>() > declval<T2>())>> : true_type { };
+	
+
+	template<typename T1, typename T2, logic_operation_type TYPE>
+	struct logic_operation { static bool operate(const T1&, const T2&) { return false; }  };
+
+	template<typename T> struct logic_operation<T, T, logic_operation_type::not> {
+		static_assert(has_logic_operation<logic_operation_type::not, T, T>::value, "template parameter T has no logic operator");
+		static bool operate(const T& value) { return !value; }
+	};
+
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same> {
+		static_assert(has_logic_operation<logic_operation_type::same, T1, T2>::value, "template parameter T has no logic operator");
+		static bool operate(const T1& value1, const T1& value2) { return value1 == value2; }
+	};
+
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::diferent> {
+		static_assert(has_logic_operation<logic_operation_type::diferent, T1, T2>::value, "template parameter T has no logic operator");
+		static bool operate(const T1& value1, const T1& value2) { return value1 != value2; }
+	};
+
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_minor> {
+		static_assert(has_logic_operation<logic_operation_type::same_or_minor, T1, T2>::value, "template parameter T has no logic operator");
+		static bool operate(const T1& value1, const T1& value2) { return value1 <= value2; }
+	};
+
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_major> {
+		static_assert(has_logic_operation<logic_operation_type::same_or_major, T1, T2>::value, "template parameter T has no logic operator");
+		static bool operate(const T1& value1, const T1& value2) { return value1 >= value2; }
+	};
+
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::minor> {
+		static_assert(has_logic_operation<logic_operation_type::minor, T1, T2>::value, "template parameter T has no logic operator");
+		static bool operate(const T1& value1, const T1& value2) { return value1 < value2; }
+	};
+
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::major> {
+		static_assert(has_logic_operation<logic_operation_type::major, T1, T2>::value, "template parameter T has no logic operator");
+		static bool operate(const T1& value1, const T1& value2) { return value1 > value2; }
+	};
+
+
+	template<boolean_operation_type TYPE, typename T1, typename T2 = T1, typename = void> struct has_boolean_operation : false_type { };
+	template<typename T> struct has_boolean_operation<boolean_operation_type::not, T, T, void_t<decltype(~declval<T>())>> : true_type { };
+	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::and, T1, T2, void_t<decltype(declval<T1>() & declval<T2>())>> : true_type { };
+	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::or, T1, T2, void_t<decltype(declval<T1>() | declval<T2>())>> : true_type { };
+	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::xor , T1, T2, void_t<decltype(declval<T1>() ^ declval<T2>())>> : true_type { };
+	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::nan, T1, T2, void_t<decltype(~(declval<T1>() & declval<T2>()))>> : true_type { };
+	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::nor, T1, T2, void_t<decltype(~(declval<T1>() | declval<T2>()))>> : true_type { };
+	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::xnor, T1, T2, void_t<decltype(~(declval<T1>() ^ declval<T2>()))>> : true_type { };
 
 }
 
