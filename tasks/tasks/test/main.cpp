@@ -5,7 +5,7 @@
 
 using namespace ang;
 
-safe_enum(, encoding, uint)
+safe_flags(, encoding, uint)
 {
 	binary,
 	ascii,
@@ -13,8 +13,9 @@ safe_enum(, encoding, uint)
 
 int main()
 {
-	max<1, 2>();
-	max(1, 2);
+	encoding_t e;
+	e += encoding::ascii;
+
 
     return 0;
 }

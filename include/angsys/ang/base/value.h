@@ -187,13 +187,13 @@ namespace ang //constants
 	struct _LINK _name##_t : public ang::value<_name##_base> { \
 			_name##_t() : value(default_value<type>::value) {} \
 			_name##_t(type const& v) : value(v) {} \
-			_name##_t(value const& v) : value(v) {} \
+			_name##_t(_name##_t const& v) : value(v) {} \
 			_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
-			_name##_t(value && v) : value(ang::forward<value>(v)) { } \
+			_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
 			_name##_t& operator = (type const& v){ _value = v; return*this; } \
-			_name##_t& operator = (value const& v) { _value = v.get(); return*this; } \
+			_name##_t& operator = (_name##_t const& v) { _value = v.get(); return*this; } \
 			_name##_t& operator = (type && v) { _value = ang::move(v); v = default_value<type>::value; return*this; } \
-			_name##_t& operator = (value && v) { _value = ang::move(v.get()); v.set(default_value<type>::value); return*this; } \
+			_name##_t& operator = (_name##_t && v) { _value = ang::move(v._value); v.set(default_value<type>::value); return*this; } \
 	}; typedef _name##_base::enum_t _name; enum _name##_base::enum_t : _type
 
 
@@ -201,13 +201,21 @@ namespace ang //constants
 	struct _LINK _name##_t : public ang::value<_name##_base> { \
 			_name##_t() : value(default_value<type>::value) {} \
 			_name##_t(type const& v) : value(v) {} \
-			_name##_t(value const& v) : value(v) {} \
+			_name##_t(_name##_t const& v) : value(v) {} \
 			_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
-			_name##_t(value && v) : value(ang::forward<value>(v)) { } \
+			_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
 			_name##_t& operator = (type const& v){ _value = v; return*this; } \
-			_name##_t& operator = (value const& v) { _value = v.get(); return*this; } \
+			_name##_t& operator = (_name##_t const& v) { _value = v.get(); return*this; } \
 			_name##_t& operator = (type && v) { _value = ang::move(v); v = default_value<type>::value; return*this; } \
-			_name##_t& operator = (value && v) { _value = ang::move(v.get()); v.set(default_value<type>::value); return*this; } \
+			_name##_t& operator = (_name##_t && v) { _value = ang::move(v.get()); v.set(default_value<type>::value); return*this; } \
+			_name##_t& operator ^= (const _name##_t& v) { _value ^= v.get(); return*this; } \
+			_name##_t& operator ^= (type v) { _value ^= v;	return*this; } \
+			_name##_t& operator *= (const _name##_t& v) { _value &= v.get(); return*this; } \
+			_name##_t& operator *= (type v) { _value &= v;	return*this; } \
+			_name##_t& operator += (const _name##_t& v) { _value |= v.get(); return*this; } \
+			_name##_t& operator += (type v) { _value |= v;	return*this; } \
+			_name##_t& operator -= (const _name##_t& v) { _value &= ~v.get(); return*this; } \
+			_name##_t& operator -= (type v) { _value &= ~v;	return*this; } \
 	}; typedef _name##_base::enum_t _name; enum _name##_base::enum_t : _type
 
 }
