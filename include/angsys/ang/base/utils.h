@@ -207,8 +207,6 @@ namespace ang //operations
 		division,
 	}arithmetic_operation_t;
 
-	template<logic_operation_t TYPE, typename T1, typename T2> struct logic_operation;
-
 	template<logic_operation_type TYPE, typename T1, typename T2 = T1, typename = void> struct has_logic_operation : false_type { };
 	template<typename T> struct has_logic_operation<logic_operation_type::not, T, T, void_t<decltype(!declval<T>())>> : true_type { };
 	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::same, T1, T2, void_t<decltype(declval<T1>() == declval<T2>())>> : true_type { };
@@ -267,6 +265,16 @@ namespace ang //operations
 	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::nor, T1, T2, void_t<decltype(~(declval<T1>() | declval<T2>()))>> : true_type { };
 	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::xnor, T1, T2, void_t<decltype(~(declval<T1>() ^ declval<T2>()))>> : true_type { };
 
+}
+
+namespace ang
+{
+	template<typename T, T VALUE = T{ 0 } >
+	struct default_value { 
+		static const T value = VALUE;
+		inline operator T const& ()const { return value; }
+		inline T const& get()const { return value; }
+	};
 }
 
 #endif//__ANG_BASE_UTILS_H__

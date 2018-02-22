@@ -46,8 +46,9 @@
 #include <ang/base/defines.h>
 #include <ang/base/utils.h>
 #include <ang/base/memory.h>
+#include <ang/base/value.h>
 
-namespace
+namespace ang
 {
 
 }
