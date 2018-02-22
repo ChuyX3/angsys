@@ -269,7 +269,7 @@ namespace ang //operations
 
 namespace ang
 {
-	template<typename T, T VALUE = T{ 0 } >
+	template<typename T, T VALUE = T(0) >
 	struct default_value { 
 		static const T value = VALUE;
 		inline operator T const& ()const { return value; }

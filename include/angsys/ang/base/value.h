@@ -6,7 +6,7 @@
 namespace ang //constants
 {
 
-	template<typename T> struct value {
+	template<typename T, typename = void> struct value {
 		value() : _value(default_value<T>::value) {}
 		value(T const& v) : _value(v) {}
 		value(value const& v) : _value(v._value) {}
@@ -49,6 +49,52 @@ namespace ang //constants
 
 	private:
 		T _value;
+	};
+
+	template<typename T>
+	struct value<T, void_t<typename T::enum_t>> : public T {
+		typedef typename T::enum_t type;
+		value() {}
+		value(type const& v) { _value = v; }
+		value(value const& v) { _value = v._value; }
+		value(type && v) {
+			_value = v;
+			v = default_value<type>::value;
+		}
+		value(value && v) {
+			_value = ang::move(v._value);
+			v._value = default_value<type>::value;
+		}
+
+		operator type& () { return get(); }
+		operator type const& ()const { return get(); }
+
+		value& operator = (type const& v) {
+			_value = v;
+			return*this;
+		}
+		value& operator = (value const& v) {
+			_value = v._value;
+			return*this;
+		}
+		value& operator = (type && v) {
+			_value = v;
+			v = default_value<type>::value;
+			return*this;
+		}
+		value& operator = (value && v) {
+			_value = ang::move(v._value);
+			v._value = default_value<type>::value;
+			return*this;
+		}
+
+		type& get() { return *reinterpret_cast<type*>(&_value); }
+		type const& get()const { return *reinterpret_cast<type const*>(&_value); }
+		void set(type const& v) { _value = v; }
+		void move(type && v) {
+			_value = v;
+			v = default_value<type>::value;
+		}
 	};
 
 
@@ -137,33 +183,32 @@ namespace ang //constants
 	};
 
 
-#define safe_enum(_LINK, _name, _type) struct _name##_base { enum type : _type; }; \
-	struct _LINK _name##_t : public _name##_base, public value<_name##_base::type> { \
-			value() : _value(default_value<T>::value) {} \
-			value(T const& v) : _value(v) {} \
-			value(value const& v) : _value(v._value) {} \
-			value(T && v) : _value(ang::move(v)) { v = default_value<T>::value;	} \
-			value(value && v) : _value(ang::move(v._value)) { v._value = default_value<T>::value; } \
-			value& operator = (T const& v){ _value = v; return*this; } \
-			value& operator = (value const& v) { _value = v._value; return*this; } \
-			value& operator = (T && v) { _value = ang::move(v); v = default_value<T>::value; return*this; } \
-			value& operator = (value && v) { _value = ang::move(v._value); v._value = default_value<T>::value; return*this; } \
-	}; typedef _name##_base::type _name; enum _name##_base::type : _type
+#define safe_enum(_LINK, _name, _type) struct _name##_base { enum enum_t : _type; protected: enum_t _value; }; \
+	struct _LINK _name##_t : public ang::value<_name##_base> { \
+			_name##_t() : value(default_value<type>::value) {} \
+			_name##_t(type const& v) : value(v) {} \
+			_name##_t(value const& v) : value(v) {} \
+			_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
+			_name##_t(value && v) : value(ang::forward<value>(v)) { } \
+			_name##_t& operator = (type const& v){ _value = v; return*this; } \
+			_name##_t& operator = (value const& v) { _value = v.get(); return*this; } \
+			_name##_t& operator = (type && v) { _value = ang::move(v); v = default_value<type>::value; return*this; } \
+			_name##_t& operator = (value && v) { _value = ang::move(v.get()); v.set(default_value<type>::value); return*this; } \
+	}; typedef _name##_base::enum_t _name; enum _name##_base::enum_t : _type
 
 
-#define safe_flag(_LINK, _name, _type) struct _name##_base { enum type : _type; }; \
-	struct _LINK _name##_t : public _name##_base, public value<_type> { \
-			value() : _value(default_value<T>::value) {} \
-			value(T const& v) : _value(v) {} \
-			value(value const& v) : _value(v._value) {} \
-			value(T && v) : _value(ang::move(v)) { v = default_value<T>::value;	} \
-			value(value && v) : _value(ang::move(v._value)) { v._value = default_value<T>::value; } \
-			value& operator = (T const& v){ _value = v; return*this; } \
-			value& operator = (value const& v) { _value = v._value; return*this; } \
-			value& operator = (T && v) { _value = ang::move(v); v = default_value<T>::value; return*this; } \
-			value& operator = (value && v) { _value = ang::move(v._value); v._value = default_value<T>::value; return*this; } \
-	}; typedef _name##_base::type _name; enum _name##_base::type : _type
-
+#define safe_flags(_LINK, _name, _type) struct _name##_base { enum enum_t : _type; protected: _type _value; }; \
+	struct _LINK _name##_t : public ang::value<_name##_base> { \
+			_name##_t() : value(default_value<type>::value) {} \
+			_name##_t(type const& v) : value(v) {} \
+			_name##_t(value const& v) : value(v) {} \
+			_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
+			_name##_t(value && v) : value(ang::forward<value>(v)) { } \
+			_name##_t& operator = (type const& v){ _value = v; return*this; } \
+			_name##_t& operator = (value const& v) { _value = v.get(); return*this; } \
+			_name##_t& operator = (type && v) { _value = ang::move(v); v = default_value<type>::value; return*this; } \
+			_name##_t& operator = (value && v) { _value = ang::move(v.get()); v.set(default_value<type>::value); return*this; } \
+	}; typedef _name##_base::enum_t _name; enum _name##_base::enum_t : _type
 
 }
 

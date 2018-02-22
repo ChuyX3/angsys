@@ -5,6 +5,12 @@
 
 using namespace ang;
 
+safe_enum(, encoding, uint)
+{
+	binary,
+	ascii,
+};
+
 int main()
 {
 	max<1, 2>();
