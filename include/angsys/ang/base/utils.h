@@ -228,6 +228,22 @@ namespace ang //testing
 	template<typename T> inline constexpr genre_t genre_of(T const&) { return __genre_of<T>::value; }
 
 
+	template<typename T> struct is_integer_value : false_type { };
+	template<> struct is_integer_value<ang_int8_t> : true_type { };
+	template<> struct is_integer_value<ang_uint8_t> : true_type { };
+	template<> struct is_integer_value<ang_int16_t> : true_type { };
+	template<> struct is_integer_value<ang_uint16_t> : true_type { };
+	template<> struct is_integer_value<ang_int32_t> : true_type { };
+	template<> struct is_integer_value<ang_uint32_t> : true_type { };
+	template<> struct is_integer_value<ang_lint32_t> : true_type { };
+	template<> struct is_integer_value<ang_ulint32_t> : true_type { };
+	template<> struct is_integer_value<ang_int64_t> : true_type { };
+	template<> struct is_integer_value<ang_uint64_t> : true_type { };
+
+	template<typename T> struct is_floating_value : false_type { };
+	template<> struct is_floating_value<ang_float32_t> : true_type { };
+	template<> struct is_floating_value<ang_float64_t> : true_type { };
+
 	template<typename T, typename = void>
 	struct __is_safe_enum_base : false_type { };
 

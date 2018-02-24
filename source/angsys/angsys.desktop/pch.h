@@ -9,6 +9,6 @@
 
 #include<winapifamily.h>
 
-#include "ang/base/platform.h"
+#include "compile_config.h"
 
 // TODO: reference additional headers your program requires here

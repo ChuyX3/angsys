@@ -48,8 +48,11 @@
 #include <ang/base/memory.h>
 #include <ang/base/text.h>
 #include <ang/base/value.h>
+#include <ang/base/array.h>
 #include <ang/base/tuple.h>
 #include <ang/base/runtime.h>
+
+#include <ang/base/interface.h>
 
 namespace ang
 {

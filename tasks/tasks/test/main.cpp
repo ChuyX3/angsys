@@ -42,11 +42,6 @@ inline __m128i shift_right_128(__m128i const& x, int n)
 }
 
 
-
-
-
-
-
 typedef struct _int128 {
 	_int128() {
 		_value = _mm_set1_epi32(0);
@@ -332,9 +327,12 @@ struct MyStruct
 
 int main()
 {	
-	MyStruct a;
-	rtti_t const& name = rtti::type_of<int128_t>();
+	int a = 123;
+	int* b;
+
+	auto const& id = type_of<int>();
 	
+	id.dyn_cast(&a, &b);
 
 	return 0;
 }

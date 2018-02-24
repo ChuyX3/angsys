@@ -55,6 +55,8 @@ typedef short				ang_int16_t;
 typedef unsigned short		ang_uint16_t;
 typedef int					ang_int32_t;
 typedef unsigned int		ang_uint32_t;
+typedef long				ang_lint32_t;
+typedef unsigned long		ang_ulint32_t;
 typedef long long			ang_int64_t;
 typedef unsigned long long	ang_uint64_t;
 typedef float				ang_float32_t;
