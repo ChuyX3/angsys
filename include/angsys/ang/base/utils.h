@@ -5,8 +5,11 @@
 
 namespace ang //constants
 {
+	template<typename...>
+	struct voider { using type = void; };
+
 	//void type
-	template <typename... Ts> using void_t = void;
+	template <typename... Ts> using void_t = typename voider<Ts...>::type;
 
 	template<typename T, T VALUE>
 	struct integer_constant {
@@ -154,8 +157,25 @@ namespace ang //comparision
 
 namespace ang //testing
 {
+	typedef enum class genre {
+		value_type = 0,
+		enum_type,
+		union_type,
+		class_type,
+		function_type,
+	}genre_t;
+
+
+	template<typename> struct is_void : false_type { };
+	template<> struct is_void<void> : true_type { };
+	template<> struct is_void<const void> : true_type { };
+
 	template<typename T1, typename T2> struct is_same_type : false_type { };
 	template<typename T> struct is_same_type<T,T> : true_type { };
+
+	template<typename T> struct is_enum : yes_expression<__is_enum(T)> {};
+	template<typename T> struct is_union : yes_expression<__is_union(T)> {};
+	template<typename T> struct is_class : yes_expression<__is_class(T)> {};
 
 	template<typename base_type, typename child_type>
 	struct is_base_of : public yes_expression<__is_base_of(base_type, child_type)> { };
@@ -166,12 +186,55 @@ namespace ang //testing
 	template<typename T, typename = void> struct is_functor : false_type { };
 	template<typename T> struct is_functor<T, void_t<decltype(&T::operator())>> : true_type { };
 
-	template<typename T> struct is_function : is_functor<T> { };
+	template<typename T> struct is_function : false_type { };
 	template<typename T, typename... Ts> struct is_function<T(Ts...)> : true_type { };
 	template<typename T, typename... Ts> struct is_function<T(*)(Ts...)> : true_type { };
 	template<typename T, typename O, typename... Ts> struct is_function<T(O::*)(Ts...)> : true_type { };
 
+	template<typename T>
+	struct is_calleable : or_expression<
+		is_function<T>::value,
+		is_functor<T>::value> {
+	};
 
+
+	template<
+		typename T,
+		bool = is_enum<T>::value,
+		bool = is_union<T>::value,
+		bool = is_class<T>::value,
+		bool = is_function<T>::value
+	> struct __genre_of {
+		static constexpr genre_t value = genre::value_type;
+	};
+
+	template<typename T> struct __genre_of<T, true, false, false, false> {
+		static constexpr genre_t value = genre::enum_type;
+	};
+
+	template<typename T> struct __genre_of<T, false, true, false, false> {
+		static constexpr genre_t value = genre::union_type;
+	};
+
+	template<typename T> struct __genre_of<T, false, false, true, false> {
+		static constexpr genre_t value = genre::class_type;
+	};
+
+	template<typename T> struct __genre_of<T, false, false, false, true> {
+		static constexpr genre_t value = genre::function_type;
+	};
+
+	template<typename T> inline constexpr genre_t genre_of() { return __genre_of<T>::value; }
+	template<typename T> inline constexpr genre_t genre_of(T const&) { return __genre_of<T>::value; }
+
+
+	template<typename T, typename = void>
+	struct __is_safe_enum_base : false_type { };
+
+	template<typename T>
+	struct __is_safe_enum_base<T, void_t<typename T::type>> : yes_expression<is_enum<typename T::type>::value> { };
+
+	template<typename T, genre_t TYPE = genre_of<T>(), bool IS_SAFE_ENUM = __is_safe_enum_base<T>::value> struct value;
 }
 
 namespace ang //operations
@@ -274,6 +337,28 @@ namespace ang
 		static const T value = VALUE;
 		inline operator T const& ()const { return value; }
 		inline T const& get()const { return value; }
+	};
+
+	template<wsize SIZE> struct integer_type_by_size { };
+
+	template<> struct integer_type_by_size<1U> {
+		typedef char int_t;
+		typedef unsigned char uint_t;
+	};
+
+	template<> struct integer_type_by_size<2U> {
+		typedef short int_t;
+		typedef unsigned short uint_t;
+	};
+
+	template<> struct integer_type_by_size<4U> {
+		typedef int int_t;
+		typedef unsigned int uint_t;
+	};
+
+	template<> struct integer_type_by_size<8U> {
+		typedef long long int_t;
+		typedef unsigned long long uint_t;
 	};
 }
 

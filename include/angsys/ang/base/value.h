@@ -6,7 +6,11 @@
 namespace ang //constants
 {
 
-	template<typename T, typename = void> struct value {
+	template<typename T, genre_t TYPE, bool IS_SAFE_ENUM>
+	struct value {
+		typedef T type;
+		static constexpr genre_t genre_id = TYPE;
+
 		value() : _value(default_value<T>::value) {}
 		value(T const& v) : _value(v) {}
 		value(value const& v) : _value(v._value) {}
@@ -40,6 +44,58 @@ namespace ang //constants
 		}
 
 		T& get() { return _value; }
+		T const& get()const { return _value; }
+		void set(T const& v) { _value = v; }
+		void move(T && v) {
+			_value = ang::forward<T>(v);
+			v = default_value<T>::value;
+		}
+
+	private:
+		T _value;
+	};
+
+	template<typename T>
+	struct value<T, genre::union_type, false> {
+		typedef T type;
+		static constexpr genre_t genre_id = genre::union_type;
+
+		value() : _value(default_value<T>::value) {}
+		value(T const& v) : _value(v) {}
+		value(value const& v) : _value(v._value) {}
+		value(T && v) : _value(ang::move(v)) {
+			v = default_value<T>::value;
+		}
+		value(value && v) : _value(ang::move(v._value)) {
+			v._value = default_value<T>::value;
+		}
+
+		operator T& () { return get(); }
+		operator T const& ()const { return get(); }
+
+		value& operator = (T const& v) {
+			_value = v;
+			return*this;
+		}
+		value& operator = (value const& v) {
+			_value = v._value;
+			return*this;
+		}
+		value& operator = (T && v) {
+			_value = ang::move(v);
+			v = default_value<T>::value;
+			return*this;
+		}
+		value& operator = (value && v) {
+			_value = ang::move(v._value);
+			v._value = default_value<T>::value;
+			return*this;
+		}
+
+		T* operator ->() { return &get(); }
+		T const* operator ->()const { return &get(); }
+
+		T& get() { return _value; }
 		T const& get() { return _value; }
 		void set(T const& v) { _value = v; }
 		void move(T && v) {
@@ -52,8 +108,52 @@ namespace ang //constants
 	};
 
 	template<typename T>
-	struct value<T, void_t<typename T::enum_t>> : public T {
-		typedef typename T::enum_t type;
+	struct value<T, genre::class_type, false> : public T {
+		typedef T type;
+		static constexpr genre_t genre_id = genre::class_type;
+
+		value() {}
+		value(T const& v) : T(ang::forward<T>(v)) { }
+		value(value const& v) : T(ang::forward<value>(v)) { }
+		value(T && v) : T(ang::forward<T>(v)) { }
+		value(value && v) : T(ang::forward<value>(v)) { }
+
+		operator T& () { return static_cast<T&>(*this); }
+		operator T const& ()const { return static_cast<T const&>(*this); }
+
+		value& operator = (T const& v) {
+			static_cast<T&>(*this) = ang::forward<T>(v);
+			return*this;
+		}
+		value& operator = (value const& v) {
+			static_cast<T&>(*this) = ang::forward<value>(v);
+			return*this;
+		}
+		value& operator = (T && v) {
+			static_cast<T&>(*this) = ang::forward<T>(v);
+			return*this;
+		}
+		value& operator = (value && v) {
+			static_cast<T&>(*this) = ang::forward<value>(v);
+			return*this;
+		}
+
+		T* operator ->() { return this; }
+		T const* operator ->()const { return this; }
+
+		T& get() { return return static_cast<T&>(*this); }
+		T const& get()const { return return static_cast<T const&>(*this); }
+		void set(T const& v) { static_cast<T&>(*this) = ang::forward<T>(v); }
+		void move(T && v) {
+			static_cast<T&>(*this) = ang::forward<T>(v);
+		}
+	};
+
+	template<typename T>
+	struct value<T, genre::class_type, true> : public T {
+		typedef typename T::type type;
+		static constexpr genre_t genre_id = genre::enum_type;
+
 		value() {}
 		value(type const& v) { _value = v; }
 		value(value const& v) { _value = v._value; }
@@ -88,6 +188,10 @@ namespace ang //constants
 			return*this;
 		}
 
+
+		T* operator ->() { return this; }
+		T const* operator ->()const { return this; }
+
 		type& get() { return *reinterpret_cast<type*>(&_value); }
 		type const& get()const { return *reinterpret_cast<type const*>(&_value); }
 		void set(type const& v) { _value = v; }
@@ -97,6 +201,10 @@ namespace ang //constants
 		}
 	};
 
+
+	template<typename T> struct __genre_of<value<T>, false, false, true, false> {
+		static constexpr genre_t value = value<T>::genre_id;
+	};
 
 	template<typename E>
 	struct safe_flag : public E, public value<typename E::type> {
@@ -183,8 +291,8 @@ namespace ang //constants
 	};
 
 
-#define safe_enum(_LINK, _name, _type) struct _name##_base { enum enum_t : _type; protected: enum_t _value; }; \
-	struct _LINK _name##_t : public ang::value<_name##_base> { \
+#define safe_enum(_LINK, _name, _type) struct _name##_proxy { enum type : _type; protected: type _value; }; \
+	struct _LINK _name##_t : public ang::value<_name##_proxy> { \
 			_name##_t() : value(default_value<type>::value) {} \
 			_name##_t(type const& v) : value(v) {} \
 			_name##_t(_name##_t const& v) : value(v) {} \
@@ -194,11 +302,11 @@ namespace ang //constants
 			_name##_t& operator = (_name##_t const& v) { _value = v.get(); return*this; } \
 			_name##_t& operator = (type && v) { _value = ang::move(v); v = default_value<type>::value; return*this; } \
 			_name##_t& operator = (_name##_t && v) { _value = ang::move(v._value); v.set(default_value<type>::value); return*this; } \
-	}; typedef _name##_base::enum_t _name; enum _name##_base::enum_t : _type
+	}; typedef _name##_proxy::type _name; enum _name##_proxy::type : _type
 
 
-#define safe_flags(_LINK, _name, _type) struct _name##_base { enum enum_t : _type; protected: _type _value; }; \
-	struct _LINK _name##_t : public ang::value<_name##_base> { \
+#define safe_flags(_LINK, _name, _type) struct _name##_proxy { enum type : _type; protected: _type _value; }; \
+	struct _LINK _name##_t : public ang::value<_name##_proxy> { \
 			_name##_t() : value(default_value<type>::value) {} \
 			_name##_t(type const& v) : value(v) {} \
 			_name##_t(_name##_t const& v) : value(v) {} \
@@ -216,7 +324,7 @@ namespace ang //constants
 			_name##_t& operator += (type v) { _value |= v;	return*this; } \
 			_name##_t& operator -= (const _name##_t& v) { _value &= ~v.get(); return*this; } \
 			_name##_t& operator -= (type v) { _value &= ~v;	return*this; } \
-	}; typedef _name##_base::enum_t _name; enum _name##_base::enum_t : _type
+	}; typedef _name##_proxy::type _name; enum _name##_proxy::type : _type
 
 }
 

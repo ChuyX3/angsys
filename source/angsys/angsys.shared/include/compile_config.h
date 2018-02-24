@@ -1,8 +1,8 @@
 #ifndef __COMPILE_CONFIG_H__
 #define __COMPILE_CONFIG_H__
 
-#include <angplatform.h>
-#include <angtypes.h>
+#include <ang/base/platform.h>
+#include <ang/base/types.h>
 
 #if defined WINAPI_FAMILY
 #include <WinSock2.h>

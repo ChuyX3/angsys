@@ -10,7 +10,8 @@
 #include <stdio.h>
 #include <tchar.h>
 
+#define ANGSYS_DYNAMIC_LIBRARY
 #include <ang/base/base.h>
-
+#pragma comment(lib, "angsys.lib")
 
 // TODO: reference additional headers your program requires here

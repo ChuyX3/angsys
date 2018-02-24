@@ -44,14 +44,29 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\value.h">
       <Filter>header\angsys\base</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\text.h">
+      <Filter>header\angsys\base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\runtime.h">
+      <Filter>header\angsys\base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\tuple.h">
+      <Filter>header\angsys\base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\runtime.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\APPLY_FUNCX_N.inl">
+      <Filter>header\angsys\base\inlines</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\text.inl">
       <Filter>header\angsys\base\inlines</Filter>
     </None>
   </ItemGroup>
