@@ -16,6 +16,7 @@
 
 namespace ang //constants
 {
+
 	namespace collections
 	{
 		template<typename T> struct array_view;
@@ -165,9 +166,179 @@ namespace ang //constants
 
 			element_type** operator & () { return &get(); }
 		};
+
+
+
+		template<typename T, template<typename> class allocator = memory::default_allocator>
+		struct scope_array {
+		public:
+			typedef T* type;
+			typedef T element_type;
+
+		private:
+			allocator<element_type> alloc;
+			wsize _size;
+			element_type* _data;
+			
+		public:
+			scope_array() : _size(0), _data(null) { }
+			scope_array(ang::nullptr_t const&) : scope_array() {}
+			scope_array(wsize size, type val = null) : scope_array() {
+				_size = min(wsize(-1) / sizeof(T), sz);
+				if (_size > 0) {
+					_data = alloc.allocate(_size);
+					if(val) for (windex i = 0; i < _size; ++i)
+						alloc.template construct<T, T const&>((T*)&_data[i], val[i]);
+					else for (windex i = 0; i < _size; ++i)
+						alloc.template construct<T>((T*)&_data[i]);
+				}
+			}			
+			scope_array(scope_array const& other) : scope_array() {
+				_size = min(wsize(-1) / sizeof(T), other._size);
+				if (_size > 0) {
+					_data = alloc.allocate(_size);
+					for (windex i = 0; i < _size; ++i)
+						alloc.template construct<T, T const&>((T*)&_data[i], other._data[i]);
+				}
+			}
+			scope_array(scope_array && other) : scope_array() {
+				_size = other._size;
+				_data = other._data;
+				other._size = 0;
+				other._data = null;
+			}
+			template<typename U, wsize N>scope_array(U(&ar)[N]) : scope_array() {
+				_size = min(wsize(-1) / sizeof(T), N);
+				if (_size > 0) {
+					_data = alloc.allocate(_size);
+					for (windex i = 0; i < _size; ++i)
+						alloc.template construct<T, U const&>((T*)&_data[i], ar[i]);
+				}
+			}
+			template<typename U, wsize N>scope_array(const U(&ar)[N]) : scope_array() {
+				_size = min(wsize(-1) / sizeof(T), N);
+				if (_size > 0) {
+					_data = alloc.allocate(_size);
+					for (windex i = 0; i < _size; ++i)
+						alloc.template construct<T, U const&>((T*)&_data[i], ar[i]);
+				}
+			}
+			~scope_array() { clean(); }
+
+		public: /*getters and setters*/
+			type & get() { return _data; }
+			type const& get()const { return _data; }
+			void set(type val, wsize size) {
+				clean();
+				_size = min(wsize(-1) / sizeof(T), sz);
+				if (_size > 0) {
+					_data = alloc.allocate(_size);
+					for (windex i = 0; i < _size; ++i)
+						alloc.template construct<T, T const&>((T*)&_data[i], val[i]);
+				}
+			}
+			void move(scope_array& other) {
+				if ((scope_array*)&other == this) return;
+				clean();
+				_size = other._size;
+				_data = other._data;
+				other._size = 0;
+				other._data = null;
+			}
+			void move(array_view<T>& other) {
+				clean();
+				if (other.size() > 0)
+					_data = alloc.allocate(other.size());
+				_size = other.size();
+
+				for (windex i = 0; i < _size; ++i)
+					alloc.template construct<T, T&&>(&_data[i], ang::move(other.get()[i]));
+				other.set(null, 0);
+			}
+			template<typename U, template<typename> class allocator2> void copy(scope_array<U, allocator2> const& other) {
+				clean();
+				if (other.size() > 0)
+					_data = alloc.allocate(other.size());
+				_size = other.size();
+				for (windex i = 0; i < _size; ++i)
+					alloc.template construct<T, U const&>(&_data[i], other[i]);
+				other.set(null, 0);
+			}
+			template<typename U> void copy(array_view<U> const& other) {
+				clean();
+				if (other.size() > 0)
+					_data = alloc.allocate(other.size());
+				_size = other.size();
+				for (windex i = 0; i < _size; ++i)
+					alloc.template construct<T, U const&>(&_data[i], other[i]);
+			}
+			template<typename U, wsize N> void copy(U(&ar)[N]) {
+				clean(); _size = N;
+				if (_size > 0) {
+					_data = alloc.allocate(_size);
+					for (windex i = 0; i < _size; ++i)
+						alloc.template construct<T, U const&>((T*)&_data[i], ar[i]);
+				}
+			}
+			template<typename U, wsize N> void copy(const U(&ar)[N]) {
+				clean(); _size = N;
+				if (_size > 0) {
+					_data = alloc.allocate(_size);
+					for (windex i = 0; i < _size; ++i)
+						alloc.template construct<T, U const&>((T*)&_data[i], ar[i]);
+				}
+			}
+
+			type data()const { return _data; }
+			wsize size()const { return _size; }
+			void clean() {
+				if (_data) {
+					for (windex i = 0; i < _size; ++i)
+						alloc.template destroy<T>((T*)&_data[i]);
+					alloc.deallocate(_data);
+				}
+				_size = 0;
+				_data = null;
+			}
+			type allocate(wsize size) {
+				clean(); 
+				if (size > 0) {
+					_size = size;
+					_data = alloc.allocate(_size);
+					for (index i = 0; i < _size; ++i)
+						alloc.template construct<T, T const&>((T*)&_data[i], default_value<T>::value);
+				}
+				return _data;
+			}
+			bool is_empty()const { return _size == 0; }
+			type begin()const { return _data; }
+			type end()const { return _data + _size; }
+
+		public: /*operators*/
+			scope_array& operator = (type val) { set(ang::move(val), 1u); return*this; }
+			scope_array& operator = (scope_array const& val) { set(val._data, val._size); return*this; }
+			scope_array& operator = (scope_array && val) { move(val); return*this; }
+			template<typename U, wsize N> scope_array& operator = (U(&ar)[N]) { copy(ar); return*this; }
+			template<typename U, wsize N> scope_array& operator = (const U(&ar)[N]) { copy(ar); return*this; }
+
+			explicit operator type& () { return get(); }
+			explicit operator type ()const { return get(); }
+			operator array_view<T>()const { return array_view<T>(size(), get()); }
+
+			template<typename I>element_type& operator [](I const& idx) { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return _data[idx]; }
+			template<typename I>element_type const& operator [](I const& idx)const { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return _data[idx]; }
+
+			element_type** operator & () { return &get(); }
+		};
 	}
 
 	using collections::array_view;
+	using collections::stack_array;
+	using collections::scope_array;
+
+	template<typename T, wsize N> inline constexpr wsize array_size(const T(&ar)[N]) { return N; }
+	template<class T, wsize SIZE> inline constexpr wsize array_size(const stack_array<T, SIZE>&) { return SIZE; }
+	template<class T> inline wsize array_size(const array_view<T>& arr) { return arr.size(); }
 }
 
 #endif//__ANG_BASE_ARRAY_H__

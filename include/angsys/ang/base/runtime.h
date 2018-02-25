@@ -59,16 +59,6 @@ namespace ang //constants
 				}
 				return false;
 			}
-			template<typename To> inline To* dyn_cast(unknown_t from) {
-				To* out = null;
-				_dyn_cast(*this, from, rtti::type_of<To>(), (unknown_ptr_t)&out);
-				return out;
-			}
-			template<typename To> inline To const* dyn_cast(const_unknown_t from) {
-				To* out = null;
-				_dyn_cast(*this, const_cast<unknown_t>(from), rtti::type_of<To>(), (unknown_ptr_t)&out);
-				return out;
-			}
 			template<typename T> bool is_type_of()const {
 				return is_type_of(type_of<T>());
 			}
@@ -82,11 +72,15 @@ namespace ang //constants
 			template<typename T> inline static rtti_t const& type_of(const T&) {
 				return type_info_builder<T>::type_of();
 			}
-			template<typename From, typename To> static inline To* dyn_cast(From* from) {
-				return type_of<From>().dyn_cast<To>((unknown_t)from);
+			template<typename To, typename From> static inline To* dyn_cast(From* from) {
+				To* out = null;
+				type_of<From>()._dyn_cast(type_of<From>(), from, rtti::type_of<To>(), (unknown_ptr_t)&out);
+				return out;
 			}
-			template<typename From, typename To> static inline To const* dyn_cast(From const* from) {
-				return type_of<From>().dyn_cast<To>((const_unknown_t)from);
+			template<typename To, typename From> static inline To const* dyn_cast(From const* from) {
+				To* out = null;
+				type_of<From>()._dyn_cast(type_of<From>(), const_cast<From*>(from), rtti::type_of<To>(), (unknown_ptr_t)&out);
+				return out;
 			}
 
 			static rtti_t const& regist(type_name_t name, genre_t g, wsize sz, wsize a);
@@ -113,14 +107,14 @@ namespace ang //constants
 
 		template<typename To, typename From, bool VALUE = is_same_type<To, From>::value || is_base_of<To, From>::value >
 		struct __dyn_cast_helper {
-			To* cast(From* old) { return static_cast<To*>(old); }
-			To const* cast(From const* old) { return static_cast<To const*>(old); }
+			static To* cast(From* old) { return static_cast<To*>(old); }
+			static To const* cast(From const* old) { return static_cast<To const*>(old); }
 		};
 
 		template<typename To, typename From>
 		struct __dyn_cast_helper<To, From, false> {
-			To* cast(From* old) { return rtti::dyn_cast<To>(old); }
-			To const* cast(From const* old) { return rtti::dyn_cast<To>(old); }
+			static To* cast(From* old) { return rtti::dyn_cast<To>(old); }
+			static To const* cast(From const* old) { return rtti::dyn_cast<To>(old); }
 		};
 
 		template<typename T> inline rtti_t const& type_of() { return rtti::type_of<T>(); }
@@ -132,8 +126,8 @@ namespace ang //constants
 		template<typename T> inline bool is_type_of(rtti_t const& id) { return rtti::type_of<T>().is_type_of(id); }
 		template<typename T, typename U> inline bool is_type_of() { return rtti::type_of<T>().is_type_of(rtti::type_of<U>()); }
 		template<typename T, typename U> inline bool is_type_of(const U&) { return rtti::type_of<T>().is_type_of(rtti::type_of<U>()); }
-		template<typename To, typename From> inline To* dyn_cast(From* old) { return __dyn_cast_helper<To, From>::cast<To>(old); }
-		template<typename To, typename From> inline To const* dyn_cast(From const* old) { return __dyn_cast_helper<To, From>::cast<To>(old); }
+		template<typename To, typename From> inline To* dyn_cast(From* old) { return __dyn_cast_helper<To, From>::cast(old); }
+		template<typename To, typename From> inline To const* dyn_cast(From const* old) { return __dyn_cast_helper<To, From>::cast(old); }
 
 
 		template<typename T, genre_t TYPE>

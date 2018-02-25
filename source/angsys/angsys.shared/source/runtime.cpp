@@ -149,10 +149,4 @@ rtti_t const& rtti::regist(type_name_t name, genre_t g, wsize sz, wsize a, array
 	return*info;
 }
 
-//safe_enum_rrti(ang::text, encoding_t, value<encoding_proxy>);
-
-
-ang::rtti_t const& ang::text::encoding_t::class_info() {
-	return rtti::regist("ang::text::encoding_t", genre::enum_type, sizeof(encoding_t), alignof(encoding_t), null, null);
-}
-//static rtti_t const& class_info();
+safe_enum_rrti(ang::text, encoding_t, value<encoding_proxy>);

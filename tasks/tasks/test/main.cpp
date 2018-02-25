@@ -315,24 +315,9 @@ private:
 	__m128i _value;
 }int128_t;
 
-
-struct MyStruct
-{
-	char a;
-	short b;
-	int c;
-	long64 d;
-};
-
-
 int main()
 {	
-	int a = 123;
-	int* b;
-
-	auto const& id = type_of<int>();
-	
-	id.dyn_cast(&a, &b);
+	auto const& id = type_of<intf_wrapper<iobject>>();
 
 	return 0;
 }

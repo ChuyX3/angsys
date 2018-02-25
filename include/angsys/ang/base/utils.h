@@ -364,7 +364,7 @@ namespace ang
 {
 	template<typename T, T VALUE = T(0) >
 	struct default_value { 
-		static const T value = VALUE;
+		static constexpr T value = VALUE;
 		inline operator T const& ()const { return value; }
 		inline T const& get()const { return value; }
 	};

@@ -1,9 +1,8 @@
 #ifndef __ANG_MEMORY_H__
 #define __ANG_MEMORY_H__
 
-#include <angplatform.h>
-#include <angtypes.h>
-#include "angc/core_hash_table.h"
+#include <ang/base/base.h>
+#include "core_hash_table.h"
 
 #if defined _DEBUG || defined _DEVELOPPER
 #define _MEMORY_PROFILING
@@ -16,21 +15,26 @@ namespace ang
 {
 	namespace memory
 	{
-		class allocator_internal
+		struct iraw_allocator
 		{
-#ifdef _MEMORY_PROFILING
-		public:
-			static ulong64 hash_table_context_create_hash_number(pointer key, ulong64 size) { return ulong64(key) % size; }
-			static void hash_table_context_delete_data(ang_hash_table_pair_t pair);
+			virtual pointer memory_alloc(wsize size) = 0;
+			virtual void memory_release(pointer ptr) = 0;
+#ifdef _DEBUG
+			virtual pointer memory_alloc(wsize size, const char* file, int line) = 0;
 #endif
-		private:
+		};
+
+		class allocator_internal 
+			: public iraw_allocator
+		{
+		protected:
 #ifdef _MEMORY_PROFILING
-			uint _allocator_type;
-			HANDLE hMutex;
-			ang_unorder_map<pointer, memory_block_t, allocator_internal> memory_map;
+			ang_memory_hint_t _allocator_type;
+			core::async::mutex_t mutex;
+			collections::hash_table<pointer, memory_block_t> memory_map;
 #endif
 		public:
-			allocator_internal(uint);
+			allocator_internal(ang_memory_hint_t);
 			~allocator_internal();
 
 			pointer memory_alloc(wsize);
@@ -40,7 +44,7 @@ namespace ang
 #endif
 		};
 
-		class aligned_allocator_internal
+		class aligned_allocator_internal : public allocator_internal
 		{
 		public:
 			aligned_allocator_internal();
@@ -56,6 +60,9 @@ namespace ang
 #endif
 
 		};
+
+		aligned_allocator_internal* get_aligned_allocator();
+		iraw_allocator* get_raw_allocator(ang_memory_hint_t hint);
 	}
 }
 

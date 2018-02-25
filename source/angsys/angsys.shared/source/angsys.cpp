@@ -10,29 +10,33 @@
 
 #include "pch.h"
 #include "ang/system.h"
-#include <assert.h>
-
-ANG_EXTERN ang_void_ptr_t ang_alloc_unmanaged_memory(ang_size_t sz) { return malloc(sz); }
-ANG_EXTERN void ang_free_unmanaged_memory(ang_void_ptr_t ptr) { free(ptr); }
 
 using namespace ang;
 
-bool interface::default_query_interface(rtti_t const& src_id, unknown_t src, rtti_t const& out_id, unknown_ptr_t out)
+
+ANG_EXTERN ulong64 get_performance_time_us()
 {
-#ifdef _DEBUG
-	assert(src && src_id.is_type_of(interface::class_info()));
+	{
+#if defined ANDROID_PLATFORM
+		struct timespec ts;
+		ulong64 theTick = 0;
+		clock_gettime(CLOCK_REALTIME, &ts);
+		theTick = (ulong64)ts.tv_nsec / 1000.0;
+		theTick += (ulong64)ts.tv_sec * 1000000.0;
+		return theTick;
+#else
+		static struct PerformanceFrequency {
+			ulong64 QuadPart;
+			PerformanceFrequency() {
+				LARGE_INTEGER _frec;
+				QueryPerformanceFrequency(&_frec);
+				QuadPart = (ulong64)_frec.QuadPart;
+			}
+		}frec;
+
+		LARGE_INTEGER count;
+		QueryPerformanceCounter(&count);
+		return  (1000000 * count.QuadPart) / frec.QuadPart; //uS
 #endif
-
-	return ((interface*)(src))->query_interface(out_id, out);
-}
-
-rtti_t const& interface::class_info() {
-	static const char name[] = "ang::interface";
-	return rtti::regist(name, genre::class_type, sizeof(interface), alignof(wsize), null, &default_query_interface);
-}
-
-rtti_t const& iobject::class_info() {
-	static const char name[] = "ang::iobject";
-	static rtti_t const* parents[] = { &rtti::type_of<interface>() };
-	return rtti::regist(name, genre::class_type, sizeof(interface), alignof(wsize), parents, &default_query_interface);
+	}
 }

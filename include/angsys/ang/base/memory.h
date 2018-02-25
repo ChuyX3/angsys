@@ -22,6 +22,7 @@ typedef enum _ang_memory_hint {
 	ang_default_memory,
 	ang_object_memory,
 	ang_buffer_memory,
+	ang_aligned_memory,
 }ang_memory_hint, ang_memory_hint_t;
 
 ANG_EXTERN LINK ang_void_ptr_t ang_alloc_managed_memory(ang_size_t, ang_memory_hint_t);
@@ -325,6 +326,9 @@ namespace ang
 			}
 		};
 
+		template<typename T> using default_allocator = managed_allocator<T, ang_memory_hint::ang_default_memory>;
+		template<typename T> using object_allocator = managed_allocator<T, ang_memory_hint::ang_object_memory>;
+		template<typename T> using buffer_allocator = managed_allocator<T, ang_memory_hint::ang_buffer_memory>;
 	}
 }
 

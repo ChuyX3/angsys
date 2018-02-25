@@ -52,6 +52,7 @@
 #include <ang/base/runtime.h>
 #include <ang/base/value.h>
 #include <ang/base/interface.h>
+#include <ang/base/async.h>
 
 #ifdef LINK
 #undef LINK

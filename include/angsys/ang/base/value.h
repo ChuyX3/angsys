@@ -339,7 +339,7 @@ namespace ang //constants
 
 #define safe_enum_rrti(_NAMESPACE, _NAME, ...) \
 	ang::rtti_t const& _NAMESPACE::_NAME::class_info() { \
-		/*ang::rtti_t const* parent[] = { ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPE_OF_DIR, COMA_SEPARATOR, __VA_ARGS__)) };*/ \
+		ang::rtti_t const* parent[] = { ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPE_OF_DIR, COMA_SEPARATOR, __VA_ARGS__)) }; \
 		return rtti::regist(#_NAMESPACE"::"#_NAME, genre::enum_type, sizeof(_NAME), alignof(_NAME), null, null); \
 	}
 

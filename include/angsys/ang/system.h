@@ -397,6 +397,123 @@ namespace ang
 
 }
 
+namespace ang
+{
+	/******************************************************************/
+	/* class ang::object :                                            */
+	/*  -> implements the base class for all library's objects        */
+	/******************************************************************/
+	class LINK object
+		: public iobject
+	{
+	private:
+		dword& _ref_count;
+
+	public:
+		object(bool inc_ref = false);
+
+	protected:
+		virtual~object();
+
+		object(object &&) = delete;
+		object(object const&) = delete;
+		object& operator = (object &&) = delete;
+		object& operator = (object const&) = delete;
+
+	public:
+		virtual comparision_result_t compare(object const& obj)const;
+//		virtual string to_string()const;
+//		virtual wsize serialize(streams::itext_output_stream_t)const;
+//		virtual wsize serialize(streams::ibinary_output_stream_t)const;
+//		virtual wsize deserialize(streams::itext_input_stream_t);
+//		virtual wsize deserialize(streams::ibinary_input_stream_t);
+
+	protected:
+		virtual bool auto_release();
+		virtual bool auto_release(ushort alignment);
+
+	public:
+		ANG_DECLARE_INTERFACE();
+
+	public:
+		virtual dword add_ref() override;
+		virtual dword release() override;
+
+	public:
+		pointer operator new(wsize);
+		void operator delete(pointer);
+
+#ifdef _DEBUG
+		pointer operator new(wsize, const char*, int);
+		pointer operator new(wsize, word, const char*, int);
+#endif//_DEBUG
+
+	protected: //for aligned objects
+		pointer operator new(wsize, ushort alignment);
+		void operator delete(pointer, ushort alignment);
+
+	protected:
+		pointer operator new[](wsize)noexcept;
+		void operator delete[](pointer)noexcept;
+
+	public:
+
+		bool operator == (object const& obj)const;
+
+		bool operator != (object const& obj)const;
+
+		template<typename T> typename smart_ptr_type<T>::smart_ptr_t as() {
+			return  this ? dyn_cast<typename smart_ptr_type<T>::type>(this) : null;
+		}
+
+		template<typename T> bool as(T*& out) {
+			out = this ? dyn_cast<typename smart_ptr_type<T>::type>(this) : null;
+			return out != null;
+		}
+
+	};
+
+
+	class LINK safe_pointer
+	{
+	public:
+		typedef object type;
+
+	private:
+		pointer _info;
+
+	public:
+		safe_pointer();
+		safe_pointer(safe_pointer&&);
+		safe_pointer(safe_pointer const&);
+		safe_pointer(object*);
+		safe_pointer(std::nullptr_t const&);
+		template< typename T>
+		safe_pointer(object_wrapper<T> obj) : safe_pointer(obj.get()) {}
+		~safe_pointer();
+
+	private:
+		void set(object*);
+		void clean();
+
+	public: //properties
+		bool is_valid()const;
+		template< typename T>
+		object_wrapper<T> lock() {
+			return is_valid() ? dynamic_cast<T*>(lock<object>()) : nullptr;
+		}
+
+		safe_pointer& operator = (objptr);
+		safe_pointer& operator = (object*);
+		safe_pointer& operator = (safe_pointer&&);
+		safe_pointer& operator = (safe_pointer const&);
+		template< typename T>
+		safe_pointer& operator = (object_wrapper<T> obj) { return operator = (objptr(obj.get())); }
+		safe_pointer& operator = (std::nullptr_t const&);
+	};
+
+	template<> LINK objptr safe_pointer::lock<object>();
+}
 
 
 #endif //__ANGSYS_HPP__

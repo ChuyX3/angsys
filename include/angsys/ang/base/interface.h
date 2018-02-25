@@ -29,12 +29,18 @@
 #define ANG_UTILS_TO_STRING_OBJ(_VALUE) ang::cstr_t(#_VALUE)
 
 #define ANG_DECLARE_CLASS_INFO() scall ang::rtti_t const& class_info();
-#define ANG_DECLARE_RUNTIME_INFO() vcall ang::rtti_t const& runtime_info() pure;
+#define ANG_DECLARE_RUNTIME_INFO() vcall ang::rtti_t const& runtime_info()const pure;
 #define ANG_DECLARE_QUERY_INTERFACE() vcall bool query_interface(ang::rtti_t const&, ang::unknown_ptr_t) pure;
 
 #define ANG_OVERRIDE_CLASS_INFO() scall ang::rtti_t const& class_info();
-#define ANG_OVERRIDE_RUNTIME_INFO() vcall ang::rtti_t const& runtime_info() override;
+#define ANG_OVERRIDE_RUNTIME_INFO() vcall ang::rtti_t const& runtime_info()const override;
 #define ANG_OVERRIDE_QUERY_INTERFACE() vcall bool query_interface(ang::rtti_t const&, ang::unknown_ptr_t) override;
+
+#define ANG_DECLARE_INTERFACE() visible \
+	ANG_OVERRIDE_CLASS_INFO() \
+	ANG_OVERRIDE_RUNTIME_INFO() \
+	ANG_OVERRIDE_QUERY_INTERFACE()
+
 
 #define ang_begin__(...)	__VA_ARGS__ : ang::interface {
 #define ang_begin(...)	ANG_EXPAND(ang_begin__(__VA_ARGS__))
