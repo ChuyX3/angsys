@@ -1,3 +1,14 @@
+/*********************************************************************************************************************/
+/*   File Name: ang/base/memory.h                                                                                     */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
+
 #ifndef __ANG_BASE_H__
 #error ang/base/base.h is not included
 #elif !defined __ANG_BASE_MEMORY_H__
@@ -316,5 +327,11 @@ namespace ang
 
 	}
 }
+
+#ifndef __PLACEMENT_NEW_INLINE
+#define __PLACEMENT_NEW_INLINE
+inline pointer operator new(wsize, pointer ptr) throw() { return ptr; }
+inline void operator delete(pointer, pointer) throw() { return; }
+#endif
 
 #endif//__ANG_BASE_MEMORY_H__

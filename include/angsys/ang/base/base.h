@@ -1,5 +1,5 @@
 /*********************************************************************************************************************/
-/*   File Name: angbase.h                                                                                            */
+/*   File Name: ang/base/base.h                                                                                      */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
 /*   File description: this file is exposes many native types and wrappers for them as well as useful macros.        */
 /*                                                                                                                   */
@@ -46,19 +46,12 @@
 #include <ang/base/defines.h>
 #include <ang/base/utils.h>
 #include <ang/base/memory.h>
-#include <ang/base/text.h>
-#include <ang/base/value.h>
-#include <ang/base/array.h>
 #include <ang/base/tuple.h>
+#include <ang/base/array.h>
+#include <ang/base/text.h>
 #include <ang/base/runtime.h>
-
+#include <ang/base/value.h>
 #include <ang/base/interface.h>
-
-namespace ang
-{
-
-}
-
 
 #ifdef LINK
 #undef LINK

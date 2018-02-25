@@ -1,3 +1,14 @@
+/*********************************************************************************************************************/
+/*   File Name: ang/base/value.h                                                                                     */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
+
 #ifndef __ANG_BASE_H__
 #error ang/base/base.h is not included
 #elif !defined __ANG_BASE_VALUE_H__
@@ -201,11 +212,6 @@ namespace ang //constants
 		}
 	};
 
-
-	template<typename T> struct __genre_of<value<T>, false, false, true, false> {
-		static constexpr genre_t value = value<T>::genre_id;
-	};
-
 	template<typename E>
 	struct safe_flag : public E, public value<typename E::type> {
 		typedef typename E::type type;
@@ -293,6 +299,7 @@ namespace ang //constants
 
 #define safe_enum(_LINK, _name, _type) struct _name##_proxy { enum type : _type; protected: type _value; }; \
 	struct _LINK _name##_t : public ang::value<_name##_proxy> { \
+			static rtti_t const& class_info(); \
 			_name##_t() : value(default_value<type>::value) {} \
 			_name##_t(type const& v) : value(v) {} \
 			_name##_t(_name##_t const& v) : value(v) {} \
@@ -307,6 +314,7 @@ namespace ang //constants
 
 #define safe_flags(_LINK, _name, _type) struct _name##_proxy { enum type : _type; protected: _type _value; }; \
 	struct _LINK _name##_t : public ang::value<_name##_proxy> { \
+			static rtti_t const& class_info(); \
 			_name##_t() : value(default_value<type>::value) {} \
 			_name##_t(type const& v) : value(v) {} \
 			_name##_t(_name##_t const& v) : value(v) {} \
@@ -326,6 +334,31 @@ namespace ang //constants
 			_name##_t& operator -= (type v) { _value &= ~v;	return*this; } \
 	}; typedef _name##_proxy::type _name; enum _name##_proxy::type : _type
 
+
+#define FUNCX_TYPE_OF_DIR(A0) &ang::rtti::type_of<A0>()
+
+#define safe_enum_rrti(_NAMESPACE, _NAME, ...) \
+	ang::rtti_t const& _NAMESPACE::_NAME::class_info() { \
+		/*ang::rtti_t const* parent[] = { ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPE_OF_DIR, COMA_SEPARATOR, __VA_ARGS__)) };*/ \
+		return rtti::regist(#_NAMESPACE"::"#_NAME, genre::enum_type, sizeof(_NAME), alignof(_NAME), null, null); \
+	}
+
+	namespace text
+	{
+		struct LINK encoding_t : public ang::value<encoding_proxy>
+		{
+			static rtti_t const& class_info();
+			encoding_t() : value(default_value<type>::value) {}
+			encoding_t(type const& v) : value(v) {}
+			encoding_t(encoding_t const& v) : value(v) {}
+			encoding_t(type && v) : value(ang::forward<type>(v)) {	}
+			encoding_t(encoding_t && v) : value(ang::forward<value>(v)) { }
+			encoding_t& operator = (type const& v) { _value = v; return*this; }
+			encoding_t& operator = (encoding_t const& v) { _value = v.get(); return*this; }
+			encoding_t& operator = (type && v) { _value = ang::move(v); v = default_value<type>::value; return*this; }
+			encoding_t& operator = (encoding_t && v) { _value = ang::move(v._value); v.set(default_value<type>::value); return*this; }
+		};
+	}
 }
 
 #endif//__ANG_BASE_VALUE_H__

@@ -1,3 +1,14 @@
+/*********************************************************************************************************************/
+/*   File Name: ang/base/defines.h                                                                                   */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
+
 #ifndef __ANG_BASE_H__
 #error ang/base/base.h is not included
 #elif !defined __ANG_BASE_DEFINES_H__
@@ -28,8 +39,8 @@
 
 #include <ang/base/inlines/APPLY_FUNCX_N.inl>
 
-#define APPLY_FUNCX_(FUNCX, M, ...) ANG_EXPAND(M(FUNCX, __VA_ARGS__))
-#define APPLY_FUNCX_N(FUNCX, ...) ANG_EXPAND(APPLY_FUNCX_(FUNCX, ANG_CATAB(APPLY_FUNCX, ANG_NUM_ARGS(__VA_ARGS__)), __VA_ARGS__ ))
+#define APPLY_FUNCX_(FUNCX, SEPARATOR, M, ...) ANG_EXPAND(M(FUNCX, SEPARATOR, __VA_ARGS__))
+#define APPLY_FUNCX_N(FUNCX, SEPARATOR, ...) ANG_EXPAND(APPLY_FUNCX_(FUNCX, SEPARATOR, ANG_CATAB(APPLY_FUNCX, ANG_NUM_ARGS(__VA_ARGS__)), __VA_ARGS__ ))
 
 #define DECLARE_VARS0() 
 #define DECLARE_VARS1(A0) A0 arg0;
@@ -45,12 +56,14 @@
 #define DECLARE_VARS_(_DECLARE_VARS_, ...) ANG_EXPAND(_DECLARE_VARS_(__VA_ARGS__))
 #define DECLARE_VARSN(...) ANG_EXPAND(DECLARE_VARS_(ANG_CATAB(DECLARE_VARS, ANG_EXPAND(ANG_NUM_ARGS(__VA_ARGS__))), __VA_ARGS__))
 
+#define COMA ,
+#define COMA_SEPARATOR() ,
 #define FUNCX_TOSTRING(A0) #A0
 #define FUNCX_TYPENAME(A0) typename A0
 
-#define TEMPLATE(...) template<ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPENAME, __VA_ARGS__))>
+#define TEMPLATE(...) template<ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPENAME, COMA_SEPARATOR, __VA_ARGS__))>
 
-#define COMA ,
+
 
 #if defined WINDOWS_PLATFORM && defined ANG_DEVELOPPER
 #define _DECLSPEC_ALLOCATOR __declspec(allocator)

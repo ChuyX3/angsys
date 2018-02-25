@@ -1,5 +1,5 @@
 /*********************************************************************************************************************/
-/*   File Name: angtypes.h                                                                                           */
+/*   File Name: ang/base/types.h                                                                                           */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
 /*   File description: this file is exposes many native types for multiplatform use                                  */
 /*                                                                                                                   */

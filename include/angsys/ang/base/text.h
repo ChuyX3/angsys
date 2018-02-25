@@ -1,3 +1,14 @@
+/*********************************************************************************************************************/
+/*   File Name: ang/base/text.h                                                                                     */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
+
 #ifndef __ANG_BASE_H__
 #error ang/base/base.h is not included
 #elif !defined __ANG_BASE_TEXT_H__
@@ -20,7 +31,7 @@ namespace ang //constants
 
 	namespace text
 	{
-		struct encoding_proxy { enum type : word; protected: type _value; };
+		struct LINK encoding_proxy{ enum type : word; protected: type _value; };
 		typedef enum encoding_proxy::type : word {
 			none = 0,
 			binary = 0,

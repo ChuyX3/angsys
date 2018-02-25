@@ -1,3 +1,14 @@
+/*********************************************************************************************************************/
+/*   File Name: ang/base/utils.h                                                                                     */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
+
 #ifndef __ANG_BASE_H__
 #error ang/base/base.h is not included
 #elif !defined __ANG_BASE_UTILS_H__
@@ -87,7 +98,7 @@ namespace ang //expressions
 	template<> struct and_expression<true, true> : true_type { };
 
 	template<bool VALUE1, bool VALUE2> struct or_expression : true_type { };
-	template<> struct and_expression<false, false> : false_type { };
+	template<> struct or_expression<false, false> : false_type { };
 
 	template<bool VALUE1, bool VALUE2> struct xor_expression : false_type { };
 	template<> struct and_expression<true, false> : true_type { };
@@ -103,6 +114,9 @@ namespace ang //expressions
 
 	template<bool VALUE1, bool VALUE2> struct xnor_expression : not_expression<xor_expression<VALUE1, VALUE2>::value> { };
 
+
+	template<bool VALUE> struct is_valid {};
+	template<> struct is_valid<true> : true_type {};
 }
 
 namespace ang //comparision

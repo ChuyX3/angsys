@@ -9,7 +9,7 @@
 /*********************************************************************************************************************/
 
 #include "pch.h"
-#include "ang/base/base.h"
+#include "ang/system.h"
 #include <assert.h>
 
 ANG_EXTERN ang_void_ptr_t ang_alloc_unmanaged_memory(ang_size_t sz) { return malloc(sz); }
@@ -19,7 +19,9 @@ using namespace ang;
 
 bool interface::default_query_interface(rtti_t const& src_id, unknown_t src, rtti_t const& out_id, unknown_ptr_t out)
 {
+#ifdef _DEBUG
 	assert(src && src_id.is_type_of(interface::class_info()));
+#endif
 
 	return ((interface*)(src))->query_interface(out_id, out);
 }
@@ -27,4 +29,10 @@ bool interface::default_query_interface(rtti_t const& src_id, unknown_t src, rtt
 rtti_t const& interface::class_info() {
 	static const char name[] = "ang::interface";
 	return rtti::regist(name, genre::class_type, sizeof(interface), alignof(wsize), null, &default_query_interface);
+}
+
+rtti_t const& iobject::class_info() {
+	static const char name[] = "ang::iobject";
+	static rtti_t const* parents[] = { &rtti::type_of<interface>() };
+	return rtti::regist(name, genre::class_type, sizeof(interface), alignof(wsize), parents, &default_query_interface);
 }

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ang/base/base.h"
+#include "ang/system.h"
 
 #include <list>
 
@@ -104,17 +104,11 @@ inline auto find_rtti(rtti_t* info, std::list<rtti_t*>& list)-> decltype(list.be
 	return list.end();
 }
 
-bool rtti::default_dyn_cast(const rtti_t& src_id, unknown_t src, const rtti_t& out_id, unknown_ptr_t out)
+bool ang_runtime_rtti_default_dyn_cast(const rtti_t& src_id, unknown_t src, const rtti_t& out_id, unknown_ptr_t out)
 {
 	if (out && src_id.type_id() == out_id.type_id()) {
 		*out = src;
 		return true;
-	}
-	else {
-		for (const rtti_t* info : src_id._parents) {
-			if (info->dyn_cast(src, out_id, out))
-				return true;
-		}
 	}
 	return false;
 }
@@ -124,7 +118,7 @@ rtti_t const& rtti::regist(type_name_t name, genre_t g, wsize sz, wsize a)
 	runtime_type_manager* instance = runtime_type_manager::instance();
 
 	rtti_t* info = instance->allocate();
-	info = new(info)rtti(name, g, sz, a);
+	info = new(info)rtti(name, g, sz, a, null, &ang_runtime_rtti_default_dyn_cast);
 	auto it = instance->find_info(info);
 	if (it != null) {
 		info->~__type_info();
@@ -137,12 +131,12 @@ rtti_t const& rtti::regist(type_name_t name, genre_t g, wsize sz, wsize a)
 	return*info;
 }
 
-rtti_t const& rtti::regist(type_name_t name, genre_t g, wsize sz, wsize a, array_view<rtti_t const*> parents, dynamic_cast_proc dyn)
+rtti_t const& rtti::regist(type_name_t name, genre_t g, wsize sz, wsize a, array_view<rtti_t const*> parents, dynamic_cast_proc cast)
 {
 	runtime_type_manager* instance = runtime_type_manager::instance();
 
 	rtti_t* info = instance->allocate();
-	info = new(info)rtti(name, g, sz, a, parents, dyn);
+	info = new(info)rtti(name, g, sz, a, parents, cast ? cast : &ang_runtime_rtti_default_dyn_cast);
 	auto it = instance->find_info(info);
 	if (it != null) {
 		info->~__type_info();
@@ -155,3 +149,10 @@ rtti_t const& rtti::regist(type_name_t name, genre_t g, wsize sz, wsize a, array
 	return*info;
 }
 
+//safe_enum_rrti(ang::text, encoding_t, value<encoding_proxy>);
+
+
+ang::rtti_t const& ang::text::encoding_t::class_info() {
+	return rtti::regist("ang::text::encoding_t", genre::enum_type, sizeof(encoding_t), alignof(encoding_t), null, null);
+}
+//static rtti_t const& class_info();

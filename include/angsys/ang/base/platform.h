@@ -1,5 +1,5 @@
 /*********************************************************************************************************************/
-/*   File Name: angplatform.h                                                                                        */
+/*   File Name: ang/base/platform.h                                                                                        */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
 /*   File description: this file is exposes useful macros for multiplatform programing.                              */
 /*                                                                                                                   */
