@@ -315,9 +315,37 @@ private:
 	__m128i _value;
 }int128_t;
 
+
+ANG_EXTERN ulong64 get_performance_time_us()
+{
+	{
+#if defined ANDROID_PLATFORM
+		struct timespec ts;
+		ulong64 theTick = 0;
+		clock_gettime(CLOCK_REALTIME, &ts);
+		theTick = (ulong64)ts.tv_nsec / 1000.0;
+		theTick += (ulong64)ts.tv_sec * 1000000.0;
+		return theTick;
+#else
+		static struct PerformanceFrequency {
+			ulong64 QuadPart;
+			PerformanceFrequency() {
+				LARGE_INTEGER _frec;
+				QueryPerformanceFrequency(&_frec);
+				QuadPart = (ulong64)_frec.QuadPart;
+			}
+		}frec;
+
+		LARGE_INTEGER count;
+		QueryPerformanceCounter(&count);
+		return  (1000000 * count.QuadPart) / frec.QuadPart; //uS
+#endif
+	}
+}
+
 int main()
 {	
-	auto const& id = type_of<intf_wrapper<iobject>>();
+	auto encoder = text::iencoder::get_encoder(text::encoding::ascii);
 
 	return 0;
 }

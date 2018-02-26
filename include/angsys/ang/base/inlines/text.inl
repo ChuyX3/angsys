@@ -133,7 +133,7 @@ namespace ang
 					dest[i++] = swap_endian<SWAP1, char16_t>(0XD800 | (((char_to_dword(swap_endian<SWAP2>(src[j++])) - 0X10000) >> 10) & 0X02FF));
 				}
 				else
-					dest[i++] = (char16_t)char_to_dword(swap_endian<xor_expresion<SWAP1, SWAP2>::value>(src[j++]));
+					dest[i++] = (char16_t)char_to_dword(swap_endian<xor_expression<SWAP1, SWAP2>::value>(src[j++]));
 			}
 		};
 
@@ -252,7 +252,7 @@ namespace ang
 				}
 			}
 			template<bool SWAP1, bool SWAP2> static inline void convert(char16_t* dest, windex& i, const char16_t* src, windex& j) {
-				dest[i++] = swap_endian<xor_expresion<SWAP1, SWAP2>::value>(src[j++]);
+				dest[i++] = swap_endian<xor_expression<SWAP1, SWAP2>::value>(src[j++]);
 			}
 		};
 

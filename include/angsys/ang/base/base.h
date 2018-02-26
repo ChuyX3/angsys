@@ -15,13 +15,6 @@
 
 #include <ang/base/types.h>
 
-#ifdef __cplusplus
-
-//#include <ang/interface.h>
-//#include <ang/utils.h>
-
-#endif//__cplusplus
-
 #ifdef LINK
 #undef LINK
 #endif//LINK
@@ -43,6 +36,7 @@
 #define LINK
 #endif
 
+#ifdef __cplusplus
 #include <ang/base/defines.h>
 #include <ang/base/utils.h>
 #include <ang/base/memory.h>
@@ -53,6 +47,7 @@
 #include <ang/base/value.h>
 #include <ang/base/interface.h>
 #include <ang/base/async.h>
+#endif//__cplusplus
 
 #ifdef LINK
 #undef LINK

@@ -22,12 +22,15 @@ ANG_EXTERN memory_block_t memory_block_create(wsize size, pointer ptr)
 
 
 allocator_internal::allocator_internal(ang_memory_hint_t hint)
+#ifdef _MEMORY_PROFILING
 	: _allocator_type(hint)
+#endif
 {
 }
 
 allocator_internal::~allocator_internal()
 {
+#ifdef _MEMORY_PROFILING
 	bool error = false;
 	core::async::scope_locker<decltype(mutex)> lock(mutex);
 	if (!memory_map.is_empty()) memory_map.iterate([&](collections::pair<pointer, memory_block_t>& info)
@@ -48,11 +51,12 @@ allocator_internal::~allocator_internal()
 	if (error)
 		__debugbreak();
 #endif
-
+#endif
 }
 
 pointer allocator_internal::memory_alloc(wsize size)
 {
+#ifdef _MEMORY_PROFILING
 	auto block = memory_block_create(size, ang_alloc_unmanaged_memory(align_up<8, sizeof(memory_block)>() + size));
 	block->line = 0;
 	block->file = nullptr;
@@ -61,10 +65,14 @@ pointer allocator_internal::memory_alloc(wsize size)
 		memory_map.insert(block->ptr, block);
 	}
 	return block->ptr;
+#else
+	return ang_alloc_unmanaged_memory(size);
+#endif
 }
 
 void allocator_internal::memory_release(pointer ptr)
 {
+#ifdef _MEMORY_PROFILING
 	memory_block_t block;
 	{ //scope
 		core::async::scope_locker<decltype(mutex)> lock(mutex);
@@ -75,6 +83,10 @@ void allocator_internal::memory_release(pointer ptr)
 	if (block->file)ang_free_unmanaged_memory(block->file);
 	block->file = nullptr;
 	ang_free_unmanaged_memory(block);
+
+#else
+	return ang_free_unmanaged_memory(ptr);
+#endif
 }
 
 #ifdef _DEBUG
@@ -99,6 +111,8 @@ aligned_allocator_internal::aligned_allocator_internal()
 	: allocator_internal(ang_aligned_memory) {
 }
 aligned_allocator_internal::~aligned_allocator_internal() {
+
+#ifdef _MEMORY_PROFILING
 	bool error = false;
 	core::async::scope_locker<decltype(mutex)> lock(mutex);
 	if (!memory_map.is_empty()) memory_map.iterate([&](collections::pair<pointer, memory_block_t>& info)
@@ -120,6 +134,7 @@ aligned_allocator_internal::~aligned_allocator_internal() {
 	if (error)
 		__debugbreak();
 #endif
+#endif
 }
 
 pointer aligned_allocator_internal::memory_alloc(wsize size) {
@@ -129,6 +144,7 @@ pointer aligned_allocator_internal::memory_alloc(wsize size) {
 #ifdef WINDOWS_PLATFORM
 
 void aligned_allocator_internal::memory_release(pointer ptr) {
+#ifdef _MEMORY_PROFILING
 	memory_block_t block;
 	{ //scope
 		core::async::scope_locker<decltype(mutex)> lock(mutex);
@@ -139,9 +155,13 @@ void aligned_allocator_internal::memory_release(pointer ptr) {
 	if (block->file)ang_free_unmanaged_memory(block->file);
 	block->file = nullptr;
 	_aligned_free(block);
+#else
+	ang_free_unmanaged_memory(ptr);
+#endif
 }
 
 pointer aligned_allocator_internal::aligned_memory_alloc(wsize size, const wsize ALIGMENT) {
+#ifdef _MEMORY_PROFILING
 	auto block = memory_block_create(size, _aligned_malloc(align_up<8, sizeof(memory_block)>() + size, ALIGMENT));
 	block->line = 0;
 	block->file = nullptr;
@@ -150,6 +170,9 @@ pointer aligned_allocator_internal::aligned_memory_alloc(wsize size, const wsize
 		memory_map.insert(block->ptr, block);
 	}
 	return block->ptr;
+#else
+	return _aligned_malloc(size, ALIGMENT);
+#endif
 }
 
 #ifdef _DEBUG
@@ -223,30 +246,6 @@ pointer aligned_allocator_internal::aligned_memory_alloc(wsize size, wsize ALIGM
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-aligned_allocator_internal* memory::get_aligned_allocator() {
-	static aligned_allocator_internal aligned_memory_allocator;
-	return &aligned_memory_allocator;
-}
-
-iraw_allocator* memory::get_raw_allocator(ang_memory_hint_t hint)
-{
-	static allocator_internal default_memory_allocator(ang_default_memory);
-	static allocator_internal object_memory_allocator(ang_object_memory);
-	static allocator_internal buffer_memory_allocator(ang_buffer_memory);
-
-	switch (hint)
-	{
-	case ang_object_memory:
-		return &object_memory_allocator;
-	case ang_buffer_memory:
-		return &buffer_memory_allocator;
-	case ang_aligned_memory:
-		return get_aligned_allocator();
-	default:
-		return &default_memory_allocator;
-	}
-}
 
 
 ANG_EXTERN pointer ang_alloc_unmanaged_memory(wsize size)

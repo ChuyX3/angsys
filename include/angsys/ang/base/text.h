@@ -211,8 +211,58 @@ namespace ang //constants
 		typedef encoder<encoding::utf32_se> utf32_se_t, utf32_se;
 		typedef encoder<encoding::utf32_le> utf32_le_t, utf32_le;
 		typedef encoder<encoding::utf32_be> utf32_be_t, utf32_be;
-	}
 
+
+		template<> struct encoder<encoding::auto_detect> {
+
+			inline static wsize char_size_by_encoding(text::encoding encoding) {
+				switch (encoding)
+				{
+				case text::encoding::unicode:
+					return sizeof(wchar_t);
+				case text::encoding::utf16:
+				case text::encoding::utf16_be:
+				case text::encoding::utf16_le:
+				case text::encoding::utf16_se:
+					return sizeof(char16_t);
+				case text::encoding::utf32:
+				case text::encoding::utf32_be:
+				case text::encoding::utf32_le:
+				case text::encoding::utf32_se:
+					return sizeof(char32_t);
+				default:
+					//case text::encoding::ascii:
+					//case text::encoding::utf8:
+					return sizeof(char);
+				}
+			}
+
+			template<typename T>
+			inline static wsize length(T cstr) {
+				return encoder<encoding_by_char_type<T>::value>::length((typename char_type_by_type<T>::cstr_t)cstr);
+			}
+
+			template<typename T1, typename T2>
+			inline static wsize size(T2 cstr) {
+				return encoder<encoding_by_char_type<T1>::value>::size((typename char_type_by_type<T2>::cstr_t)cstr);
+			}
+
+			template<typename T1, typename T2>
+			inline static int compare(T1 cstr1, T2 cstr2) {
+				return encoder<encoding_by_char_type<T1>::value>::compare((typename char_type_by_type<T1>::cstr_t)cstr1, (typename char_type_by_type<T2>::cstr_t)cstr2);
+			}
+
+			template<typename T1, typename T2>
+			inline static wsize compare_until(T1 cstr1, T2 cstr2) {
+				return encoder<encoding_by_char_type<T1>::value>::compare_until((typename char_type_by_type<T1>::cstr_t)cstr1, (typename char_type_by_type<T2>::cstr_t)cstr2);
+			}
+
+			template<typename T1, typename T2>
+			inline static wsize convert(T1 dest, wsize maxsize, T2 src, bool end_of_string = true) {
+				return encoder<encoding_by_char_type<T1>::value>::convert((typename char_type_by_type<T1>::str_t)dest, maxsize, (typename char_type_by_type<T2>::cstr_t)src, end_of_string);
+			}
+		};
+	}
 
 	template<typename T, text::encoding ENCODING_>
 	struct str_view {
@@ -309,7 +359,7 @@ namespace ang //constants
 
 	template<typename T, text::encoding ENCODING_>
 	struct str_view<const T, ENCODING_> {
-		static constexpr text::encoding ENCODING = ENCODING_;
+		volatile static constexpr text::encoding ENCODING = ENCODING_;
 		typedef str_view<const T, ENCODING_> sefl_t;
 		typedef typename text::char_type_by_encoding<ENCODING>::char_t char_t;
 		typedef typename text::char_type_by_encoding<ENCODING>::cstr_t cstr_t;
@@ -380,8 +430,10 @@ namespace ang //constants
 		wsize size_;
 		cstr_t view_;
 	};
+
 }
 
 #include <ang/base/inlines/text.inl>
+//#include <ang/base/inlines/raw_str.inl>
 
 #endif//__ANG_BASE_TEXT_H__

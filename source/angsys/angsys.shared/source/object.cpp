@@ -20,29 +20,25 @@ safe_enum_rrti(ang, comparision_result_t, value<comparision_result_proxy>);
 bool interface::default_query_interface(rtti_t const& src_id, unknown_t src, rtti_t const& out_id, unknown_ptr_t out)
 {
 #ifdef _DEBUG
-	assert(src && src_id.is_type_of(interface::class_info()));
+	assert(src_id.is_type_of(interface::class_info()));
 #endif
-
-	return ((interface*)(src))->query_interface(out_id, out);
+	return src ? reinterpret_cast<interface*>(src)->query_interface(out_id, out) : null;
 }
 
 rtti_t const& interface::class_info() {
 	static const char name[] = "ang::interface";
-	return rtti::regist(name, genre::class_type, sizeof(interface), alignof(wsize), null, &default_query_interface);
+	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(interface), alignof(wsize), null, &default_query_interface);
+	return info;
 }
 
-rtti_t const& iobject::class_info() {
-	static const char name[] = "ang::iobject";
-	static rtti_t const* parents[] = { &rtti::type_of<interface>() };
-	return rtti::regist(name, genre::class_type, sizeof(interface), alignof(wsize), parents, &default_query_interface);
-}
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::iobject, interface);
 
 typedef struct smart_ptr_info
 {
 	dword _mem_ref_counter; //4bytes
 	dword _obj_ref_counter; //4bytes
 	memory::iraw_allocator* allocator;
-	pointer _object; //4-8bytes
+	interface* _object; //4-8bytes
 }smart_ptr_info_t, *smart_ptr_info_ptr_t;
 
 #define GET_SMART_PTR_INFO(_ptr) smart_ptr_info_ptr_t(wsize(_ptr) - align_up<16, sizeof(smart_ptr_info_t)>())
@@ -52,17 +48,20 @@ typedef struct smart_ptr_info
 
 safe_pointer::safe_pointer()
 	: _info(nullptr)
+	, _offset(0)
 {
 }
 
 safe_pointer::safe_pointer(safe_pointer&& other)
 	: _info(other._info)
+	, _offset(0)
 {
 	other._info = nullptr;
 }
 
 safe_pointer::safe_pointer(safe_pointer const& other)
 	: _info(nullptr)
+	, _offset(0)
 {
 	set(const_cast<safe_pointer&>(other).lock<object>());
 }
@@ -70,11 +69,13 @@ safe_pointer::safe_pointer(safe_pointer const& other)
 
 safe_pointer::safe_pointer(std::nullptr_t const&)
 	: _info(nullptr)
+	, _offset(0)
 {
 }
 
-safe_pointer::safe_pointer(object* obj)
+safe_pointer::safe_pointer(interface* obj)
 	: _info(nullptr)
+	, _offset(0)
 {
 	set(obj);
 }
@@ -95,16 +96,21 @@ void safe_pointer::clean()
 		}
 	}
 	_info = nullptr;
+	_offset = 0;
 }
 
-void safe_pointer::set(object* obj)
+void safe_pointer::set(interface* _obj)
 {
+	iobject* obj = dyn_cast<iobject>(_obj);
+
 	if (_info && smart_ptr_info_ptr_t(_info)->_object == obj)
 		return;
+
 	clean();
 
 	if (obj != nullptr)
 	{
+		_offset = wsize(_obj) - wsize(obj);
 		auto info = GET_SMART_PTR_INFO(obj);
 		_info = info;
 #ifdef WINDOWS_PLATFORM
@@ -122,18 +128,18 @@ bool safe_pointer::is_valid()const
 }
 
 template<>
-objptr safe_pointer::lock<object>()
+intfptr safe_pointer::lock<interface>()
 {
-	return is_valid() ? (object*)smart_ptr_info_ptr_t(_info)->_object : nullptr;
+	return is_valid() ? (interface*)(wsize(smart_ptr_info_ptr_t(_info)->_object) + _offset) : nullptr;
 }
 
-safe_pointer& safe_pointer::operator = (object* obj)
+safe_pointer& safe_pointer::operator = (interface* obj)
 {
 	set(obj);
 	return *this;
 }
 
-safe_pointer& safe_pointer::operator = (objptr obj)
+safe_pointer& safe_pointer::operator = (intfptr obj)
 {
 	set(obj.get());
 	return *this;
@@ -141,14 +147,20 @@ safe_pointer& safe_pointer::operator = (objptr obj)
 
 safe_pointer& safe_pointer::operator = (safe_pointer&& other)
 {
+	if (this != &other)
+		return*this;
+	clean();
+
 	_info = other._info;
+	_offset = other._offset;
 	other._info = nullptr;
+	other._offset = 0;
 	return *this;
 }
 
 safe_pointer& safe_pointer::operator = (safe_pointer const& ptr)
 {
-	objptr obj = const_cast<safe_pointer&>(ptr).lock<object>();
+	intfptr obj = const_cast<safe_pointer&>(ptr).lock<interface>();
 	set(obj.get());
 	return *this;
 }
@@ -169,7 +181,7 @@ pointer object::operator new(wsize sz)
 	ptr->_obj_ref_counter = 0;
 	ptr->_mem_ref_counter = 0;
 	ptr->allocator = allocator;
-	ptr->_object = pointer(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
+	ptr->_object = (interface*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
 	return ptr->_object;
 }
 
@@ -195,7 +207,7 @@ pointer object::operator new(wsize sz, const word)
 	ptr->_obj_ref_counter = 0;
 	ptr->_mem_ref_counter = 0;
 	ptr->allocator = allocator;
-	ptr->_object = pointer(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
+	ptr->_object = (interface*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
 	return ptr->_object;
 }
 
@@ -220,7 +232,7 @@ pointer object::operator new(wsize sz, const char* file, int line)
 	ptr->_obj_ref_counter = 0;
 	ptr->_mem_ref_counter = 0;
 	ptr->allocator = allocator;
-	ptr->_object = pointer(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
+	ptr->_object = (interface*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
 	return ptr->_object;
 }
 
@@ -231,7 +243,7 @@ pointer object::operator new(wsize sz, const word, const char* file, int line)
 	ptr->_obj_ref_counter = 0;
 	ptr->_mem_ref_counter = 0;
 	ptr->allocator = allocator;
-	ptr->_object = pointer(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
+	ptr->_object = (interface*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
 	return ptr->_object;
 }
 #endif
@@ -251,31 +263,9 @@ object::~object()
 
 }
 
-rtti_t const& object::class_info() {
-	static const char name[] = "ang::object";
-	static rtti_t const* parents[] = { &rtti::type_of<iobject>() };
-	return rtti::regist(name, genre::class_type, sizeof(interface), alignof(wsize), parents, &default_query_interface);
-}
-
-rtti_t const& object::runtime_info()const {
-	return class_info();
-}
-
-bool object::query_interface(rtti_t const& id, unknown_ptr_t out) {
-	if (id.type_id() == class_info().type_id())
-	{
-		if (out == null) return false;
-		*out = static_cast<object*>(this);
-		return true;
-	}
-	else if (id.type_id() == class_info().type_id())
-	{
-		if (out == null) return false;
-		*out = static_cast<iobject*>(this);
-		return true;
-	}
-	return false;
-}
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::object, ang::iobject);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(object);
+ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(object, iobject, interface);
 
 dword object::add_ref()
 {
@@ -347,6 +337,10 @@ bool object::auto_release(word ALIGMENT)
 	return true;
 }
 
+comparision_result_t object::compare(object const* obj)const
+{
+	return (obj != null && runtime_info().type_id() == obj->runtime_info().type_id())? comparision_result::same : comparision_result::diferent;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 

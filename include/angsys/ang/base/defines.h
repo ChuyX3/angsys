@@ -57,18 +57,29 @@
 #define DECLARE_VARSN(...) ANG_EXPAND(DECLARE_VARS_(ANG_CATAB(DECLARE_VARS, ANG_EXPAND(ANG_NUM_ARGS(__VA_ARGS__))), __VA_ARGS__))
 
 #define COMA ,
+#define NON_SEPARATOR()
 #define COMA_SEPARATOR() ,
+#define OR_SEPARATOR() ||
+#define AND_SEPARATOR() &&
+#define ELSE_SEPARATOR() else
 #define FUNCX_TOSTRING(A0) #A0
 #define FUNCX_TYPENAME(A0) typename A0
+#define FUNCX_TYPE_OF(A0) ang::rtti::type_of<A0>()
+#define FUNCX_TYPE_OF_PTR(A0) &ang::rtti::type_of<A0>()
+#define FUNCX_QUERY_INTERFACE(A0) if(id.type_id() == A0::class_info().type_id()) { if (out == null) return false; *out = static_cast<A0*>(this); return true; } \
 
 #define TEMPLATE(...) template<ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPENAME, COMA_SEPARATOR, __VA_ARGS__))>
-
+#define TYPE_OF_ARRAY(...) { ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPE_OF, COMA_SEPARATOR, __VA_ARGS__)) }
+#define TYPE_OF_PTR_ARRAY(...) { ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPE_OF_PTR, COMA_SEPARATOR, __VA_ARGS__)) }
+#define QUERY_INTERFACE_SWITCH(...) { ANG_EXPAND(APPLY_FUNCX_N(FUNCX_QUERY_INTERFACE, ELSE_SEPARATOR, __VA_ARGS__)) }
 
 
 #if defined WINDOWS_PLATFORM && defined ANG_DEVELOPPER
 #define _DECLSPEC_ALLOCATOR __declspec(allocator)
+#define _DECLSPEC_NOVTABLE __declspec(novtable)
 #else
 #define _DECLSPEC_ALLOCATOR 
+#define _DECLSPEC_NOVTABLE 
 #endif // WINDOWS_PLATFORM
 
 

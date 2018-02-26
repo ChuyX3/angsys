@@ -21,6 +21,12 @@
     <Filter Include="header\angsys\base\inlines">
       <UniqueIdentifier>{c75c2947-1adc-4e98-bd3f-bd8c4a95a499}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\async">
+      <UniqueIdentifier>{2fd281b4-ea37-46f1-9670-f8648d742836}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\angsys\inline">
+      <UniqueIdentifier>{5018daf5-de34-4176-b3a2-523920dc7528}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h">
@@ -62,12 +68,60 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\system.h">
       <Filter>header\angsys</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\async.h">
+      <Filter>header\angsys\base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\smart_ptr.h">
+      <Filter>header\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\object.h">
+      <Filter>header\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\intf_wrapper.hpp">
+      <Filter>header\angsys\inline</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\object_wrapper.hpp">
+      <Filter>header\angsys\inline</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\buffers.h">
+      <Filter>header\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\string.h">
+      <Filter>header\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_memory.h">
+      <Filter>header\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
+      <Filter>header\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core_hash_table.h">
+      <Filter>header\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\encoder_interface.h">
+      <Filter>header\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\runtime.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\memory.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\object.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\async\async.cpp">
+      <Filter>source\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\encoder.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -78,5 +132,11 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\text.inl">
       <Filter>header\angsys\base\inlines</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\raw_str.inl">
+      <Filter>header\angsys\base\inlines</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis" />
   </ItemGroup>
 </Project>

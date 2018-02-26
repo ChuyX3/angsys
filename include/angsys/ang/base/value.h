@@ -297,7 +297,7 @@ namespace ang //constants
 	};
 
 
-#define safe_enum(_LINK, _name, _type) struct _name##_proxy { enum type : _type; protected: type _value; }; \
+#define safe_enum(_LINK, _name, _type) struct _LINK _name##_proxy { enum type : _type; protected: type _value; }; \
 	struct _LINK _name##_t : public ang::value<_name##_proxy> { \
 			static rtti_t const& class_info(); \
 			_name##_t() : value(default_value<type>::value) {} \
