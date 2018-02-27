@@ -47,8 +47,8 @@ namespace ang
 	{
 		using namespace text;
 
-		template<encoding ENCODING> class basic_string_buffer;
-		template<encoding ENCODING> using basic_string = object_wrapper<basic_string_buffer<ENCODING>>;
+		template<encoding ENCODING, template<typename> allocator = memory::buffer_allocator> class basic_string_buffer;
+		template<encoding ENCODING, template<typename> allocator = memory::buffer_allocator> using basic_string = object_wrapper<basic_string_buffer<ENCODING, allocator>>;
 		typedef basic_string_buffer<encoding::ascii> ascii_string_buffer, string_buffer;
 		typedef basic_string_buffer<encoding::unicode> unicode_string_buffer, wstring_buffer;
 		typedef basic_string_buffer<encoding::utf8> utf8_string_buffer, mstring_buffer;

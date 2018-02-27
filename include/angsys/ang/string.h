@@ -85,13 +85,15 @@ namespace ang
 		ang_interface(itext_buffer);
 
 		ang_begin_interface(LINK itext_buffer, ibuffer)
-			visible vcall raw_str_t raw_str() pure;
-			visible vcall raw_cstr_t raw_cstr()const pure;
+			visible vcall raw_str_t text_buffer() pure;
+			visible vcall raw_cstr_t text_buffer()const pure;
 		ang_end_interface();
 
 		ang_begin_interface(LINK iencoder)
 			visible scall iencoder_t get_encoder(encoding_t);
 			visible vcall encoding_t format()const pure;
+			visible vcall rtti_t const& char_type()const pure;
+			visible vcall void set_eos(unknown_str_t str, windex at)const pure;
 			visible vcall wsize lenght(unknown_cstr_t)const pure;
 			visible vcall wsize size(unknown_cstr_t, encoding_t)const pure;
 			visible vcall int compare(unknown_cstr_t, unknown_cstr_t, encoding_t)const pure;
@@ -107,9 +109,86 @@ namespace ang
 
 	namespace strings
 	{
+		class LINK basic_string_buffer_base
+			: public object
+			, public itext_buffer
+		{
 
+		protected:
+			struct _str_data {
+				static constexpr wsize RAW_CAPACITY = 128u; //local storage capacity
 
+				union {
+					wsize _storage_type;
+					struct {
+						wsize _unused;
+						wsize _allocated_length;
+						wsize _allocated_capacity;
+						pointer _allocated_buffer;
+					};
+					struct {
+						wsize _stack_length;
+						byte _stack_buffer[RAW_CAPACITY];
+					};
+				};
+			} _data;
+			wsize _map_index, _map_size;
+			iencoder_t _encoder;
+
+		protected:
+			basic_string_buffer_base();
+
+		public: //overides
+			ANG_DECLARE_INTERFACE();
+
+		public:
+			bool is_empty()const;
+			bool is_local_data()const;
+			void length(wsize len);
+			wsize length() const;
+			wsize capacity() const;
+
+		public:
+			void copy(raw_cstr_t);
+			void concat(raw_cstr_t);
+
+			int compare(raw_cstr_t)const;
+			windex compare_until(raw_cstr_t)const;
+			windex find(raw_cstr_t, windex start = 0, windex end = -1)const;
+			windex find_revert(raw_cstr_t, windex start = -1, windex end = 0)const;
+			wsize sub_string(raw_str_t, windex start, windex end)const;
+
+		protected:
+			void copy_at(raw_str_t, windex at);
+
+		public:
+			virtual comparision_result_t compare(object const* obj)const override;
+			virtual pointer buffer_ptr()const override;
+			virtual wsize buffer_size()const override;
+			virtual wsize mem_copy(wsize, pointer, text::encoding_t) override;
+			virtual ibuffer_view_t map_buffer(windex, wsize) override;
+			virtual bool unmap_buffer(ibuffer_view_t&, wsize) override;
+			virtual bool can_realloc_buffer()const override;
+			virtual bool realloc_buffer(wsize) override;
+			virtual raw_str_t text_buffer()override;
+			virtual raw_cstr_t text_buffer()const override;
+			virtual bool realloc(wsize new_size, bool save = true) = 0;
+			virtual void clean() = 0;
+
+		protected:
+			virtual~basic_string_buffer_base();
+		};
 	}
+
 }
 
+#define MY_ALLOCATOR memory::buffer_allocator
+#define MY_LINKAGE LINK
+
+#define	MY_ENCODING text::encoding::ascii
+#include <ang/inline/string_declaration.hpp>
+#undef MY_ENCODING
+
+#undef MY_LINKAGE
+#undef MY_ALLOCATOR
 #endif//__STRING_H__

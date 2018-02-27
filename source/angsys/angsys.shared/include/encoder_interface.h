@@ -19,6 +19,8 @@ namespace ang
 			ANG_DECLARE_INTERFACE();
 
 			virtual encoding_t format()const override;
+			virtual rtti_t const& char_type()const override;
+			virtual void set_eos(unknown_str_t str, windex at)const override;
 			virtual wsize lenght(unknown_cstr_t cstr)const override;
 			virtual wsize size(unknown_cstr_t cstr, encoding_t e)const override;
 			virtual int compare(unknown_cstr_t cstr1, unknown_cstr_t cstr2, encoding_t e)const override;
@@ -47,8 +49,18 @@ namespace ang
 		}
 
 		template<encoding ENCODING> inline
+			rtti_t const& encoder_interface<ENCODING>::char_type()const {
+			return rtti::type_of<char_t>();
+		}
+
+		template<encoding ENCODING> inline
 		wsize encoder_interface<ENCODING>::lenght(unknown_cstr_t cstr)const {
 			return encoder<ENCODING>::lenght((cstr_t)cstr);
+		}
+
+		template<encoding ENCODING> inline
+		void encoder_interface<ENCODING>::set_eos(unknown_str_t dest, windex at)const {
+			((str_t)dest)[at] = 0;
 		}
 
 		template<encoding ENCODING> inline
