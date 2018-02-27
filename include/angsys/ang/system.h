@@ -65,6 +65,7 @@ namespace ang
 
 #include <ang/smart_ptr.h>
 #include <ang/object.h>
+#include <ang/singleton.h>
 #include <ang/buffers.h>
 #include <ang/string.h>
 

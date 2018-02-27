@@ -12,6 +12,7 @@
 #include "ang/system.h"
 #include "ang_memory.h"
 #include "encoder_interface.h"
+#include "runtime_manager.h"
 
 using namespace ang;
 using namespace ang::memory;
@@ -61,6 +62,7 @@ namespace ang
 			, object_memory_allocator(ang_object_memory)
 			, buffer_memory_allocator(ang_buffer_memory)
 			, aligned_memory_allocator()
+			, runtime_type_manager()
 		{
 
 		}
@@ -77,12 +79,14 @@ namespace ang
 			utf32_se_encoder = null;
 			utf32_le_encoder = null;
 			utf32_be_encoder = null;
+
 		}
 
 		allocator_internal default_memory_allocator;
 		allocator_internal object_memory_allocator;
 		allocator_internal buffer_memory_allocator;
 		aligned_allocator_internal aligned_memory_allocator;
+		runtime::runtime_type_manager runtime_type_manager;
 
 		text::iencoder_t ascii_encoder;
 		text::iencoder_t unicode_encoder;
@@ -118,6 +122,10 @@ iraw_allocator* memory::get_raw_allocator(ang_memory_hint_t hint)
 	}
 }
 
+runtime::runtime_type_manager* runtime::runtime_type_manager::instance()
+{
+	return &ang_main_instance::instance()->runtime_type_manager;
+}
 
 text::iencoder_t text::iencoder::get_encoder(text::encoding_t e)
 {

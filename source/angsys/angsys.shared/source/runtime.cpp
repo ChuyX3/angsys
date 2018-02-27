@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "ang/system.h"
-
-#include <list>
+#include "runtime_manager.h"
 
 using namespace ang;
 
@@ -17,92 +16,6 @@ ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ulong, "ang::ulong_t");
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(long64, "ang::long64_t");
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ulong64, "ang::ulong64_t");
 
-
-namespace ang
-{
-	namespace runtime
-	{
-		class runtime_type_manager {
-			runtime_type_manager() { 
-				head = null;
-				tail = null;
-			}
-			~runtime_type_manager() { 
-				rtti_node* node = head, *temp;
-				while (node) {
-					temp = node;
-					node = node->next;
-					temp->info->~__type_info();
-					allocator.deallocate(temp->info);
-					free(temp);
-				}
-			}
-
-		public:
-			static runtime_type_manager* instance() {
-				static runtime_type_manager s_instance;
-				return &s_instance;
-			}
-	
-			rtti_t* find_info(rtti_t* info)const {
-				rtti_node* node = head;
-				while (node) {
-					if (info->genre() == node->info->genre() &&
-						info->size() == node->info->size() &&
-						info->aligment() == node->info->aligment() &&
-						text::ascii::compare(info->type_name().cstr(), node->info->type_name().cstr()) == 0)
-						return node->info;
-
-					node = node->next;
-				}
-				return null;
-			}
-
-			rtti_t* push(rtti_t* info) {
-				if (tail) {
-					tail->next = (rtti_node*)malloc(sizeof(rtti_node));
-					tail->next->info = info;
-					tail->next->next = null;
-					tail = tail->next;
-				}
-				else {
-					tail = head = (rtti_node*)malloc(sizeof(rtti_node));
-					tail->info = info;
-					tail->next = null;
-				}
-				return tail->info;
-			}
-
-			rtti_t* allocate()const { 
-				return allocator.allocate(1);
-			}
-			void deallocate(rtti_t* ptr)const {
-				allocator.deallocate(ptr);
-			}
-
-		private:
-			mutable memory::unmanaged_allocator<rtti_t> allocator;
-			struct rtti_node {
-				rtti_t* info;
-				rtti_node* next;
-			};
-			rtti_node* head;
-			rtti_node* tail;
-		};
-	}
-}
-
-
-inline auto find_rtti(rtti_t* info, std::list<rtti_t*>& list)-> decltype(list.begin()) {
-	for (auto it = list.begin(); it != list.end(); ++it) {
-		if (info->genre() == (*it)->genre() &&
-			info->size() == (*it)->size() &&
-			info->aligment() == (*it)->aligment() &&
-			text::ascii::compare(info->type_name().cstr(), (*it)->type_name().cstr()) == 0)
-			return it;
-	}
-	return list.end();
-}
 
 bool ang_runtime_rtti_default_dyn_cast(const rtti_t& src_id, unknown_t src, const rtti_t& out_id, unknown_ptr_t out)
 {

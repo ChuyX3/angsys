@@ -101,6 +101,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\encoder_interface.h">
       <Filter>header\include</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\runtime_manager.h">
+      <Filter>header\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\singleton.h">
+      <Filter>header\angsys</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">

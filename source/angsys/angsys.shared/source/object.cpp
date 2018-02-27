@@ -173,6 +173,16 @@ safe_pointer& safe_pointer::operator = (std::nullptr_t const&)
 
 //////////////////////////////////////////////////////////////////////////////////////
 
+ang::object* ang_alloc_object_memory(ang_size_t sz)
+{
+	static memory::iraw_allocator* allocator = memory::get_raw_allocator(ang_object_memory);
+	smart_ptr_info_ptr_t ptr = new(allocator->memory_alloc(sz + align_up<16, sizeof(smart_ptr_info_t)>())) smart_ptr_info_t();
+	ptr->_obj_ref_counter = 0;
+	ptr->_mem_ref_counter = 0;
+	ptr->allocator = allocator;
+	ptr->_object = (interface*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
+	return (object*)ptr->_object;
+}
 
 pointer object::operator new(wsize sz)
 {
@@ -250,6 +260,9 @@ pointer object::operator new(wsize sz, const word, const char* file, int line)
 
 pointer object::operator new[](wsize)noexcept { return null; }
 void object::operator delete[](pointer)noexcept {}
+
+pointer object::operator new(wsize, void* ptr)noexcept { return ptr; }
+void object::operator delete(pointer, void*)noexcept { }
 
 object::object(bool inc_ref)
 	: _ref_count(GET_SMART_PTR_INFO(this)->_obj_ref_counter)

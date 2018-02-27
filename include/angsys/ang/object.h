@@ -1,6 +1,9 @@
 #ifndef __ANGSYS_H__
 #elif !defined __OBJECT_H__
 #define __OBJECT_H__
+
+LINK ang::object* ang_alloc_object_memory(ang_size_t);
+
 namespace ang
 {
 	ang_interface(iobject);
@@ -71,6 +74,9 @@ namespace ang
 		pointer operator new(wsize);
 		void operator delete(pointer);
 
+		pointer operator new(wsize, void*);
+		void operator delete(pointer, void*);
+
 #ifdef _DEBUG
 		pointer operator new(wsize, const char*, int);
 		pointer operator new(wsize, word, const char*, int);
@@ -115,7 +121,6 @@ namespace ang
 	bool operator != (object_wrapper<T1> const& obj1, object_wrapper<T2> const& obj2) {
 		return operator == (obj1, obj2);
 	}
-
 }
 
 #endif//__SAMRT_PTR_H__
