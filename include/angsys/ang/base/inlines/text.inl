@@ -287,15 +287,15 @@ namespace ang
 			return encoder<encoding::utf32>::size(cstr);
 		}
 
-		template<encoding ENCODING> template <typename cstr2_t> inline wsize encoder<ENCODING>::size(cstr2_t cstr) {
+		template<encoding ENCODING> template <typename cstr2_t> inline wsize encoder<ENCODING>::size(cstr2_t cstr, windex start, windex end) {
 			typedef typename char_type_by_type<cstr2_t>::char_t other_char_t;
 			typedef typename char_type_by_type<cstr2_t>::cstr_t other_cstr_t;
 
-			wsize i = 0, j = 0;
+			wsize i = 0;
 			if (cstr == nullptr) goto END;
 		LOOP:
-			if (is_end_of_string(&other_cstr_t(cstr)[j])) goto END;
-			i += converter<char_t, other_char_t>::template size<is_endian_swapped<encoding_by_char_type<cstr2_t>::value>::value>((other_cstr_t)cstr, j);
+			if (is_end_of_string(&other_cstr_t(cstr)[start]) || start >= end) goto END;
+			i += converter<char_t, other_char_t>::template size<is_endian_swapped<encoding_by_char_type<cstr2_t>::value>::value>((other_cstr_t)cstr, start);
 			goto LOOP;
 		END:
 			return i;
@@ -399,20 +399,20 @@ namespace ang
 			return ang::invalid_index;
 		}
 
-		template<encoding ENCODING> template <typename cstr2_t> inline typename encoder<ENCODING>::raw_str_t encoder<ENCODING>::convert(raw_str_t dest, cstr2_t src, bool eos, wsize max)
+		template<encoding ENCODING> template <typename cstr2_t> inline typename encoder<ENCODING>::raw_str_t encoder<ENCODING>::convert(raw_str_t dest, cstr2_t src, bool eos, wsize max_out, wsize max_in)
 		{
 			wsize i = 0, j = 0;
-			return convert(dest, i, src, j, eos, max);
+			return convert(dest, i, src, j, eos, max_out, max_in);
 		}
 
-		template<encoding ENCODING> template <typename cstr2_t> inline typename encoder<ENCODING>::raw_str_t encoder<ENCODING>::convert(raw_str_t dest, wsize& i, cstr2_t src, wsize& j, bool eos, wsize max)
+		template<encoding ENCODING> template <typename cstr2_t> inline typename encoder<ENCODING>::raw_str_t encoder<ENCODING>::convert(raw_str_t dest, wsize& i, cstr2_t src, wsize& j, bool eos, wsize max_out, wsize max_in)
 		{
 			typedef typename char_type_by_type<cstr2_t>::char_t other_char_t;
 			typedef typename char_type_by_type<cstr2_t>::cstr_t other_cstr_t;
 
 			if ((other_cstr_t)src == nullptr) goto END;
 		LOOP:
-			if (is_end_of_string(&other_cstr_t(src)[j]) || i >= max) goto END;
+			if (is_end_of_string(&other_cstr_t(src)[j]) || i >= max_out || j >= max_in) goto END;
 			converter<char_t, other_char_t>::template convert<is_endian_swapped<ENCODING>::value, is_endian_swapped<encoding_by_char_type<cstr2_t>::value>::value>(dest, i, (other_cstr_t)src, j);
 			goto LOOP;
 		END:

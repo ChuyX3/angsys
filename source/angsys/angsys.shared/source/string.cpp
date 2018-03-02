@@ -16,7 +16,7 @@ basic_string_buffer_base::~basic_string_buffer_base()
 {
 	_map_index = invalid_index;
 	_map_size = invalid_index;
-	clean();
+	//clean();
 }
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::strings::basic_string_buffer_base, object, itext_buffer);
@@ -213,23 +213,24 @@ windex basic_string_buffer_base::compare_until(raw_cstr_t str)const
 windex basic_string_buffer_base::find(raw_cstr_t str, windex start, windex end)const
 {
 	auto my_data = text_buffer();
-	return encoder()._find(my_data.ptr(), min(my_data.count(), end), str.ptr(), str.count(), str.encoding(), start);
+	return _encoder->find(my_data.ptr(), min(my_data.count(), end), str.ptr(), str.count(), str.encoding(), start);
 }
 
-windex basic_string_buffer_base::find_revert(raw_cstr_t str, windex start, windex end)const
+windex basic_string_buffer_base::find_reverse(raw_cstr_t str, windex start, windex end)const
 {
 	auto my_data = text_buffer();
-	return encoder()._find_revert(my_data.ptr(), min(my_data.count(), end), str.ptr(), str.count(), str.encoding(), start);
+	return _encoder->find_reverse(my_data.ptr(), min(my_data.count(), end), str.ptr(), str.count(), str.encoding(), start);
 }
 
-wsize basic_string_buffer_base::sub_string(raw_str_t raw, windex start, windex end)const
+raw_str_t basic_string_buffer_base::sub_string(raw_str_t raw, windex start, windex end)const
 {
-	if (start >= end || start > length()) return 0;
-	text::encoder_interface _encoder; wsize i = start;
-	text::encoder_interface::initialize_interface(&_encoder, raw._encoding);
+	if (start >= end || start > length()) 
+		return raw_str_t();
 
-	if (!_encoder._convert_string)
-		return 0;
+	auto encoder = iencoder::get_encoder(raw.encoding());
 	auto my_data = text_buffer();
-	return _encoder._convert_string(raw.ptr(), end - start, my_data.ptr(), i, my_data.encoding(), true);
+	wsize i = 0, j = start, cs = encoder->char_type().size();
+
+	encoder->convert(raw.ptr(), i, my_data.ptr(), j, my_data.encoding(), true, raw.size() / cs, end);
+	return raw_str_t(raw.ptr(), i * cs, raw.encoding());
 }

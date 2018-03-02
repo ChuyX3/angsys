@@ -193,13 +193,13 @@ namespace ang //constants
 
 			static wsize lenght(raw_cstr_t cstr);//base character count
 			static wsize count(raw_cstr_t cstr);//character count
-			template <typename cstr2_t> static wsize size(cstr2_t cstr);//character needed for convertion
+			template <typename cstr2_t> static wsize size(cstr2_t cstr, windex start = 0, windex end = -1);//character needed for convertion
 			template<typename cstr2_t> static int compare(raw_cstr_t first, cstr2_t second);
 			template<typename cstr2_t> static windex compare_until(raw_cstr_t first, cstr2_t second);
 			template<typename cstr2_t> static windex find(raw_cstr_t first, wsize sz1, cstr2_t second, wsize sz2, windex start);
 			template<typename cstr2_t> static windex find_reverse(raw_cstr_t first, wsize sz1, cstr2_t second, wsize sz2, windex start);
-			template<typename cstr2_t> static raw_str_t convert(raw_str_t str, cstr2_t cstr, bool eos = true, wsize max = -1);
-			template<typename cstr2_t> static raw_str_t convert(raw_str_t str, wsize& i, cstr2_t cstr, wsize& j, bool eos = true, wsize max = -1);
+			template<typename cstr2_t> static raw_str_t convert(raw_str_t str, cstr2_t cstr, bool eos = true, wsize max_out = -1, wsize max_in = -1);
+			template<typename cstr2_t> static raw_str_t convert(raw_str_t str, wsize& i, cstr2_t cstr, wsize& j, bool eos = true, wsize max_out = -1, wsize max_in = -1);
 		};
 
 		typedef encoder<encoding::ascii>	ascii_t,	ascii;

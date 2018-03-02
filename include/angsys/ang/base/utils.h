@@ -36,7 +36,7 @@ namespace ang //constants
 	typedef integer_constant<bool, false> false_type;
 
 	typedef integer_constant<long64, -1> invalid_index_type;
-	extern const invalid_index_type invalid_index;
+	invalid_index_type const invalid_index = {};
 
 	typedef decltype(nullptr) nullptr_t;
 	nullptr_t const null = {};

@@ -105,6 +105,12 @@ ang::raw_cstr::raw_cstr(raw_cstr const& str)
 	, _encoding(str._encoding) {
 }
 
+ang::raw_cstr::raw_cstr(raw_str const& str)
+	: _value(str.ptr())
+	, _size(str.size())
+	, _encoding(str.encoding()) {
+}
+
 void const* ang::raw_cstr::ptr()const { return _value; }
 
 wsize ang::raw_cstr::size()const { return _size; }

@@ -4,7 +4,7 @@
 
 namespace ang
 {
-	ANG_BEGIN_OBJECT_WRAPPER(MY_LINKAGE, strings::basic_string_buffer<MY_ENCODING COMA MY_ALLOCATOR>)
+	/*ANG_BEGIN_OBJECT_WRAPPER(MY_LINKAGE, strings::basic_string_buffer<MY_ENCODING COMA MY_ALLOCATOR>)
 		visible scall constexpr text::encoding ENCODING = MY_ENCODING;
 		template<typename T> object_wrapper(safe_str<T> const& str);
 		template<text::encoding_enum OTHER_ENCODING> object_wrapper(object_wrapper<strings::string_buffer<OTHER_ENCODING>> const& str);
@@ -38,13 +38,12 @@ namespace ang
 
 		template<typename T> friend object_wrapper<strings::string_buffer<ENCODING>>& operator <<
 			(object_wrapper<strings::string_buffer<ENCODING>>&, safe_str<T> const&);
-	ANG_END_OBJECT_WRAPPER();
+	ANG_END_OBJECT_WRAPPER();*/
 
 	namespace strings
 	{
 		template<> class MY_LINKAGE basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>
-			: public object
-			, public itext_buffer
+			: public basic_string_buffer_base
 		{
 		public:
 			static const text::encoding ENCODING = MY_ENCODING;
@@ -54,28 +53,12 @@ namespace ang
 			typedef MY_ALLOCATOR<type> allocator_t;
 			typedef text::encoder<MY_ENCODING> encoder;
 
-			static constexpr wsize CAPACITY = 128u / sizeof(char_t);
+			static constexpr wsize CAPACITY = basic_string_buffer_base::RAW_CAPACITY / sizeof(char_t);
 			typedef str_view<char_t> str_t;
 			typedef str_view<char_t const> cstr_t;
 			typedef basic_string_buffer<MY_ENCODING, MY_ALLOCATOR> string;
 
 		private:
-			struct str_data {
-				union {
-					wsize _storage_type;
-					struct {
-						wsize _unused;
-						wsize _allocated_length;
-						wsize _allocated_capacity;
-						str_t _allocated_buffer;
-					};
-					struct {
-						wsize _stack_length;
-						char_t _stack_buffer[CAPACITY];
-					};
-				};
-			}_data;
-			wsize _map_index, _map_size;
 			allocator_t alloc;
 
 		public:
@@ -85,13 +68,8 @@ namespace ang
 			ANG_DECLARE_INTERFACE();
 
 		public:
-			void clean();
-			bool is_empty()const;
-			bool is_local_data()const;
-			void length(wsize len);
-			wsize length() const;
-			wsize capacity() const;
-			bool realloc(wsize new_size, bool save = true);
+			virtual void clean()override;
+			virtual bool realloc(wsize new_size, bool save = true)override;
 
 		public:
 			void copy(raw_cstr_t);
