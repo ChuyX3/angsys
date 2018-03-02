@@ -98,6 +98,8 @@ namespace ang
 			visible vcall wsize size(unknown_cstr_t, encoding_t)const pure;
 			visible vcall int compare(unknown_cstr_t, unknown_cstr_t, encoding_t)const pure;
 			visible vcall wsize compare_until(unknown_cstr_t, unknown_cstr_t, encoding_t)const pure;
+			visible vcall wsize find(unknown_cstr_t, wsize, unknown_cstr_t, wsize, encoding_t, windex)const pure;
+			visible vcall wsize find_reverse(unknown_cstr_t, wsize, unknown_cstr_t, wsize, encoding_t, windex)const pure;
 			visible vcall raw_str_t convert(unknown_str_t dest, unknown_cstr_t src, encoding_t e, bool set_eos = true, wsize max_size = - 1)const pure;
 			visible vcall raw_str_t convert(unknown_str_t dest, wsize& i, unknown_cstr_t src, wsize& j, encoding_t e, bool set_eos = true, wsize max_size = - 1)const pure;
 		ang_end_interface();
@@ -185,9 +187,9 @@ namespace ang
 #define MY_ALLOCATOR memory::buffer_allocator
 #define MY_LINKAGE LINK
 
-#define	MY_ENCODING text::encoding::ascii
-#include <ang/inline/string_declaration.hpp>
-#undef MY_ENCODING
+//#define	MY_ENCODING text::encoding::ascii
+//#include <ang/inline/string_declaration.hpp>
+//#undef MY_ENCODING
 
 #undef MY_LINKAGE
 #undef MY_ALLOCATOR

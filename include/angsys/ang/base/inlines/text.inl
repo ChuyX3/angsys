@@ -342,6 +342,63 @@ namespace ang
 			goto LOOP;
 		}
 
+		template<encoding ENCODING> template <typename cstr2_t> inline windex encoder<ENCODING>::find(raw_cstr_t first, wsize s1, cstr2_t second, wsize s2, windex start)
+		{
+			typedef char_t char1_t;
+			typedef typename char_type_by_type<cstr2_t>::char_t char2_t;		
+			constexpr bool SWAP1 = is_endian_swapped<ENCODING>::value;
+			constexpr bool SWAP2 = is_endian_swapped<encoding_by_char_type<char2_t>::value>::value;
+
+			if (first == null || second == null) return invalid_index;
+			if (s2 == 0 || start >= s1) return invalid_index;
+			if (s2 > (s1 - start)) return invalid_index;
+
+			char1_t const* beg = first + start;
+			char1_t const* end = first + s1 - s2 + 1;
+
+			char32_t c1, c2;
+			windex i = start, j, k, l, t;
+			do {
+				j = 0;
+				k = 0;
+				l = 0;
+				while (k < s2 && to_char32<false, SWAP1>(beg, j) == to_char32<false, SWAP2>(second, k)) 
+					l = k;
+				if (l == s2) return i;
+				t = 0;
+				to_char32<false,SWAP1>(beg, t);
+				i += t;
+				beg += t;
+			} while (beg < end);
+			return ang::invalid_index;
+		}
+
+		template<encoding ENCODING> template <typename cstr2_t> inline windex encoder<ENCODING>::find_reverse(raw_cstr_t first, wsize s1, cstr2_t second, wsize s2, windex start)
+		{
+			typedef char_t char1_t;
+			typedef typename char_type_by_type<cstr2_t>::char_t char2_t;
+			constexpr bool SWAP1 = is_endian_swapped<ENCODING>::value;
+			constexpr bool SWAP2 = is_endian_swapped<encoding_by_char_type<char2_t>::value>::value;
+
+			if (first == null || second == null) return ang::invalid_index;
+			if (s2 == 0 || start > s1) return ang::invalid_index;
+			if (s2 > start)	return ang::invalid_index;
+
+			char1_t const* beg = first;
+			char1_t const* end = first + (start - s2);
+			windex i = start - s2, j, k, l;
+			do {
+				j = 0;
+				k = 0;
+				l = 0;
+				while (k < s2 && to_char32<false, SWAP1>(beg, j) == to_char32<false, SWAP2>(second, k))
+					l = k;
+				if (l == s2) return i;
+				i--;
+			} while (beg <= --end);
+			return ang::invalid_index;
+		}
+
 		template<encoding ENCODING> template <typename cstr2_t> inline typename encoder<ENCODING>::raw_str_t encoder<ENCODING>::convert(raw_str_t dest, cstr2_t src, bool eos, wsize max)
 		{
 			wsize i = 0, j = 0;

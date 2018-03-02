@@ -25,6 +25,8 @@ namespace ang
 			virtual wsize size(unknown_cstr_t cstr, encoding_t e)const override;
 			virtual int compare(unknown_cstr_t cstr1, unknown_cstr_t cstr2, encoding_t e)const override;
 			virtual wsize compare_until(unknown_cstr_t cstr1, unknown_cstr_t cstr2, encoding_t e)const override;
+			virtual wsize find(unknown_cstr_t cstr1, wsize s1, unknown_cstr_t cstr2, wsize s2, encoding_t e, windex start)const override;
+			virtual wsize find_reverse(unknown_cstr_t cstr1, wsize s1, unknown_cstr_t cstr2, wsize s2, encoding_t e, windex start)const override;
 			virtual raw_str_t convert(unknown_str_t dest, unknown_cstr_t src, encoding_t e, bool set_eos, wsize max_size)const override;
 			virtual raw_str_t convert(unknown_str_t dest, wsize& i, unknown_cstr_t src, wsize& j, encoding_t e, bool set_eos, wsize max_size)const override;
 
@@ -119,6 +121,16 @@ namespace ang
 			default: return 0;
 			}
 		}
+
+		template<encoding ENCODING> inline
+		wsize encoder_interface<ENCODING>::find(unknown_cstr_t cstr1, wsize s1, unknown_cstr_t cstr2, wsize s2, encoding_t e, windex start)const {
+		}
+
+		template<encoding ENCODING> inline
+		wsize encoder_interface<ENCODING>::find_reverse(unknown_cstr_t cstr1, wsize s1, unknown_cstr_t cstr2, wsize s2, encoding_t e, windex start)const {
+
+		}
+
 
 		template<encoding ENCODING> inline
 		raw_str_t encoder_interface<ENCODING>::convert(unknown_str_t dest, unknown_cstr_t src, encoding_t e, bool set_eos, wsize max_size)const {

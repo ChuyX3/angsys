@@ -19,7 +19,7 @@ basic_string_buffer_base::~basic_string_buffer_base()
 	clean();
 }
 
-ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::strings::basic_string_buffer_base, object, itext_buffer);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::strings::basic_string_buffer_base, object, itext_buffer);
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::strings::basic_string_buffer_base);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::strings::basic_string_buffer_base, object, itext_buffer, ibuffer, ibuffer_view);
 
@@ -169,52 +169,54 @@ void basic_string_buffer_base::concat(raw_cstr_t str)
 		return;
 	auto lc = 128u / _encoder->char_type().size();
 	wsize my_len = length();
-	if ((my_len + sz) < lc)
+	realloc(my_len + sz, true);
+	if (is_local_data())
 	{
 		_encoder->convert(_data._stack_buffer, _data._stack_length, str.ptr(), j, str.encoding(), true, min(lc - my_len - 1, sz));
 	}
 	else
 	{
-		realloc(my_len + sz, true);
 		_encoder->convert(_data._allocated_buffer, _data._allocated_length, str.ptr(), j, str.encoding(), true, min(_data._allocated_capacity - my_len - 1, sz));
 	}
 }
 
 void basic_string_buffer_base::copy_at(raw_str_t str, windex at)
 {
-	wsize sz = str.count(), i = 0;
+	wsize sz = str.count(), j = 0;
 	if (sz == 0U)
 		return;
-	auto lc = 128u / char_size();
+	auto lc = 128u / _encoder->char_type().size();
 	wsize my_len = min(length(), at);
-	if ((my_len + sz) < lc)
+	realloc(my_len + sz, true);
+	if (is_local_data())
 	{
-		_data._stack_length = my_len + encoder()._convert_string(_data._stack_buffer + (my_len * char_size()), min(lc - my_len - 1, sz), str.ptr(), i, str.encoding(), true);
+		_data._stack_length = my_len;
+		_encoder->convert(_data._stack_buffer, _data._stack_length, str.ptr(), j, str.encoding(), true, min(lc - my_len - 1, sz));
 	}
 	else
 	{
-		realloc(my_len + sz, true);
-		_data._allocated_length = my_len + encoder()._convert_string((byte*)_data._allocated_buffer + (my_len * char_size()), min(_data._allocated_capacity - my_len - 1, sz), str.ptr(), i, str.encoding(), true);
+		_data._allocated_length = my_len;
+		_encoder->convert(_data._allocated_buffer, _data._allocated_length, str.ptr(), j, str.encoding(), true, min(_data._allocated_capacity - my_len - 1, sz));
 	}
 }
 
-int basic_string_buffer_base::compare(raw_str_t str)const
+int basic_string_buffer_base::compare(raw_cstr_t str)const
 {
-	return encoder()._compare_string(text_buffer().ptr(), str.ptr(), str.encoding());
+	return _encoder->compare(text_buffer().ptr(), str.ptr(), str.encoding());
 }
 
-windex basic_string_buffer_base::compare_until(raw_str_t str)const
+windex basic_string_buffer_base::compare_until(raw_cstr_t str)const
 {
-	return encoder()._compare_string_until(text_buffer().ptr(), str.ptr(), str.encoding());
+	return _encoder->compare_until(text_buffer().ptr(), str.ptr(), str.encoding());
 }
 
-windex basic_string_buffer_base::find(raw_str_t str, windex start, windex end)const
+windex basic_string_buffer_base::find(raw_cstr_t str, windex start, windex end)const
 {
 	auto my_data = text_buffer();
 	return encoder()._find(my_data.ptr(), min(my_data.count(), end), str.ptr(), str.count(), str.encoding(), start);
 }
 
-windex basic_string_buffer_base::find_revert(raw_str_t str, windex start, windex end)const
+windex basic_string_buffer_base::find_revert(raw_cstr_t str, windex start, windex end)const
 {
 	auto my_data = text_buffer();
 	return encoder()._find_revert(my_data.ptr(), min(my_data.count(), end), str.ptr(), str.count(), str.encoding(), start);

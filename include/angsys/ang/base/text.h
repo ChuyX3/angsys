@@ -196,6 +196,8 @@ namespace ang //constants
 			template <typename cstr2_t> static wsize size(cstr2_t cstr);//character needed for convertion
 			template<typename cstr2_t> static int compare(raw_cstr_t first, cstr2_t second);
 			template<typename cstr2_t> static windex compare_until(raw_cstr_t first, cstr2_t second);
+			template<typename cstr2_t> static windex find(raw_cstr_t first, wsize sz1, cstr2_t second, wsize sz2, windex start);
+			template<typename cstr2_t> static windex find_reverse(raw_cstr_t first, wsize sz1, cstr2_t second, wsize sz2, windex start);
 			template<typename cstr2_t> static raw_str_t convert(raw_str_t str, cstr2_t cstr, bool eos = true, wsize max = -1);
 			template<typename cstr2_t> static raw_str_t convert(raw_str_t str, wsize& i, cstr2_t cstr, wsize& j, bool eos = true, wsize max = -1);
 		};
