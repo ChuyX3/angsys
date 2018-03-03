@@ -48,7 +48,15 @@ namespace ang
 	{
 		using namespace text;
 
-		template<encoding ENCODING> class const_string_buffer;
+		template<encoding ENCODING> class basic_const_string_buffer;
+		template<encoding ENCODING> using basic_const_string = object_wrapper<basic_const_string_buffer<ENCODING>>;
+		typedef basic_const_string_buffer<encoding::ascii> ascii_const_string_buffer, const_string_buffer;
+		typedef basic_const_string_buffer<encoding::unicode> unicode_const_string_buffer, const_wstring_buffer;
+		typedef basic_const_string_buffer<encoding::utf8> utf8_const_string_buffer, const_mstring_buffer;
+		typedef object_wrapper<ascii_const_string_buffer> ascii_const_string, const_string;
+		typedef object_wrapper<unicode_const_string_buffer> unicode_const_string, const_wstring;
+		typedef object_wrapper<utf8_const_string_buffer> utf8_const_string, const_mstring;
+
 		template<encoding ENCODING, template<typename> class allocator = memory::buffer_allocator> class basic_string_buffer;
 		template<encoding ENCODING, template<typename> class allocator = memory::buffer_allocator> using basic_string = object_wrapper<basic_string_buffer<ENCODING, allocator>>;
 		typedef basic_string_buffer<encoding::ascii> ascii_string_buffer, string_buffer;

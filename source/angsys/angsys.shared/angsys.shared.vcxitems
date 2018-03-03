@@ -59,6 +59,7 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\APPLY_FUNCX_N.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\raw_str.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\text.inl" />
+    <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis" />

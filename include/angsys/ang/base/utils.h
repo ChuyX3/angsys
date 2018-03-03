@@ -45,6 +45,21 @@ namespace ang //constants
 
 namespace ang //type utils
 {
+	template<typename T> struct is_const : false_type {};
+	template<typename T> struct is_const<const T> : true_type {};
+
+	template<typename T> struct is_reference : false_type {};
+	template<typename T> struct is_reference<T&> : true_type {};
+	template<typename T> struct is_reference<T&&> : true_type {};
+	template<typename T> struct is_reference<T const&> : true_type {};
+
+	template<typename T> struct is_pointer : false_type {};
+	template<typename T> struct is_pointer<T*> : true_type {};
+	template<typename T> struct is_pointer<T* const> : true_type {};
+	template<typename T> struct is_pointer<T const*> : true_type {};
+	template<typename T> struct is_pointer<T const* const> : true_type {};
+
+
 	template<typename T> struct remove_constant { typedef T type; };
 	template<typename T> struct remove_constant<const T>	{ typedef T type; };
 	template<typename T> struct remove_constant<const T&> { typedef T& type; };

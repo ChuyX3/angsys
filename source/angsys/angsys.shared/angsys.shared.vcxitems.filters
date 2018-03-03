@@ -30,6 +30,9 @@
     <Filter Include="source\strings">
       <UniqueIdentifier>{d7719f38-7947-40dc-b39f-18c2833e6389}</UniqueIdentifier>
     </Filter>
+    <Filter Include="header\include\inline">
+      <UniqueIdentifier>{019f3061-2402-48bc-96bb-c627630a3dcc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h">
@@ -155,6 +158,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\raw_str.inl">
       <Filter>header\angsys\base\inlines</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl">
+      <Filter>header\include\inline</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

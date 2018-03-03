@@ -25,8 +25,10 @@
 #define ang_object(_NAME) typedef ang::object_wrapper<class _NAME> _NAME##_t; typedef ang::object_wrapper_ptr<_NAME> _NAME##_ptr_t; typedef ang::object_wrapper<const _NAME> const_##_NAME##_t; typedef ang::object_wrapper_ptr<const _NAME> const_##_NAME##_ptr_t
 #define ang_interface(_NAME) typedef ang::intf_wrapper<struct _NAME> _NAME##_t; typedef ang::intf_wrapper_ptr<_NAME> _NAME##_ptr_t; typedef ang::intf_wrapper<const _NAME> const_##_NAME##_t; typedef ang::intf_wrapper_ptr<const _NAME> const_##_NAME##_ptr_t
 
-#define ANG_UTILS_TO_STRING(_VALUE) #_VALUE
-#define ANG_UTILS_TO_STRING_OBJ(_VALUE) ang::cstr_t(#_VALUE)
+#define ANG_UTILS_TO_STRING(_VALUE) ANG_UTILS_TO_STRING_(_VALUE)
+#define ANG_UTILS_TO_STRING_(_VALUE) #_VALUE
+#define ANG_UTILS_TO_STRING_OBJ(_VALUE) ANG_UTILS_TO_STRING_OBJ_(_VALUE)
+#define ANG_UTILS_TO_STRING_OBJ_(_VALUE) ang::cstr_t(#_VALUE)
 
 #define ANG_DECLARE_CLASS_INFO() scall ang::rtti_t const& class_info();
 #define ANG_DECLARE_RUNTIME_INFO() vcall ang::rtti_t const& runtime_info()const pure;
@@ -73,7 +75,8 @@ _DECLSPEC_NOVTABLE struct ang_begin(_NAME) \
 
 #define ang_end_interface() ANG_END()
 
-#define ANG_IMPLEMENT_INTERFACE_CLASS_INFO(_CLASS, ...) \
+#define ANG_IMPLEMENT_INTERFACE_CLASS_INFO(_CLASS, ...) ANG_EXPAND(ANG_IMPLEMENT_INTERFACE_CLASS_INFO_(_CLASS, __VA_ARGS__))
+#define ANG_IMPLEMENT_INTERFACE_CLASS_INFO_(_CLASS, ...) \
 ang::rtti_t const& _CLASS::class_info() { \
 	static const char name[] = #_CLASS; \
 	static rtti_t const* parents[] = ANG_EXPAND(TYPE_OF_PTR_ARRAY(__VA_ARGS__)); \
@@ -83,14 +86,15 @@ ang::rtti_t const& _CLASS::class_info() { \
 #define ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(_CLASS, ...) \
 bool _CLASS::query_interface(ang::rtti_t const& id, ang::unknown_ptr_t out) { ANG_EXPAND(QUERY_INTERFACE_SWITCH(_CLASS, __VA_ARGS__)) return false; }
 
-
-#define ANG_IMPLEMENT_OBJECT_CLASS_INFO(_CLASS, ...) \
+#define ANG_IMPLEMENT_OBJECT_CLASS_INFO(_CLASS, ...) ANG_EXPAND(ANG_IMPLEMENT_OBJECT_CLASS_INFO_(_CLASS, __VA_ARGS__))
+#define ANG_IMPLEMENT_OBJECT_CLASS_INFO_(_CLASS, ...) \
 ang::rtti_t const& _CLASS::class_info() { \
 	static const char name[] = #_CLASS; \
 	static rtti_t const* parents[] = ANG_EXPAND(TYPE_OF_PTR_ARRAY(__VA_ARGS__)); \
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(_CLASS), alignof(_CLASS), parents, &default_query_interface); \
 	return info; \
  }
+
 #define ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(_CLASS) ang::rtti_t const& _CLASS::runtime_info()const { return _CLASS::class_info();  }
 #define ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(_CLASS, _BASE, ...) \
 bool _CLASS::query_interface(ang::rtti_t const& id, ang::unknown_ptr_t out) { \

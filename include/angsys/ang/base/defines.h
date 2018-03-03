@@ -14,13 +14,28 @@
 #elif !defined __ANG_BASE_DEFINES_H__
 #define __ANG_BASE_DEFINES_H__
 
+#ifdef  _MSC_VER 
 
 #define ANG_EXPAND(x) x
 #define ANG_CATAB(A, B) ANG_CATAB_(A, B)
 #define ANG_CATAB_(A, B) A##B
 
-#define ANG_NUM_ARGS(...)	ANG_EXPAND(ANG_NUM_ARGS_( __VA_ARGS__, ANG_PP_RSEQ_N()))
-#define ANG_NUM_ARGS_(...)	ANG_EXPAND(ANG_PPARG_N(__VA_ARGS__))
+#define ANG_NUM_ARGS_EXPAND__(...) unused, __VA_ARGS__
+#define ANG_NUM_ARGS(...)	ANG_EXPAND(ANG_NUM_ARGS_(ANG_NUM_ARGS_EXPAND__(__VA_ARGS__)))
+#define ANG_NUM_ARGS_(...)	ANG_EXPAND(ANG_NUM_ARGS__( __VA_ARGS__, ANG_PP_RSEQ_N()))
+#define ANG_NUM_ARGS__(...)	ANG_EXPAND(ANG_PPARG_N(__VA_ARGS__))
+
+
+#else
+
+#define ANG_EXPAND(...) __VA_ARGS__
+#define ANG_CATAB(A, B) ANG_CATAB_(A, B)
+#define ANG_CATAB_(A, B) A##B
+
+#define ANG_NUM_ARGS(...)	ANG_NUM_ARGS_( __VA_ARGS__, ANG_PP_RSEQ_N())
+#define ANG_NUM_ARGS_(...)	ANG_PPARG_N(__VA_ARGS__)
+
+#endif
 
 #define ANG_PPARG_N(\
         _1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,_13,_14,_15,_16,_17,_18,_19,_20,\
@@ -31,7 +46,7 @@
 		N,...)	N
 
 #define ANG_PP_RSEQ_N() \
-		100,99,98,97,96,95,94,93,92,91,90,89,88,87,86,85,84,83,82,81,\
+		99,98,97,96,95,94,93,92,91,90,89,88,87,86,85,84,83,82,81,\
 		80,79,78,77,76,75,74,73,72,71,70,69,68,67,66,65,64,63,62,61, \
 		60,59,58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,\
 		40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,\

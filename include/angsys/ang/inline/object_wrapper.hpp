@@ -153,14 +153,22 @@ namespace ang
 
 		object_wrapper(object_wrapper && ptr)
 			: object_wrapper() {
-			T * temp = ptr._ptr;
-			ptr._ptr = null;
-			_ptr = temp;
+			move(ptr);
+		}
+
+		object_wrapper(object_wrapper<T> && ptr)
+			: object_wrapper() {
+			move(ptr);
 		}
 
 		object_wrapper(object_wrapper const& ptr)
 			: object_wrapper() {
-			set(ptr);
+			set(ptr.get());
+		}
+
+		object_wrapper(object_wrapper<T> const& ptr)
+			: object_wrapper() {
+			set(ptr.get());
 		}
 
 		object_wrapper(ang::nullptr_t const&)
@@ -207,6 +215,12 @@ namespace ang
 			ptr._ptr = null;
 		}
 
+		void move(object_wrapper<T>& ptr) {
+			clean();
+			_ptr = ptr.get();
+			ptr.clean_unsafe();
+		}
+
 		type const** addres_of(void) {
 			return&_ptr;
 		}
@@ -227,12 +241,23 @@ namespace ang
 			clean();
 			return*this;
 		}
+
 		object_wrapper& operator = (object_wrapper && ptr) {
 			move(ptr);
 			return*this;
 		}
 
+		object_wrapper& operator = (object_wrapper<T> && ptr) {
+			move(ptr);
+			return*this;
+		}
+
 		object_wrapper& operator = (object_wrapper const& ptr) {
+			set(ptr.get());
+			return*this;
+		}
+
+		object_wrapper& operator = (object_wrapper<T> const& ptr) {
 			set(ptr.get());
 			return*this;
 		}
@@ -422,6 +447,12 @@ namespace ang
 		bool is_empty()const;
 		object* get(void)const;
 		void set(object*);
+		template<typename T> inline void move(object_wrapper<T>& ptr) {
+			if (this == (object_wrapper<T>)&ptr) return;
+			clean();
+			_ptr = ptr.get();
+			ptr.clean_unsafe();
+		}
 		object ** addres_of(void);
 
 	public:
@@ -429,7 +460,7 @@ namespace ang
 		object_wrapper& operator = (object_wrapper &&);
 		object_wrapper& operator = (object_wrapper const&);
 
-		object_wrapper_ptr<const object> operator & (void);
+		object_wrapper_ptr<object> operator & (void);
 		object* operator -> (void)const;
 		operator object* (void)const;
 
@@ -455,7 +486,9 @@ namespace ang
 		object_wrapper();
 		object_wrapper(object const*);
 		object_wrapper(object_wrapper &&);
+		object_wrapper(object_wrapper<object> &&);
 		object_wrapper(object_wrapper const&);
+		object_wrapper(object_wrapper<object> const&);
 		object_wrapper(ang::nullptr_t const&);
 		~object_wrapper();
 
@@ -469,14 +502,22 @@ namespace ang
 		bool is_empty()const;
 		object const* get(void)const;
 		void set(object const*);
+		template<typename T> inline void move(object_wrapper<T>& ptr) {
+			if ((void*)this == (void*)(object_wrapper<T>*)&ptr) return;
+			clean();
+			_ptr = ptr.get();
+			ptr.clean_unsafe();
+		}
 		object const** addres_of(void);
 
 	public:
 		object_wrapper& operator = (object const*);
 		object_wrapper& operator = (object_wrapper &&);
+		object_wrapper& operator = (object_wrapper<object> &&);
 		object_wrapper& operator = (object_wrapper const&);
+		object_wrapper& operator = (object_wrapper<object> const&);
 
-		object_wrapper_ptr<object> operator & (void);
+		object_wrapper_ptr<const object> operator & (void);
 		object const* operator -> (void)const;
 		operator object const* (void)const;
 

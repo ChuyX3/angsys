@@ -21,25 +21,25 @@ namespace ang
 		template<text::encoding E> inline operator str_view<typename text::char_type_by_encoding<E>::char_t, E>() {
 			return E == _encoding ? str_view<typename text::char_type_by_encoding<E>::char_t, E>(
 				(typename text::char_type_by_encoding<E>::str_t)_value,
-				_size / *sizeof(typename text::char_type_by_encoding<E>::char_t))
+				_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
 				: str_view<typename text::char_type_by_encoding<E>::char_t, E>();
 		}
 		template<text::encoding E> inline operator cstr_view<typename text::char_type_by_encoding<E>::char_t, E>()const {
 			return E == _encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_t, E>(
 				(typename text::char_type_by_encoding<E>::cstr_t)_value,
-				_size / *sizeof(typename text::char_type_by_encoding<E>::char_t))
+				_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
 				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
 		}
 		template<text::encoding E> inline str_view<typename text::char_type_by_encoding<E>::char_t, E> to_str() {
 			return E == _encoding ? str_view<typename text::char_type_by_encoding<E>::char_t, E>(
 				(typename text::char_type_by_encoding<E>::str_t)_value,
-				_size / *sizeof(typename text::char_type_by_encoding<E>::char_t))
+				_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
 				: str_view<typename text::char_type_by_encoding<E>::char_t, E>();
 		}
 		template<text::encoding E> inline cstr_view<typename text::char_type_by_encoding<E>::char_t, E> to_cstr()const {
 			return E == _encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_t, E>(
 				(typename text::char_type_by_encoding<E>::cstr_t)_value,
-				_size / *sizeof(typename text::char_type_by_encoding<E>::char_t))
+				_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
 				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
 		}
 
@@ -67,8 +67,19 @@ namespace ang
 		wsize char_size()const;
 		text::encoding encoding()const;
 
-		template<text::encoding E> inline operator cstr_view<typename text::char_type_by_encoding<E>::char_t, E>()const;
-		template<text::encoding E> inline cstr_view<typename text::char_type_by_encoding<E>::char_t, E> to_cstr()const;
+		template<text::encoding E> inline operator cstr_view<typename text::char_type_by_encoding<E>::char_t, E>()const {
+			return E == _encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_t, E>(
+				(typename text::char_type_by_encoding<E>::cstr_t)_value,
+				_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
+				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
+		}
+
+		template<text::encoding E> inline cstr_view<typename text::char_type_by_encoding<E>::char_t, E> to_cstr()const {
+			return E == _encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_t, E>(
+				(typename text::char_type_by_encoding<E>::cstr_t)_value,
+				_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
+				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
+		}
 
 	private:
 		void const* _value;
@@ -116,7 +127,7 @@ namespace ang
 
 	namespace strings
 	{
-		class LINK const_string_buffer_base
+		class LINK basic_const_string_buffer_base
 			: public object
 			, public text::itext_buffer
 		{
@@ -124,18 +135,19 @@ namespace ang
 			pointer operator new(wsize, text::encoding_t, raw_cstr_t);
 			void operator delete(pointer, text::encoding_t, raw_cstr_t);
 
-			const_string_buffer_base();
-			virtual~const_string_buffer_base();
+			basic_const_string_buffer_base();
+			virtual~basic_const_string_buffer_base();
 
-			const_string_buffer_base(const_string_buffer_base &&) = delete;
-			const_string_buffer_base(const_string_buffer_base const&) = delete;
-			const_string_buffer_base& operator = (const_string_buffer_base &&) = delete;
-			const_string_buffer_base& operator = (const_string_buffer_base const&) = delete;
+			basic_const_string_buffer_base(basic_const_string_buffer_base &&) = delete;
+			basic_const_string_buffer_base(basic_const_string_buffer_base const&) = delete;
+			basic_const_string_buffer_base& operator = (basic_const_string_buffer_base &&) = delete;
+			basic_const_string_buffer_base& operator = (basic_const_string_buffer_base const&) = delete;
 
 		public:	
 			virtual bool is_constant()const override;
 			virtual bool can_realloc_buffer()const override;
 	
+			ANG_DECLARE_INTERFACE();
 		private:
 			virtual pointer buffer_ptr() override;
 			virtual wsize mem_copy(wsize, pointer, text::encoding_t) override;
@@ -153,8 +165,47 @@ namespace ang
 #include <ang/inline/const_string_declaration.hpp>
 #undef MY_ENCODING
 
-#undef MY_LINKAGE
+#define	MY_ENCODING text::encoding::unicode
+#include <ang/inline/const_string_declaration.hpp>
+#undef MY_ENCODING
 
+#define	MY_ENCODING text::encoding::utf8
+#include <ang/inline/const_string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf16
+#include <ang/inline/const_string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf16_se
+#include <ang/inline/const_string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf16_le
+#include <ang/inline/const_string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf16_be
+#include <ang/inline/const_string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf32
+#include <ang/inline/const_string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf32_se
+#include <ang/inline/const_string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf32_le
+#include <ang/inline/const_string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf32_be
+#include <ang/inline/const_string_declaration.hpp>
+#undef MY_ENCODING
+
+#undef MY_LINKAGE
 
 namespace ang
 {
@@ -231,7 +282,6 @@ namespace ang
 		protected:
 			virtual~basic_string_buffer_base();
 		};
-
 
 		template<encoding MY_ENCODING, template<typename> class allocator>
 		class basic_string_buffer : public basic_string_buffer_base

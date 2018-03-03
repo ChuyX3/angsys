@@ -6,8 +6,8 @@ namespace ang
 {
 	namespace strings
 	{
-		template<> class MY_LINKAGE const_string_buffer<MY_ENCODING>
-			: public const_string_buffer_base
+		template<> class MY_LINKAGE basic_const_string_buffer<MY_ENCODING>
+			: public basic_const_string_buffer_base
 		{
 		public:
 			static const text::encoding ENCODING = MY_ENCODING;
@@ -16,10 +16,10 @@ namespace ang
 			typedef str_view<char_t const> cstr_t;
 
 		public:
-			template<typename T, text::encoding E> pointer operator new(wsize sz, str_view<T, E> const& str) { return operator new(sz, ENCODING, (raw_cstr)str); }
-			template<typename T, text::encoding E> void operator delete(pointer ptr, raw_cstr_t str) { return operator delete(ptr, ENCODING, (raw_cstr)str); }
+			template<typename T, text::encoding E> pointer operator new(wsize sz, str_view<T, E> const& str) { return basic_const_string_buffer_base::operator new(sz, ENCODING, (raw_cstr)str); }
+			template<typename T, text::encoding E> void operator delete(pointer ptr, raw_cstr_t str) { return basic_const_string_buffer_base::operator delete(ptr, ENCODING, (raw_cstr)str); }
 
-			const_string_buffer();
+			basic_const_string_buffer();
 
 			ANG_DECLARE_INTERFACE();
 
@@ -30,8 +30,10 @@ namespace ang
 			virtual raw_str_t text_buffer()override;
 			virtual raw_cstr_t text_buffer()const override;
 
+			inline cstr_t cstr()const { return text_buffer().to_cstr<MY_ENCODING>(); }
+
 		private:
-			virtual~const_string_buffer();
+			virtual~basic_const_string_buffer();
 		};
 	}
 }

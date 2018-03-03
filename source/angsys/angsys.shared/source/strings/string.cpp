@@ -25,9 +25,14 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::strings::basic_string_buffer_base, obj
 
 /////////////////////////////////////////////////////////////////////////
 
-pointer basic_string_buffer_base::buffer_ptr()const
+pointer basic_string_buffer_base::buffer_ptr()
 {
-	return (void*)text_buffer().ptr();
+	return text_buffer().ptr();
+}
+
+const_pointer basic_string_buffer_base::buffer_ptr()const
+{
+	return text_buffer().ptr();
 }
 
 wsize basic_string_buffer_base::buffer_size()const
@@ -96,7 +101,7 @@ raw_cstr_t  basic_string_buffer_base::text_buffer()const {
 
 comparision_result_t basic_string_buffer_base::compare(object const* obj)const
 {
-	const itext_buffer_t buffer = dyn_cast<itext_buffer>(const_cast<object*>(obj));
+	const_itext_buffer_t buffer = dyn_cast<itext_buffer>(obj);
 	if (buffer.is_empty())
 		return comparision_result::diferent;
 	return (comparision_result)_encoder->compare(text_buffer().ptr(), buffer->text_buffer().ptr(), buffer->encoding());
