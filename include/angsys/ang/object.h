@@ -2,7 +2,12 @@
 #elif !defined __OBJECT_H__
 #define __OBJECT_H__
 
-LINK ang::object* ang_alloc_object_memory(ang_size_t);
+LINK ang::object* ang_alloc_object_memory(ang_size_t, ang_memory_hint_t = ang_object_memory);
+
+#ifdef _DEBUG
+LINK ang::object* ang_alloc_object_memory(ang_size_t, const char* file, int line, ang_memory_hint_t = ang_object_memory);
+#endif // _DEBUG
+
 
 namespace ang
 {

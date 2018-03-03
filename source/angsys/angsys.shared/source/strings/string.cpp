@@ -96,10 +96,10 @@ raw_cstr_t  basic_string_buffer_base::text_buffer()const {
 
 comparision_result_t basic_string_buffer_base::compare(object const* obj)const
 {
-	itext_buffer_t buffer = dyn_cast<itext_buffer>(const_cast<object*>(obj));
+	const itext_buffer_t buffer = dyn_cast<itext_buffer>(const_cast<object*>(obj));
 	if (buffer.is_empty())
 		return comparision_result::diferent;
-	return (comparision_result)_encoder->compare(text_buffer().ptr(), buffer->buffer_ptr(), buffer->encoding());
+	return (comparision_result)_encoder->compare(text_buffer().ptr(), buffer->text_buffer().ptr(), buffer->encoding());
 }
 
 bool basic_string_buffer_base::is_local_data()const

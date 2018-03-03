@@ -27,6 +27,9 @@
     <Filter Include="header\angsys\inline">
       <UniqueIdentifier>{5018daf5-de34-4176-b3a2-523920dc7528}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\strings">
+      <UniqueIdentifier>{d7719f38-7947-40dc-b39f-18c2833e6389}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h">
@@ -107,8 +110,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\singleton.h">
       <Filter>header\angsys</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\const_string_declaration.hpp">
+      <Filter>header\angsys\inline</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\string_declaration.hpp">
-      <Filter>header</Filter>
+      <Filter>header\angsys\inline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -133,8 +139,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\encoder.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\string.cpp">
-      <Filter>source</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\const_string.cpp">
+      <Filter>source\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp">
+      <Filter>source\strings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

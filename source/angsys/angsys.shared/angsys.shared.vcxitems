@@ -29,6 +29,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\types.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\buffers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\const_string_declaration.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\intf_wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\object_wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\string_declaration.hpp" />
@@ -51,7 +52,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\memory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\runtime.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\string.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\const_string.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\APPLY_FUNCX_N.inl" />

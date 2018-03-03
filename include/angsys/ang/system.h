@@ -41,12 +41,14 @@ namespace ang
 {
 	class object;
 	typedef ang::object_wrapper<object> object_t, objptr;
+	typedef ang::object_wrapper<const object> const_object_t, cobjptr;
 	typedef ang::object_wrapper_ptr<object> object_ptr_t;
 
 	namespace strings
 	{
 		using namespace text;
 
+		template<encoding ENCODING> class const_string_buffer;
 		template<encoding ENCODING, template<typename> class allocator = memory::buffer_allocator> class basic_string_buffer;
 		template<encoding ENCODING, template<typename> class allocator = memory::buffer_allocator> using basic_string = object_wrapper<basic_string_buffer<ENCODING, allocator>>;
 		typedef basic_string_buffer<encoding::ascii> ascii_string_buffer, string_buffer;

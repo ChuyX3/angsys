@@ -173,9 +173,9 @@ safe_pointer& safe_pointer::operator = (std::nullptr_t const&)
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-ang::object* ang_alloc_object_memory(ang_size_t sz)
+object* ang_alloc_object_memory(ang_size_t sz, ang_memory_hint_t hint)
 {
-	static memory::iraw_allocator* allocator = memory::get_raw_allocator(ang_object_memory);
+	memory::iraw_allocator* allocator = memory::get_raw_allocator(hint);
 	smart_ptr_info_ptr_t ptr = new(allocator->memory_alloc(sz + align_up<16, sizeof(smart_ptr_info_t)>())) smart_ptr_info_t();
 	ptr->_obj_ref_counter = 0;
 	ptr->_mem_ref_counter = 0;
@@ -184,15 +184,22 @@ ang::object* ang_alloc_object_memory(ang_size_t sz)
 	return (object*)ptr->_object;
 }
 
-pointer object::operator new(wsize sz)
+#ifdef _DEBUG
+object* ang_alloc_object_memory(ang_size_t sz, const char* file, int line, ang_memory_hint_t hint)
 {
-	static memory::iraw_allocator* allocator = memory::get_raw_allocator(ang_object_memory);
-	smart_ptr_info_ptr_t ptr = new(allocator->memory_alloc(sz + align_up<16, sizeof(smart_ptr_info_t)>())) smart_ptr_info_t();
+	memory::iraw_allocator* allocator = memory::get_raw_allocator(hint);
+	smart_ptr_info_ptr_t ptr = new(allocator->memory_alloc(sz + align_up<16, sizeof(smart_ptr_info_t)>(), file, line)) smart_ptr_info_t();
 	ptr->_obj_ref_counter = 0;
 	ptr->_mem_ref_counter = 0;
 	ptr->allocator = allocator;
 	ptr->_object = (interface*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
-	return ptr->_object;
+	return (object*)ptr->_object;
+}
+#endif
+
+pointer object::operator new(wsize sz)
+{
+	return ang_alloc_object_memory(sz, ang_object_memory);
 }
 
 void object::operator delete(pointer ptr)
@@ -212,13 +219,7 @@ void object::operator delete(pointer ptr)
 
 pointer object::operator new(wsize sz, const word)
 {
-	static memory::iraw_allocator* allocator = memory::get_raw_allocator(ang_aligned_memory);
-	smart_ptr_info_ptr_t ptr = new(allocator->memory_alloc(sz + align_up<16, sizeof(smart_ptr_info_t)>())) smart_ptr_info_t();
-	ptr->_obj_ref_counter = 0;
-	ptr->_mem_ref_counter = 0;
-	ptr->allocator = allocator;
-	ptr->_object = (interface*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
-	return ptr->_object;
+	return ang_alloc_object_memory(sz, ang_aligned_memory);
 }
 
 void object::operator delete(pointer ptr, const word)
@@ -237,13 +238,7 @@ void object::operator delete(pointer ptr, const word)
 #ifdef _DEBUG
 pointer object::operator new(wsize sz, const char* file, int line)
 {
-	static memory::iraw_allocator* allocator = memory::get_raw_allocator(ang_object_memory);
-	smart_ptr_info_ptr_t ptr = new(allocator->memory_alloc(sz + align_up<16, sizeof(smart_ptr_info_t)>(), file, line)) smart_ptr_info_t();
-	ptr->_obj_ref_counter = 0;
-	ptr->_mem_ref_counter = 0;
-	ptr->allocator = allocator;
-	ptr->_object = (interface*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
-	return ptr->_object;
+	return ang_alloc_object_memory(sz, file, line, ang_aligned_memory);
 }
 
 pointer object::operator new(wsize sz, const word, const char* file, int line)

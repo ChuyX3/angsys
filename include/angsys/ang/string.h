@@ -8,7 +8,7 @@ namespace ang
 		raw_str();
 		raw_str(void* v, wsize s, text::encoding e);
 		raw_str(raw_str const& str);
-		template<typename T, text::encoding E> inline raw_str(str_view<T, E> str) 
+		template<typename T, text::encoding E> inline raw_str(str_view<T, E> str)
 			: raw_str(str.str(), str.size() * sizeof(typename text::char_type_by_encoding<E>::char_t), E) {
 		}
 
@@ -100,8 +100,8 @@ namespace ang
 			visible vcall wsize compare_until(unknown_cstr_t, unknown_cstr_t, encoding_t)const pure;
 			visible vcall wsize find(unknown_cstr_t, wsize, unknown_cstr_t, wsize, encoding_t, windex)const pure;
 			visible vcall wsize find_reverse(unknown_cstr_t, wsize, unknown_cstr_t, wsize, encoding_t, windex)const pure;
-			visible vcall raw_str_t convert(unknown_str_t dest, unknown_cstr_t src, encoding_t e, bool set_eos = true, wsize max_out_size = - 1, wsize max_in_size = -1)const pure;
-			visible vcall raw_str_t convert(unknown_str_t dest, wsize& i, unknown_cstr_t src, wsize& j, encoding_t e, bool set_eos = true, wsize max_out_size = - 1, wsize max_in_size = -1)const pure;
+			visible vcall raw_str_t convert(unknown_str_t dest, unknown_cstr_t src, encoding_t e, bool set_eos = true, wsize max_out_size = -1, wsize max_in_size = -1)const pure;
+			visible vcall raw_str_t convert(unknown_str_t dest, wsize& i, unknown_cstr_t src, wsize& j, encoding_t e, bool set_eos = true, wsize max_out_size = -1, wsize max_in_size = -1)const pure;
 		ang_end_interface();
 
 	}
@@ -109,6 +109,55 @@ namespace ang
 	ANG_INTF_WRAPPER_DECLARATION(LINK, text::itext_buffer);
 	ANG_INTF_WRAPPER_DECLARATION(LINK, text::iencoder);
 
+}
+
+namespace ang
+{
+
+	namespace strings
+	{
+		class LINK const_string_buffer_base
+			: public object
+			, public text::itext_buffer
+		{
+		protected:
+			pointer operator new(wsize, text::encoding_t, raw_cstr_t);
+			void operator delete(pointer, text::encoding_t, raw_cstr_t);
+
+			const_string_buffer_base();
+			virtual~const_string_buffer_base();
+
+			const_string_buffer_base(const_string_buffer_base &&) = delete;
+			const_string_buffer_base(const_string_buffer_base const&) = delete;
+			const_string_buffer_base& operator = (const_string_buffer_base &&) = delete;
+			const_string_buffer_base& operator = (const_string_buffer_base const&) = delete;
+
+		public:	
+			virtual bool is_constant()const override;
+			virtual bool can_realloc_buffer()const override;
+	
+		private:
+			virtual pointer buffer_ptr() override;
+			virtual wsize mem_copy(wsize, pointer, text::encoding_t) override;
+			virtual ibuffer_view_t map_buffer(windex, wsize) override;
+			virtual bool unmap_buffer(ibuffer_view_t&, wsize) override;
+			virtual bool realloc_buffer(wsize) override;
+		};
+	}
+}
+
+
+#define MY_LINKAGE LINK
+
+#define	MY_ENCODING text::encoding::ascii
+#include <ang/inline/const_string_declaration.hpp>
+#undef MY_ENCODING
+
+#undef MY_LINKAGE
+
+
+namespace ang
+{
 	namespace strings
 	{
 		class LINK basic_string_buffer_base
@@ -165,7 +214,8 @@ namespace ang
 
 		public:
 			virtual comparision_result_t compare(object const* obj)const override;
-			virtual pointer buffer_ptr()const override;
+			virtual pointer buffer_ptr() override;
+			virtual const_pointer buffer_ptr()const override;
 			virtual wsize buffer_size()const override;
 			virtual wsize mem_copy(wsize, pointer, text::encoding_t) override;
 			virtual ibuffer_view_t map_buffer(windex, wsize) override;

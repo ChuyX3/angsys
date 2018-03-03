@@ -125,19 +125,11 @@ namespace ang
 
 		intf_wrapper_ptr<type> operator & (void);
 
-		type * operator -> (void) { 
-			return get(); 
-		}
-
-		type const* operator -> (void)const { 
+		type* operator -> (void)const { 
 			return get();
 		}
 
-		operator type * (void) {
-			return get();
-		}
-
-		operator type const* (void)const {
+		operator type* (void)const {
 			return get(); 
 		}
 
@@ -146,6 +138,133 @@ namespace ang
 
 	};
 
+	template<class T>
+	class intf_wrapper<const T>
+	{
+	public:
+		typedef T type;
+		typedef T* type_ptr;
+		typedef T& type_ref;
+		typedef T const* ctype_ptr;
+		typedef T const& ctype_ref;
+
+		intf_wrapper()
+			: _ptr(null) {
+			static_assert(is_interface<type>::value && !is_object<type>::value, "ERROR: T is not a interface type...");
+		}
+
+		intf_wrapper(ctype_ptr ptr)
+			: intf_wrapper() {
+			set(ptr);
+		}
+
+		intf_wrapper(ang::nullptr_t const&)
+			: intf_wrapper() {
+		}
+
+		intf_wrapper(intf_wrapper && ptr)
+			: intf_wrapper() {
+			T * temp = other._ptr;
+			other._ptr = null;
+			_ptr = temp;
+		}
+
+		intf_wrapper(intf_wrapper const& ptr)
+			: intf_wrapper() {
+			set(ptr.get());
+		}
+
+		~intf_wrapper() {
+			clean();
+		}
+
+	public:
+		void clean() {
+			iobject * _obj = dyn_cast<iobject>(const_cast<type_ptr>(_ptr));
+			if (_obj)_obj->release();
+			_ptr = null;
+		}
+
+		bool is_empty()const {
+			return _ptr == null;
+		}
+
+		ctype_ptr get(void)const {
+			return _ptr;
+		}
+
+		void set(ctype_ptr ptr) {
+			if (ptr == _ptr)
+				return;
+			iobject * _old = dyn_cast<iobject>(const_cast<type_ptr>(_ptr));
+			iobject * _new = dyn_cast<iobject>(const_cast<type_ptr>(ptr));
+			_ptr = ptr;
+			if (_new)_new->add_ref();
+			if (_old)_old->release();
+		}
+
+		void move(intf_wrapper& ptr) {
+			if (this == &ptr)
+				return;
+			clean();
+			_ptr = ptr._ptr;
+			ptr._ptr = null;
+		}
+
+		ctype_ptr* addres_of(void) {
+			return &_ptr;
+		}
+
+		ctype_ptr* addres_for_init(void) {
+			clean();
+			return &_ptr;
+		}
+
+		template<typename T> typename smart_ptr_type<T>::const_smart_ptr_t as() {
+			return  this ? dyn_cast<typename smart_ptr_type<T>::const_type>(_ptr) : null;
+		}
+
+		template<typename T> bool as(T const*& out) {
+			out = this ? dyn_cast<typename smart_ptr_type<T>::const_type>(_ptr) : null;
+			return out != null;
+		}
+
+
+	public: //operator
+		intf_wrapper& operator = (ctype_ptr ptr) {
+			set(ptr);
+			return*this;
+		}
+
+		intf_wrapper& operator = (ang::nullptr_t const&) {
+			clean();
+			return*this;
+		}
+
+		intf_wrapper& operator = (intf_wrapper && ptr) {
+			move(ptr);
+			return*this;
+		}
+
+		intf_wrapper& operator = (intf_wrapper const& ptr) {
+			set(ptr.get());
+			return*this;
+		}
+
+		intf_wrapper_ptr<const type> operator & (void);
+
+		type const* operator -> (void)const {
+			return get();
+		}
+
+		operator type const* (void)const {
+			return get();
+		}
+
+	protected:
+		type const* _ptr;
+
+	};
 
 	/******************************************************************/
 	/* template class ang::intf_wrapper_ptr :                         */
@@ -201,6 +320,55 @@ namespace ang
 
 	};
 
+	template<typename T>
+	class intf_wrapper_ptr<const T>
+	{
+	public:
+		intf_wrapper_ptr(intf_wrapper<const T>*ptr)
+			: _ptr(ptr) {
+		}
+
+		intf_wrapper_ptr(intf_wrapper_ptr && ptr)
+			: _ptr(ptr._ptr) {
+			ptr._ptr = null;
+		}
+
+		intf_wrapper_ptr(intf_wrapper_ptr const& ptr)
+			: _ptr(ptr._ptr) {
+		}
+
+		~intf_wrapper_ptr() {
+			_ptr = null;
+		}
+
+		bool is_empty()const {
+			return _ptr == null;
+		}
+
+		intf_wrapper<const T>* operator ->()const {
+			return _ptr;
+		}
+
+		operator intf_wrapper<const T>*()const {
+			return _ptr;
+		}
+
+		operator T const**()const {
+			return _ptr->addres_of();
+		}
+
+		operator unknown_ptr_t()const {
+			return _ptr->addres_of();
+		}
+
+		intf_wrapper<const T>& operator *() {
+			return *_ptr;
+		}
+
+	private:
+		intf_wrapper<const T>* _ptr;
+
+	};
 
 	/******************************************************************/
 	/* template class ang::intf_wrapper<interface> :                  */
@@ -248,16 +416,64 @@ namespace ang
 		template<typename T> intf_wrapper& operator = (intf_wrapper<T> const&);
 
 		intf_wrapper_ptr<type> operator & (void);
-		type * operator -> (void);
-		type const* operator -> (void)const;
-		operator type * (void);
-		operator type const* (void)const;
+		type* operator -> (void)const;
+		operator type* (void)const;
 
 	private:
 		interface* _ptr;
 
 	};
 
+	template<>
+	class LINK intf_wrapper<const interface>
+	{
+	public:
+		typedef interface type;
+		typedef interface* type_ptr;
+		typedef interface& type_ref;
+		typedef interface const* ctype_ptr;
+		typedef interface const& ctype_ref;
+
+	public:
+		intf_wrapper();
+		intf_wrapper(ctype_ptr);
+		intf_wrapper(ang::nullptr_t const&);
+		intf_wrapper(intf_wrapper &&);
+		intf_wrapper(intf_wrapper const&);
+
+		template<typename T> intf_wrapper(T const*);
+		template<typename T> intf_wrapper(intf_wrapper<const T> const&);
+
+		~intf_wrapper();
+
+	public:
+		void clean();
+		bool is_empty()const;
+		type const* get(void)const;
+		void set(type const*);
+		type const** addres_of(void);
+
+		template<typename T> typename smart_ptr_type<T>::const_smart_ptr_t as() {
+			return dyn_cast<typename smart_ptr_type<T>::const_type>(_ptr);
+		}
+
+	public:
+		intf_wrapper& operator = (type const*);
+		intf_wrapper& operator = (ang::nullptr_t const&);
+		intf_wrapper& operator = (intf_wrapper &&);
+		intf_wrapper& operator = (intf_wrapper const&);
+		template<typename T> intf_wrapper& operator = (T const*);
+		template<typename T> intf_wrapper& operator = (intf_wrapper<const T> const&);
+
+		intf_wrapper_ptr<const type> operator & (void);
+		type const* operator -> (void)const;
+		operator type * (void);
+		operator type const* (void)const;
+
+	private:
+		interface const* _ptr;
+
+	};
 
 	/******************************************************************/
 	/* class ang::safe_pointer :                                      */
@@ -313,6 +529,11 @@ namespace ang
 
 template<typename T>
 inline ang::intf_wrapper_ptr<T> ang::intf_wrapper<T>::operator & (void) {
+	return this;
+}
+
+template<typename T>
+inline ang::intf_wrapper_ptr<const T> ang::intf_wrapper<const T>::operator & (void) {
 	return this;
 }
 

@@ -140,6 +140,7 @@ typedef long long long64;
 typedef unsigned long long qword;
 typedef unsigned long long ulong64;
 typedef void * pointer;
+typedef void const * const_pointer;
 #ifdef  index
 #undef  index
 #endif//index

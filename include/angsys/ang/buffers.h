@@ -8,7 +8,9 @@ namespace ang
 	ang_interface(ibuffer_view);
 
 	ang_begin_interface(LINK ibuffer_view)
-		visible vcall pointer buffer_ptr()const pure;
+		visible vcall bool is_constant()const pure;
+		visible vcall pointer buffer_ptr() pure;
+		visible vcall const_pointer buffer_ptr()const pure;
 		visible vcall wsize buffer_size()const pure;
 	ang_end_interface();
 
