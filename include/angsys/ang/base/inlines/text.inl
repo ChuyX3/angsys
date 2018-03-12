@@ -421,25 +421,6 @@ namespace ang
 		}
 	}
 
-	inline str_view<const char> operator "" _s(const char* str, wsize sz) { return str_view<const char>(str, sz); }
-	inline str_view<const mchar> operator "" _sm(const char* str, wsize sz) { return str_view<const mchar>((mchar const*)str, sz); }
-	inline str_view<const wchar_t> operator "" _s(const wchar_t* str, wsize sz) { return str_view<const wchar_t>(str, sz); }
-	inline str_view<const char16_t> operator "" _s(const char16_t* str, wsize sz) { return str_view<const char16_t>(str, sz); }
-	inline str_view<const char32_t> operator "" _s(const char32_t* str, wsize sz) { return str_view<const char32_t>(str, sz); }
-
-	typedef str_view<char> str_t;
-	typedef str_view<mchar> mstr_t;
-	typedef str_view<wchar> wstr_t;
-	typedef str_view<char16_t> str16_t;
-	typedef str_view<char32_t> str32_t;
-
-	typedef str_view<const char> cstr_t;
-	typedef str_view<const mchar> cmstr_t;
-	typedef str_view<const wchar> cwstr_t;
-	typedef str_view<const char16_t> cstr16_t;
-	typedef str_view<const char32_t> cstr32_t;
-
-
 	template<typename T, text::encoding ENCODING>
 	inline long64 str_to_integer(str_view<T, ENCODING> str, windex& i, int base = 10) {
 		static constexpr bool SWAP = text::is_endian_swapped<ENCODING>::value;

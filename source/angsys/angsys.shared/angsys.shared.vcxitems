@@ -20,6 +20,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\base.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\defines.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\interface.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\property.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\runtime.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\text.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\tuple.h" />
@@ -29,6 +30,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\types.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\buffers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\array.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\iterators.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\vector.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\function.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\const_string_declaration.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\intf_wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\object_wrapper.hpp" />
@@ -54,12 +60,16 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\runtime.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\const_string.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string_pool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\APPLY_FUNCX_N.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\raw_str.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\text.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\array.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\function.inl" />
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl" />
+    <None Include="$(MSBuildThisFileDirectory)include\inline\string.inl" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis" />

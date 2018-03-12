@@ -12,7 +12,6 @@
 #error ...
 #else
 
-
 ang::intf_wrapper<MY_TYPE>::intf_wrapper() : _ptr(null) {
 
 }
@@ -39,11 +38,11 @@ ang::intf_wrapper<MY_TYPE>::intf_wrapper(intf_wrapper const& other) : _ptr(null)
 
 
 ang::intf_wrapper<MY_TYPE>::~intf_wrapper() {
-	clean();
+	clear();
 }
 
 
-void ang::intf_wrapper<MY_TYPE>::clean()
+void ang::intf_wrapper<MY_TYPE>::clear()
 {
 	iobject * _obj = dyn_cast<iobject>(_ptr);
 	if (_obj)_obj->release();
@@ -83,7 +82,7 @@ ang::intf_wrapper<MY_TYPE>& ang::intf_wrapper<MY_TYPE>::operator = (MY_TYPE* ptr
 
 ang::intf_wrapper<MY_TYPE>& ang::intf_wrapper<MY_TYPE>::operator = (ang::nullptr_t const&)
 {
-	clean();
+	clear();
 	return*this;
 }
 
@@ -92,7 +91,7 @@ ang::intf_wrapper<MY_TYPE>& ang::intf_wrapper<MY_TYPE>::operator = (ang::intf_wr
 {
 	if (this == &other)
 		return *this;
-	clean();
+	clear();
 	_ptr = other._ptr;
 	other._ptr = null;
 	return*this;
@@ -161,11 +160,11 @@ ang::intf_wrapper<const MY_TYPE>::intf_wrapper(intf_wrapper const& other) : _ptr
 
 
 ang::intf_wrapper<const MY_TYPE>::~intf_wrapper() {
-	clean();
+	clear();
 }
 
 
-void ang::intf_wrapper<const MY_TYPE>::clean()
+void ang::intf_wrapper<const MY_TYPE>::clear()
 {
 	iobject const * _obj = dyn_cast<iobject>(_ptr);
 	if (_obj)const_cast<iobject*>(_obj)->release();
@@ -205,7 +204,7 @@ ang::intf_wrapper<const MY_TYPE>& ang::intf_wrapper<const MY_TYPE>::operator = (
 
 ang::intf_wrapper<const MY_TYPE>& ang::intf_wrapper<const MY_TYPE>::operator = (ang::nullptr_t const&)
 {
-	clean();
+	clear();
 	return*this;
 }
 
@@ -214,7 +213,7 @@ ang::intf_wrapper<const MY_TYPE>& ang::intf_wrapper<const MY_TYPE>::operator = (
 {
 	if (this == &other)
 		return *this;
-	clean();
+	clear();
 	_ptr = other._ptr;
 	other._ptr = null;
 	return*this;

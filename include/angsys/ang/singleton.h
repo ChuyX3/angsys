@@ -7,6 +7,8 @@ namespace ang
 	template<typename T, template<typename> class allocator = memory::default_allocator>
 	class singleton
 	{
+	public:
+		typedef allocator<T> allocator_t;
 	private:
 		static T* instance_manager(T* ptr, bool write = false, bool del = false) {
 			static T* _instance = null;
@@ -27,7 +29,7 @@ namespace ang
 			if (!is_instanced()) {
 				allocator<T> alloc;
 				auto ptr = alloc.allocate(1);
-				alloc.template create<T>(ptr);
+				alloc.construct<T>(ptr);
 			}
 				
 			return instance_manager(null, false);
@@ -41,8 +43,8 @@ namespace ang
 		}
 
 		singleton() {
-			if (is_instanced())
-				throw exception_t(except_code::two_singleton);
+			//if (is_instanced())
+			//	throw exception_t(except_code::two_singleton);
 			instance_manager(static_cast<T*>(this), true, false);
 		}
 

@@ -68,6 +68,8 @@ namespace ang
 		}
 		~ang_main_instance()
 		{
+			strings::string_pool::release_instance();
+
 			ascii_encoder = null;
 			unicode_encoder = null;
 			utf8_encoder = null;

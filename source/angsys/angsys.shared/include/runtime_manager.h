@@ -31,7 +31,6 @@ namespace ang
 						info->aligment() == node->info->aligment() &&
 						text::ascii::compare(info->type_name().cstr(), node->info->type_name().cstr()) == 0)
 						return node->info;
-
 					node = node->next;
 				}
 				return null;

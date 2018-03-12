@@ -16,7 +16,7 @@ basic_string_buffer_base::~basic_string_buffer_base()
 {
 	_map_index = invalid_index;
 	_map_size = invalid_index;
-	//clean();
+	//clear();
 }
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::strings::basic_string_buffer_base, object, itext_buffer);
@@ -84,17 +84,21 @@ bool basic_string_buffer_base::realloc_buffer(wsize size) { return realloc(size 
 raw_str_t  basic_string_buffer_base::text_buffer() {
 	auto char_size = _encoder->char_type().size();
 	if (_map_index != invalid_index || _map_size != invalid_index)
-		return is_local_data() ? raw_str((pointer)(_data._stack_buffer + _map_index), _map_size, encoding()) : raw_str(((byte*)_data._allocated_buffer) + _map_index, _map_size, encoding());
+		return storage_type_stack == storage_type() ? raw_str((pointer)(_data._stack_buffer + _map_index), _map_size, encoding()) : raw_str(((byte*)_data._allocated_buffer) + _map_index, _map_size, encoding());
 	else
-		return is_local_data() ? raw_str((pointer)_data._stack_buffer, _data._stack_length * char_size, encoding()) : raw_str(_data._allocated_buffer, _data._allocated_length * char_size, encoding());
+		return storage_type_stack == storage_type() ? raw_str((pointer)_data._stack_buffer, _data._stack_length * char_size, encoding()) 
+		: storage_type_allocated == storage_type() ? raw_str(_data._allocated_buffer, _data._allocated_length * char_size, encoding())
+		: _data._const_string->text_buffer();
 }
 
 raw_cstr_t  basic_string_buffer_base::text_buffer()const {
 	auto char_size = _encoder->char_type().size();
 	if (_map_index != invalid_index || _map_size != invalid_index)
-		return is_local_data() ? raw_cstr((pointer)(_data._stack_buffer + _map_index), _map_size, encoding()) : raw_cstr(((byte*)_data._allocated_buffer) + _map_index, _map_size, encoding());
+		return storage_type_stack == storage_type() ? raw_cstr((pointer)(_data._stack_buffer + _map_index), _map_size, encoding()) : raw_cstr(((byte*)_data._allocated_buffer) + _map_index, _map_size, encoding());
 	else
-		return is_local_data() ? raw_cstr((pointer)_data._stack_buffer, _data._stack_length * char_size, encoding()) : raw_cstr(_data._allocated_buffer, _data._allocated_length * char_size, encoding());
+		return storage_type_stack == storage_type() ? raw_cstr((pointer)_data._stack_buffer, _data._stack_length * char_size, encoding())
+		: storage_type_allocated == storage_type() ? raw_cstr(_data._allocated_buffer, _data._allocated_length * char_size, encoding())
+		: ((basic_const_string_buffer_base const*)_data._const_string)->text_buffer();
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -107,21 +111,23 @@ comparision_result_t basic_string_buffer_base::compare(object const* obj)const
 	return (comparision_result)_encoder->compare(text_buffer().ptr(), buffer->text_buffer().ptr(), buffer->encoding());
 }
 
-bool basic_string_buffer_base::is_local_data()const
+basic_string_buffer_base::storage_type_t basic_string_buffer_base::storage_type()const
 {
-	return  bool(_data._storage_type != invalid_index);
+	return _data._storage_type == storage_type_allocated ? storage_type_allocated 
+		: _data._storage_type == storage_type_string_pool ? storage_type_string_pool
+		: storage_type_stack;
 }
 
 void basic_string_buffer_base::length(wsize len)
 {
 	dword end = 0; wsize i = 0;
 	auto char_size = _encoder->char_type().size();
-	if (is_local_data()) {
+	if (storage_type_stack == storage_type()) {
 		len = min(len, 128u / char_size - 1);
 		_data._stack_length = len;
 		_encoder->set_eos(_data._stack_buffer, len); //set end of string
 	}
-	else {
+	else if (storage_type_allocated == storage_type()) {
 		len = min(len, _data._allocated_capacity - 1);
 		_data._allocated_length = len;
 		_encoder->set_eos(_data._allocated_buffer, len); //set end of string
@@ -138,7 +144,9 @@ wsize basic_string_buffer_base::length() const
 	if (_map_index != invalid_index || _map_size != invalid_index)
 		return _map_size;
 	else
-		return is_local_data() ? _data._stack_length : _data._allocated_length;
+		return storage_type_stack == storage_type() ? _data._stack_length 
+		: storage_type_allocated == storage_type() ? _data._allocated_length
+		: _data._const_string->text_buffer().count();
 }
 
 wsize basic_string_buffer_base::capacity() const
@@ -146,7 +154,21 @@ wsize basic_string_buffer_base::capacity() const
 	if (_map_index != invalid_index || _map_size != invalid_index)
 		return _map_size;
 	else
-		return is_local_data() ? 128u / _encoder->char_type().size() - 1 : _data._allocated_capacity - 1;
+		return storage_type_stack == storage_type() ? 128u / _encoder->char_type().size() - 1
+		: storage_type_allocated == storage_type() ? _data._allocated_capacity - 1
+		: _data._const_string->text_buffer().count();
+}
+
+void basic_string_buffer_base::set(basic_const_string_buffer_base* ptr)
+{
+	clear();
+	if (ptr != null && encoding() == ptr->encoding())
+	{
+		_data._storage_type = storage_type_string_pool;
+		_data._const_string = ptr;
+		_data._const_string->add_ref();
+		_data._const_string_view = ptr->text_buffer().ptr();
+	}
 }
 
 void basic_string_buffer_base::copy(raw_cstr_t str)
@@ -157,7 +179,7 @@ void basic_string_buffer_base::copy(raw_cstr_t str)
 	auto lc = 128u / _encoder->char_type().size();
 	if (sz < lc)
 	{
-		clean();
+		clear();
 		_encoder->convert(_data._stack_buffer, _data._stack_length, str.ptr(), j, str.encoding(), true, min(sz, lc - 1));
 	}
 	else
@@ -175,13 +197,23 @@ void basic_string_buffer_base::concat(raw_cstr_t str)
 	auto lc = 128u / _encoder->char_type().size();
 	wsize my_len = length();
 	realloc(my_len + sz, true);
-	if (is_local_data())
+	if (storage_type_stack == storage_type())
 	{
 		_encoder->convert(_data._stack_buffer, _data._stack_length, str.ptr(), j, str.encoding(), true, min(lc - my_len - 1, sz));
 	}
-	else
+	else if (storage_type_allocated == storage_type())
 	{
 		_encoder->convert(_data._allocated_buffer, _data._allocated_length, str.ptr(), j, str.encoding(), true, min(_data._allocated_capacity - my_len - 1, sz));
+	}
+	else
+	{	
+		basic_const_string_buffer_base* _const_string = _data._const_string;
+		auto txt = _const_string->text_buffer();
+		memset(&_data, 0, sizeof(_data));
+		realloc(txt.count() + str.count());
+		copy(txt);
+		concat(str);
+		_const_string->release();
 	}
 }
 
@@ -193,15 +225,25 @@ void basic_string_buffer_base::copy_at(raw_str_t str, windex at)
 	auto lc = 128u / _encoder->char_type().size();
 	wsize my_len = min(length(), at);
 	realloc(my_len + sz, true);
-	if (is_local_data())
+	if (storage_type_stack == storage_type())
 	{
 		_data._stack_length = my_len;
 		_encoder->convert(_data._stack_buffer, _data._stack_length, str.ptr(), j, str.encoding(), true, min(lc - my_len - 1, sz));
 	}
-	else
+	else if (storage_type_allocated == storage_type())
 	{
 		_data._allocated_length = my_len;
 		_encoder->convert(_data._allocated_buffer, _data._allocated_length, str.ptr(), j, str.encoding(), true, min(_data._allocated_capacity - my_len - 1, sz));
+	}
+	else
+	{
+		basic_const_string_buffer_base* _const_string = _data._const_string;
+		auto txt = _const_string->text_buffer();
+		memset(&_data, 0, sizeof(_data));
+		realloc(txt.count() + str.count());
+		copy(txt);
+		copy_at(str, at);
+		_const_string->release();
 	}
 }
 
@@ -239,3 +281,51 @@ raw_str_t basic_string_buffer_base::sub_string(raw_str_t raw, windex start, wind
 	encoder->convert(raw.ptr(), i, my_data.ptr(), j, my_data.encoding(), true, raw.size() / cs, end);
 	return raw_str_t(raw.ptr(), i * cs, raw.encoding());
 }
+
+///////////////////////////////////////////////////////////////////////////////////
+#define MY_ALLOCATOR ang::memory::buffer_allocator
+
+#define MY_ENCODING ang::text::encoding::ascii
+#include "inline/string.inl"
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::unicode
+#include "inline/string.inl"
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf8
+#include "inline/string.inl"
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf16
+#include "inline/string.inl"
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf16_se
+#include "inline/string.inl"
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf16_le
+#include "inline/string.inl"
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf16_be
+#include "inline/string.inl"
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf32
+#include "inline/string.inl"
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf32_se
+#include "inline/string.inl"
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf32_le
+#include "inline/string.inl"
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf32_be
+#include "inline/string.inl"
+#undef MY_ENCODING
+

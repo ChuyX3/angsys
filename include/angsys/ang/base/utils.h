@@ -41,6 +41,7 @@ namespace ang //constants
 	typedef decltype(nullptr) nullptr_t;
 	nullptr_t const null = {};
 
+	template<typename T> using initializer_list = std::initializer_list<T>;
 }
 
 namespace ang //type utils
@@ -335,32 +336,32 @@ namespace ang //operations
 
 	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same> {
 		static_assert(has_logic_operation<logic_operation_type::same, T1, T2>::value, "template parameter T has no logic operator");
-		static bool operate(const T1& value1, const T1& value2) { return value1 == value2; }
+		static bool operate(const T1& value1, const T2& value2) { return value1 == value2; }
 	};
 
 	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::diferent> {
 		static_assert(has_logic_operation<logic_operation_type::diferent, T1, T2>::value, "template parameter T has no logic operator");
-		static bool operate(const T1& value1, const T1& value2) { return value1 != value2; }
+		static bool operate(const T1& value1, const T2& value2) { return value1 != value2; }
 	};
 
 	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_minor> {
 		static_assert(has_logic_operation<logic_operation_type::same_or_minor, T1, T2>::value, "template parameter T has no logic operator");
-		static bool operate(const T1& value1, const T1& value2) { return value1 <= value2; }
+		static bool operate(const T1& value1, const T2& value2) { return value1 <= value2; }
 	};
 
 	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_major> {
 		static_assert(has_logic_operation<logic_operation_type::same_or_major, T1, T2>::value, "template parameter T has no logic operator");
-		static bool operate(const T1& value1, const T1& value2) { return value1 >= value2; }
+		static bool operate(const T1& value1, const T2& value2) { return value1 >= value2; }
 	};
 
 	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::minor> {
 		static_assert(has_logic_operation<logic_operation_type::minor, T1, T2>::value, "template parameter T has no logic operator");
-		static bool operate(const T1& value1, const T1& value2) { return value1 < value2; }
+		static bool operate(const T1& value1, const T2& value2) { return value1 < value2; }
 	};
 
 	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::major> {
 		static_assert(has_logic_operation<logic_operation_type::major, T1, T2>::value, "template parameter T has no logic operator");
-		static bool operate(const T1& value1, const T1& value2) { return value1 > value2; }
+		static bool operate(const T1& value1, const T2& value2) { return value1 > value2; }
 	};
 
 

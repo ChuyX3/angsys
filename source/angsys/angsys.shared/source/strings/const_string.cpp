@@ -32,7 +32,7 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::strings::basic_const_string_buffer_bas
 
 basic_const_string_buffer_base::basic_const_string_buffer_base() { }
 basic_const_string_buffer_base::~basic_const_string_buffer_base() { }
-bool basic_const_string_buffer_base::is_constant()const { return true; }
+bool basic_const_string_buffer_base::is_readonly()const { return true; }
 bool basic_const_string_buffer_base::can_realloc_buffer()const { return false; }
 pointer basic_const_string_buffer_base::buffer_ptr() { return null; }
 wsize basic_const_string_buffer_base::mem_copy(wsize, pointer, text::encoding_t) { return 0; }

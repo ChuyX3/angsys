@@ -13,7 +13,7 @@
 #ifndef __ANGC_CORE_HASH_TABLE_H__
 #define __ANGC_CORE_HASH_TABLE_H__
 
-#include <ang/base/base.h>
+#include <ang/system.h>
 
 #ifdef LINK
 #undef LINK
@@ -91,41 +91,33 @@ namespace ang
 				return out;
 			}
 			else {
-				for (auto i = 0U; i < array_size(list); ++i)
+				for (auto i = 0U; i < algorithms::array_size(list); ++i)
 					if (size < list[i])
 						return list[i];
 				return -1;
 			}
 		}
 
-
-		template<typename K, typename T>
-		using pair = tuple<K, T>;
-
-
 		template<typename K, typename T, 
 			template<typename> class allocator = memory::unmanaged_allocator,
 			template<typename> class hash_code_maker = collections::hash_code_maker>
-		class hash_table {
+		class hash_map {
 		private:
-			typedef struct _node {
-				pair<K, T> data;
-				_node* next;
-			}node_t, *node_ptr_t;
+			typedef linked_node<pair<K, T>> node_t, *node_ptr_t;
 
 			wsize _size;
 			allocator<node_t> alloc;
 			scope_array<node_ptr_t, allocator> _table;
 
 		public:
-			hash_table() {
+			hash_map() {
 				_table.allocate(127);
 			}
-			~hash_table() {
-				clean();
+			~hash_map() {
+				clear();
 			}
 
-			inline void clean() {
+			inline void clear() {
 				for (wsize i = 0; i < _table.size() && _size > 0; ++i) {
 					node_ptr_t temp = _table[i];
 					_table[i] = null;
@@ -138,7 +130,7 @@ namespace ang
 					}
 				}
 				_size = 0;
-				_table.clean();
+				_table.clear();
 			}
 			inline bool insert(K key, T value) {
 				if (_size > (_table.size() * 0.75))
@@ -150,8 +142,8 @@ namespace ang
 				ulong64 hash = hash_code_maker<K>::make(key, _table.size());
 				node_ptr_t entry = alloc.allocate(1);
 				alloc.template construct<node_t>(entry);
-				entry->data.set<0>(key);
-				entry->data.set<1>(value);
+				entry->data.key = key;
+				entry->data.value = value;
 				entry->next = _table[hash];
 				_table[hash] = entry;
 				_size++;
@@ -167,9 +159,9 @@ namespace ang
 				node_ptr_t temp = *prev;
 
 				while (temp != null) {
-					if (logic_operation<K,K, logic_operation_type::same>::operate(temp->data.get<0>(), key)) {
+					if (logic_operation<K,K, logic_operation_type::same>::operate(temp->data.key, key)) {
 						*prev = temp->next;
-						if (out)*out = temp->data.get<1>();
+						if (out)*out = temp->data.value;
 						alloc.template destroy<node_t>(temp);
 						alloc.deallocate(temp);
 						_size--;
@@ -185,7 +177,7 @@ namespace ang
 			inline bool find(K key, T* out = null)const {
 				node_ptr_t node = find_node(key);
 				if (node == null) return false;
-				if (out)*out = node->data.get<0>();
+				if (out)*out = node->data.value;
 				return true;
 			}
 			inline wsize size()const { return _size; }
@@ -207,7 +199,7 @@ namespace ang
 				ulong64 hash = hash_code_maker<K>::make(key, _table.size());
 				node_ptr_t temp = _table[hash];
 				while (temp != null) {
-					if (logic_operation<K, K, logic_operation_type::same>::operate(temp->data.get<0>(), key))
+					if (logic_operation<K, K, logic_operation_type::same>::operate(temp->data.key, key))
 						return temp;
 					temp = temp->next;
 				}
@@ -225,7 +217,7 @@ namespace ang
 						node_ptr_t temp = _table[i];
 						_table[i] = null;
 						while (temp) {
-							ulong64 hash = hash_code_maker<K>::make(temp->data.get<0>(), _table.size());
+							ulong64 hash = hash_code_maker<K>::make(temp->data.key, _table.size());
 							node_ptr_t entry = temp;
 							temp = temp->next;
 							entry->next = new_data[hash];
@@ -233,7 +225,138 @@ namespace ang
 							s--;
 						}
 					}
-					_table.clean();
+					_table.clear();
+				}
+				_table.move(new_data);
+			}
+		};
+
+
+		template<typename T,
+			template<typename> class allocator = memory::unmanaged_allocator,
+			template<typename> class hash_code_maker = collections::hash_code_maker>
+		class hash_set {
+		private:
+			typedef linked_node<T> node_t, *node_ptr_t;
+
+			wsize _size;
+			allocator<node_t> alloc;
+			scope_array<node_ptr_t, allocator> _table;
+
+		public:
+			hash_set() {
+				_table.allocate(127);
+			}
+			~hash_set() {
+				clear();
+			}
+
+			inline void clear() {
+				for (wsize i = 0; i < _table.size() && _size > 0; ++i) {
+					node_ptr_t temp = _table[i];
+					_table[i] = null;
+					while (temp) {
+						node_ptr_t to_delete = temp;
+						temp = temp->next;
+						alloc.template destroy<node_t>(to_delete);
+						alloc.deallocate(to_delete);
+						_size--;
+					}
+				}
+				_size = 0;
+				_table.clear();
+			}
+			inline bool insert(T value) {
+				if (_size > (_table.size() * 0.75))
+					increase_capacity();
+				if (find_node(value) != null)
+					return false;
+				ulong64 hash = hash_code_maker<T>::make(value, _table.size());
+				node_ptr_t entry = alloc.allocate(1);
+				alloc.template construct<node_t>(entry);
+				entry->data.value = ang::move(value);
+				entry->next = _table[hash];
+				_table[hash] = entry;
+				_size++;
+				return true;
+			}
+			inline bool remove(T const& out) {
+				if (_table.is_empty())
+					return false;
+
+				ulong64 hash = hash_code_maker<T>::make(key, _table.size());
+
+				node_ptr_t *prev = &_table[hash];
+				node_ptr_t temp = *prev;
+
+				while (temp != null) {
+					if (logic_operation<T, T, logic_operation_type::same>::operate(temp->data.value, value)) {
+						*prev = temp->next;
+						if (out)*out = temp->data.value;
+						alloc.template destroy<node_t>(temp);
+						alloc.deallocate(temp);
+						_size--;
+						return true;
+					}
+					prev = &temp->next;
+					temp = temp->next;
+				}
+				return false;
+			}
+			inline bool is_empty()const { return _size == 0; }
+			inline bool contains(T const& value)const { return find_node(value) != null; }
+			inline bool find(T const& value)const {
+				node_ptr_t node = find_node(value);
+				if (node == null)
+					return false;
+				return true;
+			}
+			inline wsize size()const { return _size; }
+
+			template<typename F> inline void iterate(F const& callback)const {
+				for (windex i = 0; i < _size; i++) {
+					node_ptr_t temp = _table[i];
+					while (temp != null) {
+						callback(temp->data);
+						temp = temp->next;
+					}
+				}
+			}
+
+		private:
+			node_ptr_t find_node(T const& value)const {
+				if (_table.size() == 0)
+					return null;
+				ulong64 hash = hash_code_maker<T>::make(value, _table.size());
+				node_ptr_t temp = _table[hash];
+				while (temp != null) {
+					if (logic_operation<T, T, logic_operation_type::same>::operate(temp->data, value))
+						return temp;
+					temp = temp->next;
+				}
+				return null;
+			}
+			void increase_capacity() {
+
+				scope_array<node_ptr_t, allocator> new_data;
+				wsize new_size = ang_hash_table_get_next_size(_table.size() + 20);
+				new_data.allocate(new_size);
+
+				if (!_table.is_empty() && _size)
+				{
+					for (wsize i = 0, s = _size; i < _table.size() && s > 0; ++i) {
+						node_ptr_t temp = _table[i];
+						_table[i] = null;
+						while (temp) {
+							ulong64 hash = hash_code_maker<T>::make(temp->data, _table.size());
+							node_ptr_t entry = temp;
+							temp = temp->next;
+							entry->next = new_data[hash];
+							new_data[hash] = entry;
+							s--;
+						}
+					}
+					_table.clear();
 				}
 				_table.move(new_data);
 			}

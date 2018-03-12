@@ -68,6 +68,32 @@ namespace ang
 		typedef object_wrapper<utf8_string_buffer> utf8_string, mstring;
 	}
 
+	namespace collections
+	{
+		template<typename T, template<typename> class allocator = memory::object_allocator> class array_buffer;
+		template<typename T, template<typename> class allocator = memory::object_allocator> class vector_buffer;
+		template<typename T, template<typename> class allocator = memory::object_allocator> using array = object_wrapper<array_buffer<T, allocator>>;
+		template<typename T, template<typename> class allocator = memory::object_allocator> using vector = object_wrapper<vector_buffer<T, allocator>>;
+	}
+
+	namespace core
+	{
+		namespace delegates
+		{
+			template<typename T> class listener;
+			template<typename T> class function_data;
+			template<typename T> using function = object_wrapper<function_data<T>>;
+			template<typename T> struct ifunction;
+			template<typename T> using ifunction_t = intf_wrapper<ifunction<T>>;
+			template<typename T> using method = intf_wrapper<ifunction<T>>;
+
+			using var_args_t = collections::vector<objptr>;
+			using var_args = collections::vector_buffer<objptr>;
+		}
+
+		using collections::array;
+	}
+
 	using strings::string;
 	using strings::wstring;
 	using strings::mstring;
@@ -76,8 +102,15 @@ namespace ang
 #include <ang/smart_ptr.h>
 #include <ang/object.h>
 #include <ang/singleton.h>
+#include <ang/collections.h>
 #include <ang/buffers.h>
+#include <ang/core/function.h>
+#include <ang/collections/array.h>
+#include <ang/collections/vector.h>
 #include <ang/string.h>
 
+
+//#include <ang/collections/inline/array.inl>
+//#include <ang/inline/function.inl>
 
 #endif //__ANGSYS_H__

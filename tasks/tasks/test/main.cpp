@@ -343,67 +343,11 @@ ANG_EXTERN ulong64 get_performance_time_us()
 	}
 }
 
-
-#include<type_traits>
-
-template<typename T, class proxy>
-class property
-{
-public:
-	property(T val) : value(val) {}
-
-	const T& get()const { return value; }
-	void set(const T& val) { 
-		static_assert(!std::is_const<T>::value, "can't asign value to a const property");
-		value = val; 
-	}
-
-	operator T &() { return value; }
-	operator T const&()const { return value; }
-	property& operator = (property const& val) {
-		set(val.get());
-		return*this;
-	}
-	property& operator = (T const& val) {
-		set(val);
-		return*this;
-	}
-
-private:
-	typename std::remove_const<T>::type value;
-	friend proxy;
-};
-
-
-class my_class
-{
-public:
-	my_class() : my_property(0), my_const_property(0) { }
-
-	property<int, my_class> my_property;
-	property<const int, my_class> my_const_property;
-
-	void increase_const_property() {
-		my_const_property.value++;
-	}
-
-	void decrease_const_property() {
-		my_const_property.value--;
-	}
-};
-
-
-
 int main()
 {	
-	my_class a;
-
-	int c = a.my_property;
-	a.increase_const_property();
-	c = a.my_property;
-
-	a.my_property = 5;
-	a.my_const_property = 5;
+	string str = new("jesus rocha") strings::const_string_buffer();
+	
+	safe_pointer;
 
 	return 0;
 }

@@ -35,18 +35,18 @@ allocator_internal::~allocator_internal()
 	core::async::scope_locker<decltype(mutex)> lock(mutex);
 	if (!memory_map.is_empty()) memory_map.iterate([&](collections::pair<pointer, memory_block_t>& info)
 	{
-		if (info.get<0>())
+		if (info.key)
 		{
 			error = true;
 			//				NN_LOG("Allocator[%d]: Memory leak at %X: size: %d; file: %s: %d;\n", _allocator_type, (wsize)info.second->ptr, info.second->size, info.second->file, info.second->line);
 		}
 
 
-		if (info.get<1>()->file)
-			ang_free_unmanaged_memory(info.get<1>()->file);
-		ang_free_unmanaged_memory(info.get<1>());
+		if (info.value->file)
+			ang_free_unmanaged_memory(info.value->file);
+		ang_free_unmanaged_memory(info.value);
 	});
-	memory_map.clean();
+	memory_map.clear();
 #ifdef WINDOWS_PLATFORM
 	if (error)
 		__debugbreak();
@@ -117,19 +117,19 @@ aligned_allocator_internal::~aligned_allocator_internal() {
 	core::async::scope_locker<decltype(mutex)> lock(mutex);
 	if (!memory_map.is_empty()) memory_map.iterate([&](collections::pair<pointer, memory_block_t>& info)
 	{
-		if (info.get<0>())
+		if (info.key)
 		{
 			error = true;
 			//				NN_LOG("Allocator[%d]: Memory leak at %X: size: %d; file: %s: %d;\n", _allocator_type, (wsize)info.second->ptr, info.second->size, info.second->file, info.second->line);
 		}
 
 
-		if (info.get<1>()->file)
-			ang_free_unmanaged_memory(info.get<1>()->file);
-		_aligned_free(info.get<1>());
+		if (info.value->file)
+			ang_free_unmanaged_memory(info.value->file);
+		_aligned_free(info.value);
 	});
 
-	memory_map.clean();
+	memory_map.clear();
 #ifdef WINDOWS_PLATFORM
 	if (error)
 		__debugbreak();

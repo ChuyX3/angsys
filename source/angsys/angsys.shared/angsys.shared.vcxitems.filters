@@ -33,6 +33,15 @@
     <Filter Include="header\include\inline">
       <UniqueIdentifier>{019f3061-2402-48bc-96bb-c627630a3dcc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="header\angsys\core">
+      <UniqueIdentifier>{7e438f59-ea84-4f78-b509-2254ca6fb7d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\angsys\collections">
+      <UniqueIdentifier>{e82b5310-d21a-4fc2-8f70-8d0dc314ec3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\angsys\collections\inline">
+      <UniqueIdentifier>{39d0e658-8ab8-42e6-8c91-2af969eda8de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h">
@@ -119,6 +128,24 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\string_declaration.hpp">
       <Filter>header\angsys\inline</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections.h">
+      <Filter>header\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\property.h">
+      <Filter>header\angsys\base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\function.h">
+      <Filter>header\angsys\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\iterators.h">
+      <Filter>header\angsys\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\array.h">
+      <Filter>header\angsys\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\vector.h">
+      <Filter>header\angsys\collections</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
@@ -148,6 +175,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp">
       <Filter>source\strings</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string_pool.cpp">
+      <Filter>source\strings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\APPLY_FUNCX_N.inl">
@@ -161,6 +191,15 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl">
       <Filter>header\include\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)include\inline\string.inl">
+      <Filter>header\include\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\function.inl">
+      <Filter>header\angsys\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\array.inl">
+      <Filter>header\angsys\collections\inline</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

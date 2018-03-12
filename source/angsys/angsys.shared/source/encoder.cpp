@@ -7,6 +7,19 @@ using namespace ang::text;
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::iencoder, interface);
 
+TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, ascii);
+TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, unicode);
+TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, utf8);
+TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, utf16);
+TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, utf16_se);
+TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, utf16_le);
+TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, utf16_be);
+TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, utf32);
+TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, utf32_se);
+TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, utf32_le);
+TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, utf32_be);
+
+
 #define MY_TYPE ang::text::iencoder
 #include "ang/inline/intf_wrapper_specialization.inl"
 #undef MY_TYPE
@@ -122,3 +135,71 @@ wsize ang::raw_cstr::char_size()const { return text::encoder<text::encoding::aut
 ang::text::encoding ang::raw_cstr::encoding()const { return _encoding; }
 
 
+///////////////////////////////////////////////////////////////////////////////////////
+
+static collections::pair<ang::text::encoding, cstr_t> s_encoding_to_string[] = 
+{
+	{ ang::text::encoding::binary, "binary"_s },
+	{ ang::text::encoding::ascii, "ascii"_s },
+	{ ang::text::encoding::unicode, "unicode"_s },
+	{ ang::text::encoding::utf8, "utf8"_s },
+	{ ang::text::encoding::utf16, "utf16"_s },
+	{ ang::text::encoding::utf16_se, "utf16_se"_s },
+	{ ang::text::encoding::utf16_le, "utf16_le"_s },
+	{ ang::text::encoding::utf16_be, "utf16_be"_s },
+	{ ang::text::encoding::utf32, "utf32"_s },
+	{ ang::text::encoding::utf32_se, "utf32_se"_s },
+	{ ang::text::encoding::utf32_le, "utf32_le"_s },
+	{ ang::text::encoding::utf32_be, "utf32_be"_s },
+};
+
+static collections::pair<cstr_t, ang::text::encoding> s_encoding_parse[] =
+{
+	{ "ascii"_s, ang::text::encoding::ascii },
+	{ "binary"_s, ang::text::encoding::binary },
+	{ "unicode"_s, ang::text::encoding::unicode },
+	{ "utf16"_s, ang::text::encoding::utf16 },
+	{ "utf16_be"_s, ang::text::encoding::utf16_be },
+	{ "utf16_le"_s, ang::text::encoding::utf16_le },
+	{ "utf16_se"_s, ang::text::encoding::utf16_se },
+	{ "utf32"_s, ang::text::encoding::utf32 },
+	{ "utf32_be"_s, ang::text::encoding::utf32_be },
+	{ "utf32_le"_s, ang::text::encoding::utf32_le },
+	{ "utf32_se"_s, ang::text::encoding::utf32_se },
+};
+
+cstr_t encoding_t::to_string()const
+{
+	auto idx = algorithms::binary_search(get(), collections::to_array(s_encoding_to_string));
+	if (idx >= algorithms::array_size(s_encoding_to_string))
+		return "binary"_s;
+	else
+		return s_encoding_to_string[idx].value;
+}
+
+encoding_t encoding_t::parse(cstr_t str)
+{
+	auto idx = algorithms::binary_search(str, collections::to_array(s_encoding_parse));
+	if (idx >= algorithms::array_size(s_encoding_parse))
+		return encoding::binary;
+	else
+		return s_encoding_parse[idx].value;
+}
+
+encoding_t encoding_t::parse(cwstr_t str)
+{
+	auto idx = algorithms::binary_search(str, collections::to_array(s_encoding_parse));
+	if (idx >= algorithms::array_size(s_encoding_parse))
+		return encoding::binary;
+	else
+		return s_encoding_parse[idx].value;
+}
+
+encoding_t encoding_t::parse(cmstr_t str)
+{
+	auto idx = algorithms::binary_search(str, collections::to_array(s_encoding_parse));
+	if (idx >= algorithms::array_size(s_encoding_parse))
+		return encoding::binary;
+	else
+		return s_encoding_parse[idx].value;
+}

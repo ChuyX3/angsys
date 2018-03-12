@@ -47,11 +47,11 @@ namespace ang
 		}
 
 		~intf_wrapper() { 
-			clean(); 
+			clear(); 
 		}
 
 	public:
-		void clean() {
+		void clear() {
 			iobject * _obj = dyn_cast<iobject>(_ptr);
 			if (_obj)_obj->release();
 			_ptr = null;
@@ -78,7 +78,7 @@ namespace ang
 		void move(intf_wrapper& ptr) {
 			if (this == &ptr)
 				return;
-			clean();
+			clear();
 			_ptr = ptr._ptr;
 			ptr._ptr = null;
 		}
@@ -88,7 +88,7 @@ namespace ang
 		}
 
 		type ** addres_for_init(void) {
-			clean(); 
+			clear(); 
 			return &_ptr;
 		}
 
@@ -109,7 +109,7 @@ namespace ang
 		}
 
 		intf_wrapper& operator = (ang::nullptr_t const&) { 
-			clean(); 
+			clear(); 
 			return*this;
 		}
 
@@ -175,11 +175,11 @@ namespace ang
 		}
 
 		~intf_wrapper() {
-			clean();
+			clear();
 		}
 
 	public:
-		void clean() {
+		void clear() {
 			iobject * _obj = dyn_cast<iobject>(const_cast<type_ptr>(_ptr));
 			if (_obj)_obj->release();
 			_ptr = null;
@@ -206,7 +206,7 @@ namespace ang
 		void move(intf_wrapper& ptr) {
 			if (this == &ptr)
 				return;
-			clean();
+			clear();
 			_ptr = ptr._ptr;
 			ptr._ptr = null;
 		}
@@ -216,7 +216,7 @@ namespace ang
 		}
 
 		ctype_ptr* addres_for_init(void) {
-			clean();
+			clear();
 			return &_ptr;
 		}
 
@@ -237,7 +237,7 @@ namespace ang
 		}
 
 		intf_wrapper& operator = (ang::nullptr_t const&) {
-			clean();
+			clear();
 			return*this;
 		}
 
@@ -397,7 +397,7 @@ namespace ang
 		~intf_wrapper();
 
 	public:
-		void clean();
+		void clear();
 		bool is_empty()const;
 		type* get(void)const;
 		void set(type*);
@@ -447,7 +447,7 @@ namespace ang
 		~intf_wrapper();
 
 	public:
-		void clean();
+		void clear();
 		bool is_empty()const;
 		type const* get(void)const;
 		void set(type const*);
@@ -502,7 +502,7 @@ namespace ang
 
 	private:
 		void set(interface*);
-		void clean();
+		void clear();
 
 	public: //properties
 		bool is_valid()const;
@@ -524,6 +524,38 @@ namespace ang
 	};
 
 	template<> LINK intfptr safe_pointer::lock<interface>();
+
+	template<typename T>
+	class weak_ptr : public safe_pointer
+	{
+	public:
+		typedef T type;
+		typedef T* type_ptr;
+		typedef T& type_ref;
+		typedef T const* ctype_ptr;
+		typedef T const& ctype_ref;
+
+	public:
+		weak_ptr() : safe_pointer() {}
+		weak_ptr(weak_ptr&& other) : safe_pointer((safe_pointer&&)other) {}
+		weak_ptr(weak_ptr const& other) : safe_pointer((safe_pointer const&)other) {}
+		weak_ptr(ang::nullptr_t const&) : safe_pointer(null) {}
+		weak_ptr(T* obj) : safe_pointer(obj) {}
+		weak_ptr(typename smart_ptr_type<T>::smart_ptr_t obj) : safe_pointer(obj.get()) {}
+		~weak_ptr() {}
+
+	public: //properties
+		typename smart_ptr_type<T>::smart_ptr_t lock()const {
+			auto ptr = safe_pointer::lock<intfptr>();
+			return reinterpret_cast<T*>(ptr.get());
+		}
+
+		weak_ptr& operator = (typename smart_ptr_type<T>::smart_ptr_t obj) { safe_pointer::operator=(obj.get()); return *this; }
+		weak_ptr& operator = (T* obj) { safe_pointer::operator=(obj);  return *this; }
+		weak_ptr& operator = (weak_ptr&& other) { safe_pointer::operator=(other); return *this; }
+		weak_ptr& operator = (weak_ptr const& other) { safe_pointer::operator=(other);  return *this; }
+		weak_ptr& operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }
+	};
 }
 
 

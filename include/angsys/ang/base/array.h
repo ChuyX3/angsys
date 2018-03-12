@@ -64,8 +64,8 @@ namespace ang //constants
 			operator type& () { return get(); }
 			operator type ()const { return get(); }
 
-			template<typename I>element_type& operator [](I idx) { static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted"); ANG_ASSERT(wsize(idx) < _size, "array_view: operator [] overflow exception"); return _data[idx]; }
-			template<typename I>element_type const& operator [](I idx)const { static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted"); ANG_ASSERT(wsize(idx) < _size, "array_view: operator [] overflow exception"); return _data[idx]; }
+			template<typename I>element_type& operator [](I idx) { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return _data[idx]; }
+			template<typename I>element_type const& operator [](I idx)const { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return _data[idx]; }
 
 			element_type** operator & () { return &get(); }
 		};
@@ -167,8 +167,6 @@ namespace ang //constants
 			element_type** operator & () { return &get(); }
 		};
 
-
-
 		template<typename T, template<typename> class allocator = memory::default_allocator>
 		struct scope_array {
 		public:
@@ -223,13 +221,13 @@ namespace ang //constants
 						alloc.template construct<T, U const&>((T*)&_data[i], ar[i]);
 				}
 			}
-			~scope_array() { clean(); }
+			~scope_array() { clear(); }
 
 		public: /*getters and setters*/
 			type & get() { return _data; }
 			type const& get()const { return _data; }
 			void set(type val, wsize size) {
-				clean();
+				clear();
 				_size = min(wsize(-1) / sizeof(T), sz);
 				if (_size > 0) {
 					_data = alloc.allocate(_size);
@@ -239,14 +237,14 @@ namespace ang //constants
 			}
 			void move(scope_array& other) {
 				if ((scope_array*)&other == this) return;
-				clean();
+				clear();
 				_size = other._size;
 				_data = other._data;
 				other._size = 0;
 				other._data = null;
 			}
 			void move(array_view<T>& other) {
-				clean();
+				clear();
 				if (other.size() > 0)
 					_data = alloc.allocate(other.size());
 				_size = other.size();
@@ -256,7 +254,7 @@ namespace ang //constants
 				other.set(null, 0);
 			}
 			template<typename U, template<typename> class allocator2> void copy(scope_array<U, allocator2> const& other) {
-				clean();
+				clear();
 				if (other.size() > 0)
 					_data = alloc.allocate(other.size());
 				_size = other.size();
@@ -265,7 +263,7 @@ namespace ang //constants
 				other.set(null, 0);
 			}
 			template<typename U> void copy(array_view<U> const& other) {
-				clean();
+				clear();
 				if (other.size() > 0)
 					_data = alloc.allocate(other.size());
 				_size = other.size();
@@ -273,7 +271,7 @@ namespace ang //constants
 					alloc.template construct<T, U const&>(&_data[i], other[i]);
 			}
 			template<typename U, wsize N> void copy(U(&ar)[N]) {
-				clean(); _size = N;
+				clear(); _size = N;
 				if (_size > 0) {
 					_data = alloc.allocate(_size);
 					for (windex i = 0; i < _size; ++i)
@@ -281,7 +279,7 @@ namespace ang //constants
 				}
 			}
 			template<typename U, wsize N> void copy(const U(&ar)[N]) {
-				clean(); _size = N;
+				clear(); _size = N;
 				if (_size > 0) {
 					_data = alloc.allocate(_size);
 					for (windex i = 0; i < _size; ++i)
@@ -291,7 +289,7 @@ namespace ang //constants
 
 			type data()const { return _data; }
 			wsize size()const { return _size; }
-			void clean() {
+			void clear() {
 				if (_data) {
 					for (windex i = 0; i < _size; ++i)
 						alloc.template destroy<T>((T*)&_data[i]);
@@ -301,7 +299,7 @@ namespace ang //constants
 				_data = null;
 			}
 			type allocate(wsize size) {
-				clean(); 
+				clear(); 
 				if (size > 0) {
 					_size = size;
 					_data = alloc.allocate(_size);
@@ -336,9 +334,25 @@ namespace ang //constants
 	using collections::stack_array;
 	using collections::scope_array;
 
-	template<typename T, wsize N> inline constexpr wsize array_size(const T(&ar)[N]) { return N; }
-	template<class T, wsize SIZE> inline constexpr wsize array_size(const stack_array<T, SIZE>&) { return SIZE; }
-	template<class T> inline wsize array_size(const array_view<T>& arr) { return arr.size(); }
+	namespace algorithms
+	{
+		template<typename T, wsize N> inline constexpr wsize array_size(const T(&ar)[N]) { return N; }
+		template<class T, wsize SIZE> inline constexpr wsize array_size(const stack_array<T, SIZE>&) { return SIZE; }
+		template<class T> inline wsize array_size(const array_view<T>& arr) { return arr.size(); }
+
+		template<typename K, typename T>
+		wsize binary_search(K const& key, array_view<T> const& vector) {
+			long64 first = 0, last = (long64)vector.size() - 1;
+			long64 mid;
+			while (first <= last) {
+				mid = (first + last) / 2;
+				if (logic_operation<T, K, logic_operation_type::same>::operate(vector[mid], key)) return (wsize)mid;
+				else if (logic_operation<T, K, logic_operation_type::same>::operate(vector[mid], key)) last = mid - 1;
+				else first = mid + 1;
+			}
+			return invalid_index;
+		}
+	}
 }
 
 #endif//__ANG_BASE_ARRAY_H__

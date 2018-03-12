@@ -16,6 +16,7 @@ namespace ang
 			typedef str_view<char_t const> cstr_t;
 
 		public:
+			template<typename T, wsize N> pointer operator new(wsize sz, const T(&ar)[N]) { return basic_const_string_buffer_base::operator new(sz, ENCODING, str_view<const T>(ar)); }
 			template<typename T, text::encoding E> pointer operator new(wsize sz, str_view<T, E> const& str) { return basic_const_string_buffer_base::operator new(sz, ENCODING, (raw_cstr)str); }
 			template<typename T, text::encoding E> void operator delete(pointer ptr, raw_cstr_t str) { return basic_const_string_buffer_base::operator delete(ptr, ENCODING, (raw_cstr)str); }
 

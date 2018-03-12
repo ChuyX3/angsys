@@ -223,7 +223,7 @@ namespace ang
 
 	public:
 		void clean();
-		void clean_unsafe();
+		void clear_unsafe();
 		bool is_empty()const;
 		collections::vector_buffer<T, allocator>* get(void)const;
 		void set(collections::vector_buffer<T, allocator>*);
@@ -308,7 +308,7 @@ namespace ang
 
 	public:
 		void clean();
-		void clean_unsafe();
+		void clear_unsafe();
 		bool is_empty()const;
 		collections::vector_buffer<object_wrapper<T>, allocator>* get(void)const;
 		void set(collections::vector_buffer<object_wrapper<T>, allocator>*);

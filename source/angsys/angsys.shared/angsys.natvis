@@ -161,4 +161,17 @@
     </Expand>
   </Type>
 
+
+  <Type Name="ang::strings::basic_const_string_buffer&lt;*&gt;">
+    <DisplayString Condition="view_ != 0">{((this + 1) + sizeof(wsize)), s}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">*(wsize*)(this + 1)</Item>
+      <ArrayItems>
+        <Size>size_</Size>
+        <ValuePointer>(char*)(wsize(this + 1) + sizeof(wsize))</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
 </AutoVisualizer>

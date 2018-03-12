@@ -4,6 +4,8 @@
 #define __SAMRT_PTR_H__
 namespace ang
 {
+	template<typename T> class weak_ptr;
+
 	template<typename T> struct is_object : integer_constant<bool, is_same_type<T, object>::value || is_inherited_from<T, object>::value> {};
 
 	template<typename T, bool VALUE = is_interface<T>::value> struct is_smart_ptr : public false_type {};

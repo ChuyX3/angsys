@@ -433,9 +433,80 @@ namespace ang //constants
 		cstr_t view_;
 	};
 
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	bool operator == (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+		return text::encoder<E1>::template compare<T2 const*>(value1.cstr(), value2.cstr()) == 0; 
+	}
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	bool operator != (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+		return text::encoder<E1>::template compare<T2 const*>(value1.cstr(), value2.cstr()) != 0;
+	}
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	bool operator >= (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+		return text::encoder<E1>::template compare<T2 const*>(value1.cstr(), value2.cstr()) >= 0;
+	}
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	bool operator <= (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+		return text::encoder<E1>::template compare<T2 const*>(value1.cstr(), value2.cstr()) <= 0;
+	}
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	bool operator > (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+		return text::encoder<E1>::template compare<T2 const*>(value1.cstr(), value2.cstr()) > 0;
+	}
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	bool operator < (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+		return text::encoder<E1>::template compare<T2 const*>(value1.cstr(), value2.cstr()) < 0;
+	}
+
+
+	inline str_view<const char> operator "" _s(const char* str, wsize sz) { return str_view<const char>(str, sz); }
+	inline str_view<const mchar> operator "" _sm(const char* str, wsize sz) { return str_view<const mchar>((mchar const*)str, sz); }
+	inline str_view<const wchar_t> operator "" _s(const wchar_t* str, wsize sz) { return str_view<const wchar_t>(str, sz); }
+	inline str_view<const char16_t> operator "" _s(const char16_t* str, wsize sz) { return str_view<const char16_t>(str, sz); }
+	inline str_view<const char32_t> operator "" _s(const char32_t* str, wsize sz) { return str_view<const char32_t>(str, sz); }
+
+	typedef str_view<char> str_t;
+	typedef str_view<mchar> mstr_t;
+	typedef str_view<wchar> wstr_t;
+	typedef str_view<char16_t> str16_t;
+	typedef str_view<char32_t> str32_t;
+
+	typedef str_view<const char> cstr_t;
+	typedef str_view<const mchar> cmstr_t;
+	typedef str_view<const wchar> cwstr_t;
+	typedef str_view<const char16_t> cstr16_t;
+	typedef str_view<const char32_t> cstr32_t;
+
+	template<typename T, T VALUE>
+	struct to_string
+	{
+		static const str_view<const char> value;
+	};
+
+#define TO_STRING_TEMPLATE(_LINK, _ENUM, _VALUE) namespace ang { template<> struct _LINK to_string<_ENUM, _ENUM::_VALUE>	{ static const str_view<const char> value; }; }
+#define TO_STRING_TEMPLATE_IMPLEMENT(_ENUM, _VALUE) const ang::str_view<const char>  ang::to_string<_ENUM, _ENUM::_VALUE>::value = ANG_UTILS_TO_STRING_OBJ(_VALUE);
+
 }
 
 #include <ang/base/inlines/text.inl>
 //#include <ang/base/inlines/raw_str.inl>
+
+TO_STRING_TEMPLATE(LINK, ang::text::encoding, ascii);
+TO_STRING_TEMPLATE(LINK, ang::text::encoding, unicode);
+TO_STRING_TEMPLATE(LINK, ang::text::encoding, utf8);
+TO_STRING_TEMPLATE(LINK, ang::text::encoding, utf16);
+TO_STRING_TEMPLATE(LINK, ang::text::encoding, utf16_se);
+TO_STRING_TEMPLATE(LINK, ang::text::encoding, utf16_le);
+TO_STRING_TEMPLATE(LINK, ang::text::encoding, utf16_be);
+TO_STRING_TEMPLATE(LINK, ang::text::encoding, utf32);
+TO_STRING_TEMPLATE(LINK, ang::text::encoding, utf32_se);
+TO_STRING_TEMPLATE(LINK, ang::text::encoding, utf32_le);
+TO_STRING_TEMPLATE(LINK, ang::text::encoding, utf32_be);
 
 #endif//__ANG_BASE_TEXT_H__

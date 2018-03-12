@@ -1,17 +1,9 @@
-#ifndef __ANGSYS_HPP__
-#elif !defined __ANG_COLLECTIONS_ARRAY_HPP__
-#define __ANG_COLLECTIONS_ARRAY_HPP__
+#ifndef __ANG_COLLECTIONS_H__
+#elif !defined __ANG_COLLECTIONS_ARRAY_H__
+#define __ANG_COLLECTIONS_ARRAY_H__
 
 namespace ang
 {
-	namespace collections
-	{
-		template<typename T, template<typename> class allocator = memory::default_allocator> class array_buffer;
-		template<typename T, template<typename> class allocator = memory::default_allocator> using array = object_wrapper<array_buffer<T, allocator>>;
-	}
-
-	using collections::array;
-
 	namespace collections
 	{
 		/******************************************************************/
@@ -27,6 +19,7 @@ namespace ang
 		public:
 			typedef T							type;
 			typedef array_buffer<T, allocator> 	self_t;
+			typedef allocator<T>				allocator_t;
 			typedef iarray<T>					iarray_t;
 			typedef ienum<T>					ienum_t;
 			typedef base_iterator<T>			base_iterator_t;
@@ -38,12 +31,14 @@ namespace ang
 			typedef const_backward_iterator<T>	const_backward_iterator_t;
 
 		protected:
-			scope_array<T, allocator> _data;
+			allocator_t alloc;
+			wsize _size;
+			type* _data;
 
 		public:
 			inline array_buffer();
 			inline array_buffer(wsize reserve);
-			template<typename U>inline array_buffer(ang::initializer_list_t<U> list);
+			template<typename U>inline array_buffer(ang::initializer_list<U> list);
 			inline array_buffer(const ang::nullptr_t&);
 			inline array_buffer(array_buffer&& ar);
 			inline array_buffer(const array_buffer& ar);
@@ -62,13 +57,14 @@ namespace ang
 			inline wsize size()const;
 			inline void size(wsize size);
 
-			inline void clean();
+			inline void clear();
 			inline bool move(array_buffer<T, allocator>&);
 			template<typename U> inline void copy(array_view<U>const&);
 			template<typename U, template<typename> class allocator2> inline void copy(scope_array<U, allocator2>const&);
 			template<typename U, wsize SIZE> inline void copy(stack_array<U, SIZE> const&);
 
 		public: //ibuffer overrides
+			inline bool is_readonly()const override;
 			inline text::encoding_t encoding()const override;
 			inline pointer buffer_ptr()const override;
 			inline wsize buffer_size()const override;
@@ -103,27 +99,26 @@ namespace ang
 			inline iterator_t at(windex) override;
 			inline const_iterator_t at(windex)const override;
 			inline void copy(const ienum<T>*) override;
-			inline iterator<T> find(const T&, bool invert = false)const override;
-			inline iterator<T> find(const T&, base_iterator_t next_to, bool invert = false)const override;
+			inline iterator<T> find(core::delegates::function<bool(T&)>, bool invert = false)const override;
+			inline iterator<T> find(core::delegates::function<bool(T&)>, base_iterator_t next_to, bool invert = false)const override;
+			inline collections::ienum_t<T> find_all(core::delegates::function<bool(T&)>)const override;
 
 		public: //overrides
-			inline static type_name_t class_name();
-			inline static bool is_inherited_of(type_name_t);
-			inline type_name_t object_name()const override;
-			inline bool is_kind_of(type_name_t)const override;
-			inline bool query_object(type_name_t, unknown_ptr_t) override;
+			ANG_DECLARE_INTERFACE();
 			inline comparision_result_t compare(const object&)const override;
 
 		protected: //memory operations
 			inline bool realloc(wsize size);
 
 		};
+
 	}//collections
 
-	 /******************************************************************/
-	 /* template class ang::object_wrapper<array_buffer> :             */
-	 /*  -> specialization of object_wrapper<array_buffer> -> array    */
-	 /******************************************************************/
+
+	/******************************************************************/
+	/* template class ang::object_wrapper<array_buffer> :             */
+	/*  -> specialization of object_wrapper<array_buffer> -> array    */
+	/******************************************************************/
 	template<typename T, template<typename> class allocator>
 	class object_wrapper<collections::array_buffer<T, allocator>>
 	{
@@ -146,7 +141,7 @@ namespace ang
 			set(new collections::array_buffer<T, allocator>(ar));
 		}
 		object_wrapper(collections::array_buffer<T, allocator>*);
-		template<typename U> object_wrapper(ang::initializer_list_t<U> list);
+		template<typename U> object_wrapper(ang::initializer_list<U> list);
 		object_wrapper(const collections::ienum<data_type>* store);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
@@ -158,7 +153,7 @@ namespace ang
 		~object_wrapper();
 
 	public:
-		void clean();
+		void clear();
 		void clear_unsafe();
 		bool is_empty()const;
 		collections::array_buffer<T, allocator>* get(void)const;
@@ -192,99 +187,7 @@ namespace ang
 		template<typename I>T const& operator[](I const& idx)const;
 	};
 
-	namespace collections
-	{
-		template<typename T, template<typename> class allocator>
-		struct scope_array<object_wrapper<T>, allocator>
-		{
-		public:
-			typedef object_wrapper<T>* type;
-			typedef object_wrapper<T> element_type;
-
-		private:
-			wsize _size;
-			element_type* _data;
-
-		public:
-			scope_array();
-			scope_array(wsize size, type val = null);
-			scope_array(ang::nullptr_t const&);
-			scope_array(scope_array const& other);
-			scope_array(scope_array && other);
-			template<typename U, wsize N>scope_array(U(&ar)[N]);
-			template<typename U, wsize N>scope_array(const U(&ar)[N]);
-			~scope_array() { clean(); }
-
-		public: /*getters and setters*/
-			type & get() { return _data; }
-			type const& get()const { return _data; }
-			void set(type val, wsize size);
-			void move(scope_array&);
-			void move(array_view<object_wrapper<T>>&);
-			template<typename U, template<typename> class allocator2> void copy(scope_array<U, allocator2> const&);
-			template<typename U> void copy(array_view<U> const&);
-			template<typename U, wsize N> void copy(U(&ar)[N]);
-			template<typename U, wsize N> void copy(const U(&ar)[N]);
-
-			type data()const { return _data; }
-			wsize size()const { return _size; }
-			void clean();
-			type alloc(wsize);
-
-			type begin()const { return _data; }
-			type end()const { return _data + _size; }
-
-		public: /*operators*/
-			scope_array& operator = (type val) { set(ang::move(val), 1u); return*this; }
-			scope_array& operator = (scope_array const& val) { set(val._data, val._size); return*this; }
-			scope_array& operator = (scope_array && val) { move(val); return*this; }
-			template<typename U, wsize N> scope_array& operator = (U(&ar)[N]) { copy(ar); return*this; }
-			template<typename U, wsize N> scope_array& operator = (const U(&ar)[N]) { copy(ar); return*this; }
-
-			operator type& () { return get(); }
-			operator type ()const { return get(); }
-			operator array_view<object_wrapper<T>>()const { return array_view<object_wrapper<T>>(size(), get()); }
-
-			template<typename I>element_type& operator [](I  const& idx) { static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted"); ANG_ASSERT((wsize)idx < _size, "scope_array: operator [] overflow exception"); return _data[idx]; }
-			template<typename I>element_type const& operator [](I const& idx)const { static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted"); ANG_ASSERT((wsize)idx < _size, "scope_array: operator [] overflow exception"); return _data[idx]; }
-
-			element_type** operator & () { return &get(); }
-		};
-	}
 }//ang
 
-#include <ang/collections/array_definition.hpp>
 
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, byte, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, wchar, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char16_t, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char32_t, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, short, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ushort, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, int, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, uint, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, long, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ulong, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, long64, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ulong64, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, float, ang::memory::default_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, double, ang::memory::default_allocator)
-
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, byte, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, wchar, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char16_t, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, char32_t, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, short, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ushort, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, int, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, uint, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, long, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ulong, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, long64, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, ulong64, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, float, ang::memory::aligned16_allocator)
-ANG_ARRAY_VALUE_SPECIALIZATION_DECLARATION(LINK, double, ang::memory::aligned16_allocator)
-
-#endif //__ANG_COLLECTIONS_ARRAY_HPP__
+#endif //__ANG_COLLECTIONS_ITERATORS_H__

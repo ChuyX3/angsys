@@ -212,91 +212,6 @@ namespace ang //constants
 		}
 	};
 
-	template<typename E>
-	struct safe_flag : public E, public value<typename E::type> {
-		typedef typename E::type type;
-		typedef typename E::base enum_base;
-		safe_flag() { }
-		safe_flag(safe_flag const& e) { E::value_ = e.get(); }
-		safe_flag(type e) { E::value_ = e; }
-		enum_base get()const { return E::value_; }
-		void set(enum_base value) { E::value_ = value; }
-		safe_flag& operator = (const safe_flag& value) { set(value.get()); return*this; }
-		safe_flag& operator = (type value) { set(value);	return*this; }
-		safe_flag& operator |= (const safe_flag& value) { E::value_ |= value.get(); return*this; }
-		safe_flag& operator |= (type value) { E::value_ |= value;	return*this; }
-		safe_flag& operator &= (const safe_flag& value) { E::value_ &= value.get(); return*this; }
-		safe_flag& operator &= (type value) { E::value_ &= value;	return*this; }
-		safe_flag& operator ^= (const safe_flag& value) { E::value_ ^= value.get(); return*this; }
-		safe_flag& operator ^= (type value) { E::value_ ^= value;	return*this; }
-		safe_flag& operator *= (const safe_flag& value) { E::value_ &= value.get(); return*this; }
-		safe_flag& operator *= (type value) { E::value_ &= value;	return*this; }
-		safe_flag& operator += (const safe_flag& value) { E::value_ |= value.get(); return*this; }
-		safe_flag& operator += (type value) { E::value_ |= value;	return*this; }
-		safe_flag& operator -= (const safe_flag& value) { E::value_ &= ~value.get(); return*this; }
-		safe_flag& operator -= (type value) { E::value_ &= ~value;	return*this; }
-		operator type()const { return (type)E::value_; }
-		operator enum_base()const { return E::value_; }
-		inline bool is_active(type flag)const {
-			if ((E::value_ & (enum_base)flag) == (enum_base)flag) return true;
-			return false;
-		}
-		inline bool is_active(safe_flag const& flag)const {
-			if ((E::value_ & flag.get()) == flag.get()) return true;
-			return false;
-		}
-
-	protected:
-		safe_flag(enum_base e) { E::value_ = e; }
-
-	public:
-		friend safe_flag<E> operator * (type first, type second) { return first & second; }
-		friend safe_flag<E> operator * (const safe_flag<E>& first, type second) { return first.get() & second; }
-		friend safe_flag<E> operator * (type first, const safe_flag<E>& second) { return first & second.get(); }
-		friend safe_flag<E> operator * (const safe_flag<E>& first, const safe_flag<E>& second) { return first.get() & second.get(); }
-		friend safe_flag<E> operator + (type first, type second) { return first | second; }
-		friend safe_flag<E> operator + (const safe_flag<E>& first, type second) { return first.get() | second; }
-		friend safe_flag<E> operator + (type first, const safe_flag<E>& second) { return first | second.get(); }
-		friend safe_flag<E> operator + (const safe_flag<E>& first, const safe_flag<E>& second) { return first.get() | second.get(); }
-		friend safe_flag<E> operator - (type first, type second) { return first & ~second; }
-		friend safe_flag<E> operator - (const safe_flag<E>& first, type second) { return first.get() & ~second; }
-		friend safe_flag<E> operator - (type first, const safe_flag<E>& second) { return first & ~second.get(); }
-		friend safe_flag<E> operator - (const safe_flag<E>& first, const safe_flag<E>& second) { return first.get() & ~second.get(); }
-		friend safe_flag<E> operator & (type first, type second) { return first & ~second; }
-		friend safe_flag<E> operator & (const safe_flag<E>& first, type second) { return first.get() & second; }
-		friend safe_flag<E> operator & (type first, const safe_flag<E>& second) { return first & second.get(); }
-		friend safe_flag<E> operator & (const safe_flag<E>& first, const safe_flag<E>& second) { return first.get() & second.get(); }
-		friend safe_flag<E> operator | (type first, type second) { return first | second; }
-		friend safe_flag<E> operator | (const safe_flag<E>& first, type second) { return first.get() | second; }
-		friend safe_flag<E> operator | (type first, const safe_flag<E>& second) { return first | second.get(); }
-		friend safe_flag<E> operator | (const safe_flag<E>& first, const safe_flag<E>& second) { return first.get() | second.get(); }
-		friend safe_flag<E> operator ^ (type first, type second) { return first ^ second; }
-		friend safe_flag<E> operator ^ (const safe_flag<E>& first, type second) { return first.get() ^ second; }
-		friend safe_flag<E> operator ^ (type first, const safe_flag<E>& second) { return first ^ second.get(); }
-		friend safe_flag<E> operator ^ (const safe_flag<E>& first, const safe_flag<E>& second) { return first.get() ^ second.get(); }
-		friend safe_flag<E> operator ~ (type first) { return ~first; }
-		friend safe_flag<E> operator ~ (safe_flag<E> const& first) { return ~first.get(); }
-		friend bool operator == (safe_flag<E> const& first, safe_flag<E> const& second) { return first.get() == second.get(); }
-		friend bool operator != (safe_flag<E> const& first, safe_flag<E> const& second) { return first.get() != second.get(); }
-		friend bool operator >= (safe_flag<E> const& first, safe_flag<E> const& second) { return first.get() >= second.get(); }
-		friend bool operator <= (safe_flag<E> const& first, safe_flag<E> const& second) { return first.get() <= second.get(); }
-		friend bool operator > (safe_flag<E> const& first, safe_flag<E> const& second) { return first.get() > second.get(); }
-		friend bool operator < (safe_flag<E> const& first, safe_flag<E> const& second) { return first.get() < second.get(); }
-		friend bool operator == (safe_flag<E> const& first, type second) { return first.get() == second; }
-		friend bool operator != (safe_flag<E> const& first, type second) { return first.get() != second; }
-		friend bool operator >= (safe_flag<E> const& first, type second) { return first.get() >= second; }
-		friend bool operator <= (safe_flag<E> const& first, type second) { return first.get() <= second; }
-		friend bool operator > (safe_flag<E> const& first, type second) { return first.get() > second; }
-		friend bool operator < (safe_flag<E> const& first, type second) { return first.get() < second; }
-		friend bool operator == (type first, safe_flag<E> const& second) { return first == second.get(); }
-		friend bool operator != (type first, safe_flag<E> const& second) { return first != second.get(); }
-		friend bool operator >= (type first, safe_flag<E> const& second) { return first >= second.get(); }
-		friend bool operator <= (type first, safe_flag<E> const& second) { return first <= second.get(); }
-		friend bool operator > (type first, safe_flag<E> const& second) { return first > second.get(); }
-		friend bool operator < (type first, safe_flag<E> const& second) { return first < second.get(); }
-	};
-
-
 #define safe_enum(_LINK, _name, _type) struct _LINK _name##_proxy { enum type : _type; protected: type _value; }; \
 	struct _LINK _name##_t : public ang::value<_name##_proxy> { \
 			static rtti_t const& class_info(); \
@@ -305,6 +220,7 @@ namespace ang //constants
 			_name##_t(_name##_t const& v) : value(v) {} \
 			_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
 			_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
+			ang::cstr_t to_string()const; \
 			_name##_t& operator = (type const& v){ _value = v; return*this; } \
 			_name##_t& operator = (_name##_t const& v) { _value = v.get(); return*this; } \
 			_name##_t& operator = (type && v) { _value = ang::move(v); v = default_value<type>::value; return*this; } \
@@ -347,12 +263,16 @@ namespace ang //constants
 	{
 		struct LINK encoding_t : public ang::value<encoding_proxy>
 		{
+			static encoding_t parse(cstr_t);
+			static encoding_t parse(cwstr_t);
+			static encoding_t parse(cmstr_t);
 			static rtti_t const& class_info();
 			encoding_t() : value(default_value<type>::value) {}
 			encoding_t(type const& v) : value(v) {}
 			encoding_t(encoding_t const& v) : value(v) {}
 			encoding_t(type && v) : value(ang::forward<type>(v)) {	}
 			encoding_t(encoding_t && v) : value(ang::forward<value>(v)) { }
+			cstr_t to_string()const;
 			encoding_t& operator = (type const& v) { _value = v; return*this; }
 			encoding_t& operator = (encoding_t const& v) { _value = v.get(); return*this; }
 			encoding_t& operator = (type && v) { _value = ang::move(v); v = default_value<type>::value; return*this; }

@@ -26,8 +26,8 @@
 		object_wrapper(ang::nullptr_t const&); \
 		~object_wrapper(); \
 	public: \
-		void clean(); \
-		void clean_unsafe(); \
+		void clear(); \
+		void clear_unsafe(); \
 		bool is_empty()const; \
 		type* get(void)const; \
 		void set(type*); \
@@ -63,8 +63,8 @@
 		object_wrapper(ang::nullptr_t const&); \
 		~object_wrapper(); \
 	public: \
-		void clean(); \
-		void clean_unsafe(); \
+		void clear(); \
+		void clear_unsafe(); \
 		bool is_empty()const; \
 		type const* get(void)const; \
 		void set(type const*); \
@@ -103,7 +103,7 @@
 		intf_wrapper(intf_wrapper const&); \
 		~intf_wrapper(); \
 	public: \
-		void clean(); \
+		void clear(); \
 		bool is_empty()const; \
 		type* get(void)const; \
 		void set(type*); \
@@ -138,7 +138,7 @@
 		intf_wrapper(intf_wrapper const&); \
 		~intf_wrapper(); \
 	public: \
-		void clean(); \
+		void clear(); \
 		bool is_empty()const; \
 		type const* get(void)const; \
 		void set(type const*); \

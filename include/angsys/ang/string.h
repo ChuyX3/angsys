@@ -124,7 +124,6 @@ namespace ang
 
 namespace ang
 {
-
 	namespace strings
 	{
 		class LINK basic_const_string_buffer_base
@@ -144,7 +143,7 @@ namespace ang
 			basic_const_string_buffer_base& operator = (basic_const_string_buffer_base const&) = delete;
 
 		public:	
-			virtual bool is_constant()const override;
+			virtual bool is_readonly()const override;
 			virtual bool can_realloc_buffer()const override;
 	
 			ANG_DECLARE_INTERFACE();
@@ -155,6 +154,7 @@ namespace ang
 			virtual bool unmap_buffer(ibuffer_view_t&, wsize) override;
 			virtual bool realloc_buffer(wsize) override;
 		};
+
 	}
 }
 
@@ -216,12 +216,19 @@ namespace ang
 			, public itext_buffer
 		{
 		public:
-			static constexpr wsize RAW_CAPACITY = 128u; //local storage capacity
+			static const wsize RAW_CAPACITY = 128u; //local storage capacity
+
+			enum storage_type_t : wsize {
+				storage_type_stack = 0,
+				storage_type_allocated = -1,
+				storage_type_string_pool = -2,
+			};
 
 		protected:
+			
 			struct _str_data {
 				union {
-					wsize _storage_type;
+					storage_type_t _storage_type;
 					struct {
 						wsize _unused;
 						wsize _allocated_length;
@@ -231,6 +238,11 @@ namespace ang
 					struct {
 						wsize _stack_length;
 						byte _stack_buffer[RAW_CAPACITY];
+					};
+					struct {
+						wsize __unused;
+						basic_const_string_buffer_base* _const_string;
+						pointer _const_string_view;
 					};
 				};
 			} _data;
@@ -245,12 +257,13 @@ namespace ang
 
 		public:
 			bool is_empty()const;
-			bool is_local_data()const;
+			storage_type_t storage_type()const;
 			void length(wsize len);
 			wsize length() const;
 			wsize capacity() const;
 
 		public:
+			void set(basic_const_string_buffer_base*);
 			void copy(raw_cstr_t);
 			void concat(raw_cstr_t);
 
@@ -277,7 +290,7 @@ namespace ang
 			virtual raw_cstr_t text_buffer()const override;
 
 			virtual bool realloc(wsize new_size, bool save = true) pure;
-			virtual void clean() pure;
+			virtual void clear() pure;
 
 		protected:
 			virtual~basic_string_buffer_base();
@@ -291,7 +304,7 @@ namespace ang
 			typedef typename char_type_by_encoding<ENCODING>::char_t char_t, type;
 			typedef typename char_type_by_encoding<ENCODING>::str_t unsafe_str_t;
 			typedef typename char_type_by_encoding<ENCODING>::cstr_t unsafe_cstr_t;
-			typedef allocator<type> allocator_t;
+			typedef allocator<char_t> allocator_t;
 			typedef text::encoder<ENCODING> encoder;
 
 			static constexpr wsize CAPACITY = RAW_CAPACITY / sizeof(char_t);
@@ -307,17 +320,43 @@ namespace ang
 			basic_string_buffer();
 
 		public: //overides
-			static ang::rtti_t const& class_info();
-			virtual ang::rtti_t const& runtime_info()const override { return class_info(); }
-			virtual bool query_interface(ang::rtti_t const&, ang::unknown_ptr_t) override {
-
-			}
+			ANG_DECLARE_INTERFACE();
 
 		public:
-			virtual void clean()override;
-			virtual bool realloc(wsize new_size, bool save = true)override;
-			inline str_t str() { return text_buffer().to_str<ENCODING>(); }
-			inline cstr_t cstr()const { return text_buffer().to_cstr<ENCODING>(); }
+			virtual void clear()override {
+				if (!is_local_data())
+					alloc.deallocate((str_t)_data._allocated_buffer);
+				memset(&_data, 0, sizeof(_data));
+			}
+			virtual bool realloc(wsize new_size, bool save = true)override {
+				if (_map_index != invalid_index || _map_size != invalid_index)
+					return false;
+
+				if (capacity() > new_size) 
+					return true;
+		
+				wsize cs = sizeof(char_t), size = 32U, i = 0;
+				while (size <= new_size)
+					size *= 2U;
+				auto new_buffer = alloc.allocate(size);
+				if (new_buffer == null)
+					return false;
+				wsize len = 0U, j = 0;
+				new_buffer[0] = 0;
+				auto data = cstr();
+				if (save)
+					text::encoder<ENCODING>::convert(new_buffer, len, data.cstr(), j, true, size - 1, data.size());
+
+				clear();
+				_data._allocated_length = len;
+				_data._allocated_capacity = size - 1;
+				_data._allocated_buffer = new_buffer;
+				_data._storage_type = invalid_index;
+				return true;
+			}
+			
+			inline str_t str() { return this ? text_buffer().to_str<ENCODING>() : str_t(); }
+			inline cstr_t cstr()const { return this ? text_buffer().to_cstr<ENCODING>() : cstr_t();}
 
 		public:
 			using string_base::copy;
@@ -358,11 +397,29 @@ namespace ang
 			}
 
 		private:
-			virtual~basic_string_buffer() { }
+			virtual~basic_string_buffer() { clear(); }
+		};
+
+
+		class LINK string_pool
+			: public singleton<string_pool, memory::unmanaged_allocator>
+		{
+		private:
+			//friend  singleton<string_pool, memory::unmanaged_allocator>;
+			friend typename singleton<string_pool, memory::unmanaged_allocator>::allocator_t;
+			pointer pool;
+			string_pool();
+			virtual~string_pool();
+
+		public:
+			cstr_t save_string(cstr_t);
+			cstr_t save_string(string const&);
+			cstr_t save_string(const_string);
+			cstr_t save_string(const_string_buffer*);
+			const_string find_string(cstr_t);
 		};
 
 	}
-
 }
 
 #define MY_ALLOCATOR memory::buffer_allocator
@@ -372,15 +429,81 @@ namespace ang
 #include <ang/inline/string_declaration.hpp>
 #undef MY_ENCODING
 
+#define	MY_ENCODING text::encoding::unicode
+#include <ang/inline/string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf8
+#include <ang/inline/string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf16
+#include <ang/inline/string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf16_se
+#include <ang/inline/string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf16_le
+#include <ang/inline/string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf16_be
+#include <ang/inline/string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf32
+#include <ang/inline/string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf32_se
+#include <ang/inline/string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf32_le
+#include <ang/inline/string_declaration.hpp>
+#undef MY_ENCODING
+
+#define	MY_ENCODING text::encoding::utf32_be
+#include <ang/inline/string_declaration.hpp>
+#undef MY_ENCODING
+
+
 #undef MY_LINKAGE
 #undef MY_ALLOCATOR
 
 
 template<ang::text::encoding MY_ENCODING, template<typename> class allocator>
 inline ang::rtti_t const& ang::strings::basic_string_buffer<MY_ENCODING, allocator>::class_info() {
-	static const char name[] = "ang::strings::basic_string_buffer"_s; //TODO:
+	static const cstr_view<char> name = string_pool::instance()->save_string((string("ang::strings::basic_string_buffer<"_s) += to_string<MY_ENCODING>::value) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<string_base>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(_CLASS), alignof(_CLASS), parents, &default_query_interface);
 	return info;
 }
+
+namespace ang
+{
+	template<text::encoding E1, template<typename>class A1, text::encoding E2, template<typename>class A2> bool operator == (strings::basic_string<E1, A1> const& str1, strings::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1->cstr(), str2->cstr()) == 0; }
+	template<text::encoding E1, template<typename>class A1, text::encoding E2, template<typename>class A2> bool operator != (strings::basic_string<E1, A1> const& str1, strings::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1->cstr(), str2->cstr()) != 0; }
+	template<text::encoding E1, template<typename>class A1, text::encoding E2, template<typename>class A2> bool operator <= (strings::basic_string<E1, A1> const& str1, strings::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1->cstr(), str2->cstr()) <= 0; }
+	template<text::encoding E1, template<typename>class A1, text::encoding E2, template<typename>class A2> bool operator >= (strings::basic_string<E1, A1> const& str1, strings::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1->cstr(), str2->cstr()) >= 0; }
+	template<text::encoding E1, template<typename>class A1, text::encoding E2, template<typename>class A2> bool operator < (strings::basic_string<E1, A1> const& str1, strings::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1->cstr(), str2->cstr()) < 0; }
+	template<text::encoding E1, template<typename>class A1, text::encoding E2, template<typename>class A2> bool operator > (strings::basic_string<E1, A1> const& str1, strings::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1->cstr(), str2->cstr()) > 0; }
+
+	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>	bool operator == (strings::basic_string<E1, A1> const& str1, const str_view<T2, E2>& str2) { return text::encoder<E1>::template compare<T2 const*>(str1->cstr(), str2.cstr()) == 0; }
+	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>	bool operator != (strings::basic_string<E1, A1> const& str1, const str_view<T2, E2>& str2) { return text::encoder<E1>::template compare<T2 const*>(str1->cstr(), str2.cstr()) != 0; }
+	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>	bool operator >= (strings::basic_string<E1, A1> const& str1, const str_view<T2, E2>& str2) { return text::encoder<E1>::template compare<T2 const*>(str1->cstr(), str2.cstr()) >= 0; }
+	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>	bool operator <= (strings::basic_string<E1, A1> const& str1, const str_view<T2, E2>& str2) { return text::encoder<E1>::template compare<T2 const*>(str1->cstr(), str2.cstr()) <= 0; }
+	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>	bool operator > (strings::basic_string<E1, A1> const& str1, const str_view<T2, E2>& str2) { return text::encoder<E1>::template compare<T2 const*>(str1->cstr(), str2.cstr()) > 0; }
+	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>	bool operator < (strings::basic_string<E1, A1> const& str1, const str_view<T2, E2>& str2) { return text::encoder<E1>::template compare<T2 const*>(str1->cstr(), str2.cstr()) < 0; }
+
+	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2> bool operator == (const str_view<T1, E1>& str1, strings::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1.cstr(), str2->cstr()) == 0; }
+	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2> bool operator != (const str_view<T1, E1>& str1, strings::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1.cstr(), str2->cstr()) != 0; }
+	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2> bool operator >= (const str_view<T1, E1>& str1, strings::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1.cstr(), str2->cstr()) >= 0; }
+	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2> bool operator <= (const str_view<T1, E1>& str1, strings::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1.cstr(), str2->cstr()) <= 0; }
+	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2> bool operator > (const str_view<T1, E1>& str1, strings::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1.cstr(), str2->cstr()) > 0; }
+	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2> bool operator < (const str_view<T1, E1>& str1, strings::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1.cstr(), str2->cstr()) < 0; }
+}
+
 #endif//__STRING_H__

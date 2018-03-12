@@ -47,17 +47,17 @@ namespace ang
 		}
 
 		~object_wrapper() {
-			clean();
+			clear();
 		}
 
 	public: //properties
 
-		void clean() {
+		void clear() {
 			if (_ptr)_ptr->release();
 			_ptr = null;
 		}
 
-		void clean_unsafe() { 
+		void clear_unsafe() { 
 			_ptr = null;
 		}
 
@@ -81,7 +81,7 @@ namespace ang
 		void move(object_wrapper& ptr) {
 			if (this == &ptr)
 				return;
-			clean();
+			clear();
 			_ptr = ptr._ptr;
 			ptr._ptr = null;
 		}
@@ -91,7 +91,7 @@ namespace ang
 		}
 
 		type ** addres_for_init(void) { 
-			clean();
+			clear();
 			return&_ptr;
 		}
 
@@ -103,7 +103,7 @@ namespace ang
 		}
 
 		object_wrapper& operator = (ang::nullptr_t const&) { 
-			clean(); 
+			clear(); 
 			return*this;
 		}
 		object_wrapper& operator = (object_wrapper && ptr) {
@@ -176,17 +176,17 @@ namespace ang
 		}
 
 		~object_wrapper() {
-			clean();
+			clear();
 		}
 
 	public: //properties
 
-		void clean() {
+		void clear() {
 			if (_ptr)_ptr->release();
 			_ptr = null;
 		}
 
-		void clean_unsafe() {
+		void clear_unsafe() {
 			_ptr = null;
 		}
 
@@ -210,15 +210,15 @@ namespace ang
 		void move(object_wrapper& ptr) {
 			if (this == &ptr)
 				return;
-			clean();
+			clear();
 			_ptr = ptr._ptr;
 			ptr._ptr = null;
 		}
 
 		void move(object_wrapper<T>& ptr) {
-			clean();
+			clear();
 			_ptr = ptr.get();
-			ptr.clean_unsafe();
+			ptr.clear_unsafe();
 		}
 
 		type const** addres_of(void) {
@@ -226,7 +226,7 @@ namespace ang
 		}
 
 		type const** addres_for_init(void) {
-			clean();
+			clear();
 			return&_ptr;
 		}
 
@@ -238,7 +238,7 @@ namespace ang
 		}
 
 		object_wrapper& operator = (ang::nullptr_t const&) {
-			clean();
+			clear();
 			return*this;
 		}
 
@@ -442,16 +442,16 @@ namespace ang
 		}
 
 	public:
-		void clean();
-		void clean_unsafe();
+		void clear();
+		void clear_unsafe();
 		bool is_empty()const;
 		object* get(void)const;
 		void set(object*);
 		template<typename T> inline void move(object_wrapper<T>& ptr) {
 			if (this == (object_wrapper<T>)&ptr) return;
-			clean();
+			clear();
 			_ptr = ptr.get();
-			ptr.clean_unsafe();
+			ptr.clear_unsafe();
 		}
 		object ** addres_of(void);
 
@@ -497,16 +497,16 @@ namespace ang
 		}
 
 	public:
-		void clean();
-		void clean_unsafe();
+		void clear();
+		void clear_unsafe();
 		bool is_empty()const;
 		object const* get(void)const;
 		void set(object const*);
 		template<typename T> inline void move(object_wrapper<T>& ptr) {
 			if ((void*)this == (void*)(object_wrapper<T>*)&ptr) return;
-			clean();
+			clear();
 			_ptr = ptr.get();
-			ptr.clean_unsafe();
+			ptr.clear_unsafe();
 		}
 		object const** addres_of(void);
 

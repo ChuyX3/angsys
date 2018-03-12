@@ -82,10 +82,10 @@ safe_pointer::safe_pointer(interface* obj)
 
 safe_pointer::~safe_pointer()
 {
-	clean();
+	clear();
 }
 
-void safe_pointer::clean()
+void safe_pointer::clear()
 {
 	if (_info)
 	{
@@ -106,7 +106,7 @@ void safe_pointer::set(interface* _obj)
 	if (_info && smart_ptr_info_ptr_t(_info)->_object == obj)
 		return;
 
-	clean();
+	clear();
 
 	if (obj != nullptr)
 	{
@@ -149,7 +149,7 @@ safe_pointer& safe_pointer::operator = (safe_pointer&& other)
 {
 	if (this != &other)
 		return*this;
-	clean();
+	clear();
 
 	_info = other._info;
 	_offset = other._offset;
@@ -167,7 +167,7 @@ safe_pointer& safe_pointer::operator = (safe_pointer const& ptr)
 
 safe_pointer& safe_pointer::operator = (std::nullptr_t const&)
 {
-	clean();
+	clear();
 	return *this;
 }
 
@@ -379,16 +379,16 @@ object_wrapper<object>::object_wrapper(ang::nullptr_t const&) : _ptr(null) {
 
 object_wrapper<object>::~object_wrapper()
 {
-	clean();
+	clear();
 }
 
-void object_wrapper<object>::clean()
+void object_wrapper<object>::clear()
 {
 	if (_ptr)_ptr->release();
 	_ptr = null;
 }
 
-void object_wrapper<object>::clean_unsafe()
+void object_wrapper<object>::clear_unsafe()
 {
 	_ptr = null;
 }
@@ -422,7 +422,7 @@ object_wrapper<object>& object_wrapper<object>::operator = (object_wrapper<objec
 {
 	if (this == &other)
 		return *this;
-	clean();
+	clear();
 	_ptr = other._ptr;
 	other._ptr = null;
 	return*this;
@@ -487,16 +487,16 @@ object_wrapper<const object>::object_wrapper(ang::nullptr_t const&) : _ptr(null)
 
 object_wrapper<const object>::~object_wrapper()
 {
-	clean();
+	clear();
 }
 
-void object_wrapper<const object>::clean()
+void object_wrapper<const object>::clear()
 {
 	if (_ptr)const_cast<object*>(_ptr)->release();
 	_ptr = null;
 }
 
-void object_wrapper<const object>::clean_unsafe()
+void object_wrapper<const object>::clear_unsafe()
 {
 	_ptr = null;
 }
@@ -594,10 +594,10 @@ intf_wrapper<interface>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
 }
 
 intf_wrapper<interface>::~intf_wrapper() {
-	clean();
+	clear();
 }
 
-void intf_wrapper<interface>::clean()
+void intf_wrapper<interface>::clear()
 {
 	iobject * _obj = dyn_cast<iobject>(_ptr);
 	if (_obj)_obj->release();
@@ -632,7 +632,7 @@ intf_wrapper<interface>& intf_wrapper<interface>::operator = (interface* ptr)
 
 intf_wrapper<interface>& intf_wrapper<interface>::operator = (ang::nullptr_t const&)
 {
-	clean();
+	clear();
 	return*this;
 }
 
@@ -640,7 +640,7 @@ intf_wrapper<interface>& intf_wrapper<interface>::operator = (intf_wrapper<inter
 {
 	if (this == &other)
 		return *this;
-	clean();
+	clear();
 	_ptr = other._ptr;
 	other._ptr = null;
 	return*this;
@@ -695,10 +695,10 @@ intf_wrapper<const interface>::intf_wrapper(intf_wrapper const& other) : _ptr(nu
 }
 
 intf_wrapper<const interface>::~intf_wrapper() {
-	clean();
+	clear();
 }
 
-void intf_wrapper<const interface>::clean()
+void intf_wrapper<const interface>::clear()
 {
 	iobject const * _obj = dyn_cast<iobject>(_ptr);
 	if (_obj)const_cast<iobject*>(_obj)->release();
@@ -733,7 +733,7 @@ intf_wrapper<const interface>& intf_wrapper<const interface>::operator = (interf
 
 intf_wrapper<const interface>& intf_wrapper<const interface>::operator = (ang::nullptr_t const&)
 {
-	clean();
+	clear();
 	return*this;
 }
 
@@ -741,7 +741,7 @@ intf_wrapper<const interface>& intf_wrapper<const interface>::operator = (intf_w
 {
 	if (this == &other)
 		return *this;
-	clean();
+	clear();
 	_ptr = other._ptr;
 	other._ptr = null;
 	return*this;
