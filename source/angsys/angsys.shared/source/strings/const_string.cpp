@@ -21,10 +21,17 @@ pointer basic_const_string_buffer_base::operator new(wsize sz, text::encoding_t 
 	return obj;
 }
 
+#ifdef WINDOWS_PLATFORM
 void basic_const_string_buffer_base::operator delete(pointer ptr, text::encoding_t, raw_cstr_t str)
 {
 	object::operator delete (ptr);
 }
+#elif defined ANDROID_PLATFORM
+void basic_const_string_buffer_base::operator delete(pointer ptr)
+{
+	object::operator delete (ptr);
+}
+#endif
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::strings::basic_const_string_buffer_base, object, itext_buffer);
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::strings::basic_const_string_buffer_base);

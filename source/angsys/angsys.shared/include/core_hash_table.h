@@ -284,13 +284,13 @@ namespace ang
 				if (_table.is_empty())
 					return false;
 
-				ulong64 hash = hash_code_maker<T>::make(key, _table.size());
+				ulong64 hash = hash_code_maker<T>::make(out, _table.size());
 
 				node_ptr_t *prev = &_table[hash];
 				node_ptr_t temp = *prev;
 
 				while (temp != null) {
-					if (logic_operation<T, T, logic_operation_type::same>::operate(temp->data.value, value)) {
+					if (logic_operation<T, T, logic_operation_type::same>::operate(temp->data.value, out)) {
 						*prev = temp->next;
 						if (out)*out = temp->data.value;
 						alloc.template destroy<node_t>(temp);

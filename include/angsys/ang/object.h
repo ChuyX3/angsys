@@ -11,7 +11,6 @@ LINK ang::object* ang_alloc_object_memory(ang_size_t, const char* file, int line
 
 namespace ang
 {
-	ang_interface(iobject);
 
 	/******************************************************************/
 	/* enum ang::comparision_result_t :                                */
@@ -25,14 +24,6 @@ namespace ang
 		diferent = 20
 	};
 
-	/******************************************************************/
-	/* interface ang::iobject :                                       */
-	/*  -> implements basic methods for smart pointer management      */
-	/******************************************************************/
-	ang_begin_interface(LINK iobject)
-		visible vcall dword add_ref() pure;
-		visible vcall dword release() pure;
-	ang_end_interface();
 
 
 	/******************************************************************/
@@ -76,11 +67,11 @@ namespace ang
 		virtual dword release() override;
 
 	public:
-		pointer operator new(wsize);
-		void operator delete(pointer);
+		pointer operator new(wsize)noexcept;
+		void operator delete(pointer)noexcept;
 
-		pointer operator new(wsize, void*);
-		void operator delete(pointer, void*);
+		pointer operator new(wsize, pointer)noexcept;
+		void operator delete(pointer, pointer)noexcept;
 
 #ifdef _DEBUG
 		pointer operator new(wsize, const char*, int);

@@ -132,7 +132,11 @@ namespace ang
 		{
 		protected:
 			pointer operator new(wsize, text::encoding_t, raw_cstr_t);
+#ifdef WINDOWS_PLATFORM
 			void operator delete(pointer, text::encoding_t, raw_cstr_t);
+#elif defined ANDROID_PLATFORM
+			void operator delete(pointer);
+#endif // WINDOWS_PLATFORM
 
 			basic_const_string_buffer_base();
 			virtual~basic_const_string_buffer_base();
@@ -220,8 +224,8 @@ namespace ang
 
 			enum storage_type_t : wsize {
 				storage_type_stack = 0,
-				storage_type_allocated = -1,
-				storage_type_string_pool = -2,
+				storage_type_allocated = wsize(-1),
+				storage_type_string_pool = wsize(-2),
 			};
 
 		protected:
@@ -308,8 +312,8 @@ namespace ang
 			typedef text::encoder<ENCODING> encoder;
 
 			static constexpr wsize CAPACITY = RAW_CAPACITY / sizeof(char_t);
-			typedef str_view<char_t> str_t;
-			typedef str_view<char_t const> cstr_t;
+			typedef str_view<char_t, ENCODING> str_t;
+			typedef str_view<char_t const, ENCODING> cstr_t;
 			typedef basic_string_buffer_base string_base, base_t;
 			typedef basic_string_buffer<ENCODING, allocator> string, self_t;
 
@@ -324,8 +328,10 @@ namespace ang
 
 		public:
 			virtual void clear()override {
-				if (!is_local_data())
+				if (storage_type_allocated == storage_type())
 					alloc.deallocate((str_t)_data._allocated_buffer);
+				else if (storage_type_string_pool == storage_type())
+					_data._const_string->release();
 				memset(&_data, 0, sizeof(_data));
 			}
 			virtual bool realloc(wsize new_size, bool save = true)override {
@@ -355,8 +361,8 @@ namespace ang
 				return true;
 			}
 			
-			inline str_t str() { return this ? text_buffer().to_str<ENCODING>() : str_t(); }
-			inline cstr_t cstr()const { return this ? text_buffer().to_cstr<ENCODING>() : cstr_t();}
+			inline str_t str() { return this ? text_buffer().template to_str<ENCODING>() : str_t(); }
+			inline cstr_t cstr()const { return this ? text_buffer().template to_cstr<ENCODING>() : cstr_t();}
 
 		public:
 			using string_base::copy;
@@ -385,10 +391,10 @@ namespace ang
 			template<typename T, text::encoding E> windex find_reverse(str_view<T, E> const& str, windex start = 0, windex end = -1)const { string_base::find_reverse(str, start, end); }
 			template<text::encoding E, template<typename>class _alloc> windex find_reverse(basic_string<E, _alloc> const& str, windex start = 0, windex end = -1)const { string_base::find_reverse((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str, start, end); }
 
-			template<typename T, text::encoding E> str_view<T, E> sub_string(str_view<T, E>& str, windex start, windex end)const {
-				string_base::sub_string(str, start, end).to_str<E>();
+			template<typename T, text::encoding E> str_view<T, E> sub_string(str_view<T, E>& str, windex start = 0, windex end = - 1)const {
+				return string_base::sub_string(str, start, end).template to_str<E>();
 			}
-			template<text::encoding E, template<typename>class _alloc> basic_string<E>& sub_string(basic_string<E, _alloc>& str, windex start = 0, windex end = -1)const {
+			template<text::encoding E, template<typename>class _alloc> basic_string<E, _alloc>& sub_string(basic_string<E, _alloc>& str, windex start = 0, windex end = -1)const {
 				if (str.is_empty())str = new basic_string_buffer<E, _alloc>();
 				cstr_t my_str = cstr();
 				my_str.set(my_str.cstr() + start, min(my_str.size(), end) - start);
@@ -476,9 +482,9 @@ namespace ang
 
 template<ang::text::encoding MY_ENCODING, template<typename> class allocator>
 inline ang::rtti_t const& ang::strings::basic_string_buffer<MY_ENCODING, allocator>::class_info() {
-	static const cstr_view<char> name = string_pool::instance()->save_string((string("ang::strings::basic_string_buffer<"_s) += to_string<MY_ENCODING>::value) += ">"_s);
+	static const cstr_view<char> name = string_pool::instance()->save_string((string("ang::strings::basic_string_buffer<"_s) += ang::to_string<ang::text::encoding, MY_ENCODING>::value) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<string_base>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(_CLASS), alignof(_CLASS), parents, &default_query_interface);
+	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(basic_string_buffer<MY_ENCODING, allocator>), alignof(basic_string_buffer<MY_ENCODING, allocator>), parents, &default_query_interface);
 	return info;
 }
 

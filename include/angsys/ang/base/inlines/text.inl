@@ -356,7 +356,6 @@ namespace ang
 			char1_t const* beg = first + start;
 			char1_t const* end = first + s1 - s2 + 1;
 
-			char32_t c1, c2;
 			windex i = start, j, k, l, t;
 			do {
 				j = 0;

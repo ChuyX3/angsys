@@ -18,13 +18,13 @@ namespace ang //constants
 {
 	safe_enum(LINK, property_style, uint) 
 	{
-		default,
+		def,
 		alertable,
 		no_storage
 	};
 
 
-	template<typename T, class owner, property_style TYPE = property_style::default> class property;
+	template<typename T, class owner, property_style TYPE = property_style::def> class property;
 
 	template<typename T, class owner, property_style TYPE>
 	class property {
@@ -36,7 +36,7 @@ namespace ang //constants
 		operator T const&()const { return value; }
 		property& operator = (property const& val) { set(val.get()); return*this; }
 		property& operator = (T const& val) { set(val); return*this; }
-		T* operator ->()const { return const_cast<T*>(&_value); }
+		T* operator ->()const { return const_cast<T*>(&value); }
 
 	protected:
 		typename ang::remove_constant<T>::type value;
@@ -49,7 +49,7 @@ namespace ang //constants
 		property(T val) : value(val) {}
 		const T& get()const { return value; }
 		operator T const&()const { return value; }
-		T* operator ->()const { return const_cast<T*>(&_value); }
+		T* operator ->()const { return const_cast<T*>(&value); }
 
 	protected:
 		void set(const T& val) { value = val; }
@@ -72,7 +72,7 @@ namespace ang //constants
 		operator T const&()const { return value; }
 		property& operator = (property const& val) { set(val.get()); return*this; }
 		property& operator = (T const& val) { set(val); return*this; }
-		T* operator ->()const { return const_cast<T*>(&_value); }
+		T* operator ->()const { return const_cast<T*>(&value); }
 
 	protected:
 		typename ang::remove_constant<T>::type value;

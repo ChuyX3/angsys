@@ -22,7 +22,7 @@ bool interface::default_query_interface(rtti_t const& src_id, unknown_t src, rtt
 #ifdef _DEBUG
 	assert(src_id.is_type_of(interface::class_info()));
 #endif
-	return src ? reinterpret_cast<interface*>(src)->query_interface(out_id, out) : null;
+	return src ? reinterpret_cast<interface*>(src)->query_interface(out_id, out) : false;
 }
 
 rtti_t const& interface::class_info() {
@@ -50,6 +50,7 @@ safe_pointer::safe_pointer()
 	: _info(nullptr)
 	, _offset(0)
 {
+
 }
 
 safe_pointer::safe_pointer(safe_pointer&& other)
@@ -256,8 +257,8 @@ pointer object::operator new(wsize sz, const word, const char* file, int line)
 pointer object::operator new[](wsize)noexcept { return null; }
 void object::operator delete[](pointer)noexcept {}
 
-pointer object::operator new(wsize, void* ptr)noexcept { return ptr; }
-void object::operator delete(pointer, void*)noexcept { }
+pointer object::operator new(wsize, pointer ptr)noexcept { return ptr; }
+void object::operator delete(pointer, pointer)noexcept { }
 
 object::object(bool inc_ref)
 	: _ref_count(GET_SMART_PTR_INFO(this)->_obj_ref_counter)

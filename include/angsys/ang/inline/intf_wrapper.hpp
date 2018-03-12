@@ -36,8 +36,8 @@ namespace ang
 
 		intf_wrapper(intf_wrapper && ptr)
 			: intf_wrapper() {
-			T * temp = other._ptr;
-			other._ptr = null;
+			T * temp = ptr._ptr;
+			ptr._ptr = null;
 			_ptr = temp;
 		}
 
@@ -92,12 +92,12 @@ namespace ang
 			return &_ptr;
 		}
 
-		template<typename T> typename smart_ptr_type<T>::smart_ptr_t as() {
-			return  this ? dyn_cast<typename smart_ptr_type<T>::type>(_ptr) : null;
+		template<typename U> typename smart_ptr_type<U>::smart_ptr_t as() {
+			return  this ? dyn_cast<typename smart_ptr_type<U>::type>(_ptr) : null;
 		}
 
-		template<typename T> bool as(T*& out) {
-			out = this ? dyn_cast<typename smart_ptr_type<T>::type>(_ptr) : null;
+		template<typename U> bool as(U*& out) {
+			out = this ? dyn_cast<typename smart_ptr_type<U>::type>(_ptr) : null;
 			return out != null;
 		}
 
@@ -164,8 +164,8 @@ namespace ang
 
 		intf_wrapper(intf_wrapper && ptr)
 			: intf_wrapper() {
-			T * temp = other._ptr;
-			other._ptr = null;
+			T * temp = ptr._ptr;
+			ptr._ptr = null;
 			_ptr = temp;
 		}
 
@@ -220,12 +220,12 @@ namespace ang
 			return &_ptr;
 		}
 
-		template<typename T> typename smart_ptr_type<T>::const_smart_ptr_t as() {
-			return  this ? dyn_cast<typename smart_ptr_type<T>::const_type>(_ptr) : null;
+		template<typename U> typename smart_ptr_type<U>::const_smart_ptr_t as() {
+			return  this ? dyn_cast<typename smart_ptr_type<U>::const_type>(_ptr) : null;
 		}
 
-		template<typename T> bool as(T const*& out) {
-			out = this ? dyn_cast<typename smart_ptr_type<T>::const_type>(_ptr) : null;
+		template<typename U> bool as(U const*& out) {
+			out = this ? dyn_cast<typename smart_ptr_type<U>::const_type>(_ptr) : null;
 			return out != null;
 		}
 

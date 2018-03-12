@@ -29,7 +29,7 @@ namespace ang
 			if (!is_instanced()) {
 				allocator<T> alloc;
 				auto ptr = alloc.allocate(1);
-				alloc.construct<T>(ptr);
+				alloc.template construct<T>(ptr);
 			}
 				
 			return instance_manager(null, false);

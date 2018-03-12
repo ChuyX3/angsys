@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "ang_memory.h"
 
+#ifdef ANDROID_PLATFORM
+#include <malloc.h>
+#endif
+
 using namespace ang;
 using namespace ang::memory;
 
@@ -193,50 +197,22 @@ pointer aligned_allocator_internal::aligned_memory_alloc(wsize size, wsize ALIGM
 }
 
 #endif
-#else
-void aligned_allocator_internal::memory_release(pointer ptr)override {
-	memory_block_t block;
-	{ //scope
-		core::async::scope_locker<decltype(mutex)> lock(mutex);
-		auto it = memory_map.find(ptr);
-		if (it == memory_map.end())
-			return;
-		block = it->second;
-		memory_map.erase(it);
-	}
-
-	if (block->file)ang_free_unmanaged_memory(block->file);
-	block->file = nullptr;
-	ang_free_unmanaged_memory(block);
+#elif defined ANDROID_PLATFORM
+void aligned_allocator_internal::memory_release(pointer ptr) {
+	free(ptr);
 }
 
 pointer aligned_allocator_internal::aligned_memory_alloc(wsize size, const wsize ALIGMENT) {
-	auto block = memory_block_create(size, ang_alloc_unmanaged_memory(align_up(ALIGMENT, align_up<8, sizeof(memory_block)>() + size)));
-	block->line = 0;
-	block->file = nullptr;
-	block->ptr = (pointer)align_up(ALIGMENT, (wsize)block->ptr);
-	{ //scope
-		core::async::scope_locker<decltype(mutex)> lock(mutex);
-		memory_map.insert({ block->ptr, block });
-	}
-	return block->ptr;
+	return memalign(ALIGMENT, size);
 }
 
 #ifdef _DEBUG
 pointer aligned_allocator_internal::memory_alloc(wsize size, const char* file, int line) {
-	return aligned_memory_alloc(size, 16U, file, line);
+	return memalign(16U, size);
 }
 
 pointer aligned_allocator_internal::aligned_memory_alloc(wsize size, wsize ALIGMENT, const char* file, int line) {
-	auto block = memory_block_create(size, _aligned_malloc(align_up<8, sizeof(memory_block)>() + size, ALIGMENT));
-	block->line = line;
-	block->file = (char*)ang_alloc_unmanaged_memory(strlen(file) + 1);
-	strcpy(block->file, file);
-	{ //scope
-		core::async::scope_locker<decltype(mutex)> lock(mutex);
-		memory_map.insert({ block->ptr, block });
-	}
-	return block->ptr;
+	return memalign(ALIGMENT, size);
 }
 
 #endif

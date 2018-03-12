@@ -348,7 +348,7 @@ namespace ang //constants
 		sefl_t operator ++ (int) {
 			sefl_t ret = *this;
 			set(str() + 1, size() - 1);
-			return std::move(ret);
+			return ang::move(ret);
 		}
 		friend sefl_t operator + (sefl_t const& str, wsize i) {
 			return sefl_t(str.view_ + i, str.size() - i);
@@ -361,7 +361,7 @@ namespace ang //constants
 
 	template<typename T, text::encoding ENCODING_>
 	struct str_view<const T, ENCODING_> {
-		volatile static constexpr text::encoding ENCODING = ENCODING_;
+		static constexpr text::encoding ENCODING = ENCODING_;
 		typedef str_view<const T, ENCODING_> sefl_t;
 		typedef typename text::char_type_by_encoding<ENCODING>::char_t char_t;
 		typedef typename text::char_type_by_encoding<ENCODING>::cstr_t cstr_t;
@@ -422,7 +422,7 @@ namespace ang //constants
 		sefl_t operator ++ (int) {
 			sefl_t ret = *this;
 			set(cstr() + 1, size() - 1);
-			return std::move(ret);
+			return ang::move(ret);
 		}
 		friend sefl_t operator + (sefl_t const& str, wsize i) {
 			return sefl_t(str.cstr() + (wsize)i, str.size() - (wsize)i);

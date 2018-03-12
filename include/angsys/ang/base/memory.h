@@ -69,26 +69,26 @@ namespace ang
 				typedef managed_allocator<_Other, HINT> other;
 			};
 
-			pointer address(reference _Val) const _NOEXCEPT
+			pointer address(reference _Val) const noexcept
 			{	// return address of mutable _Val
 				return (ang::addressof(_Val));
 			}
 
-			const_pointer address(const_reference _Val) const _NOEXCEPT
+			const_pointer address(const_reference _Val) const noexcept
 			{	// return address of nonmutable _Val
 				return (ang::addressof(_Val));
 			}
 
-			managed_allocator() _NOEXCEPT
+			managed_allocator() noexcept
 			{	// construct default allocator (do nothing)
 			}
 
-			managed_allocator(const managed_allocator<T, HINT>&) _NOEXCEPT
+			managed_allocator(const managed_allocator<T, HINT>&) noexcept
 			{	// construct by copying (do nothing)
 			}
 
 			template<typename _Other>
-			managed_allocator(const managed_allocator<_Other, HINT>&) _NOEXCEPT
+			managed_allocator(const managed_allocator<_Other, HINT>&) noexcept
 			{	// construct from a related allocator (do nothing)
 			}
 
@@ -133,7 +133,7 @@ namespace ang
 				_Ptr->~U();
 			}
 
-			wsize max_size() const _NOEXCEPT
+			wsize max_size() const noexcept
 			{	// estimate maximum array size
 				return ((wsize)(-1) / sizeof(T));
 			}
@@ -167,26 +167,26 @@ namespace ang
 				typedef aligned_allocator<_Other, ALIGNMENT> other;
 			};
 
-			pointer address(reference _Val) const _NOEXCEPT
+			pointer address(reference _Val) const noexcept
 			{	// return address of mutable _Val
 				return (ang::addressof(_Val));
 			}
 
-			const_pointer address(const_reference _Val) const _NOEXCEPT
+			const_pointer address(const_reference _Val) const noexcept
 			{	// return address of nonmutable _Val
 				return (ang::addressof(_Val));
 			}
 
-			aligned_allocator() _NOEXCEPT
+			aligned_allocator() noexcept
 			{	// construct default allocator (do nothing)
 			}
 
-			aligned_allocator(const aligned_allocator<T, ALIGNMENT>&) _NOEXCEPT
+			aligned_allocator(const aligned_allocator<T, ALIGNMENT>&) noexcept
 			{	// construct by copying (do nothing)
 			}
 
 			template<typename _Other>
-			aligned_allocator(const aligned_allocator<_Other, ALIGNMENT>&) _NOEXCEPT
+			aligned_allocator(const aligned_allocator<_Other, ALIGNMENT>&) noexcept
 			{	// construct from a related allocator (do nothing)
 			}
 
@@ -224,7 +224,7 @@ namespace ang
 				_Ptr->~U();
 			}
 
-			wsize max_size() const _NOEXCEPT
+			wsize max_size() const noexcept
 			{	// estimate maximum array size
 				return ((wsize)(-1) / sizeof(T));
 			}
@@ -256,26 +256,26 @@ namespace ang
 				typedef unmanaged_allocator<_Other> other;
 			};
 
-			pointer address(reference _Val) const _NOEXCEPT
+			pointer address(reference _Val) const noexcept
 			{	// return address of mutable _Val
 				return (ang::addressof(_Val));
 			}
 
-			const_pointer address(const_reference _Val) const _NOEXCEPT
+			const_pointer address(const_reference _Val) const noexcept
 			{	// return address of nonmutable _Val
 				return (ang::addressof(_Val));
 			}
 
-			unmanaged_allocator() _NOEXCEPT
+			unmanaged_allocator() noexcept
 			{	// construct default allocator (do nothing)
 			}
 
-			unmanaged_allocator(const unmanaged_allocator<T>&) _NOEXCEPT
+			unmanaged_allocator(const unmanaged_allocator<T>&) noexcept
 			{	// construct by copying (do nothing)
 			}
 
 			template<typename _Other>
-			unmanaged_allocator(const unmanaged_allocator<_Other>&) _NOEXCEPT
+			unmanaged_allocator(const unmanaged_allocator<_Other>&) noexcept
 			{	// construct from a related allocator (do nothing)
 			}
 
@@ -320,7 +320,7 @@ namespace ang
 				_Ptr->~U();
 			}
 
-			wsize max_size() const _NOEXCEPT
+			wsize max_size() const noexcept
 			{	// estimate maximum array size
 				return ((wsize)(-1) / sizeof(T));
 			}

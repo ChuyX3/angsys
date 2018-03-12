@@ -345,7 +345,10 @@ ANG_EXTERN ulong64 get_performance_time_us()
 
 int main()
 {	
+
 	string str = new("jesus rocha") strings::const_string_buffer();
+
+	auto name = str->runtime_info().type_name();
 	
 	safe_pointer;
 

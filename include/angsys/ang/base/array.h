@@ -181,7 +181,7 @@ namespace ang //constants
 		public:
 			scope_array() : _size(0), _data(null) { }
 			scope_array(ang::nullptr_t const&) : scope_array() {}
-			scope_array(wsize size, type val = null) : scope_array() {
+			scope_array(wsize sz, type val = null) : scope_array() {
 				_size = min(wsize(-1) / sizeof(T), sz);
 				if (_size > 0) {
 					_data = alloc.allocate(_size);
@@ -226,7 +226,7 @@ namespace ang //constants
 		public: /*getters and setters*/
 			type & get() { return _data; }
 			type const& get()const { return _data; }
-			void set(type val, wsize size) {
+			void set(type val, wsize sz) {
 				clear();
 				_size = min(wsize(-1) / sizeof(T), sz);
 				if (_size > 0) {

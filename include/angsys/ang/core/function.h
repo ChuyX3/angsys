@@ -11,13 +11,13 @@ namespace ang
 			template<typename T, typename... Ts>
 			ang_begin_interface_inline(ifunction<T(Ts...)>)
 				visible vcall T invoke(Ts...)const pure;
-				visible vcall ifunction* clone()const pure;
+			visible vcall ifunction* clone()const pure;
 			ang_end_interface();
 
 			template<typename... Ts>
 			ang_begin_interface_inline(ifunction<void(Ts...)>)
 				visible vcall void invoke(Ts...)const pure;
-				visible vcall ifunction* clone()const pure;
+			visible vcall ifunction* clone()const pure;
 			ang_end_interface();
 
 			template<typename T, typename... Ts>
@@ -57,7 +57,7 @@ namespace ang
 				function_type _function;
 
 			public:
-				inline static_function(function_type f) 
+				inline static_function(function_type f)
 					: _function(f) {
 				}
 
@@ -177,157 +177,159 @@ namespace ang
 			};
 		}
 
-		template<typename T, typename... Ts>
-		class object_wrapper <core::delegates::function_data<T(Ts...)>>
-		{
-		public:
-			typedef core::delegates::function_data<T(Ts...)> type;
-
-		protected:
-			type* _ptr;
-
-		public:
-			object_wrapper();
-			object_wrapper(core::delegates::function_data<T(Ts...)>*);
-			object_wrapper(object_wrapper &&);
-			object_wrapper(object_wrapper const&);
-			object_wrapper(ang::nullptr_t const&);
-			~object_wrapper();
-
-			template<typename F>
-			object_wrapper(F const& func) : object_wrapper() {
-				static_assert(is_calleable<F>::value, "F is not a calleable object");
-				set(new core::delegates::static_function<F, T, Ts...>(func));
-			}
-
-			template<typename O>
-			object_wrapper(O* obj, T(O::*f)(Ts...)) : object_wrapper() {
-				set(new core::delegates::member_function<O, is_base_of<object, O>::value, T, Ts...>(obj, f));
-			}
-
-			template<typename O>
-			object_wrapper(O* obj, T(*f)(O*, Ts...)) : object_wrapper() {
-				set(new core::delegates::pseudo_member_function<O, T, Ts...>(obj, f));
-			}
-
-		public:
-			void clear();
-			void clear_unsafe();
-			bool is_empty()const;
-			type* get(void)const;
-			void set(type*);
-			type ** addres_of(void);
-
-			T invoke(Ts ... args)const {
-				if (is_empty())
-					return T();
-				return get()->invoke(ang::forward<Ts>(args)...);
-			}
-
-		public:
-			object_wrapper& operator = (object_wrapper &&);
-			object_wrapper& operator = (object_wrapper const&);
-			object_wrapper& operator = (ang::nullptr_t const&) {
-				clear();
-				return*this;
-			}
-
-			operator objptr()const {
-				return _ptr;
-			}
-
-			template<typename F>
-			object_wrapper& operator = (F const& func)
-			{
-				static_assert(is_calleable<F>::value, "F is not a calleable object");
-				set(new core::delegates::static_function<F, T, Ts...>(func));
-				return*this;
-			}
-
-			object_wrapper_ptr<type> operator & (void);
-
-			T operator()(Ts ... args)const {
-				return invoke(ang::forward<Ts>(args)...);
-			}
-
-		};
-
-		template<typename... Ts>
-		class object_wrapper <core::delegates::function_data<void(Ts...)>>
-		{
-		public:
-			typedef core::delegates::function_data<void(Ts...)> type;
-
-		protected:
-			type* _ptr;
-
-		public:
-			object_wrapper();
-			object_wrapper(object_wrapper &&);
-			object_wrapper(object_wrapper const&);
-			object_wrapper(ang::nullptr_t const&);
-			~object_wrapper();
-
-			object_wrapper(core::delegates::function_data<void(Ts...)> * func) : object_wrapper() {
-				set(func);
-			}
-
-
-			template<typename F>
-			object_wrapper(F const& func) : object_wrapper() {
-				set(new core::delegates::static_function<F, void, Ts...>(func));
-			}
-
-			template<typename O>
-			object_wrapper(O* obj, void(O::*f)(Ts...)) : object_wrapper() {
-				set(new core::delegates::member_function<O, is_base_of<object, O>::value, void, Ts...>(obj, f));
-			}
-
-		public:
-			void clear();
-			void clear_unsafe();
-			bool is_empty()const;
-			type* get(void)const;
-			void set(type*);
-			type ** addres_of(void);
-
-			void invoke(Ts ... args)const {
-				if (is_empty())
-					return;
-				return get()->invoke(ang::forward<Ts>(args)...);
-			}
-
-		public:
-			object_wrapper& operator = (object_wrapper &&);
-			object_wrapper& operator = (object_wrapper const&);
-			object_wrapper& operator = (ang::nullptr_t const&) {
-				clear();
-				return*this;
-			}
-
-			operator objptr()const {
-				return _ptr;
-			}
-
-			template<typename F>
-			object_wrapper& operator = (F func)
-			{
-				set(new core::delegates::static_function<F, void, Ts...>(func));
-				return*this;
-			}
-
-			object_wrapper_ptr<type> operator & (void);
-
-			void operator()(Ts ... args)const {
-				invoke(ang::forward<Ts>(args)...);
-			}
-
-			friend safe_pointer;
-		};
-
-		using ang::core::delegates::var_args;
-		using ang::core::delegates::var_args_t;
 	}
+
+	template<typename T, typename... Ts>
+	class object_wrapper <core::delegates::function_data<T(Ts...)>>
+	{
+	public:
+		typedef core::delegates::function_data<T(Ts...)> type;
+
+	protected:
+		type* _ptr;
+
+	public:
+		object_wrapper();
+		object_wrapper(core::delegates::function_data<T(Ts...)>*);
+		object_wrapper(object_wrapper &&);
+		object_wrapper(object_wrapper const&);
+		object_wrapper(ang::nullptr_t const&);
+		~object_wrapper();
+
+		template<typename F>
+		object_wrapper(F const& func) : object_wrapper() {
+			static_assert(is_calleable<F>::value, "F is not a calleable object");
+			set(new core::delegates::static_function<F, T, Ts...>(func));
+		}
+
+		template<typename O>
+		object_wrapper(O* obj, T(O::*f)(Ts...)) : object_wrapper() {
+			set(new core::delegates::member_function<O, is_base_of<interface, O>::value, T, Ts...>(obj, f));
+		}
+
+		template<typename O>
+		object_wrapper(O* obj, T(*f)(O*, Ts...)) : object_wrapper() {
+			set(new core::delegates::pseudo_member_function<O, is_base_of<interface, O>::value, T, Ts...>(obj, f));
+		}
+
+	public:
+		void clear();
+		void clear_unsafe();
+		bool is_empty()const;
+		type* get(void)const;
+		void set(type*);
+		type ** addres_of(void);
+
+		T invoke(Ts ... args)const {
+			if (is_empty())
+				return T();
+			return get()->invoke(ang::forward<Ts>(args)...);
+		}
+
+	public:
+		object_wrapper& operator = (object_wrapper &&);
+		object_wrapper& operator = (object_wrapper const&);
+		object_wrapper& operator = (ang::nullptr_t const&) {
+			clear();
+			return*this;
+		}
+
+		operator objptr()const {
+			return _ptr;
+		}
+
+		template<typename F>
+		object_wrapper& operator = (F const& func)
+		{
+			static_assert(is_calleable<F>::value, "F is not a calleable object");
+			set(new core::delegates::static_function<F, T, Ts...>(func));
+			return*this;
+		}
+
+		object_wrapper_ptr<type> operator & (void);
+
+		T operator()(Ts ... args)const {
+			return invoke(ang::forward<Ts>(args)...);
+		}
+
+	};
+
+	template<typename... Ts>
+	class object_wrapper <core::delegates::function_data<void(Ts...)>>
+	{
+	public:
+		typedef core::delegates::function_data<void(Ts...)> type;
+
+	protected:
+		type* _ptr;
+
+	public:
+		object_wrapper();
+		object_wrapper(object_wrapper &&);
+		object_wrapper(object_wrapper const&);
+		object_wrapper(ang::nullptr_t const&);
+		~object_wrapper();
+
+		object_wrapper(core::delegates::function_data<void(Ts...)> * func) : object_wrapper() {
+			set(func);
+		}
+
+
+		template<typename F>
+		object_wrapper(F const& func) : object_wrapper() {
+			set(new core::delegates::static_function<F, void, Ts...>(func));
+		}
+
+		template<typename O>
+		object_wrapper(O* obj, void(O::*f)(Ts...)) : object_wrapper() {
+			set(new core::delegates::member_function<O, is_base_of<object, O>::value, void, Ts...>(obj, f));
+		}
+
+	public:
+		void clear();
+		void clear_unsafe();
+		bool is_empty()const;
+		type* get(void)const;
+		void set(type*);
+		type ** addres_of(void);
+
+		void invoke(Ts ... args)const {
+			if (is_empty())
+				return;
+			return get()->invoke(ang::forward<Ts>(args)...);
+		}
+
+	public:
+		object_wrapper& operator = (object_wrapper &&);
+		object_wrapper& operator = (object_wrapper const&);
+		object_wrapper& operator = (ang::nullptr_t const&) {
+			clear();
+			return*this;
+		}
+
+		operator objptr()const {
+			return _ptr;
+		}
+
+		template<typename F>
+		object_wrapper& operator = (F func)
+		{
+			set(new core::delegates::static_function<F, void, Ts...>(func));
+			return*this;
+		}
+
+		object_wrapper_ptr<type> operator & (void);
+
+		void operator()(Ts ... args)const {
+			invoke(ang::forward<Ts>(args)...);
+		}
+
+		friend safe_pointer;
+	};
+
+	using ang::core::delegates::var_args;
+	using ang::core::delegates::var_args_t;
+
 }
 
 #endif//__CORE_FUNCTION_H__

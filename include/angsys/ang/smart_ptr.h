@@ -22,6 +22,19 @@ namespace ang
 		//typedef shared_ptr<T> smart_ptr_t; typedef typename smart_ptr_t::type type;
 		typedef T* smart_ptr_t; typedef T type;
 	};
+
+
+	ang_interface(iobject);
+
+	
+	/******************************************************************/
+	/* interface ang::iobject :                                       */
+	/*  -> implements basic methods for smart pointer management      */
+	/******************************************************************/
+	ang_begin_interface(LINK iobject)
+		visible vcall dword add_ref() pure;
+		visible vcall dword release() pure;
+	ang_end_interface();
 }
 
 #include <ang/inline/intf_wrapper.hpp>

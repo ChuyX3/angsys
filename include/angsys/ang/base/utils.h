@@ -287,7 +287,7 @@ namespace ang //operations
 {
 	typedef enum class logic_operation_type : uint
 	{
-		not,
+		negation,
 		same,
 		diferent,
 		same_or_minor,
@@ -298,13 +298,13 @@ namespace ang //operations
 
 	typedef enum class boolean_operation_type : uint
 	{
-		not,
-		and,
-		or,
-		xor,
-		nan,
-		nor,
-		xnor,
+		not_operation,
+		and_operation,
+		or_operation,
+		xor_operation,
+		nan_operation,
+		nor_operation,
+		xnor_operation,
 	}boolean_operation_t;
 
 	typedef enum class arithmetic_operation_type : uint
@@ -317,7 +317,7 @@ namespace ang //operations
 	}arithmetic_operation_t;
 
 	template<logic_operation_type TYPE, typename T1, typename T2 = T1, typename = void> struct has_logic_operation : false_type { };
-	template<typename T> struct has_logic_operation<logic_operation_type::not, T, T, void_t<decltype(!declval<T>())>> : true_type { };
+	template<typename T> struct has_logic_operation<logic_operation_type::negation, T, T, void_t<decltype(!declval<T>())>> : true_type { };
 	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::same, T1, T2, void_t<decltype(declval<T1>() == declval<T2>())>> : true_type { };
 	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::diferent, T1, T2, void_t<decltype(declval<T1>() != declval<T2>())>> : true_type { };
 	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::same_or_minor, T1, T2, void_t<decltype(declval<T1>() <= declval<T2>())>> : true_type { };
@@ -329,8 +329,8 @@ namespace ang //operations
 	template<typename T1, typename T2, logic_operation_type TYPE>
 	struct logic_operation { static bool operate(const T1&, const T2&) { return false; }  };
 
-	template<typename T> struct logic_operation<T, T, logic_operation_type::not> {
-		static_assert(has_logic_operation<logic_operation_type::not, T, T>::value, "template parameter T has no logic operator");
+	template<typename T> struct logic_operation<T, T, logic_operation_type::negation> {
+		static_assert(has_logic_operation<logic_operation_type::negation, T, T>::value, "template parameter T has no logic operator");
 		static bool operate(const T& value) { return !value; }
 	};
 
@@ -366,13 +366,13 @@ namespace ang //operations
 
 
 	template<boolean_operation_type TYPE, typename T1, typename T2 = T1, typename = void> struct has_boolean_operation : false_type { };
-	template<typename T> struct has_boolean_operation<boolean_operation_type::not, T, T, void_t<decltype(~declval<T>())>> : true_type { };
-	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::and, T1, T2, void_t<decltype(declval<T1>() & declval<T2>())>> : true_type { };
-	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::or, T1, T2, void_t<decltype(declval<T1>() | declval<T2>())>> : true_type { };
-	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::xor , T1, T2, void_t<decltype(declval<T1>() ^ declval<T2>())>> : true_type { };
-	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::nan, T1, T2, void_t<decltype(~(declval<T1>() & declval<T2>()))>> : true_type { };
-	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::nor, T1, T2, void_t<decltype(~(declval<T1>() | declval<T2>()))>> : true_type { };
-	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::xnor, T1, T2, void_t<decltype(~(declval<T1>() ^ declval<T2>()))>> : true_type { };
+	template<typename T> struct has_boolean_operation<boolean_operation_type::not_operation, T, T, void_t<decltype(~declval<T>())>> : true_type { };
+	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::and_operation, T1, T2, void_t<decltype(declval<T1>() & declval<T2>())>> : true_type { };
+	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::or_operation, T1, T2, void_t<decltype(declval<T1>() | declval<T2>())>> : true_type { };
+	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::xor_operation, T1, T2, void_t<decltype(declval<T1>() ^ declval<T2>())>> : true_type { };
+	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::nan_operation, T1, T2, void_t<decltype(~(declval<T1>() & declval<T2>()))>> : true_type { };
+	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::nor_operation, T1, T2, void_t<decltype(~(declval<T1>() | declval<T2>()))>> : true_type { };
+	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::xnor_operation, T1, T2, void_t<decltype(~(declval<T1>() ^ declval<T2>()))>> : true_type { };
 
 }
 
@@ -406,6 +406,25 @@ namespace ang
 		typedef long long int_t;
 		typedef unsigned long long uint_t;
 	};
+
+	template<typename T, bool IS_FUNCTION = is_function<T>::value>
+	struct __adressof {
+		static T* value(T& val) { 
+			return (reinterpret_cast<T*>(&const_cast<char&>(reinterpret_cast<const volatile char&>(val))));
+		}
+	};
+
+	template<typename T>
+	struct __adressof<T, true> {
+		static T* value(T& val) {
+			return (val);
+		}
+	};
+
+	template<typename T>
+	inline T *addressof(T& val) noexcept {	
+		return __adressof<T>::value(val);
+	}
 }
 
 #endif//__ANG_BASE_UTILS_H__

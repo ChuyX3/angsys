@@ -76,7 +76,7 @@ namespace ang
 			template<text::encoding E, template<typename>class _alloc> windex find_reverse(basic_string<E, _alloc> const& str, windex start = 0, windex end = -1)const { string_base::find_reverse((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str, start, end); }
 
 			template<typename T, text::encoding E> str_view<T, E> sub_string(str_view<T, E>& str, windex start, windex end)const {
-				string_base::sub_string(str, start, end).to_str<E>();
+
 			}
 			template<text::encoding E, template<typename>class _alloc> basic_string<E>& sub_string(basic_string<E, _alloc>& str, windex start = 0, windex end = -1)const {
 				if (str.is_empty())str = new basic_string_buffer<E, _alloc>();
@@ -212,22 +212,22 @@ namespace ang
 		template<text::encoding E> 
 		friend object_wrapper<strings::basic_string_buffer<ENCODING>> operator + 
 			(object_wrapper<const strings::basic_string_buffer<ENCODING>> const& str1, object_wrapper<strings::basic_string_buffer<E>> const& str2) {
-			object_wrapper<strings::basic_string_buffer<ENCODING>> out = str1;
+			object_wrapper<strings::basic_string_buffer<ENCODING>> out = str1->cstr();
 			out += str2;
 			return ang::move(out);
 		}
 
 		template<typename T, text::encoding E> friend object_wrapper<strings::basic_string_buffer<ENCODING>> operator +
 			(object_wrapper<const strings::basic_string_buffer<ENCODING>> const& str1, str_view<T, E> const& str2) {
-			object_wrapper<strings::basic_string_buffer<ENCODING>> out = str1;
+			object_wrapper<strings::basic_string_buffer<ENCODING>> out = str1->cstr();
 			out += str2;
 			return ang::move(out);
 		}
 
 		template<typename T, text::encoding E> friend object_wrapper<strings::basic_string_buffer<ENCODING>> operator +
 			(str_view<T, E> const& str1, object_wrapper<const strings::basic_string_buffer<ENCODING>> const& str2) {
-			object_wrapper<strings::basic_string_buffer<ENCODING>> out = str1;
-			out += str2;
+			object_wrapper<strings::basic_string_buffer<ENCODING>> out = str1->cstr();
+			out += str2->cstr();
 			return ang::move(out);
 		}
 

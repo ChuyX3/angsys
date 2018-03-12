@@ -38,7 +38,7 @@ basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::~basic_string_buffer()
 
 ang::rtti_t const& basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::class_info()
 {
-	static const char name[] = ANG_UTILS_TO_STRING(ang::strings::basic_string_buffer<MY_ENCODING COMA MY_ALLOCATOR>);
+	static const char name[] = ANG_UTILS_TO_STRING(ang::string<MY_ENCODING COMA MY_ALLOCATOR>);
 	static rtti_t const* parents[] = TYPE_OF_PTR_ARRAY(basic_string_buffer_base);
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>), alignof(basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>), parents, &default_query_interface);
 	return info; 

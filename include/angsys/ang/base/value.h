@@ -107,7 +107,7 @@ namespace ang //constants
 		T const* operator ->()const { return &get(); }
 
 		T& get() { return _value; }
-		T const& get() { return _value; }
+		T const& get()const { return _value; }
 		void set(T const& v) { _value = v; }
 		void move(T && v) {
 			_value = ang::forward<T>(v);
@@ -152,8 +152,8 @@ namespace ang //constants
 		T* operator ->() { return this; }
 		T const* operator ->()const { return this; }
 
-		T& get() { return return static_cast<T&>(*this); }
-		T const& get()const { return return static_cast<T const&>(*this); }
+		T& get() { return static_cast<T&>(*this); }
+		T const& get()const { return static_cast<T const&>(*this); }
 		void set(T const& v) { static_cast<T&>(*this) = ang::forward<T>(v); }
 		void move(T && v) {
 			static_cast<T&>(*this) = ang::forward<T>(v);
@@ -166,14 +166,14 @@ namespace ang //constants
 		static constexpr genre_t genre_id = genre::enum_type;
 
 		value() {}
-		value(type const& v) { _value = v; }
-		value(value const& v) { _value = v._value; }
+		value(type const& v) { this->_value = v; }
+		value(value const& v) { this->_value = v._value; }
 		value(type && v) {
-			_value = v;
+			this->_value = v;
 			v = default_value<type>::value;
 		}
 		value(value && v) {
-			_value = ang::move(v._value);
+			this->_value = ang::move(v._value);
 			v._value = default_value<type>::value;
 		}
 
@@ -181,20 +181,20 @@ namespace ang //constants
 		operator type const& ()const { return get(); }
 
 		value& operator = (type const& v) {
-			_value = v;
+			this->_value = v;
 			return*this;
 		}
 		value& operator = (value const& v) {
-			_value = v._value;
+			this->_value = v._value;
 			return*this;
 		}
 		value& operator = (type && v) {
-			_value = v;
+			this->_value = v;
 			v = default_value<type>::value;
 			return*this;
 		}
 		value& operator = (value && v) {
-			_value = ang::move(v._value);
+			this->_value = ang::move(v._value);
 			v._value = default_value<type>::value;
 			return*this;
 		}
@@ -203,11 +203,11 @@ namespace ang //constants
 		T* operator ->() { return this; }
 		T const* operator ->()const { return this; }
 
-		type& get() { return *reinterpret_cast<type*>(&_value); }
-		type const& get()const { return *reinterpret_cast<type const*>(&_value); }
-		void set(type const& v) { _value = v; }
+		type& get() { return *reinterpret_cast<type*>(&this->_value); }
+		type const& get()const { return *reinterpret_cast<type const*>(&this->_value); }
+		void set(type const& v) { this->_value = v; }
 		void move(type && v) {
-			_value = v;
+			this->_value = v;
 			v = default_value<type>::value;
 		}
 	};

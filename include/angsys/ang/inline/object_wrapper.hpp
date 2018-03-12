@@ -396,7 +396,6 @@ namespace ang
 	{
 	public:
 		typedef object type;
-		typedef object type;
 		typedef object* type_ptr;
 		typedef object& type_ref;
 		typedef object const* ctype_ptr;
@@ -475,7 +474,6 @@ namespace ang
 	class LINK object_wrapper<const object>
 	{
 	public:
-		typedef object type;
 		typedef object type;
 		typedef object* type_ptr;
 		typedef object& type_ref;
