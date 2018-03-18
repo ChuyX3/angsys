@@ -25,8 +25,13 @@ namespace ang
 		template<typename T> struct ilist;
 
 		template<class T> using ienum_t = intf_wrapper<ienum<T>>;
+		template<class T> using ienum_ptr = intf_wrapper<ienum<T>>;
+
 		template<class T> using iarray_t = intf_wrapper<iarray<T>>;
+		template<class T> using iarray_ptr = intf_wrapper<iarray<T>>;
+
 		template<class T> using ilist_t = intf_wrapper<ilist<T>>;
+		template<class T> using ilist_ptr = intf_wrapper<ilist<T>>;
 
 		/******************************************************************/
 /* interface ang::collections::ienum :                            */
@@ -67,9 +72,9 @@ namespace ang
 			visible vcall iterator<T> at(windex) pure;
 			visible vcall const_iterator<T> at(windex)const pure;
 			visible vcall void copy(const ienum<T>*) pure;
-			visible vcall iterator<T> find(core::delegates::function<bool(T&)>, bool invert = false)const pure;
-			visible vcall iterator<T> find(core::delegates::function<bool(T&)>, base_iterator<T> next_to, bool invert = false)const pure;
-			visible vcall ienum_t<T> find_all(core::delegates::function<bool(T&)>)const pure;
+			visible vcall iterator<T> find(core::delegates::function<bool(T const&)>, bool invert = false)const pure;
+			visible vcall iterator<T> find(core::delegates::function<bool(T const&)>, base_iterator<T> next_to, bool invert = false)const pure;
+			visible vcall ienum_ptr<T> find_all(core::delegates::function<bool(T const&)>)const pure;
 		ang_end_interface();
 
 		/******************************************************************/

@@ -191,7 +191,8 @@ namespace ang //constants
 		template<typename T>
 		struct __type_info_builder_genre_class_helper<T, false> : true_type {
 			static rtti_t const& type_of() {
-				rtti_t const& info = rtti::regist("class<'unknown'>", genre::class_type, sizeof(T), alignof(T));
+				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
+				rtti_t const& info = rtti::regist("class<'unknown'>", genre::class_type, sizeof(type), alignof(type));
 				return info;
 			}
 		};

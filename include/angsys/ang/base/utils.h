@@ -203,9 +203,9 @@ namespace ang //testing
 	template<typename T1, typename T2> struct is_same_type : false_type { };
 	template<typename T> struct is_same_type<T,T> : true_type { };
 
-	template<typename T> struct is_enum : yes_expression<__is_enum(T)> {};
-	template<typename T> struct is_union : yes_expression<__is_union(T)> {};
-	template<typename T> struct is_class : yes_expression<__is_class(T)> {};
+	template<typename T> struct is_enum : yes_expression<__is_enum(typename remove_reference<typename remove_constant<T>::type>::type)> {};
+	template<typename T> struct is_union : yes_expression<__is_union(typename remove_reference<typename remove_constant<T>::type>::type)> {};
+	template<typename T> struct is_class : yes_expression<__is_class(typename remove_reference<typename remove_constant<T>::type>::type)> {};
 
 	template<typename base_type, typename child_type>
 	struct is_base_of : public yes_expression<__is_base_of(base_type, child_type)> { };
@@ -237,6 +237,7 @@ namespace ang //testing
 	> struct __genre_of {
 		static constexpr genre_t value = genre::value_type;
 	};
+
 
 	template<typename T> struct __genre_of<T, true, false, false, false> {
 		static constexpr genre_t value = genre::enum_type;

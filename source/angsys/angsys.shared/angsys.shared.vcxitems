@@ -15,6 +15,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angsys.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\array.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\async.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\base.h" />
@@ -35,6 +36,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\iterators.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\vector.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\function.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\exception.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\const_string_declaration.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\intf_wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\object_wrapper.hpp" />
@@ -43,7 +45,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\singleton.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\smart_ptr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\string.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\system.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_memory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core_hash_table.h" />
@@ -55,6 +56,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\async\async.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\encoder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\exception.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\memory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\runtime.cpp" />
@@ -67,6 +69,7 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\raw_str.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\text.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\array.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\collections.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\function.inl" />
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl" />
     <None Include="$(MSBuildThisFileDirectory)include\inline\string.inl" />

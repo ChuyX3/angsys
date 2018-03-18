@@ -346,11 +346,11 @@ ANG_EXTERN ulong64 get_performance_time_us()
 int main()
 {	
 
-	string str = new("jesus rocha") strings::const_string_buffer();
+	collections::array<int> a = { 1,2,3,4,5,6,7,8,9 };
 
-	auto name = str->runtime_info().type_name();
-	
-	safe_pointer;
+	rtti_t const& info = type_of<collections::ienum<int>>();
+
+	rtti_t const& info2 = type_of<collections::iarray<int>>();
 
 	return 0;
 }

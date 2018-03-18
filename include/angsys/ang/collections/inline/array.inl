@@ -21,6 +21,7 @@
 template<typename T, template <typename> class allocator>
 inline ang::collections::array_buffer<T, allocator>::array_buffer()
 	: object()
+	, _size(0)
 	, _data(null)
 {
 }
@@ -29,7 +30,7 @@ template<typename T, template <typename> class allocator>
 inline ang::collections::array_buffer<T, allocator>::array_buffer(wsize reserve)
 	: array_buffer()
 {
-	_data.alloc(reserve);
+	realloc(reserve);
 }
 
 template<typename T, template <typename> class allocator> template<typename U>
@@ -37,7 +38,7 @@ inline ang::collections::array_buffer<T, allocator>::array_buffer(std::initializ
 	: array_buffer()
 {
 	wsize c = 0;
-	_data.alloc(list.size());
+	realloc(list.size());
 	for (auto it = list.begin(); it != list.end(); ++it)
 		_data[c++] = *it;	
 }
@@ -53,21 +54,24 @@ template<typename T, template <typename> class allocator>
 inline ang::collections::array_buffer<T, allocator>::array_buffer(ang::collections::array_buffer<T, allocator>&& ar)
 	: array_buffer()
 {
-	_data.move(ar._data);
+	_size = ang::move(ar._size);
+	_data = ang::move(ar._data);
+	ar._size = 0;
+	ar._data = null;
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::collections::array_buffer<T, allocator>::array_buffer(const ang::collections::array_buffer<T, allocator>& ar)
 	: array_buffer()
 {
-	copy(&static_cast<const ienum_t&>(ar));
+	copy(&static_cast<const ienum_type&>(ar));
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::collections::array_buffer<T, allocator>::array_buffer(const ang::collections::array_buffer<T, allocator>* ar)
 	: array_buffer()
 {
-	if (ar) copy(static_cast<const ienum_t*>(ar));
+	if (ar) copy(static_cast<const ienum_type*>(ar));
 }
 
 template<typename T, template <typename> class allocator>
@@ -96,6 +100,16 @@ inline ang::collections::array_buffer<T, allocator>::~array_buffer()
 {
 	clear();
 }
+
+template<typename T, template <typename> class allocator>
+inline ang::rtti_t const& ang::collections::array_buffer<T, allocator>::class_info()
+{
+	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::array_buffer<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static rtti_t const* parents[] = { &runtime::type_of<iarray<T>>() };
+	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::array_buffer<T, allocator>), alignof(ang::collections::array_buffer<T, allocator>), parents, &default_query_interface);
+	return info;
+}
+
 //
 //template<typename T, template <typename> class allocator>
 //inline ang::type_name_t ang::collections::array_buffer<T, allocator>::class_name()
@@ -155,45 +169,65 @@ inline ang::collections::array_buffer<T, allocator>::~array_buffer()
 template<typename T, template <typename> class allocator>
 inline void ang::collections::array_buffer<T, allocator>::clear()
 {
-	_data.clear();
+	if (_data) {
+		for (windex i = 0; i < _size; ++i)
+			alloc.template destroy<T>((T*)&_data[i]);
+		alloc.deallocate(_data);
+	}
+	_size = 0;
+	_data = null;
 }
 
 template<typename T, template <typename> class allocator>
 inline bool ang::collections::array_buffer<T, allocator>::is_empty()const
 {
-	return null == _data.get();
+	return null == _data;
 }
 
 template<typename T, template <typename> class allocator>
 inline T* ang::collections::array_buffer<T, allocator>::data()const
 {
-	return _data.get();
+	return _data;
 }
 
 template<typename T, template <typename> class allocator>
 inline wsize ang::collections::array_buffer<T, allocator>::size()const
 {
-	return _data.size();
+	return _size;
 }
 
 template<typename T, template <typename> class allocator>
 inline void ang::collections::array_buffer<T, allocator>::size(wsize size)
 {
-	if (size == _data.size())
+	if (size == _size)
 		return;
-	_data.alloc(size);
+	realloc(size);
 }
 
 template<typename T, template <typename> class allocator> template<typename U>
 inline void ang::collections::array_buffer<T, allocator>::copy(ang::array_view<U> const& ar)
 {
-	_data.copy(ar);
+	clear();
+	if (ar.size() > 0)
+		_data = alloc.allocate(ar.size());
+	_size = ar.size();
+
+	for (windex i = 0; i < _size; ++i)
+		alloc.template construct<T, U const&>(&_data[i], ar[i]);
+	ar.set(null, 0);
 }
 
 template<typename T, template <typename> class allocator> template<typename U, template<typename> class allocator2>
 inline void ang::collections::array_buffer<T, allocator>::copy(ang::scope_array<U, allocator2> const& ar)
 {
-	_data.copy(ar);
+	clear();
+	if (ar.size() > 0)
+		_data = alloc.allocate(ar.size());
+	_size = ar.size();
+
+	for (windex i = 0; i < _size; ++i)
+		alloc.template construct<T, U const&>(&_data[i], ar[i]);
+	ar.set(null, 0);
 }
 
 template<typename T, template<typename> class allocator>
@@ -203,28 +237,34 @@ inline ang::text::encoding_t ang::collections::array_buffer<T, allocator>::encod
 }
 
 template<typename T, template <typename> class allocator>
-inline pointer ang::collections::array_buffer<T, allocator>::buffer_ptr()const
+inline pointer ang::collections::array_buffer<T, allocator>::buffer_ptr()
 {
-	return (pointer)_data.get();
+	return (pointer)_data;
+}
+
+template<typename T, template <typename> class allocator>
+inline const_pointer ang::collections::array_buffer<T, allocator>::buffer_ptr()const
+{
+	return (pointer)_data;
 }
 
 template<typename T, template <typename> class allocator>
 inline wsize ang::collections::array_buffer<T, allocator>::buffer_size()const
 {
-	return _data.size() * (wsize)sizeof(T);
+	return _size * (wsize)sizeof(T);
 }
 
 template<typename T, template <typename> class allocator>
 inline wsize ang::collections::array_buffer<T, allocator>::mem_copy(wsize _s, pointer _p, text::encoding_t)
 {
-	throw(exception_t(except_code::unsupported));
+	throw_exception(except_code::unsupported);
 	return 0;
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::ibuffer_view_t ang::collections::array_buffer<T, allocator>::map_buffer(windex start, wsize size)
 {
-	throw(exception_t(except_code::unsupported));
+	throw_exception(except_code::unsupported);
 	return null;
 }
 
@@ -259,13 +299,13 @@ inline void ang::collections::array_buffer<T, allocator>::copy(const ang::collec
 	size(_items->counter());
 	windex i = 0;
 	for (T const& value : *_items)
-		_data.get()[i++] = value;
+		_data[i++] = value;
 }
 
 template<typename T, template <typename> class allocator>
 inline wsize ang::collections::array_buffer<T, allocator>::counter()const
 {
-	return _data.size();
+	return _size;
 }
 
 template<typename T, template <typename> class allocator>
@@ -273,11 +313,11 @@ inline T& ang::collections::array_buffer<T, allocator>::at(ang::collections::bas
 {
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty())
-		throw(exception_t(except_code::invalid_memory));
+		throw_exception(except_code::invalid_memory);
 	if (&_data != it.current())
-		throw(exception_t(except_code::invalid_param));
-	if (it.offset() >= _data.size())
-		throw(exception_t(except_code::array_overflow));
+		throw_exception(except_code::invalid_param);
+	if (it.offset() >= _size)
+		throw_exception(except_code::array_overflow);
 #endif
 	return _data[it.offset()];
 }
@@ -285,7 +325,7 @@ inline T& ang::collections::array_buffer<T, allocator>::at(ang::collections::bas
 template<typename T, template <typename> class allocator>
 inline ang::collections::iterator<T> ang::collections::array_buffer<T, allocator>::at(windex idx)
 {
-	if (idx >= _data.size())
+	if (idx >= _size)
 		return  iterator_t(const_cast<self_t*>(this), null, 0);
 	return iterator_t(const_cast<self_t*>(this), (pointer)&_data, idx);
 }
@@ -293,24 +333,24 @@ inline ang::collections::iterator<T> ang::collections::array_buffer<T, allocator
 template<typename T, template <typename> class allocator>
 inline ang::collections::iterator<const T> ang::collections::array_buffer<T, allocator>::at(windex idx)const
 {
-	if (idx >= _data.size())
+	if (idx >= _size)
 		return  const_iterator_t(const_cast<self_t*>(this), null, 0);
 	return const_iterator_t(const_cast<self_t*>(this), (pointer)&_data, idx);
 }
 
 template<typename T, template <typename> class allocator>
-inline ang::collections::iterator<T> ang::collections::array_buffer<T, allocator>::find(T const& datum, bool invert)const
+inline ang::collections::iterator<T> ang::collections::array_buffer<T, allocator>::find(ang::core::delegates::function<bool(T const&)> cond, bool invert)const
 {
 	if (!is_empty())
 	{
 		if (invert) for (auto i = size(); i > 0; --i)
 		{
-			if (comparision_operations<T, T>::template compare<comparision_same>(_data[i - 1] , datum))
+			if (cond(_data[i - 1]))
 				return at(i - 1);
 		}
 		else for (auto i = 0U; i < size(); ++i)
 		{
-			if (comparision_operations<T, T>::template compare<comparision_same>(_data[i] , datum))
+			if (cond(_data[i]))
 				return at(i);
 		}
 	}
@@ -318,18 +358,18 @@ inline ang::collections::iterator<T> ang::collections::array_buffer<T, allocator
 }
 
 template<typename T, template <typename> class allocator>
-inline ang::collections::iterator<T> ang::collections::array_buffer<T, allocator>::find(T const& datum, ang::collections::base_iterator<T> next_to, bool invert)const
+inline ang::collections::iterator<T> ang::collections::array_buffer<T, allocator>::find(ang::core::delegates::function<bool(T const&)> cond, ang::collections::base_iterator<T> next_to, bool invert)const
 {
 	if (!is_empty() && next_to.parent() == this)
 	{
 		if (invert) for (auto i = next_to.offset() + 1; i > 0; --i)
 		{
-			if (comparision_operations<T, T>::template compare<comparision_same>(_data[i - 1], datum))
+			if (cond(_data[i - 1]))
 				return at(i - 1);
 		}
 		else for (auto i = next_to.offset(); i < size(); ++i)
 		{
-			if (comparision_operations<T, T>::template compare<comparision_same>(_data[i], datum))
+			if (cond(_data[i]))
 				return at(i);
 		}
 	}
@@ -337,63 +377,78 @@ inline ang::collections::iterator<T> ang::collections::array_buffer<T, allocator
 }
 
 template<typename T, template <typename> class allocator>
+inline ang::collections::ienum_ptr<T> ang::collections::array_buffer<T, allocator>::find_all(ang::core::delegates::function<bool(T const&)> cond)const
+{
+	vector<T, allocator> out;
+	if (!is_empty())
+	{
+		for (auto i = size(); i > 0; --i)
+		{
+			//if (cond(_data[i - 1])) TODO:
+			//	out += at(i - 1);
+		}
+	}
+	return out.get();
+}
+
+template<typename T, template <typename> class allocator>
 inline ang::collections::forward_iterator<T> ang::collections::array_buffer<T, allocator>::begin()
 {
-	return forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data));
+	return forward_iterator_t(const_cast<array_buffer*>(this), pointer(&_data));
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::collections::forward_iterator<T> ang::collections::array_buffer<T, allocator>::end()
 {
-	return forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size());
+	return forward_iterator_t(const_cast<array_buffer*>(this), pointer(&_data), _size);
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::collections::forward_iterator<const T> ang::collections::array_buffer<T, allocator>::begin()const
 {
-	return const_forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data));
+	return const_forward_iterator_t(const_cast<array_buffer*>(this), pointer(&_data));
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::collections::forward_iterator<const T> ang::collections::array_buffer<T, allocator>::end()const
 {
-	return const_forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size());
+	return const_forward_iterator_t(const_cast<array_buffer*>(this), pointer(&_data), _size);
 }
 
 template<typename T, template<typename> class allocator>
 inline ang::collections::forward_iterator<T> ang::collections::array_buffer<T, allocator>::last()
 {
-	return _data.size() ? forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size() - 1) : end();
+	return _size ? forward_iterator_t(const_cast<array_buffer*>(this), pointer(&_data), _size - 1) : end();
 }
 
 template<typename T, template<typename> class allocator>
 inline ang::collections::forward_iterator<const T> ang::collections::array_buffer<T, allocator>::last()const
 {
-	return _data.size() ? const_forward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size() - 1) : end();
+	return _size ? const_forward_iterator_t(const_cast<array_buffer*>(this), pointer(&_data), _size - 1) : end();
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::collections::backward_iterator<T> ang::collections::array_buffer<T, allocator>::rbegin()
 {
-	return backward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size() - 1);
+	return backward_iterator_t(const_cast<array_buffer*>(this), pointer(&_data), _size - 1);
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::collections::backward_iterator<T> ang::collections::array_buffer<T, allocator>::rend()
 {
-	return backward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), invalid_index);
+	return backward_iterator_t(const_cast<array_buffer*>(this), pointer(&_data), invalid_index);
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::collections::backward_iterator<const T> ang::collections::array_buffer<T, allocator>::rbegin()const
 {
-	return const_backward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), _data.size() - 1);
+	return const_backward_iterator_t(const_cast<array_buffer*>(this), pointer(&_data), _size - 1);
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::collections::backward_iterator<const T> ang::collections::array_buffer<T, allocator>::rend()const
 {
-	return const_backward_iterator_t(const_cast<array_buffer*>(this), position_t(&_data), invalid_index);
+	return const_backward_iterator_t(const_cast<array_buffer*>(this), pointer(&_data), invalid_index);
 }
 
 template<typename T, template <typename> class allocator>
@@ -401,12 +456,12 @@ inline bool ang::collections::array_buffer<T, allocator>::increase(ang::collecti
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() != &_data)
-		throw(exception_t(except_code::invalid_param));
-	if (it.offset() >= _data.size())
-		throw(exception_t(except_code::array_overflow));
+		throw_exception(except_code::invalid_param);
+	if (it.offset() >= _size)
+		throw_exception(except_code::array_overflow);
 #endif
 	it.offset(it.offset() + 1);
-	if (it.offset() > _data.size()) it.offset(_data.size());
+	if (it.offset() > _size) it.offset(_size);
 	return true;
 }
 
@@ -415,13 +470,13 @@ inline bool ang::collections::array_buffer<T, allocator>::increase(ang::collecti
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() != &_data)
-		throw(exception_t(except_code::invalid_param));
-	if (it.offset() >= _data.size())
-		throw(exception_t(except_code::array_overflow));
+		throw_exception(except_code::invalid_param);
+	if (it.offset() >= _size)
+		throw_exception(except_code::array_overflow);
 #endif
 	it.offset(it.offset() + val);
-	if (it.offset() >= _data.size())
-		it.offset(_data.size());
+	if (it.offset() >= _size)
+		it.offset(_size);
 	return true;
 }
 
@@ -430,9 +485,9 @@ inline bool ang::collections::array_buffer<T, allocator>::decrease(ang::collecti
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() != &_data)
-		throw(exception_t(except_code::invalid_param));
-	if (it.offset() >= _data.size())
-		throw(exception_t(except_code::array_overflow));
+		throw_exception(except_code::invalid_param);
+	if (it.offset() >= _size)
+		throw_exception(except_code::array_overflow);
 #endif
 	it.offset(it.offset() - 1);
 	if ((int)it.offset() < -1)
@@ -445,9 +500,9 @@ inline bool ang::collections::array_buffer<T, allocator>::decrease(ang::collecti
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() != &_data)
-		throw(exception_t(except_code::invalid_param));
-	if (it.offset() >= _data.size())
-		throw(exception_t(except_code::array_overflow));
+		throw_exception(except_code::invalid_param);
+	if (it.offset() >= _size)
+		throw_exception(except_code::array_overflow);
 #endif
 	it.offset(it.offset() - val);
 	if ((int)it.offset() < -1)
@@ -456,17 +511,19 @@ inline bool ang::collections::array_buffer<T, allocator>::decrease(ang::collecti
 }
 
 template<typename T, template <typename> class allocator>
-inline ang::comparision_result_t ang::collections::array_buffer<T, allocator>::compare(const ang::object& obj)const
+inline ang::comparision_result_t ang::collections::array_buffer<T, allocator>::compare(const ang::object* obj)const
 {
-	if (obj.is_kind_of(class_name()))
+	windex i = 0;
+	intf_wrapper<const ienum<T>> other = obj->as<ienum<T>>();
+
+	if (obj && obj->runtime_info().is_type_of(class_info()))
 	{
-		array_buffer<T, allocator>const& other = static_cast<array_buffer<T, allocator>const&>(obj);
-		if (counter() > other.counter())
+		if (counter() > other->counter())
 			return comparision_result::mayor;
-		else if (counter() < other.counter())
+		else if (counter() < other->counter())
 			return comparision_result::minor;
-		else for (windex i = 0, c = counter(); i < c; ++i)
-			if (comparision_operations<T, T>::template compare<comparision_diferent>(_data[i], other._data[i]))
+		else for (auto it = other->begin(); it != other->end(); ++it)
+			if (logic_operation<T, T, logic_operation_type::same>::operate(_data[i],*it))
 				return comparision_result::diferent;
 		return comparision_result::same;
 	}
@@ -477,8 +534,15 @@ inline ang::comparision_result_t ang::collections::array_buffer<T, allocator>::c
 template<typename T, template <typename> class allocator>
 inline bool ang::collections::array_buffer<T, allocator>::realloc(wsize size)
 {
-	_data.alloc(size);
-	return true;
+	clear();
+	if (size > 0)
+	{
+		_size = size;
+		_data = alloc.allocate(_size);
+		for (windex i = 0; i < _size; ++i)
+			alloc.template construct<T, T const&>((T*)&_data[i], T());
+	}
+	return _data;
 }
 
 
@@ -659,8 +723,8 @@ inline T const& ang::object_wrapper<ang::collections::array_buffer<T, allocator>
 {
 	static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted");
 #ifdef DEBUG_SAFE_CODE
-		if (is_empty()) throw(exception_t(except_code::invalid_memory));
-		if ((idx >= _ptr->size()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+		if (is_empty()) throw_exception(except_code::invalid_memory);
+		if ((idx >= _ptr->size()) || (idx < 0)) throw_exception(except_code::array_overflow);
 #endif
 	return _ptr->data()[idx];
 }
@@ -670,8 +734,8 @@ inline T & ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::op
 {
 	static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted");
 #ifdef DEBUG_SAFE_CODE
-		if (is_empty()) throw(exception_t(except_code::invalid_memory));
-		if ((idx >= _ptr->size()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+		if (is_empty()) throw_exception(except_code::invalid_memory);
+		if ((idx >= _ptr->size()) || (idx < 0)) throw_exception(except_code::array_overflow);
 #endif
 	return _ptr->data()[idx];
 }

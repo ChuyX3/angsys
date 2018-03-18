@@ -95,11 +95,19 @@ namespace ang
 		template<typename T> typename smart_ptr_type<T>::smart_ptr_t as() {
 			return  this ? dyn_cast<typename smart_ptr_type<T>::type>(this) : null;
 		}
-
 		template<typename T> bool as(T*& out) {
 			out = this ? dyn_cast<typename smart_ptr_type<T>::type>(this) : null;
 			return out != null;
 		}
+
+		template<typename T> typename smart_ptr_type<T>::const_smart_ptr_t as()const {
+			return  this ? dyn_cast<typename smart_ptr_type<T>::const_type>(this) : null;
+		}
+		template<typename T> bool as(T const*& out)const {
+			out = this ? dyn_cast<typename smart_ptr_type<T>::const_type>(this) : null;
+			return out != null;
+		}
+
 
 	};
 

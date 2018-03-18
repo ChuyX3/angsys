@@ -129,32 +129,34 @@ namespace ang //constants
 		template<typename To, typename From> inline To* dyn_cast(From* old) { return __dyn_cast_helper<To, From>::cast(old); }
 		template<typename To, typename From> inline To const* dyn_cast(From const* old) { return __dyn_cast_helper<To, From>::cast(old); }
 
+		//template<typename T, genre_t TYPE>
+		//struct type_info_builder<const T, TYPE> : type_info_builder<T, TYPE> {};
 
-		template<typename T, genre_t TYPE>
-		struct type_info_builder<const T, TYPE> : type_info_builder<T, TYPE> {};
+		//template<typename T, genre_t TYPE>
+		//struct type_info_builder<T&, TYPE> : type_info_builder<T, TYPE> {};
 
-		template<typename T, genre_t TYPE>
-		struct type_info_builder<T&, TYPE> : type_info_builder<T, TYPE> {};
+		//template<typename T, genre_t TYPE>
+		//struct type_info_builder<T const&, TYPE> : type_info_builder<T, TYPE> {};
 
-		template<typename T, genre_t TYPE>
-		struct type_info_builder<T const&, TYPE> : type_info_builder<T, TYPE> {};
-
-		template<typename T, genre_t TYPE>
-		struct type_info_builder<T&&, TYPE> : type_info_builder<T, TYPE> {};
+		//template<typename T, genre_t TYPE>
+		//struct type_info_builder<T&&, TYPE> : type_info_builder<T, TYPE> {};
 
 
 		template<typename T, genre_t TYPE> rtti_t const& type_info_builder<T, TYPE>::type_of() {
-			rtti_t const& info = rtti::regist("value<'unknown'>", genre_of<T>(), sizeof(T), alignof(T));
+			typedef typename remove_reference<typename remove_constant<T>::type>::type type;
+			rtti_t const& info = rtti::regist("value<'unknown'>", genre_of<type>(), sizeof(type), alignof(type));
 			return info;
 		}
 
 		template<typename T> rtti_t const& type_info_builder<T, genre::union_type>::type_of() {
-			rtti_t const& info = rtti::regist("union<'unknown'>", genre_of<T>(), sizeof(T), alignof(T));
+			typedef typename remove_reference<typename remove_constant<T>::type>::type type;
+			rtti_t const& info = rtti::regist("union<'unknown'>", genre_of<type>(), sizeof(type), alignof(type));
 			return info;
 		}
 
 		template<typename T> rtti_t const& type_info_builder<T, genre::enum_type>::type_of() {
-			rtti_t const& info = rtti::regist("enum<'unknown'>", genre_of<T>(), sizeof(T), alignof(T));
+			typedef typename remove_reference<typename remove_constant<T>::type>::type type;
+			rtti_t const& info = rtti::regist("enum<'unknown'>", genre_of<type>(), sizeof(type), alignof(type));
 			return info;
 		}
 	}

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ang/system.h"
+#include "angsys.h"
 
 using namespace ang;
 using namespace ang::core;
@@ -57,7 +57,7 @@ mutex::~mutex()
 	_handle = null;
 	DeleteCriticalSection(handle);	
 #endif
-	ang_free_unmanaged_memory(handle);
+	ang_free_unmanaged_memory(_handle);
 }
 
 bool mutex::lock()const
@@ -104,7 +104,7 @@ bool mutex::unlock()const
 cond::cond()
 {
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
-	_handle = memory::default_allocator<pthread_cond_t>::alloc(1);
+	_handle = ang_alloc_unmanaged_memory(sizeof(pthread_cond_t));
 	pthread_cond_init((pthread_cond_t*)_handle, NULL);
 #elif defined WINDOWS_PLATFORM
 	//this->_handle = CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);

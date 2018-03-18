@@ -21,7 +21,7 @@ namespace ang
 			typedef vector_buffer<T, allocator> self_t;
 			typedef allocator<T>				allocator_t;
 			typedef iarray<T>					iarray;
-			typedef ienum<T>					ienum_t;
+			typedef ienum<T>					ienum_type;
 			typedef ilist<T>					ilist_t;
 			typedef base_iterator<T>			base_iterator_t;
 			typedef iterator<T>					iterator_t;
@@ -46,7 +46,7 @@ namespace ang
 			inline vector_buffer(vector_buffer&& ar);
 			inline vector_buffer(const vector_buffer& ar);
 			inline vector_buffer(const vector_buffer* ar);
-			inline vector_buffer(const ienum_t* store);
+			inline vector_buffer(const ienum_type* store);
 			template<typename U> inline vector_buffer(array_view<U> const&);
 			template<typename U, template<typename> class allocator2> inline vector_buffer(scope_array<U, allocator2> const&);
 			template<typename U, wsize SIZE> inline vector_buffer(stack_array<U, SIZE> const&);
@@ -77,7 +77,8 @@ namespace ang
 		public: //ibuffer overrides
 			inline bool is_readonly()const override;
 			inline text::encoding_t encoding()const override;
-			inline pointer buffer_ptr()const override;
+			inline pointer buffer_ptr() override;
+			inline const_pointer buffer_ptr()const override;
 			inline wsize buffer_size()const override;
 			inline wsize mem_copy(wsize, pointer, text::encoding_t = text::encoding::binary) override;
 			inline ibuffer_view_t map_buffer(windex, wsize) override;
@@ -110,9 +111,9 @@ namespace ang
 			inline iterator_t at(windex) override;
 			inline const_iterator_t at(windex)const override;
 			inline void copy(const ienum<T>*) override;
-			inline iterator_t find(core::delegates::function<bool(T&)>, bool invert = false)const override;
-			inline iterator_t find(core::delegates::function<bool(T&)>, base_iterator_t next_to, bool invert = false)const override;
-			inline collections::ienum_t<T> find_all(core::delegates::function<bool(T&)>)const override;
+			inline iterator_t find(core::delegates::function<bool(T const&)>, bool invert = false)const override;
+			inline iterator_t find(core::delegates::function<bool(T const&)>, base_iterator_t next_to, bool invert = false)const override;
+			inline collections::ienum_ptr<T> find_all(core::delegates::function<bool(T const&)>)const override;
 
 		public: //ilist overrides
 			inline void extend(const ienum<T>*) override;
@@ -128,7 +129,7 @@ namespace ang
 
 		public: //overrides
 			ANG_DECLARE_INTERFACE();
-			inline comparision_result_t compare(const object&)const override;
+			inline comparision_result_t compare(const object*)const override;
 
 		protected: //Memory Operations
 			inline bool realloc(wsize size, bool save = true);

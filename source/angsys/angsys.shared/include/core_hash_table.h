@@ -13,7 +13,7 @@
 #ifndef __ANGC_CORE_HASH_TABLE_H__
 #define __ANGC_CORE_HASH_TABLE_H__
 
-#include <ang/system.h>
+#include <angsys.h>
 
 #ifdef LINK
 #undef LINK

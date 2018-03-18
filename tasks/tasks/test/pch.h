@@ -11,7 +11,7 @@
 #include <tchar.h>
 
 #define ANGSYS_DYNAMIC_LIBRARY
-#include <ang/system.h>
+#include <angsys.h>
 #pragma comment(lib, "angsys.lib")
 
 // TODO: reference additional headers your program requires here
