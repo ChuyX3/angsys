@@ -110,61 +110,37 @@ inline ang::rtti_t const& ang::collections::array_buffer<T, allocator>::class_in
 	return info;
 }
 
-//
-//template<typename T, template <typename> class allocator>
-//inline ang::type_name_t ang::collections::array_buffer<T, allocator>::class_name()
-//{
-//	static type_name_t name = runtime_data_base::regist_typename(ang::move(("ang::collections::array<"_o += type_of<T>()) += ">"_s));
-//	return name;
-//}
-//
-//template<typename T, template <typename> class allocator>
-//inline bool ang::collections::array_buffer<T, allocator>::is_inherited_of(ang::type_name_t name)
-//{
-//	if (name == type_of<array_buffer<T, allocator>>()
-//		|| ang::object::is_inherited_of(name)
-//		|| ang::collections::iarray<T>::is_inherited_of(name))
-//		return true;
-//	return false;
-//}
-//
-//template<typename T, template <typename> class allocator>
-//inline ang::type_name_t ang::collections::array_buffer<T, allocator>::object_name()const
-//{
-//	return ang::collections::array_buffer<T, allocator>::class_name();
-//}
-//
-//template<typename T, template <typename> class allocator>
-//inline bool ang::collections::array_buffer<T, allocator>::is_kind_of(ang::type_name_t name)const
-//{
-//	if (name == type_of<array_buffer<T, allocator>>()
-//		|| ang::object::is_kind_of(name)
-//		|| ang::collections::iarray<T>::is_kind_of(name))
-//		return true;
-//	return false;
-//}
-//
-//template<typename T, template <typename> class allocator>
-//inline bool ang::collections::array_buffer<T, allocator>::query_object(ang::type_name_t className, ang::unknown_ptr_t out)
-//{
-//	if (out == null)
-//		return false;
-//
-//	if (className == type_of<array_buffer<T, allocator>>())
-//	{
-//		*out = static_cast<ang::collections::array_buffer<T, allocator>*>(this);
-//		return true;
-//	}
-//	else if (ang::object::query_object(className, out))
-//	{
-//		return true;
-//	}
-//	else if (ang::collections::iarray<T>::query_object(className, out))
-//	{
-//		return true;
-//	}
-//	return false;
-//}
+template<typename T, template <typename> class allocator>
+inline ang::rtti_t const& ang::collections::array_buffer<T, allocator>::runtime_info()const
+{
+	return class_info();
+}
+
+template<typename T, template <typename> class allocator>
+inline bool ang::collections::array_buffer<T, allocator>::query_interface(ang::rtti_t const& id, ang::unknown_ptr_t out)
+{
+	if (id.type_id() == class_info().type_id())
+	{
+		if (out == null) return false;
+		*out = static_cast<array_buffer<T, allocator>*>(this);
+		return true;
+	}
+	else if (object::query_interface(id, out))
+	{
+		return true;
+	}
+	else if (id.type_id() == type_of<iarray<T>>().type_id()) {
+		if (out == null) return false;
+		*out = static_cast<iarray<T>*>(this);
+		return true;
+	}
+	else if (id.type_id() == type_of<ienum<T>>().type_id()) {
+		if (out == null) return false;
+		*out = static_cast<ienum<T>*>(this);
+		return true;
+	}
+}
+
 
 template<typename T, template <typename> class allocator>
 inline void ang::collections::array_buffer<T, allocator>::clear()
@@ -182,6 +158,12 @@ template<typename T, template <typename> class allocator>
 inline bool ang::collections::array_buffer<T, allocator>::is_empty()const
 {
 	return null == _data;
+}
+
+template<typename T, template <typename> class allocator>
+inline bool ang::collections::array_buffer<T, allocator>::is_readonly()const
+{
+	return false;
 }
 
 template<typename T, template <typename> class allocator>

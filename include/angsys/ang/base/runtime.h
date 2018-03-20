@@ -25,18 +25,24 @@ namespace ang //constants
 		typedef cstr_view<char> type_name_t;
 		typedef struct __type_info type_info_t, rtti, rtti_t;
 		template<typename T, genre_t TYPE = genre_of<T>()> struct type_info_builder;
+		
 
 		typedef bool(*dynamic_cast_proc)(const rtti_t&, unknown_t, const rtti_t&, unknown_ptr_t);
 
-		template<typename T, genre_t TYPE>
-		struct type_info_builder { static rtti_t const& type_of(); };
+		template<typename T>
+		struct type_info_builder<T, genre::value_type> { static rtti_t const& type_of(); };
 
 		template<typename T>
 		struct type_info_builder<T, genre::union_type> { static rtti_t const& type_of(); };
 
-
 		template<typename T>
 		struct type_info_builder<T, genre::enum_type> { static rtti_t const& type_of(); };
+
+		template<typename T>
+		struct type_info_builder<T, genre::function_type> { static rtti_t const& type_of(); };
+
+		template<typename T>
+		struct type_info_builder<T, genre::class_type> { static rtti_t const& type_of(); };
 
 		struct LINK __type_info {
 			__type_info(rtti_t&&) = delete;
@@ -128,6 +134,7 @@ namespace ang //constants
 		template<typename T, typename U> inline bool is_type_of(const U&) { return rtti::type_of<T>().is_type_of(rtti::type_of<U>()); }
 		template<typename To, typename From> inline To* dyn_cast(From* old) { return __dyn_cast_helper<To, From>::cast(old); }
 		template<typename To, typename From> inline To const* dyn_cast(From const* old) { return __dyn_cast_helper<To, From>::cast(old); }
+		template<typename... Ts> type_name_t args_list_type_name();
 
 		//template<typename T, genre_t TYPE>
 		//struct type_info_builder<const T, TYPE> : type_info_builder<T, TYPE> {};
@@ -141,24 +148,6 @@ namespace ang //constants
 		//template<typename T, genre_t TYPE>
 		//struct type_info_builder<T&&, TYPE> : type_info_builder<T, TYPE> {};
 
-
-		template<typename T, genre_t TYPE> rtti_t const& type_info_builder<T, TYPE>::type_of() {
-			typedef typename remove_reference<typename remove_constant<T>::type>::type type;
-			rtti_t const& info = rtti::regist("value<'unknown'>", genre_of<type>(), sizeof(type), alignof(type));
-			return info;
-		}
-
-		template<typename T> rtti_t const& type_info_builder<T, genre::union_type>::type_of() {
-			typedef typename remove_reference<typename remove_constant<T>::type>::type type;
-			rtti_t const& info = rtti::regist("union<'unknown'>", genre_of<type>(), sizeof(type), alignof(type));
-			return info;
-		}
-
-		template<typename T> rtti_t const& type_info_builder<T, genre::enum_type>::type_of() {
-			typedef typename remove_reference<typename remove_constant<T>::type>::type type;
-			rtti_t const& info = rtti::regist("enum<'unknown'>", genre_of<type>(), sizeof(type), alignof(type));
-			return info;
-		}
 	}
 	
 	using namespace runtime;
@@ -193,6 +182,7 @@ rtti_t const& type_info_builder<_TYPE>::type_of() { static rtti_t const& info = 
 }}
 
 
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, void);
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, char);
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, byte);
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, wchar);
@@ -206,5 +196,7 @@ ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, long);
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, ulong);
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, long64);
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, ulong64);
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, float);
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, double);
 
 #endif//__ANG_BASE_RUNTIME_H__

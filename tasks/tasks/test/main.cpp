@@ -345,12 +345,7 @@ ANG_EXTERN ulong64 get_performance_time_us()
 
 int main()
 {	
-
-	collections::array<int> a = { 1,2,3,4,5,6,7,8,9 };
-
-	rtti_t const& info = type_of<collections::ienum<int>>();
-
-	rtti_t const& info2 = type_of<collections::iarray<int>>();
+	array<int> a = { 1,2,3,4,5,6,7,8 };
 
 	return 0;
 }

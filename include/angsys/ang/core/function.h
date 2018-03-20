@@ -11,44 +11,44 @@ namespace ang
 			template<typename T, typename... Ts>
 			ang_begin_interface_inline(ifunction<T(Ts...)>)
 				visible vcall T invoke(Ts...)const pure;
-			visible vcall ifunction* clone()const pure;
+				visible vcall ifunction* clone()const pure;
 			ang_end_interface();
 
 			template<typename... Ts>
 			ang_begin_interface_inline(ifunction<void(Ts...)>)
 				visible vcall void invoke(Ts...)const pure;
-			visible vcall ifunction* clone()const pure;
+				visible vcall ifunction* clone()const pure;
 			ang_end_interface();
 
 			template<typename T, typename... Ts>
-			class function_data<T(Ts...)>
+			class function_object<T(Ts...)>
 				: public object
 				, public ifunction<T(Ts...)>
 			{
 			public:
-				function_data() {}
+				function_object() {}
 				ANG_DECLARE_INTERFACE();
 
 			protected:
-				virtual~function_data() {}
+				virtual~function_object() {}
 			};
 
 			template<typename... Ts>
-			class function_data<void(Ts...)>
+			class function_object<void(Ts...)>
 				: public object
 				, public ifunction<void(Ts...)>
 			{
 			public:
-				function_data() {}
+				function_object() {}
 				ANG_DECLARE_INTERFACE();
 
 			protected:
-				virtual~function_data() {}
+				virtual~function_object() {}
 			};
 
 			template<typename F, typename T, typename... Ts>
 			class static_function final
-				: public function_data<T(Ts...)>
+				: public function_object<T(Ts...)>
 			{
 			public:
 				typedef F function_type;
@@ -75,7 +75,7 @@ namespace ang
 
 			template<typename O, bool IS_INTERFACE, typename T, typename... Ts>
 			class member_function final
-				: public function_data<T(Ts...)>
+				: public function_object<T(Ts...)>
 			{
 			public:
 				typedef T(O::*function_type)(Ts...);
@@ -100,7 +100,7 @@ namespace ang
 
 			template<typename O, typename T, typename... Ts>
 			class member_function<O, true, T, Ts...> final
-				: public function_data<T(Ts...)>
+				: public function_object<T(Ts...)>
 			{
 			public:
 				typedef T(O::*function_type)(Ts...);
@@ -128,7 +128,7 @@ namespace ang
 
 			template<typename O, bool IS_INTERFACE, typename T, typename... Ts>
 			class pseudo_member_function final
-				: public function_data<T(Ts...)>
+				: public function_object<T(Ts...)>
 			{
 			public:
 				typedef T(*function_type)(O*, Ts...);
@@ -153,7 +153,7 @@ namespace ang
 
 			template<typename O, typename T, typename... Ts>
 			class pseudo_member_function<O, true, T, Ts...> final
-				: public function_data<T(Ts...)>
+				: public function_object<T(Ts...)>
 			{
 			public:
 				typedef T(*function_type)(O*, Ts...);
@@ -180,17 +180,17 @@ namespace ang
 	}
 
 	template<typename T, typename... Ts>
-	class object_wrapper <core::delegates::function_data<T(Ts...)>>
+	class object_wrapper <core::delegates::function_object<T(Ts...)>>
 	{
 	public:
-		typedef core::delegates::function_data<T(Ts...)> type;
+		typedef core::delegates::function_object<T(Ts...)> type;
 
 	protected:
 		type* _ptr;
 
 	public:
 		object_wrapper();
-		object_wrapper(core::delegates::function_data<T(Ts...)>*);
+		object_wrapper(core::delegates::function_object<T(Ts...)>*);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
 		object_wrapper(ang::nullptr_t const&);
@@ -226,7 +226,24 @@ namespace ang
 			return get()->invoke(ang::forward<Ts>(args)...);
 		}
 
+		template<typename F>
+		void se(F const& func) {
+			static_assert(is_calleable<F>::value, "F is not a calleable object");
+			set((type*)new core::delegates::static_function<F, T, Ts...>(func));
+		}
+
+		template<typename O>
+		void set(O* obj, T(O::*f)(Ts...)) {
+			set((type*)new core::delegates::member_function<O, is_base_of<interface, O>::value, T, Ts...>(obj, f));
+		}
+
+		template<typename O>
+		void set(O* obj, T(*f)(O*, Ts...)) {
+			set((type*)new core::delegates::pseudo_member_function<O, is_base_of<interface, O>::value, T, Ts...>(obj, f));
+		}
+
 	public:
+		object_wrapper& operator = (type*);
 		object_wrapper& operator = (object_wrapper &&);
 		object_wrapper& operator = (object_wrapper const&);
 		object_wrapper& operator = (ang::nullptr_t const&) {
@@ -255,10 +272,10 @@ namespace ang
 	};
 
 	template<typename... Ts>
-	class object_wrapper <core::delegates::function_data<void(Ts...)>>
+	class object_wrapper <core::delegates::function_object<void(Ts...)>>
 	{
 	public:
-		typedef core::delegates::function_data<void(Ts...)> type;
+		typedef core::delegates::function_object<void(Ts...)> type;
 
 	protected:
 		type* _ptr;
@@ -270,7 +287,7 @@ namespace ang
 		object_wrapper(ang::nullptr_t const&);
 		~object_wrapper();
 
-		object_wrapper(core::delegates::function_data<void(Ts...)> * func) : object_wrapper() {
+		object_wrapper(core::delegates::function_object<void(Ts...)> * func) : object_wrapper() {
 			set(func);
 		}
 

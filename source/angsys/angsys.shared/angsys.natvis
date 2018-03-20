@@ -149,7 +149,7 @@
       <Item Name="[genre]" ExcludeView="simple">_genre,en</Item>
       <Item Name="[size]" ExcludeView="simple">_size,x</Item>
       <Item Name="[aligment]" ExcludeView="simple">_aligment,x</Item>
-      <Item Name="[parents]" ExcludeView="simple">_parents</Item>
+      <Item Name="[parents]" Condition="_parents._data != 0" ExcludeView="simple">_parents</Item>
     </Expand>
   </Type>
 

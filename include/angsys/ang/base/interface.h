@@ -183,25 +183,7 @@ namespace ang //constants
 
 	namespace runtime
 	{
-		template<typename T, bool IS_INTERFACE = has_class_info_function<T>::value>
-		struct __type_info_builder_genre_class_helper : false_type {
-			static rtti_t const& type_of() { return T::class_info(); }
-		};
-
-		template<typename T>
-		struct __type_info_builder_genre_class_helper<T, false> : true_type {
-			static rtti_t const& type_of() {
-				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
-				rtti_t const& info = rtti::regist("class<'unknown'>", genre::class_type, sizeof(type), alignof(type));
-				return info;
-			}
-		};
-
-		template<typename T>
-		struct type_info_builder<T, genre::class_type> : __type_info_builder_genre_class_helper<T> {
-		};
-
-	
+		
 		template<typename T> struct type_info_builder<intf_wrapper<T>, genre::class_type> : type_info_builder<T> { };
 		template<typename T> struct type_info_builder<object_wrapper<T>, genre::class_type> : type_info_builder<T> { };
 		

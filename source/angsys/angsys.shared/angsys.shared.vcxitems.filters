@@ -18,9 +18,6 @@
     <Filter Include="header\angsys\base">
       <UniqueIdentifier>{6aafc53b-d02a-494e-8c92-b5e38ff58a24}</UniqueIdentifier>
     </Filter>
-    <Filter Include="header\angsys\base\inlines">
-      <UniqueIdentifier>{c75c2947-1adc-4e98-bd3f-bd8c4a95a499}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\async">
       <UniqueIdentifier>{2fd281b4-ea37-46f1-9670-f8648d742836}</UniqueIdentifier>
     </Filter>
@@ -41,6 +38,12 @@
     </Filter>
     <Filter Include="header\angsys\collections\inline">
       <UniqueIdentifier>{39d0e658-8ab8-42e6-8c91-2af969eda8de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\angsys\core\inline">
+      <UniqueIdentifier>{cb1fb28c-3dcc-4b3b-9b3a-520b97443c17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\angsys\base\inline">
+      <UniqueIdentifier>{c75c2947-1adc-4e98-bd3f-bd8c4a95a499}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -186,29 +189,29 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\APPLY_FUNCX_N.inl">
-      <Filter>header\angsys\base\inlines</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\text.inl">
-      <Filter>header\angsys\base\inlines</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\raw_str.inl">
-      <Filter>header\angsys\base\inlines</Filter>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl">
       <Filter>header\include\inline</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)include\inline\string.inl">
       <Filter>header\include\inline</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\function.inl">
-      <Filter>header\angsys\inline</Filter>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\array.inl">
       <Filter>header\angsys\collections\inline</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\collections.inl">
       <Filter>header\angsys\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\inline\function.inl">
+      <Filter>header\angsys\core\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\APPLY_FUNCX_N.inl">
+      <Filter>header\angsys\base\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\text.inl">
+      <Filter>header\angsys\base\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\runtime.inl">
+      <Filter>header\angsys\base\inline</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

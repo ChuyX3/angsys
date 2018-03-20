@@ -81,8 +81,8 @@ namespace ang
 		namespace delegates
 		{
 			template<typename T> class listener;
-			template<typename T> class function_data;
-			template<typename T> using function = object_wrapper<function_data<T>>;
+			template<typename T> class function_object;
+			template<typename T> using function = object_wrapper<function_object<T>>;
 			template<typename T> struct ifunction;
 			template<typename T> using ifunction_t = intf_wrapper<ifunction<T>>;
 			template<typename T> using method = intf_wrapper<ifunction<T>>;
@@ -90,13 +90,17 @@ namespace ang
 			using var_args_t = collections::vector<objptr>;
 			using var_args = collections::vector_buffer<objptr>;
 		}
-
-		using collections::array;
 	}
 
 	using strings::string;
 	using strings::wstring;
 	using strings::mstring;
+
+	using collections::array;
+	using collections::vector;
+	using core::delegates::var_args;
+	using core::delegates::var_args_t;
+
 
 	ang_object(exception);
 }
@@ -112,8 +116,9 @@ namespace ang
 #include <ang/string.h>
 #include <ang/exception.h>
 
+#include <ang/base/inline/runtime.inl>
+#include <ang/core/inline/function.inl>
 #include <ang/collections/inline/collections.inl>
 #include <ang/collections/inline/array.inl>
-//#include <ang/inline/function.inl>
 
 #endif //__ANGSYS_H__

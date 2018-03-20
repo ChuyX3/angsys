@@ -69,7 +69,7 @@
 #endif
 
 
-#include <ang/base/inlines/APPLY_FUNCX_N.inl>
+#include <ang/base/inline/APPLY_FUNCX_N.inl>
 
 #define APPLY_FUNCX_(FUNCX, SEPARATOR, M, ...) ANG_EXPAND(M(FUNCX, SEPARATOR, __VA_ARGS__))
 #define APPLY_FUNCX_N(FUNCX, SEPARATOR, ...) ANG_EXPAND(APPLY_FUNCX_(FUNCX, SEPARATOR, ANG_CATAB(APPLY_FUNCX, ANG_NUM_ARGS(__VA_ARGS__)), __VA_ARGS__ ))

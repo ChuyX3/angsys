@@ -494,8 +494,7 @@ namespace ang //constants
 
 }
 
-#include <ang/base/inlines/text.inl>
-//#include <ang/base/inlines/raw_str.inl>
+#include <ang/base/inline/text.inl>
 
 TO_STRING_TEMPLATE(LINK, ang::text::encoding, ascii);
 TO_STRING_TEMPLATE(LINK, ang::text::encoding, unicode);

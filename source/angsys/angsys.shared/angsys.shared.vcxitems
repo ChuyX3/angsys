@@ -65,12 +65,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string_pool.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\APPLY_FUNCX_N.inl" />
-    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\raw_str.inl" />
-    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inlines\text.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\APPLY_FUNCX_N.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\runtime.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\text.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\array.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\collections.inl" />
-    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\function.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\inline\function.inl" />
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl" />
     <None Include="$(MSBuildThisFileDirectory)include\inline\string.inl" />
   </ItemGroup>
