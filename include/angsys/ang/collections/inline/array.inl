@@ -104,7 +104,7 @@ inline ang::collections::array_buffer<T, allocator>::~array_buffer()
 template<typename T, template <typename> class allocator>
 inline ang::rtti_t const& ang::collections::array_buffer<T, allocator>::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::array_buffer<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::array<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<iarray<T>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::array_buffer<T, allocator>), alignof(ang::collections::array_buffer<T, allocator>), parents, &default_query_interface);
 	return info;
@@ -361,16 +361,16 @@ inline ang::collections::iterator<T> ang::collections::array_buffer<T, allocator
 template<typename T, template <typename> class allocator>
 inline ang::collections::ienum_ptr<T> ang::collections::array_buffer<T, allocator>::find_all(ang::core::delegates::function<bool(T const&)> cond)const
 {
-	vector<T, allocator> out;
+	vector<T, allocator> out = new vector_buffer<T, allocator>();
 	if (!is_empty())
 	{
 		for (auto i = size(); i > 0; --i)
 		{
-			//if (cond(_data[i - 1])) TODO:
-			//	out += at(i - 1);
+			if (cond(_data[i - 1]))
+				out += _data[i - 1];
 		}
 	}
-	return out.get();
+	return out->is_empty() ? null : out.get();
 }
 
 template<typename T, template <typename> class allocator>
@@ -498,7 +498,7 @@ inline ang::comparision_result_t ang::collections::array_buffer<T, allocator>::c
 	windex i = 0;
 	intf_wrapper<const ienum<T>> other = obj->as<ienum<T>>();
 
-	if (obj && obj->runtime_info().is_type_of(class_info()))
+	if (!other.is_empty())
 	{
 		if (counter() > other->counter())
 			return comparision_result::mayor;

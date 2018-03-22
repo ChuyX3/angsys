@@ -120,5 +120,6 @@ namespace ang
 #include <ang/core/inline/function.inl>
 #include <ang/collections/inline/collections.inl>
 #include <ang/collections/inline/array.inl>
+#include <ang/collections/inline/vector.inl>
 
 #endif //__ANGSYS_H__

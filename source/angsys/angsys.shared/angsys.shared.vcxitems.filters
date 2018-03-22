@@ -128,9 +128,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\string_declaration.hpp">
       <Filter>header\angsys\inline</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections.h">
-      <Filter>header\angsys</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\property.h">
       <Filter>header\angsys\base</Filter>
     </ClInclude>
@@ -150,6 +147,9 @@
       <Filter>header\angsys</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angsys.h">
+      <Filter>header\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections.h">
       <Filter>header\angsys</Filter>
     </ClInclude>
   </ItemGroup>
@@ -212,6 +212,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\runtime.inl">
       <Filter>header\angsys\base\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\vector.inl">
+      <Filter>header\angsys\collections\inline</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

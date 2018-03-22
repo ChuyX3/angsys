@@ -343,9 +343,16 @@ ANG_EXTERN ulong64 get_performance_time_us()
 	}
 }
 
+
 int main()
 {	
-	array<int> a = { 1,2,3,4,5,6,7,8 };
+	array<int> a = { 1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,6,7,7,7,7,7,7,8 };
+
+	auto f = a->find_all([](int const& value) ->bool
+	{
+		return value == 3;
+	});
+
 
 	return 0;
 }
