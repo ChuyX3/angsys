@@ -101,7 +101,7 @@ namespace ang
 		template<typename K, typename T, 
 			template<typename> class allocator = memory::unmanaged_allocator,
 			template<typename> class hash_code_maker = collections::hash_code_maker>
-		class hash_map {
+		class internal_hash_map {
 		private:
 			typedef linked_node<pair<K, T>> node_t, *node_ptr_t;
 
@@ -110,10 +110,10 @@ namespace ang
 			scope_array<node_ptr_t, allocator> _table;
 
 		public:
-			hash_map() {
+			internal_hash_map() {
 				_table.allocate(127);
 			}
-			~hash_map() {
+			~internal_hash_map() {
 				clear();
 			}
 
@@ -235,7 +235,7 @@ namespace ang
 		template<typename T,
 			template<typename> class allocator = memory::unmanaged_allocator,
 			template<typename> class hash_code_maker = collections::hash_code_maker>
-		class hash_set {
+		class internal_hash_set {
 		private:
 			typedef linked_node<T> node_t, *node_ptr_t;
 
@@ -244,10 +244,10 @@ namespace ang
 			scope_array<node_ptr_t, allocator> _table;
 
 		public:
-			hash_set() {
+			internal_hash_set() {
 				_table.allocate(127);
 			}
-			~hash_set() {
+			~internal_hash_set() {
 				clear();
 			}
 

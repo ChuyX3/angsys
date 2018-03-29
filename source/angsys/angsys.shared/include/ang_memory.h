@@ -31,7 +31,7 @@ namespace ang
 #ifdef _MEMORY_PROFILING
 			ang_memory_hint_t _allocator_type;
 			core::async::mutex_t mutex;
-			collections::hash_map<pointer, memory_block_t> memory_map;
+			collections::internal_hash_map<pointer, memory_block_t> memory_map;
 #endif
 		public:
 			allocator_internal(ang_memory_hint_t);

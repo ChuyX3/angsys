@@ -5,17 +5,17 @@
 using namespace ang;
 using namespace ang::strings;
 
-typedef collections::hash_map<cstr_t, const_string>* pool_handle;
+typedef collections::internal_hash_map<cstr_t, const_string>* pool_handle;
 
 string_pool::string_pool()
 {
-	pool = ang_alloc_unmanaged_memory(sizeof(collections::hash_map<cstr_t, const_string>));
-	pool = new(pool)collections::hash_map<cstr_t, const_string>();
+	pool = ang_alloc_unmanaged_memory(sizeof(collections::internal_hash_map<cstr_t, const_string>));
+	pool = new(pool)collections::internal_hash_map<cstr_t, const_string>();
 }
 
 string_pool::~string_pool()
 {
-	pool_handle(pool)->~hash_map();
+	pool_handle(pool)->~internal_hash_map();
 	ang_free_unmanaged_memory(pool);
 }
 

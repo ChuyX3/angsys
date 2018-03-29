@@ -14,6 +14,8 @@
 #include "encoder_interface.h"
 #include "runtime_manager.h"
 
+#include "ang/collections/hash_map.h"
+
 using namespace ang;
 using namespace ang::memory;
 

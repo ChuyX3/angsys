@@ -9,7 +9,7 @@ namespace ang
 		const wsize ITERATOR_TYPE_DEFAULT = 0;
 		const wsize ITERATOR_TYPE_REVERSE = 1;
 
-		template<class K, class T>struct pair;
+		template<typename K, typename T> struct pair;
 		template<typename T> class iterator;
 		template<typename T> class base_iterator;
 		template<typename T> class forward_iterator;
@@ -107,6 +107,29 @@ namespace ang
 			visible vcall void push(T const&) pure;
 			visible vcall bool pop() pure;
 			visible vcall bool pop(T&) pure;
+		ang_end_interface();
+
+
+		/******************************************************************/
+		/* interface ang::collections::imap :							  */
+		/*  -> represents a collection of objects or variables which      */
+		/*     can be accessed by a key                                   */
+		/******************************************************************/
+		template<typename K, typename T>
+		ang_begin_interface_inline(imap, public ienum<pair<K, T>>)
+			visible vcall bool copy(const ienum<pair<K, T>>*) pure;
+			visible vcall void extend(const ienum<pair<K, T>>*) pure;
+			visible vcall bool insert(K, T) pure;
+			visible vcall bool insert(pair<K, T>) pure;
+			visible vcall bool update(K, T) pure;
+			visible vcall bool update(pair<K, T>) pure;
+			visible vcall bool remove(K const&) pure;
+			visible vcall bool remove(K const&, T&) pure;
+			visible vcall bool remove(base_iterator<pair<K, T>> it) pure;
+			visible vcall bool remove(base_iterator<pair<K, T>> it, T&) pure;
+			visible vcall bool has_key(const K&)const pure;
+			visible vcall iterator<pair<K, T>> find(const K&) pure;
+			visible vcall const_iterator<pair<K, T>> find(const K&)const pure;
 		ang_end_interface();
 
 
