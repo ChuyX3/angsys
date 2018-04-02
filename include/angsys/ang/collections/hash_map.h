@@ -42,22 +42,22 @@ namespace ang
 
 		template<typename K>
 		struct hash_index_maker {
-			static inline long64 make(const K& key) {
-				create_hash_index(key);
+			static inline long64 make(const K& key, ulong64 SZ) {
+				return create_hash_index(key, SZ);
 			}
 		};
 
 		template<typename T, text::encoding E>
 		struct hash_index_maker<str_view<T, E>> {
-			static inline long64 make(const str_view<T, E>& key) {
-				create_hash_index(raw_cstr(key));
+			static inline long64 make(const str_view<T, E>& key, ulong64 SZ) {
+				return create_hash_index(raw_cstr(key), SZ);
 			}
 		};
 
 		template<text::encoding E, template<typename>class A>
 		struct hash_index_maker<strings::basic_string<E,A>> {
-			static inline long64 make(const strings::basic_string<E, A>& key) {
-				create_hash_index(raw_cstr(key->cstr()));
+			static inline long64 make(const strings::basic_string<E, A>& key, ulong64 SZ) {
+				return create_hash_index(raw_cstr(key->cstr()), SZ);
 			}
 		};
 	}
@@ -83,23 +83,23 @@ namespace ang
 			typedef T									value_type;
 			typedef K									key_type;
 			typedef hash_map_object<K, T, allocator, hash_index_maker>	self_type;
-			typedef allocator<pair<K, T>>				allocator_t;
+			typedef hash_index_maker<K>					index_maker;
 			typedef imap<K, T>							imap_type;
-			typedef ienum<pair<K, T>>					ienum_type;
-			typedef base_iterator<T>					base_iterator_t;
-			typedef iterator<T>							iterator_t;
-			typedef const_iterator<T>					const_iterator_t;
-			typedef forward_iterator<T>					forward_iterator_t;
-			typedef const_forward_iterator<T>			const_forward_iterator_t;
-			typedef backward_iterator<T>				backward_iterator_t;
-			typedef const_backward_iterator<T>			const_backward_iterator_t;
+			typedef ienum<type>							ienum_type;
+			typedef base_iterator<type>					base_iterator_t;
+			typedef iterator<type>						iterator_t;
+			typedef const_iterator<type>				const_iterator_t;
+			typedef forward_iterator<type>				forward_iterator_t;
+			typedef const_forward_iterator<type>		const_forward_iterator_t;
+			typedef backward_iterator<type>				backward_iterator_t;
+			typedef const_backward_iterator<type>		const_backward_iterator_t;
 			typedef double_linked_node<type>			node_t, *node_ptr_t;
 			typedef scope_array<node_ptr_t, allocator>	node_array_t;
 
+
 		protected:
-			allocator_t alloc;
+			allocator<node_t> alloc;
 			wsize _count;
-			wsize _capacity;
 			node_array_t _table;
 
 		public:
@@ -125,7 +125,7 @@ namespace ang
 
 			inline void clear();
 			inline void empty();
-			inline bool move(hash_map_object<T, allocator>&);
+			inline bool move(hash_map_object<K, T, allocator, hash_index_maker>&);
 
 			template<typename U> inline void copy(array_view<U>const&);
 			template<typename U, template<typename> class allocator2> inline void copy(scope_array<U, allocator2>const&);
@@ -138,7 +138,7 @@ namespace ang
 		public: //ienum overrides
 			inline wsize counter()const override;
 
-			inline T& at(base_iterator_t const&) override;
+			inline type& at(base_iterator_t const&) override;
 			inline bool increase(base_iterator_t&)const override;
 			inline bool increase(base_iterator_t&, int offset)const override;
 			inline bool decrease(base_iterator_t&)const override;
@@ -157,25 +157,30 @@ namespace ang
 			inline const_backward_iterator_t rend()const override;
 
 		public: //imap overrides
-			inline bool copy(const ienum<pair<K, T>>*) override;
-			inline void extend(const ienum<pair<K, T>>*) override;
+			inline bool copy(const ienum<type>*) override;
+			inline void extend(const ienum<type>*) override;
 			inline bool insert(K, T) override;
-			inline bool insert(pair<K, T>) override;
+			inline bool insert(type) override;
 			inline bool update(K, T) override;
-			inline bool update(pair<K, T>) override;
+			inline bool update(type) override;
 			inline bool remove(K const&) override;
 			inline bool remove(K const&, T&) override;
-			inline bool remove(base_iterator<pair<K, T>> it) override;
-			inline bool remove(base_iterator<pair<K, T>> it, T&) override;
+			inline bool remove(base_iterator<type> it) override;
+			inline bool remove(base_iterator<type> it, T&) override;
 			inline bool has_key(const K&)const override;
-			inline iterator<pair<K, T>> find(const K&) override;
-			inline const_iterator<pair<K, T>> find(const K&)const override;
+			inline iterator<type> find(const K&) override;
+			inline const_iterator<type> find(const K&)const override;
 
 		public: //overrides
 			ANG_DECLARE_INTERFACE();
 			inline comparision_result_t compare(const object*)const override;
 	
 		protected: //Memory Operations
+			template<typename U, typename V> inline node_ptr_t allocate_node(U key, V val) {
+				node_ptr_t node = alloc.allocate(1);
+				alloc.template construct<node_t>(node, forward<U>(key), forward<V>(val));
+				return node;
+			}
 			inline void increase_capacity();
 			inline wsize hash_index(key_type const&)const;
 			inline node_ptr_t find_node(key_type const&)const;

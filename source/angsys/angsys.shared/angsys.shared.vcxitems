@@ -71,6 +71,7 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\text.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\array.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\collections.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\hash_map.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\vector.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\inline\function.inl" />
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl" />

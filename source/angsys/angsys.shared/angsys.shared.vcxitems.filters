@@ -219,6 +219,9 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\vector.inl">
       <Filter>header\angsys\collections\inline</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\hash_map.inl">
+      <Filter>header\angsys\collections\inline</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis" />

@@ -2,11 +2,11 @@
 //
 
 #include "pch.h"
-#include <type_traits>
 
+#include <type_traits>
 #include <emmintrin.h>  
 
-#include <mutex>
+#include <ang/collections/hash_map.h>
 
 using namespace ang;
 
@@ -41,27 +41,26 @@ inline __m128i shift_right_128(__m128i const& x, int n)
 	return x1;
 }
 
-
 typedef struct _int128 {
 	_int128() {
 		_value = _mm_set1_epi32(0);
 	}
-	_int128(int32_t value) {
+	_int128(int value) {
 		if (value < 0)
 			_value = _mm_setr_epi64x(value, -1);
 		else
 			_value = _mm_setr_epi64x(value, 0);
 	}
-	_int128(int64_t value) {
+	_int128(long64 value) {
 		if (value < 0)		
 			_value = _mm_setr_epi64x(value, -1);	
 		else
 			_value = _mm_setr_epi64x(value, 0);
 	}
-	_int128(uint32_t value) {
+	_int128(uint value) {
 		_value = _mm_setr_epi64x(value, 0);
 	}
-	_int128(uint64_t value) {
+	_int128(ulong64 value) {
 		_value = _mm_setr_epi64x(value, 0);
 	}
 	_int128(_int128 const& value) {
@@ -71,31 +70,31 @@ typedef struct _int128 {
 		_value = value;
 	}
 
-	int64_t& loword() { return _value.m128i_i64[0]; }
-	int64_t& hiword() { return _value.m128i_i64[1]; }
+	long64& loword() { return _value.m128i_i64[0]; }
+	long64& hiword() { return _value.m128i_i64[1]; }
 
-	int64_t const& loword()const { return _value.m128i_i64[0]; }
-	int64_t const& hiword()const { return _value.m128i_i64[1]; }
+	long64 const& loword()const { return _value.m128i_i64[0]; }
+	long64 const& hiword()const { return _value.m128i_i64[1]; }
 
-	inline _int128& operator = (int32_t value) {
+	inline _int128& operator = (int value) {
 		if (value < 0)
 			_value = _mm_setr_epi64x(value, -1);
 		else
 			_value = _mm_setr_epi64x(value, 0);
 		return*this;
 	}
-	inline _int128& operator = (int64_t value) {
+	inline _int128& operator = (long64 value) {
 		if (value < 0)
 			_value = _mm_setr_epi64x(value, -1);
 		else
 			_value = _mm_setr_epi64x(value, 0);
 		return*this;
 	}
-	inline _int128& operator = (uint32_t value) {
+	inline _int128& operator = (uint value) {
 		_value = _mm_setr_epi64x(value, 0);
 		return*this;
 	}
-	inline _int128& operator = (uint64_t value) {
+	inline _int128& operator = (ulong64 value) {
 		_value = _mm_setr_epi64x(value, 0);
 		return*this;
 	}
@@ -315,7 +314,6 @@ private:
 	__m128i _value;
 }int128_t;
 
-
 ANG_EXTERN ulong64 get_performance_time_us()
 {
 	{
@@ -343,16 +341,11 @@ ANG_EXTERN ulong64 get_performance_time_us()
 	}
 }
 
-
 int main()
 {	
-	array<int> a = { 1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,6,7,7,7,7,7,7,8 };
+	collections::hash_map<int, int> map = new collections::hash_map_object<int,int>();
 
-	auto f = a->find_all([](int const& value) ->bool
-	{
-		return value == 3;
-	});
-
+	
 
 	return 0;
 }

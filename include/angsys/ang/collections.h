@@ -154,6 +154,32 @@ namespace ang
 			node_ptr_t next;
 		};
 
+		template<typename K, typename T>
+		struct linked_node<pair<K, T>> {
+			typedef pair<K, T> type;
+			typedef linked_node<type> sefl_t;
+			typedef linked_node<type> node_t;
+			typedef linked_node<type> *node_ptr_t;
+
+			linked_node()
+				: data()
+				, next(null) {
+			}
+
+			linked_node(type val)
+				: data(ang::move(val))
+				, next(null) {
+			}
+
+			linked_node(K key, T val)
+				: data(ang::move(key), ang::move(val))
+				, next(null) {
+			}
+
+			type data;
+			node_ptr_t next;
+		};
+
 		template<typename T>
 		struct double_linked_node {
 			typedef T type;
@@ -174,6 +200,36 @@ namespace ang
 			}
 
 			T data;
+			node_ptr_t prev;
+			node_ptr_t next;
+		};
+
+		template<typename K, typename T>
+		struct double_linked_node<pair<K, T>> {
+			typedef pair<K, T> type;
+			typedef double_linked_node<type> self_t;
+			typedef double_linked_node<type> node_t;
+			typedef double_linked_node<type> *node_ptr_t;
+
+			double_linked_node()
+				: data()
+				, prev(null)
+				, next(null) {
+			}
+
+			double_linked_node(type val)
+				: data(ang::move(val))
+				, prev(null)
+				, next(null) {
+			}
+
+			double_linked_node(K key, T val)
+				: data(ang::move(key), ang::move(val))
+				, prev(null)
+				, next(null) {
+			}
+
+			type data;
 			node_ptr_t prev;
 			node_ptr_t next;
 		};
