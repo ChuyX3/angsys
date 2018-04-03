@@ -38,6 +38,13 @@
 
 namespace ang
 {
+	namespace algorithms
+	{
+		wsize LINK hash_table_get_next_size(wsize);
+	}
+
+
+
 	namespace collections
 	{
 		template<typename T>
@@ -66,37 +73,6 @@ namespace ang
 				return ang_uint64_t(h % TS);
 			}
 		};
-
-		static const ang_uint32_t list[] = {
-			7u,
-			13u,
-			31u,
-			61u,
-			127u,
-			251u,
-			509u,
-			1021u,
-			2039u,
-			4093u,
-			8191u,
-			16381u,
-		};
-
-		inline wsize ang_hash_table_get_next_size(wsize size) {
-			wsize out = 0;
-			if (size >= 16381) {
-				out = 16381;
-				while (size >= out)
-					out *= 2;
-				return out;
-			}
-			else {
-				for (auto i = 0U; i < algorithms::array_size(list); ++i)
-					if (size < list[i])
-						return list[i];
-				return -1;
-			}
-		}
 
 		template<typename K, typename T, 
 			template<typename> class allocator = memory::unmanaged_allocator,
@@ -208,7 +184,7 @@ namespace ang
 			void increase_capacity() {
 		
 				scope_array<node_ptr_t, allocator> new_data;
-				wsize new_size = ang_hash_table_get_next_size(_table.size() + 20);
+				wsize new_size = algorithms::hash_table_get_next_size(_table.size() + 20);
 				new_data.allocate(new_size);
 			
 				if (!_table.is_empty() && _size)
@@ -339,7 +315,7 @@ namespace ang
 			void increase_capacity() {
 
 				scope_array<node_ptr_t, allocator> new_data;
-				wsize new_size = ang_hash_table_get_next_size(_table.size() + 20);
+				wsize new_size = algorithms::hash_table_get_next_size(_table.size() + 20);
 				new_data.allocate(new_size);
 
 				if (!_table.is_empty() && _size)

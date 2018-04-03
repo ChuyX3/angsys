@@ -17,7 +17,7 @@ namespace ang
 {
 	namespace runtime
 	{
-		template<class K, class T>
+		template<typename K, typename T>
 		struct __type_info_builder_genre_class_helper<collections::pair<K, T>, false> : true_type {
 			static rtti_t const& type_of() {
 				static const cstr_view<char> name = strings::string_pool::instance()->save_string((((string("ang::collections::pair<"_s) += rtti::type_of<K>().type_name()) += ","_s) += rtti::type_of<T>().type_name()) += ">"_s);
@@ -29,7 +29,7 @@ namespace ang
 }
 
 
-template<class T>
+template<typename T>
 inline ang::rtti_t const& ang::collections::ienum<T>::class_info()
 {
 	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::ienum<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
@@ -38,7 +38,7 @@ inline ang::rtti_t const& ang::collections::ienum<T>::class_info()
 	return info;
 }
 
-template<class T>
+template<typename T>
 inline ang::rtti_t const& ang::collections::iarray<T>::class_info()
 {
 	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::iarray<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
@@ -47,7 +47,7 @@ inline ang::rtti_t const& ang::collections::iarray<T>::class_info()
 	return info;
 }
 
-template<class T>
+template<typename T>
 inline ang::rtti_t const& ang::collections::ilist<T>::class_info()
 {
 	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::ilist<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
@@ -56,7 +56,7 @@ inline ang::rtti_t const& ang::collections::ilist<T>::class_info()
 	return info;
 }
 
-template<class T>
+template<typename T>
 inline ang::rtti_t const& ang::collections::isequence<T>::class_info()
 {
 	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::isequence<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
@@ -65,11 +65,20 @@ inline ang::rtti_t const& ang::collections::isequence<T>::class_info()
 	return info;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////
+template<typename K, typename T>
+inline ang::rtti_t const& ang::collections::imap<K, T>::class_info()
+{
+	static const cstr_view<char> name = strings::string_pool::instance()->save_string((((string("ang::collections::imap<"_s) += rtti::type_of<K>().type_name()) += ","_s)+= rtti::type_of<T>().type_name()) += ">"_s);
+	static rtti_t const* parents[] = { &runtime::type_of<collections::ienum<pair<K,T>>>() };
+	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::imap<K, T>), alignof(wsize), parents, &default_query_interface);
+	return info;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-template<class T>
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
 ang::collections::base_iterator<T>::base_iterator(ang::collections::base_iterator<T> const& it)
 	: _parent(it.parent())
 	, _current(it.current())
@@ -77,7 +86,7 @@ ang::collections::base_iterator<T>::base_iterator(ang::collections::base_iterato
 {
 }
 
-template<class T>
+template<typename T>
 ang::collections::base_iterator<T>::base_iterator(ang::collections::ienum<T>* par, pointer cur, wsize off)
 	: _parent(par)
 	, _current(cur)
@@ -85,48 +94,48 @@ ang::collections::base_iterator<T>::base_iterator(ang::collections::ienum<T>* pa
 {
 }
 
-template<class T>
+template<typename T>
 ang::collections::base_iterator<T>::~base_iterator()
 {
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::ienum<T>* ang::collections::base_iterator<T>::parent()const
 {
 	return _parent;
 }
 
-template<class T>
+template<typename T>
 inline void ang::collections::base_iterator<T>::parent(ang::collections::ienum<T>* p)
 {
 	_parent = p;
 }
 
-template<class T>
+template<typename T>
 inline pointer ang::collections::base_iterator<T>::current()const
 {
 	return _current;
 }
 
-template<class T>
+template<typename T>
 inline void ang::collections::base_iterator<T>::current(pointer c)
 {
 	_current = c;
 }
 
-template<class T>
+template<typename T>
 inline wsize ang::collections::base_iterator<T>::offset()const
 {
 	return _offset;
 }
 
-template<class T>
+template<typename T>
 inline void ang::collections::base_iterator<T>::offset(wsize c)
 {
 	_offset = c;
 }
 
-template<class T>
+template<typename T>
 inline bool ang::collections::base_iterator<T>::is_valid()const
 {
 	return bool(_current != null && _parent != null);
@@ -134,13 +143,13 @@ inline bool ang::collections::base_iterator<T>::is_valid()const
 
 
 
-template<class T>
+template<typename T>
 inline void ang::collections::base_iterator<T>::clear()
 {
 	_current = null;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::base_iterator<T>& ang::collections::base_iterator<T>::operator = (ang::collections::base_iterator<T> const& it)
 {
 	_parent = it.parent();
@@ -151,7 +160,7 @@ inline ang::collections::base_iterator<T>& ang::collections::base_iterator<T>::o
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<class T>
+template<typename T>
 ang::collections::iterator<T>::operator T*()const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -161,7 +170,7 @@ ang::collections::iterator<T>::operator T*()const
 	return &this->_parent->at(*this);
 }
 
-template<class T>
+template<typename T>
 T* ang::collections::iterator<T>::operator -> ()const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -171,7 +180,7 @@ T* ang::collections::iterator<T>::operator -> ()const
 	return &this->_parent->at(*this);
 }
 
-template<class T>
+template<typename T>
 T& ang::collections::iterator<T>::operator * ()const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -183,7 +192,7 @@ T& ang::collections::iterator<T>::operator * ()const
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-template<class T>
+template<typename T>
 ang::collections::iterator<const T>::operator T const*()const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -193,7 +202,7 @@ ang::collections::iterator<const T>::operator T const*()const
 	return &this->_parent->at(*this);
 }
 
-template<class T>
+template<typename T>
 T const* ang::collections::iterator<const T>::operator -> ()const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -203,7 +212,7 @@ T const* ang::collections::iterator<const T>::operator -> ()const
 	return &this->_parent->at(*this);
 }
 
-template<class T>
+template<typename T>
 T const& ang::collections::iterator<const T>::operator * ()const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -215,7 +224,7 @@ T const& ang::collections::iterator<const T>::operator * ()const
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<T>& ang::collections::forward_iterator<T>::operator += (int val)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -226,7 +235,7 @@ inline ang::collections::forward_iterator<T>& ang::collections::forward_iterator
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<T>& ang::collections::forward_iterator<T>::operator -= (int val)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -237,7 +246,7 @@ inline ang::collections::forward_iterator<T>& ang::collections::forward_iterator
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<T>& ang::collections::forward_iterator<T>::operator ++ ()
 {
 #ifdef DEBUG_SAFE_CODE
@@ -248,7 +257,7 @@ inline ang::collections::forward_iterator<T>& ang::collections::forward_iterator
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<T>& ang::collections::forward_iterator<T>::operator -- ()
 {
 #ifdef DEBUG_SAFE_CODE
@@ -259,7 +268,7 @@ inline ang::collections::forward_iterator<T>& ang::collections::forward_iterator
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<T> ang::collections::forward_iterator<T>::operator ++ (int)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -271,7 +280,7 @@ inline ang::collections::forward_iterator<T> ang::collections::forward_iterator<
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<T> ang::collections::forward_iterator<T>::operator -- (int)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -283,7 +292,7 @@ inline ang::collections::forward_iterator<T> ang::collections::forward_iterator<
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<T> ang::collections::forward_iterator<T>::operator + (int)const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -295,7 +304,7 @@ inline ang::collections::forward_iterator<T> ang::collections::forward_iterator<
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<T> ang::collections::forward_iterator<T>::operator - (int)const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -307,7 +316,7 @@ inline ang::collections::forward_iterator<T> ang::collections::forward_iterator<
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<T>& ang::collections::backward_iterator<T>::operator += (int val)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -318,7 +327,7 @@ inline ang::collections::backward_iterator<T>& ang::collections::backward_iterat
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<T>& ang::collections::backward_iterator<T>::operator -= (int val)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -329,7 +338,7 @@ inline ang::collections::backward_iterator<T>& ang::collections::backward_iterat
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<T>& ang::collections::backward_iterator<T>::operator ++ ()
 {
 #ifdef DEBUG_SAFE_CODE
@@ -340,7 +349,7 @@ inline ang::collections::backward_iterator<T>& ang::collections::backward_iterat
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<T>& ang::collections::backward_iterator<T>::operator -- ()
 {
 #ifdef DEBUG_SAFE_CODE
@@ -351,7 +360,7 @@ inline ang::collections::backward_iterator<T>& ang::collections::backward_iterat
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<T> ang::collections::backward_iterator<T>::operator ++ (int)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -363,7 +372,7 @@ inline ang::collections::backward_iterator<T> ang::collections::backward_iterato
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<T> ang::collections::backward_iterator<T>::operator -- (int)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -375,7 +384,7 @@ inline ang::collections::backward_iterator<T> ang::collections::backward_iterato
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<T> ang::collections::backward_iterator<T>::operator + (int)const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -387,7 +396,7 @@ inline ang::collections::backward_iterator<T> ang::collections::backward_iterato
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<T> ang::collections::backward_iterator<T>::operator - (int)const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -399,7 +408,7 @@ inline ang::collections::backward_iterator<T> ang::collections::backward_iterato
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<const T>& ang::collections::forward_iterator<const T>::operator += (int val)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -410,7 +419,7 @@ inline ang::collections::forward_iterator<const T>& ang::collections::forward_it
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<const T>& ang::collections::forward_iterator<const T>::operator -= (int val)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -421,7 +430,7 @@ inline ang::collections::forward_iterator<const T>& ang::collections::forward_it
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<const T>& ang::collections::forward_iterator<const T>::operator ++ ()
 {
 #ifdef DEBUG_SAFE_CODE
@@ -432,7 +441,7 @@ inline ang::collections::forward_iterator<const T>& ang::collections::forward_it
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<const T>& ang::collections::forward_iterator<const T>::operator -- ()
 {
 #ifdef DEBUG_SAFE_CODE
@@ -443,7 +452,7 @@ inline ang::collections::forward_iterator<const T>& ang::collections::forward_it
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<const T> ang::collections::forward_iterator<const T>::operator ++ (int)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -455,7 +464,7 @@ inline ang::collections::forward_iterator<const T> ang::collections::forward_ite
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<const T> ang::collections::forward_iterator<const T>::operator -- (int)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -467,7 +476,7 @@ inline ang::collections::forward_iterator<const T> ang::collections::forward_ite
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<const T> ang::collections::forward_iterator<const T>::operator + (int)const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -479,7 +488,7 @@ inline ang::collections::forward_iterator<const T> ang::collections::forward_ite
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::forward_iterator<const T> ang::collections::forward_iterator<const T>::operator - (int)const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -491,7 +500,7 @@ inline ang::collections::forward_iterator<const T> ang::collections::forward_ite
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<const T>& ang::collections::backward_iterator<const T>::operator += (int val)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -502,7 +511,7 @@ inline ang::collections::backward_iterator<const T>& ang::collections::backward_
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<const T>& ang::collections::backward_iterator<const T>::operator -= (int val)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -513,7 +522,7 @@ inline ang::collections::backward_iterator<const T>& ang::collections::backward_
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<const T>& ang::collections::backward_iterator<const T>::operator ++ ()
 {
 #ifdef DEBUG_SAFE_CODE
@@ -524,7 +533,7 @@ inline ang::collections::backward_iterator<const T>& ang::collections::backward_
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<const T>& ang::collections::backward_iterator<const T>::operator -- ()
 {
 #ifdef DEBUG_SAFE_CODE
@@ -535,7 +544,7 @@ inline ang::collections::backward_iterator<const T>& ang::collections::backward_
 	return*this;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<const T> ang::collections::backward_iterator<const T>::operator ++ (int)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -547,7 +556,7 @@ inline ang::collections::backward_iterator<const T> ang::collections::backward_i
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<const T> ang::collections::backward_iterator<const T>::operator -- (int)
 {
 #ifdef DEBUG_SAFE_CODE
@@ -559,7 +568,7 @@ inline ang::collections::backward_iterator<const T> ang::collections::backward_i
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<const T> ang::collections::backward_iterator<const T>::operator + (int)const
 {
 #ifdef DEBUG_SAFE_CODE
@@ -571,7 +580,7 @@ inline ang::collections::backward_iterator<const T> ang::collections::backward_i
 	return saveState;
 }
 
-template<class T>
+template<typename T>
 inline ang::collections::backward_iterator<const T> ang::collections::backward_iterator<const T>::operator - (int)const
 {
 #ifdef DEBUG_SAFE_CODE

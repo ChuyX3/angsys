@@ -166,3 +166,36 @@ text::iencoder_t text::iencoder::get_encoder(text::encoding_t e)
 	default: return null;
 	}
 }
+
+
+
+static const ang_uint32_t list[] = {
+	7u,
+	13u,
+	31u,
+	61u,
+	127u,
+	251u,
+	509u,
+	1021u,
+	2039u,
+	4093u,
+	8191u,
+	16381u,
+};
+
+wsize algorithms::hash_table_get_next_size(wsize size) {
+	wsize out = 0;
+	if (size >= 16381) {
+		out = 16381;
+		while (size >= out)
+			out *= 2;
+		return out;
+	}
+	else {
+		for (auto i = 0U; i < algorithms::array_size(list); ++i)
+			if (size < list[i])
+				return list[i];
+		return -1;
+	}
+}

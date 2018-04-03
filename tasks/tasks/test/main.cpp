@@ -345,7 +345,16 @@ int main()
 {	
 	collections::hash_map<int, int> map = new collections::hash_map_object<int,int>();
 
-	
+	map->insert(1, 2);
+	map->insert(2, 2);
+	map->insert(3, 2);
+	map->insert(4, 2);
+	map->insert(5, 2);
+	map->insert(6, 2);
+	map->insert(7, 2);
+	map->insert(8, 2);
+	map->insert(9, 2);
+	map->insert(10, 2);
 
 	return 0;
 }

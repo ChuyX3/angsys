@@ -174,4 +174,26 @@
     </Expand>
   </Type>
 
+  <Type Name="ang::collections::hash_map_object&lt;*&gt;">
+    <DisplayString>map[{_count}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_count</Item>
+      <CustomListItems MaxItemsPerView="5000" ExcludeView="Test">
+        <Variable Name="i_" InitialValue="0" />
+        <Variable Name="node_" InitialValue="_table._data == nullptr ? nullptr : *_table._data" />
+        <Size>_count</Size>
+        <Loop Condition="i_ &lt; _table._size">
+          <If Condition="node_ == nullptr">
+            <Exec>i_++</Exec>
+            <Exec>node_ = _table._data[i_]</Exec>
+          </If>
+          <Else>
+            <Item>node_->data</Item>
+            <Exec>node_ = node_->next</Exec>
+          </Else>
+        </Loop>
+      </CustomListItems>
+    </Expand>
+  </Type>
+
 </AutoVisualizer>

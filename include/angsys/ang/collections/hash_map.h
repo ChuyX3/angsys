@@ -29,35 +29,48 @@ namespace ang
 	namespace algorithms
 	{
 		wsize LINK hash_table_get_next_size(wsize);
-		ulong64 LINK create_hash_index(int, ulong64);
-		ulong64 LINK create_hash_index(uint, ulong64);
-		ulong64 LINK create_hash_index(long, ulong64);
-		ulong64 LINK create_hash_index(ulong, ulong64);
-		ulong64 LINK create_hash_index(long64, ulong64);
-		ulong64 LINK create_hash_index(ulong64, ulong64);
-		ulong64 LINK create_hash_index(float, ulong64);
-		ulong64 LINK create_hash_index(double, ulong64);
-		ulong64 LINK create_hash_index(pointer, ulong64);
-		ulong64 LINK create_hash_index(raw_cstr_t, ulong64);
-
+		
 		template<typename K>
 		struct hash_index_maker {
-			static inline long64 make(const K& key, ulong64 SZ) {
-				return create_hash_index(key, SZ);
+			static inline ulong64 make(const K& key_, ulong64 TS) {
+				static_assert(genre_of<K>() == genre::value_type || genre_of<K>() == genre::enum_type, "invaid type for template hash_index_maker");
+				union { K k; ulong64 val; } key;
+				key.val = 0;
+				key.k = key_;
+				return (ulong64)((2475825 + key.val + 1) % TS);
 			}
 		};
 
 		template<typename T, text::encoding E>
 		struct hash_index_maker<str_view<T, E>> {
-			static inline long64 make(const str_view<T, E>& key, ulong64 SZ) {
-				return create_hash_index(raw_cstr(key), SZ);
+			static inline ulong64 make(const str_view<T, E>& key, ulong64 TS) {
+				ulong64 h = 75025;
+				windex i = 0, c = value.size();
+
+				for (char32_t n = text::to_char32<false, text::is_endian_swapped<E>::value>(key.cstr(), i);
+					n != 0 && i < key.size();
+					n = text::to_char32<false, text::is_endian_swapped<E>::value>(key.cstr(), i))
+				{
+					h = (h << 5) + h + dword(n) + 1;
+				}
+				return ang_uint64_t(h % TS);
 			}
 		};
 
 		template<text::encoding E, template<typename>class A>
 		struct hash_index_maker<strings::basic_string<E,A>> {
-			static inline long64 make(const strings::basic_string<E, A>& key, ulong64 SZ) {
-				return create_hash_index(raw_cstr(key->cstr()), SZ);
+			static inline long64 make(const strings::basic_string<E, A>& key_, ulong64 TS) {
+				ulong64 h = 75025;
+				windex i = 0, c = value.size();
+				auto key = key_->cstr();
+
+				for (char32_t n = text::to_char32<false, text::is_endian_swapped<E>::value>(key.cstr(), i);
+					n != 0 && i < key.size();
+					n = text::to_char32<false, text::is_endian_swapped<E>::value>(key.cstr(), i))
+				{
+					h = (h << 5) + h + dword(n) + 1;
+				}
+				return ang_uint64_t(h % TS);
 			}
 		};
 	}
@@ -173,7 +186,7 @@ namespace ang
 
 		public: //overrides
 			ANG_DECLARE_INTERFACE();
-			inline comparision_result_t compare(const object*)const override;
+			//inline comparision_result_t compare(const object*)const override;
 	
 		protected: //Memory Operations
 			template<typename U, typename V> inline node_ptr_t allocate_node(U key, V val) {
