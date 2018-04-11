@@ -182,7 +182,7 @@ namespace ang //constants
 			scope_array() : _size(0), _data(null) { }
 			scope_array(ang::nullptr_t const&) : scope_array() {}
 			scope_array(wsize sz, type val = null) : scope_array() {
-				_size = min(wsize(-1) / sizeof(T), sz);
+				_size = min(wsize(-1) / size_of<T>(), sz);
 				if (_size > 0) {
 					_data = alloc.allocate(_size);
 					if(val) for (windex i = 0; i < _size; ++i)
@@ -192,7 +192,7 @@ namespace ang //constants
 				}
 			}			
 			scope_array(scope_array const& other) : scope_array() {
-				_size = min(wsize(-1) / sizeof(T), other._size);
+				_size = min(wsize(-1) / size_of<T>(), other._size);
 				if (_size > 0) {
 					_data = alloc.allocate(_size);
 					for (windex i = 0; i < _size; ++i)
@@ -206,7 +206,7 @@ namespace ang //constants
 				other._data = null;
 			}
 			template<typename U, wsize N>scope_array(U(&ar)[N]) : scope_array() {
-				_size = min(wsize(-1) / sizeof(T), N);
+				_size = min(wsize(-1) / size_of<T>(), N);
 				if (_size > 0) {
 					_data = alloc.allocate(_size);
 					for (windex i = 0; i < _size; ++i)
@@ -214,7 +214,7 @@ namespace ang //constants
 				}
 			}
 			template<typename U, wsize N>scope_array(const U(&ar)[N]) : scope_array() {
-				_size = min(wsize(-1) / sizeof(T), N);
+				_size = min(wsize(-1) / size_of<T>(), N);
 				if (_size > 0) {
 					_data = alloc.allocate(_size);
 					for (windex i = 0; i < _size; ++i)
@@ -228,7 +228,7 @@ namespace ang //constants
 			type const& get()const { return _data; }
 			void set(type val, wsize sz) {
 				clear();
-				_size = min(wsize(-1) / sizeof(T), sz);
+				_size = min(wsize(-1) / size_of<T>(), sz);
 				if (_size > 0) {
 					_data = alloc.allocate(_size);
 					for (windex i = 0; i < _size; ++i)

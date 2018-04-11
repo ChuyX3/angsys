@@ -15,8 +15,8 @@
 #define __ANG_BASE_MEMORY_H__
 
 
-ANG_EXTERN LINK ang_void_ptr_t ang_alloc_unmanaged_memory(ang_size_t);
-ANG_EXTERN LINK void ang_free_unmanaged_memory(ang_void_ptr_t);
+ANG_EXTERN LINK pointer ang_alloc_unmanaged_memory(wsize);
+ANG_EXTERN LINK void ang_free_unmanaged_memory(pointer);
 
 typedef enum _ang_memory_hint {
 	ang_default_memory,
@@ -25,16 +25,16 @@ typedef enum _ang_memory_hint {
 	ang_aligned_memory,
 }ang_memory_hint, ang_memory_hint_t;
 
-ANG_EXTERN LINK ang_void_ptr_t ang_alloc_managed_memory(ang_size_t, ang_memory_hint_t);
-ANG_EXTERN LINK void ang_free_managed_memory(ang_void_ptr_t, ang_memory_hint_t);
+ANG_EXTERN LINK pointer ang_alloc_managed_memory(wsize, ang_memory_hint_t);
+ANG_EXTERN LINK void ang_free_managed_memory(pointer, ang_memory_hint_t);
 
-ANG_EXTERN LINK ang_void_ptr_t ang_alloc_aligned_memory(ang_size_t, wsize ALIGMENT);
-ANG_EXTERN LINK void ang_free_aligned_memory(ang_void_ptr_t);
+ANG_EXTERN LINK pointer ang_alloc_aligned_memory(wsize, wsize ALIGMENT);
+ANG_EXTERN LINK void ang_free_aligned_memory(pointer);
 
 #ifdef _DEBUG
-ANG_EXTERN LINK ang_void_ptr_t ang_alloc_unmanaged_memory_debug(ang_size_t, const char* file, int line);
-ANG_EXTERN LINK ang_void_ptr_t ang_alloc_managed_memory_debug(ang_size_t, ang_memory_hint_t, const char* file, int line);
-ANG_EXTERN LINK ang_void_ptr_t ang_alloc_aligned_memory_debug(ang_size_t, wsize ALIGMENT, const char* file, int line);
+ANG_EXTERN LINK pointer ang_alloc_unmanaged_memory_debug(wsize, const char* file, int line);
+ANG_EXTERN LINK pointer ang_alloc_managed_memory_debug(wsize, ang_memory_hint_t, const char* file, int line);
+ANG_EXTERN LINK pointer ang_alloc_aligned_memory_debug(wsize, wsize ALIGMENT, const char* file, int line);
 #endif
 
 
@@ -42,6 +42,19 @@ namespace ang
 {
 	namespace memory
 	{
+		struct iraw_allocator
+		{
+			virtual pointer memory_alloc(wsize size) = 0;
+			virtual void memory_release(pointer ptr) = 0;
+			virtual pointer aligned_memory_alloc(wsize, wsize) = 0;// only for aligned allocator
+#ifdef _DEBUG
+			virtual pointer memory_alloc(wsize size, const char* file, int line) = 0;
+			virtual pointer aligned_memory_alloc(wsize, wsize, const char* file, int line) = 0;// only for aligned allocator
+#endif
+		};
+
+		LINK iraw_allocator* get_raw_allocator(ang_memory_hint_t hint);
+
 		template<typename T, ang_memory_hint_t HINT_>
 		class managed_allocator
 		{

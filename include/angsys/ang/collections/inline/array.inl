@@ -106,7 +106,7 @@ inline ang::rtti_t const& ang::collections::array_buffer<T, allocator>::class_in
 {
 	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::array<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<iarray<T>>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::array_buffer<T, allocator>), alignof(ang::collections::array_buffer<T, allocator>), parents, &default_query_interface);
+	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<ang::collections::array_buffer<T, allocator>>(), alignof(ang::collections::array_buffer<T, allocator>), parents, &default_query_interface);
 	return info;
 }
 
@@ -233,7 +233,7 @@ inline const_pointer ang::collections::array_buffer<T, allocator>::buffer_ptr()c
 template<typename T, template <typename> class allocator>
 inline wsize ang::collections::array_buffer<T, allocator>::buffer_size()const
 {
-	return _size * (wsize)sizeof(T);
+	return _size * (wsize)size_of<T>();
 }
 
 template<typename T, template <typename> class allocator>
@@ -524,7 +524,7 @@ inline bool ang::collections::array_buffer<T, allocator>::realloc(wsize size)
 		for (windex i = 0; i < _size; ++i)
 			alloc.template construct<T, T const&>((T*)&_data[i], T());
 	}
-	return _data;
+	return _data != null;
 }
 
 

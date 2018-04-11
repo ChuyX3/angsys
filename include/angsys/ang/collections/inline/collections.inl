@@ -21,7 +21,7 @@ namespace ang
 		struct __type_info_builder_genre_class_helper<collections::pair<K, T>, false> : true_type {
 			static rtti_t const& type_of() {
 				static const cstr_view<char> name = strings::string_pool::instance()->save_string((((string("ang::collections::pair<"_s) += rtti::type_of<K>().type_name()) += ","_s) += rtti::type_of<T>().type_name()) += ">"_s);
-				static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(collections::pair<K, T>), alignof(collections::pair<K, T>));
+				static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<collections::pair<K, T>>(), align_of<collections::pair<K, T>>());
 				return info;
 			}
 		};

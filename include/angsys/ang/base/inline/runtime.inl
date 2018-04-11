@@ -265,7 +265,11 @@ namespace ang
 		struct __type_info_builder_genre_class_helper<T, false> {
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
-				rtti_t const& info = rtti::regist("class<'unknown'>", genre::class_type, rtti::type_of<type>().size(), rtti::type_of<type>().aligment());
+				rtti_t const& info = rtti::regist("class<'unknown'>"
+					, genre::class_type
+					, size_of<type>()
+					, align_of<type>()
+				);
 				return info;
 			}
 		};
@@ -309,7 +313,7 @@ namespace ang
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
 					strings::string_pool::instance()->save_string((string("const "_s) += rtti::type_of<type>().type_name()) += "&"_s)
-					, ang::genre::class_type, sizeortti::type_of<type>().size(), rtti::type_of<type>().aligment());
+					, ang::genre::class_type, rtti::type_of<type>().size(), rtti::type_of<type>().aligment());
 				return info;
 			}
 		};
@@ -338,6 +342,20 @@ namespace ang
 				return info;
 			}
 		};
+
+#if defined WINDOWS_PLATFORM && defined _X86_
+		template<typename T, typename... Ts>
+		struct __type_info_builder_genre_function_helper<T(__stdcall*)(Ts...)> {
+			static rtti_t const& type_of() {
+				rtti_t const& info = rtti::regist(
+					strings::string_pool::instance()->save_string(((string(rtti::type_of<T>().type_name()) += "(__stdcall*)("_s) += runtime::args_list_type_name<Ts...>()) += ")"_s)
+					, genre::function_type, sizeof(wsize), alignof(wsize));
+				return info;
+			}
+		};
+
+#endif
+
 
 		template<typename T, typename O, typename... Ts>
 		struct __type_info_builder_genre_function_helper<T(O::*)(Ts...)> {

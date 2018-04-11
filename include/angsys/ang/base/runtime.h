@@ -30,19 +30,19 @@ namespace ang //constants
 		typedef bool(*dynamic_cast_proc)(const rtti_t&, unknown_t, const rtti_t&, unknown_ptr_t);
 
 		template<typename T>
-		struct type_info_builder<T, genre::value_type> { static rtti_t const& type_of(); };
+		struct type_info_builder<T, genre::value_type> { static constexpr genre GENRE = genre::value_type; static rtti_t const& type_of(); };
 
 		template<typename T>
-		struct type_info_builder<T, genre::union_type> { static rtti_t const& type_of(); };
+		struct type_info_builder<T, genre::union_type> { static constexpr genre GENRE = genre::union_type; static rtti_t const& type_of(); };
 
 		template<typename T>
-		struct type_info_builder<T, genre::enum_type> { static rtti_t const& type_of(); };
+		struct type_info_builder<T, genre::enum_type> { static constexpr genre GENRE = genre::enum_type; static rtti_t const& type_of(); };
 
 		template<typename T>
-		struct type_info_builder<T, genre::function_type> { static rtti_t const& type_of(); };
+		struct type_info_builder<T, genre::function_type> { static constexpr genre GENRE = genre::function_type; static rtti_t const& type_of(); };
 
 		template<typename T>
-		struct type_info_builder<T, genre::class_type> { static rtti_t const& type_of(); };
+		struct type_info_builder<T, genre::class_type> { static constexpr genre GENRE = genre::class_type; static rtti_t const& type_of(); };
 
 		struct LINK __type_info {
 			__type_info(rtti_t&&) = delete;
@@ -73,7 +73,7 @@ namespace ang //constants
 			}
 
 			template<typename T> inline static rtti_t const& type_of() {
-				return type_info_builder<T>::type_of();
+				return type_info_builder<T, genre_of<T>()>::type_of();
 			}
 			template<typename T> inline static rtti_t const& type_of(const T&) {
 				return type_info_builder<T>::type_of();

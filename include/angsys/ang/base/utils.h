@@ -207,6 +207,14 @@ namespace ang //testing
 	template<typename T> struct is_union : yes_expression<__is_union(typename remove_reference<typename remove_constant<T>::type>::type)> {};
 	template<typename T> struct is_class : yes_expression<__is_class(typename remove_reference<typename remove_constant<T>::type>::type)> {};
 
+	template<typename T> struct is_abstract : yes_expression<__is_abstract(T)> { };
+	template<typename T> struct is_final : yes_expression<__is_final(T)> { };
+
+	template <typename T, typename = void> struct is_complete_impl : false_type { };
+	template <typename T> struct is_complete_impl< T, void_t<decltype(sizeof(T))> > : true_type { };
+	template <typename T> constexpr bool ___is_complete() { return is_complete_impl<T>::value; }
+	template <typename T> struct is_complete : yes_expression<___is_complete<T>()> { };
+
 	template<typename base_type, typename child_type>
 	struct is_base_of : public yes_expression<__is_base_of(base_type, child_type)> { };
 
@@ -220,7 +228,11 @@ namespace ang //testing
 	template<typename T, typename... Ts> struct is_function<T(Ts...)> : true_type { };
 	template<typename T, typename... Ts> struct is_function<T(*)(Ts...)> : true_type { };
 	template<typename T, typename O, typename... Ts> struct is_function<T(O::*)(Ts...)> : true_type { };
-
+#if defined WINDOWS_PLATFORM && defined _X86_
+	template<typename T, typename... Ts> struct is_function<T(__stdcall*)(Ts...)> : true_type { };
+	template<typename T, typename... Ts> struct is_function<T(__vectorcall*)(Ts...)> : true_type { };
+	template<typename T, typename... Ts> struct is_function<T(__fastcall*)(Ts...)> : true_type { };
+#endif
 	template<typename T>
 	struct is_calleable : or_expression<
 		is_function<T>::value,
@@ -282,6 +294,26 @@ namespace ang //testing
 	struct __is_safe_enum_base<T, void_t<typename T::type>> : yes_expression<is_enum<typename T::type>::value> { };
 
 	template<typename T, genre_t TYPE = genre_of<T>(), bool IS_SAFE_ENUM = __is_safe_enum_base<T>::value> struct value;
+
+
+	template<typename T, bool IS_COMPLETE = is_complete<T>::value>
+	struct size_of_impl { static constexpr wsize value = sizeof(T); };
+
+	template<typename T>
+	struct size_of_impl<T, false> { static constexpr wsize value = 0; };
+
+	template<typename T, bool IS_COMPLETE = is_complete<T>::value, bool IS_ABSTRACT = is_complete<T>::value>
+	struct align_of_impl { static constexpr wsize value = sizeof(wsize); };
+
+	template<typename T>
+	struct align_of_impl<T, false, true> { static constexpr wsize value = alignof(T); };
+
+	template<typename T>
+	struct align_of_impl<T, true, true> { static constexpr wsize value = alignof(T); };
+
+	template<typename T> constexpr wsize size_of() { return size_of_impl<T>::value; }
+	template<typename T> constexpr wsize align_of() { return align_of_impl<T>::value; }
+
 }
 
 namespace ang //operations

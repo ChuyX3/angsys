@@ -131,7 +131,27 @@ namespace ang
 			visible vcall iterator<pair<K, T>> find(const K&) pure;
 			visible vcall const_iterator<pair<K, T>> find(const K&)const pure;
 		ang_end_interface();
-
+	
+		template<text::encoding E, template<typename>class A, typename T>
+		struct _DECLSPEC_NOVTABLE imap<strings::basic_string<E, A>, T>
+			: ienum<pair<strings::basic_string<E, A>, T>> {
+			inline ANG_DECLARE_CLASS_INFO();
+			inline ANG_DECLARE_RUNTIME_INFO();
+			inline ANG_DECLARE_QUERY_INTERFACE();
+			visible vcall bool copy(const ienum<pair<strings::basic_string<E, A>, T>>*) pure;
+			visible vcall void extend(const ienum<pair<strings::basic_string<E, A>, T>>*) pure;
+			visible vcall bool insert(raw_cstr_t, T) pure;
+			visible vcall bool insert(pair<strings::basic_string<E, A>, T>) pure;
+			visible vcall bool update(raw_cstr_t, T) pure;
+			visible vcall bool update(pair<strings::basic_string<E, A>, T>) pure;
+			visible vcall bool remove(raw_cstr_t) pure;
+			visible vcall bool remove(raw_cstr_t, T&) pure;
+			visible vcall bool remove(base_iterator<pair<strings::basic_string<E, A>, T>> it) pure;
+			visible vcall bool remove(base_iterator<pair<strings::basic_string<E, A>, T>> it, T&) pure;
+			visible vcall bool has_key(raw_cstr_t)const pure;
+			visible vcall iterator<pair<strings::basic_string<E, A>, T>> find(raw_cstr_t) pure;
+			visible vcall const_iterator<pair<strings::basic_string<E, A>, T>> find(raw_cstr_t)const pure;
+		};
 
 		template<typename T>
 		struct linked_node {

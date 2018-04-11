@@ -147,6 +147,7 @@ typedef void const * const_pointer;
 typedef uint index;
 typedef size_t windex;
 typedef size_t wsize;
+typedef intptr_t wint;
 
 typedef union
 {
