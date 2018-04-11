@@ -24,8 +24,6 @@ namespace ang
 		diferent = 20
 	};
 
-
-
 	/******************************************************************/
 	/* class ang::object :                                            */
 	/*  -> implements the base class for all library's objects        */
@@ -88,9 +86,13 @@ namespace ang
 
 	public:
 
-		bool operator == (object const& obj)const;
+		inline bool operator == (object const& obj)const {
+			return this->compare(&obj) == comparision_result::same;
+		}
 
-		bool operator != (object const& obj)const;
+		inline bool operator != (object const& obj)const {
+			return this->compare(&obj) != comparision_result::same;
+		}
 
 		template<typename T> typename smart_ptr_type<T>::smart_ptr_t as() {
 			return  this ? dyn_cast<typename smart_ptr_type<T>::type>(this) : null;
@@ -125,6 +127,7 @@ namespace ang
 	bool operator != (object_wrapper<T1> const& obj1, object_wrapper<T2> const& obj2) {
 		return operator == (obj1, obj2);
 	}
+
 }
 
 #endif//__SAMRT_PTR_H__

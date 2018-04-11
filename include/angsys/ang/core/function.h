@@ -282,14 +282,11 @@ namespace ang
 
 	public:
 		object_wrapper();
+		object_wrapper(core::delegates::function_object<void(Ts...)> * func);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
 		object_wrapper(ang::nullptr_t const&);
 		~object_wrapper();
-
-		object_wrapper(core::delegates::function_object<void(Ts...)> * func) : object_wrapper() {
-			set(func);
-		}
 
 
 		template<typename F>

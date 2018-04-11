@@ -86,7 +86,7 @@ void basic_string_buffer<MY_ENCODING>::clear()
 
 bool basic_string_buffer<MY_ENCODING>::realloc(wsize new_size, bool save)
 {
-	if (_map_index != invalid_index || _map_size != invalid_index)
+	if (_map_index != (wsize)invalid_index || _map_size != (wsize)invalid_index)
 		return false;
 	if (_data._storage_type == storage_type_string_pool)
 		new_size = save ? max(_data._const_string->text_buffer().count(), new_size) : new_size;

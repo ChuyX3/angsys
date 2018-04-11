@@ -36,7 +36,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\hash_map.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\iterators.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\vector.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\async.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\function.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\listener.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\exception.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\const_string_declaration.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\intf_wrapper.hpp" />
@@ -46,6 +48,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\singleton.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\smart_ptr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\string.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\variable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_memory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core_hash_table.h" />
@@ -74,6 +77,7 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\hash_map.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\vector.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\inline\function.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\inline\listener.inl" />
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl" />
     <None Include="$(MSBuildThisFileDirectory)include\inline\string.inl" />
   </ItemGroup>

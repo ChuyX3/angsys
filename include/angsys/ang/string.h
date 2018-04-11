@@ -4,7 +4,7 @@
 
 namespace ang
 {
-	typedef struct LINK raw_str {
+	struct LINK raw_str {
 		raw_str();
 		raw_str(void* v, wsize s, text::encoding e);
 		raw_str(raw_str const& str);
@@ -47,9 +47,9 @@ namespace ang
 		void* _value;
 		wsize _size;
 		text::encoding _encoding;
-	}raw_str_t;
+	};
 
-	typedef struct LINK raw_cstr {
+	struct LINK raw_cstr {
 		raw_cstr();
 		raw_cstr(void const* v, wsize s, text::encoding e);
 		raw_cstr(raw_cstr const& str);
@@ -59,6 +59,9 @@ namespace ang
 		}
 		template<typename T, text::encoding E> inline raw_cstr(cstr_view<T, E> str)
 			: raw_cstr(str.cstr(), str.size() * sizeof(typename text::char_type_by_encoding<E>::char_t), E) {
+		}
+		template<typename T, wsize N> inline raw_cstr(const T (&str)[N])
+			: raw_cstr(str, (N - 1)* sizeof(T), text::encoding_by_char_type<T>::value) {
 		}
 
 		void const* ptr()const;
@@ -85,7 +88,7 @@ namespace ang
 		void const* _value;
 		wsize _size;
 		text::encoding _encoding;
-	}raw_cstr_t;
+	};
 
 	namespace text
 	{
@@ -121,6 +124,8 @@ namespace ang
 	ANG_INTF_WRAPPER_DECLARATION(LINK, text::iencoder);
 
 }
+
+
 
 namespace ang
 {
@@ -222,10 +227,10 @@ namespace ang
 		public:
 			static const wsize RAW_CAPACITY = 128u; //local storage capacity
 
-			enum storage_type_t : wsize {
+			enum storage_type_t : wint {
 				storage_type_stack = 0,
-				storage_type_allocated = wsize(-1),
-				storage_type_string_pool = wsize(-2),
+				storage_type_allocated = wint(-1),
+				storage_type_string_pool = wint(-2),
 			};
 
 		protected:

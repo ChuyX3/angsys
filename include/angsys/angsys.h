@@ -44,6 +44,9 @@ namespace ang
 	typedef ang::object_wrapper<const object> const_object_t, cobjptr;
 	typedef ang::object_wrapper_ptr<object> object_ptr_t;
 
+	typedef struct raw_str raw_str_t;
+	typedef struct raw_cstr raw_cstr_t;
+
 	namespace strings
 	{
 		using namespace text;
@@ -107,6 +110,7 @@ namespace ang
 
 #include <ang/smart_ptr.h>
 #include <ang/object.h>
+#include <ang/variable.h>
 #include <ang/singleton.h>
 #include <ang/collections.h>
 #include <ang/buffers.h>
@@ -115,11 +119,13 @@ namespace ang
 #include <ang/collections/vector.h>
 #include <ang/string.h>
 #include <ang/exception.h>
+#include <ang/core/listener.h>
 
 #include <ang/base/inline/runtime.inl>
 #include <ang/core/inline/function.inl>
 #include <ang/collections/inline/collections.inl>
 #include <ang/collections/inline/array.inl>
 #include <ang/collections/inline/vector.inl>
+#include <ang/core/inline/listener.inl>
 
 #endif //__ANGSYS_H__

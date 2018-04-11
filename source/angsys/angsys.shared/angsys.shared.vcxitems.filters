@@ -155,6 +155,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\hash_map.h">
       <Filter>header\angsys\collections</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\listener.h">
+      <Filter>header\angsys\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\async.h">
+      <Filter>header\angsys\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\variable.h">
+      <Filter>header\angsys</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
@@ -221,6 +230,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\hash_map.inl">
       <Filter>header\angsys\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\inline\listener.inl">
+      <Filter>header\angsys\core\inline</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

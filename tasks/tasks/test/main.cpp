@@ -3,10 +3,14 @@
 
 #include "pch.h"
 
+#include "dsplay.h"
+
 #include <type_traits>
 #include <emmintrin.h>  
 
 #include <ang/collections/hash_map.h>
+
+#include <vulkan\vk_driver.h>
 
 using namespace ang;
 
@@ -341,20 +345,52 @@ ANG_EXTERN ulong64 get_performance_time_us()
 	}
 }
 
-int main()
-{	
-	collections::hash_map<int, int> map = new collections::hash_map_object<int,int>();
 
-	map->insert(1, 2);
-	map->insert(2, 2);
-	map->insert(3, 2);
-	map->insert(4, 2);
-	map->insert(5, 2);
-	map->insert(6, 2);
-	map->insert(7, 2);
-	map->insert(8, 2);
-	map->insert(9, 2);
-	map->insert(10, 2);
+static graphics::vulkan::vk_driver_t driver;
+
+void OnInit(platform::windows::window_t wnd, objptr)
+{
+	driver = new graphics::vulkan::vk_driver();
+}
+
+void OnDraw(platform::windows::window_t wnd, objptr)
+{
+	HWND hwnd = wnd->hwnd();
+	HDC hdc = GetDC(hwnd);
+	RECT rc;
+	GetClientRect(hwnd, &rc);
+	HBRUSH hbr = CreateSolidBrush(RGB(100, 50, 80));
+	auto oldBrush = SelectObject(hdc, hbr);
+
+
+	Rectangle(hdc, 0, 0, rc.right, rc.bottom);
+	SelectObject(hdc, oldBrush);
+	DeleteObject(hbr);
+	ReleaseDC(hwnd,hdc);
+}
+
+void OnExit(platform::windows::window_t wnd, objptr)
+{
+	driver = null;
+}
+
+
+struct a_t;
+
+int main()
+{
+	
+	is_complete<a_t>::value;
+
+	type_info_builder<void()>::GENRE;
+
+	platform::windows::window_t wnd = new platform::windows::window();
+
+	wnd->create_event += &OnInit;
+	wnd->draw_event += &OnDraw;
+	wnd->destroy_event += &OnExit;
+
+	wnd->run();
 
 	return 0;
 }

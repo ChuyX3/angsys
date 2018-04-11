@@ -7,12 +7,8 @@
 
 #include "targetver.h"
 
-#include <stdio.h>
-#include <tchar.h>
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
-#define ANGSYS_DYNAMIC_LIBRARY
-#include <angsys.h>
-#pragma comment(lib, "angsys.lib")
-#pragma comment(lib, "display.lib")
+
 
 // TODO: reference additional headers your program requires here

@@ -15,14 +15,6 @@ namespace ang
 {
 	namespace memory
 	{
-		struct iraw_allocator
-		{
-			virtual pointer memory_alloc(wsize size) = 0;
-			virtual void memory_release(pointer ptr) = 0;
-#ifdef _DEBUG
-			virtual pointer memory_alloc(wsize size, const char* file, int line) = 0;
-#endif
-		};
 
 		class allocator_internal 
 			: public iraw_allocator
@@ -37,10 +29,12 @@ namespace ang
 			allocator_internal(ang_memory_hint_t);
 			~allocator_internal();
 
-			pointer memory_alloc(wsize);
-			void memory_release(pointer);
+			pointer memory_alloc(wsize) override;
+			void memory_release(pointer) override;
+			pointer aligned_memory_alloc(wsize size, wsize)override { return memory_alloc(size); }
 #ifdef _DEBUG
-			pointer memory_alloc(wsize, const char* file, int line);
+			pointer memory_alloc(wsize, const char* file, int line) override;
+			pointer aligned_memory_alloc(wsize size, wsize, const char* file, int line)override { return memory_alloc(size, file, line); }
 #endif
 		};
 
@@ -50,19 +44,17 @@ namespace ang
 			aligned_allocator_internal();
 			~aligned_allocator_internal();
 
-			pointer memory_alloc(wsize);
-			void memory_release(pointer);
-			pointer aligned_memory_alloc(wsize, wsize);
-
+			pointer memory_alloc(wsize) override;
+			void memory_release(pointer) override;
+			pointer aligned_memory_alloc(wsize, wsize) override;
 #ifdef _DEBUG
-			pointer memory_alloc(wsize, const char* file, int line);
-			pointer aligned_memory_alloc(wsize, wsize, const char* file, int line);
+			pointer memory_alloc(wsize, const char* file, int line) override;
+			pointer aligned_memory_alloc(wsize, wsize, const char* file, int line) override;
 #endif
 
 		};
 
 		aligned_allocator_internal* get_aligned_allocator();
-		iraw_allocator* get_raw_allocator(ang_memory_hint_t hint);
 	}
 }
 
