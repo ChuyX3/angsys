@@ -22,8 +22,8 @@
 #define intern private:
 #define allow	friend
 
-#define ang_object(_NAME) class _NAME; typedef ang::object_wrapper<_NAME> _NAME##_t; typedef ang::object_wrapper_ptr<_NAME> _NAME##_ptr_t; typedef ang::object_wrapper<const _NAME> const_##_NAME##_t; typedef ang::object_wrapper_ptr<const _NAME> const_##_NAME##_ptr_t
-#define ang_interface(_NAME) struct _NAME; typedef ang::intf_wrapper<_NAME> _NAME##_t; typedef ang::intf_wrapper_ptr<_NAME> _NAME##_ptr_t; typedef ang::intf_wrapper<const _NAME> const_##_NAME##_t; typedef ang::intf_wrapper_ptr<const _NAME> const_##_NAME##_ptr_t
+#define ang_object(_NAME) class _NAME; typedef ang::object_wrapper<_NAME> _NAME##_t; typedef ang::object_wrapper_ptr<_NAME> _NAME##_ptr_t;
+#define ang_interface(_NAME) struct _NAME; typedef ang::intf_wrapper<_NAME> _NAME##_t; typedef ang::intf_wrapper_ptr<_NAME> _NAME##_ptr_t;
 
 #define ANG_DECLARE_CLASS_INFO() scall ang::rtti_t const& class_info();
 #define ANG_DECLARE_RUNTIME_INFO() vcall ang::rtti_t const& runtime_info()const pure;
@@ -156,14 +156,8 @@ namespace ang //constants
 	template<typename T> class object_wrapper;
 	template<typename T> class object_wrapper_ptr;
 
-	template<typename T> using const_intf_wrapper = intf_wrapper<const T>;
-	template<typename T> using const_intf_wrapper_ptr = intf_wrapper_ptr<const T>;
-	template<typename T> using const_object_wrapper = object_wrapper<const T>;
-	template<typename T> using const_object_wrapper_ptr = object_wrapper_ptr<const T>;
-
 	ang_interface(interface);
 	typedef interface_t intfptr;
-	typedef const_interface_t cintfptr;
 
 	struct _DECLSPEC_NOVTABLE LINK interface {
 		visible scall bool default_query_interface(rtti_t const&, unknown_t, rtti_t const&, unknown_ptr_t);

@@ -67,6 +67,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\const_string.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string_pool.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\variant.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\APPLY_FUNCX_N.inl" />

@@ -13,6 +13,7 @@ namespace ang
 		template<typename T, template<typename> class allocator>
 		class array_buffer final
 			: public object
+			//, public ivariant
 			, public ibuffer
 			, public iarray<T>
 		{
@@ -57,7 +58,7 @@ namespace ang
 			inline wsize size()const;
 			inline void size(wsize size);
 
-			inline void clear();
+			inline void clear()override;
 			inline bool move(array_buffer<T, allocator>&);
 			template<typename U> inline void copy(array_view<U>const&);
 			template<typename U, template<typename> class allocator2> inline void copy(scope_array<U, allocator2>const&);
@@ -154,8 +155,8 @@ namespace ang
 		~object_wrapper();
 
 	public:
-		void clear();
-		void clear_unsafe();
+		void reset();
+		void reset_unsafe();
 		bool is_empty()const;
 		collections::array_buffer<T, allocator>* get(void)const;
 		void set(collections::array_buffer<T, allocator>*);

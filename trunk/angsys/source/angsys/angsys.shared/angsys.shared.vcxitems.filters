@@ -45,6 +45,9 @@
     <Filter Include="header\angsys\base\inline">
       <UniqueIdentifier>{c75c2947-1adc-4e98-bd3f-bd8c4a95a499}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\variant">
+      <UniqueIdentifier>{24355a81-e9fc-4cdb-9aa0-ecc742dd3337}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h">
@@ -198,6 +201,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\exception.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\variant.cpp">
+      <Filter>source\variant</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

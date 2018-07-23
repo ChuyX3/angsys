@@ -27,8 +27,8 @@ namespace ang //constants
 			typedef T element_type;
 
 		private:
-			wsize _size;
 			element_type* _data;
+			wsize _size;
 			static element_type _dummy_data[1];
 
 		public:
@@ -92,7 +92,7 @@ namespace ang //constants
 			T _data[_SIZE];
 
 		public:
-			stack_array() {}
+			stack_array() { }
 			stack_array(stack_array && other) = default;
 
 			template<wsize _OTHER_SIZE>
@@ -174,10 +174,9 @@ namespace ang //constants
 			typedef T element_type;
 
 		private:
+			element_type* _data; wsize _size;
 			allocator<element_type> alloc;
-			wsize _size;
-			element_type* _data;
-			
+
 		public:
 			scope_array() : _size(0), _data(null) { }
 			scope_array(ang::nullptr_t const&) : scope_array() {}

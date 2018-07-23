@@ -214,7 +214,7 @@ namespace ang
 
 	public:
 		void clear();
-		void clear_unsafe();
+		void reset_unsafe();
 		bool is_empty()const;
 		type* get(void)const;
 		void set(type*);
@@ -301,7 +301,7 @@ namespace ang
 
 	public:
 		void clear();
-		void clear_unsafe();
+		void reset_unsafe();
 		bool is_empty()const;
 		type* get(void)const;
 		void set(type*);

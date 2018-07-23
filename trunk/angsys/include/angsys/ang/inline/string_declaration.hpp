@@ -23,8 +23,8 @@ namespace ang
 			typedef basic_string_buffer_base string_base, base_t;
 			typedef basic_string_buffer<ENCODING, memory::buffer_allocator> string, self_t;
 
-		private:
-			allocator_t alloc;
+	//	private:
+	//		allocator_t alloc;
 
 		public:
 			basic_string_buffer();
@@ -38,6 +38,7 @@ namespace ang
 			}
 		public: //overides
 			ANG_DECLARE_INTERFACE();
+			virtual variant clone()const override;
 
 		public:
 			virtual bool is_readonly(void) const override;
@@ -95,6 +96,9 @@ namespace ang
 	ANG_BEGIN_OBJECT_WRAPPER(MY_LINKAGE, strings::basic_string_buffer<MY_ENCODING COMA MY_ALLOCATOR>)
 		visible scall const text::encoding ENCODING = MY_ENCODING;
 		object_wrapper(strings::basic_const_string_buffer<MY_ENCODING>* str) : object_wrapper() {
+			set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
+		}
+		object_wrapper(raw_cstr_t const& str) : object_wrapper() {
 			set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 		}
 		template<typename T, text::encoding E> 
@@ -188,49 +192,6 @@ namespace ang
 			(object_wrapper<strings::basic_string_buffer<ENCODING>>& str1, str_view<T, E> const& str2) {
 			return str1 += str2;	
 		}
-	ANG_END_OBJECT_WRAPPER();
-
-
-	ANG_BEGIN_CONST_OBJECT_WRAPPER(MY_LINKAGE, strings::basic_string_buffer<MY_ENCODING COMA MY_ALLOCATOR>)
-		visible scall const text::encoding ENCODING = MY_ENCODING;
-		template<typename T, text::encoding E> 
-		object_wrapper(str_view<T, E> const& str) : object_wrapper() {
-			set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
-		}
-		template<text::encoding E>
-		object_wrapper(object_wrapper<strings::basic_string_buffer<E>> const& str) : object_wrapper() {
-			if(str) set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str->cstr()));
-		}
-		template<typename T, wsize N> 
-		object_wrapper(const T(&ar)[N]) : object_wrapper() {
-			set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(cstr_view<T>(ar)));
-		}	
-
-		operator cstr_view<typename text::char_type_by_encoding<ENCODING>::char_t, ENCODING>(void)const { return get()->cstr(); }
-		explicit operator raw_cstr_t (void)const { return get()->cstr(); }
-		template<typename I>typename text::char_type_by_encoding<ENCODING>::char_t const& operator [](I idx)const { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return get()->cstr()[idx]; }
-		template<text::encoding E> 
-		friend object_wrapper<strings::basic_string_buffer<ENCODING>> operator + 
-			(object_wrapper<const strings::basic_string_buffer<ENCODING>> const& str1, object_wrapper<strings::basic_string_buffer<E>> const& str2) {
-			object_wrapper<strings::basic_string_buffer<ENCODING>> out = str1->cstr();
-			out += str2;
-			return ang::move(out);
-		}
-
-		template<typename T, text::encoding E> friend object_wrapper<strings::basic_string_buffer<ENCODING>> operator +
-			(object_wrapper<const strings::basic_string_buffer<ENCODING>> const& str1, str_view<T, E> const& str2) {
-			object_wrapper<strings::basic_string_buffer<ENCODING>> out = str1->cstr();
-			out += str2;
-			return ang::move(out);
-		}
-
-		template<typename T, text::encoding E> friend object_wrapper<strings::basic_string_buffer<ENCODING>> operator +
-			(str_view<T, E> const& str1, object_wrapper<const strings::basic_string_buffer<ENCODING>> const& str2) {
-			object_wrapper<strings::basic_string_buffer<ENCODING>> out = str1->cstr();
-			out += str2->cstr();
-			return ang::move(out);
-		}
-
 	ANG_END_OBJECT_WRAPPER();
 
 }

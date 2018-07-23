@@ -46,8 +46,9 @@ namespace ang
 		object& operator = (object const&) = delete;
 
 	public:
+		virtual void clear();
 		virtual comparision_result_t compare(object const* obj)const;
-//		virtual string to_string()const;
+		virtual wstring to_string()const;
 //		virtual wsize serialize(streams::itext_output_stream_t)const;
 //		virtual wsize serialize(streams::ibinary_output_stream_t)const;
 //		virtual wsize deserialize(streams::itext_input_stream_t);
@@ -95,21 +96,12 @@ namespace ang
 		}
 
 		template<typename T> typename smart_ptr_type<T>::smart_ptr_t as() {
-			return  this ? dyn_cast<typename smart_ptr_type<T>::type>(this) : null;
+			return  this ? interface_cast<typename smart_ptr_type<T>::type>(this) : null;
 		}
 		template<typename T> bool as(T*& out) {
-			out = this ? dyn_cast<typename smart_ptr_type<T>::type>(this) : null;
+			out = this ? interface_cast<typename smart_ptr_type<T>::type>(this) : null;
 			return out != null;
 		}
-
-		template<typename T> typename smart_ptr_type<T>::const_smart_ptr_t as()const {
-			return  this ? dyn_cast<typename smart_ptr_type<T>::const_type>(this) : null;
-		}
-		template<typename T> bool as(T const*& out)const {
-			out = this ? dyn_cast<typename smart_ptr_type<T>::const_type>(this) : null;
-			return out != null;
-		}
-
 
 	};
 

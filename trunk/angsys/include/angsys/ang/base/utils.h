@@ -411,12 +411,31 @@ namespace ang //operations
 
 namespace ang
 {
-	template<typename T, T VALUE = T(0) >
-	struct default_value { 
-		static constexpr T value = VALUE;
+
+	template<typename T, genre_t G = genre_of<T>()> struct default_value;
+
+	template<typename T>
+	struct default_value<T, genre::value_type> {
+		static constexpr T value = 0;
 		inline operator T const& ()const { return value; }
 		inline T const& get()const { return value; }
 	};
+
+	template<typename T>
+	struct default_value<T, genre::enum_type> {
+		static constexpr T value = T(0);
+		inline operator T const& ()const { return value; }
+		inline T const& get()const { return value; }
+	};
+
+	template<typename T>
+	struct default_value<T, genre::class_type> {
+		static const T value;
+		inline operator T const& ()const { return value; }
+		inline T const& get()const { return value; }
+	};
+	template<typename T> T default_value<T, genre::class_type>::value;
+
 
 	template<wsize SIZE> struct integer_type_by_size { };
 

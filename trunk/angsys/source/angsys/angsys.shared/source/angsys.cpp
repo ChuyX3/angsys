@@ -66,7 +66,7 @@ namespace ang
 			, aligned_memory_allocator()
 			, runtime_type_manager()
 		{
-
+			objects = new(malloc(sizeof(object_manager))) object_manager();
 		}
 		~ang_main_instance()
 		{
@@ -84,6 +84,9 @@ namespace ang
 			utf32_le_encoder = null;
 			utf32_be_encoder = null;
 
+			objects->~object_manager();
+			free(objects);
+			objects = null;
 		}
 
 		allocator_internal default_memory_allocator;
@@ -91,6 +94,8 @@ namespace ang
 		allocator_internal buffer_memory_allocator;
 		aligned_allocator_internal aligned_memory_allocator;
 		runtime::runtime_type_manager runtime_type_manager;
+
+		object_manager* objects;
 
 		text::iencoder_t ascii_encoder;
 		text::iencoder_t unicode_encoder;

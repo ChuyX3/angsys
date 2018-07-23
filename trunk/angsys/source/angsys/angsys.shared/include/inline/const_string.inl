@@ -19,7 +19,7 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::strings::basic_const_string_buffer<MY_
 
 comparision_result_t basic_const_string_buffer<MY_ENCODING>::compare(object const* obj)const
 {
-	const_itext_buffer_t buffer = dyn_cast<itext_buffer>(obj);
+	itext_buffer_t buffer = interface_cast<itext_buffer>(const_cast<object*>(obj));
 	if (buffer.is_empty())
 		return comparision_result::diferent;
 	return (comparision_result)iencoder::get_encoder(MY_ENCODING)->compare(text_buffer().ptr(), buffer->text_buffer().ptr(), buffer->encoding());

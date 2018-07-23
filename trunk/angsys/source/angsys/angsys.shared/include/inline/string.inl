@@ -38,7 +38,7 @@ basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::~basic_string_buffer()
 
 ang::rtti_t const& basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::class_info()
 {
-	static const char name[] = ANG_UTILS_TO_STRING(ang::string<MY_ENCODING COMA MY_ALLOCATOR>);
+	static const char name[] = ANG_UTILS_TO_STRING(ang::string<MY_ENCODING>);
 	static rtti_t const* parents[] = TYPE_OF_PTR_ARRAY(basic_string_buffer_base);
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>), alignof(basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>), parents, &default_query_interface);
 	return info; 
@@ -64,6 +64,10 @@ bool basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::query_interface(ang::rtti_t
 	return false;
 }
 
+variant basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::clone()const
+{
+	return (ivariant*)new self_t(cstr());
+}
 
 bool basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::is_readonly(void) const
 {
@@ -77,6 +81,7 @@ text::encoding_t basic_string_buffer<MY_ENCODING>::encoding(void) const
 
 void basic_string_buffer<MY_ENCODING>::clear()
 {
+	allocator_t alloc;
 	if(_data._storage_type == storage_type_allocated)
 		alloc.deallocate((unsafe_str_t)_data._allocated_buffer);
 	else if (_data._storage_type == storage_type_string_pool)
@@ -86,6 +91,7 @@ void basic_string_buffer<MY_ENCODING>::clear()
 
 bool basic_string_buffer<MY_ENCODING>::realloc(wsize new_size, bool save)
 {
+	allocator_t alloc;
 	if (_map_index != (wsize)invalid_index || _map_size != (wsize)invalid_index)
 		return false;
 	if (_data._storage_type == storage_type_string_pool)

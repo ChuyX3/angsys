@@ -149,7 +149,7 @@ void ang::object_wrapper<ang::core::delegates::function_object<T(Ts...)>>::clear
 }
 
 template<typename T, typename... Ts>
-inline void ang::object_wrapper<ang::core::delegates::function_object<T(Ts...)>>::clear_unsafe()
+inline void ang::object_wrapper<ang::core::delegates::function_object<T(Ts...)>>::reset_unsafe()
 {
 	_ptr = null;
 }
@@ -261,7 +261,7 @@ void ang::object_wrapper<ang::core::delegates::function_object<void(Ts...)>>::cl
 }
 
 template<typename... Ts>
-inline void ang::object_wrapper<ang::core::delegates::function_object<void(Ts...)>>::clear_unsafe()
+inline void ang::object_wrapper<ang::core::delegates::function_object<void(Ts...)>>::reset_unsafe()
 {
 	_ptr = null;
 }

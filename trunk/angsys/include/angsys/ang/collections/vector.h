@@ -177,7 +177,7 @@ namespace ang
 
 	public:
 		void clear();
-		void clear_unsafe();
+		void reset_unsafe();
 		bool is_empty()const;
 		collections::vector_buffer<T, allocator>* get(void)const;
 		void set(collections::vector_buffer<T, allocator>*);

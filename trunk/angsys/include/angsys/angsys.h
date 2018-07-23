@@ -41,11 +41,26 @@ namespace ang
 {
 	class object;
 	typedef ang::object_wrapper<object> object_t, objptr;
-	typedef ang::object_wrapper<const object> const_object_t, cobjptr;
 	typedef ang::object_wrapper_ptr<object> object_ptr_t;
 
 	typedef struct raw_str raw_str_t;
 	typedef struct raw_cstr raw_cstr_t;
+
+	ang_interface(ivariant);
+
+	typedef ivariant_t variant;
+	template<typename T> class weak_ptr;
+	template<typename T> class variable;
+	template<typename T> using variable_t = object_wrapper<variable<T>>;
+	template<typename T> using shared_ptr = variable_t<T>;
+
+	typedef shared_ptr<bool> boolean;
+	typedef shared_ptr<int> integer;
+	typedef shared_ptr<uint> uinteger;
+	typedef shared_ptr<long64> integer64;
+	typedef shared_ptr<ulong64> uinteger64;
+	typedef shared_ptr<float> floating;
+	typedef shared_ptr<double> floating64;
 
 	namespace strings
 	{

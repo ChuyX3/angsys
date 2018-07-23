@@ -307,6 +307,12 @@ namespace ang //constants
 				size_ = 0;
 			}
 		}
+		sefl_t begin()const {
+			return sefl_t(view_, size_);
+		}
+		sefl_t end()const {
+			return sefl_t(view_ + size_, 0);
+		}
 		sefl_t& operator = (sefl_t const& str) {
 			set(str.view_, str.size_);
 			return*this;
@@ -324,6 +330,9 @@ namespace ang //constants
 		}
 		char_t const& operator*()const {
 			return *cstr();
+		}
+		char_t** operator & () { 
+			return &view_;
 		}
 		operator str_t () {
 			return str();
@@ -355,8 +364,8 @@ namespace ang //constants
 		}
 
 	private:
-		wsize size_;
 		str_t view_;
+		wsize size_;
 	};
 
 	template<typename T, text::encoding ENCODING_>
@@ -380,6 +389,12 @@ namespace ang //constants
 		cstr_t cstr()const {
 			return view_;
 		};
+		sefl_t begin()const {
+			return sefl_t(view_, size_);
+		}
+		sefl_t end()const {
+			return sefl_t(view_ + size_, 0);
+		}
 		void set(cstr_t str, wsize sz = -1) {
 			if (str) {
 				view_ = str;
@@ -405,6 +420,9 @@ namespace ang //constants
 		char_t const& operator*()const {
 			return *cstr();
 		}
+		char_t const** operator & () { 
+			return &view_;
+		}
 		operator cstr_t () {
 			return cstr();
 		}
@@ -413,11 +431,11 @@ namespace ang //constants
 		}
 		template<typename index_t> sefl_t& operator += (index_t i) {
 			set(cstr() + (wsize)i, size() - (wsize)i);
-			return this;
+			return *this;
 		}
 		sefl_t& operator ++ () {
 			set(cstr() + 1, size() - 1);
-			return this;
+			return *this;
 		}
 		sefl_t operator ++ (int) {
 			sefl_t ret = *this;
@@ -429,8 +447,8 @@ namespace ang //constants
 		}
 
 	private:
-		wsize size_;
 		cstr_t view_;
+		wsize size_;
 	};
 
 
@@ -482,6 +500,162 @@ namespace ang //constants
 	typedef str_view<const wchar> cwstr_t;
 	typedef str_view<const char16_t> cstr16_t;
 	typedef str_view<const char32_t> cstr32_t;
+
+
+	namespace text
+	{
+		////text_format class////
+		// {c:[u|U]|[l|L][N|n]}
+		//	u = uppercase
+		//	l = lowercase
+		//  n = default, optional
+		// {s:[u|U]|[l|L]}
+		//	u = uppercase
+		//	l = lowercase
+		//  n = default, optional
+		// {i:[n|N]xx,[t|T]c,(F|f)c,[[x|X]|[b|B]],[S|s]}
+		//	N = Max Number of digits (xx = number)
+		//	T = Thousand separator character (c = character)
+		//	F = Fill character (c)
+		//	X = Uppercase Hexadecimal format
+		//	x = Lowercase Hexadecimal format
+		//	B = Binary
+		//	S = +|-
+		// {u:[n|N]xx,[t|T]c,(F|f)c,[[x|X]|[b|B]]}
+		//	N = Max Number of digits (xx = number)
+		//	T = Thousand separator character (c = character)
+		//	X = Hexadecimal format
+		//	F = Fill character (c)
+		//	B = Binary
+		// {f:[n|N]xx,[t|T]c,(F|f)c,[[x|X]|[b|B]],[E],[S|s]}
+		//	N = Max Number of decimals (xx = number)
+		//	T = Thousand separator character (c = character)
+		//	X = Hexadecimal format
+		//	F = Fill character (c)
+		//	B = Binary
+		//	S = +|-
+		//	E = Cientific Notation
+		class LINK text_format
+		{
+		public:
+			enum target : byte
+			{
+				none = 0,
+				char_,
+				text_,
+				signed_,
+				unsigned_,
+				float_,
+			};
+
+			struct text_format_flags
+			{
+				union
+				{
+					qword value;
+					struct
+					{
+						ang::text::text_format::target target;
+						union
+						{
+							byte flags;
+							struct
+							{
+								bool lower_case : 1;
+								bool upper_case : 1;
+							};
+							struct
+							{
+								byte base : 2; //1-x, 2-X, 3-b
+								bool sign : 1;
+								bool exponent : 1;
+							};
+						};
+						char fill;
+						union
+						{
+							byte max_pres;
+							struct {
+								byte max : 4;
+								byte pres : 4;
+							};
+						};
+						char thousand;
+					};
+				};
+			};
+		public:
+			text_format();//default format-> bad format
+			text_format(cstr_t format);
+			text_format(const text_format&);
+			text_format(const text_format_flags&);
+			virtual~text_format();
+
+		public:
+			target format_target()const;
+			void format(cstr_t format);
+			//string format()const;
+			qword format_flags()const;
+			text_format& operator = (const text_format&);
+
+		protected:
+			text_format_flags flags;
+
+		};
+
+		typedef text_format text_format_t;
+		typedef text_format::text_format_flags text_format_flags, text_format_flags_t;
+
+
+		template<typename T>
+		struct default_text_format {
+			static text_format format() {
+				return text_format();
+			}
+		};
+
+
+		template<typename T>
+		struct default_text_format<const T> : default_text_format<T> { };
+
+		template<typename T>
+		struct default_text_format<T&> : default_text_format<T> { };
+
+		template<typename T>
+		struct default_text_format<const T&> : default_text_format<T> { };
+
+		template<> struct default_text_format<char> {
+			static text_format format() { text_format _format = cstr_t("{c:}"); return _format; }
+		};
+
+		template<> struct default_text_format<mchar> :public default_text_format<char> {};
+		template<> struct default_text_format<wchar> :public default_text_format<char> {};
+		template<> struct default_text_format<char16_t> :public default_text_format<char> {};
+		template<> struct default_text_format<char32_t> :public default_text_format<char> {};
+
+		template<> struct default_text_format<int> {
+			static text_format format() { text_format _format = cstr_t("{s:}"); return _format; }
+		};
+
+		template<> struct default_text_format<short> :public default_text_format<int> {};
+		template<> struct default_text_format<long> :public default_text_format<int> {};
+		template<> struct default_text_format<long64> :public default_text_format<int> {};
+
+		template<> struct default_text_format<uint> {
+			static text_format format() { text_format _format = cstr_t("{u:}"); return _format; }
+		};
+
+		template<> struct default_text_format<ushort> :public default_text_format<uint> {};
+		template<> struct default_text_format<ulong> :public default_text_format<uint> {};
+		template<> struct default_text_format<ulong64> :public default_text_format<uint> {};
+
+		template<> struct default_text_format<float> {
+			static text_format format() { text_format _format = cstr_t("{f:N.4}"); return _format; }
+		};
+
+		template<> struct default_text_format<double> :public default_text_format<float> {};
+	}
+
 
 	template<typename T, T VALUE>
 	struct to_string

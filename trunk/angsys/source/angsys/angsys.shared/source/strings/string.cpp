@@ -25,6 +25,63 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::strings::basic_string_buffer_base, obj
 
 /////////////////////////////////////////////////////////////////////////
 
+wstring basic_string_buffer_base::to_string()const
+{
+	return text_buffer();
+}
+
+wstring basic_string_buffer_base::to_string(text::text_format_t format)const
+{
+	//TODO:
+	return text_buffer(); 
+}
+
+rtti_t const& basic_string_buffer_base::value_type()const
+{
+	return runtime_info();
+}
+
+bool basic_string_buffer_base::set_value(rtti_t const& id, unknown_t ptr)
+{
+	if (id.is_type_of(type_of<cstr_t>()))
+	{
+		cstr_t& str = *reinterpret_cast<cstr_t*>(ptr);
+		copy(str);
+		return true;
+	}
+	else if (id.is_type_of(type_of<cwstr_t>()))
+	{
+		cwstr_t& str = *reinterpret_cast<cwstr_t*>(ptr);
+		copy(str);
+		return true;
+	}
+	else if (id.is_type_of(type_of<cmstr_t>()))
+	{
+		cmstr_t& str = *reinterpret_cast<cmstr_t*>(ptr);
+		copy(str);
+		return true;
+	}
+	else if (id.is_type_of(type_of<cstr16_t>()))
+	{
+		cstr16_t& str = *reinterpret_cast<cstr16_t*>(ptr);
+		copy(str);
+		return true;
+	}
+	else if (id.is_type_of(type_of<cstr32_t>()))
+	{
+		cstr32_t& str = *reinterpret_cast<cstr32_t*>(ptr);
+		copy(str);
+		return true;
+	}
+
+	return false;
+}
+
+bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t)const
+{
+	return false;
+}
+
 pointer basic_string_buffer_base::buffer_ptr()
 {
 	return text_buffer().ptr();
@@ -105,7 +162,7 @@ raw_cstr_t  basic_string_buffer_base::text_buffer()const {
 
 comparision_result_t basic_string_buffer_base::compare(object const* obj)const
 {
-	const_itext_buffer_t buffer = dyn_cast<itext_buffer>(obj);
+	itext_buffer_t buffer = interface_cast<itext_buffer>(const_cast<object*>(obj));
 	if (buffer.is_empty())
 		return comparision_result::diferent;
 	return (comparision_result)_encoder->compare(text_buffer().ptr(), buffer->text_buffer().ptr(), buffer->encoding());

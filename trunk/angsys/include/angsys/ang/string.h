@@ -223,6 +223,7 @@ namespace ang
 		class LINK basic_string_buffer_base
 			: public object
 			, public itext_buffer
+			, public ivariant
 		{
 		public:
 			static const wsize RAW_CAPACITY = 128u; //local storage capacity
@@ -287,6 +288,13 @@ namespace ang
 
 		public:
 			virtual comparision_result_t compare(object const* obj)const override;
+
+			virtual wstring to_string()const override;
+			virtual wstring to_string(text::text_format_t)const override;
+			virtual rtti_t const& value_type()const override;
+			virtual bool set_value(rtti_t const&, unknown_t) override;
+			virtual bool get_value(rtti_t const&, unknown_t)const override;
+
 			virtual pointer buffer_ptr() override;
 			virtual const_pointer buffer_ptr()const override;
 			virtual wsize buffer_size()const override;
@@ -322,8 +330,8 @@ namespace ang
 			typedef basic_string_buffer_base string_base, base_t;
 			typedef basic_string_buffer<ENCODING, allocator> string, self_t;
 
-		private:
-			allocator_t alloc;
+		//private:
+			
 
 		public:
 			basic_string_buffer();
@@ -331,8 +339,14 @@ namespace ang
 		public: //overides
 			ANG_DECLARE_INTERFACE();
 
+			variant clone()const override
+			{
+				return (ivariant*)new self_t(cstr());
+			}
+
 		public:
 			virtual void clear()override {
+				allocator_t alloc;
 				if (storage_type_allocated == storage_type())
 					alloc.deallocate((str_t)_data._allocated_buffer);
 				else if (storage_type_string_pool == storage_type())
@@ -340,6 +354,8 @@ namespace ang
 				memset(&_data, 0, sizeof(_data));
 			}
 			virtual bool realloc(wsize new_size, bool save = true)override {
+				allocator_t alloc;
+
 				if (_map_index != invalid_index || _map_size != invalid_index)
 					return false;
 
@@ -487,7 +503,7 @@ namespace ang
 
 template<ang::text::encoding MY_ENCODING, template<typename> class allocator>
 inline ang::rtti_t const& ang::strings::basic_string_buffer<MY_ENCODING, allocator>::class_info() {
-	static const cstr_view<char> name = string_pool::instance()->save_string((string("ang::strings::basic_string_buffer<"_s) += ang::to_string<ang::text::encoding, MY_ENCODING>::value) += ">"_s);
+	static const cstr_view<char> name = string_pool::instance()->save_string((string("ang::string<"_s) += ang::to_string<ang::text::encoding, MY_ENCODING>::value) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<string_base>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(basic_string_buffer<MY_ENCODING, allocator>), alignof(basic_string_buffer<MY_ENCODING, allocator>), parents, &default_query_interface);
 	return info;

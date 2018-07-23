@@ -1,6 +1,52 @@
 #pragma once
+#include "core_hash_table.h"
+
 namespace ang
 {
+	namespace runtime
+	{
+		typedef struct rttiptr
+		{
+			rtti_t* ptr;
+			rttiptr() : ptr(null) { }
+			rttiptr(rtti_t* p) : ptr(p) { }
+			rttiptr(rttiptr const& p) : ptr(p.ptr) { }
+			~rttiptr() { ptr = null; }
+
+			rttiptr& operator = (rtti_t* p) { ptr = p; return*this; }
+			rttiptr& operator = (rttiptr const& p) { ptr = p.ptr; return*this; }
+
+			rtti_t* operator ->() { return ptr; }
+			rtti_t const* operator ->()const { return ptr; }
+
+			operator rtti_t*() { return ptr; }
+			operator rtti_t const*()const { return ptr; }
+
+			bool operator == (rttiptr const& info) {
+				return info->genre() == ptr->genre() &&
+					info->size() == ptr->size() &&
+					info->aligment() == ptr->aligment() &&
+					text::ascii::compare(info->type_name().cstr(), ptr->type_name().cstr()) == 0;
+			}
+
+			bool operator != (rttiptr const& info) {
+				return !operator==(info);
+			}
+		}rttiptr_t;
+	}
+
+	namespace collections
+	{
+		template<> struct hash_code_maker<runtime::rttiptr_t> {
+			static ulong64 make(runtime::rttiptr_t const& value, ulong64 const TS) {
+				ulong64 h = 75025;
+				for (char c : value->type_name())
+					h = (h << 5) + h + (byte)c + 1;
+				return ulong64(h % TS);
+			}
+		};
+	}
+
 	namespace runtime
 	{
 		class runtime_type_manager {
@@ -8,47 +54,29 @@ namespace ang
 			static runtime_type_manager* instance();
 
 			runtime_type_manager() {
-				head = null;
-				tail = null;
+				
 			}
 			~runtime_type_manager() {
-				rtti_node* node = head, *temp;
-				while (node) {
-					temp = node;
-					node = node->next;
-					temp->info->~__type_info();
-					allocator.deallocate(temp->info);
-					free(temp);
-				}
+				set.clear([&](rttiptr_t& info)
+				{
+					info.ptr->~__type_info();
+					deallocate(info.ptr);
+					info.ptr = null;
+				});
 			}
 
 		public:
 			rtti_t* find_info(rtti_t* info)const {
-				rtti_node* node = head;
-				while (node) {
-					if (info->genre() == node->info->genre() &&
-						info->size() == node->info->size() &&
-						info->aligment() == node->info->aligment() &&
-						text::ascii::compare(info->type_name().cstr(), node->info->type_name().cstr()) == 0)
-						return node->info;
-					node = node->next;
-				}
+				rttiptr_t f;
+				if (set.find(info, &f))
+					return f;
 				return null;
 			}
 
 			rtti_t* push(rtti_t* info) {
-				if (tail) {
-					tail->next = (rtti_node*)malloc(sizeof(rtti_node));
-					tail->next->info = info;
-					tail->next->next = null;
-					tail = tail->next;
-				}
-				else {
-					tail = head = (rtti_node*)malloc(sizeof(rtti_node));
-					tail->info = info;
-					tail->next = null;
-				}
-				return tail->info;
+				if (!set.insert(info))
+					return null;
+				return info;
 			}
 
 			rtti_t* allocate()const {
@@ -60,14 +88,48 @@ namespace ang
 
 		private:
 			mutable memory::unmanaged_allocator<rtti_t> allocator;
-			struct rtti_node {
-				rtti_t* info;
-				rtti_node* next;
-			};
-			rtti_node* head;
-			rtti_node* tail;
+			collections::internal_hash_set<rttiptr_t> set;
 		};
 	}
 
+#if defined _DEBUG || defined _DEVELOPPER
+	class object_manager {
+	public:
+		static object_manager* instance();
+
+		object_manager() {
+		}
+		~object_manager() {
+			map.clear([&](collections::pair<intptr_t, object*>& info)
+			{
+				__debugbreak();
+			});
+		}
+
+	public:
+		object* find_info(object* o)const {
+			object* out = null;
+			if (map.find((intptr_t)o, &out))
+				return out;
+			return null;
+		}
+
+		object* push(object* o) {
+			if (map.insert((intptr_t)o, o))
+				return o;
+			return null;
+		}
+
+		object* pop(object* o) {
+			object* out = null;
+			if (map.remove((intptr_t)o, &out))
+				return out;
+			return null;
+		}
+
+	private:
+		collections::internal_hash_map<intptr_t, object*> map;
+	};
+#endif
 }
 

@@ -87,6 +87,7 @@ namespace ang
 
 		public:
 			internal_hash_map() {
+				_size = 0;
 				_table.allocate(127);
 			}
 			~internal_hash_map() {
@@ -100,6 +101,22 @@ namespace ang
 					while (temp) {
 						node_ptr_t to_delete = temp;
 						temp = temp->next;
+						alloc.template destroy<node_t>(to_delete);
+						alloc.deallocate(to_delete);
+						_size--;
+					}
+				}
+				_size = 0;
+				_table.clear();
+			}
+			template<typename F>inline void clear(F f) {
+				for (wsize i = 0; i < _table.size() && _size > 0; ++i) {
+					node_ptr_t temp = _table[i];
+					_table[i] = null;
+					while (temp) {
+						node_ptr_t to_delete = temp;
+						temp = temp->next;
+						f(to_delete->data);
 						alloc.template destroy<node_t>(to_delete);
 						alloc.deallocate(to_delete);
 						_size--;
@@ -221,6 +238,7 @@ namespace ang
 
 		public:
 			internal_hash_set() {
+				_size = 0;
 				_table.allocate(127);
 			}
 			~internal_hash_set() {
@@ -242,6 +260,22 @@ namespace ang
 				_size = 0;
 				_table.clear();
 			}
+			template<typename F>inline void clear(F f) {
+				for (wsize i = 0; i < _table.size() && _size > 0; ++i) {
+					node_ptr_t temp = _table[i];
+					_table[i] = null;
+					while (temp) {
+						node_ptr_t to_delete = temp;
+						temp = temp->next;
+						f(to_delete->data);
+						alloc.template destroy<node_t>(to_delete);
+						alloc.deallocate(to_delete);
+						_size--;
+					}
+				}
+				_size = 0;
+				_table.clear();
+			}
 			inline bool insert(T value) {
 				if (_size > (_table.size() * 0.75))
 					increase_capacity();
@@ -250,7 +284,7 @@ namespace ang
 				ulong64 hash = hash_code_maker<T>::make(value, _table.size());
 				node_ptr_t entry = alloc.allocate(1);
 				alloc.template construct<node_t>(entry);
-				entry->data.value = ang::move(value);
+				entry->data = ang::move(value);
 				entry->next = _table[hash];
 				_table[hash] = entry;
 				_size++;
@@ -266,9 +300,9 @@ namespace ang
 				node_ptr_t temp = *prev;
 
 				while (temp != null) {
-					if (logic_operation<T, T, logic_operation_type::same>::operate(temp->data.value, out)) {
+					if (logic_operation<T, T, logic_operation_type::same>::operate(temp->data, out)) {
 						*prev = temp->next;
-						if (out)*out = temp->data.value;
+						if (out)*out = temp->data;
 						alloc.template destroy<node_t>(temp);
 						alloc.deallocate(temp);
 						_size--;
@@ -281,10 +315,10 @@ namespace ang
 			}
 			inline bool is_empty()const { return _size == 0; }
 			inline bool contains(T const& value)const { return find_node(value) != null; }
-			inline bool find(T const& value)const {
+			inline bool find(T const& value, T* out = null)const {
 				node_ptr_t node = find_node(value);
-				if (node == null)
-					return false;
+				if (node == null) return false;
+				if (out) *out = node->data;
 				return true;
 			}
 			inline wsize size()const { return _size; }

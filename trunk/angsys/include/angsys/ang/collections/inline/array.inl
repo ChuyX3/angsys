@@ -496,7 +496,7 @@ template<typename T, template <typename> class allocator>
 inline ang::comparision_result_t ang::collections::array_buffer<T, allocator>::compare(const ang::object* obj)const
 {
 	windex i = 0;
-	intf_wrapper<const ienum<T>> other = obj->as<ienum<T>>();
+	intf_wrapper<ienum<T>> other = const_cast<object*>(obj)->as<ienum<T>>();
 
 	if (!other.is_empty())
 	{
@@ -584,18 +584,18 @@ inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::object
 template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::~object_wrapper()
 {
-	clear();
+	reset();
 }
 
 template<typename T, template <typename> class allocator>
-inline void ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::clear()
+inline void ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::reset()
 {
 	if (_ptr)_ptr->release();
 	_ptr = null;
 }
 
 template<typename T, template <typename> class allocator>
-inline void ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::clear_unsafe()
+inline void ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::reset_unsafe()
 {
 	_ptr = null;
 }

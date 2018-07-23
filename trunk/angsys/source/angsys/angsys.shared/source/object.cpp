@@ -11,6 +11,7 @@
 #include "pch.h"
 #include "angsys.h"
 #include "ang_memory.h"
+#include "runtime_manager.h"
 #include <assert.h>
 
 using namespace ang;
@@ -83,10 +84,10 @@ safe_pointer::safe_pointer(interface* obj)
 
 safe_pointer::~safe_pointer()
 {
-	clear();
+	reset();
 }
 
-void safe_pointer::clear()
+void safe_pointer::reset()
 {
 	if (_info)
 	{
@@ -102,12 +103,12 @@ void safe_pointer::clear()
 
 void safe_pointer::set(interface* _obj)
 {
-	iobject* obj = dyn_cast<iobject>(_obj);
+	iobject* obj = interface_cast<iobject>(_obj);
 
 	if (_info && smart_ptr_info_ptr_t(_info)->_object == obj)
 		return;
 
-	clear();
+	reset();
 
 	if (obj != nullptr)
 	{
@@ -150,7 +151,7 @@ safe_pointer& safe_pointer::operator = (safe_pointer&& other)
 {
 	if (this != &other)
 		return*this;
-	clear();
+	reset();
 
 	_info = other._info;
 	_offset = other._offset;
@@ -168,7 +169,7 @@ safe_pointer& safe_pointer::operator = (safe_pointer const& ptr)
 
 safe_pointer& safe_pointer::operator = (std::nullptr_t const&)
 {
-	clear();
+	reset();
 	return *this;
 }
 
@@ -265,11 +266,16 @@ object::object(bool inc_ref)
 {
 	if (inc_ref)
 		add_ref();
+#if defined _DEBUG || defined _DEVELOPPER
+	object_manager::instance()->push(this);
+#endif
 }
 
 object::~object()
 {
-
+#if defined _DEBUG || defined _DEVELOPPER
+	object_manager::instance()->pop(this);
+#endif
 }
 
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::object, ang::iobject);
@@ -307,6 +313,7 @@ bool object::auto_release()
 	++info->_mem_ref_counter;
 #endif
 
+	this->clear();
 	this->~object(); //call destructor;
 	info->_object = nullptr;
 #ifdef WINDOWS_PLATFORM
@@ -331,7 +338,7 @@ bool object::auto_release(word ALIGMENT)
 #else
 	++info->_mem_ref_counter;
 #endif
-
+	this->clear();
 	this->~object(); //call destructor;
 	info->_object = nullptr;
 #ifdef WINDOWS_PLATFORM
@@ -346,9 +353,19 @@ bool object::auto_release(word ALIGMENT)
 	return true;
 }
 
+void object::clear()
+{
+
+}
+
 comparision_result_t object::compare(object const* obj)const
 {
 	return (obj != null && runtime_info().type_id() == obj->runtime_info().type_id())? comparision_result::same : comparision_result::diferent;
+}
+
+wstring object::to_string()const
+{
+	return runtime_info().type_name();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -380,16 +397,16 @@ object_wrapper<object>::object_wrapper(ang::nullptr_t const&) : _ptr(null) {
 
 object_wrapper<object>::~object_wrapper()
 {
-	clear();
+	reset();
 }
 
-void object_wrapper<object>::clear()
+void object_wrapper<object>::reset()
 {
 	if (_ptr)_ptr->release();
 	_ptr = null;
 }
 
-void object_wrapper<object>::clear_unsafe()
+void object_wrapper<object>::reset_unsafe()
 {
 	_ptr = null;
 }
@@ -423,7 +440,7 @@ object_wrapper<object>& object_wrapper<object>::operator = (object_wrapper<objec
 {
 	if (this == &other)
 		return *this;
-	clear();
+	reset();
 	_ptr = other._ptr;
 	other._ptr = null;
 	return*this;
@@ -445,128 +462,22 @@ object_wrapper_ptr<object> object_wrapper<object>::operator& (void)
 	return this;
 }
 
-object* object_wrapper<object>::operator -> (void)const
+object* object_wrapper<object>::operator -> (void)
 {
 	return get();
 }
 
-object_wrapper<object>::operator object* (void)const
+object const* object_wrapper<object>::operator -> (void)const
 {
 	return get();
 }
 
-///////////////////////////////////////////////////////////////////////////
-
-object_wrapper<const object>::object_wrapper() : _ptr(null) {
-
-}
-
-object_wrapper<const object>::object_wrapper(object const * ptr) : _ptr(null) {
-	set(ptr);
-}
-
-object_wrapper<const object>::object_wrapper(object_wrapper && other) : _ptr(null) {
-	object const * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
-}
-
-object_wrapper<const object>::object_wrapper(object_wrapper<object> && other) : _ptr(null) {
-	move(other);
-}
-
-object_wrapper<const object>::object_wrapper(object_wrapper const& other) : _ptr(null) {
-	set(other.get());
-}
-
-object_wrapper<const object>::object_wrapper(object_wrapper<object> const& other) : _ptr(null) {
-	set(other.get());
-}
-
-object_wrapper<const object>::object_wrapper(ang::nullptr_t const&) : _ptr(null) {
-}
-
-object_wrapper<const object>::~object_wrapper()
-{
-	clear();
-}
-
-void object_wrapper<const object>::clear()
-{
-	if (_ptr)const_cast<object*>(_ptr)->release();
-	_ptr = null;
-}
-
-void object_wrapper<const object>::clear_unsafe()
-{
-	_ptr = null;
-}
-
-bool object_wrapper<const object>::is_empty()const
-{
-	return _ptr == null;
-}
-
-object const * object_wrapper<const object>::get(void)const
-{
-	return _ptr;
-}
-
-void object_wrapper<const object>::set(object const * ptr)
-{
-	object const * temp = _ptr;
-	if (ptr == _ptr) return;
-	_ptr = ptr;
-	if (_ptr)const_cast<object*>(_ptr)->add_ref();
-	if (temp)const_cast<object*>(temp)->release();
-}
-
-object_wrapper<const object>& object_wrapper<const object>::operator = (object const * ptr)
-{
-	set(ptr);
-	return*this;
-}
-
-object_wrapper<const object>& object_wrapper<const object>::operator = (object_wrapper<const object> && other)
-{
-	move(other);
-	return*this;
-}
-
-object_wrapper<const object>& object_wrapper<const object>::operator = (object_wrapper<object> && other)
-{
-	move(other);
-	return*this;
-}
-
-object_wrapper<const object>& object_wrapper<const object>::operator = (object_wrapper<const object> const& other)
-{
-	set(other._ptr);
-	return*this;
-}
-
-object_wrapper<const object>& object_wrapper<const object>::operator = (object_wrapper<object> const& other)
-{
-	set(other.get());
-	return*this;
-}
-
-object const ** object_wrapper<const object>::addres_of(void)
-{
-	return &_ptr;
-}
-
-object_wrapper_ptr<const object> object_wrapper<const object>::operator& (void)
-{
-	return this;
-}
-
-object const * object_wrapper<const object>::operator -> (void)const
+object_wrapper<object>::operator object* (void)
 {
 	return get();
 }
 
-object_wrapper<const object>::operator const object* (void)const
+object_wrapper<object>::operator object const* (void)const
 {
 	return get();
 }
@@ -595,12 +506,12 @@ intf_wrapper<interface>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
 }
 
 intf_wrapper<interface>::~intf_wrapper() {
-	clear();
+	reset();
 }
 
-void intf_wrapper<interface>::clear()
+void intf_wrapper<interface>::reset()
 {
-	iobject * _obj = dyn_cast<iobject>(_ptr);
+	iobject * _obj = interface_cast<iobject>(_ptr);
 	if (_obj)_obj->release();
 	_ptr = null;
 }
@@ -618,8 +529,8 @@ interface* intf_wrapper<interface>::get(void)const
 void intf_wrapper<interface>::set(interface* ptr)
 {
 	if (ptr == _ptr) return;
-	iobject * _old = dyn_cast<iobject>(_ptr);
-	iobject * _new = dyn_cast<iobject>(ptr);
+	iobject * _old = interface_cast<iobject>(_ptr);
+	iobject * _new = interface_cast<iobject>(ptr);
 	_ptr = ptr;
 	if (_new)_new->add_ref();
 	if (_old)_old->release();
@@ -633,7 +544,7 @@ intf_wrapper<interface>& intf_wrapper<interface>::operator = (interface* ptr)
 
 intf_wrapper<interface>& intf_wrapper<interface>::operator = (ang::nullptr_t const&)
 {
-	clear();
+	reset();
 	return*this;
 }
 
@@ -641,7 +552,7 @@ intf_wrapper<interface>& intf_wrapper<interface>::operator = (intf_wrapper<inter
 {
 	if (this == &other)
 		return *this;
-	clear();
+	reset();
 	_ptr = other._ptr;
 	other._ptr = null;
 	return*this;
@@ -663,114 +574,24 @@ intf_wrapper_ptr<interface> intf_wrapper<interface>::operator & (void)
 	return this;
 }
 
-interface* intf_wrapper<interface>::operator -> (void)const
+interface* intf_wrapper<interface>::operator -> (void)
 {
 	return get();
 }
 
-intf_wrapper<interface>::operator interface* (void)const
+interface const* intf_wrapper<interface>::operator -> (void)const
+{
+	return get();
+}
+
+intf_wrapper<interface>::operator interface* (void)
+{
+	return get();
+}
+
+intf_wrapper<interface>::operator interface const* (void)const
 {
 	return get();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-
-intf_wrapper<const interface>::intf_wrapper() : _ptr(null) {
-}
-
-intf_wrapper<const interface>::intf_wrapper(ang::nullptr_t const&) : _ptr(null) {
-}
-
-intf_wrapper<const interface>::intf_wrapper(interface const * ptr) : _ptr(null) {
-	set(ptr);
-}
-
-intf_wrapper<const interface>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
-	interface const * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
-}
-
-intf_wrapper<const interface>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
-	set(other._ptr);
-}
-
-intf_wrapper<const interface>::~intf_wrapper() {
-	clear();
-}
-
-void intf_wrapper<const interface>::clear()
-{
-	iobject const * _obj = dyn_cast<iobject>(_ptr);
-	if (_obj)const_cast<iobject*>(_obj)->release();
-	_ptr = null;
-}
-
-bool intf_wrapper<const interface>::is_empty()const
-{
-	return _ptr == null;
-}
-
-interface const * intf_wrapper<const interface>::get(void)const
-{
-	return _ptr;
-}
-
-void intf_wrapper<const interface>::set(interface const * ptr)
-{
-	if (ptr == _ptr) return;
-	iobject const * _old = dyn_cast<iobject>(_ptr);
-	iobject const * _new = dyn_cast<iobject>(ptr);
-	_ptr = ptr;
-	if (_new)const_cast<iobject*>(_new)->add_ref();
-	if (_old)const_cast<iobject*>(_old)->release();
-}
-
-intf_wrapper<const interface>& intf_wrapper<const interface>::operator = (interface const * ptr)
-{
-	set(ptr);
-	return*this;
-}
-
-intf_wrapper<const interface>& intf_wrapper<const interface>::operator = (ang::nullptr_t const&)
-{
-	clear();
-	return*this;
-}
-
-intf_wrapper<const interface>& intf_wrapper<const interface>::operator = (intf_wrapper<const interface> && other)
-{
-	if (this == &other)
-		return *this;
-	clear();
-	_ptr = other._ptr;
-	other._ptr = null;
-	return*this;
-}
-
-intf_wrapper<const interface>& intf_wrapper<const interface>::operator = (intf_wrapper<const interface> const& other)
-{
-	set(other._ptr);
-	return*this;
-}
-
-interface const ** intf_wrapper<const interface>::addres_of(void)
-{
-	return &_ptr;
-}
-
-intf_wrapper_ptr<const interface> intf_wrapper<const interface>::operator & (void)
-{
-	return this;
-}
-
-interface const * intf_wrapper<const interface>::operator -> (void)const
-{
-	return get();
-}
-
-intf_wrapper<const interface>::operator interface const * (void)const
-{
-	return get();
-}
-
