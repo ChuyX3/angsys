@@ -202,7 +202,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\exception.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\variant.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\boolean.cpp">
       <Filter>source\variant</Filter>
     </ClCompile>
   </ItemGroup>

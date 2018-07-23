@@ -505,13 +505,19 @@ namespace ang //constants
 	namespace text
 	{
 		////text_format class////
+		// {b:[u|U]|[l|L]|[c|C],[t|T]}
+		//	u = uppercase (TRUE/FALSE)
+		//	l = lowercase (true/false)
+		//	c = camelcase (True/False)
+		//  t = (type) 0 == [true/false](default), 1 == [yes/no], 2 == [hight/low]
 		// {c:[u|U]|[l|L][N|n]}
 		//	u = uppercase
 		//	l = lowercase
 		//  n = default, optional
-		// {s:[u|U]|[l|L]}
-		//	u = uppercase
-		//	l = lowercase
+		// {s:[u|U]|[l|L]|[c|C]}
+		//	u = uppercase (ABCD)
+		//	l = lowercase (abcd)
+		//	c = camelcase (Abcd)
 		//  n = default, optional
 		// {i:[n|N]xx,[t|T]c,(F|f)c,[[x|X]|[b|B]],[S|s]}
 		//	N = Max Number of digits (xx = number)
@@ -541,6 +547,7 @@ namespace ang //constants
 			enum target : byte
 			{
 				none = 0,
+				bool_,
 				char_,
 				text_,
 				signed_,
@@ -559,14 +566,19 @@ namespace ang //constants
 						union
 						{
 							byte flags;
-							struct
+							union
 							{
-								bool lower_case : 1;
-								bool upper_case : 1;
+								struct
+								{
+									bool lower_case : 1;
+									bool upper_case : 1;
+									byte type : 2; //(boolean) : 0 - [true/false], 1 - [yes/no], 2 - [hight/low]
+								};
 							};
 							struct
 							{
-								byte base : 2; //1-x, 2-X, 3-b
+								byte case_ : 2; // 1 - lower case, 2 - upper case, 3 - camel case
+								byte base : 2; //(number) : 1-x, 2-X, 3-b
 								bool sign : 1;
 								bool exponent : 1;
 							};
@@ -623,6 +635,10 @@ namespace ang //constants
 
 		template<typename T>
 		struct default_text_format<const T&> : default_text_format<T> { };
+
+		template<> struct default_text_format<bool> {
+			static text_format format() { text_format _format = cstr_t("{b:}"); return _format; }
+		};
 
 		template<> struct default_text_format<char> {
 			static text_format format() { text_format _format = cstr_t("{c:}"); return _format; }

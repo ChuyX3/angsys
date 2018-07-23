@@ -135,12 +135,15 @@ namespace ang
 		, public value<bool>
 	{
 	public:
+		static wstring to_string(value<bool>, text::text_format = text::default_text_format<bool>::format());
+
+	public:
 		variable();
 		variable(bool const&);
-		variable(value<bool> const& val) : value<bool>(val) {	}
+		variable(value<bool> const& val);
 		variable(variable const*);
-		template<typename T>
-		variable(value<T> const& other) : value(other.get() ? true : false) {}
+		template<typename T> variable(value<T> const& other)
+			: value<T>(other.get() ? true : false) {}
 
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
