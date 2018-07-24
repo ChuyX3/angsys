@@ -54,13 +54,21 @@ namespace ang
 	template<typename T> using variable_t = object_wrapper<variable<T>>;
 	template<typename T> using shared_ptr = variable_t<T>;
 
-	typedef shared_ptr<bool> boolean;
-	typedef shared_ptr<int> integer;
-	typedef shared_ptr<uint> uinteger;
-	typedef shared_ptr<long64> integer64;
-	typedef shared_ptr<ulong64> uinteger64;
-	typedef shared_ptr<float> floating;
-	typedef shared_ptr<double> floating64;
+	typedef variable<bool> boolean;
+	typedef variable<int> integer;
+	typedef variable<uint> uinteger;
+	typedef variable<long64> integer64;
+	typedef variable<ulong64> uinteger64;
+	typedef variable<float> floating;
+	typedef variable<double> floating64;
+
+	typedef shared_ptr<bool> boolean_t;
+	typedef shared_ptr<int> integer_t;
+	typedef shared_ptr<uint> uinteger_t;
+	typedef shared_ptr<long64> integer64_t;
+	typedef shared_ptr<ulong64> uinteger64_t;
+	typedef shared_ptr<float> floating_t;
+	typedef shared_ptr<double> floating64_t;
 
 	namespace strings
 	{

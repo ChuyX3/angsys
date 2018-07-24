@@ -205,6 +205,18 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\boolean.cpp">
       <Filter>source\variant</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\variant.cpp">
+      <Filter>source\variant</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\floating.cpp">
+      <Filter>source\variant</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\integer.cpp">
+      <Filter>source\variant</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\uinteger.cpp">
+      <Filter>source\variant</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl">

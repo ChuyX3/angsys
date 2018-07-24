@@ -184,7 +184,7 @@ namespace ang
 	public:
 		variable();
 		variable(int const&);
-		variable(value<int> const& val) : value<int>(val) {	}
+		variable(value<int> const& val);
 		variable(variable const*);
 		template<typename T>
 		variable(value<T> const& other) : value(other.get()) {}
@@ -227,7 +227,93 @@ namespace ang
 	public:
 		variable();
 		variable(uint const&);
-		variable(value<uint> const& val) : value<uint>(val) {	}
+		variable(value<uint> const& val);
+		variable(variable const*);
+		template<typename T>
+		variable(value<T> const& other) : value(other.get()) {}
+
+	public: //overrides
+		ANG_DECLARE_INTERFACE();
+
+		virtual wstring to_string()const override;
+		virtual wstring to_string(text::text_format_t)const override;
+		comparision_result_t compare(object const* obj)const override;
+
+		virtual rtti_t const& value_type()const override;
+		virtual bool set_value(rtti_t const&, unknown_t) override;
+		virtual bool get_value(rtti_t const&, unknown_t)const override;
+		virtual variant clone()const override;
+
+		using ivariant::set_value;
+		using ivariant::get_value;
+
+	protected:
+		virtual~variable();
+	};
+
+	template<>
+	class LINK variable<long>
+		: public object
+		, public ivariant
+		, public value<long>
+	{
+	public:
+		template<typename T, text::encoding E> static inline value<long> parse(str_view<T, E> str, int b = 10) {
+			windex i = 0;
+			return (long)str_to_signed(str, i, b);
+		}
+		template<typename T, text::encoding E> static inline value<long> Parse(str_view<T, E> str, windex i, int b = 10) {
+			return (long)str_to_signed(str, i, b);
+		}
+		static wstring to_string(value<long>, text::text_format = text::default_text_format<long>::format());
+
+	public:
+		variable();
+		variable(long const&);
+		variable(value<long> const& val);
+		variable(variable const*);
+		template<typename T>
+		variable(value<T> const& other) : value(other.get()) {}
+
+	public: //overrides
+		ANG_DECLARE_INTERFACE();
+
+		virtual wstring to_string()const override;
+		virtual wstring to_string(text::text_format_t)const override;
+		comparision_result_t compare(object const* obj)const override;
+
+		virtual rtti_t const& value_type()const override;
+		virtual bool set_value(rtti_t const&, unknown_t) override;
+		virtual bool get_value(rtti_t const&, unknown_t)const override;
+		virtual variant clone()const override;
+
+		using ivariant::set_value;
+		using ivariant::get_value;
+
+	protected:
+		virtual~variable();
+	};
+
+	template<>
+	class LINK variable<ulong>
+		: public object
+		, public ivariant
+		, public value<ulong>
+	{
+	public:
+		template<typename T, text::encoding E> static inline value<ulong> parse(str_view<T, E> str, int b = 10) {
+			windex i = 0;
+			return (ulong)str_to_unsigned(str, i, b);
+		}
+		template<typename T, text::encoding E> static inline value<ulong> Parse(str_view<T, E> str, windex i, int b = 10) {
+			return (ulong)str_to_unsigned(str, i, b);
+		}
+		static wstring to_string(value<ulong>, text::text_format = text::default_text_format<ulong>::format());
+
+	public:
+		variable();
+		variable(ulong const&);
+		variable(value<ulong> const& val);
 		variable(variable const*);
 		template<typename T>
 		variable(value<T> const& other) : value(other.get()) {}
@@ -270,7 +356,7 @@ namespace ang
 	public:
 		variable();
 		variable(long64 const&);
-		variable(value<long64> const& val) : value<long64>(val) {	}
+		variable(value<long64> const& val);
 		variable(variable const*);
 		template<typename T>
 		variable(value<T> const& other) : value(other.get()) {}
@@ -313,7 +399,7 @@ namespace ang
 	public:
 		variable();
 		variable(ulong64 const&);
-		variable(value<ulong64> const& val) : value<ulong64>(val) {	}
+		variable(value<ulong64> const& val);
 		variable(variable const*);
 		template<typename T>
 		variable(value<T> const& other) : value(other.get()) {}
@@ -356,7 +442,7 @@ namespace ang
 	public:
 		variable();
 		variable(float const&);
-		variable(value<float> const& val) : value<float>(val) {	}
+		variable(value<float> const& val);
 		variable(variable const*);
 		template<typename T>
 		variable(value<T> const& other) : value(other.get()) {}
@@ -399,7 +485,7 @@ namespace ang
 	public:
 		variable();
 		variable(double const&);
-		variable(value<double> const& val) : value<double>(val) {	}
+		variable(value<double> const& val);
 		variable(variable const*);
 		template<typename T>
 		variable(value<T> const& other) : value(other.get()) {}
@@ -422,5 +508,76 @@ namespace ang
 	protected:
 		virtual~variable();
 	};
+
+	template<typename T>
+	struct ivariant_setter {
+		static bool set(ivariant* var, T const& value) {
+			return var->set_value(type_of<T>(), (void*)&value);
+		}
+	};
+
+	template<typename T>
+	struct ivariant_setter<object_wrapper<T>> {
+		static bool set(ivariant* var, object_wrapper<T> const& value) {
+			return var->set_value(type_of<T>(), (void*)value.get());
+		}
+	};
+
+	template<typename T>
+	struct ivariant_setter<intf_wrapper<T>> {
+		static bool set(ivariant* var, intf_wrapper<T> const& value) {
+			return var->set_value(type_of<T>(), (void*)value.get());
+		}
+	};
+
+	template<typename T, wsize N>
+	struct ivariant_setter<T const(&)[N]> {
+		static bool set(ivariant* var, T const(&ar)[N]) {
+			array_view<T> value = collections::to_array((T*)ar, N);
+			return var->set_value(type_of<array_view<T>>(), (void*)&value);
+		}
+	};
+
+	template<typename T>
+	inline bool ivariant::set_value(T const& value) {
+		return ivariant_setter<T>::set(this, value);
+	}
+
+
+	template<typename T>
+	struct ivariant_getter {
+		static bool get(ivariant const* var, T& value) {
+			return var->get_value(type_of<T>(), (void*)&value);
+		}
+	};
+
+	template<typename T>
+	struct ivariant_getter<intf_wrapper<T>> {
+		static bool get(ivariant const* var, intf_wrapper<T>& value) {
+			if (value.is_empty())return false;
+			return var->get_value(type_of<T>(), (void*)value.get());
+		}
+	};
+
+	template<typename T>
+	struct ivariant_getter<object_wrapper<T>> {
+		static bool get(ivariant const* var, object_wrapper<T>& value) {
+			if (value.is_empty())return false;
+			return var->get_value(type_of<T>(), (void*)value.get());
+		}
+	};
+
+	template<typename T>
+	struct ivariant_getter<array_view<T>> {
+		static bool get(ivariant const* var, array_view<T>& value) {
+			return var->get_value(type_of<array_view<T>>(), (void*)&value);
+		}
+	};
+
+	template<typename T>
+	inline bool ivariant::get_value(T& value)const {
+		return ivariant_getter<T>::get(this, value);
+	}
+
 }
 #endif//__SAMRT_PTR_H__

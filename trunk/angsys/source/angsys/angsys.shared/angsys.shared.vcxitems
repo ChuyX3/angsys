@@ -68,6 +68,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string_pool.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\boolean.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\floating.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\integer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\uinteger.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\variant.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\APPLY_FUNCX_N.inl" />

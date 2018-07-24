@@ -76,7 +76,14 @@ variable<bool>::~variable()
 
 comparision_result_t variable<bool>::compare(object const* obj)const
 {
-	return comparision_result::diferent;
+	ivariant* var = interface_cast<ivariant>(const_cast<object*>(obj));
+	if (var == null)
+		return ang::comparision_result::diferent;
+	bool val;
+	if (var->get_value(val))
+		return val == get() ? ang::comparision_result::same : ang::comparision_result::diferent;
+	else
+		return ang::comparision_result::diferent;
 }
 
 wstring variable<bool>::to_string()const

@@ -43,7 +43,45 @@ rtti_t const& basic_string_buffer_base::value_type()const
 
 bool basic_string_buffer_base::set_value(rtti_t const& id, unknown_t ptr)
 {
-	if (id.is_type_of(type_of<cstr_t>()))
+	if (id.is_type_of(class_info()))
+	{
+		basic_string_buffer_base* str = interface_cast<basic_string_buffer_base>((interface*)ptr);
+		if (!str)
+			return false;
+		copy(str->text_buffer());
+		return true;
+	}
+	else if (id.is_type_of(type_of<char*>()) || id.is_type_of(type_of<char const*>()))
+	{
+		char const* str = reinterpret_cast<char const*>(ptr);
+		copy(cstr_t(str));
+		return true;
+	}
+	else if (id.is_type_of(type_of<mchar*>()) || id.is_type_of(type_of<mchar const*>()))
+	{
+		mchar const* str = reinterpret_cast<mchar const*>(ptr);
+		copy(cmstr_t(str));
+		return true;
+	}
+	else if (id.is_type_of(type_of<wchar*>()) || id.is_type_of(type_of<wchar const*>()))
+	{
+		wchar const* str = reinterpret_cast<wchar const*>(ptr);
+		copy(cwstr_t(str));
+		return true;
+	}
+	else if (id.is_type_of(type_of<char16_t*>()) || id.is_type_of(type_of<char16_t const*>()))
+	{
+		char16_t const* str = reinterpret_cast<char16_t const*>(ptr);
+		copy(cstr16_t(str));
+		return true;
+	}
+	else if (id.is_type_of(type_of<char32_t*>()) || id.is_type_of(type_of<char32_t const*>()))
+	{
+		char32_t const* str = reinterpret_cast<char32_t const*>(ptr);
+		copy(cstr32_t(str));
+		return true;
+	}
+	else if (id.is_type_of(type_of<cstr_t>()))
 	{
 		cstr_t& str = *reinterpret_cast<cstr_t*>(ptr);
 		copy(str);
@@ -77,8 +115,58 @@ bool basic_string_buffer_base::set_value(rtti_t const& id, unknown_t ptr)
 	return false;
 }
 
-bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t)const
+bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 {
+	if (id.is_type_of(class_info()))
+	{
+		basic_string_buffer_base* str = interface_cast<basic_string_buffer_base>((interface*)ptr);
+		if (!str)
+			return false;
+		str->copy(text_buffer());
+		return true;
+	}
+	else if (id.is_type_of<str_t>())
+	{
+		str_t& dest = *reinterpret_cast<str_t*>(ptr);
+		auto src = text_buffer();
+		dest.set(dest.str(), iencoder::get_encoder(encoding::ascii)->convert(dest.str(), src.ptr(), src.encoding(), true, dest.size(), src.count()).count());
+		return true;
+	}
+	else if (id.is_type_of<wstr_t>())
+	{
+		wstr_t& dest = *reinterpret_cast<wstr_t*>(ptr);
+		auto src = text_buffer();
+		dest.set(dest.str(), iencoder::get_encoder(encoding::unicode)->convert(dest.str(), src.ptr(), src.encoding(), true, dest.size(), src.count()).count());
+		return true;
+	}
+	else if (id.is_type_of<mstr_t>())
+	{
+		mstr_t& dest = *reinterpret_cast<mstr_t*>(ptr);
+		auto src = text_buffer();
+		dest.set(dest.str(), iencoder::get_encoder(encoding::utf8)->convert(dest.str(), src.ptr(), src.encoding(), true, dest.size(), src.count()).count());
+		return true;
+	}
+	else if (id.is_type_of<str16_t>())
+	{
+		str16_t& dest = *reinterpret_cast<str16_t*>(ptr);
+		auto src = text_buffer();
+		dest.set(dest.str(), iencoder::get_encoder(encoding::utf16)->convert(dest.str(), src.ptr(), src.encoding(), true, dest.size(), src.count()).count());
+		return true;
+	}
+	else if (id.is_type_of<str32_t>())
+	{
+		str32_t& dest = *reinterpret_cast<str32_t*>(ptr);
+		auto src = text_buffer();
+		dest.set(dest.str(), iencoder::get_encoder(encoding::utf32)->convert(dest.str(), src.ptr(), src.encoding(), true, dest.size(), src.count()).count());
+		return true;
+	}
+	else if (id.is_type_of<raw_str_t>())
+	{
+		raw_str_t& dest = *reinterpret_cast<raw_str_t*>(ptr);
+		auto src = text_buffer();
+		dest = iencoder::get_encoder(dest.encoding())->convert(dest.ptr(), src.ptr(), src.encoding(), true, dest.count(), src.count());
+		return true;
+	}
 	return false;
 }
 
