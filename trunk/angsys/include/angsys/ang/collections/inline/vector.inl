@@ -877,8 +877,8 @@ template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator += (object_wrapper const& items)
 {
 	if (is_empty())
-		set(new collections::vector_buffer<T, allocator>(items));
-	else _ptr->expand(items);
+		set(new collections::vector_buffer<T, allocator>(items.get()));
+	else _ptr->expand((array_view<T>)items);
 	return*this;
 }
 
@@ -915,7 +915,7 @@ inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::opera
 template<typename T, template <typename> class allocator> template<typename I>
 inline T const& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator[](I const& idx)const
 {
-	static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted"); 
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted"); 
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	if ((idx >= _ptr->size()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
@@ -926,7 +926,7 @@ inline T const& ang::object_wrapper<ang::collections::vector_buffer<T, allocator
 template<typename T, template <typename> class allocator> template<typename I>
 inline T & ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator[](I const& idx)
 {
-	static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted");
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	if ((idx >= _ptr->size()) || (idx < 0)) throw(exception_t(except_code::array_overflow));

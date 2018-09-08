@@ -309,7 +309,7 @@ namespace ang //testing
 	struct align_of_impl<T, false, true> { static constexpr wsize value = alignof(T); };
 
 	template<typename T>
-	struct align_of_impl<T, true, true> { static constexpr wsize value = alignof(T); };
+	struct align_of_impl<T, true, true> { static constexpr wsize value = alignof(wsize); };
 
 	template<typename T> constexpr wsize size_of() { return size_of_impl<T>::value; }
 	template<typename T> constexpr wsize align_of() { return align_of_impl<T>::value; }
@@ -477,6 +477,23 @@ namespace ang
 	inline T *addressof(T& val) noexcept {	
 		return __adressof<T>::value(val);
 	}
+
+
+	template<typename T> struct _function_type
+	{
+		typedef T type;
+		typedef T* type_ptr;
+		static_assert(is_function<T>::value, "");
+	};
+
+	template<typename T, typename...Ts> struct _function_type<T(Ts...)>
+	{
+		using type = T(Ts...);
+		using type_ptr = T(*)(Ts...);
+	};
+
+	template<typename T> using function_type = typename _function_type<T>::type_ptr;
+
 }
 
 #endif//__ANG_BASE_UTILS_H__

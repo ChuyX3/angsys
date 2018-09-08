@@ -129,8 +129,131 @@ cstr_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING
 	return this ? text_buffer().to_cstr<ENCODING>() : cstr_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING>();
 }
 
+
+
+void basic_string_buffer<MY_ENCODING>::format(cstr_t f, args_t args)
+{
+	format_parser<MY_ENCODING>::format(this, f, args);
+}
+
+void basic_string_buffer<MY_ENCODING>::format(cstr_t f, var_args_t args)
+{
+	format_parser<MY_ENCODING>::format(this, f, args);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
-#define MY_TYPE basic_string_buffer<MY_ENCODING>
-#include "ang/inline/object_wrapper_specialization.inl"
-#undef MY_TYPE
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper() : _ptr(null) {
+	set(new basic_string_buffer<MY_ENCODING>());
+}
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(basic_string_buffer<MY_ENCODING>* ptr) : _ptr(null) {
+	set(ptr);
+}
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(object_wrapper && other) : _ptr(null) {
+	basic_string_buffer<MY_ENCODING> * temp = other._ptr;
+	other._ptr = null;
+	_ptr = temp;
+}
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(object_wrapper const& other) : _ptr(null) {
+	set(other._ptr);
+}
+
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(std::nullptr_t const&) : _ptr(null) {
+}
+
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::~object_wrapper() { reset(); }
+
+
+void ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::reset()
+{
+	if (_ptr)_ptr->release();
+	_ptr = null;
+}
+
+
+void ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::reset_unsafe()
+{
+	_ptr = null;
+}
+
+
+bool ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::is_empty()const
+{
+	return _ptr == null;
+}
+
+
+basic_string_buffer<MY_ENCODING>* ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::get(void)const
+{
+	return _ptr;
+}
+
+
+void ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::set(basic_string_buffer<MY_ENCODING>* ptr)
+{
+	basic_string_buffer<MY_ENCODING> * temp = _ptr;
+	if (ptr == _ptr) return;
+	_ptr = ptr;
+	if (_ptr)_ptr->add_ref();
+	if (temp)temp->release();
+}
+
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>& ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator = (basic_string_buffer<MY_ENCODING>* ptr)
+{
+	set(ptr);
+	return*this;
+}
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>& ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator = (ang::nullptr_t const&)
+{
+	reset();
+	return*this;
+}
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>& ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator = (ang::object_wrapper<basic_string_buffer<MY_ENCODING>> && other)
+{
+	if (this == &other)
+		return *this;
+	reset();
+	_ptr = other._ptr;
+	other._ptr = null;
+	return*this;
+}
+
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>& ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator = (ang::object_wrapper<basic_string_buffer<MY_ENCODING>> const& other)
+{
+	set(other._ptr);
+	return*this;
+}
+
+
+basic_string_buffer<MY_ENCODING> ** ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::addres_of(void)
+{
+	return &_ptr;
+}
+
+
+ang::object_wrapper_ptr<basic_string_buffer<MY_ENCODING>> ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator& (void)
+{
+	return this;
+}
+
+
+basic_string_buffer<MY_ENCODING>* ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator -> (void)const
+{
+	return get();
+}
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator basic_string_buffer<MY_ENCODING>* (void)const
+{
+	return get();
+}
+

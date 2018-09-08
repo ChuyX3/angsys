@@ -318,6 +318,15 @@ namespace ang
 			}
 		};
 
+		template<typename T>
+		struct __type_info_builder_genre_class_helper<intf_wrapper<T>, false> {
+			static rtti_t const& type_of() { return type_of<T>(); }
+		};
+
+		template<typename T>
+		struct __type_info_builder_genre_class_helper<object_wrapper<T>, false> {
+			static rtti_t const& type_of() { return type_of<T>(); }
+		};
 
 		//////////////////////////////////////////////////////////////////////////////////////
 

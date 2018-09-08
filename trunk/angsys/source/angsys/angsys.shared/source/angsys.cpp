@@ -13,7 +13,9 @@
 #include "ang_memory.h"
 #include "encoder_interface.h"
 #include "runtime_manager.h"
+#include "thread_manager.h"
 
+#include <ang/platform/platform.h>
 //#include "ang/core/async.h"
 
 using namespace ang;
@@ -54,10 +56,7 @@ namespace ang
 	static class ang_main_instance
 	{
 	public:
-		static ang_main_instance* instance() {
-			static ang_main_instance _instance;
-			return &_instance;
-		}
+		static ang_main_instance* instance();
 
 		ang_main_instance()
 			: default_memory_allocator(ang_default_memory)
@@ -65,11 +64,17 @@ namespace ang
 			, buffer_memory_allocator(ang_buffer_memory)
 			, aligned_memory_allocator()
 			, runtime_type_manager()
+			, thread_manager(null)
 		{
 			objects = new(malloc(sizeof(object_manager))) object_manager();
+			thread_manager = new(malloc(sizeof(core::async::thread_manager))) core::async::thread_manager();
 		}
 		~ang_main_instance()
 		{
+			thread_manager->~thread_manager();
+			free(thread_manager);
+			thread_manager = null;
+
 			strings::string_pool::release_instance();
 
 			ascii_encoder = null;
@@ -83,9 +88,9 @@ namespace ang
 			utf32_se_encoder = null;
 			utf32_le_encoder = null;
 			utf32_be_encoder = null;
-
-			objects->~object_manager();
-			free(objects);
+			
+			objects->~object_manager();	
+			free(objects);			
 			objects = null;
 		}
 
@@ -95,7 +100,11 @@ namespace ang
 		aligned_allocator_internal aligned_memory_allocator;
 		runtime::runtime_type_manager runtime_type_manager;
 
+#if defined _DEBUG || defined _DEVELOPPER
 		object_manager* objects;
+#endif //DEBUG
+
+		core::async::thread_manager* thread_manager;
 
 		text::iencoder_t ascii_encoder;
 		text::iencoder_t unicode_encoder;
@@ -109,7 +118,30 @@ namespace ang
 		text::iencoder_t utf32_le_encoder;
 		text::iencoder_t utf32_be_encoder;
 	};
+
+	static struct ang_main_instance_constructor
+	{
+		ang_main_instance* instance = null;
+		ang_main_instance_constructor()
+		{
+			instance = (ang_main_instance*)malloc(sizeof(ang_main_instance));
+			new(instance)ang_main_instance();
+		}
+		~ang_main_instance_constructor()
+		{
+			instance->~ang_main_instance();
+			free(instance);
+		}
+	}instanceConstructor;
+
+	ang_main_instance* ang_main_instance::instance()
+	{
+		return instanceConstructor.instance;
+	}
+
 }
+
+
 
 
 aligned_allocator_internal* memory::get_aligned_allocator() {
@@ -135,6 +167,13 @@ runtime::runtime_type_manager* runtime::runtime_type_manager::instance()
 {
 	return &ang_main_instance::instance()->runtime_type_manager;
 }
+
+#if defined _DEBUG || defined _DEVELOPPER
+object_manager* object_manager::instance()
+{
+	return ang_main_instance::instance()->objects;
+}
+#endif
 
 text::iencoder_t text::iencoder::get_encoder(text::encoding_t e)
 {

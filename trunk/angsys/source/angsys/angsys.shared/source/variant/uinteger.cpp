@@ -186,12 +186,16 @@ variable<uint>::~variable()
 
 }
 
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::uinteger, object, ivariant);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::uinteger);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::uinteger, object, ivariant);
+
 comparision_result_t variable<uint>::compare(object const* obj)const
 {
 	ivariant* var = interface_cast<ivariant>(const_cast<object*>(obj));
 	if (var == null)
 		return ang::comparision_result::diferent;
-	int val;
+	uint val;
 	if (var->get_value(val))
 		return val < get() ? ang::comparision_result::mayor
 		: val > get() ? ang::comparision_result::minor
@@ -497,6 +501,10 @@ variable<ulong>::~variable()
 {
 
 }
+
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::ulinteger, object, ivariant);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::ulinteger);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::ulinteger, object, ivariant);
 
 comparision_result_t variable<ulong>::compare(object const* obj)const
 {
@@ -811,6 +819,11 @@ variable<ulong64>::~variable()
 {
 
 }
+
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::uinteger64, object, ivariant);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::uinteger64);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::uinteger64, object, ivariant);
+
 
 comparision_result_t variable<ulong64>::compare(object const* obj)const
 {

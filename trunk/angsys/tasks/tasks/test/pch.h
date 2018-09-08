@@ -12,7 +12,7 @@
 
 #define ANGSYS_DYNAMIC_LIBRARY
 #include <angsys.h>
+#include <ang/platform/platform.h>
 #pragma comment(lib, "angsys.lib")
-#pragma comment(lib, "display.lib")
 
 // TODO: reference additional headers your program requires here

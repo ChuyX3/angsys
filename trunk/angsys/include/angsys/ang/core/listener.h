@@ -181,6 +181,24 @@ namespace ang
 			};
 		}
 	}
+
+	template<typename proxy, typename T>
+	struct event : public core::delegates::listener<T>
+	{
+	private:
+		using core::delegates::listener<T>::invoke;
+		using core::delegates::listener<T>::operator();
+		friend proxy;
+	};
+
+	//template<typename proxy, typename T, typename... Ts>
+	//struct event<proxy, T(Ts...)> : public core::delegates::listener<T(Ts...)>
+	//{
+	//private:
+	//	using listener<T(Ts...)>::invoke;
+	//	using listener<T(Ts...)>::operator();
+	//	friend proxy;
+	//};
 }
 
 

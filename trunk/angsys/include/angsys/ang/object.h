@@ -49,6 +49,7 @@ namespace ang
 		virtual void clear();
 		virtual comparision_result_t compare(object const* obj)const;
 		virtual wstring to_string()const;
+		virtual wstring to_string(text::text_format_t)const;
 //		virtual wsize serialize(streams::itext_output_stream_t)const;
 //		virtual wsize serialize(streams::ibinary_output_stream_t)const;
 //		virtual wsize deserialize(streams::itext_input_stream_t);

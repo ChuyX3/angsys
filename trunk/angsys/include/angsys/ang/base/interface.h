@@ -77,7 +77,7 @@ struct _DECLSPEC_NOVTABLE __ANG_BEGIN_INTERFACE(__VA_ARGS__) \
 ang::rtti_t const& _CLASS::class_info() { \
 	static const char name[] = #_CLASS; \
 	static rtti_t const* parents[] = ANG_EXPAND(TYPE_OF_PTR_ARRAY(__VA_ARGS__)); \
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(_CLASS), alignof(wsize), parents, &default_query_interface); \
+	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<_CLASS>(), align_of<wsize>(), parents, &default_query_interface); \
 	return info; \
  }
 #define ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(_CLASS, ...) \
@@ -88,7 +88,7 @@ bool _CLASS::query_interface(ang::rtti_t const& id, ang::unknown_ptr_t out) { AN
 ang::rtti_t const& _CLASS::class_info() { \
 	static const char name[] = #_CLASS; \
 	static rtti_t const* parents[] = ANG_EXPAND(TYPE_OF_PTR_ARRAY(__VA_ARGS__)); \
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(_CLASS), alignof(_CLASS), parents, &default_query_interface); \
+	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<_CLASS>(), align_of<_CLASS>(), parents, &default_query_interface); \
 	return info; \
  }
 

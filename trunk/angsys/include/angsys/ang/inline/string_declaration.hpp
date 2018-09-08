@@ -87,6 +87,13 @@ namespace ang
 				return str;
 			}
 
+			void format(cstr_t f, args_t);
+			void format(cstr_t f, var_args_t);
+			template<typename... Ts> void format(cstr_t f, Ts...args) {
+				format(f, var_args_t{ ((var)args)... });
+			}
+			
+
 		private:
 			virtual~basic_string_buffer();
 		};
@@ -95,6 +102,12 @@ namespace ang
 
 	ANG_BEGIN_OBJECT_WRAPPER(MY_LINKAGE, strings::basic_string_buffer<MY_ENCODING COMA MY_ALLOCATOR>)
 		visible scall const text::encoding ENCODING = MY_ENCODING;
+		template<typename T, typename...Ts> 
+		inline static ang::strings::basic_string<MY_ENCODING, MY_ALLOCATOR> format(ang::str_view<T, MY_ENCODING> f, Ts... args) {
+			ang::strings::basic_string<MY_ENCODING, MY_ALLOCATOR> str;
+			str->format(f, ang::forward<Ts>(args)...);
+			return str;
+		}
 		object_wrapper(strings::basic_const_string_buffer<MY_ENCODING>* str) : object_wrapper() {
 			set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 		}

@@ -20,6 +20,57 @@ TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, utf32_le);
 TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, utf32_be);
 
 
+/////////////////////////////////////////////////////////////////////////////
+
+
+template<> wsize text::load_bom<text::encoding::utf8>(pointer ptr) {
+	alignas(4) static byte utf8_bom[4] = { 0xef, 0xbb, 0xbf, 0x0 };
+	return (text::utf8().compare_until((mchar const*)ptr, (mchar const*)utf8_bom) == 3) ? 3 : 0;
+}
+
+template<> wsize text::load_bom<text::encoding::utf16_le>(pointer ptr) {
+	alignas(4) static byte utf16_le_bom[4] = { 0xff, 0xfe, 0x0, 0x0 };
+	return (text::utf16_le().compare_until((char16_t const*)ptr, (char16_t const*)utf16_le_bom) == 1) ? 2 : 0;
+}
+
+template<> wsize text::load_bom<text::encoding::utf16_be>(pointer ptr) {
+	alignas(4) static byte utf16_be_bom[4] = { 0xfe, 0xff, 0x0, 0x0 };
+	return (text::utf16_be().compare_until((char16_t const*)ptr, (char16_t const*)utf16_be_bom) == 1) ? 2 : 0;
+}
+
+template<> wsize text::load_bom<text::encoding::utf32_le>(pointer ptr) {
+	alignas(4) static byte utf32_le_bom[8] = { 0xff, 0xfe, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
+	return (text::utf32_le().compare_until((char32_t const*)ptr, (char32_t const*)utf32_le_bom) == 1) ? 4 : 0;
+}
+
+template<> wsize text::load_bom<text::encoding::utf32_be>(pointer ptr) {
+	alignas(4) static byte utf32_be_bom[8] = { 0x0, 0x0, 0xfe, 0xff, 0x0, 0x0, 0x0, 0x0 };
+	return (text::utf32_be().compare_until((char32_t const*)ptr, (char32_t const*)utf32_be_bom) == 1) ? 4 : 0;
+}
+
+template<> wsize text::load_bom<text::encoding::utf16>(pointer ptr) {
+	return load_bom<native_encoding<text::encoding::utf16>::value>(ptr);
+}
+
+template<> wsize text::load_bom<text::encoding::utf16_se>(pointer ptr) {
+	return load_bom<native_inverse_encoding<text::encoding::utf16>::value>(ptr);
+}
+
+template<> wsize text::load_bom<text::encoding::utf32>(pointer ptr) {
+	return load_bom<native_encoding<text::encoding::utf16>::value>(ptr);
+}
+
+template<> wsize text::load_bom<text::encoding::utf32_se>(pointer ptr) {
+	return load_bom<native_inverse_encoding<text::encoding::utf16>::value>(ptr);
+}
+
+template<> wsize text::load_bom<text::encoding::unicode>(pointer ptr) {
+	return load_bom<native_encoding<text::encoding::unicode>::value>(ptr);
+}
+
+////////////////////////////////////////////////////////////////////////////
+
+
 #define MY_TYPE ang::text::iencoder
 #include "ang/inline/intf_wrapper_specialization.inl"
 #undef MY_TYPE

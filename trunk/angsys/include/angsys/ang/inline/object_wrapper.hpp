@@ -217,32 +217,33 @@ namespace ang
 		object_wrapper(ang::nullptr_t const&);
 		~object_wrapper();
 
-		//	template<wsize N> object_wrapper(const char(&ar)[N]);
+		template<wsize N> object_wrapper(const char(&ar)[N]);
+		template<wsize N> object_wrapper(const wchar(&ar)[N]);
+		template<wsize N> object_wrapper(const mchar(&ar)[N]);
+		template<wsize N> object_wrapper(const char16(&ar)[N]);
+		template<wsize N> object_wrapper(const char32(&ar)[N]);
+		template<typename T, wsize N> object_wrapper(T(&ar)[N]);
+		template<typename T, text::encoding E> object_wrapper(str_view<T, E>);
 
-		//	template<wsize N> object_wrapper(const wchar(&ar)[N]);
+		inline object_wrapper(bool); //int convertible
 
-		//	template<typename T>
-		//	inline object_wrapper(safe_str<T> const& str); //string convertible
+		inline object_wrapper(int); //int convertible
+		inline object_wrapper(uint); //uint convertible
 
-		//	inline object_wrapper(bool); //int convertible
+		inline object_wrapper(long); //long convertible
+		inline object_wrapper(ulong); //ulong convertible
 
-		//	inline object_wrapper(int); //int convertible
-		//	inline object_wrapper(uint); //uint convertible
+		inline object_wrapper(long64); //long convertible
+		inline object_wrapper(ulong64); //ulong convertible
 
-		//	inline object_wrapper(long); //long convertible
-		//	inline object_wrapper(ulong); //ulong convertible
+		inline object_wrapper(float); //float convertible
+		inline object_wrapper(double); //double convertible
 
-		//	inline object_wrapper(long64); //long convertible
-		//	inline object_wrapper(ulong64); //ulong convertible
+		template<typename T>//object convertible
+		inline object_wrapper(object_wrapper<T>);
 
-		//	inline object_wrapper(float); //float convertible
-		//	inline object_wrapper(double); //double convertible
-
-		//	template<typename T>//object convertible
-		//	inline object_wrapper(object_wrapper<T>);
-
-		//	template<typename T>//array convertible
-		//	inline object_wrapper(initializer_list_t<T>);
+		template<typename T>//array convertible
+		inline object_wrapper(initializer_list<T>);
 
 		template<typename T> typename smart_ptr_type<T>::smart_ptr_t as() {
 			return interface_cast<typename smart_ptr_type<T>::type>(_ptr);
@@ -274,13 +275,38 @@ namespace ang
 		operator object* (void);
 		operator object const* (void)const;
 
-		template<typename T> explicit operator T& ()const;
+		template<typename T> explicit operator T& () {
+			return (T&)as<T>();
+		}
+
+		template<typename T> explicit operator T const& ()const {
+			return (T const&)const_cast<objptr*>(this)->as<T>();
+		}
 
 	private:
 		object* _ptr;
 		friend class safe_pointer;
 	};
 
+
+
+	template<typename T, class owner, property_style TYPE>
+	class property<const object_wrapper<T>, owner, TYPE> {
+	public:
+		property(T* val) : value(val) {}
+		T* get()const { return value.get(); }
+		operator T*()const { return value.get(); }
+		T* operator ->()const { return value.get(); }
+
+	protected:
+		void set(T* val) { value = val; }
+		property& operator = (property const& val) { set(val.get()); return*this; }
+		property& operator = (T* val) { set(val); return*this; }
+
+	private:
+		typename object_wrapper<T> value;
+		friend owner;
+	};
 }
 
 template<typename T>

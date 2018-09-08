@@ -271,6 +271,12 @@ namespace ang
 			return n;
 		}
 
+		template<bool SWAP1, bool SWAP2, typename T, text::encoding E> char32_t to_char32(str_view< const T, E> const& val, wsize& j) {
+			wsize i = 0; char32_t n;
+			converter<char32_t, T>::template convert<SWAP1, SWAP2>(&n, i, val.cstr(), j);
+			return n;
+		}
+
 		template<encoding ENCODING> inline wsize encoder<ENCODING>::lenght(raw_cstr_t cstr) {
 			wsize i = 0;
 			if (cstr == nullptr)
@@ -426,35 +432,63 @@ namespace ang
 
 		long64 res = 0; int sig = 1; char32_t space;
 
-		for (space = text::swap_endian<SWAP>(str[i]);
-			space == U' ' || space == U'\t' || space == U'\n' || space == U'\r';
-			space = text::swap_endian<SWAP>(str[++i]));
-
-		if (text::swap_endian<SWAP>(str[i]) == U'-') {
-			sig = -1; i++;
-		}
-		else if (text::swap_endian<SWAP>(str[i]) == U'+') {
-			i++;
-		}
-
 		switch (base)
 		{
 		case 2:
-			while (text::swap_endian<SWAP>(str[i]) >= U'0' && text::swap_endian<SWAP>(str[i]) <= U'1')
+			for (space = text::swap_endian<SWAP>(str[i]);
+				space == U' ' || space == U'\t' || space == U'\n' || space == U'\r';
+				space = text::swap_endian<SWAP>(str[++i]));
+			if (text::swap_endian<SWAP>(str[i]) == U'-') {
+				sig = -1; i++;
+			}
+			else if (text::swap_endian<SWAP>(str[i]) == U'+') {
+				i++;
+			}
+			while (text::swap_endian<SWAP>(str[i]) >= U'0' && text::swap_endian<SWAP>(str[i]) <= U'1') {
 				res = (res << 1) | (text::swap_endian<SWAP>(str[i++]) - U'0');
+			}
 			if (text::swap_endian<SWAP>(str[i]) == U'b')i++;
 			break;
 		case 8:
-			while (text::swap_endian<SWAP>(str[i]) >= U'0' && text::swap_endian<SWAP>(str[i]) <= U'7')
+			for (space = text::swap_endian<SWAP>(str[i]);
+				space == U' ' || space == U'\t' || space == U'\n' || space == U'\r';
+				space = text::swap_endian<SWAP>(str[++i]));
+			if (text::swap_endian<SWAP>(str[i]) == U'-') {
+				sig = -1; i++;
+			}
+			else if (text::swap_endian<SWAP>(str[i]) == U'+') {
+				i++;
+			}
+			while (text::swap_endian<SWAP>(str[i]) >= U'0' && text::swap_endian<SWAP>(str[i]) <= U'7') {
 				res = (res << 3) | (text::swap_endian<SWAP>(str[i++]) - U'0');
+			}
 			if (text::swap_endian<SWAP>(str[i]) == U'o')i++;
 			break;
 		case 10:
-			while (text::swap_endian<SWAP>(str[i]) >= U'0' && text::swap_endian<SWAP>(str[i]) <= U'9')
+			for (space = text::swap_endian<SWAP>(str[i]);
+				space == U' ' || space == U'\t' || space == U'\n' || space == U'\r';
+				space = text::swap_endian<SWAP>(str[++i]));
+			if (text::swap_endian<SWAP>(str[i]) == U'-') {
+				sig = -1; i++;
+			}
+			else if (text::swap_endian<SWAP>(str[i]) == U'+') {
+				i++;
+			}
+			while (text::swap_endian<SWAP>(str[i]) >= U'0' && text::swap_endian<SWAP>(str[i]) <= U'9') {
 				res = (res * 10) + (text::swap_endian<SWAP>(str[i++]) - U'0');
+			}
 			if (text::swap_endian<SWAP>(str[i]) == U'd')i++;
 			break;
 		case 16:
+			for (space = text::swap_endian<SWAP>(str[i]);
+				space == U' ' || space == U'\t' || space == U'\n' || space == U'\r';
+				space = text::swap_endian<SWAP>(str[++i]));
+			if (text::swap_endian<SWAP>(str[i]) == U'-') {
+				sig = -1; i++;
+			}
+			else if (text::swap_endian<SWAP>(str[i]) == U'+') {
+				i++;
+			}
 		LOOP:
 			if (text::swap_endian<SWAP>(str[i]) >= U'0' && text::swap_endian<SWAP>(str[i]) <= U'7')
 				res = (res << 4) + (text::swap_endian<SWAP>(str[i++]) - U'0');
@@ -469,7 +503,6 @@ namespace ang
 			break;
 		default:return 0;
 		}
-
 		return res*sig;
 	}
 
@@ -479,25 +512,41 @@ namespace ang
 
 		ulong64 res = 0; char32_t space;
 
-		for (space = text::swap_endian<SWAP>(str[i]);
-			space == U' ' || space == U'\t' || space == U'\n' || space == U'\r';
-			space = text::swap_endian<SWAP>(str[++i]));
-
 		switch (base)
 		{
 		case 2:
+			for (space = text::swap_endian<SWAP>(str[i]);
+				space == U' ' || space == U'\t' || space == U'\n' || space == U'\r';
+				space = text::swap_endian<SWAP>(str[++i]));
+
 			while (text::swap_endian<SWAP>(str[i]) >= U'0' && text::swap_endian<SWAP>(str[i]) <= U'1') {
 				res = (res << 1) | (text::swap_endian<SWAP>(str[i++]) - U'0');
-			}break;
+			}
+			if (text::swap_endian<SWAP>(str[i]) == U'b')i++;
+			break;
 		case 8:
+			for (space = text::swap_endian<SWAP>(str[i]);
+				space == U' ' || space == U'\t' || space == U'\n' || space == U'\r';
+				space = text::swap_endian<SWAP>(str[++i]));
+
 			while (text::swap_endian<SWAP>(str[i]) >= U'0' && text::swap_endian<SWAP>(str[i]) <= U'7') {
 				res = (res << 3) | (text::swap_endian<SWAP>(str[i++]) - U'0');
-			}break;
+			}
+			if (text::swap_endian<SWAP>(str[i]) == U'o')i++;
+			break;
 		case 10:
+			for (space = text::swap_endian<SWAP>(str[i]);
+				space == U' ' || space == U'\t' || space == U'\n' || space == U'\r';
+				space = text::swap_endian<SWAP>(str[++i]));
 			while (text::swap_endian<SWAP>(str[i]) >= U'0' && text::swap_endian<SWAP>(str[i]) <= U'9') {
 				res = (res * 10) + (text::swap_endian<SWAP>(str[i++]) - U'0');
-			}break;
+			}
+			if (text::swap_endian<SWAP>(str[i]) == U'd')i++;
+			break;
 		case 16:
+			for (space = text::swap_endian<SWAP>(str[i]);
+				space == U' ' || space == U'\t' || space == U'\n' || space == U'\r';
+				space = text::swap_endian<SWAP>(str[++i]));
 		LOOP:
 			if (text::swap_endian<SWAP>(str[i]) >= U'0' && text::swap_endian<SWAP>(str[i]) <= U'7')
 				res = (res << 4) + (text::swap_endian<SWAP>(str[i++]) - U'0');
@@ -508,10 +557,10 @@ namespace ang
 			else goto END;
 			goto LOOP;
 		END:
+			if (text::swap_endian<SWAP>(str[i]) == U'h')i++;
 			break;
 		default:return 0;
 		}
-
 		return res;
 	}
 
@@ -536,9 +585,10 @@ namespace ang
 			res = (res * 10) + (text::swap_endian<SWAP>(str[i]) - U'0');
 			i++;
 		}
-
-		if (text::swap_endian<SWAP>(str[i]) != U'.')
+		
+		if (text::swap_endian<SWAP>(str[i]) != U'.') {
 			return res*sig;
+		}
 		i++;
 
 		while (text::swap_endian<SWAP>(str[i]) >= U'0' && text::swap_endian<SWAP>(str[i]) <= U'9') {
@@ -546,7 +596,6 @@ namespace ang
 			dec /= 10.0;
 			i++;
 		}
-
 		return res*sig;
 	}
 }

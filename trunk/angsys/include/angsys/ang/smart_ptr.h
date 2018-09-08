@@ -21,6 +21,14 @@ namespace ang
 		typedef shared_ptr<T> smart_ptr_t; typedef typename smart_ptr_t::type type;	
 	};
 
+	template<typename T> struct smart_ptr_type<intf_wrapper<T>, false, false> {
+		typedef intf_wrapper<T> smart_ptr_t; typedef typename smart_ptr_t::type type;
+	};
+
+	template<typename T> struct smart_ptr_type<object_wrapper<T>, false, false> {
+		typedef object_wrapper<T> smart_ptr_t; typedef typename smart_ptr_t::type type;
+	};
+
 
 	ang_interface(iobject);
 

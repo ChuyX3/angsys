@@ -107,6 +107,7 @@ namespace ang
 			visible scall iencoder_t get_encoder(encoding_t);
 			visible vcall encoding_t format()const pure;
 			visible vcall rtti_t const& char_type()const pure;
+			visible vcall char32 to_char32(unknown_str_t str, windex& i)const pure;
 			visible vcall void set_eos(unknown_str_t str, windex at)const pure;
 			visible vcall wsize lenght(unknown_cstr_t)const pure;
 			visible vcall wsize size(unknown_cstr_t, encoding_t, windex = 0, windex = -1)const pure;

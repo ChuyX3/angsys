@@ -215,7 +215,7 @@ namespace ang
 		collections::vector_buffer<T, allocator> const* operator -> (void)const;
 		explicit operator collections::vector_buffer<T, allocator> * (void);
 		explicit operator collections::vector_buffer<T, allocator> const* (void)const;
-		operator array_view<T>()const { return _ptr ? to_array(_ptr->data(), _ptr->size()) : array_view<T>(); }
+		operator array_view<T>()const { return _ptr ? collections::to_array(_ptr->data(), _ptr->size()) : array_view<T>(); }
 		template<typename I>T& operator[](I const& idx);
 		template<typename I>T const& operator[](I const& idx)const;
 	};

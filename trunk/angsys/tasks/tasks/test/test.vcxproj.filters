@@ -6,6 +6,8 @@
     <ClInclude Include="vulkan\vk_driver.h">
       <Filter>driver\vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="console.h" />
+    <ClInclude Include="file.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -13,6 +15,10 @@
     <ClCompile Include="vulkan\vk_driver.cpp">
       <Filter>driver\vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="output.cpp" />
+    <ClCompile Include="menu.cpp" />
+    <ClCompile Include="file.cpp" />
+    <ClCompile Include="app.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="driver">

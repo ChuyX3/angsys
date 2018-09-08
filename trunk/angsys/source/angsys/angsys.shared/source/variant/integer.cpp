@@ -189,6 +189,10 @@ variable<int>::~variable()
 
 }
 
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::integer, object, ivariant);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::integer);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::integer, object, ivariant);
+
 comparision_result_t variable<int>::compare(object const* obj)const
 {
 	ivariant* var = interface_cast<ivariant>(const_cast<object*>(obj));
@@ -504,6 +508,10 @@ variable<long>::~variable()
 {
 
 }
+
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::linteger, object, ivariant);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::linteger);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::linteger, object, ivariant);
 
 comparision_result_t variable<long>::compare(object const* obj)const
 {
@@ -822,6 +830,10 @@ variable<long64>::~variable()
 {
 
 }
+
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::integer64, object, ivariant);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::integer64);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::integer64, object, ivariant);
 
 comparision_result_t variable<long64>::compare(object const* obj)const
 {

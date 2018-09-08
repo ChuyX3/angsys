@@ -166,11 +166,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="console.h" />
+    <ClInclude Include="file.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="vulkan\vk_driver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="app.cpp" />
+    <ClCompile Include="file.cpp" />
+    <ClCompile Include="menu.cpp" />
+    <ClCompile Include="output.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -183,9 +189,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\source\angsys\angsys.desktop\angsys.desktop.vcxproj">
       <Project>{6e24f0d8-08fb-4df2-9e07-d208c4faace3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\display\display.vcxproj">
-      <Project>{4150e974-493a-46d6-8fc1-c446109a363c}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

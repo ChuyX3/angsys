@@ -48,15 +48,18 @@ namespace ang
 
 	ang_interface(ivariant);
 
-	typedef ivariant_t variant;
+	typedef ivariant_t variant, var;
 	template<typename T> class weak_ptr;
 	template<typename T> class variable;
 	template<typename T> using variable_t = object_wrapper<variable<T>>;
 	template<typename T> using shared_ptr = variable_t<T>;
+	template<typename T, typename...Ts> shared_ptr<T> make_shared(Ts... args);
 
 	typedef variable<bool> boolean;
 	typedef variable<int> integer;
 	typedef variable<uint> uinteger;
+	typedef variable<long> linteger;
+	typedef variable<ulong> ulinteger;
 	typedef variable<long64> integer64;
 	typedef variable<ulong64> uinteger64;
 	typedef variable<float> floating;
@@ -88,10 +91,14 @@ namespace ang
 		typedef basic_string_buffer<encoding::ascii> ascii_string_buffer, string_buffer;
 		typedef basic_string_buffer<encoding::unicode> unicode_string_buffer, wstring_buffer;
 		typedef basic_string_buffer<encoding::utf8> utf8_string_buffer, mstring_buffer;
+		typedef basic_string_buffer<encoding::utf16> utf16_string_buffer, string_buffer16;
+		typedef basic_string_buffer<encoding::utf32> utf32_string_buffer, string_buffer32;
 
 		typedef object_wrapper<ascii_string_buffer> ascii_string, string;
 		typedef object_wrapper<unicode_string_buffer> unicode_string, wstring;
 		typedef object_wrapper<utf8_string_buffer> utf8_string, mstring;
+		typedef object_wrapper<utf16_string_buffer> utf16_string, string16;
+		typedef object_wrapper<utf32_string_buffer> utf32_string, string32;
 	}
 
 	namespace collections
@@ -113,19 +120,24 @@ namespace ang
 			template<typename T> using ifunction_t = intf_wrapper<ifunction<T>>;
 			template<typename T> using method = intf_wrapper<ifunction<T>>;
 
-			using var_args_t = collections::vector<objptr>;
-			using var_args = collections::vector_buffer<objptr>;
+			
 		}
 	}
 
 	using strings::string;
 	using strings::wstring;
 	using strings::mstring;
+	using strings::string16;
+	using strings::string32;
 
 	using collections::array;
 	using collections::vector;
-	using core::delegates::var_args;
-	using core::delegates::var_args_t;
+
+	using args_t = vector<objptr>;
+	using args = collections::vector_buffer<var>;
+
+	using var_args_t = vector<var>;
+	using var_args = collections::vector_buffer<var>;
 
 
 	ang_object(exception);
@@ -144,6 +156,7 @@ namespace ang
 #include <ang/exception.h>
 #include <ang/core/listener.h>
 
+#include <ang/inline/object.inl>
 #include <ang/base/inline/runtime.inl>
 #include <ang/core/inline/function.inl>
 #include <ang/collections/inline/collections.inl>

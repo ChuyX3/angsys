@@ -29,7 +29,6 @@ namespace ang //constants
 		private:
 			element_type* _data;
 			wsize _size;
-			static element_type _dummy_data[1];
 
 		public:
 			array_view() : _size(0), _data(null) {}
@@ -49,10 +48,11 @@ namespace ang //constants
 			wsize size()const { return _size; }
 
 			type begin()const { 
+				static element_type _dummy_data[1];
 				return _data ? _data : _dummy_data;
 			}
 			type end()const { 
-				return _data ? _data + _size : _dummy_data;
+				return _data ? _data + _size : begin();
 			}
 
 		public: /*operators*/
@@ -69,8 +69,6 @@ namespace ang //constants
 
 			element_type** operator & () { return &get(); }
 		};
-
-		template<typename T> T array_view<T>::_dummy_data[1];
 
 		template<typename T, wsize N>
 		inline array_view<T> to_array(T(&ar)[N]) {

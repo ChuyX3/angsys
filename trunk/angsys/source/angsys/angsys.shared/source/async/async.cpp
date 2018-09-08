@@ -1,11 +1,11 @@
 #include "pch.h"
-#include "angsys.h"
+#include <ang/core/async.h>
 
 using namespace ang;
 using namespace ang::core;
 using namespace ang::core::async;
 
-extern "C" ulong64 ang_get_performance_time();
+safe_flags_implement(ang::core::async, async_action_status, uint);
 
 ////////////////////////////////////////////////////////////////
 

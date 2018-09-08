@@ -341,9 +341,6 @@ namespace ang
 		friend safe_pointer;
 	};
 
-	using ang::core::delegates::var_args;
-	using ang::core::delegates::var_args_t;
-
 }
 
 #endif//__CORE_FUNCTION_H__

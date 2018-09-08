@@ -347,6 +347,25 @@ namespace ang
 		weak_ptr& operator = (weak_ptr const& other) { safe_pointer::operator=(other);  return *this; }
 		weak_ptr& operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }
 	};
+
+
+	template<typename T, class owner, property_style TYPE>
+	class property<const intf_wrapper<T>, owner, TYPE> {
+	public:
+		property(T* val) : value(val) {}
+		T* get()const { return value.get(); }
+		operator T*()const { return value.get(); }
+		T* operator ->()const { return value.get(); }
+
+	protected:
+		void set(T* val) { value = val; }
+		property& operator = (property const& val) { set(val.get()); return*this; }
+		property& operator = (T* val) { set(val); return*this; }
+
+	private:
+		typename intf_wrapper<T> value;
+		friend owner;
+	};
 }
 
 

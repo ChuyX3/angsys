@@ -32,8 +32,14 @@ namespace ang
 		intf_wrapper(intf_wrapper &&);
 		intf_wrapper(intf_wrapper const&);
 
-		template<typename T, text::encoding E> intf_wrapper(str_view<T,E> const&); //string convertible
-		template<typename T, wsize N> intf_wrapper(T(&ar)[N]); //array convertible
+		template<wsize N> intf_wrapper(const char(&ar)[N]);
+		template<wsize N> intf_wrapper(const wchar(&ar)[N]);
+		template<wsize N> intf_wrapper(const mchar(&ar)[N]);
+		template<wsize N> intf_wrapper(const char16(&ar)[N]);
+		template<wsize N> intf_wrapper(const char32(&ar)[N]);
+		template<typename T, wsize N> intf_wrapper(T(&ar)[N]);
+		template<typename T, text::encoding E> intf_wrapper(str_view<T, E>);
+		template<text::encoding E, template<typename>class A> intf_wrapper(strings::basic_string<E,A> const&);
 
 		intf_wrapper(bool); //bool convertible
 		intf_wrapper(int); //int convertible
@@ -44,6 +50,9 @@ namespace ang
 		intf_wrapper(ulong64); //ulong convertible
 		intf_wrapper(float); //float convertible
 		intf_wrapper(double); //double convertible
+
+		template<typename T> intf_wrapper(T const& val);
+		template<typename T> intf_wrapper(variable<T>* val);
 
 		~intf_wrapper();
 
@@ -100,6 +109,8 @@ namespace ang
 		, public value<T>
 	{
 	public:
+
+	public:
 		variable();
 		variable(T const&);
 		variable(value<T> const& val) : value<T>(val) {	}
@@ -123,6 +134,149 @@ namespace ang
 	protected:
 		virtual~variable();
 	};
+
+
+	template<typename T>
+	class object_wrapper<variable<T>>
+	{
+	public:
+		typedef variable<T> type;
+		typedef variable<T>* type_ptr;
+		typedef variable<T>& type_ref;
+		typedef variable<T> const* ctype_ptr;
+		typedef variable<T> const& ctype_ref;
+
+	public:
+		object_wrapper()
+			: _ptr(null) {
+		}
+
+		object_wrapper(type* ptr)
+			: object_wrapper() {
+			set(ptr);
+		}
+
+		object_wrapper(object_wrapper && ptr)
+			: object_wrapper() {
+			T * temp = ptr._ptr;
+			ptr._ptr = null;
+			_ptr = temp;
+		}
+
+		object_wrapper(object_wrapper const& ptr)
+			: object_wrapper() {
+			set(ptr.get());
+		}
+
+		object_wrapper(ang::nullptr_t const&)
+			: object_wrapper() {
+		}
+
+		~object_wrapper() {
+			reset();
+		}
+
+	public: //properties
+
+		void reset() {
+			if (_ptr)_ptr->release();
+			_ptr = null;
+		}
+
+		void reset_unsafe() {
+			_ptr = null;
+		}
+
+		bool is_empty()const {
+			return _ptr == null;
+		}
+
+		type* get(void)const {
+			return _ptr;
+		}
+
+		void set(type* ptr) {
+			type * temp = _ptr;
+			if (ptr == _ptr)
+				return;
+			_ptr = ptr;
+			if (_ptr)_ptr->add_ref();
+			if (temp)temp->release();
+		}
+
+		void move(object_wrapper& ptr) {
+			if (this == &ptr)
+				return;
+			reset();
+			_ptr = ptr._ptr;
+			ptr._ptr = null;
+		}
+
+		type ** addres_of(void) {
+			return&_ptr;
+		}
+
+		type ** addres_for_init(void) {
+			reset();
+			return&_ptr;
+		}
+
+	public: //operators
+
+		object_wrapper& operator = (type* ptr) {
+			set(ptr);
+			return*this;
+		}
+
+		object_wrapper& operator = (ang::nullptr_t const&) {
+			reset();
+			return*this;
+		}
+		object_wrapper& operator = (object_wrapper && ptr) {
+			move(ptr);
+			return*this;
+		}
+
+		object_wrapper& operator = (object_wrapper const& ptr) {
+			set(ptr.get());
+			return*this;
+		}
+
+		object_wrapper_ptr<T> operator & (void);
+
+		type* operator -> (void) {
+			return get();
+		}
+
+		type const* operator -> (void)const {
+			return get();
+		}
+
+		operator type* (void) {
+			return get();
+		}
+
+		operator type const* (void)const {
+			return get();
+		}
+
+		operator T& () {
+			return get()->get();
+		}
+
+		operator T const& ()const {
+			return get()->get();
+		}
+
+	private:
+		type* _ptr;
+	};
+
+
+	template<typename T, typename...Ts>
+	inline shared_ptr<T> make_shared(Ts... args) {
+		return new variable<T>(ang::forward<Ts>(args)...);
+	}
 }
 
 
@@ -579,5 +733,14 @@ namespace ang
 		return ivariant_getter<T>::get(this, value);
 	}
 
+	template<typename T>
+	inline intf_wrapper<ivariant>::intf_wrapper(T const& val)
+		: intf_wrapper((ivariant*)new variable<T>(val)) {
+	}
+
+	template<typename T>
+	inline intf_wrapper<ivariant>::intf_wrapper(variable<T>* val)
+		: intf_wrapper((ivariant*)val) {
+	}
 }
 #endif//__SAMRT_PTR_H__

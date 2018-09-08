@@ -74,6 +74,10 @@ variable<bool>::~variable()
 
 }
 
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::boolean, object, ivariant);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::boolean);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::boolean, object, ivariant);
+
 comparision_result_t variable<bool>::compare(object const* obj)const
 {
 	ivariant* var = interface_cast<ivariant>(const_cast<object*>(obj));

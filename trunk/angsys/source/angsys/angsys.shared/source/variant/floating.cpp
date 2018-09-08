@@ -190,6 +190,10 @@ variable<float>::~variable()
 
 }
 
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::floating, object, ivariant);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::floating);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::floating, object, ivariant);
+
 comparision_result_t variable<float>::compare(object const* obj)const
 {
 	ivariant* var = interface_cast<ivariant>(const_cast<object*>(obj));
@@ -511,6 +515,10 @@ variable<double>::~variable()
 {
 
 }
+
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::floating64, object, ivariant);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::floating64);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::floating64, object, ivariant);
 
 comparision_result_t variable<double>::compare(object const* obj)const
 {

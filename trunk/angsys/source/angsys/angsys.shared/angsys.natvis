@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
+  <Type Name="ang::collections::pair&lt;*&gt;">
+    <DisplayString>[{key} : {value}]</DisplayString>
+    <Expand>
+      <Item Name="[key]" ExcludeView="simple">key</Item>
+      <Item Name="[value]" ExcludeView="simple">value</Item>
+    </Expand>
+  </Type>
+  
   <Type Name="ang::collections::array_view&lt;*&gt;">
     <DisplayString>array[{_size}]</DisplayString>
     <Expand>
@@ -161,6 +169,38 @@
     </Expand>
   </Type>
 
+  <Type Name="ang::intf_wrapper&lt;*&gt;">
+    <DisplayString Condition="_ptr != 0">{*_ptr}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <ExpandedItem>_ptr</ExpandedItem>
+    </Expand>
+  </Type>
+
+
+  <Type Name="ang::collections::array_buffer&lt;*&gt;">
+    <DisplayString>array[{_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::vector_buffer&lt;*&gt;">
+    <DisplayString>vector[{_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <Item Name="[capacity]" ExcludeView="simple">_capacity</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
 
   <Type Name="ang::strings::basic_const_string_buffer&lt;*&gt;">
     <DisplayString Condition="view_ != 0">{((this + 1) + sizeof(wsize)), s}</DisplayString>
@@ -171,6 +211,18 @@
         <Size>size_</Size>
         <ValuePointer>(char*)(wsize(this + 1) + sizeof(wsize))</ValuePointer>
       </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::strings::basic_string_buffer&lt;1,*&gt;">
+    <DisplayString Condition="_data._storage_type &gt;= 0">{_data._stack_buffer, s}</DisplayString>
+    <DisplayString Condition="_data._storage_type == -1">{_data._allocated_buffer, s}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type &gt;= 0">_data._stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type &gt;= 0">RAW_CAPACITY</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_capacity</Item>
     </Expand>
   </Type>
 
@@ -193,6 +245,13 @@
           </Else>
         </Loop>
       </CustomListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::value&lt;*&gt;">
+    <DisplayString Condition="genre_id == 2 || genre_id == 3">{this}</DisplayString>
+    <DisplayString Condition="genre_id != 2 &amp;&amp; genre_id != 3">{_value}</DisplayString>
+    <Expand>
     </Expand>
   </Type>
 

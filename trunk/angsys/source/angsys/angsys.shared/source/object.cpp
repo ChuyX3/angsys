@@ -368,6 +368,11 @@ wstring object::to_string()const
 	return runtime_info().type_name();
 }
 
+wstring object::to_string(text::text_format_t)const
+{
+	return runtime_info().type_name();
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 

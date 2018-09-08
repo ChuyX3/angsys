@@ -49,6 +49,44 @@ namespace ang //constants
 			auto_detect = 0XFFFF
 		} encoding;
 
+		template<encoding E>
+		struct native_encoding : integer_constant<encoding, E> { };
+
+		template<> 
+		struct native_encoding<encoding::utf16>
+			: value_selector<encoding, encoding::utf16_le, encoding::utf16_be, LITTLE_ENDIAN_PLATFORM> {
+		};
+
+		template<> 
+		struct native_encoding<encoding::utf32>
+			: value_selector<encoding, encoding::utf32_le, encoding::utf32_be, LITTLE_ENDIAN_PLATFORM > {
+		};
+
+		template<>
+		struct native_encoding<encoding::unicode>
+			: value_selector<encoding, native_encoding<encoding::utf16>::value, native_encoding<encoding::utf32>::value, sizeof(wchar) == 2>{
+		};
+
+		template<encoding E>
+		struct native_inverse_encoding : integer_constant<encoding, E> {
+		};
+
+		template<>
+		struct native_inverse_encoding<encoding::utf16>
+			: value_selector<encoding, encoding::utf16_be, encoding::utf16_le, LITTLE_ENDIAN_PLATFORM > { 
+		};
+
+		template<>
+		struct native_inverse_encoding<encoding::utf32>
+			: value_selector<encoding, encoding::utf32_be, encoding::utf32_le, LITTLE_ENDIAN_PLATFORM >{ 
+		};
+
+		template<>
+		struct native_inverse_encoding<encoding::unicode>
+			: value_selector<encoding, native_inverse_encoding<encoding::utf16>::value, native_inverse_encoding<encoding::utf32>::value, sizeof(wchar) == 2> {
+		};
+		
+
 		template<typename T> struct is_char_type : false_type { };
 
 		template<> struct is_char_type<char> : true_type { };
@@ -595,6 +633,25 @@ namespace ang //constants
 						char thousand;
 					};
 				};
+				text_format_flags() {
+					value = 0;
+				}
+				text_format_flags(qword val) {
+					value = val;
+				}
+				text_format_flags(ang::text::text_format::target t) {
+					value = 0;
+					target = t;
+					switch (t)
+					{
+					case bool_:
+						case_ = 3;
+						break;
+					case float_:
+						pres = 4;
+						break;
+					}
+				}
 			};
 		public:
 			text_format();//default format-> bad format
@@ -670,6 +727,30 @@ namespace ang //constants
 		};
 
 		template<> struct default_text_format<double> :public default_text_format<float> {};
+
+
+
+		template<text::encoding ENCODING> wsize load_bom(pointer ptr) { return 0; }
+
+		template<> LINK wsize load_bom<text::encoding::utf8>(pointer ptr);
+
+		template<> LINK wsize load_bom<text::encoding::utf16_le>(pointer ptr);
+
+		template<> LINK wsize load_bom<text::encoding::utf16_be>(pointer ptr);
+
+		template<> LINK wsize load_bom<text::encoding::utf32_le>(pointer ptr);
+
+		template<> LINK wsize load_bom<text::encoding::utf32_be>(pointer ptr);
+
+		template<> LINK wsize load_bom<text::encoding::utf16>(pointer ptr);
+
+		template<> LINK wsize load_bom<text::encoding::utf16_se>(pointer ptr);
+
+		template<> LINK wsize load_bom<text::encoding::utf32>(pointer ptr);
+
+		template<> LINK wsize load_bom<text::encoding::utf32_se>(pointer ptr);
+
+		template<> LINK wsize load_bom<text::encoding::unicode>(pointer ptr);
 	}
 
 

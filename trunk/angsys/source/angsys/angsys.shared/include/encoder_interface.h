@@ -20,6 +20,7 @@ namespace ang
 
 			virtual encoding_t format()const override;
 			virtual rtti_t const& char_type()const override;
+			virtual char32 to_char32(unknown_str_t str, windex& i)const override;
 			virtual void set_eos(unknown_str_t str, windex at)const override;
 			virtual wsize lenght(unknown_cstr_t cstr)const override;
 			virtual wsize size(unknown_cstr_t cstr, encoding_t e, windex start, windex end)const override;
@@ -45,19 +46,24 @@ namespace ang
 		}
 
 
-		template<encoding ENCODING> inline
-		encoding_t encoder_interface<ENCODING>::format()const {
+		template<encoding ENCODING> 
+		inline encoding_t encoder_interface<ENCODING>::format()const {
 			return ENCODING;
 		}
 
-		template<encoding ENCODING> inline
-			rtti_t const& encoder_interface<ENCODING>::char_type()const {
+		template<encoding ENCODING> 
+		inline rtti_t const& encoder_interface<ENCODING>::char_type()const {
 			return rtti::type_of<char_t>();
 		}
 
-		template<encoding ENCODING> inline
-		wsize encoder_interface<ENCODING>::lenght(unknown_cstr_t cstr)const {
+		template<encoding ENCODING> 
+		inline wsize encoder_interface<ENCODING>::lenght(unknown_cstr_t cstr)const {
 			return encoder<ENCODING>::lenght((cstr_t)cstr);
+		}
+
+		template<encoding ENCODING>
+		inline char32 encoder_interface<ENCODING>::to_char32(unknown_str_t str, windex& i)const {
+			return text::to_char32<false, text::is_endian_swapped<ENCODING>::value>((cstr_t)str, i);
 		}
 
 		template<encoding ENCODING> inline
