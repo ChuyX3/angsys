@@ -63,6 +63,8 @@ int main(int argc, char* argv[])
 	core::files::ifile_system* fs = core::files::ifile_system::get_file_system();
 	fs->register_paths(L"../../../third_party"_s);
 
+	auto f = core::files::file_flags::access_in + core::files::file_flags::access_out;
+
 
 	d3d11::main_app_t app = new d3d11::main_app();
 	return (int)app->run();
