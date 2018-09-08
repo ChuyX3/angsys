@@ -102,9 +102,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\GL\textures.hpp">
       <Filter>header files\include\GL</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\geometry.hpp">
-      <Filter>header files\ang\graphics</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angraph.cpp">

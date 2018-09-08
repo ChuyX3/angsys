@@ -159,7 +159,7 @@ namespace ang
 
 	public:
 		void clean();
-		void clear_unsafe();
+		void clean_unsafe();
 		bool is_empty()const;
 		collections::array_buffer<T, allocator>* get(void)const;
 		void set(collections::array_buffer<T, allocator>*);

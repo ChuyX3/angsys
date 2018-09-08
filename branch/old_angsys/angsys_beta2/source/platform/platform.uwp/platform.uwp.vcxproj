@@ -228,11 +228,6 @@
     <ClCompile Include="source\FrameworkView.cpp" />
     <ClCompile Include="source\win_events.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\angsys\angsys.uwp\angsys.uwp.vcxproj">
-      <Project>{4d737df5-bd7f-46c6-9eb5-e870bf9a5da2}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
