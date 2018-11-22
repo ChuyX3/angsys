@@ -123,10 +123,10 @@ namespace ang
 
 			public:
 				inline scope_locker(mutex_ptr_t const& m) : _mutex(m.get()) {
-					_mutex->lock();
+					if(!_mutex.is_empty())_mutex->lock();
 				}
 				inline ~scope_locker() {
-					_mutex->unlock();
+					if (!_mutex.is_empty())_mutex->unlock();
 				}
 
 				template<typename func_t>

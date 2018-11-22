@@ -45,9 +45,9 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::events::message, object);
 
 
 core_msg_t message::msg()const { return _msg; }
-array_view<objptr> message::args()const { return _args; }
-windex message::push_arg(objptr obj) { _args += obj; return _args->counter(); }
-objptr message::arg(windex i)const { return _args[i + 2]; }
+array_view<var> message::args()const { return _args; }
+windex message::push_arg(var obj) { _args += obj; return _args->counter(); }
+var message::arg(windex i)const { return _args[i + 2]; }
 ulong64 message::wparam()const { return (ulong64)_args[0]; }
 long64 message::lparam()const { return (long64)_args[1]; }
 dword message::result()const { return _result; }

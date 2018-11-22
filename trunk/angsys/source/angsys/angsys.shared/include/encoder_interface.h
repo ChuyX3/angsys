@@ -27,6 +27,7 @@ namespace ang
 			virtual int compare(unknown_cstr_t cstr1, unknown_cstr_t cstr2, encoding_t e)const override;
 			virtual wsize compare_until(unknown_cstr_t cstr1, unknown_cstr_t cstr2, encoding_t e)const override;
 			virtual wsize find(unknown_cstr_t cstr1, wsize s1, unknown_cstr_t cstr2, wsize s2, encoding_t e, windex start)const override;
+			virtual wsize find_any(unknown_cstr_t cstr, wsize sz, wsize start, array_view<const char32>)const override;
 			virtual wsize find_reverse(unknown_cstr_t cstr1, wsize s1, unknown_cstr_t cstr2, wsize s2, encoding_t e, windex start)const override;
 			virtual raw_str_t convert(unknown_str_t dest, unknown_cstr_t src, encoding_t e, bool set_eos, wsize max_out_size, wsize max_in_size)const override;
 			virtual raw_str_t convert(unknown_str_t dest, wsize& i, unknown_cstr_t src, wsize& j, encoding_t e, bool set_eos, wsize max_out_size, wsize max_in_size)const override;
@@ -148,6 +149,11 @@ namespace ang
 		}
 
 		template<encoding ENCODING> inline
+			wsize encoder_interface<ENCODING>::find_any(unknown_cstr_t cstr1, wsize s1, wsize start, array_view<const char32> chars)const {
+			return encoder<ENCODING>::find_any((cstr_t)cstr1, s1, start, chars);
+		}
+
+		template<encoding ENCODING> inline
 		wsize encoder_interface<ENCODING>::find_reverse(unknown_cstr_t cstr1, wsize s1, unknown_cstr_t cstr2, wsize s2, encoding_t e, windex start)const {
 			switch (e.get())
 			{
@@ -172,17 +178,17 @@ namespace ang
 			wsize i = 0, j = 0;
 			switch (e.get())
 			{
-			case encoding::ascii: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::ascii>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::unicode:return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::unicode>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf8: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf8>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf16: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf16_se: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16_se>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf16_le: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16_le>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf16_be: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16_be>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf32: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf32_se: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32_se>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf32_le: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32_le>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf32_be: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32_be>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
+			case encoding::ascii: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::ascii>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::unicode: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::unicode>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf8: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf8>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf16: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf16_se: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16_se>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf16_le: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16_le>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf16_be: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16_be>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf32: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf32_se: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32_se>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf32_le: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32_le>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf32_be: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32_be>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
 			default: return raw_str();
 			}
 		}
@@ -191,17 +197,17 @@ namespace ang
 		raw_str_t encoder_interface<ENCODING>::convert(unknown_str_t dest, wsize& i, unknown_cstr_t src, wsize& j, encoding_t e, bool set_eos, wsize max_out_size, wsize max_in_size)const {
 			switch (e.get())
 			{
-			case encoding::ascii: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::ascii>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::unicode:return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::unicode>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf8: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf8>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf16: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf16_se: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16_se>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf16_le: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16_le>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf16_be: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16_be>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf32: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf32_se: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32_se>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf32_le: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32_le>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
-			case encoding::utf32_be: return raw_str(encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32_be>::cstr_t)src, j, set_eos, max_out_size, max_in_size), i, ENCODING);
+			case encoding::ascii: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::ascii>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::unicode: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::unicode>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf8: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf8>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf16: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf16_se: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16_se>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf16_le: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16_le>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf16_be: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf16_be>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf32: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf32_se: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32_se>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf32_le: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32_le>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
+			case encoding::utf32_be: encoder<ENCODING>::convert((str_t)dest, i, (typename char_type_by_encoding<encoding::utf32_be>::cstr_t)src, j, set_eos, max_out_size, max_in_size); return raw_str((str_t)dest, i, ENCODING);
 			default: return raw_str();
 			}
 		}

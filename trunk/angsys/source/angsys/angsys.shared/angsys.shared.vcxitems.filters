@@ -66,6 +66,9 @@
     <Filter Include="source\streams">
       <UniqueIdentifier>{6e30a5da-47c9-4b1a-96df-e4b42fed2c66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\files">
+      <UniqueIdentifier>{7c54ee61-ea72-4539-9091-28d165d55a63}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h">
@@ -242,6 +245,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\streams.h">
       <Filter>header\angsys</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\file_system.h">
+      <Filter>header\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\com_wrapper.hpp">
+      <Filter>header\angsys\inline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
@@ -318,6 +327,18 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\streams.cpp">
       <Filter>source\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\files.cpp">
+      <Filter>source\files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\core_file.cpp">
+      <Filter>source\files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\file_system.cpp">
+      <Filter>source\files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\input_text_file.cpp">
+      <Filter>source\files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

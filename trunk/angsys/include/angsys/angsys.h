@@ -136,6 +136,9 @@ namespace ang
 	using args_t = vector<objptr>;
 	using args = collections::vector_buffer<var>;
 
+	using vars_t = vector<var>;
+	using vars = collections::vector_buffer<var>;
+
 	using var_args_t = vector<var>;
 	using var_args = collections::vector_buffer<var>;
 

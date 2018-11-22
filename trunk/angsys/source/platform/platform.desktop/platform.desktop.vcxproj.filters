@@ -6,13 +6,7 @@
     <ClInclude Include="include\async_msg_task.h">
       <Filter>header files\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\angwin.hpp">
-      <Filter>header files\ang\platform\angwin</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\gdi.hpp">
-      <Filter>header files\ang\platform\angwin</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\win_events.hpp">
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\angwin.h">
       <Filter>header files\ang\platform\angwin</Filter>
     </ClInclude>
   </ItemGroup>

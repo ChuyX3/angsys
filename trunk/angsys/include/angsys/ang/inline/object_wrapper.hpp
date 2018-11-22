@@ -10,7 +10,7 @@ namespace ang
 	/*  -> implements handling of smart pointers                      */
 	/******************************************************************/
 	template<typename T>
-	class object_wrapper 
+	class object_wrapper
 	{
 	public:
 		typedef T type;
@@ -20,17 +20,17 @@ namespace ang
 		typedef T const& ctype_ref;
 
 	public:
-		object_wrapper() 
+		object_wrapper()
 			: _ptr(null) {
 			static_assert(is_object<type>::value, "ERROR: T is not a object type...");
 		}
 
-		object_wrapper(type* ptr) 
+		object_wrapper(type* ptr)
 			: object_wrapper() {
 			set(ptr);
 		}
 
-		object_wrapper(object_wrapper && ptr) 
+		object_wrapper(object_wrapper && ptr)
 			: object_wrapper() {
 			T * temp = ptr._ptr;
 			ptr._ptr = null;
@@ -39,7 +39,7 @@ namespace ang
 
 		object_wrapper(object_wrapper const& ptr)
 			: object_wrapper() {
-			set(ptr.get()); 
+			set(ptr.get());
 		}
 
 		object_wrapper(ang::nullptr_t const&)
@@ -57,15 +57,15 @@ namespace ang
 			_ptr = null;
 		}
 
-		void reset_unsafe() { 
+		void reset_unsafe() {
 			_ptr = null;
 		}
 
-		bool is_empty()const { 
+		bool is_empty()const {
 			return _ptr == null;
 		}
 
-		type* get(void)const { 
+		type* get(void)const {
 			return _ptr;
 		}
 
@@ -90,20 +90,20 @@ namespace ang
 			return&_ptr;
 		}
 
-		type ** addres_for_init(void) { 
+		type ** addres_for_init(void) {
 			reset();
 			return&_ptr;
 		}
 
 	public: //operators
 
-		object_wrapper& operator = (type* ptr) { 
-			set(ptr); 
+		object_wrapper& operator = (type* ptr) {
+			set(ptr);
 			return*this;
 		}
 
-		object_wrapper& operator = (ang::nullptr_t const&) { 
-			reset(); 
+		object_wrapper& operator = (ang::nullptr_t const&) {
+			reset();
 			return*this;
 		}
 		object_wrapper& operator = (object_wrapper && ptr) {
@@ -118,7 +118,7 @@ namespace ang
 
 		object_wrapper_ptr<T> operator & (void);
 
-		type* operator -> (void) { 
+		type* operator -> (void) {
 			return get();
 		}
 
@@ -137,7 +137,7 @@ namespace ang
 	private:
 		type* _ptr;
 	};
-	
+
 	/******************************************************************/
 	/* template class ang::object_wrapper_ptr :                       */
 	/*  -> reprecents a object_wrapper pointer                        */
@@ -154,12 +154,12 @@ namespace ang
 			: _ptr(ptr) {
 		}
 
-		object_wrapper_ptr(object_wrapper_ptr && ptr) 
-			: _ptr(ptr._ptr) { 
+		object_wrapper_ptr(object_wrapper_ptr && ptr)
+			: _ptr(ptr._ptr) {
 			ptr._ptr = null;
 		}
 
-		object_wrapper_ptr(object_wrapper_ptr const& ptr) 
+		object_wrapper_ptr(object_wrapper_ptr const& ptr)
 			: _ptr(ptr._ptr) {
 		}
 
@@ -176,7 +176,7 @@ namespace ang
 		}
 
 		object_wrapper<T>* operator ->()const {
-			return _ptr; 
+			return _ptr;
 		}
 
 		operator object_wrapper<T>*()const {
@@ -187,7 +187,7 @@ namespace ang
 			return _ptr->addres_of();
 		}
 
-		operator T**()const { 
+		operator T**()const {
 			return _ptr->addres_of();
 		}
 
@@ -199,7 +199,7 @@ namespace ang
 	/* template class ang::object_wrapper<object> :                   */
 	/*  -> specialization of object_wrapper<object> -> objptr         */
 	/******************************************************************/
-	template<> 
+	template<>
 	class LINK object_wrapper<object>
 	{
 	public:

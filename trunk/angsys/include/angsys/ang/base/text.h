@@ -22,6 +22,8 @@ namespace ang //constants
 		big = 1,
 #ifdef _WIN32
 		native = endian_proxy::little
+#elif defined ANDROID_PLATFORM
+		native = endian_proxy::big
 #else 
 		native = endian_proxy::little
 #endif
@@ -236,6 +238,7 @@ namespace ang //constants
 			template<typename cstr2_t> static windex compare_until(raw_cstr_t first, cstr2_t second);
 			template<typename cstr2_t> static windex find(raw_cstr_t first, wsize sz1, cstr2_t second, wsize sz2, windex start);
 			template<typename cstr2_t> static windex find_reverse(raw_cstr_t first, wsize sz1, cstr2_t second, wsize sz2, windex start);
+			static windex find_any(raw_cstr_t first, wsize sz1, windex start, array_view<const char32> chars);
 			template<typename cstr2_t> static raw_str_t convert(raw_str_t str, cstr2_t cstr, bool eos = true, wsize max_out = -1, wsize max_in = -1);
 			template<typename cstr2_t> static raw_str_t convert(raw_str_t str, wsize& i, cstr2_t cstr, wsize& j, bool eos = true, wsize max_out = -1, wsize max_in = -1);
 		};

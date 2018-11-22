@@ -43,6 +43,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\doc\json.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\doc\xml.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\exception.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\com_wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\const_string_declaration.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\intf_wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\object_wrapper.hpp" />
@@ -70,6 +71,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core_hash_table.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\encoder_interface.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\file_system.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\format_parser.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\runtime_manager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\thread_manager.h" />
@@ -83,6 +85,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\encoder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\exception.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\core_file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\files.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\file_system.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\input_text_file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\memory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\platform\events.cpp" />

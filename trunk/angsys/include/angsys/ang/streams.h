@@ -106,8 +106,8 @@ namespace ang
 		
 		ang_begin_interface(LINK itext_input_stream, public iinput_stream)
 			visible vcall wsize read_format(raw_cstr_t format, var_args_t&)pure;
-			visible vcall wsize read(ibuffer_view_t, text::encoding_t, wsize max)pure;
-			visible vcall wsize read_line(ibuffer_view_t, text::encoding_t, wsize max, array_view<const char32_t> = U"\n\r")pure;
+			visible vcall wsize read(ibuffer_view_t, text::encoding_t, wsize*written = null)pure;
+			visible vcall wsize read_line(ibuffer_view_t, text::encoding_t, array_view<const char32_t> = U"\n\r", wsize*written=null)pure;
 			template<typename C, text::encoding E> wsize read_format(str_view<C, E> format, var_args_t& va) {
 				return read_format(raw_cstr(format), ang::forward<var_args_t&>(va));
 			}
@@ -145,12 +145,12 @@ namespace ang
 {
 	namespace streams
 	{
-		template<typename C, text::encoding E, typename...Ts> struct read_format_helper;
+		template<typename S, typename C, text::encoding E, typename...Ts> struct read_format_helper;
 
-		template<typename C, text::encoding E, typename T, typename...Ts>
-		struct read_format_helper<C,E,T,Ts...>
+		template<typename S, typename C, text::encoding E, typename T, typename...Ts>
+		struct read_format_helper<S,C,E,T,Ts...>
 		{
-			static wsize read_format(itext_input_stream_t stream, str_view<C, E> format, var_args_t& va, T& a, Ts&... as) {
+			static wsize read_format(S stream, str_view<C, E> format, var_args_t& va, T& a, Ts&... as) {
 				auto readed = read_format_helper<C, E, Ts...>::read_format(format, va, ang::forward<Ts&>(as)...);
 				objptr obj;
 				va->pop(obj, true);
@@ -160,10 +160,10 @@ namespace ang
 			}
 		};
 
-		template<typename C, text::encoding E>
-		struct read_format_helper<C,E>
+		template<typename S, typename C, text::encoding E>
+		struct read_format_helper<S,C,E>
 		{
-			static wsize read_format(itext_input_stream_t stream, str_view<C, E> format, var_args_t& va) {
+			static wsize read_format(S stream, str_view<C, E> format, var_args_t& va) {
 				return stream->read_format(format, va);
 			}
 		};
@@ -171,53 +171,53 @@ namespace ang
 		template<typename C, text::encoding E, typename...Ts> 
 		wsize itext_input_stream::read_format(str_view<C, E> format, Ts&... args) {
 			var_args_t va = new var_args();
-			return read_format_helper<C, E, Ts...>::read_format(this, format, va, args...);
+			return read_format_helper<itext_input_stream_t, C, E, Ts...>::read_format(this, format, va, args...);
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 
-		template<typename T> struct write_text_helper
+		template<typename S, typename T> struct write_text_helper
 		{
-			static wsize write_text(itext_output_stream_t stream, T const& val) {
+			static wsize write_text(S stream, T const& val) {
 				return stream->write(var(val));
 			}
 		};
 
-		template<typename T, text::encoding E>
-		struct write_text_helper<str_view<T,E>>
+		template<typename S, typename T, text::encoding E>
+		struct write_text_helper<S, str_view<T,E>>
 		{
-			static wsize write_text(itext_output_stream_t stream, str_view<T, E> const& val) {
+			static wsize write_text(S stream, str_view<T, E> const& val) {
 				stream->write(raw_cstr(val));
 			}
 		};
 
-		template<text::encoding E, template<typename> class A>
-		struct write_text_helper<strings::basic_string<E,A>>
+		template<typename S, text::encoding E, template<typename> class A>
+		struct write_text_helper<S, strings::basic_string<E,A>>
 		{
-			static wsize write_text(itext_output_stream_t stream, strings::basic_string<E, A> const& val) {
+			static wsize write_text(S stream, strings::basic_string<E, A> const& val) {
 				return val.is_empty() ? 0 : stream->write(raw_cstr(val->cstr()));
 			}
 		};
 
-		template<typename T>
-		struct write_text_helper<object_wrapper<T>>
+		template<typename S, typename T>
+		struct write_text_helper<S, object_wrapper<T>>
 		{
-			static wsize write_text(itext_output_stream_t stream, object_wrapper<T> const& val) {
+			static wsize write_text(S stream, object_wrapper<T> const& val) {
 				return val.is_empty() ? 0 : stream->write(val->to_string());
 			}
 		};
 
-		template<>
-		struct write_text_helper<var>
+		template<typename S>
+		struct write_text_helper<S, var>
 		{
-			static wsize write_text(itext_output_stream_t stream, var const& val) {
+			static wsize write_text(S stream, var const& val) {
 				return val.is_empty() ? 0 : stream->write(val->to_string());
 			}
 		};
 		
 		template<typename T>
 		wsize itext_output_stream::write(T const& val) {
-			return write_text_helper<T>::write_text(this, val);
+			return write_text_helper<itext_output_stream_t, T>::write_text(this, val);
 		}
 
 

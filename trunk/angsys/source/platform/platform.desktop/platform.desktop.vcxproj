@@ -223,9 +223,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\angwin.hpp" />
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\gdi.hpp" />
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\win_events.hpp" />
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\angwin.h" />
     <ClInclude Include="include\async_msg_task.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />

@@ -378,6 +378,18 @@ namespace ang
 			return ang::invalid_index;
 		}
 
+		template<encoding ENCODING> inline windex encoder<ENCODING>::find_any(raw_cstr_t first, wsize s1, windex start, array_view<const char32> chars)
+		{
+			windex i = start;
+			char32_t c1;
+		LOOP:
+			c1 = to_char32<false, is_endian_swapped<ENCODING>::value>(first, i);
+			for (auto c2 : chars)	
+				if (c1 == c2) return i;
+			if (c1 == 0) return invalid_index;
+			goto LOOP;
+		}
+
 		template<encoding ENCODING> template <typename cstr2_t> inline windex encoder<ENCODING>::find_reverse(raw_cstr_t first, wsize s1, cstr2_t second, wsize s2, windex start)
 		{
 			typedef char_t char1_t;

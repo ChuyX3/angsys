@@ -226,10 +226,11 @@ namespace ang
 			Null = 0,
 			OpenGL,
 			OpenGLES,
-			DirectX,
-			DirectX11 = graph_driver_type::DirectX,
+			DirectX9,
+			DirectX11,
 			Vulkan,//todo
 			DirectX12,//todo
+			DirectX = graph_driver_type::DirectX11,			
 		};
 
 		safe_enum(LINK, primitive, byte)

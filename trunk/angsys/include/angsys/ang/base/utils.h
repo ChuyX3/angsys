@@ -38,6 +38,20 @@ namespace ang //constants
 	typedef integer_constant<long64, -1> invalid_index_type;
 	invalid_index_type const invalid_index = {};
 
+	template<>
+	struct integer_constant<wsize, -1> {
+		typedef wsize value_type;
+		typedef integer_constant<wsize, -1> self_type;
+
+		static constexpr value_type value = -1;
+		constexpr operator pointer() const { return pointer(value); }
+		constexpr operator value_type() const { return (value); }
+		constexpr value_type operator()() const { return (value); }
+	};
+
+	typedef integer_constant<wsize, -1> invalid_handle_type;
+	invalid_handle_type const invalid_handle = {};
+
 	typedef decltype(nullptr) nullptr_t;
 	nullptr_t const null = {};
 

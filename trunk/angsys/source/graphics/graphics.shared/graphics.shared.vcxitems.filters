@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="header files">
+      <UniqueIdentifier>{24bb1f36-faa7-489f-8bbf-4a701d354ca5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files">
+      <UniqueIdentifier>{0a8b2d1b-0260-4711-a328-bbed7ff591c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang">
+      <UniqueIdentifier>{deee6ace-0aaa-4c77-aec6-c1abeb90affe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include">
+      <UniqueIdentifier>{63c3a754-78b2-4dc6-ab0c-3361682113fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang\graphics">
+      <UniqueIdentifier>{2c8f646b-7b89-4156-a1ed-3dc4bab84065}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\include\d3d9">
+      <UniqueIdentifier>{f201a88a-9264-4137-9412-6831fc564d3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\d3d9">
+      <UniqueIdentifier>{46bfac14-c848-4fe4-a9e6-ca5f596f1a0f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\graphics.h">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\reflect.h">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\buffers.h">
+      <Filter>header files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d9\buffers.h">
+      <Filter>header files\include\d3d9</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d9\driver.h">
+      <Filter>header files\include\d3d9</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d9\shaders.h">
+      <Filter>header files\include\d3d9</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d9\textures.h">
+      <Filter>header files\include\d3d9</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\graphics.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d9\d3d9_driver.cpp">
+      <Filter>source files\d3d9</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

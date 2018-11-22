@@ -14,6 +14,7 @@
 #include "encoder_interface.h"
 #include "runtime_manager.h"
 #include "thread_manager.h"
+#include "file_system.h"
 
 #include <ang/platform/platform.h>
 //#include "ang/core/async.h"
@@ -68,9 +69,13 @@ namespace ang
 		{
 			objects = new(malloc(sizeof(object_manager))) object_manager();
 			thread_manager = new(malloc(sizeof(core::async::thread_manager))) core::async::thread_manager();
+
+			core::files::file_system::instance();
 		}
 		~ang_main_instance()
 		{
+			core::files::file_system::release_instance();
+
 			thread_manager->~thread_manager();
 			free(thread_manager);
 			thread_manager = null;

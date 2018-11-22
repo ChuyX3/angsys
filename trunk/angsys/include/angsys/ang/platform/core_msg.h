@@ -21,7 +21,7 @@ namespace ang
 			{
 			private:
 				core_msg_t _msg;
-				args_t _args;
+				vars_t _args;
 				mutable dword _result;
 
 			public:
@@ -39,11 +39,11 @@ namespace ang
 
 			public: //properties
 				core_msg_t msg()const;
-				windex push_arg(objptr);
+				windex push_arg(var);
 				ulong64 wparam()const;
 				long64 lparam()const;
-				objptr arg(windex i)const;
-				array_view<objptr> args()const;
+				var arg(windex i)const;
+				array_view<var> args()const;
 				dword result()const;
 				void result(dword)const;
 

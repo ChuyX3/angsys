@@ -161,7 +161,7 @@ template<> struct _LINK type_info_builder<_TYPE> { \
 
 #define ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_INLINE(_TYPE) \
 namespace ang { namespace runtime{ \
-template<> struct _LINK type_info_builder<_TYPE> { \
+template<> struct type_info_builder<_TYPE> { \
 	static rtti_t const& type_of() { static rtti_t const& info = rtti::regist(#_TYPE, genre_of<_TYPE>(), sizeof(_TYPE), alignof(_TYPE)); return info; } \
 };}}
 

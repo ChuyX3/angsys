@@ -54,7 +54,7 @@
     </Expand>
   </Type>
 
-  <Type Name="ang::str_view&lt;wchar_t&gt;">
+  <Type Name="ang::str_view&lt;wchar_t,*&gt;">
     <DisplayString Condition="view_ != 0">{view_, su}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
@@ -66,7 +66,7 @@
     </Expand>
   </Type>
 
-  <Type Name="ang::str_view&lt;wchar_t const&gt;">
+  <Type Name="ang::str_view&lt;wchar_t const,*&gt;">
     <DisplayString Condition="view_ != 0">{view_, su}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
@@ -78,7 +78,7 @@
     </Expand>
   </Type>
 
-  <Type Name="ang::str_view&lt;unsigned char&gt;">
+  <Type Name="ang::str_view&lt;unsigned char,*&gt;">
     <DisplayString Condition="view_ != 0">{view_, s8}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
@@ -90,7 +90,7 @@
     </Expand>
   </Type>
 
-  <Type Name="ang::str_view&lt;unsigned char const&gt;">
+  <Type Name="ang::str_view&lt;unsigned char const,*&gt;">
     <DisplayString Condition="view_ != 0">{view_, s8}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
@@ -102,7 +102,7 @@
     </Expand>
   </Type>
 
-  <Type Name="ang::str_view&lt;char16_t&gt;">
+  <Type Name="ang::str_view&lt;char16_t,*&gt;">
     <DisplayString Condition="view_ != 0">{view_, su}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
@@ -114,7 +114,7 @@
     </Expand>
   </Type>
 
-  <Type Name="ang::str_view&lt;char16_t const&gt;">
+  <Type Name="ang::str_view&lt;char16_t const,*&gt;">
     <DisplayString Condition="view_ != 0">{view_, su}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
@@ -126,7 +126,7 @@
     </Expand>
   </Type>
 
-  <Type Name="ang::str_view&lt;char32_t&gt;">
+  <Type Name="ang::str_view&lt;char32_t,*&gt;">
     <DisplayString Condition="view_ != 0">{view_, s32}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
@@ -138,7 +138,7 @@
     </Expand>
   </Type>
 
-  <Type Name="ang::str_view&lt;char32_t const&gt;">
+  <Type Name="ang::str_view&lt;char32_t const,*&gt;">
     <DisplayString Condition="view_ != 0">{view_, s32}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
@@ -221,7 +221,19 @@
     <Expand>
       <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type &gt;= 0">_data._stack_length</Item>
       <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_length</Item>
-      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type &gt;= 0">RAW_CAPACITY</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type &gt;= 0">CAPACITY</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_capacity</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::strings::basic_string_buffer&lt;2,*&gt;">
+    <DisplayString Condition="_data._storage_type &gt;= 0">{_data._stack_buffer, su}</DisplayString>
+    <DisplayString Condition="_data._storage_type == -1">{_data._allocated_buffer, su}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type &gt;= 0">_data._stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type &gt;= 0">CAPACITY</Item>
       <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_capacity</Item>
     </Expand>
   </Type>

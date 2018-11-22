@@ -22,8 +22,8 @@ namespace ang
 				visible vcall void invoke(objptr, imsg_event_args_t)const pure;
 				visible vcall ievent_function* clone()const pure;
 
-				void* operator new(wsize);
-				void operator delete(void*);
+				pointer operator new(wsize);
+				void operator delete(pointer);
 			};
 
 			template<typename F, typename A>

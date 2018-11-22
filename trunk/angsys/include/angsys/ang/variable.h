@@ -69,6 +69,14 @@ namespace ang
 			return interface_cast<typename smart_ptr_type<T>::type>(_ptr);
 		}
 
+		template<typename T> explicit operator T& () {
+			return (T&)as<T>();
+		}
+
+		template<typename T> explicit operator T const& ()const {
+			return (T const&)const_cast<var*>(this)->as<T>();
+		}
+
 	public:
 		intf_wrapper& operator = (type*);
 		intf_wrapper& operator = (ang::nullptr_t const&);

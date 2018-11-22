@@ -4,7 +4,7 @@
 #include "pch.h"
 #include <ang/streams.h>
 #include <ang/maths/vectors.h>
-
+#include <ang/core/files.h>
 
 #include "console.h"
 
@@ -39,13 +39,10 @@ ANG_EXTERN ulong64 get_performance_time_us()
 
 int main(int argc, char* argv[])
 {	
-	var_args_t args;
-	for (int i = 0; i < argc; i++)
-		args += cstr_t(argv[i]);
-
-	auto time = get_performance_time_us();
-	var s = string::format("{4f} {3f} {2f} {1f} {0f}"_s, 1.2345, 2.3456, 3.4567, 4.5678, 5.6789);
-	time = get_performance_time_us() - time;
+	wstring str;
+	core::files::input_text_file_t file = new core::files::input_text_file(L"C:\\Users\\Jesus Rocha\\Desktop\\airfoil_2312_core.txt"_s);
+	
+	file->read_line(str, 100);
 
 	return 0;
 }
