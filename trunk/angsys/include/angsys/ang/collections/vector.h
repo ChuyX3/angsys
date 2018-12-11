@@ -58,7 +58,7 @@ namespace ang
 			inline bool is_empty()const;
 			inline T* data()const;
 			inline wsize size()const;
-			//inline void size(wsize);
+			inline void size(wsize, bool save);
 			inline wsize capacity()const;
 			inline void capacity(wsize size, bool save = false);
 

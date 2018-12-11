@@ -176,7 +176,8 @@ namespace ang
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 
-		template<typename S, typename T> struct write_text_helper
+		template<typename S, typename T>
+		struct write_text_helper
 		{
 			static wsize write_text(S stream, T const& val) {
 				return stream->write(var(val));

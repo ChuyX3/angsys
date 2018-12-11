@@ -476,7 +476,8 @@ namespace ang
 			}
 			if (text::swap_endian<SWAP>(str[i]) == U'o')i++;
 			break;
-		case 10:
+		
+		default: //case 10:
 			for (space = text::swap_endian<SWAP>(str[i]);
 				space == U' ' || space == U'\t' || space == U'\n' || space == U'\r';
 				space = text::swap_endian<SWAP>(str[++i]));
@@ -513,7 +514,6 @@ namespace ang
 		END:
 			if (text::swap_endian<SWAP>(str[i]) == U'h')i++;
 			break;
-		default:return 0;
 		}
 		return res*sig;
 	}
@@ -546,7 +546,7 @@ namespace ang
 			}
 			if (text::swap_endian<SWAP>(str[i]) == U'o')i++;
 			break;
-		case 10:
+		default://case 10:
 			for (space = text::swap_endian<SWAP>(str[i]);
 				space == U' ' || space == U'\t' || space == U'\n' || space == U'\r';
 				space = text::swap_endian<SWAP>(str[++i]));
@@ -571,7 +571,6 @@ namespace ang
 		END:
 			if (text::swap_endian<SWAP>(str[i]) == U'h')i++;
 			break;
-		default:return 0;
 		}
 		return res;
 	}

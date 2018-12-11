@@ -89,6 +89,11 @@ wsize read_format(ifile_t file, str_view<typename const text::char_type_by_encod
 	wsize i = 0, j = 0;
 	file_offset_t cursor = file->cursor();
 	file_offset_t forward = 0;
+	int a = 0;
+	text::text_format_flags_t f;
+
+	args = new var_args();
+
 	wsize readed;
 	wsize size1 = format.size() / sizeof(out_char_t);
 	wsize size2 = 0;
@@ -145,15 +150,38 @@ wsize read_format(ifile_t file, str_view<typename const text::char_type_by_encod
 		if (state == formating || 
 			char32(text::char_to_dword(format[i])) == U'{') //parsing data
 		{
-			int args = 0;
-			text::text_format_flags_t f;
-			f.value = format_parser<E_OUT>::parse(format, i, args);
+				
 			if (state != formating && (size2 - j) < 20)
 				// the data to parse is less that 20 characters, witch means that it can generate a parsing error 
 			{
-				state = read_file;
+				state = formating;
 				continue;
 			}
+			else
+			{
+				var val = nullptr;
+				f.value = format_parser<E_OUT>::parse(format, i, a);
+				switch (f.value)
+				{
+				case text::text_format::target::signed_:
+					val =(uint)str_to_signed(buffer, j, f.base);
+					break;
+				case text::text_format::target::unsigned_:
+					val = (uint)str_to_unsigned(buffer, j, f.base);
+					break;
+				case text::text_format::target::float_:
+					val = (uint)str_to_floating(buffer, j, f.exponent);
+					break;
+				default:
+					break;
+				}
+				if (a > args->size())
+					args->size(a + 1, true);
+				args[a] = val;
+			}
+
+			
+
 		}
 		
 	
