@@ -31,6 +31,11 @@
 #define MICRO8_PLATFORM
 #define ANG_PLATFORM MICRO8_PLATFORM
 #include <stddef.h>
+#ifdef __18F2550
+#include <p18f2550.h>
+#elif defined __18F4550
+#include <p18f4550.h>
+#endif
 #define ANG_DONT_USE_CORE_INTERFACE
 #endif//WINAPI_FAMILY
 

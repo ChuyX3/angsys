@@ -102,7 +102,14 @@ typedef unsigned int		ang_size_t;
 typedef unsigned int		ang_index_t;
 typedef unsigned int*		ang_int_ptr_t;
 typedef unsigned int* far	ang_int_lptr_t;
-
+typedef unsigned int		intptr_t;
+typedef enum __bool_tag
+{
+    false = 0,
+    true = 1
+}bool;
+#define LOW false
+#define HIGH true
 #endif
 typedef void*				ang_void_ptr_t;
 typedef void*				ang_object_ptr_t;

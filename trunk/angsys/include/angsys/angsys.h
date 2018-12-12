@@ -37,6 +37,8 @@
 #define LINK
 #endif
 
+#ifdef __cplusplus
+
 namespace ang
 {
 	class object;
@@ -166,5 +168,13 @@ namespace ang
 #include <ang/collections/inline/array.inl>
 #include <ang/collections/inline/vector.inl>
 #include <ang/core/inline/listener.inl>
+#endif//__cplusplus
+
+#ifdef MICRO8_PLATFORM
+
+#include <ang/c18/adc.h>
+#include <ang/c18/timer0.h>
+
+#endif//MICRO8_PLATFORM
 
 #endif //__ANGSYS_H__
