@@ -15,7 +15,7 @@ void adc_initialize(byte config1, byte config2)
 
 word adc_read(byte channel)
 {
-	ADCON0=channel*4;
+	ADCON0 = channel*4;
     ADCON0bits.ADON = HIGH;
     ADCON0bits.NOT_DONE = HIGH;
     while(ADCON0bits.NOT_DONE);

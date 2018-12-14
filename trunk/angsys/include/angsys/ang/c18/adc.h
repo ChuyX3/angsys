@@ -8,10 +8,6 @@
 #ifndef __ANG_C18_ADC_H__
 #define	__ANG_C18_ADC_H__
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 //Analog config 1//
 //Analog Line Selection
 #define ADC_CONFIG1_ALL_DIGITAL			0X0F
@@ -78,16 +74,13 @@ extern "C" {
 #define ADC_AN11				0X0B
 #define ADC_AN12				0X0C
 
-void adc_initialize(byte config1, byte config2); 
-word adc_read(byte channel);
-void adc_start_conversion(byte channel);
-bool adc_is_busy(void);
-void adc_wait_for_conversion(void);
-word adc_get_last_conversion(void);
+ANG_EXTERN void adc_initialize(byte config1, byte config2); 
+ANG_EXTERN word adc_read(byte channel);
+ANG_EXTERN void adc_start_conversion(byte channel);
+ANG_EXTERN bool adc_is_busy(void);
+ANG_EXTERN void adc_wait_for_conversion(void);
+ANG_EXTERN word adc_get_last_conversion(void);
 
-#ifdef	__cplusplus
-}
-#endif
 
 #endif	/* __ANG_C18_ADC_H__ */
 

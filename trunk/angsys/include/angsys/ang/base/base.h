@@ -50,6 +50,13 @@
 #include <ang/base/async.h>
 #endif//__cplusplus
 
+#ifdef MICRO8_PLATFORM
+
+#define max(A,B) ((A)>(B)?(A):(B))
+#define min(A,B) ((A)<(B)?(A):(B))
+
+#endif//MICRO8_PLATFORM
+
 #ifdef LINK
 #undef LINK
 #endif//LINK

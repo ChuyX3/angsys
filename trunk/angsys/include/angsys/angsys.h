@@ -172,8 +172,17 @@ namespace ang
 
 #ifdef MICRO8_PLATFORM
 
+#include <stdio.h>
+
+#include <ang/c18/digital_ports.h>
+#include <ang/c18/interrupt.h>
 #include <ang/c18/adc.h>
 #include <ang/c18/timer0.h>
+#include <ang/c18/timer1.h>
+#include <ang/c18/timer2.h>
+#include <ang/c18/delays.h>
+#include <ang/c18/lcd.h>
+
 
 #endif//MICRO8_PLATFORM
 

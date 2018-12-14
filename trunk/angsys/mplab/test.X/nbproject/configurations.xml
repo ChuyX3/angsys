@@ -4,24 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <logicalFolder name="f1" displayName="ang" projectFiles="true">
-        <logicalFolder name="f1" displayName="base" projectFiles="true">
-          <itemPath>../../include/angsys/ang/base/base.h</itemPath>
-          <itemPath>../../include/angsys/ang/base/platform.h</itemPath>
-          <itemPath>../../include/angsys/ang/base/types.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f2" displayName="c18" projectFiles="true">
-          <itemPath>../../include/angsys/ang/c18/adc.h</itemPath>
-          <itemPath>../../include/angsys/ang/c18/timer0.h</itemPath>
-          <itemPath>../../include/angsys/ang/c18/delays.h</itemPath>
-          <itemPath>../../include/angsys/ang/c18/timer2.h</itemPath>
-          <itemPath>../../include/angsys/ang/c18/timer1.h</itemPath>
-          <itemPath>../../include/angsys/ang/c18/interrupt.h</itemPath>
-          <itemPath>../../include/angsys/ang/c18/lcd.h</itemPath>
-          <itemPath>../../include/angsys/ang/c18/digital_ports.h</itemPath>
-        </logicalFolder>
-      </logicalFolder>
-      <itemPath>../../include/angsys/angsys.h</itemPath>
+      <itemPath>main.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -30,14 +13,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>angsys.c</itemPath>
-      <itemPath>adc.c</itemPath>
-      <itemPath>delays.c</itemPath>
-      <itemPath>tmr0.c</itemPath>
-      <itemPath>tmr2.c</itemPath>
-      <itemPath>memory.c</itemPath>
-      <itemPath>lcd.c</itemPath>
-      <itemPath>digital_ports.c</itemPath>
+      <itemPath>main.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -46,11 +22,11 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../include/angsys</Elem>
+    <Elem>.</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
-    <conf name="default" type="3">
+    <conf name="default" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <targetDevice>PIC18F2550</targetDevice>
@@ -67,6 +43,23 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../angsys.X"
+                            CT="3"
+                            CN="default"
+                            AC="true"
+                            BL="true"
+                            WD="../angsys.X"
+                            BC="${MAKE}  -f Makefile CONF=default"
+                            DBC="${MAKE}  -f Makefile CONF=default TYPE_IMAGE=DEBUG_RUN"
+                            CC="rm -rf &quot;build/default&quot; &quot;dist/default&quot;"
+                            OP="dist/default/production/angsys.X.lib"
+                            DOP="dist/default/debug/angsys.X.lib"
+                            FL="dist/default/production/angsys.X.lib"
+                            PD="dist/default/production/angsys.X."
+                            DD="dist/default/debug/angsys.X.">
+              </makeArtifact>
+            </linkerLibProjectItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -119,7 +112,7 @@
         <property key="default.radix" value="HEX"/>
         <property key="enable.case.sensitivity" value="true"/>
         <property key="hex.output.format" value="INHX32"/>
-        <property key="preprocessor.macros" value="__18CXX;__18F2550"/>
+        <property key="preprocessor.macros" value=""/>
         <property key="warning.level" value="0"/>
       </C18-AS>
       <C18-LD>
@@ -145,6 +138,7 @@
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
@@ -159,7 +153,7 @@
                   value="${memories.instruction.ram.ranges}"/>
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="0-7fff"/>
-        <property key="poweroptions.powerenable" value="false"/>
+        <property key="poweroptions.powerenable" value="true"/>
         <property key="programmertogo.imagename" value=""/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
@@ -177,7 +171,7 @@
         <property key="programoptions.testmodeentrymethod" value="VDDFirst"/>
         <property key="programoptions.usehighvoltageonmclr" value="false"/>
         <property key="programoptions.uselvpprogramming" value="false"/>
-        <property key="voltagevalue" value="5.0"/>
+        <property key="voltagevalue" value="4.75"/>
       </PICkit3PlatformTool>
     </conf>
   </confs>

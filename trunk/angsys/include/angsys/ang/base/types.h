@@ -98,18 +98,21 @@ typedef unsigned int*		ang_int_ptr_t;
 typedef unsigned long		ang_long_t;
 typedef long				ang_ulong_t;
 #elif defined MICRO8_PLATFORM
-typedef unsigned int		ang_size_t;
-typedef unsigned int		ang_index_t;
+typedef unsigned long		ang_size_t;
+typedef unsigned long		ang_index_t;
 typedef unsigned int*		ang_int_ptr_t;
 typedef unsigned int* far	ang_int_lptr_t;
 typedef unsigned int		intptr_t;
 typedef enum __bool_tag
 {
     false = 0,
-    true = 1
-}bool;
-#define LOW false
-#define HIGH true
+    LOW = 0,
+    true = 1,
+    HIGH = 1
+}level, bool, bool_t;
+
+typedef rom far void(*lpfunc_t)(void);
+
 #endif
 typedef void*				ang_void_ptr_t;
 typedef void*				ang_object_ptr_t;
