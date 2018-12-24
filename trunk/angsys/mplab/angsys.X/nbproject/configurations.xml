@@ -19,6 +19,7 @@
           <itemPath>../../include/angsys/ang/c18/interrupt.h</itemPath>
           <itemPath>../../include/angsys/ang/c18/lcd.h</itemPath>
           <itemPath>../../include/angsys/ang/c18/digital_ports.h</itemPath>
+          <itemPath>../../include/angsys/ang/c18/keyboard.h</itemPath>
         </logicalFolder>
       </logicalFolder>
       <itemPath>../../include/angsys/angsys.h</itemPath>
@@ -37,6 +38,7 @@
       <itemPath>lcd.c</itemPath>
       <itemPath>delays.c</itemPath>
       <itemPath>digital_ports.c</itemPath>
+      <itemPath>keyboard.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

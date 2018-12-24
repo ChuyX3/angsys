@@ -3,8 +3,8 @@
 
 typedef struct lcd_handle_tag
 {
-    byte w,h;
-    byte x,y;
+    coord_t size;
+    coord_t cursor;
     digital_output_t RS;
     digital_output_t E;
     digital_output_t D4;
@@ -13,7 +13,7 @@ typedef struct lcd_handle_tag
     digital_output_t D7;
 }lcd_handle_t;
 
-lcd_handle_t intern_lcd_s;
+static lcd_handle_t intern_lcd_s;
 
 
 void lcd_entry_mode(bool_t id, bool_t scroll);
@@ -22,7 +22,7 @@ void lcd_clear(void);
 void lcd_home(void);
 void lcd_put(byte value);
 void lcd_gotoxy(byte x, byte y);
-
+void lcd_back(void);
 
 
 void lcd_write_low_nibble(byte value)
@@ -49,8 +49,8 @@ void lcd_write_high_nibble(byte value)
 
 void lcd_initialize(byte column, byte row)
 {
-    intern_lcd_s.w = column;
-    intern_lcd_s.h = row;
+    intern_lcd_s.size.x = column;
+    intern_lcd_s.size.y = row;
     
     delay_ms(31);
     
@@ -84,8 +84,8 @@ void lcd_initialize(byte column, byte row)
     
     delay_ms(5);
     
-    lcd_entry_mode(false, false);
-    lcd_display_control(true, true, true);
+    lcd_entry_mode(true, false);
+    lcd_display_control(true, true, false);
     lcd_clear();
     lcd_home();
      
@@ -165,8 +165,8 @@ void lcd_clear(void)
 void lcd_home(void)
 {
     intern_lcd_s.RS.write(LOW);
-    intern_lcd_s.x = 0;
-    intern_lcd_s.y = 0;
+    intern_lcd_s.cursor.x = 0;
+    intern_lcd_s.cursor.y = 0;
     //LCD_DATA = 0X00;
     lcd_write_low_nibble(0X0);
     
@@ -184,17 +184,22 @@ void lcd_home(void)
     delay_ms(2);
 }
 
+coord_t lcd_get_cursor(void)
+{
+    return intern_lcd_s.cursor;
+}
+
 void lcd_gotoxy(byte x, byte y)
 {
     byte address;
     
-    if(x >= intern_lcd_s.w)
-        x = intern_lcd_s.w - 1;
-    if(y >= intern_lcd_s.h)
-        y = intern_lcd_s.h - 1;
+    if(x >= intern_lcd_s.size.x)
+        x = intern_lcd_s.size.x - 1;
+    if(y >= intern_lcd_s.size.y)
+        y = intern_lcd_s.size.y - 1;
     
-    intern_lcd_s.x = x;
-    intern_lcd_s.y = y;
+    intern_lcd_s.cursor.x = x;
+    intern_lcd_s.cursor.y = y;
     
     address = y * 0X40 + x;
     
@@ -217,9 +222,16 @@ void lcd_gotoxy(byte x, byte y)
 }
 
 void lcd_put(byte value)
-{
-    ang_byte_bits_t data;
-    data.value = value;
+{ 
+    if(value == 0X08)
+    {
+        lcd_back();
+        return;
+    }
+    else if(value == 0)
+    {
+        return;
+    }
     
     intern_lcd_s.RS.write(HIGH);   
     
@@ -238,16 +250,50 @@ void lcd_put(byte value)
     delay_us(100);
     intern_lcd_s.RS.write(LOW); 
     
-    intern_lcd_s.x ++;
-    if(intern_lcd_s.x >= intern_lcd_s.w)
+    intern_lcd_s.cursor.x ++;
+    if(intern_lcd_s.cursor.x >= intern_lcd_s.size.x)
     {
-        intern_lcd_s.x = 0;
-        intern_lcd_s.y++;
-        if(intern_lcd_s.y >= intern_lcd_s.h)
-            intern_lcd_s.y = 0;      
+        intern_lcd_s.cursor.x = 0;
+        intern_lcd_s.cursor.y++;
+        if(intern_lcd_s.cursor.y >= intern_lcd_s.size.y)
+            intern_lcd_s.cursor.y = 0;      
     }
     
-    lcd_gotoxy(intern_lcd_s.x, intern_lcd_s.y);
+    lcd_gotoxy(intern_lcd_s.cursor.x, intern_lcd_s.cursor.y);
+}
+
+void lcd_back(void)
+{
+    
+    intern_lcd_s.cursor.x--;
+    if(intern_lcd_s.cursor.x == 0XFF)
+    {
+        intern_lcd_s.cursor.x = intern_lcd_s.size.x - 1;
+        intern_lcd_s.cursor.y--;
+        if(intern_lcd_s.cursor.y == 0XFF)
+            intern_lcd_s.cursor.y = intern_lcd_s.size.y - 1;      
+    }
+    
+    lcd_gotoxy(intern_lcd_s.cursor.x, intern_lcd_s.cursor.y);
+    
+    intern_lcd_s.RS.write(HIGH);   
+    
+    lcd_write_high_nibble(' ');
+    
+    intern_lcd_s.E.write(HIGH);
+    delay_us(2);
+    intern_lcd_s.E.write(LOW);
+    
+    lcd_write_low_nibble(' ');
+    
+    intern_lcd_s.E.write(HIGH);
+    delay_us(2);
+    intern_lcd_s.E.write(LOW);
+    
+    delay_us(100);
+    intern_lcd_s.RS.write(LOW); 
+    
+    lcd_gotoxy(intern_lcd_s.cursor.x, intern_lcd_s.cursor.y);
 }
 
 void lcd_write(rom far const char* str)
@@ -274,6 +320,7 @@ bool_t lcd_create(lcd_t* lcd, pin_id_t RS, pin_id_t E, pin_id_t D4, pin_id_t D5,
     lcd->home = (lcd_home_t)&lcd_home;
     lcd->put = (lcd_put_t)&lcd_put;
     lcd->write = (lcd_write_t)&lcd_write;
+    lcd->back = (lcd_back_t)&lcd_back;
     lcd->gotoxy = (lcd_gotoxy_t)&lcd_gotoxy;
     return true;
 }

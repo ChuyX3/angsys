@@ -39,6 +39,8 @@ dword count;
 
 lcd_t lcd;
 
+keyboard_t keys;
+
 void setup(void)
 {  
     //interrupt_initialize(true,&high_interrupt,&low_interrupt);
@@ -48,12 +50,23 @@ void setup(void)
     
     lcd_create(&lcd, PINA5, PINA4, PINA3, PINA2, PINA1, PINA0);
     lcd.init(16, 2);
+    
+    keyboard_create(&keys,PINB0,PINB1,PINB2,PINB3,PINB4,PINB5,PINB6,PINB7);
 }
+
+enum states
+{
+    NUM1,
+    OP,
+    NUM2,
+    RESULT
+};
 
 void loop(void)
 {
-    lcd.gotoxy(0,0);
-    lcd.write("Jesus Angel");
+    char c;
+    c = keys.get();
+    lcd.put(c);
     
-    delay_ms(1000);
+    delay_ms(100);
 }

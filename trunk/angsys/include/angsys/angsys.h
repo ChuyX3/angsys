@@ -182,7 +182,7 @@ namespace ang
 #include <ang/c18/timer2.h>
 #include <ang/c18/delays.h>
 #include <ang/c18/lcd.h>
-
+#include <ang/c18/keyboard.h>
 
 #endif//MICRO8_PLATFORM
 
