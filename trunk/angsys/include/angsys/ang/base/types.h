@@ -115,15 +115,18 @@ typedef unsigned long		ang_index_t;
 typedef unsigned int*		ang_int_ptr_t;
 typedef unsigned int* far  	ang_int_lptr_t;
 typedef unsigned int		intptr_t;
-typedef enum __bool_tag
-{
-    false = 0,
-    LOW = 0,
-    true = 1,
-    HIGH = 1
-}level, bool, bool_t;
 
 typedef rom far void(*lpfunc_t)(void);
+#endif
+
+#ifndef __cplusplus
+typedef enum __bool_tag
+{
+	false = 0,
+	LOW = 0,
+	true = 1,
+	HIGH = 1
+}level, bool, bool_t;
 #endif
 
 typedef void*				ang_void_ptr_t;

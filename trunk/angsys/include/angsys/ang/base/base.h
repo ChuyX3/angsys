@@ -48,6 +48,8 @@
 #include <ang/base/property.h>
 #include <ang/base/interface.h>
 #include <ang/base/async.h>
+#else
+#include <ang/c/text.h>
 #endif//__cplusplus
 
 #ifdef MICRO8_PLATFORM

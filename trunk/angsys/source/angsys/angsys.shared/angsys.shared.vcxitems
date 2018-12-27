@@ -40,6 +40,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\files.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\function.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\listener.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\c\text.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\doc\json.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\doc\xml.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\exception.h" />
@@ -83,6 +84,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\async\thread.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\async\thread_manager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\c\angsys.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\encoder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\exception.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\core_file.cpp" />

@@ -20,5 +20,10 @@ ANG_EXTERN void high_interrupt(void);
 ANG_EXTERN void setup(void);
 ANG_EXTERN void loop(void);
 
+ANG_EXTERN lcd_t lcd;
+ANG_EXTERN adc_t adc;
+ANG_EXTERN bool_t read_done;
+ANG_EXTERN keyboard_t keys;
+
 #endif//__MAIN_H__
 

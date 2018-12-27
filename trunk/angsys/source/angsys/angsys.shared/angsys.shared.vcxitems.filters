@@ -69,6 +69,12 @@
     <Filter Include="source\files">
       <UniqueIdentifier>{7c54ee61-ea72-4539-9091-28d165d55a63}</UniqueIdentifier>
     </Filter>
+    <Filter Include="header\angsys\c">
+      <UniqueIdentifier>{27046d75-8ca6-4307-9d1e-6e3c44e33424}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\c">
+      <UniqueIdentifier>{8826d5e3-02b3-46fe-b782-36be692e83c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h">
@@ -251,6 +257,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\com_wrapper.hpp">
       <Filter>header\angsys\inline</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\c\text.h">
+      <Filter>header\angsys\c</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
@@ -339,6 +348,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\input_text_file.cpp">
       <Filter>source\files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\c\angsys.c">
+      <Filter>source\c</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

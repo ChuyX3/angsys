@@ -26,20 +26,9 @@
 #include "main.h"
 
 
-dword tick_count;
-dword count;
-
-//void lcd_initialize(void);
-//void lcd_entry_mode(volatile near bool_t id, volatile near bool_t scroll);
-//void lcd_display_control(volatile near bool_t display, volatile near bool_t cursor, volatile near bool_t blink);
-//void lcd_clear(void);
-//void lcd_home(void);
-//void lcd_put(volatile near byte value);
-
 lcd_t lcd;
 adc_t adc;
 bool_t read_done;
-keyboard_t keys;
 
 void adc_conversion_completed_event(analog_id_t, word);
 
@@ -50,23 +39,13 @@ void setup(void)
     
     adc_initialize(&adc, ADC_CONFIG1_AN0TOAN3, ADC_DEFCONFIG2);
     
-    lcd_create(&lcd, PINA5, PINA4, PINA3, PINA2, PINA1, PINA0);
+    lcd_create(&lcd, PINB5, PINB4, PINB3, PINB2, PINB1, PINB0);
     lcd.init(16, 2);
-    
-    keyboard_create(&keys,PINB0,PINB1,PINB2,PINB3,PINB4,PINB5,PINB6,PINB7);
     
     read_done =  false;
     adc.set_completed_event(&adc_conversion_completed_event);
     adc.read_async(A0);
 }
-
-enum states
-{
-    NUM1,
-    OP,
-    NUM2,
-    RESULT
-};
 
 void loop(void)
 {
@@ -75,13 +54,21 @@ void loop(void)
         read_done = false;
         adc.read_async(A0);
         
-        
-        
+        lcd.gotoxy(0,0);
+        lcd.print("%d",adc.get_value(A0));
+        lcd.gotoxy(8,0);
+        lcd.print("%d",adc.get_value(A1));
+        lcd.gotoxy(0,1);
+        lcd.print("%d",adc.get_value(A2));
+        lcd.gotoxy(8,1);
+        lcd.print("%d",adc.get_value(A3));
     }
+    delay_ms(100);
 }
 
 void adc_conversion_completed_event(analog_id_t id, word value)
 {
+    lcd.write("done");
     switch(id)
     {
         case A0:
@@ -95,7 +82,6 @@ void adc_conversion_completed_event(analog_id_t id, word value)
             break;
         case A3:
             read_done = true;
-            //adc.read_async(A0);
             break;
         default:break;
     }

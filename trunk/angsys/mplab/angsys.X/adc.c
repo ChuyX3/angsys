@@ -66,6 +66,7 @@ bool_t adc_read_async(analog_id_t channel)
 	ADCON0bits.CHS = channel;
     ADCON0bits.ADON = HIGH;
     ADCON0bits.NOT_DONE = HIGH;
+    PIE1bits.ADIE = true;
     return true;
 }
 

@@ -1,5 +1,5 @@
 #include <angsys.h>
-
+#include <stdarg.h>
 
 typedef struct lcd_handle_tag
 {
@@ -24,6 +24,7 @@ void lcd_put(byte value);
 void lcd_gotoxy(byte x, byte y);
 void lcd_back(void);
 
+void lcd_print(rom far const char*,...);
 
 void lcd_write_low_nibble(byte value)
 {
@@ -303,6 +304,16 @@ void lcd_write(rom far const char* str)
         lcd_put(str[c]);
 }
 
+void lcd_print(rom far const char* format,...)
+{
+    va_list args;
+    char buffer[100];
+    va_start(args,format);                            // Prep arguments list
+    vsprintf(buffer,format,args);                        // "Print" to buffer
+    va_end(args);
+    lcd_write(buffer);
+}
+
 bool_t lcd_create(lcd_t* lcd, pin_id_t RS, pin_id_t E, pin_id_t D4, pin_id_t D5, pin_id_t D6, pin_id_t D7)
 {
     ang_create_digital_output(RS, &intern_lcd_s.RS);
@@ -320,6 +331,7 @@ bool_t lcd_create(lcd_t* lcd, pin_id_t RS, pin_id_t E, pin_id_t D4, pin_id_t D5,
     lcd->home = (lcd_home_t)&lcd_home;
     lcd->put = (lcd_put_t)&lcd_put;
     lcd->write = (lcd_write_t)&lcd_write;
+    lcd->print = (lcd_print_t)&lcd_print;
     lcd->back = (lcd_back_t)&lcd_back;
     lcd->gotoxy = (lcd_gotoxy_t)&lcd_gotoxy;
     return true;

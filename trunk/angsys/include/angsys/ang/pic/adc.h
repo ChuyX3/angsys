@@ -9,7 +9,11 @@
 #define	__ANG_C18_ADC_H__
 
 
+#ifdef __cplusplus
 
+
+
+#else//C
 
 //Analog config 1//
 //Analog Line Selection
@@ -101,5 +105,6 @@ struct adc_tag
 
 ANG_EXTERN void adc_initialize(adc_t* adc, adc_config1_t config1, adc_config2_t config2); 
 
-#endif	/* __ANG_C18_ADC_H__ */
+#endif//__cplusplus
+#endif//__ANG_C18_ADC_H__
 

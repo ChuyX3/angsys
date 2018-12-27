@@ -24,6 +24,7 @@ typedef rom far void (*lcd_clear_t)(void);
 typedef rom far void (*lcd_home_t)(void);
 typedef rom far void (*lcd_put_t)(volatile near byte value);
 typedef rom far void (*lcd_write_t)(rom far const char*);
+typedef rom far void (*lcd_print_t)(rom far const char*,...);
 typedef rom far void (*lcd_gotoxy_t)(byte, byte);
 typedef rom far void (*lcd_back_t)(void);
 typedef rom far coord_t (*lcd_get_cursor_t)(void);
@@ -39,6 +40,7 @@ struct lcd_tag
     lcd_home_t home;
     lcd_put_t put;
     lcd_write_t write;
+    lcd_print_t print;
     lcd_back_t back;
     lcd_gotoxy_t gotoxy;
     lcd_get_cursor_t get_cursor;
