@@ -8,14 +8,6 @@
 #ifndef __MAIN_H__
 #define	__MAIN_H__
 
-#ifndef __C18XX
-#define __C18XX
-#endif//__C18XX
-
-#ifndef __18F2550
-#define __18F2550
-#endif//__18F2550
-
 #include <angsys.h>
 
 #define FOSC 48000 //48MHz

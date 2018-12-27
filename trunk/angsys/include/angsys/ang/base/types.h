@@ -62,13 +62,18 @@ typedef unsigned long long	ang_uint64_t;
 typedef float				ang_float32_t;
 typedef double				ang_float64_t;
 #else
+
 typedef short int				ang_int16_t;
 typedef unsigned short int		ang_uint16_t;
+#ifndef __XC8
 typedef short long int			ang_int24_t;
 typedef unsigned short long int	ang_uint24_t;
+#endif
 typedef long int				ang_int32_t;
 typedef unsigned long int		ang_uint32_t;
 typedef double					ang_float32_t;
+typedef long long               ang_int64_t;
+typedef unsigned long long      ang_uint64_t;
 #endif//MICRO8_PLATFORM
 
 #if defined WINDOWS_PLATFORM
@@ -98,10 +103,17 @@ typedef unsigned int*		ang_int_ptr_t;
 typedef unsigned long		ang_long_t;
 typedef long				ang_ulong_t;
 #elif defined MICRO8_PLATFORM
+#ifdef __18CXX
+#else
+#define far
+#define near
+#define rom
+#endif
+
 typedef unsigned long		ang_size_t;
 typedef unsigned long		ang_index_t;
 typedef unsigned int*		ang_int_ptr_t;
-typedef unsigned int* far	ang_int_lptr_t;
+typedef unsigned int* far  	ang_int_lptr_t;
 typedef unsigned int		intptr_t;
 typedef enum __bool_tag
 {
@@ -112,8 +124,8 @@ typedef enum __bool_tag
 }level, bool, bool_t;
 
 typedef rom far void(*lpfunc_t)(void);
-
 #endif
+
 typedef void*				ang_void_ptr_t;
 typedef void*				ang_object_ptr_t;
 typedef void*				ang_buffer_t;
@@ -129,6 +141,7 @@ typedef char const*			ang_type_name_t;
 typedef unsigned char		ang_byte_t;
 typedef unsigned short		ang_word_t;
 typedef unsigned long		ang_dword_t;
+typedef unsigned long long  ang_qword_t;
 
 typedef unsigned char byte;
 typedef unsigned char uchar;

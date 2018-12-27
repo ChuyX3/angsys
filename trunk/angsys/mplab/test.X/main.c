@@ -5,7 +5,6 @@
  * Created on March 4, 2018, 5:44 PM
  */
 
-#include <p18f2550.h>
 
 #pragma config FOSC 	= HSPLL_HS 
 #pragma config PLLDIV	= 1
@@ -38,20 +37,27 @@ dword count;
 //void lcd_put(volatile near byte value);
 
 lcd_t lcd;
-
+adc_t adc;
+bool_t read_done;
 keyboard_t keys;
+
+void adc_conversion_completed_event(analog_id_t, word);
 
 void setup(void)
 {  
     //interrupt_initialize(true,&high_interrupt,&low_interrupt);
     delays_initialize(FOSC);
     
-    adc_initialize(ADC_CONFIG1_ALL_DIGITAL, ADC_DEFCONFIG2);
+    adc_initialize(&adc, ADC_CONFIG1_AN0TOAN3, ADC_DEFCONFIG2);
     
     lcd_create(&lcd, PINA5, PINA4, PINA3, PINA2, PINA1, PINA0);
     lcd.init(16, 2);
     
     keyboard_create(&keys,PINB0,PINB1,PINB2,PINB3,PINB4,PINB5,PINB6,PINB7);
+    
+    read_done =  false;
+    adc.set_completed_event(&adc_conversion_completed_event);
+    adc.read_async(A0);
 }
 
 enum states
@@ -64,9 +70,33 @@ enum states
 
 void loop(void)
 {
-    char c;
-    c = keys.get();
-    lcd.put(c);
-    
-    delay_ms(100);
+    if(read_done)
+    {
+        read_done = false;
+        adc.read_async(A0);
+        
+        
+        
+    }
+}
+
+void adc_conversion_completed_event(analog_id_t id, word value)
+{
+    switch(id)
+    {
+        case A0:
+            adc.read_async(A1);
+            break;
+        case A1:
+            adc.read_async(A2);
+            break;
+        case A2:
+            adc.read_async(A3);
+            break;
+        case A3:
+            read_done = true;
+            //adc.read_async(A0);
+            break;
+        default:break;
+    }
 }

@@ -174,15 +174,15 @@ namespace ang
 
 #include <stdio.h>
 
-#include <ang/c18/digital_ports.h>
-#include <ang/c18/interrupt.h>
-#include <ang/c18/adc.h>
-#include <ang/c18/timer0.h>
-#include <ang/c18/timer1.h>
-#include <ang/c18/timer2.h>
-#include <ang/c18/delays.h>
-#include <ang/c18/lcd.h>
-#include <ang/c18/keyboard.h>
+#include <ang/pic/digital_ports.h>
+#include <ang/pic/interrupt.h>
+#include <ang/pic/adc.h>
+#include <ang/pic/timer0.h>
+#include <ang/pic/timer1.h>
+#include <ang/pic/timer2.h>
+#include <ang/pic/delays.h>
+#include <ang/pic/lcd.h>
+#include <ang/pic/keyboard.h>
 
 #endif//MICRO8_PLATFORM
 
