@@ -8,7 +8,8 @@
 #ifndef __ANG_C18_DELAYS_H__
 #define	__ANG_C18_DELAYS_H__
 
-ANG_EXTERN void delays_initialize(float FOSC /*KHz*/);
+ANG_EXTERN void ang_set_fosc(float FOSC /*KHz*/);
+
 ANG_EXTERN void delay_us(word t /*uS*/);
 ANG_EXTERN void delay_ms(word t /*mS*/);
 ANG_EXTERN void delay_s(word t /*S*/);

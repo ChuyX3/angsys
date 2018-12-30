@@ -7,6 +7,10 @@ ANG_EXTERN bool_t adc_interrupt_callback(void);
 lpfunc_t high_int_vect_s;
 lpfunc_t low_int_vect_s;
 
+ANG_EXTERN dword tick_count_s;
+ANG_EXTERN bool_t tick_count_enabled_s;
+ANG_EXTERN word tmr0_preset_s;
+
 void interrupt_high_service_routine(void);
 void interrupt_low_service_routine(void);
 
@@ -49,7 +53,15 @@ void interrupt_high_service_routine(void)
         PIR1bits.ADIF = false;
         if(adc_interrupt_callback())
             return;
-    }     
+    }  
+    
+    if(INTCONbits.T0IF == true && tick_count_enabled_s)
+    {
+        INTCONbits.T0IF = false;
+        tmr0_set(tmr0_preset_s);
+        tick_count_s ++;
+        return;
+    }
     
     if(high_int_vect_s != NULL)
         high_int_vect_s();
@@ -65,7 +77,15 @@ void interrupt_low_service_routine(void)
         if(adc_interrupt_callback())
             return;
     }
-   
+
+    if(INTCONbits.T0IF == true && tick_count_enabled_s)
+    {
+        INTCONbits.T0IF = false;
+        tmr0_set(tmr0_preset_s);
+        tick_count_s ++;
+        return;
+    }   
+    
     if(low_int_vect_s != NULL)
         low_int_vect_s();
 }

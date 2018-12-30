@@ -157,6 +157,14 @@ typedef char32_t char32;
 typedef unsigned short char16;
 typedef unsigned long char32;
 #endif
+
+typedef ang_int8_t int8;
+typedef ang_uint8_t uint8;
+typedef ang_int16_t int16;
+typedef ang_uint16_t uint16;
+typedef ang_int32_t int32;
+typedef ang_uint32_t uint32;
+
 typedef unsigned short word;
 typedef unsigned short ushort;
 typedef unsigned int uint;

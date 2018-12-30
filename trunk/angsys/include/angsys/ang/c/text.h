@@ -19,7 +19,7 @@
 #endif
 
 
-enum endian
+typedef enum endian
 {
 	endian_little = 0,
 	endian_big = 1,

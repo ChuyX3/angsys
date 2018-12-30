@@ -304,14 +304,21 @@ void lcd_write(rom far const char* str)
         lcd_put(str[c]);
 }
 
+void lcd_write_ram(const char* str)
+{
+    int c;
+    for(c = 0; str[c] != 0; c++)
+        lcd_put(str[c]);
+}
+
+char buffer[64];
 void lcd_print(rom far const char* format,...)
 {
-    va_list args;
-    char buffer[100];
+    va_list args;  
     va_start(args,format);                            // Prep arguments list
     vsprintf(buffer,format,args);                        // "Print" to buffer
     va_end(args);
-    lcd_write(buffer);
+    lcd_write_ram(buffer);
 }
 
 bool_t lcd_create(lcd_t* lcd, pin_id_t RS, pin_id_t E, pin_id_t D4, pin_id_t D5, pin_id_t D6, pin_id_t D7)

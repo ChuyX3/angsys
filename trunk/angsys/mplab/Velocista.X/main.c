@@ -2,7 +2,7 @@
  * File:   main.c
  * Author: Jesus Rocha
  *
- * Created on March 4, 2018, 5:44 PM
+ * Created on December 28, 2018, 5:28 PM
  */
 
 #pragma config FOSC 	= HSPLL_HS 
@@ -29,7 +29,7 @@ adc_t adc;
 bool_t read_done;
 dword last_time;
 
-digital_output_t F0, F1, B0, B1;
+digital_pin_t F0, F1, B0, B1;
 pwm_t pwm;
 pwm_pin_t pwm0, pwm1;
 
@@ -37,9 +37,8 @@ void adc_conversion_completed_event(analog_id_t, word);
 
 void setup(void)
 {  
-    //interrupt_initialize(true,&high_interrupt,&low_interrupt);
     ang_set_fosc(FOSC);
-   
+    tick_count_start();
     
     adc_initialize(&adc, ADC_CONFIG1_AN0TOAN3, ADC_DEFCONFIG2);
     
@@ -52,37 +51,39 @@ void setup(void)
     adc.set_completed_event(&adc_conversion_completed_event);
     adc.read_async(A0);
   
-    ang_create_digital_output(PINC0, &F0);
-    ang_create_digital_output(PINB2, &F1);
-    ang_create_digital_output(PINC1, &B0);
-    ang_create_digital_output(PINB1, &B1);
+    ang_create_digital_pin(PINC0, &F0);
+    ang_create_digital_pin(PINB2, &F1);
+    ang_create_digital_pin(PINC1, &B0);
+    ang_create_digital_pin(PINB1, &B1);
     
     
-   // delay_ms(5000);
-    pwm0.write(40);
-    pwm1.write(40);
+    pwm0.write(100);
+    pwm1.write(100);
+    
+    F0.set_mode(OUTPUT);
+    B0.set_mode(OUTPUT);
+    F1.set_mode(OUTPUT);
+    B1.set_mode(OUTPUT);
     
     F0.write(LOW);
     B0.write(LOW);
     
     F1.write(LOW);
     B1.write(LOW);
+    
+    last_time = get_tick_count();
 }
 
 void loop(void)
 {
     dword time, delta;
-    if(read_done)
+    time = get_tick_count();
+    if((time - last_time) >= 1000)
     {
-        read_done = false;
-      
-        
-        
-        
-        
-        adc.read_async(A0);
-       
+        F0.write(!F0.read());  
+        last_time = time;
     }
+    delay_ms(100);
 }
 
 
@@ -91,3 +92,4 @@ void adc_conversion_completed_event(analog_id_t id, word value)
     if(id == A0)
         read_done = true;
 }
+

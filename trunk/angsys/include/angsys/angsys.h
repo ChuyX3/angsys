@@ -180,6 +180,7 @@ namespace ang
 #include <ang/pic/timer0.h>
 #include <ang/pic/timer1.h>
 #include <ang/pic/timer2.h>
+#include <ang/pic/pwm.h>
 #include <ang/pic/delays.h>
 #include <ang/pic/lcd.h>
 #include <ang/pic/keyboard.h>
