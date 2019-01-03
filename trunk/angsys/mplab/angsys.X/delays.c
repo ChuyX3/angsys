@@ -40,8 +40,8 @@ void delay_s(word t)
 
 void tick_count_start(void)
 {
-    tmr0_initialize(TMR0_PRESCALE256);
-    tmr0_preset_s = 0;//0xffff - (word)(1000 / ang_tick_s);
+    tmr0_initialize(TMR0_PRESCALE1);
+    tmr0_preset_s = 0xffff - (word)(1000 / ang_tick_s);
     tick_count_enabled_s = true;
     tmr0_set_interrupt(true);
     tmr0_set(tmr0_preset_s);
@@ -50,11 +50,5 @@ void tick_count_start(void)
 
 dword get_tick_count(void)
 {
-    dword count;
-    dword tmr0h,tmr0l;
-    count = (tick_count_s * 0X10000);
-    tmr0h = ((dword)TMR0H * 0X100);
-    tmr0l = TMR0L;
-    count = (count + tmr0h + tmr0l);
-    return count * (ang_tick_s * 256);
+    return tick_count_s;
 }

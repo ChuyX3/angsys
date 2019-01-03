@@ -76,14 +76,54 @@ void setup(void)
 
 void loop(void)
 {
-    dword time, delta;
-    time = get_tick_count();
-    if((time - last_time) >= 1000)
+    float value;
+    if(read_done)
     {
-        F0.write(!F0.read());  
-        last_time = time;
+        read_done = false;
+        value = adc.get_value(A0) * 5.0 / 1023 - 2.5;
+        adc.read_async(A0);
+        
+        
+        if(value > 0)
+        {
+            pwm0.write(100);
+            F0.write(HIGH);
+            B0.write(LOW);
+            
+            if(value > 0.5)
+            {
+                pwm1.write(100 - 25 * (value - 0.5));
+                F1.write(LOW);
+                B1.write(HIGH);
+            }
+            else
+            {
+                pwm1.write(100 - 100 * value);
+                F1.write(HIGH);
+                B1.write(LOW);
+            }
+        }
+        else if(value < 0)
+        {
+            pwm1.write(100);
+            F1.write(HIGH);
+            B1.write(LOW);
+            
+            if(value < -0.5)
+            {
+                pwm0.write(100 + 25 * (value + 5.0));
+                F0.write(LOW);
+                B0.write(HIGH);
+            }
+            else
+            {
+                pwm0.write(100 + 100 * value);
+                F0.write(HIGH);
+                B0.write(LOW);
+            }
+        }
+        
     }
-    delay_ms(100);
 }
 
 
