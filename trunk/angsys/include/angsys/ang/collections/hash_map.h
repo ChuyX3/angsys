@@ -200,8 +200,6 @@ namespace ang
 		};
 
 
-
-
 		template<text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename> class hash_index_maker>
 		class hash_map_object<strings::basic_string<E,A>, T, allocator, hash_index_maker> final
 			: public object

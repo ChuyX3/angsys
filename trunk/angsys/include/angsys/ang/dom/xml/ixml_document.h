@@ -1,0 +1,57 @@
+#ifndef __ANG_DOM_XML_H__
+#error ...
+#elif !defined __ANG_DOM_XML_IXML_DOCUMENT_H__
+#define __ANG_DOM_XML_IXML_DOCUMENT_H__
+
+namespace ang
+{
+	namespace dom
+	{
+		namespace xml
+		{
+
+			ang_begin_interface(LINK ixml_document, ixml_object, collections::ienum<ixml_node>)
+				visible vcall xml_header_t xml_header()const pure;
+				visible vcall ixml_node_t xml_data_type()const pure;
+				visible vcall xml_element_t xml_root_element()const pure;
+				visible vcall ixml_document_t xml_clone()const pure;
+
+				visible vcall xml_iterator_t find(raw_str_t, bool invert = false)const pure;
+				visible vcall xml_iterator_t find(raw_str_t, xml_iterator_t next_to, bool invert = false)const pure;
+
+				visible vcall xml_iterator_t xml_current()const pure;
+				visible vcall xml_element_t xml_current_element()const pure;
+
+				visible vcall bool move_to(xml_iterator_t current) pure;
+				visible vcall bool move_to_child(xml_iterator_t child) pure;
+
+				visible vcall bool move_up() pure;
+				visible vcall bool move_down() pure;
+				visible vcall bool move_forward() pure;
+				visible vcall bool move_backward() pure;
+
+				visible vcall void push_default_header() pure;
+				visible vcall void push_header(wstring version, xml_encoding_t encoding, bool standalone) pure;
+				visible vcall bool begin_element(wstring name) pure;
+				visible vcall bool end_element() pure;
+				visible vcall bool push_element(wstring name, wstring value) pure;
+				visible vcall bool push_element(wstring element) pure;
+				visible vcall bool push_data(wstring value) pure;
+				visible vcall bool push_value(wstring value) pure;
+				visible vcall bool push_attribute(wstring name, wstring value) pure;
+				visible vcall bool push_comment(wstring value) pure;
+
+				visible vcall void load(core::files::input_text_file_t) pure;
+				visible vcall void save(core::files::output_text_file_t)const pure;
+
+				visible vcall void parse(raw_str_t text)pure;
+				template<typename T, text::encoding E> inline void parse(str_view<T, E> const& text) { parse(raw_str(text)); }
+				template<text::encoding E, template<typename>class A> inline void parse(strings::basic_string<E, A> const& text) { parse(text.is_empty() ? raw_str() : raw_str(text->cstr())); }
+
+			ang_end_interface();
+		}
+	}
+}
+
+
+#endif//__ANG_DOM_XML_IXML_DOCUMENT_H__

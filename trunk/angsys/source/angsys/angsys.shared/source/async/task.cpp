@@ -17,7 +17,7 @@ using namespace ang;
 using namespace ang::core;
 using namespace ang::core::async;
 
-extern "C" ulong64 get_performance_time_us();
+ANG_EXTERN ulong64 get_performance_time_us(void);
 
 ////////////////////////////////////////////////////////////////////////////////////////
 

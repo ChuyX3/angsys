@@ -6,6 +6,15 @@ namespace ang
 {
 	namespace collections
 	{
+		safe_enum(LINK, iteration_method, byte)
+		{
+			by_levels,
+			preorder,
+			inorder,
+			postorder
+		};
+			
+
 		template<class T> class base_iterator
 		{
 		protected:

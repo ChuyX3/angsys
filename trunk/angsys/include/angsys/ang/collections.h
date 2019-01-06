@@ -33,11 +33,13 @@ namespace ang
 		template<class T> using ilist_t = intf_wrapper<ilist<T>>;
 		template<class T> using ilist_ptr = intf_wrapper<ilist<T>>;
 
+		template<class N> class iteration_algorithm;
+
 		/******************************************************************/
-/* interface ang::collections::ienum :                            */
-/*  -> represents an enumeration of objects or variables which    */
-/*     can be accessed orderly                                    */
-/******************************************************************/
+		/* interface ang::collections::ienum :                            */
+		/*  -> represents an enumeration of objects or variables which    */
+		/*     can be accessed orderly                                    */
+		/******************************************************************/
 		template<typename T>
 		ang_begin_interface_inline(ienum)
 			visible vcall wsize counter()const pure;
@@ -111,12 +113,30 @@ namespace ang
 
 
 		/******************************************************************/
+		/* interface ang::collections::iset :							  */
+		/*  -> represents a collection of objects or variables which      */
+		/*     can be accessed by a key                                   */
+		/******************************************************************/
+		template<typename T>
+		ang_begin_interface_inline(iset, public ienum<T>)
+			visible vcall bool copy(const ienum<T>*) pure;
+			visible vcall void extend(const ienum<T>*) pure;
+			visible vcall bool insert(T) pure;
+			visible vcall bool remove(T&) pure;
+			visible vcall bool remove(base_iterator<T> it) pure;
+			visible vcall bool remove(base_iterator<T> it, T&) pure;
+			visible vcall bool has_value(const T&)const pure;
+			visible vcall iterator<T> find(const T&) pure;
+			visible vcall const_iterator<T> find(const T&)const pure;
+		ang_end_interface();
+
+		/******************************************************************/
 		/* interface ang::collections::imap :							  */
 		/*  -> represents a collection of objects or variables which      */
 		/*     can be accessed by a key                                   */
 		/******************************************************************/
 		template<typename K, typename T>
-		ang_begin_interface_inline(imap, public ienum<pair<K, T>>)
+		ang_begin_interface_inline(imap, public ienum<pair<K COMA T>>)
 			visible vcall bool copy(const ienum<pair<K, T>>*) pure;
 			visible vcall void extend(const ienum<pair<K, T>>*) pure;
 			visible vcall bool insert(K, T) pure;
@@ -254,6 +274,150 @@ namespace ang
 			node_ptr_t next;
 		};
 
+		template<typename T>
+		struct binary_node {
+			//typedef K key_t;
+			typedef T type;
+			//typedef collections::pair<K, T> pair_t;
+			typedef binary_node<T> self_t, *self_ptr_t;
+
+			binary_node(T key) { _data = ang::move(key); }
+
+			inline type const& key()const {
+				return _data;
+			}
+
+			inline type& value() {
+				return _data;
+			}
+			inline type const& value()const {
+				return _data;
+			}
+			inline void value(type val) {
+				_data = ang::move(val);
+			}
+
+			inline self_ptr_t& parent() {
+				return _parent;
+			}
+			inline self_ptr_t const& parent()const {
+				return _parent;
+			}
+			inline void parent(self_ptr_t n) {
+				_parent = ang::move(n);
+				if (_parent == null)_node_type = 0;
+			}
+
+			inline self_ptr_t left()const {
+				return _left;
+			}
+			inline void left(self_ptr_t n) {
+				_left = ang::move(n);
+				if (_left) {
+					_left->_node_type = 1;
+					_left->parent(this);
+				}
+			}
+
+			inline self_ptr_t right()const {
+				return _right;
+			}
+			inline void right(self_ptr_t n) {
+				_right = ang::move(n);
+				if (_right) {
+					_right->_node_type = 2;
+					_right->parent(this);
+				}
+			}
+
+			inline int node_type()const { return this ? _node_type : 0; }
+			inline int height()const { return this ? _height : 0; }
+			inline void height(int n) { _height = ang::move(n); }
+			inline int balance()const { return this ? left()->height() - right()->height() : 0; }
+
+			type _data;
+			int _node_type = 0;
+			int _height = 1;
+			self_ptr_t _parent = null;
+			self_ptr_t _left = null;
+			self_ptr_t _right = null;
+		};
+
+		template<typename K, typename T>
+		struct binary_node<pair<K,T>> {
+			typedef K key_t;
+			typedef T type, value_t;
+			typedef collections::pair<K, T> pair_t;
+			typedef binary_node<T> self_t, *self_ptr_t;
+
+			binary_node(K key) { _data.key = ang::move(key); }
+			binary_node(K key, T value) { _data.key = ang::move(key); _data.value = ang::move(value); }
+			binary_node(pair_t pair) { _data = ang::move(pair); }
+
+			inline K& key() {
+				return _data.key;
+			}
+			inline K const& key()const {
+				return _data.key;
+			}
+			inline void key(K val) {
+				_data.key = ang::move(val);
+			}
+			inline type& value() {
+				return _data.value;
+			}
+			inline type const& value()const {
+				return _data.value;
+			}
+			inline void value(type val) {
+				_data.value = ang::move(val);
+			}
+
+			inline self_ptr_t& parent() {
+				return _parent;
+			}
+			inline self_ptr_t const& parent()const {
+				return _parent;
+			}
+			inline void parent(self_ptr_t n) {
+				_parent = ang::move(n);
+				if (_parent == null)_node_type = 0;
+			}
+
+			inline self_ptr_t left()const {
+				return _left;
+			}
+			inline void left(self_ptr_t n) {
+				_left = ang::move(n);
+				if (_left) {
+					_left->_node_type = 1;
+					_left->parent(this);
+				}
+			}
+
+			inline self_ptr_t right()const {
+				return _right;
+			}
+			inline void right(self_ptr_t n) {
+				_right = ang::move(n);
+				if (_right) {
+					_right->_node_type = 2;
+					_right->parent(this);
+				}
+			}
+
+			inline int node_type()const { return this ? _node_type : 0; }
+			inline int height()const { return this ? _height : 0; }
+			inline void height(int n) { _height = ang::move(n); }
+			inline int balance()const { return this ? left()->height() - right()->height() : 0; }
+
+			pair_t _data;
+			int _node_type = 0;
+			int _height = 1;
+			self_ptr_t _parent = null;
+			self_ptr_t _left = null;
+			self_ptr_t _right = null;
+		};
 	}
 }
 
@@ -261,7 +425,62 @@ namespace ang
 
 namespace ang
 {
+	namespace algorithms
+	{
 
+		template<class N>
+		class iteration_algorithm
+		{
+		public:
+			typedef N* node_ptr_t;
+			typedef node_ptr_t(*iteration_callback_t)(node_ptr_t, wsize&);
+
+		public: //overrides
+			iteration_callback_t begin;
+			iteration_callback_t end;
+			iteration_callback_t rbegin;
+			iteration_callback_t rend;
+			iteration_callback_t increase;
+			iteration_callback_t decrease;
+			//iteration_callback_t most_left;
+			//iteration_callback_t most_right;
+
+			iteration_algorithm(iteration_algorithm const& algorithm) {
+				begin = algorithm.begin;
+				end = algorithm.end;
+				rbegin = algorithm.rbegin;
+				rend = algorithm.rend;
+				increase = algorithm.increase;
+				decrease = algorithm.decrease;
+				//most_left = algorithm.most_left;
+				//most_right = algorithm.most_right;
+			}
+
+			iteration_algorithm& operator = (iteration_algorithm const& algorithm) {
+				begin = algorithm.begin;
+				end = algorithm.end;
+				rbegin = algorithm.rbegin;
+				rend = algorithm.rend;
+				increase = algorithm.increase;
+				decrease = algorithm.decrease;
+				//most_left = algorithm.most_left;
+				//most_right = algorithm.most_right;
+				return*this;
+			}
+
+		protected:
+			iteration_algorithm() {
+				begin = null;
+				end = null;
+				rbegin = null;
+				rend = null;
+				increase = null;
+				decrease = null;
+				//most_left = null;
+				//most_right = null;
+			}
+		};
+	}
 }
 
 #endif//__ANG_COLLECTIONS_H__

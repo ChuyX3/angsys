@@ -60,20 +60,17 @@
     <Filter Include="header\angsys\platform\inline">
       <UniqueIdentifier>{56cbd6e5-12b5-4162-b446-2426c4a6c987}</UniqueIdentifier>
     </Filter>
-    <Filter Include="header\angsys\doc">
-      <UniqueIdentifier>{2e74cc79-34db-42bf-ad08-ddbf34a56d5b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\streams">
       <UniqueIdentifier>{6e30a5da-47c9-4b1a-96df-e4b42fed2c66}</UniqueIdentifier>
     </Filter>
     <Filter Include="source\files">
       <UniqueIdentifier>{7c54ee61-ea72-4539-9091-28d165d55a63}</UniqueIdentifier>
     </Filter>
-    <Filter Include="header\angsys\c">
-      <UniqueIdentifier>{27046d75-8ca6-4307-9d1e-6e3c44e33424}</UniqueIdentifier>
+    <Filter Include="header\angsys\dom">
+      <UniqueIdentifier>{2e74cc79-34db-42bf-ad08-ddbf34a56d5b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\c">
-      <UniqueIdentifier>{8826d5e3-02b3-46fe-b782-36be692e83c2}</UniqueIdentifier>
+    <Filter Include="header\angsys\dom\xml">
+      <UniqueIdentifier>{7b9508cd-b852-4e35-b300-2bc045ca23fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -239,12 +236,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\thread_manager.h">
       <Filter>header\include</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\doc\xml.h">
-      <Filter>header\angsys\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\doc\json.h">
-      <Filter>header\angsys\doc</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\files.h">
       <Filter>header\angsys\core</Filter>
     </ClInclude>
@@ -257,8 +248,35 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\com_wrapper.hpp">
       <Filter>header\angsys\inline</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\c\text.h">
-      <Filter>header\angsys\c</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\binary_tree.h">
+      <Filter>header\angsys\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\json.h">
+      <Filter>header\angsys\dom</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml.h">
+      <Filter>header\angsys\dom</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_object.h">
+      <Filter>header\angsys\dom\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_collection.h">
+      <Filter>header\angsys\dom\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_node.h">
+      <Filter>header\angsys\dom\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_document.h">
+      <Filter>header\angsys\dom\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_text.h">
+      <Filter>header\angsys\dom\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_text.h">
+      <Filter>header\angsys\dom\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_node.h">
+      <Filter>header\angsys\dom\xml</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -349,9 +367,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\input_text_file.cpp">
       <Filter>source\files</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\c\angsys.c">
-      <Filter>source\c</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl">
@@ -395,6 +410,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\inline\async.inl">
       <Filter>header\angsys\core\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\binary_tree.inl">
+      <Filter>header\angsys\collections\inline</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

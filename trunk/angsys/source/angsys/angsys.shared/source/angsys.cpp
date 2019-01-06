@@ -16,13 +16,15 @@
 #include "thread_manager.h"
 #include "file_system.h"
 
+#include <ang/dom/xml.h>
+
 #include <ang/platform/platform.h>
 //#include "ang/core/async.h"
 
 using namespace ang;
 using namespace ang::memory;
 
-ANG_EXTERN ulong64 get_performance_time_us()
+ANG_EXTERN ulong64 get_performance_time_us(void)
 {
 	{
 #if defined ANDROID_PLATFORM

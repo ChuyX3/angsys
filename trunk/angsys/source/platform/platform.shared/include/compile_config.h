@@ -1,7 +1,8 @@
 #ifndef __COMPILE_CONFIG_H__
 #define __COMPILE_CONFIG_H__
 
-#include "angtypes.h"
+#include <ang/base/platform.h>
+#include <ang/base/types.h>
 
 #if defined WINAPI_FAMILY
 #include <WinSock2.h>
@@ -35,12 +36,8 @@
 #if defined WINDOWS_PLATFORM
 #if defined ANGSYS_DYNAMIC_LIBRARY
 
-
-#ifdef ANG_PLATFORM_EXPORTS
-#define LINK __declspec(dllexport)
-#else
+#ifdef ANGSYS_EXPORTS
 #define LINK __declspec(dllimport)
-#endif//ANG_PLATFORM_EXPORTS
 #else//#elif defined ANGSYS_STATIC_LIBRARY
 #define LINK
 #endif//ANGSYS_DYNAMIC_LIBRARY
