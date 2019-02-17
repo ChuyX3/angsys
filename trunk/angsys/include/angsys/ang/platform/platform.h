@@ -502,7 +502,6 @@ namespace ang
 		namespace events
 		{
 		
-
 			ang_interface(imsg_event_args);
 			ang_interface(icreated_event_args);
 			ang_interface(ivisibility_change_event_args);

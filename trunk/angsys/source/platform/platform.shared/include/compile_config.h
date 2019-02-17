@@ -35,8 +35,7 @@
 
 #if defined WINDOWS_PLATFORM
 #if defined ANGSYS_DYNAMIC_LIBRARY
-
-#ifdef ANGSYS_EXPORTS
+//#ifdef ANGSYS_EXPORTS
 #define LINK __declspec(dllimport)
 #else//#elif defined ANGSYS_STATIC_LIBRARY
 #define LINK

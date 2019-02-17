@@ -16,43 +16,30 @@ namespace ang
 	{
 		namespace events
 		{
-			class LINK message final
-				: public object
+			class LINK message
 			{
 			private:
-				core_msg_t _msg;
-				vars_t _args;
-				mutable dword _result;
+				core_msg_t m_msg;
+				ulong64 m_wparam;
+				long64 m_lparam;
+				mutable dword m_result;
 
 			public:
 				message(const message& m);
 				message(const message* m);
 				message(core_msg_t m = 0, ulong64 wparam = 0, long64 lparam = 0);
-				//template<typename... Ts>
-				//message(core_msg_t m, Ts... args) : _msg(m) {
-				//	_args = var_args{ 0_l , 0_ul, move(args ...) };
-				//}
-
-
-			public: //overrides
-				ANG_DECLARE_INTERFACE();
-
+				~message();
+				
 			public: //properties
 				core_msg_t msg()const;
-				windex push_arg(var);
 				ulong64 wparam()const;
 				long64 lparam()const;
-				var arg(windex i)const;
-				array_view<var> args()const;
 				dword result()const;
 				void result(dword)const;
-
-			private:
-				virtual~message();
 			};
 
 			ang_begin_interface(LINK imsg_event_args)
-				visible vcall const message_t& msg_info()const pure;
+				visible vcall const message& msg_info()const pure;
 				visible vcall void handled(bool) pure;
 				visible vcall bool handled()const pure;
 			ang_end_interface();
@@ -102,7 +89,6 @@ namespace ang
 			ang_end_interface();
 
 			ang_begin_interface(LINK iupdate_event_args, public imsg_event_args)
-				//visible vcall shared_ptr<core::time::step_timer> step_timer()const pure;
 				visible vcall float delta()const pure;
 				visible vcall float total()const pure;
 			ang_end_interface();
