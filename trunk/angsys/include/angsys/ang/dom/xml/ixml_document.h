@@ -11,16 +11,17 @@ namespace ang
 		{
 
 			ang_begin_interface(LINK ixml_document, ixml_object, collections::ienum<ixml_node>)
-				visible vcall xml_header_t xml_header()const pure;
+				visible vcall xml_encoding_t xml_encoding()const pure;
+				visible vcall ixml_header_t xml_header()const pure;
 				visible vcall ixml_node_t xml_data_type()const pure;
-				visible vcall xml_element_t xml_root_element()const pure;
+				visible vcall ixml_node_t xml_root_element()const pure;
 				visible vcall ixml_document_t xml_clone()const pure;
 
 				visible vcall xml_iterator_t find(raw_str_t, bool invert = false)const pure;
 				visible vcall xml_iterator_t find(raw_str_t, xml_iterator_t next_to, bool invert = false)const pure;
 
 				visible vcall xml_iterator_t xml_current()const pure;
-				visible vcall xml_element_t xml_current_element()const pure;
+				visible vcall ixml_node_t xml_current_element()const pure;
 
 				visible vcall bool move_to(xml_iterator_t current) pure;
 				visible vcall bool move_to_child(xml_iterator_t child) pure;
@@ -31,15 +32,15 @@ namespace ang
 				visible vcall bool move_backward() pure;
 
 				visible vcall void push_default_header() pure;
-				visible vcall void push_header(wstring version, xml_encoding_t encoding, bool standalone) pure;
-				visible vcall bool begin_element(wstring name) pure;
+				visible vcall void push_header(raw_str_t version, bool standalone) pure;
+				visible vcall bool begin_element(raw_str_t name) pure;
 				visible vcall bool end_element() pure;
-				visible vcall bool push_element(wstring name, wstring value) pure;
-				visible vcall bool push_element(wstring element) pure;
-				visible vcall bool push_data(wstring value) pure;
-				visible vcall bool push_value(wstring value) pure;
-				visible vcall bool push_attribute(wstring name, wstring value) pure;
-				visible vcall bool push_comment(wstring value) pure;
+				visible vcall bool push_element(raw_str_t name, raw_str_t value) pure;
+				visible vcall bool push_element(raw_str_t element) pure;
+				visible vcall bool push_data(raw_str_t value) pure;
+				visible vcall bool push_value(raw_str_t value) pure;
+				visible vcall bool push_attribute(raw_str_t name, raw_str_t value) pure;
+				visible vcall bool push_comment(raw_str_t value) pure;
 
 				visible vcall void load(core::files::input_text_file_t) pure;
 				visible vcall void save(core::files::output_text_file_t)const pure;

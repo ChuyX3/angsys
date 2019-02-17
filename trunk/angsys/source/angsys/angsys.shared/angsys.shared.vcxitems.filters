@@ -72,6 +72,15 @@
     <Filter Include="header\angsys\dom\xml">
       <UniqueIdentifier>{7b9508cd-b852-4e35-b300-2bc045ca23fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\xml">
+      <UniqueIdentifier>{dc296931-da9e-4b13-a6b9-d2047c748ffd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\include\xml">
+      <UniqueIdentifier>{746c227f-2a91-4422-b02b-d2bdbfe52c1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\include\xml\inline">
+      <UniqueIdentifier>{e166d634-9db2-4584-b123-ea68919fe2b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h">
@@ -269,13 +278,31 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_document.h">
       <Filter>header\angsys\dom\xml</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_text.h">
-      <Filter>header\angsys\dom\xml</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_internal.h">
+      <Filter>header\include\xml</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_text.h">
-      <Filter>header\angsys\dom\xml</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_element.h">
+      <Filter>header\include\xml</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_node.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_node.h">
+      <Filter>header\include\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_text.h">
+      <Filter>header\include\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_attribute.h">
+      <Filter>header\include\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_comment.h">
+      <Filter>header\include\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_document.h">
+      <Filter>header\include\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_header.h">
+      <Filter>header\include\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_header.h">
       <Filter>header\angsys\dom\xml</Filter>
     </ClInclude>
   </ItemGroup>
@@ -367,6 +394,33 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\input_text_file.cpp">
       <Filter>source\files</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml.cpp">
+      <Filter>source\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_attribute.cpp">
+      <Filter>source\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_comment.cpp">
+      <Filter>source\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_document.cpp">
+      <Filter>source\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_element.cpp">
+      <Filter>source\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_header.cpp">
+      <Filter>source\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_node.cpp">
+      <Filter>source\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_store.cpp">
+      <Filter>source\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_text.cpp">
+      <Filter>source\xml</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl">
@@ -413,6 +467,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\binary_tree.inl">
       <Filter>header\angsys\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)include\xml\inline\xml_internal.inl">
+      <Filter>header\include\xml\inline</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -44,22 +44,11 @@ namespace ang
 
 			ang_interface(ixml_object);
 			ang_interface(ixml_node);
-			ang_interface(ixml_text);
+			ang_interface(ixml_header);
 			ang_interface(ixml_document);
 			ang_interface(ixml_collection);
 
-			ang_object(xml_document);
-			ang_object(xml_node);
-			//ang_object(xml_store);
-			//ang_object(xml_text);
-			//ang_object(xml_cdata);
-			//ang_object(xml_pcdata);
-			ang_object(xml_attribute);
-			ang_object(xml_header);
-			ang_object(xml_comment);
-			ang_object(xml_element);
-
-			typedef class ixml_attributes ixml_attributes_t;
+			typedef class xml_attributes xml_attributes_t;
 			typedef collections::ienum<struct ixml_node > ixml_items;
 			typedef collections::iterator<struct ixml_node > xml_iterator_t;
 			typedef collections::base_iterator<struct ixml_node > xml_base_iterator_t;
@@ -71,6 +60,9 @@ namespace ang
 
 			typedef text::encoding xml_encoding;
 			typedef text::encoding_t xml_encoding_t;
+
+			typedef text::itext_buffer ixml_text;
+			typedef text::itext_buffer_t ixml_text_t;
 
 			safe_enum(LINK, xml_type, byte)
 			{
@@ -112,13 +104,86 @@ namespace ang
 }
 
 #include <ang/dom/xml/ixml_object.h>
+#include <ang/dom/xml/ixml_header.h>
 #include <ang/dom/xml/ixml_collection.h>
 #include <ang/dom/xml/ixml_node.h>
-#include <ang/dom/xml/ixml_text.h>
 #include <ang/dom/xml/ixml_document.h>
 
-#include <ang/dom/xml/xml_text.h>
-#include <ang/dom/xml/xml_node.h>
+namespace ang
+{
+	namespace dom
+	{
+		namespace xml
+		{
+			class xml_attributes
+			{
+			public:
+				typedef xml::ixml_collection type;
+
+			private:
+				xml::ixml_collection* _ptr;
+
+			public:
+				xml_attributes();
+				xml_attributes(xml::ixml_collection*);
+				xml_attributes(xml_attributes_t &&);
+				xml_attributes(xml_attributes_t const&);
+				xml_attributes(std::nullptr_t const&);
+				~xml_attributes();
+
+			public:
+				void reset();
+				void reset_unsafe();
+				bool is_empty()const;
+				xml::ixml_collection* get(void)const;
+				void set(xml::ixml_collection*);
+				xml::ixml_collection ** addres_of(void);
+
+				xml::xml_forward_iterator_t begin() {
+					return _ptr ? _ptr->begin() : xml::xml_forward_iterator_t(null);
+				}
+				xml::xml_forward_iterator_t end() {
+					return _ptr ? _ptr->end() : xml::xml_forward_iterator_t(null);
+				}
+
+				xml::xml_const_forward_iterator_t begin()const {
+					return _ptr ? ((xml::ixml_collection const*)_ptr)->begin() : xml::xml_const_forward_iterator_t(null);
+				}
+				xml::xml_const_forward_iterator_t end()const {
+					return _ptr ? ((xml::ixml_collection const*)_ptr)->end() : xml::xml_const_forward_iterator_t(null);
+				}
+
+				xml_attribute_t xml_attribute(raw_str_t);
+				xml_namespace_t xml_namespace(raw_str_t);
+
+				template<typename T, xml_encoding E> xml_attribute_t xml_attribute(str_view<T, E> str)const { return xml_attribute(raw_str(str)); }
+				template<typename T, xml_encoding E> xml_namespace_t xml_namespace(str_view<T, E> str)const { return xml_namespace(raw_str(str)); }
+
+			public:
+				xml_attributes_t& operator = (xml::ixml_collection*);
+				xml_attributes_t& operator = (xml_attributes_t &&);
+				xml_attributes_t& operator = (xml_attributes_t const&);
+
+				//intf_wrapper_ptr<xml::ixml_collection> operator & (void);
+				xml::ixml_collection * operator -> (void);
+				xml::ixml_collection const* operator -> (void)const;
+
+				operator xml::ixml_collection * (void);
+				operator xml::ixml_collection const* (void)const;
+
+				ixml_text_t operator[](raw_str_t)const;
+				template<typename T, xml_encoding E> ixml_text_t operator[](str_view<T, E> str)const { return operator[](raw_str(str)); }
+			};
+		}
+	}
+}
+
+//#include <ang/dom/xml/xml_node.h>
+//#include <ang/dom/xml/xml_text.h>
+//#include <ang/dom/xml/xml_attribute.h>
+//#include <ang/dom/xml/xml_comment.h>
+//#include <ang/dom/xml/xml_element.h>
+//#include <ang/dom/xml/xml_document.h>
 
 #ifdef  LINK
 #undef  LINK

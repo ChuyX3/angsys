@@ -412,6 +412,15 @@ namespace ang //operations
 	};
 
 
+	template<typename T> using logic_operation_negation = logic_operation<T, T, logic_operation_type::negation>;
+	template<typename T1, typename T2> using logic_operation_same = logic_operation<T1, T2, logic_operation_type::same>;
+	template<typename T1, typename T2> using logic_operation_diferent = logic_operation<T1, T2, logic_operation_type::diferent>;
+	template<typename T1, typename T2> using logic_operation_same_or_minor = logic_operation<T1, T2, logic_operation_type::same_or_minor>;
+	template<typename T1, typename T2> using logic_operation_same_or_major = logic_operation<T1, T2, logic_operation_type::same_or_major>;
+	template<typename T1, typename T2> using logic_operation_minor = logic_operation<T1, T2, logic_operation_type::minor>;
+	template<typename T1, typename T2> using logic_operation_major = logic_operation<T1, T2, logic_operation_type::major>;
+
+
 	template<boolean_operation_type TYPE, typename T1, typename T2 = T1, typename = void> struct has_boolean_operation : false_type { };
 	template<typename T> struct has_boolean_operation<boolean_operation_type::not_operation, T, T, void_t<decltype(~declval<T>())>> : true_type { };
 	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::and_operation, T1, T2, void_t<decltype(declval<T1>() & declval<T2>())>> : true_type { };

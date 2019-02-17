@@ -169,6 +169,76 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 		dest = iencoder::get_encoder(dest.encoding())->convert(dest.ptr(), src.ptr(), src.encoding(), true, dest.count(), src.count());
 		return true;
 	}
+	else if (id.is_type_of<short>())
+	{
+		windex i = 0;
+		short& value = *reinterpret_cast<short*>(ptr);
+		value = _encoder->to_signed(text_buffer().ptr(), i);
+		return i > 0;
+	}
+	else if (id.is_type_of<ushort>())
+	{
+		windex i = 0;
+		ushort& value = *reinterpret_cast<ushort*>(ptr);
+		value = _encoder->to_unsigned(text_buffer().ptr(), i);
+		return i > 0;
+	}
+	else if (id.is_type_of<int>())
+	{
+		windex i = 0;
+		int& value = *reinterpret_cast<int*>(ptr);
+		value = _encoder->to_signed(text_buffer().ptr(), i);
+		return i > 0;
+	}
+	else if (id.is_type_of<uint>())
+	{
+		windex i = 0;
+		uint& value = *reinterpret_cast<uint*>(ptr);
+		value = _encoder->to_unsigned(text_buffer().ptr(), i);
+		return i > 0;
+	}
+	else if (id.is_type_of<long>())
+	{
+		windex i = 0;
+		long& value = *reinterpret_cast<long*>(ptr);
+		value = _encoder->to_signed(text_buffer().ptr(), i);
+		return i > 0;
+	}
+	else if (id.is_type_of<ulong>())
+	{
+		windex i = 0;
+		ulong& value = *reinterpret_cast<ulong*>(ptr);
+		value = _encoder->to_unsigned(text_buffer().ptr(), i);
+		return i > 0;
+	}
+	else if (id.is_type_of<long64>())
+	{
+		windex i = 0;
+		long64& value = *reinterpret_cast<long64*>(ptr);
+		value = _encoder->to_signed(text_buffer().ptr(), i);
+		return i > 0;
+	}
+	else if (id.is_type_of<ulong64>())
+	{
+		windex i = 0;
+		ulong64& value = *reinterpret_cast<ulong64*>(ptr);
+		value = _encoder->to_unsigned(text_buffer().ptr(), i);
+		return i > 0;
+	}
+	else if (id.is_type_of<float>())
+	{
+		windex i = 0;
+		float& value = *reinterpret_cast<float*>(ptr);
+		value = _encoder->to_floating(text_buffer().ptr(), i);
+		return i > 0;
+	}
+	else if (id.is_type_of<double>())
+	{
+		windex i = 0;
+		double& value = *reinterpret_cast<double*>(ptr);
+		value = _encoder->to_floating(text_buffer().ptr(), i);
+		return i > 0;
+	}
 	return false;
 }
 

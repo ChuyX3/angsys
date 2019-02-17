@@ -20,7 +20,10 @@ namespace ang
 
 			virtual encoding_t format()const override;
 			virtual rtti_t const& char_type()const override;
-			virtual char32 to_char32(unknown_str_t str, windex& i)const override;
+			virtual char32 to_char32(unknown_cstr_t str, windex& i)const override;
+			virtual long64 to_signed(unknown_cstr_t str, windex& i, int base)const override;
+			virtual ulong64 to_unsigned(unknown_cstr_t str, windex& i, int base)const override;
+			virtual double to_floating(unknown_cstr_t str, windex& i, bool ex)const override;
 			virtual void set_eos(unknown_str_t str, windex at)const override;
 			virtual wsize lenght(unknown_cstr_t cstr)const override;
 			virtual wsize size(unknown_cstr_t cstr, encoding_t e, windex start, windex end)const override;
@@ -63,9 +66,25 @@ namespace ang
 		}
 
 		template<encoding ENCODING>
-		inline char32 encoder_interface<ENCODING>::to_char32(unknown_str_t str, windex& i)const {
+		inline char32 encoder_interface<ENCODING>::to_char32(unknown_cstr_t str, windex& i)const {
 			return text::to_char32<false, text::is_endian_swapped<ENCODING>::value>((cstr_t)str, i);
 		}
+
+		template<encoding ENCODING>
+		inline long64 encoder_interface<ENCODING>::to_signed(unknown_cstr_t str, windex& i, int base)const {
+			return str_to_signed<char_t const, ENCODING>((cstr_t)str, i, base);
+		}
+
+		template<encoding ENCODING>
+		inline ulong64 encoder_interface<ENCODING>::to_unsigned(unknown_cstr_t str, windex& i, int base)const {
+			return str_to_unsigned<char_t const, ENCODING>((cstr_t)str, i, base);
+		}
+
+		template<encoding ENCODING>
+		inline double encoder_interface<ENCODING>::to_floating(unknown_cstr_t str, windex& i, bool ex)const {
+			return str_to_floating<char_t const, ENCODING>((cstr_t)str, i, ex);
+		}
+
 
 		template<encoding ENCODING> inline
 		void encoder_interface<ENCODING>::set_eos(unknown_str_t dest, windex at)const {

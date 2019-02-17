@@ -337,15 +337,15 @@ namespace ang //constants
 		template<class T, wsize SIZE> inline constexpr wsize array_size(const stack_array<T, SIZE>&) { return SIZE; }
 		template<class T> inline wsize array_size(const array_view<T>& arr) { return arr.size(); }
 
-		template<typename K, typename T>
-		wsize binary_search(K const& key, array_view<T> const& vector) {
-			long64 first = 0, last = (long64)vector.size() - 1;
+		template<typename K, typename T, template<typename, typename> class operation = logic_operation_minor>
+		wsize binary_search(K const& key, array_view<T> const& vec) {
+			long64 first = 0, last = (long64)vec.size() - 1;
 			long64 mid;
 			while (first <= last) {
 				mid = (first + last) / 2;
-				if (logic_operation<T, K, logic_operation_type::same>::operate(vector[mid], key)) return (wsize)mid;
-				else if (logic_operation<T, K, logic_operation_type::same>::operate(vector[mid], key)) last = mid - 1;
-				else first = mid + 1;
+				if (operation<T, K>::operate(vec[mid], key)) last = mid - 1;
+				else if (operation<K, T>::operate(key, vec[mid])) first = mid + 1;
+				else return (wsize)mid;
 			}
 			return invalid_index;
 		}

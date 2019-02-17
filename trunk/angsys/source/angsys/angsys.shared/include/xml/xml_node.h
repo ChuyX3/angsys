@@ -1,17 +1,12 @@
-#ifndef __ANG_DOM_XML_H__
-#error ...
-#elif !defined __ANG_DOM_XML_XML_NODE_H__
-#define __ANG_DOM_XML_XML_NODE_H__
-
+#pragma once 
 namespace ang
 {
 	namespace dom
 	{
 		namespace xml
 		{
-			class LINK xml_node
-				: public object
-				, public ixml_node
+			template<xml_encoding E>
+			class xml_node : public object, public ixml_node
 			{
 			public:
 				friend xml_document;
@@ -33,7 +28,7 @@ namespace ang
 					typedef collections::ienum<ixml_node> ienum_t;
 
 				protected:
-					xml_collection(xml_node_t, xml_type_t);
+					xml_collection(xml_node_ptr<E>, xml_type_t);
 					virtual~xml_collection();
 
 				public:
@@ -89,13 +84,15 @@ namespace ang
 				mutable weak_ptr<ixml_node> _xml_parent;
 				mutable weak_ptr<ixml_document> _xml_parent_doc;
 
-				ixml_node* _xml_prev;
-				ixml_node* _xml_next;
+				xml_node* _xml_prev;
+				xml_node* _xml_next;
 
 			protected:
-				ixml_text_t _xml_name;
-				ixml_collection_t _xml_attributes;
-				ixml_object_t _xml_content;
+				strings::basic_string<E> _xml_name;
+				strings::basic_string<E> _xml_value;
+				xml_namespace_ptr<E> _xml_namespace;
+				ixml_collection_t _xml_attributes; //attributes and namespaces 
+				object_wrapper<xml_collection> _xml_children;
 
 			protected:
 				xml_node(ixml_document_t, xml_type_t);
@@ -124,23 +121,25 @@ namespace ang
 
 				virtual bool xml_has_name()const override;
 				virtual bool xml_has_value()const override;
+				virtual bool xml_has_namespace()const override;
 				virtual bool xml_has_children()const override;
 				virtual bool xml_has_attributes()const override;
 
 				virtual ixml_text_t xml_name()const override;
 				virtual ixml_text_t xml_value()const override;
+				virtual xml_namespace_ptr<E> xml_namespace()const override;
 				virtual ixml_collection_t xml_children()const override;
-				virtual ixml_attributes_t xml_attributes()const override;
+				virtual xml_attributes_t xml_attributes()const override;
 
 			protected:
 				bool push_name(wstring value);
 				bool push_data(wstring);
 				bool push_value(wstring);
-				xml_iterator_t push_attribute(xml_attribute_t att);
-				xml_iterator_t push_attribute(xml_attribute_t att, xml_iterator_t next);
+				xml_iterator_t push_attribute(xml_attribute_ptr<E> att);
+				xml_iterator_t push_attribute(xml_attribute_ptr<E> att, xml_iterator_t next);
 				bool push_attributes(ixml_collection_t attributes);
-				xml_iterator_t push_child(xml_node_t element);
-				xml_iterator_t push_child(xml_node_t element, xml_iterator_t next);
+				xml_iterator_t push_child(xml_node_ptr<E> element);
+				xml_iterator_t push_child(xml_node_ptr<E> element, xml_iterator_t next);
 				bool push_children(ixml_collection_t children);
 
 			};
@@ -148,5 +147,3 @@ namespace ang
 	}
 }
 
-
-#endif//__ANG_DOM_XML_XML_NODE_H__

@@ -222,7 +222,7 @@ namespace ang
 
 	public:
 		intf_wrapper();
-		intf_wrapper(type*);
+		intf_wrapper(type_ptr);
 		intf_wrapper(ang::nullptr_t const&);
 		intf_wrapper(intf_wrapper &&);
 		intf_wrapper(intf_wrapper const&);
@@ -233,8 +233,8 @@ namespace ang
 		~intf_wrapper();
 
 	public:
-		type* get(void)const;
-		void set(type*);
+		type_ptr get(void)const;
+		void set(type_ptr);
 		void reset();
 		void reset_unsafe();
 		bool is_empty()const;

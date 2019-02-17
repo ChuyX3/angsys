@@ -82,6 +82,69 @@ namespace ang
 			ang_end_interface();
 		}
 	}
+
+	template<> class LINK intf_wrapper<dom::xml::ixml_collection>
+	{
+	public:
+		typedef dom::xml::ixml_collection type;
+		typedef dom::xml::ixml_collection* type_ptr;
+		typedef dom::xml::ixml_collection& type_ref;
+		typedef dom::xml::ixml_collection const* ctype_ptr;
+		typedef dom::xml::ixml_collection const& ctype_ref;
+
+	private:
+		type* _ptr;
+
+	public:
+		intf_wrapper();
+		intf_wrapper(type*);
+		intf_wrapper(intf_wrapper &&);
+		intf_wrapper(intf_wrapper const&);
+		intf_wrapper(std::nullptr_t const&);
+		~intf_wrapper();
+
+	public:
+		void reset();
+		void reset_unsafe();
+		type* get(void)const;
+		void set(type*);
+		bool is_empty()const;
+		void move(intf_wrapper& ptr);
+		type ** addres_of(void);
+		type ** addres_for_init(void);
+		
+		dom::xml::xml_forward_iterator_t begin() {
+			return _ptr ? _ptr->begin() : dom::xml::xml_forward_iterator_t(null);
+		}
+		dom::xml::xml_forward_iterator_t end() {
+			return _ptr ? _ptr->end() : dom::xml::xml_forward_iterator_t(null);
+		}
+
+		dom::xml::xml_const_forward_iterator_t begin()const {
+			return _ptr ? ((dom::xml::ixml_collection const*)_ptr)->begin() : dom::xml::xml_const_forward_iterator_t(null);
+		}
+		dom::xml::xml_const_forward_iterator_t end()const {
+			return _ptr ? ((dom::xml::ixml_collection const*)_ptr)->end() : dom::xml::xml_const_forward_iterator_t(null);
+		}
+
+	public:
+		intf_wrapper& operator = (type*);
+		intf_wrapper& operator = (ang::nullptr_t const&);
+		intf_wrapper& operator = (intf_wrapper &&);
+		intf_wrapper& operator = (intf_wrapper const&);
+
+		intf_wrapper_ptr<type> operator & (void);
+		type * operator -> (void);
+		type const* operator -> (void)const;
+		operator type * (void);
+		operator type const* (void)const;
+
+		operator dom::xml::ixml_text_t()const;
+
+		dom::xml::ixml_node_t operator[](raw_str_t)const;
+		template<typename T, text::encoding E> dom::xml::ixml_node_t operator[](str_view<T, E> str)const;
+	};
+
 }
 
 #endif//__ANG_DOM_XML_IXML_COLLECTION_H__

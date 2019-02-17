@@ -349,13 +349,13 @@ namespace ang //constants
 #define safe_enum_rrti(_NAMESPACE, _name, ...) \
 	ang::rtti_t const& _NAMESPACE::_name::class_info() { \
 		ang::rtti_t const* parent[] = { ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPE_OF_DIR, COMA_SEPARATOR, __VA_ARGS__)) }; \
-		return rtti::regist(#_NAMESPACE"::"#_name, genre::enum_type, sizeof(_name), alignof(_name), null, null); \
+		return rtti::regist(#_NAMESPACE"::"#_name, genre::enum_type, sizeof(_name), alignof(_name), parent, null); \
 	}
 
 #define safe_enum_rrti2(_NAMESPACE, _name) \
 	ang::rtti_t const& _NAMESPACE::_name##_t::class_info() { \
 		ang::rtti_t const* parent[] = { &ang::rtti::type_of<value<_NAMESPACE::_name##_proxy>>() }; \
-		return rtti::regist(#_NAMESPACE"::"#_name##_t, genre::enum_type, sizeof(_name##_t), alignof(_name##_t), null, null); \
+		return rtti::regist(#_NAMESPACE"::"#_name##_t, genre::enum_type, sizeof(_name##_t), alignof(_name##_t), parent, null); \
 	}
 
 	namespace text
