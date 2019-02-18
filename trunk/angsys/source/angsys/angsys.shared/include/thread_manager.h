@@ -98,8 +98,6 @@ namespace ang
 			};
 
 
-
-
 			class thread_manager
 				: public singleton<thread_manager, memory::unmanaged_allocator>
 			{

@@ -1274,7 +1274,7 @@ inline bool ang::collections::hash_map_object<ang::strings::basic_string<E,A>, T
 	if (find_node(key) != null)
 		return false;
 	wsize idx = hash_index_maker<raw_cstr_t>::make(key, m_table.size());
-	node_ptr_t entry = allocate_node<ang::strings::basic_string<E,A>, T>(ang::forward<K>(key), ang::forward<T>(value));
+	node_ptr_t entry = allocate_node<ang::strings::basic_string<E,A>, T>(ang::forward<ang::strings::basic_string<E, A>>(ang::strings::basic_string<E, A>(key)), ang::forward<T>(value));
 
 	if (m_table[idx])
 	{
@@ -1292,10 +1292,10 @@ inline bool ang::collections::hash_map_object<ang::strings::basic_string<E,A>, T
 	if (m_count > (m_table.size() * 0.75))
 		increase_capacity();
 
-	if (find_node(pair.key) != null)
+	if (find_node((raw_cstr_t)pair.key) != null)
 		return false;
 	wsize idx = index_maker::make(pair.key, m_table.size());
-	node_ptr_t entry = allocate_node<ang::strings::basic_string<E,A>, T>(ang::forward<K>(pair.key), ang::forward<T>(pair.value));
+	node_ptr_t entry = allocate_node<ang::strings::basic_string<E,A>, T>(ang::forward<ang::strings::basic_string<E, A>>(pair.key), ang::forward<T>(pair.value));
 	if (m_table[idx])
 	{
 		entry->next = m_table[idx];
@@ -1316,7 +1316,7 @@ inline bool ang::collections::hash_map_object<ang::strings::basic_string<E,A>, T
 	if (node == null)
 	{
 		wsize idx = hash_index_maker<raw_cstr_t>::make(key, m_table.size());
-		node = allocate_node<ang::strings::basic_string<E,A>, T>(ang::forward<K>(key), ang::forward<T>(value));
+		node = allocate_node<ang::strings::basic_string<E,A>, T>(ang::forward<ang::strings::basic_string<E, A>>(ang::strings::basic_string<E, A>(key)), ang::forward<T>(value));
 		if (m_table[idx])
 		{
 			node->next = m_table[idx];
@@ -1338,11 +1338,11 @@ inline bool ang::collections::hash_map_object<ang::strings::basic_string<E,A>, T
 	if (m_count > (m_table.size() * 0.75))
 		increase_capacity();
 
-	node_ptr_t node = find_node(pair.key);
+	node_ptr_t node = find_node((raw_cstr_t)pair.key);
 	if (node == null)
 	{
 		wsize idx = index_maker::make(pair.key, m_table.size());
-		node = allocate_node<ang::strings::basic_string<E,A>, T>(ang::forward<K>(pair.key), ang::forward<T>(pair.value));
+		node = allocate_node<ang::strings::basic_string<E,A>, T>(ang::forward<ang::strings::basic_string<E, A>>(pair.key), ang::forward<T>(pair.value));
 		if (m_table[idx])
 		{
 			node->next = m_table[idx];

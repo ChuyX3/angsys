@@ -34,7 +34,7 @@ static collections::pair<except_code, cstr_t> def_except[] = {
 
 ///////////////////////////////////////////
 
-cstr_t except_code_t::to_string()const {
+string except_code_t::to_string()const {
 	wsize idx = algorithms::binary_search<except_code>(get(), to_array(def_except));
 	if (idx > algorithms::array_size(def_except))
 		return  "exception: unkown exception"_s;

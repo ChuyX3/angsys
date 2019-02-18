@@ -34,12 +34,16 @@ namespace ang
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
 
-				bool wait(core::async::async_action_status_t)const override;
-				bool wait(core::async::async_action_status_t, dword)const override;
-				core::async::async_action_status_t status()const override;
-				bool cancel()override;
-				void result()const override;
-				void complete(dword);
+				virtual core::async::iasync<void> then(core::delegates::function<void(core::async::iasync<void>)> func);
+				virtual bool wait(core::async::async_action_status_t state)const;
+				virtual bool wait(core::async::async_action_status_t state, dword ms)const;
+				virtual core::async::async_action_status_t status()const;
+				virtual bool cancel();
+				virtual void result()const;
+
+				core::async::cond& cond()const { return m_cond; }
+				core::async::mutex& mutex()const { return m_mutex; }
+				
 
 			private:
 				virtual~async_msg_task();

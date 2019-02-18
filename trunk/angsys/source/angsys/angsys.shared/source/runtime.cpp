@@ -9,7 +9,7 @@ rtti_t const& type_info_builder<void, genre::value_type>::type_of() {
 	static rtti_t const& info = rtti::regist("void"_s, genre::value_type, sizeof(wsize), alignof(wsize)); 
 	return info;
 }
-
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(pointer, "pointer");
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(char, "char");
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(byte, "byte");
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(wchar, "wchar");
@@ -25,6 +25,22 @@ ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(long64, "long64");
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ulong64, "ulong64");
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(float, "float");
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(double, "double");
+
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<char>, "char[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<byte>, "byte[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<wchar>, "wchar[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<char16_t>, "char16[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<char32_t>, "char32[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<short>, "short[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<ushort>, "ushort[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<int>, "int[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<uint>, "uint[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<long>, "long[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<ulong>, "ulong[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<long64>, "long64[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<ulong64>, "ulong64[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<float>, "float[]");
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_IMPLEMENT_OVERRIDE(ang::array_view<double>, "double[]");
 
 
 bool ang_runtime_rtti_default_dyn_cast(const rtti_t& src_id, unknown_t src, const rtti_t& out_id, unknown_ptr_t out)

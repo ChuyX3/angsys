@@ -1,6 +1,6 @@
 #include "pch.h"
-#include <ang/core/time.hpp>
-#include "ang/platform/angwin/angwin.hpp"
+#include <ang/core/timer.h>
+#include "ang/platform/angwin/angwin.h"
 
 using namespace ang;
 using namespace ang::platform;

@@ -3,6 +3,7 @@
 #include "ang/platform/angwin/angwin.h"
 #include "async_msg_task.h"
 #include <ang/collections/hash_map.h>
+#include <ang/core/timer.h>
 
 using namespace ang;
 using namespace ang::core;
@@ -17,19 +18,19 @@ namespace ang {
 	namespace platform {
 		namespace windows {
 
-			typedef struct _hprocess
+			struct process::_hprocess
 			{
-				pointer hmodule;
-				core::async::thread_t main_thread;
-				core::async::cond_ptr_t cond;
-				core::async::mutex_ptr_t mutex;
-			}*hprocess_t;
-			typedef const _hprocess* const_hprocess_t;
+				pointer hmodule = null;
+				core::async::thread_t main_thread = null;
+				collections::hash_map<string, var> properties;
 
+			};
 			process* s_current_process = null;
 		}
 	}
 }
+
+ANG_EXTERN ulong64 get_performance_time_us(void);
 
 process_t process::current_process()
 {
@@ -40,132 +41,76 @@ process_t process::current_process()
 
 process::process()
 	: m_process(null)
-	, m_properties(new collections::hash_map_object<string, var>())
-	//, cond(make_shared<core::async::cond>())
 	, start_app_event(this, [](events::core_msg_t code) { return code == events::win_msg_enum::start_app; })
 	, exit_app_event(this, [](events::core_msg_t code) { return code == events::win_msg_enum::exit_app; })
 {
 	if (s_current_process != null)
 		throw(exception_t(except_code::two_singleton));
+
 	s_current_process = this;
 	
-	m_properties["cmd_args"_s] = null;
-	m_properties["main_cond"_s] = make_shared<core::async::cond_t>();
-	m_properties["main_mutex"_s] = make_shared<core::async::mutex_t>();
-	m_properties["main_step_timer"_s] = make_shared<core::time::step_timer>();
+	m_process = new _hprocess();
+
+	m_process->hmodule = GetModuleHandle(NULL);
+	m_process->main_thread = core::async::thread::main_thread();
+
+	m_process->properties["cmd_args"] = null;
+	m_process->properties["main_cond"] = make_shared<core::async::cond_t>();
+	m_process->properties["main_mutex"] = make_shared<core::async::mutex_t>();
+	m_process->properties["step_timer"] = make_shared<core::time::step_timer>();
 }
 
 process::~process()
 {
 	close();
-	_current_process = null;
+	s_current_process = null;
 	static_cast<events::event_trigger<process>&>(start_app_event).empty();
 	static_cast<events::event_trigger<process>&>(exit_app_event).empty();
 }
 
-ANG_IMPLEMENT_CLASSNAME(ang::platform::windows::process);
-ANG_IMPLEMENT_OBJECTNAME(ang::platform::windows::process);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::windows::process);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::platform::windows::process, object, ang::platform::imessage_listener);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::windows::process, object, ang::platform::imessage_listener)
 
-bool process::is_inherited_of(type_name_t name)
+pointer process::handle()const
 {
-	return name == type_of<process>()
-		|| object::is_inherited_of(name)
-		|| imessage_reciever::is_inherited_of(name);
-}
-
-bool process::is_kind_of(type_name_t name)const
-{
-	return name == type_of<process>()
-		|| object::is_kind_of(name)
-		|| imessage_reciever::is_kind_of(name);
-}
-
-bool process::query_object(type_name_t name, unknown_ptr_t out)
-{
-	if (out == null)
-		return false;
-	if (name == type_of<process>())
-	{
-		*out = static_cast<process*>(this);
-		return true;
-	}
-	else if (object::query_object(name, out))
-	{
-		return true;
-	}
-	else if (imessage_reciever::query_object(name, out))
-	{
-		return true;
-	}
-	return false;
-}
-
-hprocces_t process::handle()const
-{
-	return _process;
-}
-
-bool process::is_created()const
-{
-	return bool(_process != null);
-}
-
-bool process::create(pointer a)
-{
-	auto handle = new _hprocess();
-	handle->close_request = false;
-	handle->nonqueue_msg = null;
-	handle->main_thread = core::async::thread::main_thread();
-	handle->hmodule = GetModuleHandle(NULL);
-	attach(handle);
-
-	return true;
+	return m_process;
 }
 
 bool process::close()
 {
-	auto handle = reinterpret_cast<hprocess_t>(_process);
-	_process = null;
+	auto handle = m_process;
+	m_process = null;
 	delete handle;
 	return true;
 }
 
-void process::attach(hprocces_t h)
-{
-	_process = h;
-}
-
-void process::detach()
-{
-	_process = null;
-}
-
 bool process::is_worker_thread()const {
-	return (!is_created()) ? false : hprocess_t(_process)->main_thread->is_current_thread();
+	return m_process->main_thread->is_current_thread();
 }
 
 core::async::mutex_ptr_t process::main_mutex()const {
-	return properties["main_mutex"].as<core::async::mutex_t>();
+	return m_process->properties["main_mutex"].as<core::async::mutex_t>();
 }
 
 core::async::cond_ptr_t process::main_cond()const {
-	return properties["main_cond"].as<core::async::cond_t>();
+	return m_process->properties["main_cond"].as<core::async::cond_t>();
 }
 
 core::async::thread_t process::main_worker_thread()const {
-	return (!is_created()) ? null : const_hprocess_t(_process)->main_thread;
+	return m_process->main_thread;
 }
 
 array<string> process::command_line_args()const {
-	return properties["cmd_args"].as<array<string>>();
+	return m_process->properties["cmd_args"].as<array<string>>();
 }
 
-objptr process::property(cstr_t key)const {
-	return properties[key];
+var process::property(cstr_t key)const {
+	return m_process->properties[key];
 }
 
-void process::property(cstr_t key, objptr obj) {
-	properties[key] = obj;
+void process::property(cstr_t key, var obj) {
+	m_process->properties[key] = obj;
 }
 
 events::event_trigger<process>const& process::trigger(events::event_listener const& listener)const
@@ -175,123 +120,78 @@ events::event_trigger<process>const& process::trigger(events::event_listener con
 
 dword process::run()
 {
-	if (!create(null))
-		return false;
 	if (!init_app(command_line_args()))
 	{
 		close();
 		return -1;
 	}
-	while (update());
+	main_loop();
 	exit_app();
 	return 0;
 }
 
 dword process::run(array<string> args)
 {
-	if (!create(args.get()))
-		return false;
 	if (!init_app(command_line_args()))
 	{
 		close();
 		return -1;
 	}
-	while (update());
+
+	int res = main_loop();
+
 	exit_app();
-	return 0;
+
+	return res;
 }
 
-bool process::update()
+int process::main_loop()
 {
-	double total = 8000.0; // 8 mS
-	core::time::step_timer timer;
-	timer.reset();
-	try {
-		while (total > 0 && dispatch_msg())
-		{	
-			timer.update();
-			total -= timer.delta();
-		}
-		update_app();
-	}
-	catch (exception_t e)
+	MSG msg;
+	while (true)
 	{
-		ang_debug_output_error((cstr_t)e->what());
-		hprocess_t(_process)->close_request = true;
+		if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessageW(&msg);
+	
+			if (msg.hwnd == NULL)
+			{
+				dispatch_msg({ msg.message, msg.wParam, msg.lParam });
+			}
+
+			if (msg.message == WM_QUIT)
+				break;
+		}
+		else
+		{
+			update_app();
+		}
 	}
-	return !hprocess_t(_process)->close_request;
+	return msg.wParam;
 }
 
 bool process::init_app(array<string> cmd)
 {
-	platform::events::message_t m = new platform::events::message(events::win_msg_enum::start_app,0,0);
-	m->push_arg(this);
-	m->push_arg(cmd.get());
-	try { trigger(start_app_event).invoke(new platform::events::app_status_event_args(m)); }
+	platform::events::message m = platform::events::message(events::win_msg_enum::start_app, 0, 0);
+	try { trigger(start_app_event).invoke(new platform::events::app_status_event_args(m, null)); }
 	catch (...) {}
-	properties["main_step_timer"].as<core::time::step_timer>()->reset();
+	m_process->properties["step_timer"].as<core::time::step_timer>()->reset();
 	return true;
 }
 
 void process::update_app()
 {
-	properties["main_step_timer"].as<core::time::step_timer>()->update();
+	m_process->properties["step_timer"].as<core::time::step_timer>()->update();
 }
 
 bool process::exit_app()
 {
-	platform::events::message_t m = new platform::events::message(events::win_msg_enum::start_app, 0, 0);
-	m->push_arg(this);
-	try { trigger(exit_app_event).invoke(new platform::events::app_status_event_args(m)); }
+	platform::events::message m = platform::events::message(events::win_msg_enum::start_app, 0, 0);
+	try { trigger(exit_app_event).invoke(new platform::events::app_status_event_args(m, null)); }
 	catch (...) {}
 
 	return close();
-}
-
-dword process::on_message_dispatcher(events::message_t msg)
-{
-	switch (msg->msg())
-	{
-	case WM_QUIT:
-		hprocess_t(_process)->close_request = true;
-		return (dword)msg->wparam();
-	case events::win_msg_enum::system_reserved_event:
-		if (msg->wparam() != 0)
-		{
-			dword res = 0;
-			auto task = reinterpret_cast<async_msg_task*>(msg->wparam());
-			auto reciever = reinterpret_cast<imessage_reciever*>(msg->lparam());
-			auto mutex = main_mutex();
-			core::async::scope_locker<core::async::mutex_ptr_t> locker(mutex);
-			if (task->status_ != core::async::async_action_status::canceled)
-			{
-				task->status_ = core::async::async_action_status::running;
-				task->cond_->signal();
-				{//Executing command
-					mutex->unlock();
-					if (reciever)
-						reciever->send_msg(task->msg_);
-					else send_msg(task->msg_);
-					res = task->msg_->result();
-					mutex->lock();
-				}
-				task->status_ = core::async::async_action_status::completed;
-			}
-			task->complete(res);
-			task->release();
-		}
-		break;
-	case events::win_msg_enum::interprocess_command:
-		if (msg->wparam() != 0)
-		{
-			HANDLE hEvent = reinterpret_cast<HANDLE>(msg->wparam());
-			uint command = uint(msg->lparam());
-			core::async::scope_locker<core::async::mutex_ptr_t> locker(main_mutex());
-			SetEvent(hEvent);
-		}
-		break;
-	}
-	return 0;
 }
 
 bool process::listen_to(events::event_t)
@@ -299,84 +199,26 @@ bool process::listen_to(events::event_t)
 	return false;
 }
 
-void process::send_msg(events::message_t msg)
+dword process::send_msg(events::message msg)
 {
-	if (!is_created())
-		return;
-
-	if (is_worker_thread())
+	if (m_process->main_thread->is_current_thread())
 	{
-		msg->result(on_message_dispatcher(msg));
-		return;
+		return dispatch_msg(msg);
 	}
-	auto cond = main_cond();
-	auto mutex = main_mutex();
-	core::async::scope_locker<core::async::mutex_ptr_t> locker(mutex);
-	//Waiting for dispatch previous message
-	cond->waitfor(mutex, [&]()->bool
+	else
 	{
-		return !hprocess_t(_process)->nonqueue_msg.is_empty();
-	});
-
-	hprocess_t(_process)->nonqueue_msg = msg.get();
-	//Waiting for dispatch my message
-	cond->waitfor(mutex, [&]()->bool
-	{
-		return (hprocess_t(_process)->nonqueue_msg.get() == msg.get());
-	});
+		PostMessageW(NULL, msg.msg(), msg.wparam(), msg.lparam());
+		return -1; //TODO
+	}
 }
 
-core::async::ioperation_t<dword> process::post_msg(events::message_t msg)
+core::async::iasync<dword> process::post_msg(events::message msg)
 {
-	if (!is_created())
-		return null;
-
-	auto task = new async_msg_task(this, main_cond(), main_mutex(), msg);
-	task->add_ref();
-	if (PostThreadMessageW(hprocess_t(_process)->main_thread->thread_id()
-		, events::win_msg_enum::system_reserved_event, (WPARAM)task
-		, (LPARAM)static_cast<imessage_reciever*>(this)) == 0)
-	{
-		task->release();
-		return null;
-	}
-	return task;
+	PostMessageW(NULL, msg.msg(), msg.wparam(), msg.lparam());
+	return null; //TODO
 }
 
-bool process::dispatch_msg()
+dword process::dispatch_msg(events::message msg)
 {
-	if (!is_created())
-		return false;
-	bool result = false;
-
-	if (hprocess_t(_process)->nonqueue_msg != null)
-	{
-		hprocess_t(_process)->nonqueue_msg->result(on_message_dispatcher(hprocess_t(_process)->nonqueue_msg));
-		core::async::scope_locker<core::async::mutex_ptr_t> locker(main_mutex());
-		hprocess_t(_process)->nonqueue_msg = null;
-		main_cond()->signal();
-		result = true;
-	}
-
-	MSG msg;
-	if (PeekMessageW(&msg, null, 0, 0, PM_REMOVE) != FALSE)
-	{
-		result = true;
-		if (msg.hwnd == null)
-		{
-			events::message_t m = new events::message(msg.message, msg.wParam, msg.lParam);
-			m->result(on_message_dispatcher(m));
-		}
-		else switch (msg.message)
-		{
-		case WM_QUIT:
-			hprocess_t(_process)->close_request = true;
-			break;
-		default:
-			TranslateMessage(&msg);
-			DispatchMessageW(&msg);
-			break;
-		}
-	}
-	return result;
+	return 0;
 }

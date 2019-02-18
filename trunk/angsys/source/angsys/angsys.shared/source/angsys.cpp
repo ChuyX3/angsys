@@ -53,7 +53,19 @@ ANG_EXTERN ulong64 get_performance_time_us(void)
 	}
 }
 
-
+namespace ang
+{
+	namespace core
+	{
+		namespace time
+		{
+			ulong64 get_performance_time_us()
+			{
+				return get_performance_time_us();
+			}
+		}
+	}
+}
 
 
 namespace ang
@@ -254,7 +266,7 @@ wsize algorithms::hash_table_get_next_size(wsize size) {
 }
 
 
-long64 algorithms::hash_index_maker<raw_str_t>::make(raw_str_t& key_, ulong64 TS)
+long64 algorithms::hash_index_maker<raw_str_t>::make(raw_str_t const& key_, ulong64 TS)
 {
 	ulong64 h = 75025;
 	
@@ -270,7 +282,7 @@ long64 algorithms::hash_index_maker<raw_str_t>::make(raw_str_t& key_, ulong64 TS
 	return ang_uint64_t(h % TS);
 }
 
-long64 algorithms::hash_index_maker<raw_cstr_t>::make(raw_cstr_t& key_, ulong64 TS)
+long64 algorithms::hash_index_maker<raw_cstr_t>::make(raw_cstr_t const& key_, ulong64 TS)
 {
 	ulong64 h = 75025;
 

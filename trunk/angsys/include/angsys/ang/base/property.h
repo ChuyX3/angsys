@@ -16,12 +16,12 @@
 
 namespace ang //constants
 {
-	safe_enum(LINK, property_style, uint) 
+	typedef enum class property_style : uint 
 	{
 		def,
 		alertable,
 		no_storage
-	};
+	}property_style_t;
 
 
 	template<typename T, class owner, property_style TYPE = property_style::def> class property;

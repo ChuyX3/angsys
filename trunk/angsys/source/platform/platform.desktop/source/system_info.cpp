@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ang/platform/angwin/angwin.hpp"
+#include "ang/platform/angwin/angwin.h"
 
 using namespace ang;
 using namespace ang::platform;
@@ -27,7 +27,7 @@ graphics::size<float> system_info::current_screen_bound()
 	auto app = app::current_app();
 	if (app != null && app->main_wnd() != null)
 	{
-		auto monitor = MonitorFromWindow((HWND)app->main_wnd()->get_core_view_handle(), MONITOR_DEFAULTTONEAREST);
+		auto monitor = MonitorFromWindow((HWND)app->main_wnd()->core_view_handle(), MONITOR_DEFAULTTONEAREST);
 		if (monitor != null)
 		{
 			MONITORINFO info;

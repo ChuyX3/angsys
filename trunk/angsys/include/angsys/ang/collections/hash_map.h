@@ -75,11 +75,11 @@ namespace ang
 		};
 
 		template<> struct LINK hash_index_maker<raw_str_t> {
-			static long64 make(raw_str_t& key_, ulong64 TS);
+			static long64 make(raw_str_t const& key_, ulong64 TS);
 		};
 
 		template<> struct LINK hash_index_maker<raw_cstr_t> {
-			static long64 make(raw_cstr_t& key_, ulong64 TS);
+			static long64 make(raw_cstr_t const& key_, ulong64 TS);
 		};
 	}
 

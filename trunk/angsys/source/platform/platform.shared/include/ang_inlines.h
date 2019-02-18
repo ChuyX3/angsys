@@ -1,7 +1,7 @@
 #ifndef __ANG_INLINES_H__
 #define __ANG_INLINES_H__
 
-#include "angbase.hpp"
+#include "angbase.h"
 
 #define ang_new(_type) ang_allocator<_type>:: template contruct<void>(ang_allocator<_type>::alloc(1))
 #define ang_new_args(_type, ...) ang_allocator<_type>:: template construct<void>(ang_allocator<_type>::alloc(1), __VA_ARGS__)

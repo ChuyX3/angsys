@@ -368,7 +368,6 @@ namespace ang
 			};
 
 
-
 			class LINK process
 				: public object
 				, public imessage_listener
@@ -377,8 +376,10 @@ namespace ang
 				static process_t current_process();
 
 			protected:
-				pointer m_process;
-				collections::hash_map<string, var> m_properties;
+				struct _hprocess;
+				typedef _hprocess *hprocess_t;
+				hprocess_t m_process;
+				
 				//mutable core::async::mutex_ptr_t mutex;
 				//mutable core::async::cond_ptr_t cond;
 				//array<string> cmd_args;
@@ -394,7 +395,7 @@ namespace ang
 				virtual dword run(array<string> args);
 
 			protected:
-				bool update();
+				int main_loop();
 				void destroy();
 				dword on_message_dispatcher(events::message);
 				events::event_trigger<process>const& trigger(events::event_listener const& listener)const;
@@ -404,16 +405,12 @@ namespace ang
 				virtual dword send_msg(events::message msg) override;
 				virtual core::async::iasync<dword> post_msg(events::message msg) override;
 				virtual bool listen_to(events::event_t) override;
-				bool dispatch_msg();
+				virtual dword dispatch_msg(events::message);
 
 				pointer handle()const;
-				bool is_created()const;
 
 			protected:
-				virtual bool create(pointer);
 				virtual bool close();
-				virtual void attach(pointer);
-				virtual void detach();
 
 			public: //Properties
 				bool is_worker_thread()const;

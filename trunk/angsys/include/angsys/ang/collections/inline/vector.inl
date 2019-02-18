@@ -93,7 +93,7 @@ inline ang::rtti_t const& ang::collections::vector_buffer<T, allocator>::class_i
 {
 	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::vector<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<ilist<T>>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::vector_buffer<T, allocator>), alignof(ang::collections::array_buffer<T, allocator>), parents, &default_query_interface);
+	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::vector_buffer<T, allocator>), alignof(ang::collections::vector_buffer<T, allocator>), parents, &default_query_interface);
 	return info;
 }
 
@@ -229,6 +229,54 @@ inline void ang::collections::vector_buffer<T, allocator>::extend(ang::stack_arr
 	for (wsize i = 0U; i < SIZE; i++)
 		push(ar[i]);
 }
+
+template<typename T, template <typename> class allocator>
+inline ang::rtti_t const& ang::collections::vector_buffer<T, allocator>::value_type()const
+{
+	return type_of<array_view<T>>();
+}
+
+template<typename T, template <typename> class allocator>
+inline bool ang::collections::vector_buffer<T, allocator>::set_value(ang::rtti_t const& id, ang::unknown_t value)
+{
+	if (id.is_type_of<array_view<T>>())
+	{
+		array_view<T>& ar = *reinterpret_cast<array_view<T>*>(value);
+		copy(ar);
+		return true;
+	}
+	return false;
+}
+
+template<typename T, template <typename> class allocator>
+inline bool ang::collections::vector_buffer<T, allocator>::get_value(ang::rtti_t const& id, ang::unknown_t value)const
+{
+	if (id.is_type_of<array_view<T>>())
+	{
+		array_view<T>& ar = *reinterpret_cast<array_view<T>*>(value);
+		ar.set(m_data, m_size);
+	}
+	return false;
+}
+
+template<typename T, template <typename> class allocator>
+inline ang::variant ang::collections::vector_buffer<T, allocator>::clone()const
+{
+	return (ivariant*) new ang::collections::vector_buffer<T, allocator>(*this);
+}
+
+template<typename T, template <typename> class allocator>
+inline ang::wstring ang::collections::vector_buffer<T, allocator>::to_string()const
+{
+	return class_info().type_name();
+}
+
+template<typename T, template <typename> class allocator>
+inline ang::wstring ang::collections::vector_buffer<T, allocator>::to_string(ang::text::text_format_t)const
+{
+	return class_info().type_name();
+}
+
 
 template<typename T, template<typename> class allocator>
 inline bool ang::collections::vector_buffer<T, allocator>::is_readonly()const

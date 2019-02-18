@@ -28,7 +28,7 @@ safe_enum_rrti(ang::core::files, file_system_priority_t, value<file_system_prior
 //#undef MY_TYPE
 //#undef MY_ALLOCATOR
 
-cstr_t file_system_priority_t::to_string()const
+string file_system_priority_t::to_string()const
 {
 	switch (_value)
 	{

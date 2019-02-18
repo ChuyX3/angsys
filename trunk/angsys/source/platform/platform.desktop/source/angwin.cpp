@@ -1,17 +1,42 @@
 #include "pch.h"
 #include "ang/platform/angwin/angwin.h"
 
-#include "ang_inlines.h"
-
 using namespace ang;
 using namespace ang::platform;
 using namespace ang::platform::windows;
 
-ANG_IMPLEMENT_ENUM(ang::platform::windows, showing_flag, dword, showing_flag::hide);
+ANG_EXTERN ulong64 get_performance_time_us(void)
+{
+	{
+#if defined ANDROID_PLATFORM
+		struct timespec ts;
+		ulong64 theTick = 0;
+		clock_gettime(CLOCK_REALTIME, &ts);
+		theTick = (ulong64)ts.tv_nsec / 1000.0;
+		theTick += (ulong64)ts.tv_sec * 1000000.0;
+		return theTick;
+#else
+		static struct PerformanceFrequency {
+			ulong64 QuadPart;
+			PerformanceFrequency() {
+				LARGE_INTEGER _frec;
+				QueryPerformanceFrequency(&_frec);
+				QuadPart = (ulong64)_frec.QuadPart;
+			}
+		}frec;
 
-ANG_IMPLEMENT_FLAGS(ang::platform::windows, class_style, dword);
+		LARGE_INTEGER count;
+		QueryPerformanceCounter(&count);
+		return  (1000000 * count.QuadPart) / frec.QuadPart; //uS
+#endif
+	}
+}
 
-static ang_pair<cstr_t, class_style> _parse_class_style_map[] =
+safe_enum_rrti(ang::platform::windows, showing_flag_t, value<showing_flag_proxy>);
+safe_enum_rrti(ang::platform::windows, class_style_t, value<class_style_proxy>);
+safe_flags_implement(ang::platform::windows, class_style, dword);
+
+static collections::pair<cstr_t, class_style> _parse_class_style_map[] =
 {
 	{ "byte_align_client"_s , class_style::byte_align_client },
 	{ "byte_align_window"_s , class_style::byte_align_window },
@@ -28,7 +53,7 @@ static ang_pair<cstr_t, class_style> _parse_class_style_map[] =
 	{ "vredraw"_s , class_style::vredraw }
 };
 
-static ang_pair<class_style, cstr_t> to_string_class_style_map[] =
+static collections::pair<class_style, cstr_t> to_string_class_style_map[] =
 {
 	{ class_style::none , "none"_s },
 	{ class_style::vredraw , "vredraw"_s },
@@ -45,29 +70,29 @@ static ang_pair<class_style, cstr_t> to_string_class_style_map[] =
 	{ class_style::drop_shaow , "drop_shaow" }
 };
 
-//string class_style_t::to_string()const
-//{
-//	string out = "";
-//	class_style_t val = _value;
-//	bool first = true;
-//	for (int i = array_size(to_string_class_style_map) - 1; i >= 0; --i)
-//	{
-//		if (val._value == 0)
-//			break;
-//		if (val.is_active(to_string_class_style_map[i].key))
-//		{
-//			if (first) {
-//				first = false;
-//				out << to_string_class_style_map[i].value;
-//			}
-//			else
-//				out << " + " << to_string_class_style_map[i].value;
-//			val -= to_string_class_style_map[i].key;
-//		}
-//	}
-//	return ang::move(out);
-//}
-//
+string class_style_t::to_string()const
+{
+	string out = "";
+	class_style_t val = get();
+	bool first = true;
+	for (int i = algorithms::array_size(to_string_class_style_map) - 1; i >= 0; --i)
+	{
+		if (val._value == 0)
+			break;
+		if (val & to_string_class_style_map[i].key)
+		{
+			if (first) {
+				first = false;
+				out << to_string_class_style_map[i].value;
+			}
+			else
+				out << " + "_s << to_string_class_style_map[i].value;
+			val -= to_string_class_style_map[i].key;
+		}
+	}
+	return ang::move(out);
+}
+
 //template<> class_style_t ang::xml::xml_value::as<class_style_t>()const
 //{
 //	cwstr_t key = as<cwstr_t>();
@@ -79,9 +104,10 @@ static ang_pair<class_style, cstr_t> to_string_class_style_map[] =
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-ANG_IMPLEMENT_FLAGS(ang::platform::windows, wnd_style, dword);
+safe_enum_rrti(ang::platform::windows, wnd_style_t, value<wnd_style_proxy>);
+safe_flags_implement(ang::platform::windows, wnd_style, dword);
 
-static ang_pair<cstr_t, wnd_style> _parse_wnd_style_map[] =
+static collections::pair<cstr_t, wnd_style> _parse_wnd_style_map[] =
 {
 	{ "border"_s , wnd_style::border },
 	{ "caption"_s , wnd_style::caption },
@@ -107,7 +133,7 @@ static ang_pair<cstr_t, wnd_style> _parse_wnd_style_map[] =
 	{ "vscroll"_s , wnd_style::vscroll },
 };
 
-static ang_pair<wnd_style, cstr_t> to_string_wnd_style_map[] =
+static collections::pair<wnd_style, cstr_t> to_string_wnd_style_map[] =
 {
 	{ wnd_style::popup , "popup"_s },
 	{ wnd_style::none , "none"_s },
@@ -130,29 +156,29 @@ static ang_pair<wnd_style, cstr_t> to_string_wnd_style_map[] =
 	{ wnd_style::child , "child"_s },
 };
 
-//string wnd_style_t::to_string()const
-//{
-//	string out = "";
-//	wnd_style_t val = _value;
-//	bool first = true;
-//	for (int i = array_size(to_string_wnd_style_map) - 1; i >= 0; --i)
-//	{
-//		if (val._value == 0)
-//			break;
-//		if (val.is_active(to_string_wnd_style_map[i].key))
-//		{
-//			if (first) {
-//				first = false;
-//				out << to_string_wnd_style_map[i].value;
-//			}
-//			else
-//				out << " + " << to_string_wnd_style_map[i].value;
-//			val -= to_string_wnd_style_map[i].key;
-//		}
-//	}
-//	return ang::move(out);
-//}
-//
+string wnd_style_t::to_string()const
+{
+	string out = "";
+	wnd_style_t val = get();
+	bool first = true;
+	for (int i = algorithms::array_size(to_string_wnd_style_map) - 1; i >= 0; --i)
+	{
+		if (val.get() == 0)
+			break;
+		if (val & to_string_wnd_style_map[i].key)
+		{
+			if (first) {
+				first = false;
+				out << to_string_wnd_style_map[i].value;
+			}
+			else
+				out << " + "_s << to_string_wnd_style_map[i].value;
+			val -= to_string_wnd_style_map[i].key;
+		}
+	}
+	return ang::move(out);
+}
+
 //template<> wnd_style_t ang::xml::xml_value::as<wnd_style_t>()const
 //{
 //	cwstr_t key = as<cwstr_t>();
@@ -164,9 +190,10 @@ static ang_pair<wnd_style, cstr_t> to_string_wnd_style_map[] =
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-ANG_IMPLEMENT_FLAGS(ang::platform::windows, wnd_style_ex, dword);
+safe_enum_rrti(ang::platform::windows, wnd_style_ex_t, value<wnd_style_ex_proxy>);
+safe_flags_implement(ang::platform::windows, wnd_style_ex, dword);
 
-static ang_pair<cstr_t, wnd_style_ex> _parse_wnd_style_ex_map[] =
+static collections::pair<cstr_t, wnd_style_ex> _parse_wnd_style_ex_map[] =
 {
 	{ "accept_files"_s , wnd_style_ex::accept_files },
 	{ "app_window"_s , wnd_style_ex::app_window },
@@ -192,7 +219,7 @@ static ang_pair<cstr_t, wnd_style_ex> _parse_wnd_style_ex_map[] =
 	{ "window_edge"_s , wnd_style_ex::window_edge }
 };
 
-static ang_pair<wnd_style_ex, cstr_t> to_string_wnd_style_ex_map[] =
+static collections::pair<wnd_style_ex, cstr_t> to_string_wnd_style_ex_map[] =
 {
 	{ wnd_style_ex::none , "none"_s },
 	{ wnd_style_ex::dlg_modal_frame , "dlg_modal_frame"_s },
@@ -215,30 +242,30 @@ static ang_pair<wnd_style_ex, cstr_t> to_string_wnd_style_ex_map[] =
 	{ wnd_style_ex::app_window , "app_window" }
 };
 
-//
-//string wnd_style_ex_t::to_string()const
-//{
-//	string out = "";
-//	wnd_style_ex_t val = _value;
-//	bool first = true;
-//	for (int i = array_size(to_string_wnd_style_ex_map) - 1; i >= 0; --i)
-//	{
-//		if (val._value == 0)
-//			break;
-//		if (val.is_active(to_string_wnd_style_ex_map[i].key))
-//		{
-//			if (first) {
-//				first = false;
-//				out << to_string_wnd_style_ex_map[i].value;
-//			}
-//			else
-//				out << " + " << to_string_wnd_style_ex_map[i].value;
-//			val -= to_string_wnd_style_ex_map[i].key;
-//		}
-//	}
-//	return ang::move(out);
-//}
-//
+
+string wnd_style_ex_t::to_string()const
+{
+	string out = "";
+	wnd_style_ex_t val = get();
+	bool first = true;
+	for (int i = algorithms::array_size(to_string_wnd_style_ex_map) - 1; i >= 0; --i)
+	{
+		if (val.get() == 0)
+			break;
+		if (val & to_string_wnd_style_ex_map[i].key)
+		{
+			if (first) {
+				first = false;
+				out << to_string_wnd_style_ex_map[i].value;
+			}
+			else
+				out << " + "_s << to_string_wnd_style_ex_map[i].value;
+			val -= to_string_wnd_style_ex_map[i].key;
+		}
+	}
+	return ang::move(out);
+}
+
 //template<> wnd_style_ex_t ang::xml::xml_value::as<wnd_style_ex_t>()const
 //{
 //	cwstr_t key = as<cwstr_t>();

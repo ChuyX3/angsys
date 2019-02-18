@@ -30,7 +30,7 @@ namespace ang
 				erase_bkgnd = 0x0014,
 				sys_color_change = 0x0015,
 				visibility_change = 0x0018,
-				show_window = visibility_change,
+				show_window = 0x0018,
 				font_change = 0x001D,
 				time_change = 0x001E,
 				cancel_mode = 0x001F,
@@ -200,10 +200,10 @@ namespace ang
 			{
 			private:
 				message m_msg;
-				app_t m_app;
+				windows::app_t m_app;
 
 			public:
-				app_status_event_args(message, app_t app);
+				app_status_event_args(message, windows::app_t app);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
@@ -225,12 +225,12 @@ namespace ang
 			{
 			private:
 				message m_msg;
-				window_t m_view;
-				app_t m_app;
+				windows::window_t m_view;
+				windows::app_t m_app;
 				var_args_t m_args;
 
 			public:
-				created_event_args(message, window_t, app_t, var_args_t);
+				created_event_args(message, windows::window_t, windows::app_t, var_args_t);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
@@ -279,10 +279,10 @@ namespace ang
 			{
 			private:
 				message m_msg;
-				window_t m_view;
+				windows::window_t m_view;
 				bool m_visible;
 			public:
-				visibility_change_event_args(message, window_t, bool);
+				visibility_change_event_args(message, windows::window_t, bool);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
@@ -326,12 +326,12 @@ namespace ang
 			{
 			private:
 				message msg;
-				window_t m_view;
+				windows::window_t m_view;
 				graphics::device_context_t m_dc;
 				graphics::size<float> m_size;
 
 			public:
-				draw_event_args(message, window_t, graphics::device_context_t, graphics::size<float>);
+				draw_event_args(message, windows::window_t, graphics::device_context_t, graphics::size<float>);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();

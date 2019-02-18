@@ -20,7 +20,7 @@ namespace ang {
 			{
 				pointer hmodule;
 				bool close_request;
-				events::message_t nonqueue_msg;
+				events::message nonqueue_msg;
 				core::async::thread_t main_thread;
 			}*hprocess_t;
 			extern process* _current_process;
@@ -35,14 +35,14 @@ app_t app::current_app()
 	return _current_process->as<app>();
 }
 
-icore_app_t icore_app::get_core_app()
+icore_app_t icore_app::core_app()
 {
 	return app::current_app().get();
 }
 
 app::app()
-	: _enable_update(true)
-	, _main_wnd(null)
+	: m_enable_update(true)
+	, m_main_wnd(null)
 	, main_wnd_created_event(this, [](events::core_msg_t code) { return events::win_msg_enum::created == code; })
 	, main_wnd_destroyed_event(this, [](events::core_msg_t code) { return events::win_msg_enum::destroyed == code; })
 {

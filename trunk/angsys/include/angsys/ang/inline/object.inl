@@ -116,6 +116,12 @@ namespace ang
 
 	///////////////////////////////////////////////////////////////////////////
 
+	template<typename T>
+	inline intf_wrapper<ivariant>::intf_wrapper(ang::shared_ptr<T> ptr)
+		: intf_wrapper<ivariant>(null) {
+		set(ptr.get());
+	}
+
 	template<wsize N>
 	inline intf_wrapper<ivariant>::intf_wrapper(const char(&ar)[N])
 		: intf_wrapper<ivariant>(null) {
@@ -162,6 +168,56 @@ namespace ang
 	inline intf_wrapper<ivariant>::intf_wrapper(strings::basic_string<E, A> const& str) 
 		: intf_wrapper<ivariant>(null) {
 		set(str.is_empty() ? null : str.get());
+	}
+
+
+	template<typename T> 
+	intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator = (T* ptr) {
+		static_assert(is_base_of<ivariant, T>::value, "Invalid argument for var");
+		set(ptr);
+		return*this;
+	}
+
+	template<typename T> 
+	intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator = (shared_ptr<T> ptr) {
+		set(ptr.get());
+		return*this;
+	}
+
+	template<typename T> 
+	intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator = (intf_wrapper<T> const& ptr) {
+		ivariant* var_ = interface_cast<ivariant>(ptr.get());
+		set(var_);
+		return*this;
+	}
+
+	template<typename T, text::encoding E> 
+	intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator = (str_view<T, E> const& str) {
+		text::itext_buffer *buffer;
+		if(buffer = interface_cast<text::itext_buffer>(get()))
+		{
+			buffer->mem_copy(str.size(), (pointer)str.cstr(), E);
+		}
+		else
+		{
+			strings::basic_string<E> ptr = str;
+			set(ptr.get());
+		}
+		return*this;
+	}
+
+	template<typename T, wsize N> 
+	intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator = (T(&ar)[N]) {
+		if (interface_cast<collections::iarray<T>>(get()))
+		{
+			get()->set_value(ar);
+		}
+		else
+		{
+			array<T> arr = ar;
+			set((ivariant*)arr.get())
+		}
+		return*this;
 	}
 }
 

@@ -84,7 +84,7 @@ static collections::pair<cstr_t, ang::dom::xml::xml_type> s_xml_type_parsing_map
 //		return s_xml_type_parsing_map[idx].value;
 //}
 
-cstr_t xml_type_t::to_string()const
+string xml_type_t::to_string()const
 {
 	auto idx = algorithms::binary_search(_value, collections::to_array(s_xml_type_to_string_map));
 	if (idx >= algorithms::array_size(s_xml_type_to_string_map))
@@ -95,7 +95,7 @@ cstr_t xml_type_t::to_string()const
 
 safe_enum_rrti(ang::dom::xml, xml_exception_code_t, value<xml_exception_code_proxy>);
 
-cstr_t xml_exception_code_t::to_string()const
+string xml_exception_code_t::to_string()const
 {
 	return ang::move(except_code_t((except_code)_value).to_string());
 }

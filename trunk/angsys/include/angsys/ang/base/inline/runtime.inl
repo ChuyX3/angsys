@@ -328,6 +328,17 @@ namespace ang
 			static rtti_t const& type_of() { return type_of<T>(); }
 		};
 
+		template<typename T>
+		struct __type_info_builder_genre_class_helper<array_view<T>, false> {
+			static rtti_t const& type_of() {
+				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
+				rtti_t const& info = rtti::regist(
+					strings::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "[]"_s)
+					, ang::genre::class_type, rtti::type_of<type>().size(), rtti::type_of<type>().aligment());
+				return info;
+			}
+		};
+
 		//////////////////////////////////////////////////////////////////////////////////////
 
 		template<typename T> struct __type_info_builder_genre_function_helper;

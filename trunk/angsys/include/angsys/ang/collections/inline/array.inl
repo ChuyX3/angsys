@@ -161,6 +161,53 @@ inline bool ang::collections::array_buffer<T, allocator>::is_empty()const
 }
 
 template<typename T, template <typename> class allocator>
+inline ang::rtti_t const& ang::collections::array_buffer<T, allocator>::value_type()const
+{
+	return type_of<array_view<T>>();
+}
+
+template<typename T, template <typename> class allocator>
+inline bool ang::collections::array_buffer<T, allocator>::set_value(ang::rtti_t const& id, ang::unknown_t value)
+{
+	if (id.is_type_of<array_view<T>>())
+	{
+		array_view<T>& ar = *reinterpret_cast<array_view<T>*>(value);
+		copy(ar);
+		return true;
+	}
+	return false;
+}
+
+template<typename T, template <typename> class allocator>
+inline bool ang::collections::array_buffer<T, allocator>::get_value(ang::rtti_t const& id, ang::unknown_t value)const
+{
+	if (id.is_type_of<array_view<T>>())
+	{
+		array_view<T>& ar = *reinterpret_cast<array_view<T>*>(value);
+		ar.set(m_data, m_size);
+	}
+	return false;
+}
+
+template<typename T, template <typename> class allocator>
+inline ang::variant ang::collections::array_buffer<T, allocator>::clone()const 
+{
+	return (ivariant*) new ang::collections::array_buffer<T, allocator>(*this);
+}
+
+template<typename T, template <typename> class allocator>
+inline ang::wstring ang::collections::array_buffer<T, allocator>::to_string()const
+{
+	return class_info().type_name();
+}
+
+template<typename T, template <typename> class allocator>
+inline ang::wstring ang::collections::array_buffer<T, allocator>::to_string(ang::text::text_format_t)const
+{
+	return class_info().type_name();
+}
+
+template<typename T, template <typename> class allocator>
 inline bool ang::collections::array_buffer<T, allocator>::is_readonly()const
 {
 	return false;
@@ -196,7 +243,7 @@ inline void ang::collections::array_buffer<T, allocator>::copy(ang::array_view<U
 
 	for (windex i = 0; i < m_size; ++i)
 		m_alloc.template construct<T, U const&>(&m_data[i], ar[i]);
-	ar.set(null, 0);
+	//ar.set(null, 0);
 }
 
 template<typename T, template <typename> class allocator> template<typename U, template<typename> class allocator2>

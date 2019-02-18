@@ -13,7 +13,7 @@ namespace ang
 		template<typename T, template<typename> class allocator>
 		class array_buffer final
 			: public object
-			//, public ivariant
+			, public ivariant
 			, public ibuffer
 			, public iarray<T>
 		{
@@ -63,6 +63,14 @@ namespace ang
 			template<typename U> inline void copy(array_view<U>const&);
 			template<typename U, template<typename> class allocator2> inline void copy(scope_array<U, allocator2>const&);
 			template<typename U, wsize SIZE> inline void copy(stack_array<U, SIZE> const&);
+
+		public: //ivariant overrides
+			inline rtti_t const& value_type()const override;
+			inline bool set_value(rtti_t const&, unknown_t)override;
+			inline bool get_value(rtti_t const&, unknown_t)const override;
+			inline variant clone()const override;
+			inline wstring to_string()const override;
+			inline wstring to_string(text::text_format_t)const override;
 
 		public: //ibuffer overrides
 			inline bool is_readonly()const override;

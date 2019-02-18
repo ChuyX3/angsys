@@ -32,12 +32,14 @@ namespace ang
 		intf_wrapper(intf_wrapper &&);
 		intf_wrapper(intf_wrapper const&);
 
+		template<typename T> intf_wrapper(shared_ptr<T> ptr);
 		template<wsize N> intf_wrapper(const char(&ar)[N]);
 		template<wsize N> intf_wrapper(const wchar(&ar)[N]);
 		template<wsize N> intf_wrapper(const mchar(&ar)[N]);
 		template<wsize N> intf_wrapper(const char16(&ar)[N]);
 		template<wsize N> intf_wrapper(const char32(&ar)[N]);
 		template<typename T, wsize N> intf_wrapper(T(&ar)[N]);
+		//template<typename T> intf_wrapper(array_view<T> const& ar);
 		template<typename T, text::encoding E> intf_wrapper(str_view<T, E>);
 		template<text::encoding E, template<typename>class A> intf_wrapper(strings::basic_string<E,A> const&);
 
@@ -83,6 +85,7 @@ namespace ang
 		intf_wrapper& operator = (intf_wrapper &&);
 		intf_wrapper& operator = (intf_wrapper const&);
 		template<typename T> intf_wrapper& operator = (T*);
+		template<typename T> intf_wrapper& operator = (shared_ptr<T> ptr);
 		template<typename T> intf_wrapper& operator = (intf_wrapper<T> const&);
 
 		template<typename T, text::encoding E> intf_wrapper& operator = (str_view<T, E> const&); //string convertible
