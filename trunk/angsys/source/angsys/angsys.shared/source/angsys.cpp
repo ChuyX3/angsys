@@ -21,6 +21,8 @@
 #include <ang/platform/platform.h>
 //#include "ang/core/async.h"
 
+#include <ang/collections/hash_map.h>
+
 using namespace ang;
 using namespace ang::memory;
 
@@ -56,7 +58,7 @@ ANG_EXTERN ulong64 get_performance_time_us(void)
 
 namespace ang
 {
-	static class ang_main_instance
+	class ang_main_instance
 	{
 	public:
 		static ang_main_instance* instance();
@@ -250,3 +252,40 @@ wsize algorithms::hash_table_get_next_size(wsize size) {
 		return -1;
 	}
 }
+
+
+long64 algorithms::hash_index_maker<raw_str_t>::make(raw_str_t& key_, ulong64 TS)
+{
+	ulong64 h = 75025;
+	
+	text::iencoder_t encoder = text::iencoder::get_encoder(key_.encoding());
+	windex i = 0, c = key_.count();
+
+	for (char32_t n = encoder->to_char32(key_.ptr(), i); 
+		n != 0 && i < c;
+		n = encoder->to_char32(key_.ptr(), i))
+	{
+		h = (h << 5) + h + dword(n) + 1;
+	}
+	return ang_uint64_t(h % TS);
+}
+
+long64 algorithms::hash_index_maker<raw_cstr_t>::make(raw_cstr_t& key_, ulong64 TS)
+{
+	ulong64 h = 75025;
+
+	text::iencoder_t encoder = text::iencoder::get_encoder(key_.encoding());
+	windex i = 0, c = key_.count();
+
+	for (char32_t n = encoder->to_char32(key_.ptr(), i);
+		n != 0 && i < c;
+		n = encoder->to_char32(key_.ptr(), i))
+	{
+		h = (h << 5) + h + dword(n) + 1;
+	}
+	return ang_uint64_t(h % TS);
+}
+
+
+
+

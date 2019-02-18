@@ -46,6 +46,13 @@ namespace ang
 				numerical,
 			};
 
+			safe_enum(LINK, key_state, uint)
+			{
+				pressed = 0,
+				released = 1,
+				toggled = 2,
+			};
+
 			safe_enum(LINK, virtual_key, uint)
 			{
 				no_key = 0,
@@ -106,6 +113,15 @@ namespace ang
 				pointer_hardware_type_t type;
 				key_modifiers_t modifiers;
 			}poiner_info_t;
+
+			typedef struct key_info
+			{
+				virtual_key key_code;
+				char32_t char_code;
+				word flags;
+				key_state_t state;
+				key_modifiers_t modifiers;
+			}key_info_t;
 
 			typedef struct text_selection
 			{

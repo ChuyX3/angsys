@@ -66,23 +66,23 @@ static collections::pair<cstr_t, ang::dom::xml::xml_type> s_xml_type_parsing_map
 	{ "tree"_s, ang::dom::xml::xml_type::tree },
 };
 
-xml_type_t xml_type_t::parse(cstr_t text)
-{
-	auto idx = algorithms::binary_search(text, collections::to_array(s_xml_type_parsing_map));
-	if (idx >= algorithms::array_size(s_xml_type_parsing_map))
-		return xml_type::abstract;
-	else
-		return s_xml_type_parsing_map[idx].value;
-}
-
-xml_type_t xml_type_t::parse(cwstr_t text)
-{
-	auto idx = algorithms::binary_search(text, collections::to_array(s_xml_type_parsing_map));
-	if (idx >= algorithms::array_size(s_xml_type_parsing_map))
-		return xml_type::abstract;
-	else
-		return s_xml_type_parsing_map[idx].value;
-}
+//xml_type_t xml_type_t::parse(cstr_t text)
+//{
+//	auto idx = algorithms::binary_search(text, collections::to_array(s_xml_type_parsing_map));
+//	if (idx >= algorithms::array_size(s_xml_type_parsing_map))
+//		return xml_type::abstract;
+//	else
+//		return s_xml_type_parsing_map[idx].value;
+//}
+//
+//xml_type_t xml_type_t::parse(cwstr_t text)
+//{
+//	auto idx = algorithms::binary_search(text, collections::to_array(s_xml_type_parsing_map));
+//	if (idx >= algorithms::array_size(s_xml_type_parsing_map))
+//		return xml_type::abstract;
+//	else
+//		return s_xml_type_parsing_map[idx].value;
+//}
 
 cstr_t xml_type_t::to_string()const
 {
@@ -93,18 +93,17 @@ cstr_t xml_type_t::to_string()const
 		return s_xml_type_to_string_map[idx].value;
 }
 
-ANG_IMPLEMENT_ENUM(xml, xml_exception_code, uint, xml_exception_code::unknown);
+safe_enum_rrti(ang::dom::xml, xml_exception_code_t, value<xml_exception_code_proxy>);
 
 cstr_t xml_exception_code_t::to_string()const
 {
 	return ang::move(except_code_t((except_code)_value).to_string());
 }
 
-ANG_IMPLEMENT_FLAGS(ang::dom::xml, xml_format, uint);
+safe_flags_implement(ang::dom::xml, xml_format, uint);
 
 ///////////////////////////////////////////////////////////////////
-
-
+/*
 template<> typename smart_ptr_type<xml_text>::smart_ptr_t  ixml_object::xml_as<xml_text>() {
 	return xml_is_type_of(xml_type::text) ? static_cast<xml_text*>(this) : null;
 }
@@ -148,6 +147,7 @@ template<> typename smart_ptr_type<ixml_document>::smart_ptr_t  ixml_object::xml
 template<> typename smart_ptr_type<xml_document>::smart_ptr_t  ixml_object::xml_as<xml_document>() {
 	return xml_is_type_of(xml_type::document) ? static_cast<xml_document*>(this) : null;
 }
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -287,3 +287,5 @@ ixml_object const* ang::intf_wrapper<ixml_object>::operator -> (void)const
 ang::intf_wrapper<ixml_object>::operator xml::ixml_object * (void) { return _ptr; }
 
 ang::intf_wrapper<ixml_object>::operator xml::ixml_object const* (void)const { return _ptr; }
+
+*/

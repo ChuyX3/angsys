@@ -32,9 +32,9 @@ namespace ang
 			typedef const_backward_iterator<T>	const_backward_iterator_t;
 
 		protected:
-			allocator_t alloc;
-			wsize _size;
-			type* _data;
+			allocator_t m_alloc;
+			wsize m_size;
+			type* m_data;
 
 		public:
 			inline array_buffer();
@@ -129,17 +129,17 @@ namespace ang
 		typedef typename collections::array_buffer<T, allocator>::type data_type;
 
 	private:
-		collections::array_buffer<T, allocator>* _ptr;
+		collections::array_buffer<T, allocator>* m_ptr;
 
 	public:
 		object_wrapper();
-		template<typename U> inline object_wrapper(array_view<U> const& ar) : _ptr(null) {
+		template<typename U> inline object_wrapper(array_view<U> const& ar) : m_ptr(null) {
 			set(new collections::array_buffer<T, allocator>(ar));
 		}
-		template<typename U, template<typename> class allocator2> inline object_wrapper(scope_array<U, allocator2> const& ar) : _ptr(null) {
+		template<typename U, template<typename> class allocator2> inline object_wrapper(scope_array<U, allocator2> const& ar) : m_ptr(null) {
 			set(new collections::array_buffer<T, allocator>(ar));
 		}
-		template<typename U, wsize SIZE> inline object_wrapper(stack_array<U, SIZE> const& ar) : _ptr(null) {
+		template<typename U, wsize SIZE> inline object_wrapper(stack_array<U, SIZE> const& ar) : m_ptr(null) {
 			set(new collections::array_buffer<T, allocator>(ar));
 		}
 		object_wrapper(collections::array_buffer<T, allocator>*);
@@ -149,7 +149,7 @@ namespace ang
 		object_wrapper(object_wrapper const&);
 		object_wrapper(ang::nullptr_t const&);
 		template<typename U, wsize N>
-		object_wrapper(U(&ar)[N]) : _ptr(null) {
+		object_wrapper(U(&ar)[N]) : m_ptr(null) {
 			set(new collections::array_buffer<T, allocator>(to_array(ar, N)));
 		}
 		~object_wrapper();
@@ -162,10 +162,10 @@ namespace ang
 		void set(collections::array_buffer<T, allocator>*);
 		collections::array_buffer<T, allocator>** addres_of(void);
 
-		collections::forward_iterator<T> begin() { return _ptr ? _ptr->begin() : collections::iterator<T>(); }
-		collections::forward_iterator<T> end() { return _ptr ? _ptr->end() : collections::iterator<T>(); }
-		collections::forward_iterator<const T> begin()const { return _ptr ? _ptr->begin() : collections::iterator<const T>(); }
-		collections::forward_iterator<const T> end()const { return _ptr ? _ptr->end() : collections::iterator<const T>(); }
+		collections::forward_iterator<T> begin() { return m_ptr ? m_ptr->begin() : collections::iterator<T>(); }
+		collections::forward_iterator<T> end() { return m_ptr ? m_ptr->end() : collections::iterator<T>(); }
+		collections::forward_iterator<const T> begin()const { return m_ptr ? m_ptr->begin() : collections::iterator<const T>(); }
+		collections::forward_iterator<const T> end()const { return m_ptr ? m_ptr->end() : collections::iterator<const T>(); }
 
 	public:
 		object_wrapper& operator = (collections::array_buffer<T, allocator>*);
@@ -184,7 +184,7 @@ namespace ang
 		collections::array_buffer<T, allocator> const* operator -> (void)const;
 		explicit operator collections::array_buffer<T, allocator> * (void);
 		explicit operator collections::array_buffer<T, allocator> const* (void)const;
-		operator array_view<T>()const { return _ptr ? to_array(_ptr->data(), _ptr->size()) : array_view<T>(); }
+		operator array_view<T>()const { return m_ptr ? to_array(m_ptr->data(), m_ptr->size()) : array_view<T>(); }
 		template<typename I>T& operator[](I const& idx);
 		template<typename I>T const& operator[](I const& idx)const;
 	};

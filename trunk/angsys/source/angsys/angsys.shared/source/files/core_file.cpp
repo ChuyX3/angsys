@@ -11,9 +11,9 @@
 #include <ang/core/files.h>
 #include "file_system.h"
 
-#if defined _DEBUG
-#define new new(__FILE__, __LINE__)
-#endif
+//#if defined _DEBUG
+//#define new new(__FILE__, __LINE__)
+//#endif
 
 using namespace ang;
 using namespace ang::core;
@@ -420,7 +420,7 @@ bool core_file::create(path_view_t path, open_flags_t flags)
 	}
 #endif
 
-	wsize size = get_file_size(_hfile);
+	wsize size = (wsize)get_file_size(_hfile);
 
 	if (bool(flags & open_flags::format_text)) //text file
 	{
@@ -745,7 +745,7 @@ wsize core_file::read(wsize size, pointer buffer)
 	LARGE_INTEGER cur;
 	lint.QuadPart = 0;
 	SetFilePointerEx(_hfile, lint, &cur, FILE_CURRENT);
-	return cur.QuadPart;
+	return (wsize)cur.QuadPart;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 	readed = ::read(_hfile, buffer, size);
 	return ::lseek(_hfile, 0, SEEK_CUR);
@@ -771,7 +771,7 @@ wsize core_file::read(ibuffer_view_t buffer)
 	LARGE_INTEGER cur;
 	lint.QuadPart = 0;
 	SetFilePointerEx(_hfile, lint, &cur, FILE_CURRENT);
-	return cur.QuadPart;
+	return (wsize)cur.QuadPart;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 	readed = ::read(_hfile, buffer->buffer_ptr(), (dword)buffer->buffer_size());
 	return ::lseek(_hfile, 0, SEEK_CUR);
@@ -797,7 +797,7 @@ wsize core_file::write(wsize size, pointer buffer)
 	LARGE_INTEGER cur;
 	lint.QuadPart = 0;
 	SetFilePointerEx(_hfile, lint, &cur, FILE_CURRENT);
-	return cur.QuadPart;
+	return (wsize)cur.QuadPart;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 	written = ::write(_hfile, buffer, size);
 	return ::lseek(_hfile, 0, SEEK_CUR);
@@ -823,7 +823,7 @@ wsize core_file::write(ibuffer_view_t buffer)
 	LARGE_INTEGER cur;
 	lint.QuadPart = 0;
 	SetFilePointerEx(_hfile, lint, &cur, FILE_CURRENT);
-	return cur.QuadPart;
+	return (wsize)cur.QuadPart;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 	written = ::write(_hfile, buffer->buffer_ptr(), (dword)buffer->buffer_size());
 	return ::lseek(_hfile, 0, SEEK_CUR);

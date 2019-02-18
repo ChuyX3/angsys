@@ -72,10 +72,8 @@ namespace ang
 			ang_end_interface();
 
 			ang_begin_interface(LINK ikey_event_args, public imsg_event_args)
-				visible vcall uint key()const pure;
-				visible vcall input::key_modifiers_t modifiers()const pure;
-				visible vcall word flags()const pure;
-				visible vcall bool is_pressed()const pure;
+				visible vcall char32_t key()const pure;
+				visible vcall input::key_info_t info()const pure;
 			ang_end_interface();
 
 			ang_begin_interface(LINK ipointer_event_args, public imsg_event_args)
@@ -89,8 +87,8 @@ namespace ang
 			ang_end_interface();
 
 			ang_begin_interface(LINK iupdate_event_args, public imsg_event_args)
-				visible vcall float delta()const pure;
-				visible vcall float total()const pure;
+				visible vcall double delta()const pure;
+				visible vcall double total()const pure;
 			ang_end_interface();
 
 			ang_begin_interface(LINK itext_change_event_args, public imsg_event_args)

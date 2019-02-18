@@ -16,14 +16,14 @@ namespace ang
 			template<xml_encoding E> class xml_comment;
 			template<xml_encoding E> class xml_element;
 
-			template<xml_encoding E> using xml_document_ptr = xml_document<E>;
-			template<xml_encoding E> using xml_node_ptr = xml_node<E>;
-			template<xml_encoding E> using xml_cdata_ptr = xml_cdata<E>;
-			template<xml_encoding E> using xml_attribute_ptr = xml_attribute<E>;
-			template<xml_encoding E> using xml_namespace_ptr = xml_namespace<E>;
-			template<xml_encoding E> using xml_header_ptr = xml_header<E>;
-			template<xml_encoding E> using xml_comment_ptr = xml_comment<E>;
-			template<xml_encoding E> using xml_element_ptr = xml_element<E>;
+			template<xml_encoding E> using xml_document_ptr = object_wrapper<xml_document<E>>;
+			template<xml_encoding E> using xml_node_ptr = object_wrapper < xml_node<E>>;
+			template<xml_encoding E> using xml_cdata_ptr = object_wrapper < xml_cdata<E>>;
+			template<xml_encoding E> using xml_attribute_ptr = object_wrapper < xml_attribute<E>>;
+			template<xml_encoding E> using xml_namespace_ptr = object_wrapper < xml_namespace<E>>;
+			template<xml_encoding E> using xml_header_ptr = object_wrapper < xml_header<E>>;
+			template<xml_encoding E> using xml_comment_ptr = object_wrapper < xml_comment<E>>;
+			template<xml_encoding E> using xml_element_ptr = object_wrapper < xml_element<E>>;
 
 			typedef enum xml_entity : uint
 			{

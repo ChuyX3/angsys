@@ -355,9 +355,9 @@ namespace ang
 			constexpr bool SWAP1 = is_endian_swapped<ENCODING>::value;
 			constexpr bool SWAP2 = is_endian_swapped<encoding_by_char_type<char2_t>::value>::value;
 
-			if (first == null || second == null) return invalid_index;
-			if (s2 == 0 || start >= s1) return invalid_index;
-			if (s2 > (s1 - start)) return invalid_index;
+			if (first == null || second == null) return (wsize)invalid_index;
+			if (s2 == 0 || start >= s1) return (wsize)invalid_index;
+			if (s2 > (s1 - start)) return (wsize)invalid_index;
 
 			char1_t const* beg = first + start;
 			char1_t const* end = first + s1 - s2 + 1;
@@ -375,7 +375,7 @@ namespace ang
 				i += t;
 				beg += t;
 			} while (beg < end);
-			return ang::invalid_index;
+			return (wsize)invalid_index;
 		}
 
 		template<encoding ENCODING> inline windex encoder<ENCODING>::find_any(raw_cstr_t first, wsize s1, windex start, array_view<const char32> chars)
@@ -386,7 +386,7 @@ namespace ang
 			c1 = to_char32<false, is_endian_swapped<ENCODING>::value>(first, i);
 			for (auto c2 : chars)	
 				if (c1 == c2) return i;
-			if (c1 == 0) return invalid_index;
+			if (c1 == 0) return (wsize)invalid_index;
 			goto LOOP;
 		}
 
@@ -397,9 +397,9 @@ namespace ang
 			constexpr bool SWAP1 = is_endian_swapped<ENCODING>::value;
 			constexpr bool SWAP2 = is_endian_swapped<encoding_by_char_type<char2_t>::value>::value;
 
-			if (first == null || second == null) return ang::invalid_index;
-			if (s2 == 0 || start > s1) return ang::invalid_index;
-			if (s2 > start)	return ang::invalid_index;
+			if (first == null || second == null) return (wsize)invalid_index;
+			if (s2 == 0 || start > s1) return (wsize)invalid_index;
+			if (s2 > start)	return (wsize)invalid_index;
 
 			char1_t const* beg = first;
 			char1_t const* end = first + (start - s2);
@@ -413,7 +413,7 @@ namespace ang
 				if (l == s2) return i;
 				i--;
 			} while (beg <= --end);
-			return ang::invalid_index;
+			return (wsize)invalid_index;
 		}
 
 		template<encoding ENCODING> template <typename cstr2_t> inline typename encoder<ENCODING>::raw_str_t encoder<ENCODING>::convert(raw_str_t dest, cstr2_t src, bool eos, wsize max_out, wsize max_in)

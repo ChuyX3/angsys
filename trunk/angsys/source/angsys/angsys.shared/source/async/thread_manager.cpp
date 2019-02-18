@@ -4,12 +4,12 @@
 
 
 
-#if defined _DEBUG || defined _DEVELOPPER
-#define new new(__FILE__, __LINE__)
-#define new_args(...) new(__VAR_ARGS__, __FILE__, __LINE__)
-#else
-#define new_args(...) new(__VAR_ARGS__)
-#endif // MEMORY_
+//#if defined _DEBUG || defined _DEVELOPPER
+//#define new new(__FILE__, __LINE__)
+//#define new_args(...) new(__VAR_ARGS__, __FILE__, __LINE__)
+//#else
+//#define new_args(...) new(__VAR_ARGS__)
+//#endif // MEMORY_
 
 using namespace ang;
 using namespace ang::core;
@@ -34,7 +34,7 @@ thread_manager::~thread_manager()
 	_main_mutex.lock();
 	_thread_map.clear();
 	_main_thread = null;
-	_attached_threads.clear();
+	_attached_threads.reset();
 	_main_mutex.unlock();
 }
 

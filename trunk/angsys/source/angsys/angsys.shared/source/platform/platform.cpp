@@ -19,7 +19,7 @@ safe_enum_rrti(ang::platform::input, virtual_key_t, value<virtual_key_proxy>);
 safe_flags_implement(ang::platform::input, key_modifiers, uint);
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::input::ikeyboard, ang::interface);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::imessage_reciever, ang::interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::imessage_listener, ang::interface);
 //ANG_IMPLEMENT_BASIC_INTERFACE(ang::platform::icore_msg_dispatcher, imessage_reciever);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::icore_context, ang::interface);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::icore_view, ang::interface);

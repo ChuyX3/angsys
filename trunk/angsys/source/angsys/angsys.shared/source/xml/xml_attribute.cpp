@@ -9,7 +9,7 @@
 /*********************************************************************************************************************/
 
 #include "pch.h"
-#include "ang/xml.hpp"
+#include "ang/dom/xml.h"
 
 #if defined _DEBUG
 #define NEW new(__FILE__, __LINE__)

@@ -16,7 +16,7 @@ thread_t thread::create_thread()
 {
 	worker_thread_t th = new worker_thread();
 	th->start();
-	return th;
+	return th.get();
 }
 
 
@@ -31,12 +31,12 @@ void thread::sleep(dword ms)
 
 thread_t thread::main_thread()
 {
-	return thread_manager::instance()->main_thread();
+	return thread_manager::instance()->main_thread().get();
 }
 
 thread_t thread::this_thread()
 {
-	return thread_manager::instance()->this_thread();
+	return thread_manager::instance()->this_thread().get();
 }
 
 dword thread::this_thread_id()
@@ -258,7 +258,7 @@ iasync<void> worker_thread::run(core::delegates::function<void(iasync<void>)> ac
 {
 	if ((async_action_status::finished | async_action_status::attached) & _state)
 		return null;
-	return post_task(action);
+	return post_task(action).get();
 }
 
 iasync<void> worker_thread::run(core::delegates::function<void(iasync<void>, var_args_t)> action, var_args_t args)
@@ -268,7 +268,7 @@ iasync<void> worker_thread::run(core::delegates::function<void(iasync<void>, var
 	return post_task([=](iasync<void> async)
 	{
 		action.get()->invoke(async.get(), args.get());
-	});
+	}).get();
 }
 
 bool worker_thread::is_main_thread()const

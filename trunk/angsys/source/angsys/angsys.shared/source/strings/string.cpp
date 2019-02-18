@@ -10,14 +10,14 @@ using namespace ang::strings;
 basic_string_buffer_base::basic_string_buffer_base()
 {
 	memset(&_data, 0, sizeof(_data));
-	_map_index = invalid_index;
-	_map_size = invalid_index;
+	_map_index = (wsize)invalid_index;
+	_map_size = (wsize)invalid_index;
 }
 
 basic_string_buffer_base::~basic_string_buffer_base()
 {
-	_map_index = invalid_index;
-	_map_size = invalid_index;
+	_map_index = (wsize)invalid_index;
+	_map_size = (wsize)invalid_index;
 	//clear();
 }
 
@@ -173,42 +173,42 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 	{
 		windex i = 0;
 		short& value = *reinterpret_cast<short*>(ptr);
-		value = _encoder->to_signed(text_buffer().ptr(), i);
+		value = (short)_encoder->to_signed(text_buffer().ptr(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<ushort>())
 	{
 		windex i = 0;
 		ushort& value = *reinterpret_cast<ushort*>(ptr);
-		value = _encoder->to_unsigned(text_buffer().ptr(), i);
+		value = (ushort)_encoder->to_unsigned(text_buffer().ptr(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<int>())
 	{
 		windex i = 0;
 		int& value = *reinterpret_cast<int*>(ptr);
-		value = _encoder->to_signed(text_buffer().ptr(), i);
+		value = (int)_encoder->to_signed(text_buffer().ptr(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<uint>())
 	{
 		windex i = 0;
 		uint& value = *reinterpret_cast<uint*>(ptr);
-		value = _encoder->to_unsigned(text_buffer().ptr(), i);
+		value = (uint)_encoder->to_unsigned(text_buffer().ptr(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<long>())
 	{
 		windex i = 0;
 		long& value = *reinterpret_cast<long*>(ptr);
-		value = _encoder->to_signed(text_buffer().ptr(), i);
+		value = (int)_encoder->to_signed(text_buffer().ptr(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<ulong>())
 	{
 		windex i = 0;
 		ulong& value = *reinterpret_cast<ulong*>(ptr);
-		value = _encoder->to_unsigned(text_buffer().ptr(), i);
+		value = (ulong)_encoder->to_unsigned(text_buffer().ptr(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<long64>())
@@ -229,7 +229,7 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 	{
 		windex i = 0;
 		float& value = *reinterpret_cast<float*>(ptr);
-		value = _encoder->to_floating(text_buffer().ptr(), i);
+		value = (float)_encoder->to_floating(text_buffer().ptr(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<double>())

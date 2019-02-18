@@ -121,7 +121,7 @@ ang::core::delegates::listener<void(Ts...)>::~listener()
 template<typename... Ts>
 void ang::core::delegates::listener<void(Ts...)>::empty()
 {
-	functions.clear();
+	functions.reset();
 }
 
 template<typename... Ts>

@@ -12,9 +12,9 @@
 #include "file_system.h"
 
 
-#if defined _DEBUG
-#define new new(__FILE__, __LINE__)
-#endif
+//#if defined _DEBUG
+//#define new new(__FILE__, __LINE__)
+//#endif
 
 using namespace ang;
 using namespace ang::core;
@@ -22,7 +22,7 @@ using namespace ang::core::files;
 
 
 core::files::ifile_system_t core::files::ifile_system::fs_instance() {
-	return ang::singleton<core::files::file_system_t>::instance();
+	return ang::singleton<core::files::file_system_t>::instance().get();
 }
 
 //bool ifile_system::register_file_system(ifile_system* fs, file_system_priority_t prio)

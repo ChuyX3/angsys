@@ -13,9 +13,9 @@ namespace ang
 			class xml_comment final : public xml_node<E>
 			{
 			public:
-				static xml_comment_t create_new(const xml_comment&);
-				static xml_comment_t create_new(xml_document_ptr<E>, const xml_comment*);
-				static xml_comment_t create_new(xml_document_ptr<E>, strings::basic_string<E>);
+				static xml_comment_ptr<E> create_new(const xml_comment&);
+				static xml_comment_ptr<E> create_new(xml_document_ptr<E>, const xml_comment*);
+				static xml_comment_ptr<E> create_new(xml_document_ptr<E>, strings::basic_string<E>);
 
 			protected:
 				xml_comment(xml_document_ptr<E>);

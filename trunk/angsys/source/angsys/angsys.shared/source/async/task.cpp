@@ -6,12 +6,12 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined _DEBUG || defined _DEVELOPPER
-#define new new(__FILE__, __LINE__)
-#define new_args(...) new(__VAR_ARGS__, __FILE__, __LINE__)
-#else
-#define new_args(...) new(__VAR_ARGS__)
-#endif // MEMORY_
+//#if defined _DEBUG || defined _DEVELOPPER
+//#define new new(__FILE__, __LINE__)
+//#define new_args(...) new(__VAR_ARGS__, __FILE__, __LINE__)
+//#else
+//#define new_args(...) new(__VAR_ARGS__)
+//#endif // MEMORY_
 
 using namespace ang;
 using namespace ang::core;

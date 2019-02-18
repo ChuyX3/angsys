@@ -89,7 +89,7 @@ namespace ang
 				unknown,
 				not_implemented = 0X200,
 				parsing_error,
-				unexpected_error,
+				unexpected_error
 			};
 
 			safe_flags(LINK, xml_format, uint)
@@ -153,11 +153,11 @@ namespace ang
 					return _ptr ? ((xml::ixml_collection const*)_ptr)->end() : xml::xml_const_forward_iterator_t(null);
 				}
 
-				xml_attribute_t xml_attribute(raw_str_t);
-				xml_namespace_t xml_namespace(raw_str_t);
+				//xml_attribute_t xml_attribute(raw_str_t);
+				//xml_namespace_t xml_namespace(raw_str_t);
 
-				template<typename T, xml_encoding E> xml_attribute_t xml_attribute(str_view<T, E> str)const { return xml_attribute(raw_str(str)); }
-				template<typename T, xml_encoding E> xml_namespace_t xml_namespace(str_view<T, E> str)const { return xml_namespace(raw_str(str)); }
+				//template<typename T, xml_encoding E> xml_attribute_t xml_attribute(str_view<T, E> str)const { return xml_attribute(raw_str(str)); }
+				//template<typename T, xml_encoding E> xml_namespace_t xml_namespace(str_view<T, E> str)const { return xml_namespace(raw_str(str)); }
 
 			public:
 				xml_attributes_t& operator = (xml::ixml_collection*);

@@ -40,7 +40,7 @@ namespace ang
 			typedef shared_ptr<mutex> mutex_ptr_t;
 
 			ang_object(thread);
-			template<typename T> class itask;
+			template<typename T> struct itask;
 			template<typename T> using itask_t = intf_wrapper<itask<T>>;
 			template<typename T> using iasync = intf_wrapper<itask<T>>;
 

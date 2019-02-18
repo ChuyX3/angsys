@@ -45,10 +45,10 @@ namespace ang
 		struct hash_index_maker<str_view<T, E>> {
 			static inline ulong64 make(const str_view<T, E>& key, ulong64 TS) {
 				ulong64 h = 75025;
-				windex i = 0, c = value.size();
+				windex i = 0, c = key.size();
 
 				for (char32_t n = text::to_char32<false, text::is_endian_swapped<E>::value>(key.cstr(), i);
-					n != 0 && i < key.size();
+					n != 0 && i < c;
 					n = text::to_char32<false, text::is_endian_swapped<E>::value>(key.cstr(), i))
 				{
 					h = (h << 5) + h + dword(n) + 1;
@@ -61,17 +61,25 @@ namespace ang
 		struct hash_index_maker<strings::basic_string<E,A>> {
 			static inline long64 make(const strings::basic_string<E, A>& key_, ulong64 TS) {
 				ulong64 h = 75025;
-				windex i = 0, c = value.size();
 				auto key = key_->cstr();
+				windex i = 0, c = key.size();
 
 				for (char32_t n = text::to_char32<false, text::is_endian_swapped<E>::value>(key.cstr(), i);
-					n != 0 && i < key.size();
+					n != 0 && i < c;
 					n = text::to_char32<false, text::is_endian_swapped<E>::value>(key.cstr(), i))
 				{
 					h = (h << 5) + h + dword(n) + 1;
 				}
 				return ang_uint64_t(h % TS);
 			}
+		};
+
+		template<> struct LINK hash_index_maker<raw_str_t> {
+			static long64 make(raw_str_t& key_, ulong64 TS);
+		};
+
+		template<> struct LINK hash_index_maker<raw_cstr_t> {
+			static long64 make(raw_cstr_t& key_, ulong64 TS);
 		};
 	}
 
@@ -111,9 +119,9 @@ namespace ang
 
 
 		protected:
-			allocator<node_t> alloc;
-			wsize _count;
-			node_array_t _table;
+			allocator<node_t> m_alloc;
+			wsize m_count;
+			node_array_t m_table;
 
 		public:
 			inline hash_map_object();
@@ -130,11 +138,11 @@ namespace ang
 
 		public: //methods
 			inline bool is_empty()const;
-			inline T* data()const;
-			inline wsize size()const;
+			//inline pair_type* data()const;
+			//inline wsize size()const;
 			//inline void size(wsize);
-			inline wsize capacity()const;
-			inline void capacity(wsize size, bool save = false);
+			//inline wsize capacity()const;
+			//inline void capacity(wsize size, bool save = false);
 
 			inline void clear();
 			inline void empty();
@@ -144,9 +152,9 @@ namespace ang
 			template<typename U, template<typename> class allocator2> inline void copy(scope_array<U, allocator2>const&);
 			template<typename U, wsize SIZE> inline void copy(stack_array<U, SIZE> const&);
 
-			template<typename U> inline void expand(array_view<U>const&);
-			template<typename U, template<typename> class allocator2> inline void expand(scope_array<U, allocator2>const&);
-			template<typename U, wsize SIZE> inline void expand(stack_array<U, SIZE> const&);
+			template<typename U> inline void extend(array_view<U>const&);
+			template<typename U, template<typename> class allocator2> inline void extend(scope_array<U, allocator2>const&);
+			template<typename U, wsize SIZE> inline void extend(stack_array<U, SIZE> const&);
 
 		public: //ienum overrides
 			inline wsize counter()const override;
@@ -190,8 +198,8 @@ namespace ang
 	
 		protected: //Memory Operations
 			template<typename U, typename V> inline node_ptr_t allocate_node(U key, V val) {
-				node_ptr_t node = alloc.allocate(1);
-				alloc.template construct<node_t>(node, forward<U>(key), forward<V>(val));
+				node_ptr_t node = m_alloc.allocate(1);
+				m_alloc.template construct<node_t>(node, forward<U>(key), forward<V>(val));
 				return node;
 			}
 			inline void increase_capacity();
@@ -225,14 +233,14 @@ namespace ang
 
 
 		protected:
-			allocator<node_t> alloc;
-			wsize _count;
-			node_array_t _table;
+			allocator<node_t> m_alloc;
+			wsize m_count;
+			node_array_t m_table;
 
 		public:
 			inline hash_map_object();
 			inline hash_map_object(wsize reserve);
-			template<typename U, typename V>inline hash_map_object(ang::initializer_list<pair<U, V>> list);
+			inline hash_map_object(ang::initializer_list<pair_type> list);
 			inline hash_map_object(const ang::nullptr_t&);
 			inline hash_map_object(hash_map_object&& ar);
 			inline hash_map_object(const hash_map_object& ar);
@@ -244,11 +252,11 @@ namespace ang
 
 		public: //methods
 			inline bool is_empty()const;
-			inline T* data()const;
-			inline wsize size()const;
+			//inline T* data()const;
+			//inline wsize size()const;
 			//inline void size(wsize);
-			inline wsize capacity()const;
-			inline void capacity(wsize size, bool save = false);
+			//inline wsize capacity()const;
+			//inline void capacity(wsize size, bool save = false);
 
 			inline void clear();
 			inline void empty();
@@ -258,9 +266,9 @@ namespace ang
 			template<typename U, template<typename> class allocator2> inline void copy(scope_array<U, allocator2>const&);
 			template<typename U, wsize SIZE> inline void copy(stack_array<U, SIZE> const&);
 
-			template<typename U> inline void expand(array_view<U>const&);
-			template<typename U, template<typename> class allocator2> inline void expand(scope_array<U, allocator2>const&);
-			template<typename U, wsize SIZE> inline void expand(stack_array<U, SIZE> const&);
+			template<typename U> inline void extend(array_view<U>const&);
+			template<typename U, template<typename> class allocator2> inline void extend(scope_array<U, allocator2>const&);
+			template<typename U, wsize SIZE> inline void extend(stack_array<U, SIZE> const&);
 
 		public: //ienum overrides
 			inline wsize counter()const override;
@@ -328,17 +336,170 @@ namespace ang
 
 		protected: //Memory Operations
 			template<typename U, typename V> inline node_ptr_t allocate_node(U key, V val) {
-				node_ptr_t node = alloc.allocate(1);
-				alloc.template construct<node_t>(node, forward<U>(key), forward<V>(val));
+				node_ptr_t node = m_alloc.allocate(1);
+				m_alloc.template construct<node_t>(node, forward<U>(key), forward<V>(val));
 				return node;
 			}
 			inline void increase_capacity();
-			inline wsize hash_index(key_type const&)const;
-			inline node_ptr_t find_node(key_type const&)const;
+			inline wsize hash_index(raw_cstr_t const&)const;
+			inline node_ptr_t find_node(raw_cstr_t const&)const;
 		};
 
 	}//collections
 
+
+	/********************************************************************/
+	/* template class ang::object_wrapper<hash_map_object> :            */
+	/*  -> specialization of object_wrapper<hash_map_object> -> has_map */
+	/********************************************************************/
+	template<typename K, typename T, template<typename> class allocator, template<typename> class hash_index_maker>
+	class object_wrapper<collections::hash_map_object<K, T, allocator, hash_index_maker>>
+	{
+	public:
+		typedef collections::hash_map_object<K, T, allocator, hash_index_maker> type;
+		typedef typename collections::hash_map_object<K, T, allocator, hash_index_maker>::type pair_type;
+		typedef typename collections::hash_map_object<K, T, allocator, hash_index_maker>::value_type data_type;
+		typedef typename collections::hash_map_object<K, T, allocator, hash_index_maker>::key_type key_type;
+
+	private:
+		type* m_ptr;
+
+	public:
+		object_wrapper();
+		object_wrapper(type*);
+		object_wrapper(ang::initializer_list<pair_type> list);
+		object_wrapper(const collections::ienum<pair_type>* store);
+		object_wrapper(object_wrapper &&);
+		object_wrapper(object_wrapper const&);
+		object_wrapper(ang::nullptr_t const&);
+		~object_wrapper();
+
+	public:
+		void reset();
+		void reset_unsafe();
+		bool is_empty()const;
+		type* get(void)const;
+		void set(type*);
+		type** addres_of(void);
+		type** addres_for_init(void);
+
+		collections::forward_iterator<pair_type> begin() { return m_ptr ? m_ptr->begin() : collections::iterator<pair_type>(); }
+		collections::forward_iterator<pair_type> end() { return m_ptr ? m_ptr->end() : collections::iterator<pair_type>(); }
+		collections::forward_iterator<const pair_type> begin()const { return m_ptr ? m_ptr->begin() : collections::iterator<const pair_type>(); }
+		collections::forward_iterator<const pair_type> end()const { return m_ptr ? m_ptr->end() : collections::iterator<const pair_type>(); }
+
+	public:
+		object_wrapper& operator = (type*);
+		object_wrapper& operator = (const ang::nullptr_t&);
+		object_wrapper& operator = (collections::ienum<pair_type> const* items);
+		object_wrapper& operator = (object_wrapper &&);
+		object_wrapper& operator = (object_wrapper const&);
+
+		object_wrapper& operator += (pair_type item);
+		object_wrapper& operator += (collections::ienum<pair_type> const* items);
+		object_wrapper& operator += (object_wrapper const&);
+
+		object_wrapper_ptr<type> operator & (void);
+		type * operator -> (void);
+		type const* operator -> (void)const;
+		explicit operator type * (void);
+		explicit operator type const* (void)const;
+
+		data_type& operator [] (key_type const&);
+		data_type operator [] (key_type const&)const;
+	};
+
+
+
+	/********************************************************************/
+	/* template class ang::object_wrapper<hash_map_object> :            */
+	/*  -> specialization of object_wrapper<hash_map_object> -> has_map */
+	/********************************************************************/
+	template<text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename> class hash_index_maker>
+	class object_wrapper<collections::hash_map_object<strings::basic_string<E, A>, T, allocator, hash_index_maker>>
+	{
+	public:
+		typedef collections::hash_map_object<strings::basic_string<E,A>, T, allocator, hash_index_maker> type;
+		typedef typename collections::hash_map_object<strings::basic_string<E,A>, T, allocator, hash_index_maker>::type pair_type;
+		typedef typename collections::hash_map_object<strings::basic_string<E,A>, T, allocator, hash_index_maker>::value_type data_type;
+		typedef typename collections::hash_map_object<strings::basic_string<E,A>, T, allocator, hash_index_maker>::key_type key_type;
+
+	private:
+		type* m_ptr;
+
+	public:
+		object_wrapper();
+		object_wrapper(type*);
+		object_wrapper(ang::initializer_list<pair_type> list);
+		object_wrapper(const collections::ienum<pair_type>* store);
+		object_wrapper(object_wrapper &&);
+		object_wrapper(object_wrapper const&);
+		object_wrapper(ang::nullptr_t const&);
+		~object_wrapper();
+
+	public:
+		void reset();
+		void reset_unsafe();
+		bool is_empty()const;
+		type* get(void)const;
+		void set(type*);
+		type** addres_of(void);
+		type** addres_for_init(void);
+
+		collections::forward_iterator<pair_type> begin() { return m_ptr ? m_ptr->begin() : collections::iterator<pair_type>(); }
+		collections::forward_iterator<pair_type> end() { return m_ptr ? m_ptr->end() : collections::iterator<pair_type>(); }
+		collections::forward_iterator<const pair_type> begin()const { return m_ptr ? m_ptr->begin() : collections::iterator<const pair_type>(); }
+		collections::forward_iterator<const pair_type> end()const { return m_ptr ? m_ptr->end() : collections::iterator<const pair_type>(); }
+
+	public:
+		object_wrapper& operator = (type*);
+		object_wrapper& operator = (const ang::nullptr_t&);
+		object_wrapper& operator = (collections::ienum<pair_type> const* items);
+		object_wrapper& operator = (object_wrapper &&);
+		object_wrapper& operator = (object_wrapper const&);
+
+		object_wrapper& operator += (pair_type item);
+		object_wrapper& operator += (collections::ienum<pair_type> const* items);
+		object_wrapper& operator += (object_wrapper const&);
+
+		object_wrapper_ptr<type> operator & (void);
+		type * operator -> (void);
+		type const* operator -> (void)const;
+		explicit operator type * (void);
+		explicit operator type const* (void)const;
+
+		data_type& operator [] (raw_cstr_t const&);
+		data_type operator [] (raw_cstr_t const&)const;
+
+		template<text::encoding E2, template<typename>class A2>
+		data_type& operator [] (strings::basic_string<E, A> const& key) {
+			return operator[]((raw_cstr_t)key);
+		}
+		template<text::encoding E2, template<typename>class A2>
+		data_type operator [] (strings::basic_string<E, A> const&  key)const {
+			return operator[]((raw_cstr_t)key);
+		}
+
+		template<typename K, text::encoding E2>
+		data_type& operator [] (str_view<K,E2> const& key) {
+			return operator[]((raw_cstr_t)key);
+		}
+
+		template<typename K, text::encoding E2>
+		data_type operator [] (str_view<K, E2> const&  key)const {
+			return operator[]((raw_cstr_t)key);
+		}
+
+		template<typename K, wsize N>
+		data_type& operator [] (const K(&key)[N]) {
+			return operator[]((raw_cstr_t)key);
+		}
+
+		template<typename K, wsize N>
+		data_type operator [] (const K(&key)[N])const {
+			return operator[]((raw_cstr_t)key);
+		}
+	};
 
 }//ang
 

@@ -242,12 +242,12 @@ namespace ang //constants
 		_name##_t& operator = (_name##_t && v) { _value = ang::move(v.get()); v.set(default_value<type>::value); return*this; } \
 		_name##_t& operator ^= (const _name##_t& v) { _value ^= v.get(); return*this; } \
 		_name##_t& operator ^= (type v) { _value ^= v;	return*this; } \
-		_name##_t& operator *= (const _name##_t& v) { _value &= v.get(); return*this; } \
-		_name##_t& operator *= (type v) { _value &= v;	return*this; } \
+		_name##_t& operator *= (const _name##_t& v) { _value &= (uint)v.get(); return*this; } \
+		_name##_t& operator *= (type v) { _value &= (uint)v;	return*this; } \
 		_name##_t& operator += (const _name##_t& v) { _value |= v.get(); return*this; } \
 		_name##_t& operator += (type v) { _value |= v;	return*this; } \
-		_name##_t& operator -= (const _name##_t& v) { _value &= ~v.get(); return*this; } \
-		_name##_t& operator -= (type v) { _value &= ~v;	return*this; } \
+		_name##_t& operator -= (const _name##_t& v) { _value &= ~(uint)v.get(); return*this; } \
+		_name##_t& operator -= (type v) { _value &= ~(uint)v;	return*this; } \
 		bool operator !(void)const { return _value == 0; } \
 		operator bool(void)const { return _value != 0; } \
 		friend _LINK _name##_t operator * (type, type); \

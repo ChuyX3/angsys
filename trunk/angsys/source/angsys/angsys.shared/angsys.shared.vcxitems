@@ -121,14 +121,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\uinteger.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\variant.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_attribute.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_comment.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_document.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_element.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_header.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_node.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_store.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\APPLY_FUNCX_N.inl" />

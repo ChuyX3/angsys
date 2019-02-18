@@ -9,6 +9,12 @@
     <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\angwin.h">
       <Filter>header files\ang\platform\angwin</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\events.h">
+      <Filter>header files\ang\platform\angwin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\gdi.h">
+      <Filter>header files\ang\platform\angwin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

@@ -13,9 +13,9 @@ namespace ang
 			class xml_cdata final : public xml_node<E>
 			{
 			public:
-				static xml_cdata_t create_new(const xml_cdata&);
-				static xml_cdata_t create_new(xml_document_ptr<E>, const xml_cdata*);
-				static xml_cdata_t create_new(xml_document_ptr<E>, strings::basic_string<E>);
+				static xml_cdata_ptr<E> create_new(const xml_cdata<E>&);
+				static xml_cdata_ptr<E> create_new(xml_document_ptr<E>, const xml_cdata<E>*);
+				static xml_cdata_ptr<E> create_new(xml_document_ptr<E>, strings::basic_string<E>);
 
 			protected:
 				xml_cdata(xml_document_ptr<E>);

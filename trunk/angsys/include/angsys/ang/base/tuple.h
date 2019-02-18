@@ -146,6 +146,41 @@ namespace ang //constants
 		}
 	};
 
+
+	template<typename U, typename K, typename T>
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::same> {
+		static bool operate(const U& value, const collections::pair<K, T>& pair) {
+			return logic_operation<U, K, logic_operation_type::same>::operate(value, pair.key);
+		}
+	};
+
+	template<typename U, typename K, typename T>
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::major> {
+		static bool operate(const U& value, const collections::pair<K, T>& pair) {
+			return logic_operation<U, K, logic_operation_type::major>::operate(value, pair.key);
+		}
+	};
+
+	template<typename U, typename K, typename T>
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::same_or_major> {
+		static bool operate(const U& value, const collections::pair<K, T>& pair) {
+			return logic_operation<U, K, logic_operation_type::same_or_major>::operate(value, pair.key);
+		}
+	};
+
+	template<typename U, typename K, typename T>
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::minor> {
+		static bool operate(const U& value, const collections::pair<K, T>& pair) {
+			return logic_operation<U, K, logic_operation_type::minor>::operate(value, pair.key);
+		}
+	};
+
+	template<typename U, typename K, typename T>
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::same_or_minor> {
+		static bool operate(const U& value, const collections::pair<K, T>& pair) {
+			return logic_operation<U, K, logic_operation_type::same_or_minor>::operate(value, pair.key);
+		}
+	};
 }
 
 #endif//__ANG_BASE_TUPLE_H__

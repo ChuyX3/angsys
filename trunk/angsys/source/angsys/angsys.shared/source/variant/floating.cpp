@@ -229,9 +229,9 @@ bool variable<float>::set_value(rtti_t const& id, unknown_t val)
 		return false;
 
 	if (id.type_id() == type_of<bool>().type_id())
-		set(*static_cast<bool*>(val) ? 1 : 0);
+		set(*static_cast<bool*>(val) ? true : false);
 	else if (id.type_id() == type_of<boolean>().type_id())
-		set(static_cast<boolean*>(val)->get() ? 1 : 0);
+		set(static_cast<boolean*>(val)->get() ? true : false);
 
 	else if (id.type_id() == type_of<int>().type_id())
 		set((float)*static_cast<int*>(val));

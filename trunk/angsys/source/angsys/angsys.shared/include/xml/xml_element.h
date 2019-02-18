@@ -10,10 +10,10 @@ namespace ang
 			class xml_element final : public xml_node<E>
 			{
 			public:
-				static xml_element_t create_new(const xml_element&);
-				static xml_element_t create_new(xml_document_ptr<E>, const xml_element*);
-				static xml_element_t create_new(xml_document_ptr<E>, strings::basic_string<E>);
-				static xml_element_t create_new(xml_document_ptr<E>, strings::basic_string<E>, strings::basic_string<E>);
+				static xml_element_ptr<E> create_new(const xml_element&);
+				static xml_element_ptr<E> create_new(xml_document_ptr<E>, const xml_element*);
+				static xml_element_ptr<E> create_new(xml_document_ptr<E>, strings::basic_string<E>);
+				static xml_element_ptr<E> create_new(xml_document_ptr<E>, strings::basic_string<E>, strings::basic_string<E>);
 
 			protected:
 				xml_element(xml_document_ptr<E>);

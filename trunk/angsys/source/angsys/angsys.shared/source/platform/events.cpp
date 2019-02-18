@@ -27,9 +27,9 @@ void ievent_function::operator delete(void* ptr)
 }
 
 
-#if defined _DEBUG
-#define new new(__FILE__, __LINE__)
-#endif
+//#if defined _DEBUG
+//#define new new(__FILE__, __LINE__)
+//#endif
 
 //////////////////////////////////////////////////////////////
 
@@ -98,12 +98,12 @@ event_listener::listener(object* parent, function_type<bool(platform::events::co
 
 event_listener::~listener()
 {
-	_functions.clear();
+	_functions.reset();
 }
 
 void event_listener::empty()
 {
-	_functions.clear();
+	_functions.reset();
 }
 
 bool event_listener::is_empty()const
@@ -151,7 +151,7 @@ int event_listener::invoke(platform::events::imsg_event_args_t args)const
 	{
 		int c = 0;
 		objptr caller = _parent.lock<object>();
-		auto msg = args->msg_info()->msg();
+		auto msg = args->msg_info().msg();
 		for(event_t const & e : _functions) {
 			if (msg == e.get()->msg_type())
 			{
@@ -210,16 +210,16 @@ event_t::object_wrapper(platform::events::event* ev)
 
 event_t::~object_wrapper()
 {
-	clean();
+	reset();
 }
 
-void event_t::clean()
+void event_t::reset()
 {
 	if (_ptr)_ptr->release();
 	_ptr = null;
 }
 
-void event_t::clean_unsafe()
+void event_t::reset_unsafe()
 {
 	_ptr = null;
 }

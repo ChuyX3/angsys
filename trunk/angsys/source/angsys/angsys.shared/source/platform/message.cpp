@@ -6,52 +6,46 @@ using namespace ang::platform;
 using namespace ang::platform::events;
 
 message::message(const message& m)
-	: _msg(m._msg)
-	, _args(m.args())
-	, _result(m._result)
+	: m_msg(m.m_msg)
+	, m_wparam(m.m_wparam)
+	, m_lparam(m.m_lparam)
+	, m_result(m.m_result)
 {
 
 }
 
 message::message(const message* m)
-	: _msg()
-	, _args()
-	, _result(0)
+	: m_msg()
+	, m_wparam(0)
+	, m_lparam(0)
+	, m_result(0)
 {
 	if (m != null)
 	{
-		_msg = m->_msg;
-		_args = m->args();
-		_result = m->_result;
+		m_msg = m->m_msg;
+		m_wparam = m->m_wparam;
+		m_lparam = m->m_lparam;
+		m_result = m->m_result;
 	}
 }
 
 message::message(core_msg_t m, ulong64 a1, long64 a2)
-	: _msg(m)
-	, _args()
-	, _result(0)
+	: m_msg(m)
+	, m_wparam(a1)
+	, m_lparam(a2)
+	, m_result(0)
 {
-	_args += new uinteger64(a1);
-	_args += new integer64(a2);
 }
 
 message::~message()
 {
 }
 
-ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::platform::events::message, object);
-ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::events::message);
-ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::events::message, object);
-
-
-core_msg_t message::msg()const { return _msg; }
-array_view<var> message::args()const { return _args; }
-windex message::push_arg(var obj) { _args += obj; return _args->counter(); }
-var message::arg(windex i)const { return _args[i + 2]; }
-ulong64 message::wparam()const { return (ulong64)_args[0]; }
-long64 message::lparam()const { return (long64)_args[1]; }
-dword message::result()const { return _result; }
-void message::result(dword res)const { _result = res; }
+core_msg_t message::msg()const { return m_msg; }
+ulong64 message::wparam()const { return m_wparam; }
+long64 message::lparam()const { return m_lparam; }
+dword message::result()const { return m_result; }
+void message::result(dword res)const { m_result = res; }
 
 //////////////////////////////////////////////////////////////////////////////////////
 

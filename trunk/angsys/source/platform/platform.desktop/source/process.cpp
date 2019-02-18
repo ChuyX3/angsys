@@ -1,9 +1,8 @@
 #include "pch.h"
 
-#include "ang/core/time.hpp"
-#include "ang/platform/angwin/angwin.hpp"
+#include "ang/platform/angwin/angwin.h"
 #include "async_msg_task.h"
-#include <ang/collections/map.hpp>
+#include <ang/collections/hash_map.h>
 
 using namespace ang;
 using namespace ang::core;
@@ -21,39 +20,39 @@ namespace ang {
 			typedef struct _hprocess
 			{
 				pointer hmodule;
-				bool close_request;
-				events::message_t nonqueue_msg;
 				core::async::thread_t main_thread;
+				core::async::cond_ptr_t cond;
+				core::async::mutex_ptr_t mutex;
 			}*hprocess_t;
 			typedef const _hprocess* const_hprocess_t;
 
-			process* _current_process = null;
+			process* s_current_process = null;
 		}
 	}
 }
 
 process_t process::current_process()
 {
-	if (_current_process == null)
+	if (s_current_process == null)
 		new process();
-	return _current_process;
+	return s_current_process;
 }
 
 process::process()
-	: _process(null)
-	, properties(new collections::unordered_map_object<string, objptr>())
+	: m_process(null)
+	, m_properties(new collections::hash_map_object<string, var>())
 	//, cond(make_shared<core::async::cond>())
 	, start_app_event(this, [](events::core_msg_t code) { return code == events::win_msg_enum::start_app; })
 	, exit_app_event(this, [](events::core_msg_t code) { return code == events::win_msg_enum::exit_app; })
 {
-	if (_current_process != null)
+	if (s_current_process != null)
 		throw(exception_t(except_code::two_singleton));
-	_current_process = this;
+	s_current_process = this;
 	
-	properties["cmd_args"] = null;
-	properties["main_cond"] = make_shared<core::async::cond_t>();
-	properties["main_mutex"] = make_shared<core::async::mutex_t>();
-	properties["main_step_timer"] = make_shared<core::time::step_timer>();
+	m_properties["cmd_args"_s] = null;
+	m_properties["main_cond"_s] = make_shared<core::async::cond_t>();
+	m_properties["main_mutex"_s] = make_shared<core::async::mutex_t>();
+	m_properties["main_step_timer"_s] = make_shared<core::time::step_timer>();
 }
 
 process::~process()

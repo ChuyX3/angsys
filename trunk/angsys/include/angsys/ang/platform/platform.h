@@ -450,17 +450,11 @@ namespace ang
 {
 	namespace platform
 	{
-		struct icore_app;
-		struct icore_view;
-		struct icore_context;
-		struct imessage_reciever;
-		struct icore_msg_dispatcher;
-
-		typedef intf_wrapper<icore_app> icore_app_t;
-		typedef intf_wrapper<icore_view> icore_view_t;
-		typedef intf_wrapper<icore_context> icore_context_t;
-		typedef intf_wrapper<imessage_reciever> imessage_reciever_t;
-		typedef intf_wrapper<icore_msg_dispatcher> icore_msg_dispatcher_t;
+		ang_interface(icore_app);
+		ang_interface(icore_view);
+		ang_interface(icore_context);
+		ang_interface(imessage_listener);
+		//ang_interface(icore_msg_dispatcher);
 
 		safe_enum(LINK, activate_status, uint)
 		{
@@ -515,7 +509,7 @@ namespace ang
 
 			class message;
 			typedef uint core_msg_t;
-			typedef object_wrapper<message> message_t;
+			//typedef object_wrapper<message> message_t;
 
 			safe_enum(LINK, core_msg_enum, core_msg_t)
 			{	
@@ -582,9 +576,9 @@ namespace ang
 	namespace platform
 	{
 		
-		ang_begin_interface(LINK imessage_reciever)
-			visible vcall void send_msg(events::message_t) pure;
-			//visible vcall core::async::ioperation_t<dword> post_msg(events::message_t) pure;
+		ang_begin_interface(LINK imessage_listener)
+			visible vcall dword send_msg(events::message) pure;
+			visible vcall core::async::iasync<dword> post_msg(events::message) pure;
 			visible vcall bool listen_to(events::event_t) pure;
 		ang_end_interface();
 
@@ -593,24 +587,23 @@ namespace ang
 		//ang_end_interface();
 
 		ang_begin_interface(LINK icore_context)
-			visible vcall  pointer get_core_context_handle()const pure;
+			visible vcall  pointer core_context_handle()const pure;
 			visible vcall  bool bind_graphic_native_surface(pointer)pure;
 		ang_end_interface();
 
 		ang_begin_interface(LINK icore_view)
-			visible vcall pointer get_core_view_handle()const pure;
-			visible vcall icore_context_t get_core_context()const pure;
-			visible vcall graphics::size<float> get_core_view_size()const pure;
-			visible vcall graphics::size<float> get_core_view_scale_factor()const pure;
-			visible vcall imessage_reciever_t get_listener()const pure;
+			visible vcall pointer core_view_handle()const pure;
+			visible vcall icore_context_t core_context()const pure;
+			visible vcall graphics::size<float> core_view_size()const pure;
+			visible vcall graphics::size<float> core_view_scale_factor()const pure;
+			visible vcall imessage_listener_t listener()const pure;
 		ang_end_interface();
 
 		ang_begin_interface(LINK icore_app)
-			visible static icore_app_t get_core_app();
-			visible vcall pointer get_core_app_handle()const pure;
-			visible vcall icore_view_t get_main_core_view() pure;
-			visible vcall input::ikeyboard_t get_keyboard()pure;
-			//visible vcall imessage_reciever_t get_listener()const pure;
+			visible static icore_app_t core_app();
+			visible vcall pointer core_app_handle()const pure;
+			visible vcall icore_view_t main_core_view() pure;
+			visible vcall input::ikeyboard_t keyboard()pure;
 		ang_end_interface();
 	}
 }

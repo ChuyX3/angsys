@@ -40,7 +40,7 @@ wstring variable<bool>::to_string(value<bool> val,text::text_format_t f_)
 	case text::text_format::unsigned_:
 		return variable<uint>::to_string(val.get() ? 1 : 0, f_);
 	case text::text_format::float_:
-		return variable<float>::to_string(val.get() ? 1 : 0, f_);
+		return variable<float>::to_string(val.get() ? 1.0f : 0.0f, f_);
 	default:  return val.get() ? "true"_s : "false"_s;
 	}
 }

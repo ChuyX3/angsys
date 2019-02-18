@@ -223,6 +223,7 @@ bool variable<uint>::set_value(rtti_t const& id, unknown_t val)
 {
 	if (val == null)
 		return false;
+
 	if (id.type_id() == type_of<bool>().type_id())
 		set(*static_cast<bool*>(val) ? 1 : 0);
 	else if (id.type_id() == type_of<boolean>().type_id())
@@ -263,8 +264,9 @@ bool variable<uint>::set_value(rtti_t const& id, unknown_t val)
 		set((uint)*static_cast<double*>(val));
 	else if (id.type_id() == type_of<floating64>().type_id())
 		set((uint)static_cast<floating64*>(val)->get());
-
 	else return false;
+
+	return true;
 }
 
 bool variable<uint>::get_value(rtti_t const& id, unknown_t val)const
@@ -580,8 +582,9 @@ bool variable<ulong>::set_value(rtti_t const& id, unknown_t val)
 		set((ulong)*static_cast<double*>(val));
 	else if (id.type_id() == type_of<floating64>().type_id())
 		set((ulong)static_cast<floating64*>(val)->get());
-
 	else return false;
+
+	return true;
 }
 
 bool variable<ulong>::get_value(rtti_t const& id, unknown_t val)const
@@ -899,8 +902,9 @@ bool variable<ulong64>::set_value(rtti_t const& id, unknown_t val)
 		set((ulong64)*static_cast<double*>(val));
 	else if (id.type_id() == type_of<floating64>().type_id())
 		set((ulong64)static_cast<floating64*>(val)->get());
-
 	else return false;
+
+	return true;
 }
 
 bool variable<ulong64>::get_value(rtti_t const& id, unknown_t val)const

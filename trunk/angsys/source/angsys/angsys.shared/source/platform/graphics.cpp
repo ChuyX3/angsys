@@ -656,7 +656,7 @@ void  graphics::color::parse(cstr_t cstr)
 	wsize i = 1;
 	if (cstr[0] == '#')
 	{
-		code = str_to_signed(cstr, i, 16);
+		code = (dword)str_to_signed(cstr, i, 16);
 	}
 	else
 	{
@@ -673,7 +673,7 @@ void graphics::color::parse(cwstr_t cstr)
 	wsize i = 1;
 	if (cstr[0] == '#')
 	{
-		code = str_to_signed(cstr, i, 16);
+		code = (dword)str_to_signed(cstr, i, 16);
 	}
 	else
 	{

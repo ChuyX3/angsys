@@ -266,8 +266,9 @@ bool variable<int>::set_value(rtti_t const& id, unknown_t val)
 		set((int)*static_cast<double*>(val));
 	else if (id.type_id() == type_of<floating64>().type_id())
 		set((int)static_cast<floating64*>(val)->get());
-
 	else return false;
+
+	return true;
 }
 
 bool variable<int>::get_value(rtti_t const& id, unknown_t val)const
@@ -587,8 +588,9 @@ bool variable<long>::set_value(rtti_t const& id, unknown_t val)
 		set((long)*static_cast<double*>(val));
 	else if (id.type_id() == type_of<floating64>().type_id())
 		set((long)static_cast<floating64*>(val)->get());
-
 	else return false;
+
+	return true;
 }
 
 bool variable<long>::get_value(rtti_t const& id, unknown_t val)const
@@ -909,8 +911,9 @@ bool variable<long64>::set_value(rtti_t const& id, unknown_t val)
 		set((long64)*static_cast<double*>(val));
 	else if (id.type_id() == type_of<floating64>().type_id())
 		set((long64)static_cast<floating64*>(val)->get());
-
 	else return false;
+
+	return true;
 }
 
 bool variable<long64>::get_value(rtti_t const& id, unknown_t val)const

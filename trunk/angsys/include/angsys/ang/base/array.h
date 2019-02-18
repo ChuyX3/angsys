@@ -347,7 +347,7 @@ namespace ang //constants
 				else if (operation<K, T>::operate(key, vec[mid])) first = mid + 1;
 				else return (wsize)mid;
 			}
-			return invalid_index;
+			return (wsize)invalid_index;
 		}
 	}
 }

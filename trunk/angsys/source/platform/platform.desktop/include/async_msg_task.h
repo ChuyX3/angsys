@@ -18,19 +18,18 @@ namespace ang
 
 			class async_msg_task final
 				: public object
-				, public core::async::ioperation<dword>
+				, public core::async::itask<void>
 			{
 			public:
-				events::message_t msg_;
-				imessage_reciever* parent_;
-				dword result_;
-				mutable bool handled_;
-				mutable shared_ptr<core::async::cond> cond_;
-				mutable shared_ptr<core::async::mutex> mutex_;
-				mutable core::async::async_action_status_t status_;
+				events::message m_msg;
+				imessage_listener* m_parent;
+				mutable bool m_canceled;
+				mutable shared_ptr<core::async::cond> m_cond;
+				mutable shared_ptr<core::async::mutex> m_mutex;
+				mutable core::async::async_action_status_t m_status;
 
 			public:
-				async_msg_task(imessage_reciever*, core::async::cond_ptr_t cond, core::async::mutex_ptr_t, events::message_t);
+				async_msg_task(imessage_listener*, core::async::cond_ptr_t cond, core::async::mutex_ptr_t, events::message);
 			
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
@@ -39,7 +38,7 @@ namespace ang
 				bool wait(core::async::async_action_status_t, dword)const override;
 				core::async::async_action_status_t status()const override;
 				bool cancel()override;
-				dword result()const override;
+				void result()const override;
 				void complete(dword);
 
 			private:

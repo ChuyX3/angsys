@@ -198,7 +198,7 @@ namespace ang
 					thousand = true;
 					if ((beg + 1) >= end)
 						goto PARSE_ERROR;
-					flag.thousand = text::to_char32<false,false>(format, beg);
+					flag.thousand = (char)(byte)text::to_char32<false,false>(format, beg);
 					waitForEnd = true;
 					continue;
 				}
@@ -209,7 +209,7 @@ namespace ang
 					fill = true;
 					if ((beg + 1) >= end)
 						goto PARSE_ERROR;
-					flag.fill = text::to_char32<false,false>(format, beg);
+					flag.fill = (char)(byte)text::to_char32<false,false>(format, beg);
 					waitForEnd = true;
 					continue;
 				}
@@ -323,7 +323,7 @@ namespace ang
 					thousand = true;
 					if ((beg + 1) >= end)
 						goto PARSE_ERROR;
-					flag.thousand = text::to_char32<false,false>(format, beg);
+					flag.thousand = (char)(byte)text::to_char32<false,false>(format, beg);
 					waitForEnd = true;
 					continue;
 				}
@@ -334,7 +334,7 @@ namespace ang
 					fill = true;
 					if ((beg + 1) >= end)
 						goto PARSE_ERROR;
-					flag.fill = text::to_char32<false,false>(format, beg);
+					flag.fill = (char)(byte)text::to_char32<false,false>(format, beg);
 					waitForEnd = true;
 					continue;
 				}
@@ -450,7 +450,7 @@ namespace ang
 					thousand = true;
 					if ((beg + 1) >= end)
 						goto PARSE_ERROR;
-					flag.thousand = text::to_char32<false,false>(format, beg);
+					flag.thousand = (char)(byte)text::to_char32<false,false>(format, beg);
 					waitForEnd = true;
 					continue;
 				}
@@ -461,7 +461,7 @@ namespace ang
 					fill = true;
 					if ((beg + 1) >= end)
 						goto PARSE_ERROR;
-					flag.fill = text::to_char32<false,false>(format, beg);
+					flag.fill = (char)(byte)text::to_char32<false,false>(format, beg);
 					waitForEnd = true;
 					continue;
 				}
@@ -531,7 +531,7 @@ namespace ang
 			{
 				if (c == U'{') {
 					f.value = parse(format, n, a);
-					if (a > -1 && a < args->size()) {
+					if (a > -1 && a < (long64)args->size()) {
 						out->concat(str_view<const char_t, E>(&format[l], t - l));
 						out->concat(f.value ? args[a]->to_string(f) : args[a]->to_string());
 						i = l = n;
@@ -579,7 +579,7 @@ namespace ang
 			{
 				if (c == U'{') {
 					f.value = parse(format, n, a);
-					if (a > -1 && a < args->size()) {
+					if (a > -1 && a < (long64)args->size()) {
 						out->concat(str_view<const char_t, E>(&format[l], t - l));
 						out->concat(f.value ? args[a]->to_string(f) : args[a]->to_string());
 						i = l = n;
@@ -664,7 +664,7 @@ namespace ang
 					} while (c == ' ' || c == '\t');
 
 					beg = temp;
-					arg = str_to_signed(format, beg);
+					arg = (int)str_to_signed(format, beg);
 					state = state_type;
 					if (temp == beg)
 						arg = -1;
