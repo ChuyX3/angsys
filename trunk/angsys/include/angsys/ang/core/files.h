@@ -102,10 +102,10 @@ namespace ang
 				visible vcall bool is_eof()const pure;
 				visible vcall file_offset_t cursor()const pure;
 				visible vcall bool cursor(file_offset_t size, stream_reference_t ref)pure;
-				visible vcall wsize read(ibuffer_view_t);
-				visible vcall wsize read(wsize, pointer);
-				visible vcall wsize write(ibuffer_view_t);
-				visible vcall wsize write(wsize, pointer);
+				visible vcall wsize read(ibuffer_view_t)pure;
+				visible vcall wsize read(wsize, pointer)pure;
+				visible vcall wsize write(ibuffer_view_t)pure;
+				visible vcall wsize write(wsize, pointer)pure;
 
 				visible vcall ibuffer_t map(wsize size, file_offset_t offset)pure;
 				visible vcall bool unmap(ibuffer_t, wsize used)pure;
@@ -116,7 +116,7 @@ namespace ang
 				visible scall ifile_system_t fs_instance();
 				visible vcall array_view<path_t> paths(file_system_priority_t)const pure;
 				visible vcall void push_path(path_view_t, file_system_priority_t) pure;
-				visible vcall bool open_file(path_view_t, open_flags_t, ifile_ptr_t);
+				visible vcall bool open_file(path_view_t, open_flags_t, ifile_ptr_t)pure;
 				
 				visible vcall bool open(path_view_t, input_text_file_ptr_t)pure;
 				visible vcall bool open(path_view_t, output_text_file_ptr_t)pure;

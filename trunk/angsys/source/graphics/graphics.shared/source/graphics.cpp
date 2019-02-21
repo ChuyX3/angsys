@@ -25,7 +25,7 @@ using namespace ang::graphics;
 
 
 using namespace ang::graphics;
-idriver_t ang::graphics::create_graphic_driver(graph_driver_type_t type, platform::icore_view_t view, isurface_ptr_t surface)
+idriver_t ang::graphics::create_graphic_driver(graph_driver_type_t type, long64 adapter_id, platform::icore_view_t view, isurface_ptr_t surface)
 {
 	return null;
 }

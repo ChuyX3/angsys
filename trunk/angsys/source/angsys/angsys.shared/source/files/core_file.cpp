@@ -541,7 +541,7 @@ file_handle_t core_file::map_handle(ulong64 _min)
 		
 		_hmap = CreateFileMappingW(_hfile, NULL, accessFlags, 0,0, NULL);
 #else//STOREAPP
-		_hmap = CreateFileMappingFromApp(_hfile, NULL, accessFlags, _size, NULL);
+		_hmap = CreateFileMappingFromApp(_hfile, NULL, accessFlags, 0, NULL);
 #endif//DESKTOP
 		_hmap_size = _hmap ? size() : 0;
 #else//LINUX|ANDROID
@@ -559,7 +559,7 @@ file_handle_t core_file::map_handle(ulong64 _min)
 
 		auto hmap = CreateFileMappingW(_hfile, NULL, accessFlags, 0, 0, NULL);
 #else//STOREAPP
-		auto hmap = CreateFileMappingFromApp(_hfile, NULL, accessFlags, _size, NULL);
+		auto hmap = CreateFileMappingFromApp(_hfile, NULL, accessFlags, 0, NULL);
 #endif//DESKTOP
 		if (hmap)
 		{

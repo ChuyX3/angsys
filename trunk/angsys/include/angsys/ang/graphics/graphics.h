@@ -229,7 +229,7 @@ namespace ang
 			template<typename T, wsize N> inline buffers::iindex_buffer_t create_index_buffer(buffers::buffer_usage_t usage, T(&init_data)[N])const { return create_index_buffer(usage, collections::to_array(init_data)); }
 		ang_end_interface();
 
-		LINK idriver_t create_graphic_driver(graph_driver_type_t, platform::icore_view_t = null, isurface_ptr_t = null);	
+		LINK idriver_t create_graphic_driver(graph_driver_type_t, long64 adapter_id = 0, platform::icore_view_t = null, isurface_ptr_t = null);	
 
 		template<> inline buffers::iindex_buffer_t idriver::create_index_buffer(buffers::buffer_usage_t usage, array_view<short> init_data)const {
 			return create_index_buffer(usage, reflect::var_type::s16, init_data.size(), collections::to_array((byte*)init_data.get(), sizeof(short) * init_data.size()));

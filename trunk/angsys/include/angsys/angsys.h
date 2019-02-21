@@ -162,6 +162,7 @@ namespace ang
 #include <ang/core/listener.h>
 
 #include <ang/inline/object.inl>
+#include <ang/inline/variable.inl>
 #include <ang/base/inline/runtime.inl>
 #include <ang/core/inline/function.inl>
 #include <ang/collections/inline/collections.inl>

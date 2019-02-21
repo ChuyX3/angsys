@@ -43,6 +43,7 @@ namespace ang
 			template<typename T> struct itask;
 			template<typename T> using itask_t = intf_wrapper<itask<T>>;
 			template<typename T> using iasync = intf_wrapper<itask<T>>;
+			template<typename T> using task_handler_ptr = object_wrapper<task_handler<T>>;
 
 			ang_interface(ithread);
 			ang_interface(idispatcher);
@@ -122,7 +123,7 @@ namespace ang
 				mutex_ptr_t _mutex;
 
 			public:
-				inline scope_locker(mutex_ptr_t const& m) : _mutex(m.get()) {
+				inline scope_locker(mutex_ptr_t m) : _mutex(m.get()) {
 					if(!_mutex.is_empty())_mutex->lock();
 				}
 				inline ~scope_locker() {
@@ -130,7 +131,7 @@ namespace ang
 				}
 
 				template<typename func_t>
-				static auto lock(mutex_ptr_t const& m, func_t func) -> decltype(func())
+				static auto lock(mutex_ptr_t m, func_t func) -> decltype(func())
 				{
 					scope_locker _lock = m;
 					return func();

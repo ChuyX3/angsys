@@ -69,10 +69,10 @@ namespace ang
 					m_firtTime = m_last_time = m_curr_time = get_performance_time_us();
 				}
 
-				template<class F>
-				inline void tick(F f) {
+				template<typename F>
+				inline auto tick(F f) {
 					update();
-					f(delta(), total());
+					return f();
 				}
 			};
 

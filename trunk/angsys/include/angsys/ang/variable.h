@@ -113,19 +113,25 @@ namespace ang
 
 	};
 
+	template<typename T, bool = std::is_copy_constructible<T>::value>
+	struct __variable_constructor_helper;
+
 	template<typename T>
 	class variable
 		: public object
 		, public ivariant
-		, public value<T>
+		, public ang::value<T>
 	{
 	public:
+		friend __variable_constructor_helper<T>;
 
 	public:
 		variable();
-		variable(T const&);
-		variable(value<T> const& val) : value<T>(val) {	}
-		variable(variable const*);
+		variable(T const& val);
+		variable(ang::value<T> const& val)
+			: variable(val.get()) {
+		}
+		variable(variable<T> const* val);
 
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
@@ -216,7 +222,7 @@ namespace ang
 		}
 
 		void move(object_wrapper& ptr) {
-			if (this == &ptr)
+			if ((pointer)this == (pointer)&reinterpret_cast<uint&>(ptr))
 				return;
 			reset();
 			_ptr = ptr._ptr;

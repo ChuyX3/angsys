@@ -131,6 +131,7 @@
 #   error This project can only be compiled with a compiler that supports C++11
 #endif
 
+#include <type_traits>
 #include <initializer_list>
 #endif//__cplusplus
 

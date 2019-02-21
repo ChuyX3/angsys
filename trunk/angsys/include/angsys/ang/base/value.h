@@ -124,8 +124,8 @@ namespace ang //constants
 		static constexpr genre_t genre_id = genre::class_type;
 
 		value() {}
-		value(T const& v) : T(ang::forward<T>(v)) { }
-		value(value const& v) : T(ang::forward<value>(v)) { }
+		value(T const& v) : T(v) { }
+		value(value const& v) : T(v.get()) { }
 		value(T && v) : T(ang::forward<T>(v)) { }
 		value(value && v) : T(ang::forward<value>(v)) { }
 
@@ -154,7 +154,7 @@ namespace ang //constants
 
 		T& get() { return static_cast<T&>(*this); }
 		T const& get()const { return static_cast<T const&>(*this); }
-		void set(T const& v) { static_cast<T&>(*this) = ang::forward<T>(v); }
+		void set(T const& v) { static_cast<T&>(*this) = v; }
 		void move(T && v) {
 			static_cast<T&>(*this) = ang::forward<T>(v);
 		}
@@ -355,8 +355,8 @@ namespace ang //constants
 
 #define safe_enum_rrti2(_NAMESPACE, _name) \
 	ang::rtti_t const& _NAMESPACE::_name##_t::class_info() { \
-		ang::rtti_t const* parent[] = { &ang::rtti::type_of<value<_NAMESPACE::_name##_proxy>>() }; \
-		return rtti::regist(#_NAMESPACE"::"#_name##_t, genre::enum_type, sizeof(_name##_t), alignof(_name##_t), parent, null); \
+		ang::rtti_t const* parent[] = { &ang::type_of<value<_name##_proxy>>() }; \
+		return rtti::regist(#_NAMESPACE"::"#_name"_t", genre::enum_type, sizeof(_name##_t), alignof(_name##_t), parent, null); \
 	}
 
 	namespace text

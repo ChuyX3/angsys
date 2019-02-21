@@ -5,10 +5,8 @@
 
 #pragma once
 
-#include "targetver.h"
+//#include "targetver.h"
 
-#include <stdio.h>
-#include <tchar.h>
 
 #define ANGSYS_DYNAMIC_LIBRARY
 #include <angsys.h>

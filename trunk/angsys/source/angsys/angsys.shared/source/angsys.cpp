@@ -23,6 +23,8 @@
 
 #include <ang/collections/hash_map.h>
 
+#include <ang/core/timer.h>
+
 using namespace ang;
 using namespace ang::memory;
 
@@ -61,7 +63,7 @@ namespace ang
 		{
 			ulong64 get_performance_time_us()
 			{
-				return get_performance_time_us();
+				return ::get_performance_time_us();
 			}
 		}
 	}

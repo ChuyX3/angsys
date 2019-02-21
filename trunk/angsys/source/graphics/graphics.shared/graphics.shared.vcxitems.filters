@@ -22,6 +22,9 @@
     <Filter Include="source files\d3d9">
       <UniqueIdentifier>{46bfac14-c848-4fe4-a9e6-ca5f596f1a0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="header files\include\d3d11">
+      <UniqueIdentifier>{557f64d4-ea98-4dad-a476-845f09587771}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\graphics.h">
@@ -55,6 +58,18 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d9\d3d9_driver.cpp">
       <Filter>source files\d3d9</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\reflect.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\textures.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\variable.cpp">
+      <Filter>source files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

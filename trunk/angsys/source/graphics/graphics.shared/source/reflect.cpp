@@ -1,7 +1,6 @@
 #include "pch.h"
-#include <ang/graphics/angraph.hpp>
-#include "ang_inlines.h"
-#include "vector_specialization.inl"
+#include <ang/graphics/graphics.h>
+//#include "vector_specialization.inl"
 
 #if defined _DEBUG
 #define new new(__FILE__, __LINE__)
@@ -11,21 +10,21 @@ using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::reflect;
 
-ANG_IMPLEMENT_ENUM(ang::graphics::reflect, var_type, uint, var_type::none);
-ANG_IMPLEMENT_ENUM(ang::graphics::reflect, var_class, uint, var_class::none);
-ANG_IMPLEMENT_ENUM(ang::graphics::reflect, var_semantic, uint, var_semantic::none);
+safe_enum_rrti2(ang::graphics::reflect, var_type);
+safe_enum_rrti2(ang::graphics::reflect, var_class);
+safe_enum_rrti2(ang::graphics::reflect, var_semantic);
 
 
-#define MY_ALLOCATOR ang::memory::default_allocator
-#define MY_TYPE ang::graphics::reflect::variable_desc_t
-#include <ang/collections/inline/vector_object_specialization.inl>
-#undef MY_TYPE
-#define MY_TYPE ang::graphics::reflect::attribute_desc_t
-#include <ang/collections/inline/vector_object_specialization.inl>
-#undef MY_TYPE
-#undef MY_ALLOCATOR
+//#define MY_ALLOCATOR ang::memory::default_allocator
+//#define MY_TYPE ang::graphics::reflect::variable_desc_t
+//#include <ang/collections/inline/vector_object_specialization.inl>
+//#undef MY_TYPE
+//#define MY_TYPE ang::graphics::reflect::attribute_desc_t
+//#include <ang/collections/inline/vector_object_specialization.inl>
+//#undef MY_TYPE
+//#undef MY_ALLOCATOR
 
-static ang_pair<graphics::reflect::var_type, cstr_t> to_string_var_type_map[] =
+static collections::pair<graphics::reflect::var_type, cstr_t> to_string_var_type_map[] =
 {
 	{ var_type::none, "none" },
 	{ var_type::s8, "s8," },
@@ -43,7 +42,7 @@ static ang_pair<graphics::reflect::var_type, cstr_t> to_string_var_type_map[] =
 	{ var_type::block, "structure" }
 };
 
-static ang_pair<cstr_t, graphics::reflect::var_type> _parse_var_type_map[] =
+static collections::pair<cstr_t, graphics::reflect::var_type> _parse_var_type_map[] =
 {
 	{ "block", var_type::block },
 	{ "buffer", var_type::buffer },
@@ -61,28 +60,28 @@ static ang_pair<cstr_t, graphics::reflect::var_type> _parse_var_type_map[] =
 	{ "u8", var_type::u8 }
 };
 
-var_type_t graphics::reflect::var_type_t::parse(cstr_t cstr)
-{
-	wsize idx = ang_binary_search<cstr_t>(cstr, _parse_var_type_map);
-	if (idx > array_size(_parse_var_type_map))
-		return var_type::none;
-	else
-		return _parse_var_type_map[idx].value;
-}
+//var_type_t graphics::reflect::var_type_t::parse(cstr_t cstr)
+//{
+//	wsize idx = ang_binary_search<cstr_t>(cstr, _parse_var_type_map);
+//	if (idx > array_size(_parse_var_type_map))
+//		return var_type::none;
+//	else
+//		return _parse_var_type_map[idx].value;
+//}
 
-var_type_t graphics::reflect::var_type_t::parse(cwstr_t cstr)
-{
-	wsize idx = ang_binary_search<cwstr_t>(cstr, _parse_var_type_map);
-	if (idx > array_size(_parse_var_type_map))
-		return var_type::none;
-	else
-		return _parse_var_type_map[idx].value;
-}
+//var_type_t graphics::reflect::var_type_t::parse(cwstr_t cstr)
+//{
+//	wsize idx = ang_binary_search<cwstr_t>(cstr, _parse_var_type_map);
+//	if (idx > array_size(_parse_var_type_map))
+//		return var_type::none;
+//	else
+//		return _parse_var_type_map[idx].value;
+//}
 
-cstr_t graphics::reflect::var_type_t::to_string()const
+string graphics::reflect::var_type_t::to_string()const
 {
-	wsize idx = ang_binary_search(_value, to_string_var_type_map);
-	if (idx > array_size(to_string_var_type_map))
+	wsize idx = algorithms::binary_search(get(), collections::to_array(to_string_var_type_map));
+	if (idx > algorithms::array_size(to_string_var_type_map))
 		return "none"_s;	
 	else
 		return to_string_var_type_map[idx].value;
@@ -90,7 +89,7 @@ cstr_t graphics::reflect::var_type_t::to_string()const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static ang_pair<graphics::reflect::var_class, cstr_t> to_string_var_class_map[] =
+static collections::pair<graphics::reflect::var_class, cstr_t> to_string_var_class_map[] =
 {
 	{ var_class::none, "none" },
 	{ var_class::scalar, "scalar" },
@@ -101,7 +100,7 @@ static ang_pair<graphics::reflect::var_class, cstr_t> to_string_var_class_map[] 
 	{ var_class::mat4, "mat4" }
 };
 
-static ang_pair<cstr_t, graphics::reflect::var_class> _parse_var_class_map[] =
+static collections::pair<cstr_t, graphics::reflect::var_class> _parse_var_class_map[] =
 {
 	{ "mat2", var_class::mat2 },
 	{ "mat3", var_class::mat3 },
@@ -113,28 +112,28 @@ static ang_pair<cstr_t, graphics::reflect::var_class> _parse_var_class_map[] =
 	{ "vec4", var_class::vec4 }
 };
 
-var_class_t graphics::reflect::var_class_t::parse(cstr_t cstr)
-{
-	wsize idx = ang_binary_search<cstr_t>(cstr, _parse_var_class_map);
-	if (idx > array_size(_parse_var_class_map))
-		return var_class::none;
-	else
-		return _parse_var_class_map[idx].value;
-}
+//var_class_t graphics::reflect::var_class_t::parse(cstr_t cstr)
+//{
+//	wsize idx = ang_binary_search<cstr_t>(cstr, _parse_var_class_map);
+//	if (idx > array_size(_parse_var_class_map))
+//		return var_class::none;
+//	else
+//		return _parse_var_class_map[idx].value;
+//}
 
-var_class_t graphics::reflect::var_class_t::parse(cwstr_t cstr)
-{
-	wsize idx = ang_binary_search<cwstr_t>(cstr, _parse_var_class_map);
-	if (idx > array_size(_parse_var_class_map))
-		return var_class::none;
-	else
-		return _parse_var_class_map[idx].value;
-}
+//var_class_t graphics::reflect::var_class_t::parse(cwstr_t cstr)
+//{
+//	wsize idx = ang_binary_search<cwstr_t>(cstr, _parse_var_class_map);
+//	if (idx > array_size(_parse_var_class_map))
+//		return var_class::none;
+//	else
+//		return _parse_var_class_map[idx].value;
+//}
 
-cstr_t graphics::reflect::var_class_t::to_string()const
+string graphics::reflect::var_class_t::to_string()const
 {
-	wsize idx = ang_binary_search(_value, to_string_var_class_map);
-	if (idx > array_size(to_string_var_class_map))
+	wsize idx = algorithms::binary_search(get(), collections::to_array(to_string_var_class_map));
+	if (idx > algorithms::array_size(to_string_var_class_map))
 		return "none"_s;
 	else
 		return to_string_var_class_map[idx].value;
@@ -143,7 +142,7 @@ cstr_t graphics::reflect::var_class_t::to_string()const
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-static ang_pair<graphics::reflect::var_semantic, cstr_t> to_string_var_semantic_map[] =
+static collections::pair<graphics::reflect::var_semantic, cstr_t> to_string_var_semantic_map[] =
 {
 	{ var_semantic::none, "UNKNOWN" },
 	{ var_semantic::position, "POSITION" },
@@ -155,7 +154,7 @@ static ang_pair<graphics::reflect::var_semantic, cstr_t> to_string_var_semantic_
 	{ var_semantic::fog, "FOG" }
 };
 
-static ang_pair<cstr_t, graphics::reflect::var_semantic> _parse_var_semantic_map[] =
+static collections::pair<cstr_t, graphics::reflect::var_semantic> _parse_var_semantic_map[] =
 {
 	{ "BINORMAL" , var_semantic::binormal },
 	{ "COLOR" , var_semantic::color },
@@ -167,28 +166,28 @@ static ang_pair<cstr_t, graphics::reflect::var_semantic> _parse_var_semantic_map
 	{ "UNKNOWN" , var_semantic::none }
 };
 
-var_semantic_t graphics::reflect::var_semantic_t::parse(cstr_t cstr)
-{
-	wsize idx = ang_binary_search<cstr_t>(cstr, _parse_var_semantic_map);
-	if (idx > array_size(_parse_var_semantic_map))
-		return var_semantic::none;
-	else
-		return _parse_var_semantic_map[idx].value;
-}
+//var_semantic_t graphics::reflect::var_semantic_t::parse(cstr_t cstr)
+//{
+//	wsize idx = ang_binary_search<cstr_t>(cstr, _parse_var_semantic_map);
+//	if (idx > array_size(_parse_var_semantic_map))
+//		return var_semantic::none;
+//	else
+//		return _parse_var_semantic_map[idx].value;
+//}
 
-var_semantic_t graphics::reflect::var_semantic_t::parse(cwstr_t cstr)
-{
-	wsize idx = ang_binary_search<cwstr_t>(cstr, _parse_var_semantic_map);
-	if (idx > array_size(_parse_var_semantic_map))
-		return var_semantic::none;
-	else
-		return _parse_var_semantic_map[idx].value;
-}
+//var_semantic_t graphics::reflect::var_semantic_t::parse(cwstr_t cstr)
+//{
+//	wsize idx = ang_binary_search<cwstr_t>(cstr, _parse_var_semantic_map);
+//	if (idx > array_size(_parse_var_semantic_map))
+//		return var_semantic::none;
+//	else
+//		return _parse_var_semantic_map[idx].value;
+//}
 
-cstr_t graphics::reflect::var_semantic_t::to_string()const
+string graphics::reflect::var_semantic_t::to_string()const
 {
-	wsize idx = ang_binary_search(_value, to_string_var_semantic_map);
-	if (idx > array_size(to_string_var_semantic_map))
+	wsize idx = algorithms::binary_search(get(), collections::to_array(to_string_var_semantic_map));
+	if (idx > algorithms::array_size(to_string_var_semantic_map))
 		return "UNKNOWN"_s;
 	else
 		return to_string_var_semantic_map[idx].value;
@@ -241,93 +240,93 @@ variable_desc::variable_desc(const variable_desc& value) {
 }
 
 variable_desc::~variable_desc() {
-	_fields.clean();
+	_fields.reset();
 }
 
 
-bool variable_desc::load(xml::ixml_node_t input, uint aligment)
-{
-	if (input.is_empty())
-		return false;
-	auto atts = input->xml_attributes();
-	if (input->xml_has_children())
-	{
-		for(xml::ixml_node_t att : atts)
-		{
-			//xml::xml_attribute_t att = node->xml_as<xml::xml_attribute>();
-			auto name = att->xml_name()->xml_as<cwstr_t>();
-			if (name == "name"_s)
-				_var_name = (cwstr_t)att->xml_value();
-			else if (name == "array"_s)
-				_array_count = att->xml_value()->xml_as<uint>();
-			else if (name == "aligment"_s)
-				_aligment = att->xml_value()->xml_as<uint>();
-		}
-
-		_aligment = (aligment != invalid_index) ? aligment : max(_aligment, 1u);
-		_array_count = max(_array_count, 1u);
-		_position = 0;
-		_var_type = var_type::block;
-		_var_class = var_class::scalar;
-		_fields = null;
-
-		wsize total = 0;
-		wsize size = 0;
-		wsize temp = 0;
-		wsize res = 0;
-		for(xml::ixml_node_t field : input->xml_children())
-		{
-			variable_desc desc;
-			auto name = field->xml_name();
-			if (((cwstr_t)name == L"var"_s || (cwstr_t)name == L"block"_s) && desc.load(field, _aligment))
-			{
-				size = desc.get_size_in_bytes();
-				temp = total % _aligment;
-				res = _aligment - temp;
-				if (res < _aligment)
-				{
-					if (res > size)
-						total += get_memory_size_aligned(temp, size) - temp;
-					else if (res < size)
-						total += res;
-				}
-				desc._position = total;
-				total += size;
-				_fields += ang::move(desc);
-			}
-		}
-		return true;
-	}
-	else if (!atts.is_empty())
-	{
-		for(xml::ixml_node_t att : atts)
-		{
-			auto name = att->xml_name()->xml_as<cwstr_t>();
-			if (name == "name"_s)
-				_var_name = (cwstr_t)att->xml_value();
-			else if (name == "type"_s)
-				_var_type = att->xml_value()->xml_as<var_type_t>();
-			else if (name == "class"_s)
-				_var_class = att->xml_value()->xml_as<var_class_t>();
-			else if (name == "array"_s)
-				_array_count = att->xml_value()->xml_as<uint>();
-			else if (name == "aligment"_s)
-				_aligment = att->xml_value()->xml_as<uint>();
-		}
-
-		_position = 0;
-		_aligment = (aligment != invalid_index) ? aligment : max(_aligment, 1u);
-		_array_count = max(_array_count, 1u);
-		_fields = null;
-		return true;
-	}
-	return false;
-}
-
-bool variable_desc::save(xml::xml_document_t)const
-{
-	return false;
-}
+//bool variable_desc::load(xml::ixml_node_t input, uint aligment)
+//{
+//	if (input.is_empty())
+//		return false;
+//	auto atts = input->xml_attributes();
+//	if (input->xml_has_children())
+//	{
+//		for(xml::ixml_node_t att : atts)
+//		{
+//			//xml::xml_attribute_t att = node->xml_as<xml::xml_attribute>();
+//			auto name = att->xml_name()->xml_as<cwstr_t>();
+//			if (name == "name"_s)
+//				_var_name = (cwstr_t)att->xml_value();
+//			else if (name == "array"_s)
+//				_array_count = att->xml_value()->xml_as<uint>();
+//			else if (name == "aligment"_s)
+//				_aligment = att->xml_value()->xml_as<uint>();
+//		}
+//
+//		_aligment = (aligment != invalid_index) ? aligment : max(_aligment, 1u);
+//		_array_count = max(_array_count, 1u);
+//		_position = 0;
+//		_var_type = var_type::block;
+//		_var_class = var_class::scalar;
+//		_fields = null;
+//
+//		wsize total = 0;
+//		wsize size = 0;
+//		wsize temp = 0;
+//		wsize res = 0;
+//		for(xml::ixml_node_t field : input->xml_children())
+//		{
+//			variable_desc desc;
+//			auto name = field->xml_name();
+//			if (((cwstr_t)name == L"var"_s || (cwstr_t)name == L"block"_s) && desc.load(field, _aligment))
+//			{
+//				size = desc.get_size_in_bytes();
+//				temp = total % _aligment;
+//				res = _aligment - temp;
+//				if (res < _aligment)
+//				{
+//					if (res > size)
+//						total += get_memory_size_aligned(temp, size) - temp;
+//					else if (res < size)
+//						total += res;
+//				}
+//				desc._position = total;
+//				total += size;
+//				_fields += ang::move(desc);
+//			}
+//		}
+//		return true;
+//	}
+//	else if (!atts.is_empty())
+//	{
+//		for(xml::ixml_node_t att : atts)
+//		{
+//			auto name = att->xml_name()->xml_as<cwstr_t>();
+//			if (name == "name"_s)
+//				_var_name = (cwstr_t)att->xml_value();
+//			else if (name == "type"_s)
+//				_var_type = att->xml_value()->xml_as<var_type_t>();
+//			else if (name == "class"_s)
+//				_var_class = att->xml_value()->xml_as<var_class_t>();
+//			else if (name == "array"_s)
+//				_array_count = att->xml_value()->xml_as<uint>();
+//			else if (name == "aligment"_s)
+//				_aligment = att->xml_value()->xml_as<uint>();
+//		}
+//
+//		_position = 0;
+//		_aligment = (aligment != invalid_index) ? aligment : max(_aligment, 1u);
+//		_array_count = max(_array_count, 1u);
+//		_fields = null;
+//		return true;
+//	}
+//	return false;
+//}
+//
+//bool variable_desc::save(xml::xml_document_t)const
+//{
+//	return false;
+//}
 
 var_type_t variable_desc::var_type()const { return _var_type; }
 
@@ -644,20 +643,20 @@ wsize attribute_desc::get_size_in_bytes(array_view<attribute_desc> attributes, w
 	return get_memory_size_aligned(total, aligment);
 }
 
-bool attribute_desc::load(xml::ixml_node_t inputs, collections::vector<attribute_desc>& out)
-{
-	if (inputs.is_empty() || !inputs->xml_has_children())
-		return false;
-	if (out.is_empty()) out = new collections::vector_buffer<attribute_desc>();
-	else out->clean();
-	attribute_desc_t desc;
-	for(xml::ixml_node_t input : inputs->xml_children())
-	{
-		if(desc.load(input))
-			out += desc;
-	}
-	return true;
-}
+//bool attribute_desc::load(xml::ixml_node_t inputs, collections::vector<attribute_desc>& out)
+//{
+//	if (inputs.is_empty() || !inputs->xml_has_children())
+//		return false;
+//	if (out.is_empty()) out = new collections::vector_buffer<attribute_desc>();
+//	else out->clean();
+//	attribute_desc_t desc;
+//	for(xml::ixml_node_t input : inputs->xml_children())
+//	{
+//		if(desc.load(input))
+//			out += desc;
+//	}
+//	return true;
+//}
 
 attribute_desc::attribute_desc(var_type_t _type, var_class_t _class,
 	string name, var_semantic_t sem, index idx, uint pos)
@@ -678,23 +677,23 @@ attribute_desc::attribute_desc(const attribute_desc& value) {
 	_semantic_index = value._semantic_index;
 }
 
-bool attribute_desc::load(xml::ixml_node_t input)
-{
-	if (input.is_empty() || !input->xml_has_attributes())
-		return false;
-	auto att = input->xml_attributes();
-	_var_name = (cwstr_t)att["name"_s];
-	_var_type = att["type"_s]->xml_as<var_type_t>();
-	_var_class = att["class"_s]->xml_as<var_class_t>();
-	_semantic = att["semantic"_s]->xml_as<var_semantic_t>();
-	_semantic_index = att["semantic_idx"_s]->xml_as<uint>();
-	return true;
-}
-
-bool attribute_desc::save(xml::xml_document_t)const
-{
-	return false;
-}
+//bool attribute_desc::load(xml::ixml_node_t input)
+//{
+//	if (input.is_empty() || !input->xml_has_attributes())
+//		return false;
+//	auto att = input->xml_attributes();
+//	_var_name = (cwstr_t)att["name"_s];
+//	_var_type = att["type"_s]->xml_as<var_type_t>();
+//	_var_class = att["class"_s]->xml_as<var_class_t>();
+//	_semantic = att["semantic"_s]->xml_as<var_semantic_t>();
+//	_semantic_index = att["semantic_idx"_s]->xml_as<uint>();
+//	return true;
+//}
+//
+//bool attribute_desc::save(xml::xml_document_t)const
+//{
+//	return false;
+//}
 
 var_type_t attribute_desc::var_type()const { return _var_type.get(); }
 var_class_t attribute_desc::var_class()const { return _var_class.get(); }

@@ -1,20 +1,19 @@
 #include "pch.h"
 
-#include <ang/graphics/angraph.hpp>
-#include "ang_inlines.h"
+#include <ang/graphics/graphics.h>
 
 using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::textures;
 
 
-ANG_IMPLEMENT_INTERFACE(ang::graphics::textures, itexture)
-ANG_IMPLEMENT_INTERFACE(ang::graphics::textures, itexture_loader)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::textures::itexture, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::textures::itexture_loader, interface);
 
 
-ANG_IMPLEMENT_ENUM(ang::graphics::textures, tex_type, uint, textures::tex_type::null);
-ANG_IMPLEMENT_ENUM(ang::graphics::textures, tex_format, uint, textures::tex_format::null);
-ANG_IMPLEMENT_ENUM(ang::graphics::textures, tex_wrap_mode, uint, textures::tex_wrap_mode::def);
+safe_enum_rrti2(ang::graphics::textures, tex_type);
+safe_enum_rrti2(ang::graphics::textures, tex_format);
+safe_enum_rrti2(ang::graphics::textures, tex_wrap_mode);
 
 #define MY_TYPE ang::graphics::textures::itexture
 #include <ang/inline/intf_wrapper_specialization.inl>
