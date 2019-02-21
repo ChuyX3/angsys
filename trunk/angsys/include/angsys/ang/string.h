@@ -4,6 +4,7 @@
 
 namespace ang
 {
+
 	struct LINK raw_str {
 		raw_str();
 		raw_str(void* v, wsize s, text::encoding e);

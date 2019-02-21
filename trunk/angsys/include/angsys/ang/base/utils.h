@@ -217,6 +217,9 @@ namespace ang //testing
 	template<typename T1, typename T2> struct is_same_type : false_type { };
 	template<typename T> struct is_same_type<T,T> : true_type { };
 
+	template<typename T> struct underlying_type { typedef __underlying_type(T) type; };
+	template<typename T> using enum_type = typename underlying_type<T>::type;
+
 	template<typename T> struct is_enum : yes_expression<__is_enum(typename remove_reference<typename remove_constant<T>::type>::type)> {};
 	template<typename T> struct is_union : yes_expression<__is_union(typename remove_reference<typename remove_constant<T>::type>::type)> {};
 	template<typename T> struct is_class : yes_expression<__is_class(typename remove_reference<typename remove_constant<T>::type>::type)> {};
@@ -301,13 +304,15 @@ namespace ang //testing
 	template<> struct is_floating_value<ang_float32_t> : true_type { };
 	template<> struct is_floating_value<ang_float64_t> : true_type { };
 
-	template<typename T, typename = void>
-	struct __is_safe_enum_base : false_type { };
+	//template<typename T, typename = void>
+	//struct __is_safe_enum_base : false_type { };
 
-	template<typename T>
-	struct __is_safe_enum_base<T, void_t<typename T::type>> : yes_expression<is_enum<typename T::type>::value> { };
+	//template<typename T>
+	//struct __is_safe_enum_base<T, void_t<typename T::type>> : yes_expression<is_enum<typename T::type>::value> { };
 
-	template<typename T, genre_t TYPE = genre_of<T>(), bool IS_SAFE_ENUM = __is_safe_enum_base<T>::value> struct value;
+	//template<typename T, genre_t TYPE = genre_of<T>(), bool IS_SAFE_ENUM = __is_safe_enum_base<T>::value> struct value;
+
+	template<typename T, genre_t TYPE = genre_of<T>()> struct value;
 
 
 	template<typename T, bool IS_COMPLETE = is_complete<T>::value>
@@ -457,7 +462,7 @@ namespace ang
 		inline operator T const& ()const { return value; }
 		inline T const& get()const { return value; }
 	};
-	template<typename T> T default_value<T, genre::class_type>::value;
+	template<typename T> const T default_value<T, genre::class_type>::value;
 
 
 	template<wsize SIZE> struct integer_type_by_size { };

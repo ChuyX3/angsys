@@ -16,12 +16,11 @@
 
 namespace ang //constants
 {
-	struct endian_proxy { enum type : word; };
-	typedef enum endian_proxy::type : word {
+	typedef enum class endian : word {
 		little = 0,
 		big = 1,
 #ifdef _WIN32
-		native = endian_proxy::little
+		native = little
 #elif defined ANDROID_PLATFORM
 		native = endian_proxy::big
 #else 
@@ -33,8 +32,7 @@ namespace ang //constants
 
 	namespace text
 	{
-		struct LINK encoding_proxy{ enum type : word; protected: type _value; };
-		typedef enum encoding_proxy::type : word {
+		enum class encoding : word {
 			none = 0,
 			binary = 0,
 			ascii,
@@ -49,7 +47,7 @@ namespace ang //constants
 			utf32_le,
 			utf32_be,
 			auto_detect = 0XFFFF
-		} encoding;
+		};
 
 		template<encoding E>
 		struct native_encoding : integer_constant<encoding, E> { };

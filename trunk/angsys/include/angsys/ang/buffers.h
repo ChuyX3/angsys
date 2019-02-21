@@ -4,6 +4,46 @@
 
 namespace ang
 {
+	namespace text
+	{
+		struct LINK encoding_t : public ang::value<encoding>
+		{
+			static encoding_t parse(cstr_t);
+			static encoding_t parse(cwstr_t);
+			static encoding_t parse(cmstr_t);
+			static rtti_t const& class_info();
+			encoding_t() : value(default_value<type>::value) {}
+			encoding_t(type const& v) : value(v) {}
+			encoding_t(encoding_t const& v) : value(v) {}
+			encoding_t(type && v) : value(ang::forward<type>(v)) { }
+			encoding_t(encoding_t && v) : value(ang::forward<value>(v)) { }
+			ang::string to_string()const;
+			encoding_t& operator = (type const& v) { get() = v; return*this; }
+			encoding_t& operator = (encoding_t const& v) { get() = v.get(); return*this; }
+			encoding_t& operator = (type && v) { get() = ang::move(v); v = default_value<type>::value; return*this; }
+			encoding_t& operator = (encoding_t && v) { get() = ang::move(v.get()); v.set(default_value<type>::value); return*this; }
+			friend inline bool operator == (encoding_t const& a1, encoding_t const& a2) { return a1.get() == a2.get(); }
+			friend inline bool operator != (encoding_t const& a1, encoding_t const& a2) { return a1.get() != a2.get(); }
+			friend inline bool operator >= (encoding_t const& a1, encoding_t const& a2) { return a1.get() >= a2.get(); }
+			friend inline bool operator <= (encoding_t const& a1, encoding_t const& a2) { return a1.get() <= a2.get(); }
+			friend inline bool operator > (encoding_t const& a1, encoding_t const& a2) { return a1.get() > a2.get(); }
+			friend inline bool operator < (encoding_t const& a1, encoding_t const& a2) { return a1.get() < a2.get(); }
+			friend inline bool operator == (encoding_t const& a1, encoding a2) { return a1.get() == a2; }
+			friend inline bool operator == (encoding a1, encoding_t const& a2) { return a1 == a2.get(); }
+			friend inline bool operator != (encoding_t const& a1, encoding a2) { return a1.get() != a2; }
+			friend inline bool operator != (encoding a1, encoding_t const& a2) { return a1 != a2.get(); }
+			friend inline bool operator >= (encoding_t const& a1, encoding a2) { return a1.get() >= a2; }
+			friend inline bool operator >= (encoding a1, encoding_t const& a2) { return a1 >= a2.get(); }
+			friend inline bool operator <= (encoding_t const& a1, encoding a2) { return a1.get() <= a2; }
+			friend inline bool operator <= (encoding a1, encoding_t const& a2) { return a1 <= a2.get(); }
+			friend inline bool operator > (encoding_t const& a1, encoding a2) { return a1.get() > a2; }
+			friend inline bool operator > (encoding a1, encoding_t const& a2) { return a1 > a2.get(); }
+			friend inline bool operator < (encoding_t const& a1, encoding a2) { return a1.get() < a2; }
+			friend inline bool operator < (encoding a1, encoding_t const& a2) { return a1 < a2.get(); }
+		};
+	}
+
+
 	ang_interface(ibuffer);
 	ang_interface(ibuffer_view);
 

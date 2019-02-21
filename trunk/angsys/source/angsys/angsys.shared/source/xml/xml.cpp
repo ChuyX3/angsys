@@ -86,21 +86,21 @@ static collections::pair<cstr_t, ang::dom::xml::xml_type> s_xml_type_parsing_map
 
 string xml_type_t::to_string()const
 {
-	auto idx = algorithms::binary_search(_value, collections::to_array(s_xml_type_to_string_map));
+	auto idx = algorithms::binary_search(get(), collections::to_array(s_xml_type_to_string_map));
 	if (idx >= algorithms::array_size(s_xml_type_to_string_map))
 		return "abstract"_s;
 	else
 		return s_xml_type_to_string_map[idx].value;
 }
 
-safe_enum_rrti(ang::dom::xml, xml_exception_code_t, value<xml_exception_code_proxy>);
+safe_enum_rrti2(ang::dom::xml, xml_exception_code);
 
 string xml_exception_code_t::to_string()const
 {
-	return ang::move(except_code_t((except_code)_value).to_string());
+	return ang::move(except_code_t((except_code)get()).to_string());
 }
 
-safe_flags_implement(ang::dom::xml, xml_format, uint);
+safe_flags_implement(ang::dom::xml, xml_format);
 
 ///////////////////////////////////////////////////////////////////
 /*

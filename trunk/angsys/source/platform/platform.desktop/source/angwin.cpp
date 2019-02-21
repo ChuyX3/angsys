@@ -32,9 +32,9 @@ ANG_EXTERN ulong64 get_performance_time_us(void)
 	}
 }
 
-safe_enum_rrti(ang::platform::windows, showing_flag_t, value<showing_flag_proxy>);
-safe_enum_rrti(ang::platform::windows, class_style_t, value<class_style_proxy>);
-safe_flags_implement(ang::platform::windows, class_style, dword);
+safe_enum_rrti2(ang::platform::windows, showing_flag);
+safe_enum_rrti2(ang::platform::windows, class_style);
+safe_flags_implement(ang::platform::windows, class_style);
 
 static collections::pair<cstr_t, class_style> _parse_class_style_map[] =
 {
@@ -104,8 +104,8 @@ string class_style_t::to_string()const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-safe_enum_rrti(ang::platform::windows, wnd_style_t, value<wnd_style_proxy>);
-safe_flags_implement(ang::platform::windows, wnd_style, dword);
+safe_enum_rrti2(ang::platform::windows, wnd_style);
+safe_flags_implement(ang::platform::windows, wnd_style);
 
 static collections::pair<cstr_t, wnd_style> _parse_wnd_style_map[] =
 {
@@ -190,8 +190,8 @@ string wnd_style_t::to_string()const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-safe_enum_rrti(ang::platform::windows, wnd_style_ex_t, value<wnd_style_ex_proxy>);
-safe_flags_implement(ang::platform::windows, wnd_style_ex, dword);
+safe_enum_rrti2(ang::platform::windows, wnd_style_ex);
+safe_flags_implement(ang::platform::windows, wnd_style_ex);
 
 static collections::pair<cstr_t, wnd_style_ex> _parse_wnd_style_ex_map[] =
 {

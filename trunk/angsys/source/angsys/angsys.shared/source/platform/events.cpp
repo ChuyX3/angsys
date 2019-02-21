@@ -7,7 +7,7 @@ using namespace ang::core::delegates;
 using namespace ang::platform;
 using namespace ang::platform::events;
 
-safe_enum_rrti(ang::platform::events, core_msg_enum_t, value<core_msg_enum_proxy>);
+safe_enum_rrti2(ang::platform::events, core_msg_enum);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::ievent, interface);
 
 ievent_function::~ievent_function()

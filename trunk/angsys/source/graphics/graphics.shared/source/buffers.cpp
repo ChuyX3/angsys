@@ -12,9 +12,9 @@ ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::buffers::iindex_buffer, igpu_b
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::buffers::ivertex_buffer, igpu_buffer);
 
 
-safe_enum_rrti(ang::graphics::buffers, buffer_type_t, value<buffer_type_proxy>);
-safe_enum_rrti(ang::graphics::buffers, buffer_usage_t, value<buffer_usage_proxy>);
-safe_enum_rrti(ang::graphics::buffers, buffer_bind_flag_t, value<buffer_bind_flag_proxy>);
+safe_enum_rrti2(ang::graphics::buffers, buffer_type);
+safe_enum_rrti2(ang::graphics::buffers, buffer_usage);
+safe_enum_rrti2(ang::graphics::buffers, buffer_bind_flag);
 
 
 #define MY_TYPE ang::graphics::buffers::igpu_buffer

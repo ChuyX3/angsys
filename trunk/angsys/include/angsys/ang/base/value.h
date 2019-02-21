@@ -17,109 +17,109 @@
 namespace ang //constants
 {
 
-	template<typename T, genre_t TYPE, bool IS_SAFE_ENUM>
+	template<typename T, genre_t TYPE>
 	struct value {
 		typedef T type;
 		static constexpr genre_t genre_id = TYPE;
 
-		value() : _value(default_value<T>::value) {}
-		value(T const& v) : _value(v) {}
-		value(value const& v) : _value(v._value) {}
-		value(T && v) : _value(ang::move(v)) { 
+		value() : m_value(default_value<T>::value) {}
+		value(T const& v) : m_value(v) {}
+		value(value const& v) : m_value(v.m_value) {}
+		value(T && v) : m_value(ang::move(v)) { 
 			v = default_value<T>::value; 
 		}
-		value(value && v) : _value(ang::move(v._value)) {
-			v._value = default_value<T>::value;
+		value(value && v) : m_value(ang::move(v.m_value)) {
+			v.m_value = default_value<T>::value;
 		}
 
 		operator T& () { return get(); }
 		operator T const& ()const { return get(); }
 
 		value& operator = (T const& v){
-			_value = v;
+			m_value = v;
 			return*this;
 		}
 		value& operator = (value const& v) {
-			_value = v._value;
+			m_value = v.m_value;
 			return*this;
 		}
 		value& operator = (T && v) {
-			_value = ang::move(v);
+			m_value = ang::move(v);
 			v = default_value<T>::value;
 			return*this;
 		}
 		value& operator = (value && v) {
-			_value = ang::move(v._value);
-			v._value = default_value<T>::value;
+			m_value = ang::move(v.m_value);
+			v.m_value = default_value<T>::value;
 			return*this;
 		}
 
-		T& get() { return _value; }
-		T const& get()const { return _value; }
-		void set(T const& v) { _value = v; }
+		T& get() { return m_value; }
+		T const& get()const { return m_value; }
+		void set(T const& v) { m_value = v; }
 		void move(T && v) {
-			_value = ang::forward<T>(v);
+			m_value = ang::forward<T>(v);
 			v = default_value<T>::value;
 		}
 
 	private:
-		T _value;
+		T m_value;
 	};
 
 	template<typename T>
-	struct value<T, genre::union_type, false> {
+	struct value<T, genre::union_type> {
 		typedef T type;
 		static constexpr genre_t genre_id = genre::union_type;
 
-		value() : _value(default_value<T>::value) {}
-		value(T const& v) : _value(v) {}
-		value(value const& v) : _value(v._value) {}
-		value(T && v) : _value(ang::move(v)) {
+		value() : m_value(default_value<T>::value) {}
+		value(T const& v) : m_value(v) {}
+		value(value const& v) : m_value(v.m_value) {}
+		value(T && v) : m_value(ang::move(v)) {
 			v = default_value<T>::value;
 		}
-		value(value && v) : _value(ang::move(v._value)) {
-			v._value = default_value<T>::value;
+		value(value && v) : m_value(ang::move(v.m_value)) {
+			v.m_value = default_value<T>::value;
 		}
 
 		operator T& () { return get(); }
 		operator T const& ()const { return get(); }
 
 		value& operator = (T const& v) {
-			_value = v;
+			m_value = v;
 			return*this;
 		}
 		value& operator = (value const& v) {
-			_value = v._value;
+			m_value = v.m_value;
 			return*this;
 		}
 		value& operator = (T && v) {
-			_value = ang::move(v);
+			m_value = ang::move(v);
 			v = default_value<T>::value;
 			return*this;
 		}
 		value& operator = (value && v) {
-			_value = ang::move(v._value);
-			v._value = default_value<T>::value;
+			m_value = ang::move(v.m_value);
+			v.m_value = default_value<T>::value;
 			return*this;
 		}
 
 		T* operator ->() { return &get(); }
 		T const* operator ->()const { return &get(); }
 
-		T& get() { return _value; }
-		T const& get()const { return _value; }
-		void set(T const& v) { _value = v; }
+		T& get() { return m_value; }
+		T const& get()const { return m_value; }
+		void set(T const& v) { m_value = v; }
 		void move(T && v) {
-			_value = ang::forward<T>(v);
+			m_value = ang::forward<T>(v);
 			v = default_value<T>::value;
 		}
 
 	private:
-		T _value;
+		T m_value;
 	};
 
 	template<typename T>
-	struct value<T, genre::class_type, false> : public T {
+	struct value<T, genre::class_type> : public T {
 		typedef T type;
 		static constexpr genre_t genre_id = genre::class_type;
 
@@ -161,75 +161,60 @@ namespace ang //constants
 	};
 
 	template<typename T>
-	struct value<T, genre::class_type, true> : public T {
-		typedef typename T::type type;
+	struct value<T, genre::enum_type> {
+		typedef T type;
+		typedef enum_type<T> base;
 		static constexpr genre_t genre_id = genre::enum_type;
 
 		value() {}
-		value(type const& v) { this->_value = v; }
-		value(value const& v) { this->_value = v._value; }
+		value(type const& v) { get() = v; }
+		value(value const& v) { get() = v.get(); }
 		value(type && v) {
-			this->_value = v;
+			get() = v;
 			v = default_value<type>::value;
 		}
 		value(value && v) {
-			this->_value = ang::move(v._value);
-			v._value = default_value<type>::value;
+			get() = ang::move(v.get());
+			v.get() = default_value<type>::value;
 		}
 
 		operator type& () { return get(); }
 		operator type const& ()const { return get(); }
 
 		value& operator = (type const& v) {
-			this->_value = v;
+			get() = v;
 			return*this;
 		}
 		value& operator = (value const& v) {
-			this->_value = v._value;
+			get() = v.get();
 			return*this;
 		}
 		value& operator = (type && v) {
-			this->_value = v;
+			get() = v;
 			v = default_value<type>::value;
 			return*this;
 		}
 		value& operator = (value && v) {
-			this->_value = ang::move(v._value);
-			v._value = default_value<type>::value;
+			get() = ang::move(v.get());
+			v.get() = default_value<type>::value;
 			return*this;
 		}
 
-
-		T* operator ->() { return this; }
-		T const* operator ->()const { return this; }
-
-		type& get() { return *reinterpret_cast<type*>(&this->_value); }
-		type const& get()const { return *reinterpret_cast<type const*>(&this->_value); }
-		void set(type const& v) { this->_value = v; }
+		type& get() { return *reinterpret_cast<type*>(&m_value); }
+		type const& get()const { return *reinterpret_cast<type const*>(&m_value); }
+		void set(type const& v) { get() = v; }
 		void move(type && v) {
-			this->_value = v;
+			get() = v;
 			v = default_value<type>::value;
 		}
+
+	protected:
+		enum_type<type> m_value;
 	};
 
-#define safe_enum(_LINK, _name, _type) struct _LINK _name##_proxy { enum type : _type; protected: type _value; }; \
-	struct _LINK _name##_t : public ang::value<_name##_proxy> { \
-			static rtti_t const& class_info(); \
-			_name##_t() : value(default_value<type>::value) {} \
-			_name##_t(type const& v) : value(v) {} \
-			_name##_t(_name##_t const& v) : value(v) {} \
-			_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
-			_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
-			ang::string to_string()const; \
-			_name##_t& operator = (type const& v){ _value = v; return*this; } \
-			_name##_t& operator = (_name##_t const& v) { _value = v.get(); return*this; } \
-			_name##_t& operator = (type && v) { _value = ang::move(v); v = default_value<type>::value; return*this; } \
-			_name##_t& operator = (_name##_t && v) { _value = ang::move(v._value); v.set(default_value<type>::value); return*this; } \
-	}; typedef _name##_proxy::type _name; enum _name##_proxy::type : _type
 
-
-#define safe_flags(_LINK, _name, _type) struct _name##_proxy { enum type : _type; protected: _type _value; }; \
-	struct _LINK _name##_t : public ang::value<_name##_proxy> { \
+#define safe_enum(_LINK, _name, _type)  enum class _name : _type; \
+	struct _LINK _name##_t : public ang::value<_name> { \
 		static rtti_t const& class_info(); \
 		_name##_t() : value(default_value<type>::value) {} \
 		_name##_t(type const& v) : value(v) {} \
@@ -237,20 +222,54 @@ namespace ang //constants
 		_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
 		_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
 		ang::string to_string()const; \
-		_name##_t& operator = (type const& v){ _value = v; return*this; } \
-		_name##_t& operator = (_name##_t const& v) { _value = v.get(); return*this; } \
-		_name##_t& operator = (type && v) { _value = ang::move(v); v = default_value<type>::value; return*this; } \
-		_name##_t& operator = (_name##_t && v) { _value = ang::move(v.get()); v.set(default_value<type>::value); return*this; } \
-		_name##_t& operator ^= (const _name##_t& v) { _value ^= v.get(); return*this; } \
-		_name##_t& operator ^= (type v) { _value ^= v;	return*this; } \
-		_name##_t& operator *= (const _name##_t& v) { _value &= (uint)v.get(); return*this; } \
-		_name##_t& operator *= (type v) { _value &= (uint)v;	return*this; } \
-		_name##_t& operator += (const _name##_t& v) { _value |= v.get(); return*this; } \
-		_name##_t& operator += (type v) { _value |= v;	return*this; } \
-		_name##_t& operator -= (const _name##_t& v) { _value &= ~(uint)v.get(); return*this; } \
-		_name##_t& operator -= (type v) { _value &= ~(uint)v;	return*this; } \
-		bool operator !(void)const { return _value == 0; } \
-		operator bool(void)const { return _value != 0; } \
+		_name##_t& operator = (type const& v){ get() = v; return*this; } \
+		_name##_t& operator = (_name##_t const& v) { get() = v.get(); return*this; } \
+		_name##_t& operator = (type && v) { get() = ang::move(v); v = default_value<type>::value; return*this; } \
+		_name##_t& operator = (_name##_t && v) { get() = ang::move(v.get()); v.set(default_value<type>::value); return*this; } \
+		friend inline bool operator == (_name##_t const& a1, _name##_t const& a2){return a1.get() == a2.get();} \
+		friend inline bool operator != (_name##_t const& a1, _name##_t const& a2){return a1.get() != a2.get();} \
+		friend inline bool operator >= (_name##_t const& a1, _name##_t const& a2){return a1.get() >= a2.get();} \
+		friend inline bool operator <= (_name##_t const& a1, _name##_t const& a2){return a1.get() <= a2.get();} \
+		friend inline bool operator > (_name##_t const& a1, _name##_t const& a2){return a1.get() > a2.get();} \
+		friend inline bool operator < (_name##_t const& a1, _name##_t const& a2){return a1.get() < a2.get();} \
+		friend inline bool operator == (_name##_t const& a1, _name a2){return a1.get() == a2;} \
+		friend inline bool operator == (_name a1, _name##_t const& a2){return a1 == a2.get();} \
+		friend inline bool operator != (_name##_t const& a1, _name a2){return a1.get() != a2;} \
+		friend inline bool operator != (_name a1, _name##_t const& a2){return a1 != a2.get();} \
+		friend inline bool operator >= (_name##_t const& a1, _name a2){return a1.get() >= a2;} \
+		friend inline bool operator >= (_name a1, _name##_t const& a2){return a1 >= a2.get();} \
+		friend inline bool operator <= (_name##_t const& a1, _name a2){return a1.get() <= a2;} \
+		friend inline bool operator <= (_name a1, _name##_t const& a2){return a1 <= a2.get();} \
+		friend inline bool operator > (_name##_t const& a1, _name a2){return a1.get() > a2;} \
+		friend inline bool operator > (_name a1, _name##_t const& a2){return a1 > a2.get();} \
+		friend inline bool operator < (_name##_t const& a1, _name a2){return a1.get() < a2;} \
+		friend inline bool operator < (_name a1, _name##_t const& a2){return a1 < a2.get();} \
+	}; enum class _name : _type
+
+
+#define safe_flags(_LINK, _name, _type) enum class _name : _type; \
+	struct _LINK _name##_t : public ang::value<_name> { \
+		static rtti_t const& class_info(); \
+		_name##_t() : value(default_value<type>::value) {} \
+		_name##_t(type const& v) : value(v) {} \
+		_name##_t(_name##_t const& v) : value(v) {} \
+		_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
+		_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
+		ang::string to_string()const; \
+		_name##_t& operator = (type const& v){ get() = v; return*this; } \
+		_name##_t& operator = (_name##_t const& v) { get() = v.get(); return*this; } \
+		_name##_t& operator = (type && v) { get() = ang::move(v); v = default_value<type>::value; return*this; } \
+		_name##_t& operator = (_name##_t && v) { get() = ang::move(v.get()); v.set(default_value<type>::value); return*this; } \
+		_name##_t& operator ^= (const _name##_t& v) { m_value ^= (base)v.get(); return*this; } \
+		_name##_t& operator ^= (type v) { m_value ^= (base)v;	return*this; } \
+		_name##_t& operator *= (const _name##_t& v) { m_value &= (base)v.get(); return*this; } \
+		_name##_t& operator *= (type v) { m_value &= (base)v;	return*this; } \
+		_name##_t& operator += (const _name##_t& v) { m_value |= (base)v.get(); return*this; } \
+		_name##_t& operator += (type v) { m_value |= (base)v;	return*this; } \
+		_name##_t& operator -= (const _name##_t& v) { m_value &= ~(base)v.get(); return*this; } \
+		_name##_t& operator -= (type v) { m_value &= ~(base)v;	return*this; } \
+		bool operator !(void)const { return m_value == 0; } \
+		operator bool(void)const { return m_value != 0; } \
 		friend _LINK _name##_t operator * (type, type); \
 		friend _LINK _name##_t operator * (const _name##_t&, type); \
 		friend _LINK _name##_t operator * (type, const _name##_t&); \
@@ -295,90 +314,70 @@ namespace ang //constants
 		friend _LINK bool operator <= (type, _name##_t const&); \
 		friend _LINK bool operator > (type, _name##_t const&); \
 		friend _LINK bool operator < (type, _name##_t const&); \
-	}; typedef _name##_proxy::type _name; enum _name##_proxy::type : _type
+	}; enum class _name : _type
 
 
 
-#define safe_flags_implement(_NAMESPACE, _name, _base) \
+#define safe_flags_implement(_NAMESPACE, _name) \
 	bool _NAMESPACE::operator == (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name##_t const& second) { return first.get() == second.get(); } \
 	bool _NAMESPACE::operator != (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name##_t const& second) { return first.get() != second.get(); } \
 	bool _NAMESPACE::operator >= (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name##_t const& second) { return first.get() >= second.get(); } \
 	bool _NAMESPACE::operator <= (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name##_t const& second) { return first.get() <= second.get(); } \
 	bool _NAMESPACE::operator > (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name##_t const& second) { return first.get() > second.get(); } \
 	bool _NAMESPACE::operator < (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name##_t const& second) { return first.get() < second.get(); } \
-	bool _NAMESPACE::operator == (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name second) { return first.get() == (_base)second; } \
-	bool _NAMESPACE::operator != (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name second) { return first.get() != (_base)second; } \
-	bool _NAMESPACE::operator >= (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name second) { return first.get() >= (_base)second; } \
-	bool _NAMESPACE::operator <= (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name second) { return first.get() <= (_base)second; } \
-	bool _NAMESPACE::operator > (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name second) { return first.get() > (_base)second; } \
-	bool _NAMESPACE::operator < (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name second) { return first.get() < (_base)second; } \
-	bool _NAMESPACE::operator == (_NAMESPACE::_name first, _NAMESPACE::_name##_t const& second) { return (_base)first == second.get(); } \
-	bool _NAMESPACE::operator != (_NAMESPACE::_name first, _NAMESPACE::_name##_t const& second) { return (_base)first != second.get(); } \
-	bool _NAMESPACE::operator >= (_NAMESPACE::_name first, _NAMESPACE::_name##_t const& second) { return (_base)first >= second.get(); } \
-	bool _NAMESPACE::operator <= (_NAMESPACE::_name first, _NAMESPACE::_name##_t const& second) { return (_base)first <= second.get(); } \
-	bool _NAMESPACE::operator > (_NAMESPACE::_name first, _NAMESPACE::_name##_t const& second) { return (_base)first > second.get(); } \
-	bool _NAMESPACE::operator < (_NAMESPACE::_name first, _NAMESPACE::_name##_t const& second) { return (_base)first < second.get(); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator * (_NAMESPACE::_name e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name((_base)e1 & (_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator * (const _NAMESPACE::_name##_t& e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name(e1._value & (_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator * (_NAMESPACE::_name e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name((_base)e1 & e2._value); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator * (const _NAMESPACE::_name##_t& e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(e1._value & e2._value); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator + (_NAMESPACE::_name e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name((_base)e1 | (_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator + (const _NAMESPACE::_name##_t& e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name(e1._value | (_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator + (_NAMESPACE::_name e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name((_base)e1 | e2._value); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator + (const _NAMESPACE::_name##_t& e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(e1._value | e2._value); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator - (_NAMESPACE::_name e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name((_base)e1 & ~(_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator - (const _NAMESPACE::_name##_t& e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name(e1._value & ~(_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator - (_NAMESPACE::_name e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name((_base)e1 & ~e2._value); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator - (const _NAMESPACE::_name##_t& e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(e1._value & ~e2._value); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator & (_NAMESPACE::_name e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name((_base)e1 & (_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator & (const _NAMESPACE::_name##_t& e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name(e1._value & (_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator & (_NAMESPACE::_name e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name((_base)e1 & e2._value); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator & (const _NAMESPACE::_name##_t& e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(e1._value & e2._value); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator | (_NAMESPACE::_name e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name((_base)e1 | (_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator | (const _NAMESPACE::_name##_t& e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name(e1._value | (_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator | (_NAMESPACE::_name e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name((_base)e1 | e2._value); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator | (const _NAMESPACE::_name##_t& e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(e1._value | e2._value); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator ^ (_NAMESPACE::_name e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name((_base)e1 ^ (_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator ^ (const _NAMESPACE::_name##_t& e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name(e1._value ^ (_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator ^ (_NAMESPACE::_name e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name((_base)e1 ^ e2._value); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator ^ (const _NAMESPACE::_name##_t& e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(e1._value ^ e2._value); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator ~ (_NAMESPACE::_name e2) { return _NAMESPACE::_name(~(_base)e2); } \
-	_NAMESPACE::_name##_t _NAMESPACE::operator ~ (const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(~e2._value); }
+	bool _NAMESPACE::operator == (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name second) { return first.get() == second; } \
+	bool _NAMESPACE::operator != (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name second) { return first.get() != second; } \
+	bool _NAMESPACE::operator >= (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name second) { return first.get() >= second; } \
+	bool _NAMESPACE::operator <= (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name second) { return first.get() <= second; } \
+	bool _NAMESPACE::operator > (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name second) { return first.get() > second; } \
+	bool _NAMESPACE::operator < (_NAMESPACE::_name##_t const& first, _NAMESPACE::_name second) { return first.get() < second; } \
+	bool _NAMESPACE::operator == (_NAMESPACE::_name first, _NAMESPACE::_name##_t const& second) { return first == second.get(); } \
+	bool _NAMESPACE::operator != (_NAMESPACE::_name first, _NAMESPACE::_name##_t const& second) { return first != second.get(); } \
+	bool _NAMESPACE::operator >= (_NAMESPACE::_name first, _NAMESPACE::_name##_t const& second) { return first >= second.get(); } \
+	bool _NAMESPACE::operator <= (_NAMESPACE::_name first, _NAMESPACE::_name##_t const& second) { return first <= second.get(); } \
+	bool _NAMESPACE::operator > (_NAMESPACE::_name first, _NAMESPACE::_name##_t const& second) { return first > second.get(); } \
+	bool _NAMESPACE::operator < (_NAMESPACE::_name first, _NAMESPACE::_name##_t const& second) { return first < second.get(); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator * (_NAMESPACE::_name e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name((typename _name##_t::base)e1 & (typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator * (const _NAMESPACE::_name##_t& e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name(e1.m_value & (typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator * (_NAMESPACE::_name e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name((typename _name##_t::base)e1 & e2.m_value); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator * (const _NAMESPACE::_name##_t& e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(e1.m_value & e2.m_value); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator + (_NAMESPACE::_name e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name((typename _name##_t::base)e1 | (typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator + (const _NAMESPACE::_name##_t& e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name(e1.m_value | (typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator + (_NAMESPACE::_name e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name((typename _name##_t::base)e1 | e2.m_value); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator + (const _NAMESPACE::_name##_t& e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(e1.m_value | e2.m_value); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator - (_NAMESPACE::_name e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name((typename _name##_t::base)e1 & ~(typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator - (const _NAMESPACE::_name##_t& e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name(e1.m_value & ~(typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator - (_NAMESPACE::_name e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name((typename _name##_t::base)e1 & ~e2.m_value); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator - (const _NAMESPACE::_name##_t& e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(e1.m_value & ~e2.m_value); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator & (_NAMESPACE::_name e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name((typename _name##_t::base)e1 & (typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator & (const _NAMESPACE::_name##_t& e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name(e1.m_value & (typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator & (_NAMESPACE::_name e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name((typename _name##_t::base)e1 & e2.m_value); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator & (const _NAMESPACE::_name##_t& e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(e1.m_value & e2.m_value); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator | (_NAMESPACE::_name e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name((typename _name##_t::base)e1 | (typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator | (const _NAMESPACE::_name##_t& e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name(e1.m_value | (typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator | (_NAMESPACE::_name e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name((typename _name##_t::base)e1 | e2.m_value); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator | (const _NAMESPACE::_name##_t& e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(e1.m_value | e2.m_value); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator ^ (_NAMESPACE::_name e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name((typename _name##_t::base)e1 ^ (typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator ^ (const _NAMESPACE::_name##_t& e1, _NAMESPACE::_name e2) { return _NAMESPACE::_name(e1.m_value ^ (typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator ^ (_NAMESPACE::_name e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name((typename _name##_t::base)e1 ^ e2.m_value); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator ^ (const _NAMESPACE::_name##_t& e1, const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(e1.m_value ^ e2.m_value); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator ~ (_NAMESPACE::_name e2) { return _NAMESPACE::_name(~(typename _name##_t::base)e2); } \
+	_NAMESPACE::_name##_t _NAMESPACE::operator ~ (const _NAMESPACE::_name##_t& e2) { return _NAMESPACE::_name(~e2.m_value); }
 
 #define FUNCX_TYPE_OF_DIR(A0) &ang::rtti::type_of<A0>()
 
 #define safe_enum_rrti(_NAMESPACE, _name, ...) \
-	ang::rtti_t const& _NAMESPACE::_name::class_info() { \
-		ang::rtti_t const* parent[] = { ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPE_OF_DIR, COMA_SEPARATOR, __VA_ARGS__)) }; \
-		return rtti::regist(#_NAMESPACE"::"#_name, genre::enum_type, sizeof(_name), alignof(_name), parent, null); \
+	ang::rtti_t const& _NAMESPACE::_name##_t::class_info() { \
+		ang::rtti_t const* parent[] ={ ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPE_OF_DIR, COMA_SEPARATOR, __VA_ARGS__)) }; \
+		return rtti::regist(#_NAMESPACE"::"#_name, genre::enum_type, sizeof(_name##_t), alignof(_name##_t), parent, null); \
 	}
 
 #define safe_enum_rrti2(_NAMESPACE, _name) \
 	ang::rtti_t const& _NAMESPACE::_name##_t::class_info() { \
-		ang::rtti_t const* parent[] = { &ang::type_of<value<_name##_proxy>>() }; \
-		return rtti::regist(#_NAMESPACE"::"#_name"_t", genre::enum_type, sizeof(_name##_t), alignof(_name##_t), parent, null); \
+		ang::rtti_t const* parent[] = { &ang::type_of<value<_name>>() }; \
+		return rtti::regist(#_NAMESPACE"::"#_name, genre::enum_type, sizeof(_name##_t), alignof(_name##_t), parent, null); \
 	}
 
-	namespace text
-	{
-		struct LINK encoding_t : public ang::value<encoding_proxy>
-		{
-			static encoding_t parse(cstr_t);
-			static encoding_t parse(cwstr_t);
-			static encoding_t parse(cmstr_t);
-			static rtti_t const& class_info();
-			encoding_t() : value(default_value<type>::value) {}
-			encoding_t(type const& v) : value(v) {}
-			encoding_t(encoding_t const& v) : value(v) {}
-			encoding_t(type && v) : value(ang::forward<type>(v)) {	}
-			encoding_t(encoding_t && v) : value(ang::forward<value>(v)) { }
-			cstr_t to_string()const;
-			encoding_t& operator = (type const& v) { _value = v; return*this; }
-			encoding_t& operator = (encoding_t const& v) { _value = v.get(); return*this; }
-			encoding_t& operator = (type && v) { _value = ang::move(v); v = default_value<type>::value; return*this; }
-			encoding_t& operator = (encoding_t && v) { _value = ang::move(v._value); v.set(default_value<type>::value); return*this; }
-		};
-	}
 }
 
 #endif//__ANG_BASE_VALUE_H__

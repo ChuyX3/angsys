@@ -607,8 +607,8 @@ static collections::pair<cstr_t, graphics::colors> _parse_color_map[] =
 
 using namespace ang::graphics;
 
-safe_enum_rrti(ang::graphics, graph_driver_type_t, value<graphics::graph_driver_type_proxy>);
-safe_enum_rrti(ang::graphics, primitive_t, value<graphics::primitive_proxy>);
+safe_enum_rrti2(ang::graphics, graph_driver_type);
+safe_enum_rrti2(ang::graphics, primitive);
 
 graphics::color::color()
 {

@@ -46,7 +46,7 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::files::mapped_file_buffer, objec
 bool mapped_file_buffer::map(open_flags_t access, wsize size, ulong64 offset)
 {
 	_access_flag = bool(access & open_flags::access_out) ? open_flags::access_out : open_flags::access_in;
-	_access_flag += (open_flags)(access.get() & 0X1F);
+	_access_flag += access.get() & (open_flags)0X1F;
 #ifdef WINDOWS_PLATFORM
 	dword accessFlags = bool(access & open_flags::access_out) ? PAGE_READWRITE : PAGE_READONLY;
 	pointer mapp_handle = _original_source->map_handle(size + offset);
@@ -444,8 +444,8 @@ bool core_file::create(path_view_t path, open_flags_t flags)
 				_flags += open_flags::format_utf32_be;
 				break;
 			default:
-				if ((flags.get() & 0X1F) != (uint)open_flags::format_text)
-					_flags += (open_flags)(flags.get() & 0X1F);
+				if ((flags.get() & (open_flags)0X1F) != open_flags::format_text)
+					_flags += flags.get() & (open_flags)0X1F;
 				else
 					_flags += open_flags::format_ascii;
 				break;
@@ -453,7 +453,6 @@ bool core_file::create(path_view_t path, open_flags_t flags)
 		}
 		else //new file
 		{
-			uint f = (flags.get() & 0X1F);
 			switch (get_format(flags))
 			{
 			case text::encoding::ascii:
@@ -480,7 +479,6 @@ bool core_file::create(path_view_t path, open_flags_t flags)
 				_flags += open_flags::format_utf8;
 				break;
 			}
-			
 		}
 	}
 	else if (bool(flags & open_flags::format_packfile)) //text file

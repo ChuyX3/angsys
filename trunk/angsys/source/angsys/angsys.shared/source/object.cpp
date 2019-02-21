@@ -16,7 +16,7 @@
 
 using namespace ang;
 
-safe_enum_rrti(ang, comparision_result_t, value<comparision_result_proxy>);
+safe_enum_rrti2(ang, comparision_result);
 
 bool interface::default_query_interface(rtti_t const& src_id, unknown_t src, rtti_t const& out_id, unknown_ptr_t out)
 {

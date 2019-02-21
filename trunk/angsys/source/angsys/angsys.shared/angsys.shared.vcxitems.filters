@@ -81,6 +81,9 @@
     <Filter Include="header\include\xml\inline">
       <UniqueIdentifier>{e166d634-9db2-4584-b123-ea68919fe2b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{7b33a057-9338-4d9d-b3c5-4e9cfe163e8f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h">
@@ -455,6 +458,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)utils\angsys.natvis">
+      <Filter>utils</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>

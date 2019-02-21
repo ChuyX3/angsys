@@ -143,6 +143,6 @@
     <None Include="$(MSBuildThisFileDirectory)include\xml\inline\xml_internal.inl" />
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="$(MSBuildThisFileDirectory)angsys.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)utils\angsys.natvis" />
   </ItemGroup>
 </Project>

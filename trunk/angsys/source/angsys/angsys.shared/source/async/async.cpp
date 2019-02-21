@@ -5,7 +5,7 @@ using namespace ang;
 using namespace ang::core;
 using namespace ang::core::async;
 
-safe_flags_implement(ang::core::async, async_action_status, uint);
+safe_flags_implement(ang::core::async, async_action_status);
 
 ////////////////////////////////////////////////////////////////
 

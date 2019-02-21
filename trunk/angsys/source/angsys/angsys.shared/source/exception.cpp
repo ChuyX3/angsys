@@ -44,7 +44,7 @@ string except_code_t::to_string()const {
 
 exception::exception()throw()
 	: object()
-	, code(except_code::unknown)
+	, code((dword)except_code::unknown)
 	, message()
 {
 	message = except_code_t((except_code)code).to_string();
@@ -52,7 +52,7 @@ exception::exception()throw()
 
 exception::exception(except_code_t type)throw()
 	: object()
-	, code(type)
+	, code((dword)type.get())
 	, message(null)
 {
 	message = type.to_string();
@@ -75,7 +75,7 @@ exception::exception(dword errorCode, string msg)throw()
 
 exception::exception(string msg)throw()
 	: object()
-	, code(except_code::custom)
+	, code((dword)except_code::custom)
 	, message(null)
 {
 	if (!msg.is_empty())
@@ -84,7 +84,7 @@ exception::exception(string msg)throw()
 	}
 	else
 	{
-		code = except_code::unknown;
+		code = (dword)except_code::unknown;
 		message = "unknown"_s;
 		message = except_code_t((except_code)code).to_string();
 	}
@@ -102,7 +102,7 @@ exception::exception(const exception& e)throw()
 
 exception::~exception()throw()
 {
-	code = except_code::unknown;
+	code = (dword)except_code::unknown;
 	message = null;
 }
 

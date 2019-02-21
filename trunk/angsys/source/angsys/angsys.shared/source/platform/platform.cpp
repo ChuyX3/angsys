@@ -7,16 +7,16 @@ using namespace ang::platform::display;
 using namespace ang::platform::input;
 
 
-safe_enum_rrti(ang::platform, activate_status_t, value<activate_status_proxy>);
-safe_enum_rrti(ang::platform, display_invalidate_reason_t, value<activate_status_proxy>);
-safe_enum_rrti(ang::platform, display::orientation_t, value<orientation_proxy>);
+safe_enum_rrti2(ang::platform, activate_status);
+safe_enum_rrti2(ang::platform, display_invalidate_reason);
+safe_enum_rrti2(ang::platform, display::orientation);
 
-safe_enum_rrti(ang::platform::input, key_modifiers_t, value<key_modifiers_proxy>);
-safe_enum_rrti(ang::platform::input, pointer_hardware_type_t, value<pointer_hardware_type_proxy>);
-safe_enum_rrti(ang::platform::input, keyboard_type_t, value<keyboard_type_proxy>);
-safe_enum_rrti(ang::platform::input, virtual_key_t, value<virtual_key_proxy>);
+safe_enum_rrti2(ang::platform::input, key_modifiers);
+safe_enum_rrti2(ang::platform::input, pointer_hardware_type);
+safe_enum_rrti2(ang::platform::input, keyboard_type);
+safe_enum_rrti2(ang::platform::input, virtual_key);
 
-safe_flags_implement(ang::platform::input, key_modifiers, uint);
+safe_flags_implement(ang::platform::input, key_modifiers);
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::input::ikeyboard, ang::interface);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::imessage_listener, ang::interface);

@@ -15,12 +15,12 @@
 using namespace ang;
 using namespace ang::core::files;
 
-safe_flags_implement(ang::core::files, open_flags, uint);
+safe_flags_implement(ang::core::files, open_flags);
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::files::ifile, interface);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::files::ifile_system, interface);
 
-safe_enum_rrti(ang::core::files, file_system_priority_t, value<file_system_priority_proxy>);
+safe_enum_rrti2(ang::core::files, file_system_priority);
 
 //#define  MY_TYPE ang::collections::pair<ang::core::files::path, ang::core::files::pack_file_info>
 //#define MY_ALLOCATOR ang::memory::default_allocator
@@ -30,7 +30,7 @@ safe_enum_rrti(ang::core::files, file_system_priority_t, value<file_system_prior
 
 string file_system_priority_t::to_string()const
 {
-	switch (_value)
+	switch (get())
 	{
 	case file_system_priority::lowest:
 		return "lowest"_s;
@@ -110,7 +110,7 @@ text::encoding_t ang::core::files::get_format(open_flags_t encoding)
 	if (!(encoding & open_flags::format_text))
 		return text::encoding::binary;
 
-	switch (encoding.get() & 0X1F)
+	switch ((encoding.get() & (open_flags)0X1F).get())
 	{
 	case open_flags::format_ascii: return text::encoding::ascii;
 	case open_flags::format_utf8: return text::encoding::utf8;

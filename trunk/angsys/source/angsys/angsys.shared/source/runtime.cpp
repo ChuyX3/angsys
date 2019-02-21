@@ -88,4 +88,4 @@ rtti_t const& rtti::regist(type_name_t name, genre_t g, wsize sz, wsize a, array
 	return*info;
 }
 
-safe_enum_rrti(ang::text, encoding_t, value<encoding_proxy>);
+safe_enum_rrti2(ang::text, encoding);

@@ -219,7 +219,9 @@ static collections::pair<cstr_t, ang::text::encoding> s_encoding_parse[] =
 	{ "utf32_se"_s, ang::text::encoding::utf32_se },
 };
 
-cstr_t encoding_t::to_string()const
+safe_enum_rrti2(ang::text, encoding);
+
+string encoding_t::to_string()const
 {
 	auto idx = algorithms::binary_search(get(), collections::to_array(s_encoding_to_string));
 	if (idx >= algorithms::array_size(s_encoding_to_string))
