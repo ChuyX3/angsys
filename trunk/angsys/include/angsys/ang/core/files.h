@@ -102,10 +102,10 @@ namespace ang
 				visible vcall bool is_eof()const pure;
 				visible vcall file_offset_t cursor()const pure;
 				visible vcall bool cursor(file_offset_t size, stream_reference_t ref)pure;
-				visible vcall wsize read(ibuffer_view_t)pure;
-				visible vcall wsize read(wsize, pointer)pure;
-				visible vcall wsize write(ibuffer_view_t)pure;
-				visible vcall wsize write(wsize, pointer)pure;
+				visible vcall file_offset_t read(ibuffer_view_t)pure;
+				visible vcall file_offset_t read(wsize, pointer)pure;
+				visible vcall file_offset_t write(ibuffer_view_t)pure;
+				visible vcall file_offset_t write(wsize, pointer)pure;
 
 				visible vcall ibuffer_t map(wsize size, file_offset_t offset)pure;
 				visible vcall bool unmap(ibuffer_t, wsize used)pure;
@@ -139,7 +139,7 @@ namespace ang
 				: public object
 			{
 			protected:
-				ifile_t hfile;
+				ifile_t m_hfile;
 
 				file();
 				virtual~file();

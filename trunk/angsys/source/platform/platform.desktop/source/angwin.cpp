@@ -70,14 +70,14 @@ static collections::pair<class_style, cstr_t> to_string_class_style_map[] =
 	{ class_style::drop_shaow , "drop_shaow" }
 };
 
-string class_style_t::to_string()const
+wstring class_style_t::to_string()const
 {
-	string out = "";
+	wstring out = "";
 	class_style_t val = get();
 	bool first = true;
 	for (int i = algorithms::array_size(to_string_class_style_map) - 1; i >= 0; --i)
 	{
-		if (val._value == 0)
+		if (val.m_value == 0)
 			break;
 		if (val & to_string_class_style_map[i].key)
 		{
@@ -156,9 +156,9 @@ static collections::pair<wnd_style, cstr_t> to_string_wnd_style_map[] =
 	{ wnd_style::child , "child"_s },
 };
 
-string wnd_style_t::to_string()const
+wstring wnd_style_t::to_string()const
 {
-	string out = "";
+	wstring out = "";
 	wnd_style_t val = get();
 	bool first = true;
 	for (int i = algorithms::array_size(to_string_wnd_style_map) - 1; i >= 0; --i)
@@ -243,14 +243,14 @@ static collections::pair<wnd_style_ex, cstr_t> to_string_wnd_style_ex_map[] =
 };
 
 
-string wnd_style_ex_t::to_string()const
+wstring wnd_style_ex_t::to_string()const
 {
-	string out = "";
+	wstring out = "";
 	wnd_style_ex_t val = get();
 	bool first = true;
 	for (int i = algorithms::array_size(to_string_wnd_style_ex_map) - 1; i >= 0; --i)
 	{
-		if (val.get() == 0)
+		if (val.m_value == 0)
 			break;
 		if (val & to_string_wnd_style_ex_map[i].key)
 		{

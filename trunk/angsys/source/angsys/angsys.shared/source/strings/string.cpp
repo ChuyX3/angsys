@@ -173,70 +173,80 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 	{
 		windex i = 0;
 		short& value = *reinterpret_cast<short*>(ptr);
-		value = (short)_encoder->to_signed(text_buffer().ptr(), i);
+		auto str = text_buffer();
+		value = (short)_parser->to_signed(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<ushort>())
 	{
 		windex i = 0;
 		ushort& value = *reinterpret_cast<ushort*>(ptr);
-		value = (ushort)_encoder->to_unsigned(text_buffer().ptr(), i);
+		auto str = text_buffer();
+		value = (ushort)_parser->to_unsigned(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<int>())
 	{
 		windex i = 0;
 		int& value = *reinterpret_cast<int*>(ptr);
-		value = (int)_encoder->to_signed(text_buffer().ptr(), i);
+		auto str = text_buffer();
+		value = (int)_parser->to_signed(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<uint>())
 	{
 		windex i = 0;
 		uint& value = *reinterpret_cast<uint*>(ptr);
-		value = (uint)_encoder->to_unsigned(text_buffer().ptr(), i);
+		auto str = text_buffer();
+		value = (uint)_parser->to_unsigned(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<long>())
 	{
 		windex i = 0;
 		long& value = *reinterpret_cast<long*>(ptr);
-		value = (int)_encoder->to_signed(text_buffer().ptr(), i);
+		auto str = text_buffer();
+		value = (int)_parser->to_signed(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<ulong>())
 	{
 		windex i = 0;
 		ulong& value = *reinterpret_cast<ulong*>(ptr);
-		value = (ulong)_encoder->to_unsigned(text_buffer().ptr(), i);
+		auto str = text_buffer();
+		value = (ulong)_parser->to_unsigned(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<long64>())
 	{
 		windex i = 0;
 		long64& value = *reinterpret_cast<long64*>(ptr);
-		value = _encoder->to_signed(text_buffer().ptr(), i);
+		auto str = text_buffer();
+		value = _parser->to_signed(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<ulong64>())
 	{
 		windex i = 0;
 		ulong64& value = *reinterpret_cast<ulong64*>(ptr);
-		value = _encoder->to_unsigned(text_buffer().ptr(), i);
+		auto str = text_buffer();
+		value = _parser->to_unsigned(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<float>())
 	{
 		windex i = 0;
 		float& value = *reinterpret_cast<float*>(ptr);
-		value = (float)_encoder->to_floating(text_buffer().ptr(), i);
+		auto str = text_buffer();
+		value = (float)_parser->to_floating(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<double>())
 	{
 		windex i = 0;
 		double& value = *reinterpret_cast<double*>(ptr);
-		value = _encoder->to_floating(text_buffer().ptr(), i);
+		auto str = text_buffer();
+		value = _parser->to_floating(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	return false;

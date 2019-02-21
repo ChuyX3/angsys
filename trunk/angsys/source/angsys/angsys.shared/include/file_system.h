@@ -32,11 +32,11 @@ namespace ang
 				, public ibuffer
 			{
 			private:
-				system_file_t _original_source;
-				pointer _buffer_ptr;
-				wsize _buffer_size;
-				file_size_t _buffer_offset;
-				open_flags_t _access_flag;
+				system_file_t m_original_source;
+				pointer m_buffer_ptr;
+				wsize m_buffer_size;
+				file_size_t m_buffer_offset;
+				open_flags_t m_access_flag;
 
 			public:
 				mapped_file_buffer(system_file_t file, open_flags_t access, wsize size, ulong64 offset);
@@ -74,15 +74,15 @@ namespace ang
 				public ifile
 			{
 			private:
-				file_handle_t _hfile;
-				ulong64 _hmap_size;
-				file_handle_t _hmap;
-				path_t _path;
-				open_flags_t _flags;
+				file_handle_t m_hfile;
+				ulong64 m_hmap_size;
+				file_handle_t m_hmap;
+				path_t m_path;
+				open_flags_t m_flags;
 				//long64 _size;
 				//long64 _cursor;
-				core::async::mutex_ptr_t _mutex;
-				wsize _map_counter;
+				core::async::mutex_ptr_t m_mutex;
+				wsize m_map_counter;
 
 			public:
 				core_file();
@@ -108,10 +108,10 @@ namespace ang
 				virtual bool is_eof()const override;
 				virtual file_offset_t cursor()const override;
 				virtual bool cursor(file_offset_t size, stream_reference_t ref)override;
-				virtual wsize read(ibuffer_view_t);
-				virtual wsize read(wsize, pointer);
-				virtual wsize write(ibuffer_view_t);
-				virtual wsize write(wsize, pointer);
+				virtual file_offset_t read(ibuffer_view_t);
+				virtual file_offset_t read(wsize, pointer);
+				virtual file_offset_t write(ibuffer_view_t);
+				virtual file_offset_t write(wsize, pointer);
 
 				void format(text::encoding_t);
 
@@ -135,10 +135,10 @@ namespace ang
 			{
 			private:
 				friend  singleton<file_system_t>;
-				collections::vector<path_t> _paths;
+				collections::vector<path_t> m_paths;
 
-				collections::vector<intf_wrapper<ifile_system>> highest_priority;
-				collections::vector<intf_wrapper<ifile_system>> lowest_priority;
+				collections::vector<intf_wrapper<ifile_system>> m_highest_priority;
+				collections::vector<intf_wrapper<ifile_system>> m_lowest_priority;
 
 			public:
 				file_system();
@@ -165,8 +165,8 @@ namespace ang
 				, public ifile_system
 			{
 			private:
-				path_t _root_path;
-				collections::vector<path_t> _paths;
+				path_t m_root_path;
+				collections::vector<path_t> m_paths;
 
 			public:
 				folder_file_system(path_t);

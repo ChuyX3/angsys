@@ -44,24 +44,24 @@ namespace ang
 				visible vcall bool handled()const pure;
 			ang_end_interface();
 
-			ang_begin_interface(LINK icreated_event_args, public imsg_event_args)
+			ang_begin_interface(LINK icreated_event_args, imsg_event_args)
 				visible vcall icore_view_t core_view()const pure;
 				visible vcall icore_app_t core_app()const pure;
 				visible vcall var_args_t args_list()const pure;
 			ang_end_interface();
 
-			ang_begin_interface(LINK ivisibility_change_event_args, public imsg_event_args)
+			ang_begin_interface(LINK ivisibility_change_event_args, imsg_event_args)
 				visible vcall icore_view_t core_view()const pure;
 				visible vcall bool is_visible()const pure;
 			ang_end_interface();
 
-			ang_begin_interface(LINK idisplay_info_event_args, public imsg_event_args)
+			ang_begin_interface(LINK idisplay_info_event_args, imsg_event_args)
 				visible vcall icore_view_t core_view()const pure;
 				visible vcall display_invalidate_reason_t invalidate_reason()const pure;
 				visible vcall display::display_info_t display_info()const pure;
 			ang_end_interface();
 
-			ang_begin_interface(LINK iactivate_event_args, public imsg_event_args)
+			ang_begin_interface(LINK iactivate_event_args, imsg_event_args)
 				visible vcall activate_status_t status()const pure;
 			ang_end_interface();
 
@@ -71,27 +71,27 @@ namespace ang
 				visible vcall graphics::size<float> canvas_size()const pure;
 			ang_end_interface();
 
-			ang_begin_interface(LINK ikey_event_args, public imsg_event_args)
+			ang_begin_interface(LINK ikey_event_args, imsg_event_args)
 				visible vcall char32_t key()const pure;
 				visible vcall input::key_info_t info()const pure;
 			ang_end_interface();
 
-			ang_begin_interface(LINK ipointer_event_args, public imsg_event_args)
+			ang_begin_interface(LINK ipointer_event_args, imsg_event_args)
 				visible vcall graphics::point<float> position()const pure;
 				visible vcall input::key_modifiers_t modifiers()const pure;
 				visible vcall input::poiner_info_t info()const pure;
 			ang_end_interface();
 
-			ang_begin_interface(LINK iapp_status_event_args, public imsg_event_args)
+			ang_begin_interface(LINK iapp_status_event_args, imsg_event_args)
 				visible vcall icore_app_t core_app()const pure;
 			ang_end_interface();
 
-			ang_begin_interface(LINK iupdate_event_args, public imsg_event_args)
+			ang_begin_interface(LINK iupdate_event_args, imsg_event_args)
 				visible vcall double delta()const pure;
 				visible vcall double total()const pure;
 			ang_end_interface();
 
-			ang_begin_interface(LINK itext_change_event_args, public imsg_event_args)
+			ang_begin_interface(LINK itext_change_event_args, imsg_event_args)
 				visible vcall mstring text()const pure;
 				visible vcall input::ikeyboard_t keyboard()const pure;
 			ang_end_interface();

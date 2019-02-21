@@ -17,7 +17,7 @@ namespace ang
 			encoding_t(encoding_t const& v) : value(v) {}
 			encoding_t(type && v) : value(ang::forward<type>(v)) { }
 			encoding_t(encoding_t && v) : value(ang::forward<value>(v)) { }
-			ang::string to_string()const;
+			ang::wstring to_string()const;
 			encoding_t& operator = (type const& v) { get() = v; return*this; }
 			encoding_t& operator = (encoding_t const& v) { get() = v.get(); return*this; }
 			encoding_t& operator = (type && v) { get() = ang::move(v); v = default_value<type>::value; return*this; }

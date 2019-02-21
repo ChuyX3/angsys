@@ -1,5 +1,6 @@
 #pragma once
 
+
 namespace ang
 {
 	namespace text
@@ -20,10 +21,7 @@ namespace ang
 
 			virtual encoding_t format()const override;
 			virtual rtti_t const& char_type()const override;
-			virtual char32 to_char32(unknown_cstr_t str, windex& i)const override;
-			virtual long64 to_signed(unknown_cstr_t str, windex& i, int base)const override;
-			virtual ulong64 to_unsigned(unknown_cstr_t str, windex& i, int base)const override;
-			virtual double to_floating(unknown_cstr_t str, windex& i, bool ex)const override;
+			virtual char32 to_char32(unknown_cstr_t str, windex& i, bool increment)const override;
 			virtual void set_eos(unknown_str_t str, windex at)const override;
 			virtual wsize lenght(unknown_cstr_t cstr)const override;
 			virtual wsize size(unknown_cstr_t cstr, encoding_t e, windex start, windex end)const override;
@@ -37,6 +35,35 @@ namespace ang
 
 		private:
 			virtual~encoder_interface();
+		};
+
+
+		template<encoding ENCODING>
+		class format_parser_interface
+			: public object
+			, public iformat_parser
+		{
+		public:
+			typedef typename char_type_by_encoding<ENCODING>::char_t char_t;
+			typedef typename char_type_by_encoding<ENCODING>::str_t str_t;
+			typedef typename char_type_by_encoding<ENCODING>::cstr_t cstr_t;
+
+			format_parser_interface();
+
+			ANG_DECLARE_INTERFACE();
+
+			virtual encoding_t format()const override;
+		
+			virtual long64 to_signed(unknown_cstr_t str, wsize sz, windex& i, bool increment, int base)const override;
+			virtual ulong64 to_unsigned(unknown_cstr_t str, wsize sz, windex& i, bool increment, int base)const override;
+			virtual double to_floating(unknown_cstr_t str, wsize sz, windex& i, bool increment, bool ex)const override;
+			virtual bool format(unknown_cstr_t format, wsize sz, args_t args, encoding_t e, itext_buffer_ptr_t out)const override;
+			virtual bool format(unknown_cstr_t format, wsize sz, var_args_t args, encoding_t e, itext_buffer_ptr_t out)const override;
+			virtual text_format_t parse(unknown_cstr_t format, wsize sz)const override;
+			virtual text_format_t parse(unknown_cstr_t format, wsize sz, wsize& beg, int& arg)const override;
+
+		private:
+			virtual~format_parser_interface();
 		};
 
 
@@ -66,23 +93,9 @@ namespace ang
 		}
 
 		template<encoding ENCODING>
-		inline char32 encoder_interface<ENCODING>::to_char32(unknown_cstr_t str, windex& i)const {
-			return text::to_char32<false, text::is_endian_swapped<ENCODING>::value>((cstr_t)str, i);
-		}
-
-		template<encoding ENCODING>
-		inline long64 encoder_interface<ENCODING>::to_signed(unknown_cstr_t str, windex& i, int base)const {
-			return str_to_signed<char_t const, ENCODING>((cstr_t)str, i, base);
-		}
-
-		template<encoding ENCODING>
-		inline ulong64 encoder_interface<ENCODING>::to_unsigned(unknown_cstr_t str, windex& i, int base)const {
-			return str_to_unsigned<char_t const, ENCODING>((cstr_t)str, i, base);
-		}
-
-		template<encoding ENCODING>
-		inline double encoder_interface<ENCODING>::to_floating(unknown_cstr_t str, windex& i, bool ex)const {
-			return str_to_floating<char_t const, ENCODING>((cstr_t)str, i, ex);
+		inline char32 encoder_interface<ENCODING>::to_char32(unknown_cstr_t str, windex& i, bool increment)const {
+			windex j = i;
+			return text::to_char32<false, text::is_endian_swapped<ENCODING>::value>((cstr_t)str, increment ? i : j);
 		}
 
 
@@ -231,6 +244,65 @@ namespace ang
 			}
 		}
 
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		template<encoding ENCODING>
+		inline format_parser_interface<ENCODING>::format_parser_interface() {
+
+		}
+
+		template<encoding ENCODING>
+		inline format_parser_interface<ENCODING>::~format_parser_interface() {
+
+		}
+
+		template<encoding ENCODING>
+		inline encoding_t format_parser_interface<ENCODING>::format()const {
+			return ENCODING;
+		}
+
+		template<encoding ENCODING>
+		inline long64 format_parser_interface<ENCODING>::to_signed(unknown_cstr_t str, wsize sz, windex& i, bool increment, int base)const {
+			windex j = i;
+			return str_to_signed<char_t const, ENCODING>(str_view<const char_t, ENCODING>((cstr_t)str, sz), increment ? i : j, base);
+		}
+
+		template<encoding ENCODING>
+		inline ulong64 format_parser_interface<ENCODING>::to_unsigned(unknown_cstr_t str, wsize sz, windex& i, bool increment, int base)const {
+			windex j = i;
+			return str_to_unsigned<char_t const, ENCODING>(str_view<const char_t, ENCODING>((cstr_t)str, sz), increment ? i : j, base);
+		}
+
+		template<encoding ENCODING>
+		inline double format_parser_interface<ENCODING>::to_floating(unknown_cstr_t str, wsize sz, windex& i, bool increment, bool ex)const {
+			windex j = i;
+			return str_to_floating<char_t const, ENCODING>(str_view<const char_t, ENCODING>((cstr_t)str, sz), increment ? i : j, ex);
+		}
+
+		template<encoding ENCODING>
+		inline bool format_parser_interface<ENCODING>::format(unknown_cstr_t format, wsize sz, args_t args, encoding_t e, itext_buffer_ptr_t out)const {
+			return false;
+		}
+
+		template<encoding ENCODING>
+		inline bool format_parser_interface<ENCODING>::format(unknown_cstr_t format, wsize sz, var_args_t args, encoding_t e, itext_buffer_ptr_t out) const {
+			return false;
+		}
+
+		template<encoding ENCODING>
+		inline text_format_t format_parser_interface<ENCODING>::parse(unknown_cstr_t format, wsize sz)const {
+			text_format_flags f;
+			f.value = format_parser<ENCODING>::parse(str_view<const char_t, ENCODING>((cstr_t)format, sz));	
+			return f;
+		}
+
+		template<encoding ENCODING>
+		inline text_format_t format_parser_interface<ENCODING>::parse(unknown_cstr_t format, wsize sz, wsize& beg, int& arg)const {
+			text_format_flags f;
+			f.value = format_parser<ENCODING>::parse(str_view<const char_t, ENCODING>((cstr_t)format, sz), beg, arg);
+			return f;
+		}
 
 	}
 }

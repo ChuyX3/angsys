@@ -59,13 +59,12 @@ namespace ang
 				wait_for_start = 1,
 				running = 1 << 1,
 				wait_for_then = 1 << 2,
-				working = (uint)async_action_status::running | (uint)async_action_status::wait_for_then,
-				//finishing = 1 << 3,
+				working = running | wait_for_then,
 				completed = 1 << 3,
 				canceled = 1 << 4,
-				finished = (uint)async_action_status::canceled | (uint)async_action_status::completed,
-				stopped = (uint)async_action_status::finished | (uint)async_action_status::wait_for_start,
-				not_running = (uint)async_action_status::finished | (uint)async_action_status::wait_for_start | (uint)async_action_status::wait_for_then,
+				finished = canceled | completed,
+				stopped = finished | wait_for_start,
+				not_running = finished | wait_for_start | wait_for_then,
 				attached = 1 << 5,
 				error = 0XFF00,
 			};
@@ -92,7 +91,7 @@ namespace ang
 			/*     its result or any status change                            */
 			/******************************************************************/
 			template<typename T>
-			ang_begin_interface_inline(itask, public iaction<T>)
+			ang_begin_interface_inline(itask, iaction<T>)
 				visible vcall iasync<void> then(delegates::function<void(iasync<T>)>)pure;
 				template<typename U> iasync<U> then(delegates::function<U(iasync<T>)>);
 			ang_end_interface();

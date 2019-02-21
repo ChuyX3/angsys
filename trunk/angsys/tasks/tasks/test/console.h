@@ -30,13 +30,13 @@ namespace ang
 			ang_interface(iconsole_key_event_args);
 			ang_interface(iconsole_mouse_event_args);
 
-			ang_begin_interface(iconsole_key_event_args, public imsg_event_args)
+			ang_begin_interface(iconsole_key_event_args, imsg_event_args)
 				visible vcall input::virtual_key_t key()const pure;
 				visible vcall input::key_modifiers_t modifiers()const pure;
 				visible vcall bool is_primary_action()const pure;
 			ang_end_interface();
 			
-			ang_begin_interface(iconsole_mouse_event_args, public imsg_event_args)
+			ang_begin_interface(iconsole_mouse_event_args, imsg_event_args)
 				visible vcall graphics::point<short> point()const pure;
 			visible vcall input::key_modifiers_t modifiers()const pure;
 			visible vcall bool is_primary_action()const pure;

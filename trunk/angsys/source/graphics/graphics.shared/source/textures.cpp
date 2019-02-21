@@ -62,7 +62,7 @@ tex_type_t graphics::textures::tex_type_t::parse(cwstr_t cstr)
 		return _parse_tex_type_map[idx].value;
 }
 
-cstr_t graphics::textures::tex_type_t::to_string()const
+wstring graphics::textures::tex_type_t::to_string()const
 {
 	wsize idx = ang_binary_search(_value, to_string_tex_type_map);
 	if (idx > array_size(to_string_tex_type_map))
@@ -123,7 +123,7 @@ tex_format_t graphics::textures::tex_format_t::parse(cwstr_t cstr)
 		return _parse_tex_format_map[idx].value;
 }
 
-cstr_t graphics::textures::tex_format_t::to_string()const
+wstring graphics::textures::tex_format_t::to_string()const
 {
 	wsize idx = ang_binary_search(_value, to_string_tex_format_map);
 	if (idx > array_size(to_string_tex_format_map))
@@ -169,7 +169,7 @@ tex_wrap_mode_t graphics::textures::tex_wrap_mode_t::parse(cwstr_t cstr)
 		return _parse_tex_wrap_mode_map[idx].value;
 }
 
-cstr_t graphics::textures::tex_wrap_mode_t::to_string()const
+wstring graphics::textures::tex_wrap_mode_t::to_string()const
 {
 	wsize idx = ang_binary_search(_value, to_string_tex_wrap_mode_map);
 	if (idx > array_size(to_string_tex_wrap_mode_map))

@@ -4,6 +4,7 @@ basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer()
 	: basic_string_buffer_base()
 {
 	_encoder = iencoder::get_encoder(MY_ENCODING);
+	_parser = iformat_parser::get_parser(MY_ENCODING);
 }
 
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(wsize reserv)

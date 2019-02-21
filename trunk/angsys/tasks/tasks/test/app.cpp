@@ -7,6 +7,9 @@ using namespace ang::platform::console;
 
 //////////////////////////////////////////////////////////////////
 
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::iconsole_key_event_args, ang::platform::events::imsg_event_args);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::iconsole_mouse_event_args, ang::platform::events::imsg_event_args);
+
 namespace ang
 {
 	namespace platform

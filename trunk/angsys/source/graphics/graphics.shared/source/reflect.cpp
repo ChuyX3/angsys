@@ -78,7 +78,7 @@ static collections::pair<cstr_t, graphics::reflect::var_type> _parse_var_type_ma
 //		return _parse_var_type_map[idx].value;
 //}
 
-string graphics::reflect::var_type_t::to_string()const
+wstring graphics::reflect::var_type_t::to_string()const
 {
 	wsize idx = algorithms::binary_search(get(), collections::to_array(to_string_var_type_map));
 	if (idx > algorithms::array_size(to_string_var_type_map))
@@ -130,7 +130,7 @@ static collections::pair<cstr_t, graphics::reflect::var_class> _parse_var_class_
 //		return _parse_var_class_map[idx].value;
 //}
 
-string graphics::reflect::var_class_t::to_string()const
+wstring graphics::reflect::var_class_t::to_string()const
 {
 	wsize idx = algorithms::binary_search(get(), collections::to_array(to_string_var_class_map));
 	if (idx > algorithms::array_size(to_string_var_class_map))
@@ -184,7 +184,7 @@ static collections::pair<cstr_t, graphics::reflect::var_semantic> _parse_var_sem
 //		return _parse_var_semantic_map[idx].value;
 //}
 
-string graphics::reflect::var_semantic_t::to_string()const
+wstring graphics::reflect::var_semantic_t::to_string()const
 {
 	wsize idx = algorithms::binary_search(get(), collections::to_array(to_string_var_semantic_map));
 	if (idx > algorithms::array_size(to_string_var_semantic_map))

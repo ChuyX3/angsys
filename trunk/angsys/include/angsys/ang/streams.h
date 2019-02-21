@@ -104,7 +104,7 @@ namespace ang
 		ang_end_interface();
 
 		
-		ang_begin_interface(LINK itext_input_stream, public iinput_stream)
+		ang_begin_interface(LINK itext_input_stream, iinput_stream)
 			visible vcall wsize read_format(raw_cstr_t format, var_args_t&)pure;
 			visible vcall wsize read(ibuffer_view_t, text::encoding_t, wsize*written = null)pure;
 			visible vcall wsize read_line(ibuffer_view_t, text::encoding_t, array_view<const char32_t> = U"\n\r", wsize*written=null)pure;
@@ -115,7 +115,7 @@ namespace ang
 		ang_end_interface();
 
 
-		ang_begin_interface(LINK itext_output_stream, public ioutput_stream)
+		ang_begin_interface(LINK itext_output_stream, ioutput_stream)
 			visible vcall bool command(special_command_t) pure;
 			visible vcall wsize write(raw_cstr_t)pure;
 			visible vcall wsize write_line(raw_cstr_t)pure;
@@ -127,13 +127,13 @@ namespace ang
 		ang_end_interface();
 
 
-		ang_begin_interface(LINK ibinary_input_stream, public iinput_stream)
+		ang_begin_interface(LINK ibinary_input_stream, iinput_stream)
 			visible vcall wsize read(pointer, wsize)pure;
 			template<typename T> inline wsize read(T& value);
 		ang_end_interface();
 
 
-		ang_begin_interface(LINK ibinary_output_stream, public ioutput_stream)
+		ang_begin_interface(LINK ibinary_output_stream, ioutput_stream)
 			visible vcall wsize write(pointer, wsize)pure;
 			template<typename T> inline wsize write(T const& value);
 		ang_end_interface();

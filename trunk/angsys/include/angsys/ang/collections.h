@@ -69,7 +69,7 @@ namespace ang
 		/*     can be accessed unorderly                                  */
 		/******************************************************************/
 		template<typename T>
-		ang_begin_interface_inline(iarray, public ienum<T>)
+		ang_begin_interface_inline(iarray, ienum<T>)
 			using ienum<T>::at;
 			visible vcall iterator<T> at(windex) pure;
 			visible vcall const_iterator<T> at(windex)const pure;
@@ -85,7 +85,7 @@ namespace ang
 		/*     can insert or remove elements randoml y                    */
 		/******************************************************************/
 		template<typename T>
-		ang_begin_interface_inline(ilist, public iarray<T>)
+		ang_begin_interface_inline(ilist, iarray<T>)
 			visible vcall void extend(const ienum<T>*) pure;
 			visible vcall void push(T const&, bool last = true) pure;
 			visible vcall bool insert(windex idx, T const&) pure;
@@ -104,7 +104,7 @@ namespace ang
 		/*     can insert or remove elements sequentially                 */
 		/******************************************************************/
 		template<typename T>
-		ang_begin_interface_inline(isequence, public ienum<T>)
+		ang_begin_interface_inline(isequence, ienum<T>)
 			visible vcall void extend(const ienum<T>*) pure;
 			visible vcall void push(T const&) pure;
 			visible vcall bool pop() pure;
@@ -118,7 +118,7 @@ namespace ang
 		/*     can be accessed by a key                                   */
 		/******************************************************************/
 		template<typename T>
-		ang_begin_interface_inline(iset, public ienum<T>)
+		ang_begin_interface_inline(iset, ienum<T>)
 			visible vcall bool copy(const ienum<T>*) pure;
 			visible vcall void extend(const ienum<T>*) pure;
 			visible vcall bool insert(T) pure;
@@ -136,7 +136,7 @@ namespace ang
 		/*     can be accessed by a key                                   */
 		/******************************************************************/
 		template<typename K, typename T>
-		ang_begin_interface_inline(imap, public ienum<pair<K COMA T>>)
+		ang_begin_interface_inline(imap, ienum<pair<K COMA T>>)
 			visible vcall bool copy(const ienum<pair<K, T>>*) pure;
 			visible vcall void extend(const ienum<pair<K, T>>*) pure;
 			visible vcall bool insert(K, T) pure;

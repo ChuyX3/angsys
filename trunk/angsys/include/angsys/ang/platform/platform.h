@@ -421,7 +421,7 @@ namespace ang
 			void parse(cwstr_t);
 
 		public: //Override
-			string to_string()const;
+			wstring to_string()const;
 
 		public: //Operators
 

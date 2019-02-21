@@ -685,7 +685,7 @@ void graphics::color::parse(cwstr_t cstr)
 	}
 }
 
-string graphics::color::to_string()const
+wstring graphics::color::to_string()const
 {
 	wsize idx = algorithms::binary_search<dword, collections::pair<graphics::colors, cstr_t>>(code, to_string_color_map);
 	if (idx > algorithms::array_size(to_string_color_map))

@@ -221,7 +221,7 @@ namespace ang //constants
 		_name##_t(_name##_t const& v) : value(v) {} \
 		_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
 		_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
-		ang::string to_string()const; \
+		ang::wstring to_string()const; \
 		_name##_t& operator = (type const& v){ get() = v; return*this; } \
 		_name##_t& operator = (_name##_t const& v) { get() = v.get(); return*this; } \
 		_name##_t& operator = (type && v) { get() = ang::move(v); v = default_value<type>::value; return*this; } \
@@ -255,7 +255,7 @@ namespace ang //constants
 		_name##_t(_name##_t const& v) : value(v) {} \
 		_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
 		_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
-		ang::string to_string()const; \
+		ang::wstring to_string()const; \
 		_name##_t& operator = (type const& v){ get() = v; return*this; } \
 		_name##_t& operator = (_name##_t const& v) { get() = v.get(); return*this; } \
 		_name##_t& operator = (type && v) { get() = ang::move(v); v = default_value<type>::value; return*this; } \

@@ -1,11 +1,14 @@
 #include "pch.h"
 #include "angsys.h"
+
+#include "format_parser.h"
 #include "encoder_interface.h"
 
 using namespace ang;
 using namespace ang::text;
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::iencoder, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::iformat_parser, interface);
 
 TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, ascii);
 TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, unicode);
@@ -120,6 +123,52 @@ template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::encoder_interface<encodi
 template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::encoder_interface<encoding::utf32_be>, object, iencoder);
 
 
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::format_parser_interface<encoding::ascii>, object, iformat_parser);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::format_parser_interface<encoding::ascii>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::format_parser_interface<encoding::ascii>, object, iformat_parser);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::format_parser_interface<encoding::unicode>, object, iformat_parser);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::format_parser_interface<encoding::unicode>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::format_parser_interface<encoding::unicode>, object, iformat_parser);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::format_parser_interface<encoding::utf8>, object, iformat_parser);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::format_parser_interface<encoding::utf8>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::format_parser_interface<encoding::utf8>, object, iformat_parser);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::format_parser_interface<encoding::utf16>, object, iformat_parser);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::format_parser_interface<encoding::utf16>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::format_parser_interface<encoding::utf16>, object, iformat_parser);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::format_parser_interface<encoding::utf16_se>, object, iformat_parser);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::format_parser_interface<encoding::utf16_se>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::format_parser_interface<encoding::utf16_se>, object, iformat_parser);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::format_parser_interface<encoding::utf16_le>, object, iformat_parser);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::format_parser_interface<encoding::utf16_le>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::format_parser_interface<encoding::utf16_le>, object, iformat_parser);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::format_parser_interface<encoding::utf16_be>, object, iformat_parser);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::format_parser_interface<encoding::utf16_be>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::format_parser_interface<encoding::utf16_be>, object, iformat_parser);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::format_parser_interface<encoding::utf32>, object, iformat_parser);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::format_parser_interface<encoding::utf32>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::format_parser_interface<encoding::utf32>, object, iformat_parser);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::format_parser_interface<encoding::utf32_se>, object, iformat_parser);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::format_parser_interface<encoding::utf32_se>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::format_parser_interface<encoding::utf32_se>, object, iformat_parser);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::format_parser_interface<encoding::utf32_le>, object, iformat_parser);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::format_parser_interface<encoding::utf32_le>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::format_parser_interface<encoding::utf32_le>, object, iformat_parser);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::format_parser_interface<encoding::utf32_be>, object, iformat_parser);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::format_parser_interface<encoding::utf32_be>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::format_parser_interface<encoding::utf32_be>, object, iformat_parser);
+
+
 ang::raw_str::raw_str()
 	: _value(null)
 	, _size(0)
@@ -221,7 +270,7 @@ static collections::pair<cstr_t, ang::text::encoding> s_encoding_parse[] =
 
 safe_enum_rrti2(ang::text, encoding);
 
-string encoding_t::to_string()const
+wstring encoding_t::to_string()const
 {
 	auto idx = algorithms::binary_search(get(), collections::to_array(s_encoding_to_string));
 	if (idx >= algorithms::array_size(s_encoding_to_string))

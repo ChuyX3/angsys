@@ -40,9 +40,12 @@ ANG_EXTERN ulong64 get_performance_time_us()
 int main(int argc, char* argv[])
 {	
 	wstring str;
-	core::files::input_text_file_t file = new core::files::input_text_file(L"C:\\Users\\Jesus Rocha\\Desktop\\airfoil_2312_core.txt"_s);
+	core::files::input_text_file_t file = new core::files::input_text_file(L".\\airfoil.dat"_s);
 	
-	file->read_line(str, 100);
+	var_args_t args;
+	file->read_format("A18 (original)\n {f:} {f:}"_s, args);
+
+
 
 	return 0;
 }

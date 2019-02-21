@@ -33,9 +33,9 @@ core::files::ifile_system_t core::files::ifile_system::fs_instance() {
 
 file_system::file_system()
 {
-	_paths = new collections::vector_buffer<path_t>();
-	highest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();
-	lowest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();
+	m_paths = new collections::vector_buffer<path_t>();
+	m_highest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();
+	m_lowest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();
 }
 
 file_system::~file_system()
@@ -54,12 +54,12 @@ bool file_system::register_file_system(ifile_system* fs, file_system_priority_t 
 
 	if (prio == file_system_priority::highest)
 	{
-		highest_priority += fs;
+		m_highest_priority += fs;
 		return true;
 	}
 	else if (prio == file_system_priority::lowest)
 	{
-		highest_priority += fs;
+		m_highest_priority += fs;
 		return true;
 	}
 	
@@ -68,12 +68,12 @@ bool file_system::register_file_system(ifile_system* fs, file_system_priority_t 
 
 array_view<path_t> file_system::paths(file_system_priority_t p)const
 {
-	return _paths;
+	return m_paths;
 }
 
 void file_system::push_path(path_view_t path, file_system_priority_t p)
 {
-	auto it = _paths->find([&](path_t const& p)
+	auto it = m_paths->find([&](path_t const& p)
 	{ 
 		return path == (path_view_t)p;
 	});
@@ -83,11 +83,11 @@ void file_system::push_path(path_view_t path, file_system_priority_t p)
 
 	if (p == file_system_priority::highest)
 	{
-		_paths->push(path, false);
+		m_paths->push(path, false);
 	}
 	else if (p == file_system_priority::lowest)
 	{
-		_paths->push(path, true);
+		m_paths->push(path, true);
 	}
 }
 
@@ -96,7 +96,7 @@ bool file_system::open_file(path_view_t path, open_flags_t flags, ifile_ptr_t ou
 	if (out.is_empty())
 		return false;
 
-	for(auto fs : highest_priority)
+	for(auto fs : m_highest_priority)
 	{
 		if (fs->open_file(path, flags, out))
 			return true;
@@ -111,7 +111,7 @@ bool file_system::open_file(path_view_t path, open_flags_t flags, ifile_ptr_t ou
 	}
 	else
 	{
-		for (auto p : _paths)
+		for (auto p : m_paths)
 		{
 			path_t _path = (p + "/"_s) += path;
 			file->create(_path, flags);
@@ -123,7 +123,7 @@ bool file_system::open_file(path_view_t path, open_flags_t flags, ifile_ptr_t ou
 		}
 	}
 
-	for (auto fs : lowest_priority)
+	for (auto fs : m_lowest_priority)
 	{
 		if (fs->open_file(path, flags, out))
 			return true;
@@ -189,13 +189,13 @@ bool file_system::open(path_view_t path, output_binary_file_ptr_t out)
 //folder_file_system::folder_file_system(path root)
 //{
 //	_root_path = root;
-//	_paths = new collections::vector_buffer<path>();
+//	m_paths = new collections::vector_buffer<path>();
 //}
 //
 //folder_file_system::~folder_file_system()
 //{
 //	_root_path = null;
-//	_paths = null;
+//	m_paths = null;
 //}
 //
 //ANG_IMPLEMENT_CLASSNAME(ang::core::files::folder_file_system);
@@ -239,15 +239,15 @@ bool file_system::open(path_view_t path, output_binary_file_ptr_t out)
 //
 //array<path> folder_file_system::paths()const
 //{
-//	return static_cast<collections::ienum<path> const*>(_paths.get());
+//	return static_cast<collections::ienum<path> const*>(m_paths.get());
 //}
 //
 //bool folder_file_system::register_paths(path_view_t path)
 //{
-//	auto it = _paths->find([&](path_t const& p) { return path == (path_view_t)p; });
+//	auto it = m_paths->find([&](path_t const& p) { return path == (path_view_t)p; });
 //	if (it.is_valid())
 //		return false;
-//	_paths += path;
+//	m_paths += path;
 //	return true;
 //}
 //
@@ -267,7 +267,7 @@ bool file_system::open(path_view_t path, output_binary_file_ptr_t out)
 //	}
 //	else
 //	{
-//		for (auto it = _paths->begin(), end = _paths->end(); it != end; ++it)
+//		for (auto it = m_paths->begin(), end = m_paths->end(); it != end; ++it)
 //		{
 //			_path = (((_root_path + "\\"_s) += (*it)) += "\\"_s) += path;
 //			file->create(_path, flags);

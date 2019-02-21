@@ -11,18 +11,16 @@
 #include "pch.h"
 #include "angsys.h"
 #include "ang_memory.h"
-#include "encoder_interface.h"
 #include "runtime_manager.h"
 #include "thread_manager.h"
 #include "file_system.h"
 
+#include "encoder_interface.h"
+#include "format_parser.h"
+
 #include <ang/dom/xml.h>
-
 #include <ang/platform/platform.h>
-//#include "ang/core/async.h"
-
 #include <ang/collections/hash_map.h>
-
 #include <ang/core/timer.h>
 
 using namespace ang;
@@ -111,6 +109,18 @@ namespace ang
 			utf32_se_encoder = null;
 			utf32_le_encoder = null;
 			utf32_be_encoder = null;
+
+			ascii_parser = null;
+			unicode_parser = null;
+			utf8_parser = null;
+			utf16_parser = null;
+			utf16_se_parser = null;
+			utf16_le_parser = null;
+			utf16_be_parser = null;
+			utf32_parser = null;
+			utf32_se_parser = null;
+			utf32_le_parser = null;
+			utf32_be_parser = null;
 			
 			objects->~object_manager();	
 			free(objects);			
@@ -140,6 +150,18 @@ namespace ang
 		text::iencoder_t utf32_se_encoder;
 		text::iencoder_t utf32_le_encoder;
 		text::iencoder_t utf32_be_encoder;
+
+		text::iformat_parser_t ascii_parser;
+		text::iformat_parser_t unicode_parser;
+		text::iformat_parser_t utf8_parser;
+		text::iformat_parser_t utf16_parser;
+		text::iformat_parser_t utf16_se_parser;
+		text::iformat_parser_t utf16_le_parser;
+		text::iformat_parser_t utf16_be_parser;
+		text::iformat_parser_t utf32_parser;
+		text::iformat_parser_t utf32_se_parser;
+		text::iformat_parser_t utf32_le_parser;
+		text::iformat_parser_t utf32_be_parser;
 	};
 
 	static struct ang_main_instance_constructor
@@ -234,6 +256,43 @@ text::iencoder_t text::iencoder::get_encoder(text::encoding_t e)
 	}
 }
 
+
+
+text::iformat_parser_t text::iformat_parser::get_parser(text::encoding_t e)
+{
+	static struct _initializer
+	{
+		_initializer() {
+			ang_main_instance::instance()->ascii_parser = new text::format_parser_interface<text::encoding::ascii>();
+			ang_main_instance::instance()->unicode_parser = new text::format_parser_interface<text::encoding::unicode>();
+			ang_main_instance::instance()->utf8_parser = new text::format_parser_interface<text::encoding::utf8>();
+			ang_main_instance::instance()->utf16_parser = new text::format_parser_interface<text::encoding::utf16>();
+			ang_main_instance::instance()->utf16_se_parser = new text::format_parser_interface<text::encoding::utf16_se>();
+			ang_main_instance::instance()->utf16_le_parser = new text::format_parser_interface<text::encoding::utf16_le>();
+			ang_main_instance::instance()->utf16_be_parser = new text::format_parser_interface<text::encoding::utf16_be>();
+			ang_main_instance::instance()->utf32_parser = new text::format_parser_interface<text::encoding::utf32>();
+			ang_main_instance::instance()->utf32_se_parser = new text::format_parser_interface<text::encoding::utf32_se>();
+			ang_main_instance::instance()->utf32_le_parser = new text::format_parser_interface<text::encoding::utf32_le>();
+			ang_main_instance::instance()->utf32_be_parser = new text::format_parser_interface<text::encoding::utf32_be>();
+		}
+	}s_initializer;
+
+	switch (e.get())
+	{
+	case text::encoding::ascii: return ang_main_instance::instance()->ascii_parser;
+	case text::encoding::unicode: return ang_main_instance::instance()->unicode_parser;
+	case text::encoding::utf8: return ang_main_instance::instance()->utf8_parser;
+	case text::encoding::utf16: return ang_main_instance::instance()->utf16_parser;
+	case text::encoding::utf16_se: return ang_main_instance::instance()->utf16_se_parser;
+	case text::encoding::utf16_le: return ang_main_instance::instance()->utf16_le_parser;
+	case text::encoding::utf16_be: return ang_main_instance::instance()->utf32_be_parser;
+	case text::encoding::utf32: return ang_main_instance::instance()->utf32_parser;
+	case text::encoding::utf32_se: return ang_main_instance::instance()->utf32_se_parser;
+	case text::encoding::utf32_le: return ang_main_instance::instance()->utf32_le_parser;
+	case text::encoding::utf32_be: return ang_main_instance::instance()->utf32_be_parser;
+	default: return null;
+	}
+}
 
 
 static const ang_uint32_t list[] = {

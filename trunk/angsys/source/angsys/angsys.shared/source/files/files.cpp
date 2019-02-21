@@ -28,7 +28,7 @@ safe_enum_rrti2(ang::core::files, file_system_priority);
 //#undef MY_TYPE
 //#undef MY_ALLOCATOR
 
-string file_system_priority_t::to_string()const
+wstring file_system_priority_t::to_string()const
 {
 	switch (get())
 	{
@@ -126,7 +126,7 @@ text::encoding_t ang::core::files::get_format(open_flags_t encoding)
 ////////////////////////////////////////////////////////////////////////////////////
 
 file::file()
-	: hfile(null)
+	: m_hfile(null)
 
 {
 }
@@ -145,7 +145,7 @@ bool file::create(path_view_t path, open_flags_t flags)
 	auto fs = ifile_system::fs_instance();
 	if (fs == null)
 		return false;
-	if (!fs->open_file(path , flags, &hfile))
+	if (!fs->open_file(path , flags, &m_hfile))
 		return false;
 
 	return true;
@@ -154,48 +154,48 @@ bool file::create(path_view_t path, open_flags_t flags)
 bool file::attach(ifile* f)
 {
 	clear();
-	hfile = f;
+	m_hfile = f;
 	return true;
 }
 
 ibuffer_t file::map(wsize size, file_offset_t offset)
 {
-	if (hfile.is_empty())
+	if (m_hfile.is_empty())
 		return null;
-	return hfile->map(size, offset);
+	return m_hfile->map(size, offset);
 }
 
 bool file::unmap(ibuffer_t buffer, wsize size)
 {
 	if (buffer.is_empty())
 		return false;
-	return hfile->unmap(buffer, size);
+	return m_hfile->unmap(buffer, size);
 }
 
 bool file::is_valid()const
 {
-	return !hfile.is_empty();
+	return !m_hfile.is_empty();
 }
 
 //file_size_t file::size()const
 //{
-//	return is_valid() ? hfile->stream_size() : 0;
+//	return is_valid() ? m_hfile->stream_size() : 0;
 //}
 
 //bool file::size(file_size_t size)
 //{
-//	if(hfile.is_empty())
+//	if(m_hfile.is_empty())
 //		return false;
 //
-//	if (hfile->stream_size() > size)
-//		return hfile->stream_size(size);
-//	file_size_t pos = hfile->position();
-//	switch (hfile->mode().get())
+//	if (m_hfile->stream_size() > size)
+//		return m_hfile->stream_size(size);
+//	file_size_t pos = m_hfile->position();
+//	switch (m_hfile->mode().get())
 //	{
 //	case streams::stream_mode::out:
 //	case streams::stream_mode::inout: 		
-//		hfile->move_to(size, file_reference::begin);
-//		hfile->move_to(pos, file_reference::begin);
+//		m_hfile->move_to(size, file_reference::begin);
+//		m_hfile->move_to(pos, file_reference::begin);
 //		return true;
 //	default:
 //		return false;
@@ -204,15 +204,15 @@ bool file::is_valid()const
 
 streams::stream_mode_t file::mode()const
 {
-	return is_valid() ? hfile->mode().get() : streams::stream_mode::unknow;
+	return is_valid() ? m_hfile->mode().get() : streams::stream_mode::unknow;
 }
 
 bool file::set_mutex(core::async::mutex_ptr_t mutex)
 {
-	return is_valid() ? hfile->set_mutex(mutex) : false;
+	return is_valid() ? m_hfile->set_mutex(mutex) : false;
 }
 
 void file::clear()
 {
-	hfile = null;
+	m_hfile = null;
 }
