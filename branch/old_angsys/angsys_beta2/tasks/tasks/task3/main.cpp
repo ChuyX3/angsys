@@ -100,6 +100,8 @@ bool d3d11::main_app::init_app(ang::array<ang::string> cmdl)
 {
 	app::init_app(cmdl);
 
+	core::files::ifile_system::get_file_system()->register_paths(L"..\\..\\..\\..\\..\\..\\trunk\\angsys\\third_party\\"_s);
+
 	window_t wnd = new d3d11::main_wnd();
 
 	wnd->created_event += new events::created_event(_engine, &engine::on_create_event);
@@ -110,7 +112,7 @@ bool d3d11::main_app::init_app(ang::array<ang::string> cmdl)
 	wnd->mouse_button_released_event += new events::pointer_moved_event(_engine, &engine::on_pointer_released_event);
 
 	if (!wnd->create(new wnd_create_args(
-		"d3d11_core_view_wnd", "d3d11 Task3", { 100,100, 1124, 900 }
+		"d3d11_core_view_wnd", "d3d11 Task3", { 100, 100, 1280, 800 }
 	)))
 		return false;
 	set_main_wnd(wnd);

@@ -23,5 +23,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include <Xinput.h>
+#pragma comment(lib,"xinput.lib")
+
 //#define VK_NO_PROTOTYPES
 //#include <vulkan\vulkan.h>

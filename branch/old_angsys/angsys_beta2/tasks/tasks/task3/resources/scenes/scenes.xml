@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <scene>
   <sources>
-    <file sid="GIRL_MODEL_OBJ">resources/Girl/girl.bom</file>
+    <file sid="GIRL_MODEL_OBJ">resources/Girl/girl.obj</file>
     <file sid="BEAUTIFULGIRL_MODEL_OBJ">resources/BeautifulGirl/Beautiful Girl.obj</file>
     <file sid="SKYBOX_XML">resources/models/skybox.xml</file>
   </sources>

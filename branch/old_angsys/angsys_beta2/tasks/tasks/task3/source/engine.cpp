@@ -56,6 +56,7 @@ void engine::update(shared_ptr<core::time::step_timer> timer)
 	a2 += timer->delta() / 1000000.0;
 	a3 += timer->delta() / 1000000.0;
 	scene->update(timer->delta(), timer->total());
+	update_controller(timer->delta());
 }
 
 void engine::draw()
@@ -173,4 +174,83 @@ void engine::close_driver()
 	_is_running = false;
 	surface = null;
 	driver = null;
+}
+
+
+#define INPUT_DEADZONE 10000
+
+void engine::update_controller(float delta)
+{
+	delta /= 1000.0f;
+
+	if (camera.is_empty())
+		return;
+
+	XINPUT_STATE state;
+	ZeroMemory(&state, sizeof(XINPUT_STATE));
+
+	if (XInputGetState(0, &state) == ERROR_SUCCESS)
+	{
+
+		float LX = state.Gamepad.sThumbLX;
+		float LY = state.Gamepad.sThumbLY;
+
+		//determine how far the controller is pushed
+		float magnitude = sqrt(LX*LX + LY * LY);
+
+		//determine the direction the controller is pushed
+		float normalizedLX = LX / magnitude;
+		float normalizedLY = LY / magnitude;
+
+		float normalizedMagnitude = 0;
+
+		//check if the controller is outside a circular dead zone
+		if (magnitude > INPUT_DEADZONE)
+		{
+			//clip the magnitude at its expected maximum value
+			if (magnitude > 32767) magnitude = 32767;
+
+			//adjust magnitude relative to the end of the dead zone
+			magnitude -= INPUT_DEADZONE;
+
+			//optionally normalize the magnitude with respect to its expected range
+			//giving a magnitude value of 0.0 to 1.0
+			normalizedMagnitude = magnitude / (32767 - INPUT_DEADZONE);
+		}
+		else //if the controller is in the deadzone zero out the magnitude
+		{
+			magnitude = 0.0;
+			normalizedMagnitude = 0.0;
+		}
+
+
+		if (normalizedMagnitude > 0)
+		{
+			camera->rotate_left(delta / 3.0f * normalizedMagnitude * normalizedLX);
+			camera->rotate_up(-delta / 3.0f * normalizedMagnitude * normalizedLY);
+		}
+
+		float speed = (25.5f + float(state.Gamepad.bRightTrigger))
+			/ (25.5f + float(state.Gamepad.bLeftTrigger));
+
+		if ((state.Gamepad.wButtons & 0x4000) == 0x4000)
+		{
+			camera->move_forward(delta * speed);
+		}
+
+		if ((state.Gamepad.wButtons & 0x1000) == 0x1000)
+		{
+			camera->move_backward(delta * speed);
+		}
+
+		if ((state.Gamepad.wButtons & 0x100) == 0x100)
+		{
+			camera->move_left(delta * speed);
+		}
+
+		if ((state.Gamepad.wButtons & 0x200) == 0x200)
+		{
+			camera->move_right(delta * speed);
+		}
+	}
 }
