@@ -96,7 +96,7 @@ bool basic_string_buffer<MY_ENCODING>::realloc(wsize new_size, bool save)
 	if (_map_index != (wsize)invalid_index || _map_size != (wsize)invalid_index)
 		return false;
 	if (_data._storage_type == storage_type_string_pool)
-		new_size = save ? max(_data._const_string->text_buffer().count(), new_size) : new_size;
+		new_size = save ? max(_data._const_string->cstr().count(), new_size) : new_size;
 	else if (capacity() > new_size)
 		return true;
 
@@ -120,14 +120,22 @@ bool basic_string_buffer<MY_ENCODING>::realloc(wsize new_size, bool save)
 	return true;
 }
 
+raw_str_t basic_string_buffer<MY_ENCODING>::str(int) {
+	return basic_string_buffer_base::str();
+}
+
+raw_cstr_t basic_string_buffer<MY_ENCODING>::cstr(int)const {
+	return basic_string_buffer_base::cstr();
+}
+
 str_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING> basic_string_buffer<MY_ENCODING>::str()
 { 
-	return this ? text_buffer().to_str<ENCODING>() : str_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING>();
+	return this ? str(0).to_str<ENCODING>() : str_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING>();
 }
 
 cstr_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING> basic_string_buffer<MY_ENCODING>::cstr()const
 {
-	return this ? text_buffer().to_cstr<ENCODING>() : cstr_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING>();
+	return this ? cstr(0).to_cstr<ENCODING>() : cstr_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING>();
 }
 
 
@@ -145,26 +153,26 @@ void basic_string_buffer<MY_ENCODING>::format(cstr_t f, var_args_t args)
 //////////////////////////////////////////////////////////////////////////////
 
 
-ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper() : _ptr(null) {
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper() : m_ptr(null) {
 	set(new basic_string_buffer<MY_ENCODING>());
 }
 
-ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(basic_string_buffer<MY_ENCODING>* ptr) : _ptr(null) {
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(basic_string_buffer<MY_ENCODING>* ptr) : m_ptr(null) {
 	set(ptr);
 }
 
-ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(object_wrapper && other) : _ptr(null) {
-	basic_string_buffer<MY_ENCODING> * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(object_wrapper && other) : m_ptr(null) {
+	basic_string_buffer<MY_ENCODING> * temp = other.m_ptr;
+	other.m_ptr = null;
+	m_ptr = temp;
 }
 
-ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(object_wrapper const& other) : _ptr(null) {
-	set(other._ptr);
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(object_wrapper const& other) : m_ptr(null) {
+	set(other.m_ptr);
 }
 
 
-ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(std::nullptr_t const&) : _ptr(null) {
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(std::nullptr_t const&) : m_ptr(null) {
 }
 
 
@@ -173,35 +181,35 @@ ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::~object_wrapper() { reset
 
 void ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::reset()
 {
-	if (_ptr)_ptr->release();
-	_ptr = null;
+	if (m_ptr)m_ptr->release();
+	m_ptr = null;
 }
 
 
 void ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::reset_unsafe()
 {
-	_ptr = null;
+	m_ptr = null;
 }
 
 
 bool ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::is_empty()const
 {
-	return _ptr == null;
+	return m_ptr == null;
 }
 
 
 basic_string_buffer<MY_ENCODING>* ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::get(void)const
 {
-	return _ptr;
+	return m_ptr;
 }
 
 
 void ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::set(basic_string_buffer<MY_ENCODING>* ptr)
 {
-	basic_string_buffer<MY_ENCODING> * temp = _ptr;
-	if (ptr == _ptr) return;
-	_ptr = ptr;
-	if (_ptr)_ptr->add_ref();
+	basic_string_buffer<MY_ENCODING> * temp = m_ptr;
+	if (ptr == m_ptr) return;
+	m_ptr = ptr;
+	if (m_ptr)m_ptr->add_ref();
 	if (temp)temp->release();
 }
 
@@ -223,22 +231,22 @@ ang::object_wrapper<basic_string_buffer<MY_ENCODING>>& ang::object_wrapper<basic
 	if (this == &other)
 		return *this;
 	reset();
-	_ptr = other._ptr;
-	other._ptr = null;
+	m_ptr = other.m_ptr;
+	other.m_ptr = null;
 	return*this;
 }
 
 
 ang::object_wrapper<basic_string_buffer<MY_ENCODING>>& ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator = (ang::object_wrapper<basic_string_buffer<MY_ENCODING>> const& other)
 {
-	set(other._ptr);
+	set(other.m_ptr);
 	return*this;
 }
 
 
 basic_string_buffer<MY_ENCODING> ** ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::addres_of(void)
 {
-	return &_ptr;
+	return &m_ptr;
 }
 
 

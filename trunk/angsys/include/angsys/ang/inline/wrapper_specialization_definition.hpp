@@ -17,7 +17,7 @@
 		typedef MY_TYPE const* ctype_ptr; \
 		typedef MY_TYPE const& ctype_ref; \
 	private: \
-		type* _ptr; \
+		type* m_ptr; \
 	public: \
 		object_wrapper(); \
 		object_wrapper(type*); \
@@ -57,7 +57,7 @@
 		typedef MY_TYPE const* ctype_ptr; \
 		typedef MY_TYPE const& ctype_ref; \
 	protected: \
-		type* _ptr; \
+		type* m_ptr; \
 	public: \
 		intf_wrapper(); \
 		intf_wrapper(type*); \

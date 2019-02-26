@@ -183,27 +183,27 @@ int event_listener::operator() (platform::events::imsg_event_args_t args)const
 //////////////////////////////////////////////////////////////////////////////////////
 
 event_t::object_wrapper()
-	: _ptr(null)
+	: m_ptr(null)
 {
 
 }
 
 event_t::object_wrapper(event_t && other)
-	: _ptr(null)
+	: m_ptr(null)
 {
-	function_object <void(object*, platform::events::imsg_event_args*)> * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
+	function_object <void(object*, platform::events::imsg_event_args*)> * temp = other.m_ptr;
+	other.m_ptr = null;
+	m_ptr = temp;
 }
 
 event_t::object_wrapper(event_t const& other)
-	: _ptr(null)
+	: m_ptr(null)
 {
 	set(other.get());
 }
 
 event_t::object_wrapper(platform::events::event* ev)
-	: _ptr(null)
+	: m_ptr(null)
 {
 	set(ev);
 }
@@ -215,45 +215,45 @@ event_t::~object_wrapper()
 
 void event_t::reset()
 {
-	if (_ptr)_ptr->release();
-	_ptr = null;
+	if (m_ptr)m_ptr->release();
+	m_ptr = null;
 }
 
 void event_t::reset_unsafe()
 {
-	_ptr = null;
+	m_ptr = null;
 }
 
 bool event_t::is_empty()const
 {
-	return _ptr == null;
+	return m_ptr == null;
 }
 
 platform::events::event* event_t::get(void)const
 {
-	return _ptr;
+	return m_ptr;
 }
 
 void event_t::set(platform::events::event* ptr)
 {
-	function_object <void(object*, platform::events::imsg_event_args*)> * temp = _ptr;
-	if (ptr == _ptr) return;
-	_ptr = ptr;
-	if (_ptr)_ptr->add_ref();
+	function_object <void(object*, platform::events::imsg_event_args*)> * temp = m_ptr;
+	if (ptr == m_ptr) return;
+	m_ptr = ptr;
+	if (m_ptr)m_ptr->add_ref();
 	if (temp)temp->release();
 }
 
 event_t& event_t::operator = (event_t && other)
 {
-	function_object <void(object*, platform::events::imsg_event_args*)> * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
+	function_object <void(object*, platform::events::imsg_event_args*)> * temp = other.m_ptr;
+	other.m_ptr = null;
+	m_ptr = temp;
 	return*this;
 }
 
 event_t& event_t::operator = (event_t const& other)
 {
-	set(other._ptr);
+	set(other.m_ptr);
 	return*this;
 }
 
@@ -265,7 +265,7 @@ event_t& event_t::operator = (platform::events::event* ev)
 
 void event_t::operator () (objptr caller, platform::events::imsg_event_args_t args)const
 {
-	if (_ptr)
-		_ptr->invoke(ang::move(caller), ang::move(args));
+	if (m_ptr)
+		m_ptr->invoke(ang::move(caller), ang::move(args));
 }
 

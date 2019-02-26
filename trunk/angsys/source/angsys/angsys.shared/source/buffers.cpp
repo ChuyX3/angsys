@@ -5,17 +5,12 @@ using namespace ang;
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::ibuffer_view, interface);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::ibuffer, ibuffer_view);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::itext_buffer, ibuffer);
 
 #define MY_TYPE ang::ibuffer_view
 #include "ang/inline/intf_wrapper_specialization.inl"
 #undef MY_TYPE
 
 #define MY_TYPE ang::ibuffer
-#include "ang/inline/intf_wrapper_specialization.inl"
-#undef MY_TYPE
-
-#define MY_TYPE ang::text::itext_buffer
 #include "ang/inline/intf_wrapper_specialization.inl"
 #undef MY_TYPE
 
@@ -285,8 +280,8 @@ void dummy_buffer::operator delete(ang_void_ptr_t ptr)
 }
 
 dummy_buffer::dummy_buffer(pointer ptr, wsize sz)
-	: _ptr(ptr)
-	, _size(sz)
+	: m_ptr(ptr)
+	, m_size(sz)
 {
 }
 
@@ -302,11 +297,11 @@ text::encoding_t dummy_buffer::encoding()const { return text::encoding::binary; 
 
 bool dummy_buffer::is_readonly()const { return false; }
 
-pointer dummy_buffer::buffer_ptr() { return _ptr; }
+pointer dummy_buffer::buffer_ptr() { return m_ptr; }
 
-const_pointer dummy_buffer::buffer_ptr()const { return _ptr; }
+const_pointer dummy_buffer::buffer_ptr()const { return m_ptr; }
 
-wsize dummy_buffer::buffer_size()const { return _size; }
+wsize dummy_buffer::buffer_size()const { return m_size; }
 
 wsize dummy_buffer::mem_copy(wsize size, pointer ptr, text::encoding_t) {
 	wsize sz = min(size, buffer_size());

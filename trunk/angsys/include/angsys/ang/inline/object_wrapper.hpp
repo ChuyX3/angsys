@@ -21,7 +21,7 @@ namespace ang
 
 	public:
 		object_wrapper()
-			: _ptr(null) {
+			: m_ptr(null) {
 			static_assert(is_object<type>::value, "ERROR: T is not a object type...");
 		}
 
@@ -32,9 +32,9 @@ namespace ang
 
 		object_wrapper(object_wrapper && ptr)
 			: object_wrapper() {
-			T * temp = ptr._ptr;
-			ptr._ptr = null;
-			_ptr = temp;
+			T * temp = ptr.m_ptr;
+			ptr.m_ptr = null;
+			m_ptr = temp;
 		}
 
 		object_wrapper(object_wrapper const& ptr)
@@ -53,28 +53,28 @@ namespace ang
 	public: //properties
 
 		void reset() {
-			if (_ptr)_ptr->release();
-			_ptr = null;
+			if (m_ptr)m_ptr->release();
+			m_ptr = null;
 		}
 
 		void reset_unsafe() {
-			_ptr = null;
+			m_ptr = null;
 		}
 
 		bool is_empty()const {
-			return _ptr == null;
+			return m_ptr == null;
 		}
 
 		type* get(void)const {
-			return _ptr;
+			return m_ptr;
 		}
 
 		void set(type* ptr) {
-			T * temp = _ptr;
-			if (ptr == _ptr)
+			T * temp = m_ptr;
+			if (ptr == m_ptr)
 				return;
-			_ptr = ptr;
-			if (_ptr)_ptr->add_ref();
+			m_ptr = ptr;
+			if (m_ptr)m_ptr->add_ref();
 			if (temp)temp->release();
 		}
 
@@ -82,17 +82,17 @@ namespace ang
 			if (this == &ptr)
 				return;
 			reset();
-			_ptr = ptr._ptr;
-			ptr._ptr = null;
+			m_ptr = ptr.m_ptr;
+			ptr.m_ptr = null;
 		}
 
 		type ** addres_of(void) {
-			return&_ptr;
+			return&m_ptr;
 		}
 
 		type ** addres_for_init(void) {
 			reset();
-			return&_ptr;
+			return&m_ptr;
 		}
 
 	public: //operators
@@ -135,7 +135,7 @@ namespace ang
 		}
 
 	private:
-		type* _ptr;
+		type* m_ptr;
 	};
 
 	/******************************************************************/
@@ -147,52 +147,52 @@ namespace ang
 	{
 	public:
 		object_wrapper_ptr(ang::nullptr_t const&)
-			: _ptr(null) {
+			: m_ptr(null) {
 		}
 
 		object_wrapper_ptr(object_wrapper<T>*ptr)
-			: _ptr(ptr) {
+			: m_ptr(ptr) {
 		}
 
 		object_wrapper_ptr(object_wrapper_ptr && ptr)
-			: _ptr(ptr._ptr) {
-			ptr._ptr = null;
+			: m_ptr(ptr.m_ptr) {
+			ptr.m_ptr = null;
 		}
 
 		object_wrapper_ptr(object_wrapper_ptr const& ptr)
-			: _ptr(ptr._ptr) {
+			: m_ptr(ptr.m_ptr) {
 		}
 
 		~object_wrapper_ptr() {
-			_ptr = null;
+			m_ptr = null;
 		}
 
 		bool is_empty()const {
-			return _ptr == null;
+			return m_ptr == null;
 		}
 
 		object_wrapper<T>& operator *()const {
-			return *_ptr;
+			return *m_ptr;
 		}
 
 		object_wrapper<T>* operator ->()const {
-			return _ptr;
+			return m_ptr;
 		}
 
 		operator object_wrapper<T>*()const {
-			return _ptr;
+			return m_ptr;
 		}
 
 		operator unknown_ptr_t()const {
-			return _ptr->addres_of();
+			return m_ptr->addres_of();
 		}
 
 		operator T**()const {
-			return _ptr->addres_of();
+			return m_ptr->addres_of();
 		}
 
 	private:
-		object_wrapper<T>* _ptr;
+		object_wrapper<T>* m_ptr;
 	};
 
 	/******************************************************************/
@@ -246,7 +246,7 @@ namespace ang
 		inline object_wrapper(initializer_list<T>);
 
 		template<typename T> typename smart_ptr_type<T>::smart_ptr_t as() {
-			return interface_cast<typename smart_ptr_type<T>::type>(_ptr);
+			return interface_cast<typename smart_ptr_type<T>::type>(m_ptr);
 		}
 
 	public:
@@ -258,7 +258,7 @@ namespace ang
 		template<typename T> inline void move(object_wrapper<T>& ptr) {
 			if (this == (object_wrapper<T>)&ptr) return;
 			reset();
-			_ptr = ptr.get();
+			m_ptr = ptr.get();
 			ptr.reset_unsafe();
 		}
 		object ** addres_of(void);
@@ -284,7 +284,7 @@ namespace ang
 		}
 
 	private:
-		object* _ptr;
+		object* m_ptr;
 		friend class safe_pointer;
 	};
 

@@ -186,7 +186,7 @@ namespace ang
 		typedef core::delegates::function_object<T(Ts...)> type;
 
 	protected:
-		type* _ptr;
+		type* m_ptr;
 
 	public:
 		object_wrapper();
@@ -252,7 +252,7 @@ namespace ang
 		}
 
 		operator objptr()const {
-			return _ptr;
+			return m_ptr;
 		}
 
 		template<typename F>
@@ -278,7 +278,7 @@ namespace ang
 		typedef core::delegates::function_object<void(Ts...)> type;
 
 	protected:
-		type* _ptr;
+		type* m_ptr;
 
 	public:
 		object_wrapper();
@@ -322,7 +322,7 @@ namespace ang
 		}
 
 		operator objptr()const {
-			return _ptr;
+			return m_ptr;
 		}
 
 		template<typename F>

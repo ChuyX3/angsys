@@ -335,7 +335,7 @@ namespace ang
 		typedef collections::binary_map_object<K, T, allocator> type;
 
 	private:
-		collections::binary_map_object<K, T, allocator>* _ptr;
+		collections::binary_map_object<K, T, allocator>* m_ptr;
 
 	public:
 		object_wrapper();
@@ -354,10 +354,10 @@ namespace ang
 		void set(collections::binary_map_object<K, T, allocator>*);
 		collections::binary_map_object<K, T, allocator> ** addres_of(void);
 
-		collections::forward_iterator<object_wrapper<T>> begin() { return _ptr ? _ptr->begin() : collections::forward_iterator<T>(); }
-		collections::forward_iterator<object_wrapper<T>> end() { return _ptr ? _ptr->end() : collections::forward_iterator<T>(); }
-		collections::forward_iterator<const object_wrapper<T>> begin()const { return _ptr ? ((type const*)_ptr)->begin() : collections::forward_iterator<const object_wrapper<T>>(); }
-		collections::forward_iterator<const object_wrapper<T>> end()const { return _ptr ? ((type const*)_ptr)->end() : collections::forward_iterator<const object_wrapper<T>>(); }
+		collections::forward_iterator<object_wrapper<T>> begin() { return m_ptr ? m_ptr->begin() : collections::forward_iterator<T>(); }
+		collections::forward_iterator<object_wrapper<T>> end() { return m_ptr ? m_ptr->end() : collections::forward_iterator<T>(); }
+		collections::forward_iterator<const object_wrapper<T>> begin()const { return m_ptr ? ((type const*)m_ptr)->begin() : collections::forward_iterator<const object_wrapper<T>>(); }
+		collections::forward_iterator<const object_wrapper<T>> end()const { return m_ptr ? ((type const*)m_ptr)->end() : collections::forward_iterator<const object_wrapper<T>>(); }
 
 	public:
 		object_wrapper& operator = (object_wrapper<collections::binary_map_object<K, T, allocator>> &&);

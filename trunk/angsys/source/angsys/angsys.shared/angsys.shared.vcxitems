@@ -140,7 +140,9 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\platform\inline\platform.inl" />
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl" />
     <None Include="$(MSBuildThisFileDirectory)include\inline\string.inl" />
+    <None Include="$(MSBuildThisFileDirectory)include\xml\inline\xml_collection.inl" />
     <None Include="$(MSBuildThisFileDirectory)include\xml\inline\xml_internal.inl" />
+    <None Include="$(MSBuildThisFileDirectory)include\xml\inline\xml_node.inl" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)utils\angsys.natvis" />

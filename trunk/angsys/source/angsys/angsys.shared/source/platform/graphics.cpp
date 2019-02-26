@@ -314,7 +314,7 @@ rect<float>& rect<float>::operator /= (float k)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static collections::pair<graphics::colors, cstr_t> to_string_color_map[] =
+static collections::pair<graphics::colors, cstr_t> s_color_to_string_map[] =
 {
 	{ graphics::colors::null, "null"_s },
 	{ graphics::colors::transparent, "transparent"_s },
@@ -459,7 +459,7 @@ static collections::pair<graphics::colors, cstr_t> to_string_color_map[] =
 	{ graphics::colors::white, "white"_s },
 };
 
-static collections::pair<cstr_t, graphics::colors> _parse_color_map[] =
+static collections::pair<cstr_t, graphics::colors> s_color_parsing_map[] =
 {
 	{ "alice_blue"_s, graphics::colors::alice_blue },
 	{ "antique_white"_s, graphics::colors::antique_white },
@@ -607,9 +607,6 @@ static collections::pair<cstr_t, graphics::colors> _parse_color_map[] =
 
 using namespace ang::graphics;
 
-safe_enum_rrti2(ang::graphics, graph_driver_type);
-safe_enum_rrti2(ang::graphics, primitive);
-
 graphics::color::color()
 {
 	code = 0;
@@ -651,52 +648,35 @@ graphics::color::color(byte r, byte g, byte b, byte a)
 
 graphics::color::~color() {}
 
-void  graphics::color::parse(cstr_t cstr)
+color_t  graphics::color::parse(raw_cstr_t cstr)
 {
-	wsize i = 1;
-	if (cstr[0] == '#')
+	wsize i = 0;
+	if (text::iencoder::get_encoder(cstr.encoding())->to_char32(cstr.ptr(),i) == U'#')
 	{
-		code = (dword)str_to_signed(cstr, i, 16);
+		return text::iformat_parser::get_parser(cstr.encoding())->to_signed(cstr.ptr(), cstr.count(), i, true, 16);
 	}
 	else
 	{
-		wsize idx = algorithms::binary_search<cstr_t, collections::pair<cstr_t, graphics::colors>>(cstr, _parse_color_map);
-		if (idx > algorithms::array_size(_parse_color_map))
-			code = 0;
+		wsize idx = algorithms::binary_search(cstr, collections::to_array(s_color_parsing_map));
+		if (idx > algorithms::array_size(s_color_parsing_map))
+			return colors::null;
 		else
-			code = _parse_color_map[idx].value;
-	}
-}
-
-void graphics::color::parse(cwstr_t cstr)
-{
-	wsize i = 1;
-	if (cstr[0] == '#')
-	{
-		code = (dword)str_to_signed(cstr, i, 16);
-	}
-	else
-	{
-		wsize idx = algorithms::binary_search<cwstr_t, collections::pair<cstr_t, graphics::colors>>(cstr, _parse_color_map);
-		if (idx > algorithms::array_size(_parse_color_map))
-			code = 0;
-		else
-			code = _parse_color_map[idx].value;
+			return s_color_parsing_map[idx].value;
 	}
 }
 
 wstring graphics::color::to_string()const
 {
-	wsize idx = algorithms::binary_search<dword, collections::pair<graphics::colors, cstr_t>>(code, to_string_color_map);
-	if (idx > algorithms::array_size(to_string_color_map))
+	wsize idx = algorithms::binary_search<dword, collections::pair<graphics::colors, cstr_t>>(code, s_color_to_string_map);
+	if (idx > algorithms::array_size(s_color_to_string_map))
 	{
-		string out = ""_s;
-		out->format("#{0i:N08,X,F0}"_s, code);
+		wstring out = ""_s;
+		out->format(L"#{0i:N08,X,F0}"_s, code);
 		return move(out);
 	}
 	else
 	{
-		return to_string_color_map[idx].value;
+		return s_color_to_string_map[idx].value;
 	}
 }
 
@@ -717,3 +697,6 @@ graphics::color& graphics::color::operator = (dword rgba)
 	code = rgba;
 	return*this;
 }
+
+safe_enum_rrti2(ang::graphics, graph_driver_type);
+safe_enum_rrti2(ang::graphics, primitive);

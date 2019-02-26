@@ -105,13 +105,16 @@ namespace ang
 
 		
 		ang_begin_interface(LINK itext_input_stream, iinput_stream)
-			visible vcall wsize read_format(raw_cstr_t format, var_args_t&)pure;
-			visible vcall wsize read(ibuffer_view_t, text::encoding_t, wsize*written = null)pure;
-			visible vcall wsize read_line(ibuffer_view_t, text::encoding_t, array_view<const char32_t> = U"\n\r", wsize*written=null)pure;
-			template<typename C, text::encoding E> wsize read_format(str_view<C, E> format, var_args_t& va) {
+			visible vcall uint seek(raw_cstr_t format)pure;
+			visible vcall uint read_format(raw_cstr_t format, var_args_t&)pure;
+			visible vcall wsize read(text::istring_t, wsize, wsize*written = null)pure;
+			visible vcall wsize read(text::unknown_str_t, wsize sz, text::encoding_t, wsize*written = null)pure;
+			visible vcall wsize read_line(text::istring_t, array_view<const char32_t> = U"\n\r", wsize*written = null)pure;
+			visible vcall wsize read_line(text::unknown_str_t, wsize, text::encoding_t, array_view<const char32_t> = U"\n\r", wsize*written = null)pure;
+			template<typename C, text::encoding E> uint read_format(str_view<C, E> format, var_args_t& va) {
 				return read_format(raw_cstr(format), ang::forward<var_args_t&>(va));
 			}
-			template<typename C, text::encoding E, typename...Ts> wsize read_format(str_view<C, E> format, Ts&...);
+			template<typename C, text::encoding E, typename...Ts> uint read_format(str_view<C, E> format, Ts&...);
 		ang_end_interface();
 
 
@@ -150,9 +153,10 @@ namespace ang
 		template<typename S, typename C, text::encoding E, typename T, typename...Ts>
 		struct read_format_helper<S,C,E,T,Ts...>
 		{
-			static wsize read_format(S stream, str_view<C, E> format, var_args_t& va, T& a, Ts&... as) {
-				auto readed = read_format_helper<C, E, Ts...>::read_format(format, va, ang::forward<Ts&>(as)...);
-				objptr obj;
+			static uint read_format(S stream, str_view<C, E> format, var_args_t& va, T& a, Ts&... as) {
+				uint readed = 0;
+				readed = read_format_helper<S, C, E, Ts...>::read_format(stream, format, va, ang::forward<Ts&>(as)...);
+				var obj;
 				va->pop(obj, true);
 				 try { a = obj.as<T>(); }
 				catch(...){ a = T(); 	}
@@ -163,13 +167,13 @@ namespace ang
 		template<typename S, typename C, text::encoding E>
 		struct read_format_helper<S,C,E>
 		{
-			static wsize read_format(S stream, str_view<C, E> format, var_args_t& va) {
+			static uint read_format(S stream, str_view<C, E> format, var_args_t& va) {
 				return stream->read_format(format, va);
 			}
 		};
 
 		template<typename C, text::encoding E, typename...Ts> 
-		wsize itext_input_stream::read_format(str_view<C, E> format, Ts&... args) {
+		uint itext_input_stream::read_format(str_view<C, E> format, Ts&... args) {
 			var_args_t va = new var_args();
 			return read_format_helper<itext_input_stream_t, C, E, Ts...>::read_format(this, format, va, args...);
 		}
@@ -188,7 +192,7 @@ namespace ang
 		struct write_text_helper<S, str_view<T,E>>
 		{
 			static wsize write_text(S stream, str_view<T, E> const& val) {
-				stream->write(raw_cstr(val));
+				return stream->write(raw_cstr(val));
 			}
 		};
 
@@ -221,6 +225,11 @@ namespace ang
 			return write_text_helper<itext_output_stream_t, T>::write_text(this, val);
 		}
 
+		template<typename T>
+		itext_output_stream_t& operator << (itext_output_stream_t& stream, T const& val) {
+			stream->write(val);
+			return stream;
+		}
 
 	}
 }

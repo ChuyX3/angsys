@@ -12,28 +12,28 @@
 #error ...
 #else
 
-ang::intf_wrapper<MY_TYPE>::intf_wrapper() : _ptr(null) {
+ang::intf_wrapper<MY_TYPE>::intf_wrapper() : m_ptr(null) {
 
 }
 
 
-ang::intf_wrapper<MY_TYPE>::intf_wrapper(ang::nullptr_t const&) : _ptr(null) {
+ang::intf_wrapper<MY_TYPE>::intf_wrapper(ang::nullptr_t const&) : m_ptr(null) {
 
 }
 
 
-ang::intf_wrapper<MY_TYPE>::intf_wrapper(MY_TYPE* ptr) : _ptr(null) {
+ang::intf_wrapper<MY_TYPE>::intf_wrapper(MY_TYPE* ptr) : m_ptr(null) {
 	set(ptr);
 }
 
-ang::intf_wrapper<MY_TYPE>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
-	MY_TYPE * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
+ang::intf_wrapper<MY_TYPE>::intf_wrapper(intf_wrapper && other) : m_ptr(null) {
+	MY_TYPE * temp = other.m_ptr;
+	other.m_ptr = null;
+	m_ptr = temp;
 }
 
-ang::intf_wrapper<MY_TYPE>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
-	set(other._ptr);
+ang::intf_wrapper<MY_TYPE>::intf_wrapper(intf_wrapper const& other) : m_ptr(null) {
+	set(other.m_ptr);
 }
 
 
@@ -44,35 +44,35 @@ ang::intf_wrapper<MY_TYPE>::~intf_wrapper() {
 
 void ang::intf_wrapper<MY_TYPE>::reset()
 {
-	iobject * _obj = interface_cast<iobject>(_ptr);
+	iobject * _obj = interface_cast<iobject>(m_ptr);
 	if (_obj)_obj->release();
-	_ptr = null;
+	m_ptr = null;
 }
 
 void ang::intf_wrapper<MY_TYPE>::reset_unsafe()
 {
-	_ptr = null;
+	m_ptr = null;
 }
 
 
 bool ang::intf_wrapper<MY_TYPE>::is_empty()const
 {
-	return _ptr == null;
+	return m_ptr == null;
 }
 
 
 MY_TYPE* ang::intf_wrapper<MY_TYPE>::get(void)const
 {
-	return _ptr;
+	return m_ptr;
 }
 
 
 void ang::intf_wrapper<MY_TYPE>::set(MY_TYPE* ptr)
 {
-	if (ptr == _ptr) return;
-	iobject * _old = interface_cast<iobject>(_ptr);
+	if (ptr == m_ptr) return;
+	iobject * _old = interface_cast<iobject>(m_ptr);
 	iobject * _new = interface_cast<iobject>(ptr);
-	_ptr = ptr;
+	m_ptr = ptr;
 	if (_new)_new->add_ref();
 	if (_old)_old->release();
 }
@@ -97,22 +97,22 @@ ang::intf_wrapper<MY_TYPE>& ang::intf_wrapper<MY_TYPE>::operator = (ang::intf_wr
 	if (this == &other)
 		return *this;
 	reset();
-	_ptr = other._ptr;
-	other._ptr = null;
+	m_ptr = other.m_ptr;
+	other.m_ptr = null;
 	return*this;
 }
 
 
 ang::intf_wrapper<MY_TYPE>& ang::intf_wrapper<MY_TYPE>::operator = (ang::intf_wrapper<MY_TYPE> const& other)
 {
-	set(other._ptr);
+	set(other.m_ptr);
 	return*this;
 }
 
 
 MY_TYPE ** ang::intf_wrapper<MY_TYPE>::addres_of(void)
 {
-	return &_ptr;
+	return &m_ptr;
 }
 
 

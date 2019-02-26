@@ -22,7 +22,7 @@ namespace ang
 				ixml_node_t xml_clone(ixml_document_t)const override;
 
 			public:
-				ixml_text_t xml_version()const;
+				ixml_string_t xml_version()const;
 				xml_encoding_t xml_encoding()const;
 				bool xml_stand_alone()const;
 

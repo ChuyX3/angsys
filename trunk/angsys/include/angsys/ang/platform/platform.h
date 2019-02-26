@@ -230,7 +230,7 @@ namespace ang
 			DirectX11,
 			Vulkan,//todo
 			DirectX12,//todo
-			DirectX = graph_driver_type::DirectX11,			
+			DirectX = DirectX11,			
 		};
 
 		safe_enum(LINK, primitive, byte)
@@ -407,6 +407,8 @@ namespace ang
 		public:
 			typedef colors::enum_t enum_t;
 
+			static color_t parse(raw_cstr_t);
+
 		public:
 			color();
 			color(const color&);
@@ -416,9 +418,6 @@ namespace ang
 			color(dword rgb, byte a);
 			color(byte r, byte g, byte b, byte a);
 			virtual~color();
-
-			void parse(cstr_t);
-			void parse(cwstr_t);
 
 		public: //Override
 			wstring to_string()const;

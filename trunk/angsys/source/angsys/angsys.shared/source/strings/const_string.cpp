@@ -33,9 +33,9 @@ void basic_const_string_buffer_base::operator delete(pointer ptr)
 }
 #endif
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::strings::basic_const_string_buffer_base, object, itext_buffer);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::strings::basic_const_string_buffer_base, object, ibuffer);
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::strings::basic_const_string_buffer_base);
-ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::strings::basic_const_string_buffer_base, object, itext_buffer, ibuffer, ibuffer_view);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::strings::basic_const_string_buffer_base, object, ibuffer, ibuffer_view);
 
 basic_const_string_buffer_base::basic_const_string_buffer_base() { }
 basic_const_string_buffer_base::~basic_const_string_buffer_base() { }

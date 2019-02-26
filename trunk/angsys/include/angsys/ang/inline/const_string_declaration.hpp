@@ -32,10 +32,10 @@ namespace ang
 			virtual text::encoding_t encoding()const override;
 			virtual const_pointer buffer_ptr()const override;
 			virtual wsize buffer_size()const override;
-			virtual raw_str_t text_buffer()override;
-			virtual raw_cstr_t text_buffer()const override;
+			virtual raw_str_t str(int);
+			virtual raw_cstr_t cstr(int)const;
 
-			inline cstr_t cstr()const { return text_buffer().to_cstr<MY_ENCODING>(); }
+			inline cstr_t cstr()const { return cstr(0).to_cstr<MY_ENCODING>(); }
 
 		private:
 			virtual~basic_const_string_buffer();

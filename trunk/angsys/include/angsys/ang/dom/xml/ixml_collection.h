@@ -93,7 +93,7 @@ namespace ang
 		typedef dom::xml::ixml_collection const& ctype_ref;
 
 	private:
-		type* _ptr;
+		type* m_ptr;
 
 	public:
 		intf_wrapper();
@@ -114,17 +114,17 @@ namespace ang
 		type ** addres_for_init(void);
 		
 		dom::xml::xml_forward_iterator_t begin() {
-			return _ptr ? _ptr->begin() : dom::xml::xml_forward_iterator_t(null);
+			return m_ptr ? m_ptr->begin() : dom::xml::xml_forward_iterator_t(null);
 		}
 		dom::xml::xml_forward_iterator_t end() {
-			return _ptr ? _ptr->end() : dom::xml::xml_forward_iterator_t(null);
+			return m_ptr ? m_ptr->end() : dom::xml::xml_forward_iterator_t(null);
 		}
 
 		dom::xml::xml_const_forward_iterator_t begin()const {
-			return _ptr ? ((dom::xml::ixml_collection const*)_ptr)->begin() : dom::xml::xml_const_forward_iterator_t(null);
+			return m_ptr ? ((dom::xml::ixml_collection const*)m_ptr)->begin() : dom::xml::xml_const_forward_iterator_t(null);
 		}
 		dom::xml::xml_const_forward_iterator_t end()const {
-			return _ptr ? ((dom::xml::ixml_collection const*)_ptr)->end() : dom::xml::xml_const_forward_iterator_t(null);
+			return m_ptr ? ((dom::xml::ixml_collection const*)m_ptr)->end() : dom::xml::xml_const_forward_iterator_t(null);
 		}
 
 	public:
@@ -139,7 +139,7 @@ namespace ang
 		operator type * (void);
 		operator type const* (void)const;
 
-		operator dom::xml::ixml_text_t()const;
+		operator dom::xml::ixml_string_t()const;
 
 		dom::xml::ixml_node_t operator[](raw_str_t)const;
 		template<typename T, text::encoding E> dom::xml::ixml_node_t operator[](str_view<T, E> str)const;

@@ -10,6 +10,10 @@ using namespace ang::text;
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::iencoder, interface);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::iformat_parser, interface);
 
+#define MY_TYPE ang::text::iformat_parser
+#include "ang/inline/intf_wrapper_specialization.inl"
+#undef MY_TYPE
+
 TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, ascii);
 TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, unicode);
 TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, utf8);
@@ -197,6 +201,43 @@ wsize ang::raw_str::char_size()const { return text::encoder<text::encoding::auto
 
 ang::text::encoding ang::raw_str::encoding()const { return _encoding; }
 
+bool ang::operator == (raw_str_t const& str1, raw_str_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) == 0;
+}
+bool ang::operator == (raw_str_t const& str1, raw_cstr_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) == 0;
+}
+bool ang::operator != (raw_str_t const& str1, raw_str_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) != 0;
+}
+bool ang::operator != (raw_str_t const& str1, raw_cstr_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) != 0;
+}
+bool ang::operator >= (raw_str_t const& str1, raw_str_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) >= 0;
+}
+bool ang::operator >= (raw_str_t const& str1, raw_cstr_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) >= 0;
+}
+bool ang::operator <= (raw_str_t const& str1, raw_str_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) <= 0;
+}
+bool ang::operator <= (raw_str_t const& str1, raw_cstr_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) <= 0;
+}
+bool ang::operator > (raw_str_t const& str1, raw_str_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) > 0;
+}
+bool ang::operator > (raw_str_t const& str1, raw_cstr_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) > 0;
+}
+bool ang::operator < (raw_str_t const& str1, raw_str_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) < 0;
+}
+bool ang::operator < (raw_str_t const& str1, raw_cstr_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) < 0;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -234,6 +275,43 @@ wsize ang::raw_cstr::char_size()const { return text::encoder<text::encoding::aut
 
 ang::text::encoding ang::raw_cstr::encoding()const { return _encoding; }
 
+
+bool ang::operator == (raw_cstr_t const& str1, raw_str_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) == 0;
+}
+bool ang::operator == (raw_cstr_t const& str1, raw_cstr_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) == 0;
+}
+bool ang::operator != (raw_cstr_t const& str1, raw_str_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) != 0;
+}
+bool ang::operator != (raw_cstr_t const& str1, raw_cstr_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) != 0;
+}
+bool ang::operator >= (raw_cstr_t const& str1, raw_str_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) >= 0;
+}
+bool ang::operator >= (raw_cstr_t const& str1, raw_cstr_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) >= 0;
+}
+bool ang::operator <= (raw_cstr_t const& str1, raw_str_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) <= 0;
+}
+bool ang::operator <= (raw_cstr_t const& str1, raw_cstr_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) <= 0;
+}
+bool ang::operator > (raw_cstr_t const& str1, raw_str_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) > 0;
+}
+bool ang::operator > (raw_cstr_t const& str1, raw_cstr_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) > 0;
+}
+bool ang::operator < (raw_cstr_t const& str1, raw_str_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) < 0;
+}
+bool ang::operator < (raw_cstr_t const& str1, raw_cstr_t const& str2) {
+	return iencoder::get_encoder(str1.encoding())->compare(str1.ptr(), str2.ptr(), str2.encoding()) < 0;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

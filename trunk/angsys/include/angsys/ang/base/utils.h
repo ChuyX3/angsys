@@ -227,10 +227,15 @@ namespace ang //testing
 	template<typename T> struct is_abstract : yes_expression<__is_abstract(T)> { };
 	template<typename T> struct is_final : yes_expression<__is_final(T)> { };
 
-	template <typename T, typename = void> struct is_complete_impl : false_type { };
-	template <typename T> struct is_complete_impl< T, void_t<decltype(sizeof(T))> > : true_type { };
+	template<typename T, typename = void> struct is_complete_impl : false_type {};
+	template<typename T> struct is_complete_impl<T, void_t<integer_constant<bool, sizeof(T) == sizeof(T)>>> : true_type { };
 	template <typename T> constexpr bool ___is_complete() { return is_complete_impl<T>::value; }
 	template <typename T> struct is_complete : yes_expression<___is_complete<T>()> { };
+
+
+	template<typename T, bool IS_COMPLETE = is_complete<T>::value> struct is_abstract_safe : is_abstract<T> {};
+	template<typename T> struct is_abstract_safe<T,false> : true_type {};
+
 
 	template<typename base_type, typename child_type>
 	struct is_base_of : public yes_expression<__is_base_of(base_type, child_type)> { };
@@ -304,16 +309,8 @@ namespace ang //testing
 	template<> struct is_floating_value<ang_float32_t> : true_type { };
 	template<> struct is_floating_value<ang_float64_t> : true_type { };
 
-	//template<typename T, typename = void>
-	//struct __is_safe_enum_base : false_type { };
-
-	//template<typename T>
-	//struct __is_safe_enum_base<T, void_t<typename T::type>> : yes_expression<is_enum<typename T::type>::value> { };
-
-	//template<typename T, genre_t TYPE = genre_of<T>(), bool IS_SAFE_ENUM = __is_safe_enum_base<T>::value> struct value;
 
 	template<typename T, genre_t TYPE = genre_of<T>()> struct value;
-
 
 	template<typename T, bool IS_COMPLETE = is_complete<T>::value>
 	struct size_of_impl { static constexpr wsize value = sizeof(T); };
@@ -321,14 +318,11 @@ namespace ang //testing
 	template<typename T>
 	struct size_of_impl<T, false> { static constexpr wsize value = 0; };
 
-	template<typename T, bool IS_COMPLETE = is_complete<T>::value, bool IS_ABSTRACT = is_complete<T>::value>
-	struct align_of_impl { static constexpr wsize value = sizeof(wsize); };
+	template<typename T, bool IS_ABSTRACT = is_abstract_safe<T>::value>
+	struct align_of_impl { static constexpr wsize value = alignof(T); };
 
 	template<typename T>
-	struct align_of_impl<T, false, true> { static constexpr wsize value = alignof(T); };
-
-	template<typename T>
-	struct align_of_impl<T, true, true> { static constexpr wsize value = alignof(wsize); };
+	struct align_of_impl<T, true> { static constexpr wsize value = alignof(wsize); };
 
 	template<typename T> constexpr wsize size_of() { return size_of_impl<T>::value; }
 	template<typename T> constexpr wsize align_of() { return align_of_impl<T>::value; }

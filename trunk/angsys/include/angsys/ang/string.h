@@ -44,6 +44,32 @@ namespace ang
 				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
 		}
 
+		friend LINK bool operator == (raw_str_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator == (raw_str_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator != (raw_str_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator != (raw_str_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator >= (raw_str_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator >= (raw_str_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator <= (raw_str_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator <= (raw_str_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator > (raw_str_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator > (raw_str_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator < (raw_str_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator < (raw_str_t const& str1, raw_cstr_t const& str2);
+
+		template<typename T, text::encoding E> friend inline bool operator == (raw_str_t const& str1, str_view<T, E> const& str2) { return operator == (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator == (str_view<T, E> const& str1, raw_str_t const& str2) { return operator == (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator != (raw_str_t const& str1, str_view<T, E> const& str2) { return operator != (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator != (str_view<T, E> const& str1, raw_str_t const& str2) { return operator != (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator >= (raw_str_t const& str1, str_view<T, E> const& str2) { return operator >= (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator >= (str_view<T, E> const& str1, raw_str_t const& str2) { return operator >= (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator <= (raw_str_t const& str1, str_view<T, E> const& str2) { return operator <= (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator <= (str_view<T, E> const& str1, raw_str_t const& str2) { return operator <= (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator > (raw_str_t const& str1, str_view<T, E> const& str2) { return operator > (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator > (str_view<T, E> const& str1, raw_str_t const& str2) { return operator > (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator < (raw_str_t const& str1, str_view<T, E> const& str2) { return operator < (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator < (str_view<T, E> const& str1, raw_str_t const& str2) { return operator < (raw_cstr(str1), str2); }
+
 	private:
 		void* _value;
 		wsize _size;
@@ -85,6 +111,32 @@ namespace ang
 				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
 		}
 
+		friend LINK bool operator == (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator == (raw_cstr_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator != (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator != (raw_cstr_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator >= (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator >= (raw_cstr_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator <= (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator <= (raw_cstr_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator > (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator > (raw_cstr_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator < (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator < (raw_cstr_t const& str1, raw_str_t const& str2);
+
+		template<typename T, text::encoding E> friend inline bool operator == (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator == (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator == (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator == (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator != (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator != (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator != (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator != (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator >= (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator >= (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator >= (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator >= (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator <= (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator <= (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator <= (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator <= (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator > (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator > (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator > (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator > (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator < (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator < (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator < (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator < (raw_cstr(str1), str2); }
+
 	private:
 		void const* _value;
 		wsize _size;
@@ -96,13 +148,29 @@ namespace ang
 		typedef void* unknown_str_t;
 		typedef  void const* unknown_cstr_t;
 
-		ang_interface(itext_buffer);
+		//ang_interface(itext_buffer);
+		ang_interface(istring);
 		ang_interface(iencoder);
 		ang_interface(iformat_parser);
 		
-		ang_begin_interface(LINK itext_buffer, ibuffer)
+		/*ang_begin_interface(LINK itext_buffer, ibuffer)
 			visible vcall raw_str_t text_buffer() pure;
 			visible vcall raw_cstr_t text_buffer()const pure;
+		ang_end_interface();*/
+
+		ang_begin_interface(LINK istring)
+			visible vcall encoding_t encoding()const pure;
+			visible vcall raw_str_t str(int = 0) pure;
+			visible vcall raw_cstr_t cstr(int = 0)const pure;
+			visible vcall void eos(windex) pure;
+			visible vcall windex eos()const pure;
+			visible vcall void copy(raw_cstr_t)pure;
+			visible vcall void concat(raw_cstr_t)pure;
+			visible vcall int compare(raw_cstr_t)const pure;
+			visible vcall windex compare_until(raw_cstr_t)const pure;
+			visible vcall windex find(raw_cstr_t, windex start = 0, windex end = -1)const pure;
+			visible vcall windex find_reverse(raw_cstr_t, windex start = -1, windex end = 0)const pure;
+			visible vcall raw_str_t sub_string(raw_str_t, windex start, windex end)const pure;
 		ang_end_interface();
 
 		ang_begin_interface(LINK iencoder)
@@ -128,15 +196,16 @@ namespace ang
 			visible vcall long64 to_signed(unknown_cstr_t str, wsize sz, windex& i, bool increment = true, int base = 10)const pure;
 			visible vcall ulong64 to_unsigned(unknown_cstr_t str, wsize sz, windex& i, bool increment = true, int base = 10)const pure;
 			visible vcall double to_floating(unknown_cstr_t str, wsize sz, windex& i, bool increment = true, bool ex = false)const pure;
-			visible vcall bool format(unknown_cstr_t format, wsize sz, args_t args, encoding_t e, itext_buffer_ptr_t out)const pure;
-			visible vcall bool format(unknown_cstr_t format, wsize sz, var_args_t args, encoding_t e, itext_buffer_ptr_t out)const pure;
+			visible vcall bool format(unknown_cstr_t format, wsize sz, args_t args, encoding_t e, ibuffer_ptr_t out)const pure;
+			visible vcall bool format(unknown_cstr_t format, wsize sz, var_args_t args, encoding_t e, ibuffer_ptr_t out)const pure;
 			visible vcall text_format_t parse(unknown_cstr_t format, wsize sz)const pure;
 			visible vcall text_format_t parse(unknown_cstr_t format, wsize sz, wsize& beg, int& arg)const pure;
 		ang_end_interface();
 	}
 
-	ANG_INTF_WRAPPER_DECLARATION(LINK, text::itext_buffer);
+	ANG_INTF_WRAPPER_DECLARATION(LINK, text::istring);
 	ANG_INTF_WRAPPER_DECLARATION(LINK, text::iencoder);
+	ANG_INTF_WRAPPER_DECLARATION(LINK, text::iformat_parser);
 
 }
 
@@ -148,7 +217,7 @@ namespace ang
 	{
 		class LINK basic_const_string_buffer_base
 			: public object
-			, public text::itext_buffer
+			, public ibuffer
 		{
 		protected:
 			pointer operator new(wsize, text::encoding_t, raw_cstr_t);
@@ -171,12 +240,17 @@ namespace ang
 			virtual bool can_realloc_buffer()const override;
 	
 			ANG_DECLARE_INTERFACE();
+
+			virtual raw_str_t str(int = 0) = 0;
+			virtual raw_cstr_t cstr(int = 0)const = 0;
+
 		private:
 			virtual pointer buffer_ptr() override;
 			virtual wsize mem_copy(wsize, pointer, text::encoding_t) override;
 			virtual ibuffer_view_t map_buffer(windex, wsize) override;
 			virtual bool unmap_buffer(ibuffer_view_t&, wsize) override;
 			virtual bool realloc_buffer(wsize) override;
+
 		};
 
 	}
@@ -237,7 +311,8 @@ namespace ang
 	{
 		class LINK basic_string_buffer_base
 			: public object
-			, public itext_buffer
+			, public istring
+			, public ibuffer
 			, public ivariant
 		{
 		public:
@@ -290,16 +365,21 @@ namespace ang
 
 		public:
 			void set(basic_const_string_buffer_base*);
-			void copy(raw_cstr_t);
-			void concat(raw_cstr_t);
+			virtual text::encoding_t encoding()const = 0;
+			virtual raw_str_t str(int = 0)override;
+			virtual raw_cstr_t cstr(int = 0)const override;
 
-			int compare(raw_cstr_t)const;
-			windex compare_until(raw_cstr_t)const;
-			windex find(raw_cstr_t, windex start = 0, windex end = -1)const;
-			windex find_reverse(raw_cstr_t, windex start = -1, windex end = 0)const;
-			raw_str_t sub_string(raw_str_t, windex start, windex end)const;
+			virtual void copy(raw_cstr_t)override;
+			virtual void concat(raw_cstr_t)override;
+			virtual int compare(raw_cstr_t)const override;
+			virtual windex compare_until(raw_cstr_t)const override;
+			virtual windex find(raw_cstr_t, windex start = 0, windex end = -1)const override;
+			virtual windex find_reverse(raw_cstr_t, windex start = -1, windex end = 0)const override;
+			virtual raw_str_t sub_string(raw_str_t, windex start, windex end)const override;
 
 		protected:
+			virtual void eos(windex)override;
+			virtual windex eos()const override;
 			void copy_at(raw_str_t, windex at);
 
 		public:
@@ -310,7 +390,10 @@ namespace ang
 			virtual rtti_t const& value_type()const override;
 			virtual bool set_value(rtti_t const&, unknown_t) override;
 			virtual bool get_value(rtti_t const&, unknown_t)const override;
+			virtual bool realloc(wsize new_size, bool save = true) pure;
+			virtual void clear() pure;
 
+		protected:
 			virtual pointer buffer_ptr() override;
 			virtual const_pointer buffer_ptr()const override;
 			virtual wsize buffer_size()const override;
@@ -319,13 +402,7 @@ namespace ang
 			virtual bool unmap_buffer(ibuffer_view_t&, wsize) override;
 			virtual bool can_realloc_buffer()const override;
 			virtual bool realloc_buffer(wsize) override;
-			virtual raw_str_t text_buffer()override;
-			virtual raw_cstr_t text_buffer()const override;
 
-			virtual bool realloc(wsize new_size, bool save = true) pure;
-			virtual void clear() pure;
-
-		protected:
 			virtual~basic_string_buffer_base();
 		};
 
@@ -398,8 +475,8 @@ namespace ang
 				return true;
 			}
 			
-			inline str_t str() { return this ? text_buffer().template to_str<ENCODING>() : str_t(); }
-			inline cstr_t cstr()const { return this ? text_buffer().template to_cstr<ENCODING>() : cstr_t();}
+			inline str_t str() { return this ? istring::str().template to_str<ENCODING>() : str_t(); }
+			inline cstr_t cstr()const { return this ? istring::cstr().template to_cstr<ENCODING>() : cstr_t();}
 
 		public:
 			using string_base::copy;

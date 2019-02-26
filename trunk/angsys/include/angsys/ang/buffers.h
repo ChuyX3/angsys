@@ -207,8 +207,8 @@ namespace ang
 		: public ibuffer
 	{
 	private:
-		wsize _size;
-		pointer _ptr;
+		wsize m_size;
+		pointer m_ptr;
 
 	private:
 		pointer operator new(wsize)throw();

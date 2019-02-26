@@ -9,31 +9,34 @@ namespace ang
 			class xml_node : public object, public ixml_node
 			{
 			public:
-				friend xml_document;
+				friend xml_document<E>;
 
 				class xml_collection
 					: public object
 					, public ixml_collection
 				{
+				public:
+					typedef xml_collection self_t;
+
 				protected:
 					friend xml_node;
-					const xml_type_t _xml_type;
-					wsize _count;
-					xml_node* _xml_first;
-					xml_node* _xml_last;
-					mutable weak_ptr<ixml_node> _xml_parent;
+					const xml_type_t m_type;
+					wsize m_count;
+					xml_node* m_first;
+					xml_node* m_last;
+					mutable weak_ptr<ixml_node> m_parent;
 
 				public:
 					typedef ixml_node* node_ptr_t;
 					typedef collections::ienum<ixml_node> ienum_t;
 
-				protected:
 					xml_collection(xml_node_ptr<E>, xml_type_t);
+				protected:
 					virtual~xml_collection();
 
 				public:
 					ANG_DECLARE_INTERFACE();
-					virtual void clean();
+					virtual void clear();
 
 					xml_type_t xml_type()const override;
 					bool xml_is_type_of(xml_type_t)const override;
@@ -113,7 +116,7 @@ namespace ang
 
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
-				virtual void clean();
+				virtual void clear();
 
 				xml_type_t xml_type()const override;
 				bool xml_is_type_of(xml_type_t)const override;
@@ -125,9 +128,9 @@ namespace ang
 				virtual bool xml_has_children()const override;
 				virtual bool xml_has_attributes()const override;
 
-				virtual ixml_text_t xml_name()const override;
-				virtual ixml_text_t xml_value()const override;
-				virtual xml_namespace_ptr<E> xml_namespace()const override;
+				virtual ixml_string_t xml_name()const override;
+				virtual ixml_string_t xml_value()const override;
+				virtual ixml_node_t xml_namespace()const override;
 				virtual ixml_collection_t xml_children()const override;
 				virtual xml_attributes_t xml_attributes()const override;
 

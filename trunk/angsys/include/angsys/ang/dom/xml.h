@@ -1,5 +1,5 @@
 /*********************************************************************************************************************/
-/*   File Name: ang/dom/xml.h                                                                                            */
+/*   File Name: ang/dom/xml.h                                                                                        */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
 /*   File description: this file is exposes classes for the use of xml files                                         */
 /*                                                                                                                   */
@@ -50,6 +50,7 @@ namespace ang
 
 			typedef class xml_attributes xml_attributes_t;
 			typedef collections::ienum<struct ixml_node > ixml_items;
+			typedef intf_wrapper<ixml_items> ixml_items_t;
 			typedef collections::iterator<struct ixml_node > xml_iterator_t;
 			typedef collections::base_iterator<struct ixml_node > xml_base_iterator_t;
 			typedef collections::forward_iterator<struct ixml_node > xml_forward_iterator_t;
@@ -61,8 +62,8 @@ namespace ang
 			typedef text::encoding xml_encoding;
 			typedef text::encoding_t xml_encoding_t;
 
-			typedef text::itext_buffer ixml_text;
-			typedef text::itext_buffer_t ixml_text_t;
+			typedef text::istring ixml_string;
+			typedef text::istring_t ixml_string_t;
 
 			safe_enum(LINK, xml_type, byte)
 			{
@@ -121,7 +122,7 @@ namespace ang
 				typedef xml::ixml_collection type;
 
 			private:
-				xml::ixml_collection* _ptr;
+				xml::ixml_collection* m_ptr;
 
 			public:
 				xml_attributes();
@@ -140,17 +141,17 @@ namespace ang
 				xml::ixml_collection ** addres_of(void);
 
 				xml::xml_forward_iterator_t begin() {
-					return _ptr ? _ptr->begin() : xml::xml_forward_iterator_t(null);
+					return m_ptr ? m_ptr->begin() : xml::xml_forward_iterator_t(null);
 				}
 				xml::xml_forward_iterator_t end() {
-					return _ptr ? _ptr->end() : xml::xml_forward_iterator_t(null);
+					return m_ptr ? m_ptr->end() : xml::xml_forward_iterator_t(null);
 				}
 
 				xml::xml_const_forward_iterator_t begin()const {
-					return _ptr ? ((xml::ixml_collection const*)_ptr)->begin() : xml::xml_const_forward_iterator_t(null);
+					return m_ptr ? ((xml::ixml_collection const*)m_ptr)->begin() : xml::xml_const_forward_iterator_t(null);
 				}
 				xml::xml_const_forward_iterator_t end()const {
-					return _ptr ? ((xml::ixml_collection const*)_ptr)->end() : xml::xml_const_forward_iterator_t(null);
+					return m_ptr ? ((xml::ixml_collection const*)m_ptr)->end() : xml::xml_const_forward_iterator_t(null);
 				}
 
 				//xml_attribute_t xml_attribute(raw_str_t);
@@ -171,8 +172,8 @@ namespace ang
 				operator xml::ixml_collection * (void);
 				operator xml::ixml_collection const* (void)const;
 
-				ixml_text_t operator[](raw_str_t)const;
-				template<typename T, xml_encoding E> ixml_text_t operator[](str_view<T, E> str)const { return operator[](raw_str(str)); }
+				ixml_string_t operator[](raw_str_t)const;
+				template<typename T, xml_encoding E> ixml_string_t operator[](str_view<T, E> str)const { return operator[](raw_str(str)); }
 			};
 		}
 	}

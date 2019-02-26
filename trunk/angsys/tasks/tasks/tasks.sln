@@ -29,6 +29,37 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "angsys.uwp", "..\..\source\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "task1.uwp", "task1.uwp\task1.uwp.vcxproj", "{41CC2A4B-F584-4904-81D0-750691138CD9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "maths", "maths", "{5B898C8D-30AA-44BD-9C64-A91275E82C72}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\include\angsys\ang\maths\float2.h = ..\..\include\angsys\ang\maths\float2.h
+		..\..\include\angsys\ang\maths\float3.h = ..\..\include\angsys\ang\maths\float3.h
+		..\..\include\angsys\ang\maths\float4.h = ..\..\include\angsys\ang\maths\float4.h
+		..\..\include\angsys\ang\maths\float4x4.h = ..\..\include\angsys\ang\maths\float4x4.h
+		..\..\include\angsys\ang\maths\int128.h = ..\..\include\angsys\ang\maths\int128.h
+		..\..\include\angsys\ang\maths\maths.h = ..\..\include\angsys\ang\maths\maths.h
+		..\..\include\angsys\ang\maths\quad.h = ..\..\include\angsys\ang\maths\quad.h
+		..\..\include\angsys\ang\maths\quaternions.h = ..\..\include\angsys\ang\maths\quaternions.h
+		..\..\include\angsys\ang\maths\vectors.h = ..\..\include\angsys\ang\maths\vectors.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "implement", "implement", "{CA441BA4-04F5-4C34-A70B-F1F68F724BF1}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\include\angsys\ang\maths\implement\double2.inl = ..\..\include\angsys\ang\maths\implement\double2.inl
+		..\..\include\angsys\ang\maths\implement\double2_simd.inl = ..\..\include\angsys\ang\maths\implement\double2_simd.inl
+		..\..\include\angsys\ang\maths\implement\double3.inl = ..\..\include\angsys\ang\maths\implement\double3.inl
+		..\..\include\angsys\ang\maths\implement\double4.inl = ..\..\include\angsys\ang\maths\implement\double4.inl
+		..\..\include\angsys\ang\maths\implement\double4_simd.inl = ..\..\include\angsys\ang\maths\implement\double4_simd.inl
+		..\..\include\angsys\ang\maths\implement\double4x4_simd.inl = ..\..\include\angsys\ang\maths\implement\double4x4_simd.inl
+		..\..\include\angsys\ang\maths\implement\float2.inl = ..\..\include\angsys\ang\maths\implement\float2.inl
+		..\..\include\angsys\ang\maths\implement\float3.inl = ..\..\include\angsys\ang\maths\implement\float3.inl
+		..\..\include\angsys\ang\maths\implement\float4.inl = ..\..\include\angsys\ang\maths\implement\float4.inl
+		..\..\include\angsys\ang\maths\implement\float4_simd.inl = ..\..\include\angsys\ang\maths\implement\float4_simd.inl
+		..\..\include\angsys\ang\maths\implement\float4x4.inl = ..\..\include\angsys\ang\maths\implement\float4x4.inl
+		..\..\include\angsys\ang\maths\implement\float4x4_simd.inl = ..\..\include\angsys\ang\maths\implement\float4x4_simd.inl
+		..\..\include\angsys\ang\maths\implement\maths_matrix.inl = ..\..\include\angsys\ang\maths\implement\maths_matrix.inl
+		..\..\include\angsys\ang\maths\implement\maths_matrix_simd.inl = ..\..\include\angsys\ang\maths\implement\maths_matrix_simd.inl
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\..\source\graphics\graphics.shared\graphics.shared.vcxitems*{45d41acc-2c3c-43d2-bc10-02aa73ffc7c7}*SharedItemsImports = 9
@@ -233,6 +264,7 @@ Global
 		{45D41ACC-2C3C-43D2-BC10-02AA73FFC7C7} = {B04B59FC-ECEE-44B6-BC7A-E039EBDD6DA8}
 		{BE593FEE-B4EF-41BF-965A-5FEE2782D09E} = {03377881-D548-4FCD-B403-B5FFCC5A36E4}
 		{41CC2A4B-F584-4904-81D0-750691138CD9} = {D8E16DF2-4CE5-4BCF-877A-7426A8EC9E4C}
+		{CA441BA4-04F5-4C34-A70B-F1F68F724BF1} = {5B898C8D-30AA-44BD-9C64-A91275E82C72}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5ED553A7-3FB0-4C57-B5C6-36FAE4D58D56}

@@ -19,10 +19,10 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::strings::basic_const_string_buffer<MY_
 
 comparision_result_t basic_const_string_buffer<MY_ENCODING>::compare(object const* obj)const
 {
-	itext_buffer_t buffer = interface_cast<itext_buffer>(const_cast<object*>(obj));
+	ibuffer_t buffer = interface_cast<ibuffer>(const_cast<object*>(obj));
 	if (buffer.is_empty())
 		return comparision_result::diferent;
-	return (comparision_result)iencoder::get_encoder(MY_ENCODING)->compare(text_buffer().ptr(), buffer->text_buffer().ptr(), buffer->encoding());
+	return (comparision_result)iencoder::get_encoder(MY_ENCODING)->compare(cstr().cstr(), buffer->buffer_ptr(), buffer->encoding());
 }
 
 text::encoding_t basic_const_string_buffer<MY_ENCODING>::encoding()const
@@ -40,13 +40,13 @@ wsize basic_const_string_buffer<MY_ENCODING>::buffer_size()const
 	return const_str_data_ptr(wsize(this) + align_up<8, sizeof(basic_const_string_buffer<MY_ENCODING>)>())->size;
 }
 
-raw_str_t basic_const_string_buffer<MY_ENCODING>::text_buffer()
+raw_str_t basic_const_string_buffer<MY_ENCODING>::str(int)
 {
 	auto data = const_str_data_ptr(wsize(this) + align_up<8, sizeof(basic_const_string_buffer<MY_ENCODING>)>());
 	return raw_str(data->buffer, data->size * sizeof(char_t), MY_ENCODING);
 }
 
-raw_cstr_t basic_const_string_buffer<MY_ENCODING>::text_buffer()const
+raw_cstr_t basic_const_string_buffer<MY_ENCODING>::cstr(int)const
 {
 	auto data = const_str_data_ptr(wsize(this) + align_up<8, sizeof(basic_const_string_buffer<MY_ENCODING>)>());
 	return raw_cstr(data->buffer, data->size * sizeof(char_t), MY_ENCODING);

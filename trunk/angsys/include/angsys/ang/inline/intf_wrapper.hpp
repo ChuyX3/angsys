@@ -21,7 +21,7 @@ namespace ang
 		typedef T const& ctype_ref;
 
 		intf_wrapper()
-			: _ptr(null) { 
+			: m_ptr(null) { 
 			static_assert(is_interface<type>::value && !is_object<type>::value, "ERROR: T is not a interface type...");
 		}
 
@@ -36,9 +36,9 @@ namespace ang
 
 		intf_wrapper(intf_wrapper && ptr)
 			: intf_wrapper() {
-			T * temp = ptr._ptr;
-			ptr._ptr = null;
-			_ptr = temp;
+			T * temp = ptr.m_ptr;
+			ptr.m_ptr = null;
+			m_ptr = temp;
 		}
 
 		intf_wrapper(intf_wrapper const& ptr)
@@ -52,31 +52,31 @@ namespace ang
 
 	public:
 		void reset() {
-			iobject * _obj = interface_cast<iobject>(_ptr);
+			iobject * _obj = interface_cast<iobject>(m_ptr);
 			if (_obj)_obj->release();
-			_ptr = null;
+			m_ptr = null;
 		}
 
 		void reset_unsafe() {
-		//	iobject * _obj = interface_cast<iobject>(_ptr);
+		//	iobject * _obj = interface_cast<iobject>(m_ptr);
 		//	if (_obj)_obj->release();
-			_ptr = null;
+			m_ptr = null;
 		}
 
 		bool is_empty()const { 
-			return _ptr == null;
+			return m_ptr == null;
 		}
 
 		type* get(void)const {
-			return _ptr;
+			return m_ptr;
 		}
 
 		void set(type* ptr) {
-			if (ptr == _ptr)
+			if (ptr == m_ptr)
 				return;
-			iobject * _old = interface_cast<iobject>(_ptr);
+			iobject * _old = interface_cast<iobject>(m_ptr);
 			iobject * _new = interface_cast<iobject>(ptr);
-			_ptr = ptr;
+			m_ptr = ptr;
 			if (_new)_new->add_ref();
 			if (_old)_old->release();
 		}
@@ -85,25 +85,25 @@ namespace ang
 			if (this == &ptr)
 				return;
 			reset();
-			_ptr = ptr._ptr;
-			ptr._ptr = null;
+			m_ptr = ptr.m_ptr;
+			ptr.m_ptr = null;
 		}
 
 		type ** addres_of(void) { 
-			return &_ptr;
+			return &m_ptr;
 		}
 
 		type ** addres_for_init(void) {
 			reset(); 
-			return &_ptr;
+			return &m_ptr;
 		}
 
 		template<typename U> typename smart_ptr_type<U>::smart_ptr_t as() {
-			return  this ? interface_cast<typename smart_ptr_type<U>::type>(_ptr) : null;
+			return  this ? interface_cast<typename smart_ptr_type<U>::type>(m_ptr) : null;
 		}
 
 		template<typename U> bool as(U*& out) {
-			out = this ? interface_cast<typename smart_ptr_type<U>::type>(_ptr) : null;
+			out = this ? interface_cast<typename smart_ptr_type<U>::type>(m_ptr) : null;
 			return out != null;
 		}
 
@@ -148,7 +148,7 @@ namespace ang
 		}
 
 	protected:
-		type* _ptr;
+		type* m_ptr;
 
 	};
 
@@ -161,48 +161,48 @@ namespace ang
 	{
 	public:
 		intf_wrapper_ptr(intf_wrapper<T>*ptr)
-			: _ptr(ptr) {
+			: m_ptr(ptr) {
 		}
 
 		intf_wrapper_ptr(intf_wrapper_ptr && ptr)
-			: _ptr(ptr._ptr) { 
-			ptr._ptr = null;
+			: m_ptr(ptr.m_ptr) { 
+			ptr.m_ptr = null;
 		}
 
 		intf_wrapper_ptr(intf_wrapper_ptr const& ptr)
-			: _ptr(ptr._ptr) {
+			: m_ptr(ptr.m_ptr) {
 		}
 
 		~intf_wrapper_ptr() { 
-			_ptr = null;
+			m_ptr = null;
 		}
 
 		bool is_empty()const {
-			return _ptr == null;
+			return m_ptr == null;
 		}
 
 		intf_wrapper<T>* operator ->()const {
-			return _ptr;
+			return m_ptr;
 		}
 
 		operator intf_wrapper<T>*()const {
-			return _ptr;
+			return m_ptr;
 		}
 
 		operator T**()const { 
-			return _ptr->addres_of();
+			return m_ptr->addres_of();
 		}
 
 		operator unknown_ptr_t()const {
-			return _ptr->addres_of();
+			return m_ptr->addres_of();
 		}
 
 		intf_wrapper<T>& operator *() {
-			return *_ptr;
+			return *m_ptr;
 		}
 
 	private:
-		intf_wrapper<T>* _ptr;
+		intf_wrapper<T>* m_ptr;
 
 	};
 
@@ -242,7 +242,7 @@ namespace ang
 		type ** addres_for_init(void);
 
 		template<typename U> typename smart_ptr_type<U>::smart_ptr_t as() {
-			return interface_cast<typename smart_ptr_type<U>::type>(_ptr);
+			return interface_cast<typename smart_ptr_type<U>::type>(m_ptr);
 		}
 
 	public:
@@ -261,7 +261,7 @@ namespace ang
 		operator type const* (void)const;
 
 	private:
-		interface* _ptr;
+		interface* m_ptr;
 
 	};
 
@@ -337,7 +337,7 @@ namespace ang
 
 	public: //properties
 		typename smart_ptr_type<T>::smart_ptr_t lock()const {
-			auto ptr = safe_pointer::lock<intfptr>();
+			auto ptr = const_cast<weak_ptr<T>*>(this)->safe_pointer::lock<intfptr>();
 			return reinterpret_cast<T*>(ptr.get());
 		}
 

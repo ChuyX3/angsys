@@ -143,45 +143,45 @@ bool exception::query_interface(ang::rtti_t const& type, unknown_ptr_t out) thro
 /////////////////////////////////////////////////////////////////
 
 object_wrapper<exception>::object_wrapper()
-	: _ptr(null)
+	: m_ptr(null)
 {
 	set(new exception());
 }
 
 object_wrapper<exception>::object_wrapper(except_code_t type)
-	: _ptr(null)
+	: m_ptr(null)
 {
 	set(new exception(type));
 }
 
 object_wrapper<exception>::object_wrapper(dword errorCode, string msg)
-	: _ptr(null)
+	: m_ptr(null)
 {
 	set(new exception(errorCode, msg));
 }
 
 object_wrapper<exception>::object_wrapper(string msg)
-	: _ptr(null)
+	: m_ptr(null)
 {
 	set(new exception(msg));
 }
 
 object_wrapper<exception>::object_wrapper(object_wrapper && other)
-	: _ptr(null)
+	: m_ptr(null)
 {
-	exception * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
+	exception * temp = other.m_ptr;
+	other.m_ptr = null;
+	m_ptr = temp;
 }
 
 object_wrapper<exception>::object_wrapper(object_wrapper const& other)
-	: _ptr(null)
+	: m_ptr(null)
 {
-	set(other._ptr);
+	set(other.m_ptr);
 }
 
 object_wrapper<exception>::object_wrapper(ang::nullptr_t const&)
-	: _ptr(null)
+	: m_ptr(null)
 {
 }
 
@@ -192,26 +192,26 @@ object_wrapper<exception>::~object_wrapper()
 
 void object_wrapper<exception>::clean()
 {
-	if (_ptr)_ptr->release();
-	_ptr = null;
+	if (m_ptr)m_ptr->release();
+	m_ptr = null;
 }
 
 bool object_wrapper<exception>::is_empty()const
 {
-	return _ptr == null;
+	return m_ptr == null;
 }
 
 exception* object_wrapper<exception>::get(void)const
 {
-	return _ptr;
+	return m_ptr;
 }
 
 void object_wrapper<exception>::set(exception* ptr)
 {
-	exception * temp = _ptr;
-	if (ptr == _ptr) return;
-	_ptr = ptr;
-	if (_ptr)_ptr->add_ref();
+	exception * temp = m_ptr;
+	if (ptr == m_ptr) return;
+	m_ptr = ptr;
+	if (m_ptr)m_ptr->add_ref();
 	if (temp)temp->release();
 }
 
@@ -221,14 +221,14 @@ object_wrapper<exception>& object_wrapper<exception>::operator = (object_wrapper
 	if (this == &other)
 		return *this;
 	clean();
-	_ptr = other._ptr;
-	other._ptr = null;
+	m_ptr = other.m_ptr;
+	other.m_ptr = null;
 	return*this;
 }
 
 object_wrapper<exception>& object_wrapper<exception>::operator = (object_wrapper<exception> const& other)
 {
-	set(other._ptr);
+	set(other.m_ptr);
 	return*this;
 }
 

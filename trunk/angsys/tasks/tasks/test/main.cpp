@@ -37,13 +37,31 @@ ANG_EXTERN ulong64 get_performance_time_us()
 	}
 }
 
+template<typename T, typename = void>
+struct __si_complete : false_type {
+
+};
+
+template<typename T>
+struct __si_complete<T, void_t<integer_constant<bool, sizeof(T)==sizeof(T)>>> : true_type {
+
+};
+
+struct my_struct {
+
+};
+
 int main(int argc, char* argv[])
 {	
-	wstring str;
-	core::files::input_text_file_t file = new core::files::input_text_file(L".\\airfoil.dat"_s);
-	
+	core::files::ifile_system::fs_instance()->push_path(L"..\\..\\..\\third_party\\"_s, core::files::file_system_priority::lowest);
+
+	is_complete<my_struct>::value;
+
+
+	core::files::input_text_file_t file = new core::files::input_text_file(L"resources\\girl\\girl.obj"_s);
+	float a1, a2;
 	var_args_t args;
-	file->read_format("A18 (original)\n {f:} {f:}"_s, args);
+	file->read_format("A18 (original)\n {f:} {f:}"_s, a1, a2);
 
 
 

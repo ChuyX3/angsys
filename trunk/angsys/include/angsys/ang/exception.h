@@ -52,7 +52,7 @@ namespace ang
 		typedef exception type;
 
 	private:
-		type* _ptr;
+		type* m_ptr;
 
 	public:
 		object_wrapper();

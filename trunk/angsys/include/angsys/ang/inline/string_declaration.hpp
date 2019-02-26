@@ -47,7 +47,11 @@ namespace ang
 			virtual bool realloc(wsize new_size, bool save = true)override;
 
 			str_t str();
-			 cstr_t cstr()const;
+			cstr_t cstr()const;
+
+		private:
+			raw_str_t str(int)override;
+			raw_cstr_t cstr(int)const override;
 
 		public:
 			using string_base::copy;

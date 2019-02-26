@@ -25,7 +25,7 @@ namespace ang
 
 	public:
 		com_wrapper() 
-			: _ptr(null) {
+			: m_ptr(null) {
 			static_assert(is_com_object<type>::value, "ERROR: T is not a object type...");
 		}
 
@@ -36,9 +36,9 @@ namespace ang
 
 		com_wrapper(com_wrapper && ptr) 
 			: com_wrapper() {
-			T * temp = ptr._ptr;
-			ptr._ptr = null;
-			_ptr = temp;
+			T * temp = ptr.m_ptr;
+			ptr.m_ptr = null;
+			m_ptr = temp;
 		}
 
 		com_wrapper(com_wrapper const& ptr)
@@ -57,28 +57,28 @@ namespace ang
 	public: //properties
 
 		void reset() {
-			if (_ptr)_ptr->Release();
-			_ptr = null;
+			if (m_ptr)m_ptr->Release();
+			m_ptr = null;
 		}
 
 		void reset_unsafe() { 
-			_ptr = null;
+			m_ptr = null;
 		}
 
 		bool is_empty()const { 
-			return _ptr == null;
+			return m_ptr == null;
 		}
 
 		type* get(void)const { 
-			return _ptr;
+			return m_ptr;
 		}
 
 		void set(type* ptr) {
-			T * temp = _ptr;
-			if (ptr == _ptr)
+			T * temp = m_ptr;
+			if (ptr == m_ptr)
 				return;
-			_ptr = ptr;
-			if (_ptr)_ptr->AddRef();
+			m_ptr = ptr;
+			if (m_ptr)m_ptr->AddRef();
 			if (temp)temp->Release();
 		}
 
@@ -86,17 +86,17 @@ namespace ang
 			if (this == &ptr)
 				return;
 			reset();
-			_ptr = ptr._ptr;
-			ptr._ptr = null;
+			m_ptr = ptr.m_ptr;
+			ptr.m_ptr = null;
 		}
 
 		type ** addres_of(void) {
-			return&_ptr;
+			return&m_ptr;
 		}
 
 		type ** addres_for_init(void) { 
 			reset();
-			return&_ptr;
+			return&m_ptr;
 		}
 
 	public: //operators
@@ -139,7 +139,7 @@ namespace ang
 		}
 
 	private:
-		type* _ptr;
+		type* m_ptr;
 	};
 	
 	/******************************************************************/
@@ -151,52 +151,52 @@ namespace ang
 	{
 	public:
 		com_wrapper_ptr(ang::nullptr_t const&)
-			: _ptr(null) {
+			: m_ptr(null) {
 		}
 
 		com_wrapper_ptr(com_wrapper<T>*ptr)
-			: _ptr(ptr) {
+			: m_ptr(ptr) {
 		}
 
 		com_wrapper_ptr(com_wrapper_ptr && ptr) 
-			: _ptr(ptr._ptr) { 
-			ptr._ptr = null;
+			: m_ptr(ptr.m_ptr) { 
+			ptr.m_ptr = null;
 		}
 
 		com_wrapper_ptr(com_wrapper_ptr const& ptr) 
-			: _ptr(ptr._ptr) {
+			: m_ptr(ptr.m_ptr) {
 		}
 
 		~com_wrapper_ptr() {
-			_ptr = null;
+			m_ptr = null;
 		}
 
 		bool is_empty()const {
-			return _ptr == null;
+			return m_ptr == null;
 		}
 
 		com_wrapper<T>& operator *()const {
-			return *_ptr;
+			return *m_ptr;
 		}
 
 		com_wrapper<T>* operator ->()const {
-			return _ptr; 
+			return m_ptr; 
 		}
 
 		operator com_wrapper<T>*()const {
-			return _ptr;
+			return m_ptr;
 		}
 
 		operator unknown_ptr_t()const {
-			return _ptr->addres_of();
+			return m_ptr->addres_of();
 		}
 
 		operator T**()const { 
-			return _ptr->addres_of();
+			return m_ptr->addres_of();
 		}
 
 	private:
-		com_wrapper<T>* _ptr;
+		com_wrapper<T>* m_ptr;
 	};
 
 }

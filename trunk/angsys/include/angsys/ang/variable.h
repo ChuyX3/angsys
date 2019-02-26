@@ -68,7 +68,7 @@ namespace ang
 		type ** addres_for_init(void);
 
 		template<typename T> typename smart_ptr_type<T>::smart_ptr_t as() {
-			return interface_cast<typename smart_ptr_type<T>::type>(_ptr);
+			return interface_cast<typename smart_ptr_type<T>::type>(m_ptr);
 		}
 
 		template<typename T> explicit operator T& () {
@@ -109,7 +109,7 @@ namespace ang
 		operator type const* (void)const;
 
 	private:
-		ivariant* _ptr;
+		ivariant* m_ptr;
 
 	};
 
@@ -165,7 +165,7 @@ namespace ang
 
 	public:
 		object_wrapper()
-			: _ptr(null) {
+			: m_ptr(null) {
 		}
 
 		object_wrapper(type* ptr)
@@ -175,9 +175,9 @@ namespace ang
 
 		object_wrapper(object_wrapper && ptr)
 			: object_wrapper() {
-			T * temp = ptr._ptr;
-			ptr._ptr = null;
-			_ptr = temp;
+			T * temp = ptr.m_ptr;
+			ptr.m_ptr = null;
+			m_ptr = temp;
 		}
 
 		object_wrapper(object_wrapper const& ptr)
@@ -196,28 +196,28 @@ namespace ang
 	public: //properties
 
 		void reset() {
-			if (_ptr)_ptr->release();
-			_ptr = null;
+			if (m_ptr)m_ptr->release();
+			m_ptr = null;
 		}
 
 		void reset_unsafe() {
-			_ptr = null;
+			m_ptr = null;
 		}
 
 		bool is_empty()const {
-			return _ptr == null;
+			return m_ptr == null;
 		}
 
 		type* get(void)const {
-			return _ptr;
+			return m_ptr;
 		}
 
 		void set(type* ptr) {
-			type * temp = _ptr;
-			if (ptr == _ptr)
+			type * temp = m_ptr;
+			if (ptr == m_ptr)
 				return;
-			_ptr = ptr;
-			if (_ptr)_ptr->add_ref();
+			m_ptr = ptr;
+			if (m_ptr)m_ptr->add_ref();
 			if (temp)temp->release();
 		}
 
@@ -225,17 +225,17 @@ namespace ang
 			if ((pointer)this == (pointer)&reinterpret_cast<uint&>(ptr))
 				return;
 			reset();
-			_ptr = ptr._ptr;
-			ptr._ptr = null;
+			m_ptr = ptr.m_ptr;
+			ptr.m_ptr = null;
 		}
 
 		type ** addres_of(void) {
-			return&_ptr;
+			return&m_ptr;
 		}
 
 		type ** addres_for_init(void) {
 			reset();
-			return&_ptr;
+			return&m_ptr;
 		}
 
 	public: //operators
@@ -286,7 +286,7 @@ namespace ang
 		}
 
 	private:
-		type* _ptr;
+		type* m_ptr;
 	};
 
 

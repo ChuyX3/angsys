@@ -28,17 +28,35 @@ safe_enum_rrti2(ang::core::files, file_system_priority);
 //#undef MY_TYPE
 //#undef MY_ALLOCATOR
 
+static collections::pair<file_system_priority, cstr_t> s_file_system_priority_to_string_map[] =
+{
+	{file_system_priority::lowest, "lowest"_s},
+	{file_system_priority::highest, "highest"_s}
+};
+
+static collections::pair<cstr_t, file_system_priority> s_file_system_priority_parsing_map[] =
+{
+	{"highest"_s, file_system_priority::highest},
+	{"lowest"_s, file_system_priority::lowest}
+};
+
+
+file_system_priority_t file_system_priority_t::parse(raw_cstr_t str)
+{
+	auto idx = algorithms::binary_search(str, collections::to_array(s_file_system_priority_parsing_map));
+	if (idx >= algorithms::array_size(s_file_system_priority_parsing_map))
+		return file_system_priority::lowest;
+	else
+		return s_file_system_priority_parsing_map[idx].value;
+}
+
 wstring file_system_priority_t::to_string()const
 {
-	switch (get())
-	{
-	case file_system_priority::lowest:
-		return "lowest"_s;
-	case file_system_priority::highest:
-		return "highest"_s;
-	default:
+	auto idx = algorithms::binary_search(get(), collections::to_array(s_file_system_priority_to_string_map));
+	if (idx >= algorithms::array_size(s_file_system_priority_to_string_map))
 		return "unknown"_s;
-	}
+	else
+		return s_file_system_priority_to_string_map[idx].value;
 }
 
 template<text::encoding> open_flags_t get_encoding();

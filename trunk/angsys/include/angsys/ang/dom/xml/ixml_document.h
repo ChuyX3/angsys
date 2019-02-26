@@ -50,6 +50,8 @@ namespace ang
 				template<text::encoding E, template<typename>class A> inline void parse(strings::basic_string<E, A> const& text) { parse(text.is_empty() ? raw_str() : raw_str(text->cstr())); }
 
 			ang_end_interface();
+
+			ixml_document_t xml_create_document(xml_encoding_t, core::files::input_text_file_t = null);
 		}
 	}
 }

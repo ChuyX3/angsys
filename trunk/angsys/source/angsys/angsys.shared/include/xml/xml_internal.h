@@ -25,6 +25,12 @@ namespace ang
 			template<xml_encoding E> using xml_comment_ptr = object_wrapper < xml_comment<E>>;
 			template<xml_encoding E> using xml_element_ptr = object_wrapper < xml_element<E>>;
 
+			template<xml_encoding E> struct is_inherited_from<xml_node<E>, object> : true_type {};
+			template<xml_encoding E> struct is_inherited_from<xml_node<E>, interface> : true_type {};
+
+			template<xml_encoding E> struct is_inherited_from<xml_document<E>, object> : true_type {};
+			template<xml_encoding E> struct is_inherited_from<xml_document<E>, interface> : true_type {};
+
 			typedef enum xml_entity : uint
 			{
 				amp,	//	&

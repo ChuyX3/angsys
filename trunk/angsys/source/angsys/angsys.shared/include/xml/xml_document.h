@@ -9,6 +9,7 @@ namespace ang
 	{
 		namespace xml
 		{
+			
 			template<xml_encoding E>
 			class xml_document final: public object, public ixml_document
 			{
@@ -57,9 +58,9 @@ namespace ang
 				};
 
 				wsize _count;
-				xml_node* _xml_first;
-				xml_node* _xml_root;
-				xml_node* _xml_last;
+				xml_node<E>* _xml_first;
+				xml_node<E>* _xml_root;
+				xml_node<E>* _xml_last;
 				xml_document_iterator _current;
 				string _last_parsing_error;
 
@@ -77,6 +78,7 @@ namespace ang
 				virtual xml_type_t xml_type()const override;
 				virtual bool xml_is_type_of(xml_type_t)const override;
 				virtual streams::itext_output_stream_t& xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flag, ushort level = 0)const override;
+				virtual xml_encoding_t  xml_encoding()const override { return E; }
 
 				virtual wsize counter()const override;
 				virtual xml::ixml_node_t at(xml_base_iterator_t const&) override;
@@ -117,15 +119,15 @@ namespace ang
 				virtual bool move_backward() override;
 
 				virtual void push_default_header() override;
-				virtual void push_header(xml_document_ptr<E> version, xml_encoding_t encoding, bool standalone) override;
-				virtual bool begin_element(xml_document_ptr<E> name) override;
+				virtual void push_header(raw_str_t version, bool standalone) override;
+				virtual bool begin_element(raw_str_t name) override;
 				virtual bool end_element() override;
-				virtual bool push_element(xml_document_ptr<E> name, xml_document_ptr<E> value) override;
-				virtual bool push_element(xml_document_ptr<E> element) override;
-				virtual bool push_data(xml_document_ptr<E> value) override;
-				virtual bool push_value(xml_document_ptr<E> value) override;
-				virtual bool push_attribute(xml_document_ptr<E> name, xml_document_ptr<E> value) override;
-				virtual bool push_comment(xml_document_ptr<E> value) override;
+				virtual bool push_element(raw_str_t name, raw_str_t value) override;
+				virtual bool push_element(raw_str_t element) override;
+				virtual bool push_data(raw_str_t value) override;
+				virtual bool push_value(raw_str_t value) override;
+				virtual bool push_attribute(raw_str_t name, raw_str_t value) override;
+				virtual bool push_comment(raw_str_t value) override;
 
 				virtual void load(core::files::input_text_file_t) override;
 				virtual void save(core::files::output_text_file_t)const override;

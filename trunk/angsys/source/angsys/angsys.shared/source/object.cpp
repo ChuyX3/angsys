@@ -30,6 +30,7 @@ rtti_t const& interface::class_info() {
 	static const char name[] = "ang::interface";
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(interface), alignof(wsize), null, &default_query_interface);
 	return info;
+	align_of<interface>();
 }
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::iobject, interface);
@@ -42,7 +43,7 @@ typedef struct smart_ptr_info
 	interface* _object; //4-8bytes
 }smart_ptr_info_t, *smart_ptr_info_ptr_t;
 
-#define GET_SMART_PTR_INFO(_ptr) smart_ptr_info_ptr_t(wsize(_ptr) - align_up<16, sizeof(smart_ptr_info_t)>())
+#define GET_SMART_PTR_INFO(m_ptr) smart_ptr_info_ptr_t(wsize(m_ptr) - align_up<16, sizeof(smart_ptr_info_t)>())
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -379,25 +380,25 @@ wstring object::to_string(text::text_format_t)const
 
 ///////////////////////////////////////////////////////////////////////////
 
-object_wrapper<object>::object_wrapper() : _ptr(null) {
+object_wrapper<object>::object_wrapper() : m_ptr(null) {
 
 }
 
-object_wrapper<object>::object_wrapper(object* ptr) : _ptr(null) {
+object_wrapper<object>::object_wrapper(object* ptr) : m_ptr(null) {
 	set(ptr);
 }
 
-object_wrapper<object>::object_wrapper(object_wrapper && other) : _ptr(null) {
-	object * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
+object_wrapper<object>::object_wrapper(object_wrapper && other) : m_ptr(null) {
+	object * temp = other.m_ptr;
+	other.m_ptr = null;
+	m_ptr = temp;
 }
 
-object_wrapper<object>::object_wrapper(object_wrapper const& other) : _ptr(null) {
-	set(other._ptr);
+object_wrapper<object>::object_wrapper(object_wrapper const& other) : m_ptr(null) {
+	set(other.m_ptr);
 }
 
-object_wrapper<object>::object_wrapper(ang::nullptr_t const&) : _ptr(null) {
+object_wrapper<object>::object_wrapper(ang::nullptr_t const&) : m_ptr(null) {
 }
 
 object_wrapper<object>::~object_wrapper()
@@ -407,31 +408,31 @@ object_wrapper<object>::~object_wrapper()
 
 void object_wrapper<object>::reset()
 {
-	if (_ptr)_ptr->release();
-	_ptr = null;
+	if (m_ptr)m_ptr->release();
+	m_ptr = null;
 }
 
 void object_wrapper<object>::reset_unsafe()
 {
-	_ptr = null;
+	m_ptr = null;
 }
 
 bool object_wrapper<object>::is_empty()const
 {
-	return _ptr == null;
+	return m_ptr == null;
 }
 
 object* object_wrapper<object>::get(void)const
 {
-	return _ptr;
+	return m_ptr;
 }
 
 void object_wrapper<object>::set(object* ptr)
 {
-	object * temp = _ptr;
-	if (ptr == _ptr) return;
-	_ptr = ptr;
-	if (_ptr)_ptr->add_ref();
+	object * temp = m_ptr;
+	if (ptr == m_ptr) return;
+	m_ptr = ptr;
+	if (m_ptr)m_ptr->add_ref();
 	if (temp)temp->release();
 }
 
@@ -446,20 +447,20 @@ object_wrapper<object>& object_wrapper<object>::operator = (object_wrapper<objec
 	if (this == &other)
 		return *this;
 	reset();
-	_ptr = other._ptr;
-	other._ptr = null;
+	m_ptr = other.m_ptr;
+	other.m_ptr = null;
 	return*this;
 }
 
 object_wrapper<object>& object_wrapper<object>::operator = (object_wrapper<object> const& other)
 {
-	set(other._ptr);
+	set(other.m_ptr);
 	return*this;
 }
 
 object ** object_wrapper<object>::addres_of(void)
 {
-	return &_ptr;
+	return &m_ptr;
 }
 
 object_wrapper_ptr<object> object_wrapper<object>::operator& (void)
@@ -490,24 +491,24 @@ object_wrapper<object>::operator object const* (void)const
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
-intf_wrapper<interface>::intf_wrapper() : _ptr(null) {
+intf_wrapper<interface>::intf_wrapper() : m_ptr(null) {
 }
 
-intf_wrapper<interface>::intf_wrapper(ang::nullptr_t const&) : _ptr(null) {
+intf_wrapper<interface>::intf_wrapper(ang::nullptr_t const&) : m_ptr(null) {
 }
 
-intf_wrapper<interface>::intf_wrapper(interface* ptr) : _ptr(null) {
+intf_wrapper<interface>::intf_wrapper(interface* ptr) : m_ptr(null) {
 	set(ptr);
 }
 
-intf_wrapper<interface>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
-	interface * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
+intf_wrapper<interface>::intf_wrapper(intf_wrapper && other) : m_ptr(null) {
+	interface * temp = other.m_ptr;
+	other.m_ptr = null;
+	m_ptr = temp;
 }
 
-intf_wrapper<interface>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
-	set(other._ptr);
+intf_wrapper<interface>::intf_wrapper(intf_wrapper const& other) : m_ptr(null) {
+	set(other.m_ptr);
 }
 
 intf_wrapper<interface>::~intf_wrapper() {
@@ -516,27 +517,27 @@ intf_wrapper<interface>::~intf_wrapper() {
 
 void intf_wrapper<interface>::reset()
 {
-	iobject * _obj = interface_cast<iobject>(_ptr);
+	iobject * _obj = interface_cast<iobject>(m_ptr);
 	if (_obj)_obj->release();
-	_ptr = null;
+	m_ptr = null;
 }
 
 bool intf_wrapper<interface>::is_empty()const
 {
-	return _ptr == null;
+	return m_ptr == null;
 }
 
 interface* intf_wrapper<interface>::get(void)const
 {
-	return _ptr;
+	return m_ptr;
 }
 
 void intf_wrapper<interface>::set(interface* ptr)
 {
-	if (ptr == _ptr) return;
-	iobject * _old = interface_cast<iobject>(_ptr);
+	if (ptr == m_ptr) return;
+	iobject * _old = interface_cast<iobject>(m_ptr);
 	iobject * _new = interface_cast<iobject>(ptr);
-	_ptr = ptr;
+	m_ptr = ptr;
 	if (_new)_new->add_ref();
 	if (_old)_old->release();
 }
@@ -558,20 +559,20 @@ intf_wrapper<interface>& intf_wrapper<interface>::operator = (intf_wrapper<inter
 	if (this == &other)
 		return *this;
 	reset();
-	_ptr = other._ptr;
-	other._ptr = null;
+	m_ptr = other.m_ptr;
+	other.m_ptr = null;
 	return*this;
 }
 
 intf_wrapper<interface>& intf_wrapper<interface>::operator = (intf_wrapper<interface> const& other)
 {
-	set(other._ptr);
+	set(other.m_ptr);
 	return*this;
 }
 
 interface ** intf_wrapper<interface>::addres_of(void)
 {
-	return &_ptr;
+	return &m_ptr;
 }
 
 intf_wrapper_ptr<interface> intf_wrapper<interface>::operator & (void)

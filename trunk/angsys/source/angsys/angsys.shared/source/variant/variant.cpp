@@ -68,63 +68,63 @@ intf_wrapper<ivariant>::intf_wrapper(double value)
 
 intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator=(bool value)
 {
-	if (is_empty() || !_ptr->set_value(value))
+	if (is_empty() || !m_ptr->set_value(value))
 		set(new variable<bool>(value));
 	return*this;
 }
 
 intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator=(int value)
 {
-	if (is_empty() || !_ptr->set_value(value))
+	if (is_empty() || !m_ptr->set_value(value))
 		set(new variable<int>(value));
 	return*this;
 }
 
 intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator=(uint value)
 {
-	if (is_empty() || !_ptr->set_value(value))
+	if (is_empty() || !m_ptr->set_value(value))
 		set(new variable<uint>(value));
 	return*this;
 }
 
 intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator=(long value)
 {
-	if (is_empty() || !_ptr->set_value(value))
+	if (is_empty() || !m_ptr->set_value(value))
 		set(new variable<int>(value));
 	return*this;
 }
 
 intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator=(ulong value)
 {
-	if (is_empty() || !_ptr->set_value(value))
+	if (is_empty() || !m_ptr->set_value(value))
 		set(new variable<uint>(value));
 	return*this;
 }
 
 intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator=(long64 value)
 {
-	if (is_empty() || !_ptr->set_value(value))
+	if (is_empty() || !m_ptr->set_value(value))
 		set(new variable<long64>(value));
 	return*this;
 }
 
 intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator=(ulong64 value)
 {
-	if (is_empty() || !_ptr->set_value(value))
+	if (is_empty() || !m_ptr->set_value(value))
 		set(new variable<ulong64>(value));
 	return*this;
 }
 
 intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator=(float value)
 {
-	if (is_empty() || !_ptr->set_value(value))
+	if (is_empty() || !m_ptr->set_value(value))
 		set(new variable<float>(value));
 	return*this;
 }
 
 intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator=(double value)
 {
-	if (is_empty() || !_ptr->set_value(value))
+	if (is_empty() || !m_ptr->set_value(value))
 		set(new variable<double>(value));
 	return*this;
 }

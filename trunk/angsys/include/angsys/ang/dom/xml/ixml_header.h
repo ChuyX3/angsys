@@ -10,7 +10,7 @@ namespace ang
 		namespace xml
 		{
 			ang_begin_interface(LINK ixml_header)
-				visible vcall ixml_text_t xml_version()const pure;
+				visible vcall ixml_string_t xml_version()const pure;
 				visible vcall xml_encoding_t xml_encoding()const pure;
 				visible vcall bool xml_stand_alone()const pure;
 			ang_end_interface();

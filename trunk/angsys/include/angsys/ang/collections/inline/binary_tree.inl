@@ -1053,7 +1053,7 @@ inline ang::collections::binary_map_node<K, T>* ang::collections::binary_map_obj
 
 template<typename K, typename T, template<typename> class allocator>
 inline ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>::object_wrapper()
-	: _ptr(null)
+	: m_ptr(null)
 {
 
 }
@@ -1088,9 +1088,9 @@ inline ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>
 template<typename K, typename T, template<typename> class allocator>
 inline ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>> && other)
 {
-	collections::binary_map_object<K, T, allocator> * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
+	collections::binary_map_object<K, T, allocator> * temp = other.m_ptr;
+	other.m_ptr = null;
+	m_ptr = temp;
 }
 
 template<typename K, typename T, template<typename> class allocator>
@@ -1108,51 +1108,51 @@ inline ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>
 template<typename K, typename T, template<typename> class allocator>
 inline void ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>::clean()
 {
-	if (_ptr)_ptr->release();
-	_ptr = null;
+	if (m_ptr)m_ptr->release();
+	m_ptr = null;
 }
 
 template<typename K, typename T, template<typename> class allocator>
 inline bool ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>::is_empty()const
 {
-	return _ptr == null;
+	return m_ptr == null;
 }
 
 template<typename K, typename T, template<typename> class allocator>
 inline ang::collections::binary_map_object<K, T, allocator>* ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>::get(void)const
 {
-	return _ptr;
+	return m_ptr;
 }
 
 template<typename K, typename T, template<typename> class allocator>
 inline void ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>::set(ang::collections::binary_map_object<K, T, allocator>* ptr)
 {
-	collections::binary_map_object<K, T, allocator> * temp = _ptr;
-	if (ptr == _ptr) return;
-	_ptr = ptr;
-	if (_ptr)_ptr->add_ref();
+	collections::binary_map_object<K, T, allocator> * temp = m_ptr;
+	if (ptr == m_ptr) return;
+	m_ptr = ptr;
+	if (m_ptr)m_ptr->add_ref();
 	if (temp)temp->release();
 }
 
 template<typename K, typename T, template<typename> class allocator>
 inline ang::collections::binary_map_object<K, T, allocator> ** ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>::addres_of(void)
 {
-	return &_ptr;
+	return &m_ptr;
 }
 
 template<typename K, typename T, template<typename> class allocator>
 inline ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>& ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>::operator = (ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>> && other)
 {
-	ang::collections::binary_map_object<K, T, allocator> * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
+	ang::collections::binary_map_object<K, T, allocator> * temp = other.m_ptr;
+	other.m_ptr = null;
+	m_ptr = temp;
 	return*this;
 }
 
 template<typename K, typename T, template<typename> class allocator>
 inline ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>& ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>::operator = (ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>> const& other)
 {
-	set(other._ptr);
+	set(other.m_ptr);
 	return*this;
 }
 
@@ -1176,7 +1176,7 @@ inline ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>
 	if (is_empty())
 		set(new collections::binary_map_object<K, T, allocator>(store));
 	else
-		_ptr->copy(store);
+		m_ptr->copy(store);
 	return*this;
 }
 
@@ -1185,13 +1185,13 @@ inline ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>
 {
 	if (is_empty())
 		set(new collections::binary_map_object<K, T, allocator>());
-	_ptr->update(ang::move(pair));
+	m_ptr->update(ang::move(pair));
 	return*this;
 }
 
 template<typename K, typename T, template<typename> class allocator>
 inline ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>::operator ang::object_t()const {
-	return _ptr;
+	return m_ptr;
 }
 
 template<typename K, typename T, template<typename> class allocator>
@@ -1228,10 +1228,10 @@ template<typename K, typename T, template<typename> class allocator>
 inline T& ang::object_wrapper<ang::collections::binary_map_object<K, T, allocator>>::operator [] (K const& key)
 {
 	if (is_empty()) set(new collections::binary_map_object<K, T, allocator>());
-	auto it = _ptr->find(key);
+	auto it = m_ptr->find(key);
 	if (!it.is_valid()) {
-		_ptr->insert(key, T());
-		it = _ptr->find(key);
+		m_ptr->insert(key, T());
+		it = m_ptr->find(key);
 	}// throw(exception_t(except_code::array_overflow));
 	return it->value;
 }

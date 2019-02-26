@@ -57,8 +57,8 @@ namespace ang
 			virtual long64 to_signed(unknown_cstr_t str, wsize sz, windex& i, bool increment, int base)const override;
 			virtual ulong64 to_unsigned(unknown_cstr_t str, wsize sz, windex& i, bool increment, int base)const override;
 			virtual double to_floating(unknown_cstr_t str, wsize sz, windex& i, bool increment, bool ex)const override;
-			virtual bool format(unknown_cstr_t format, wsize sz, args_t args, encoding_t e, itext_buffer_ptr_t out)const override;
-			virtual bool format(unknown_cstr_t format, wsize sz, var_args_t args, encoding_t e, itext_buffer_ptr_t out)const override;
+			virtual bool format(unknown_cstr_t format, wsize sz, args_t args, encoding_t e, ibuffer_ptr_t out)const override;
+			virtual bool format(unknown_cstr_t format, wsize sz, var_args_t args, encoding_t e, ibuffer_ptr_t out)const override;
 			virtual text_format_t parse(unknown_cstr_t format, wsize sz)const override;
 			virtual text_format_t parse(unknown_cstr_t format, wsize sz, wsize& beg, int& arg)const override;
 
@@ -281,12 +281,12 @@ namespace ang
 		}
 
 		template<encoding ENCODING>
-		inline bool format_parser_interface<ENCODING>::format(unknown_cstr_t format, wsize sz, args_t args, encoding_t e, itext_buffer_ptr_t out)const {
+		inline bool format_parser_interface<ENCODING>::format(unknown_cstr_t format, wsize sz, args_t args, encoding_t e, ibuffer_ptr_t out)const {
 			return false;
 		}
 
 		template<encoding ENCODING>
-		inline bool format_parser_interface<ENCODING>::format(unknown_cstr_t format, wsize sz, var_args_t args, encoding_t e, itext_buffer_ptr_t out) const {
+		inline bool format_parser_interface<ENCODING>::format(unknown_cstr_t format, wsize sz, var_args_t args, encoding_t e, ibuffer_ptr_t out) const {
 			return false;
 		}
 

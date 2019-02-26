@@ -331,9 +331,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\encoder.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\const_string.cpp">
       <Filter>source\strings</Filter>
     </ClCompile>
@@ -403,6 +400,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml.cpp">
       <Filter>source\xml</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\encoder.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl">
@@ -455,6 +455,12 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\variable.inl">
       <Filter>header\angsys\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)include\xml\inline\xml_node.inl">
+      <Filter>header\include\xml\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)include\xml\inline\xml_collection.inl">
+      <Filter>header\include\xml\inline</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

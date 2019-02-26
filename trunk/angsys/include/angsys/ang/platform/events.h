@@ -165,7 +165,7 @@ namespace ang
 		typedef platform::events::event type;
 
 	protected:
-		platform::events::event* _ptr;
+		platform::events::event* m_ptr;
 
 	public:
 		object_wrapper();
