@@ -151,17 +151,17 @@ namespace ang
 		text::iencoder_t utf32_le_encoder;
 		text::iencoder_t utf32_be_encoder;
 
-		text::iformat_parser_t ascii_parser;
-		text::iformat_parser_t unicode_parser;
-		text::iformat_parser_t utf8_parser;
-		text::iformat_parser_t utf16_parser;
-		text::iformat_parser_t utf16_se_parser;
-		text::iformat_parser_t utf16_le_parser;
-		text::iformat_parser_t utf16_be_parser;
-		text::iformat_parser_t utf32_parser;
-		text::iformat_parser_t utf32_se_parser;
-		text::iformat_parser_t utf32_le_parser;
-		text::iformat_parser_t utf32_be_parser;
+		text::iparser_t ascii_parser;
+		text::iparser_t unicode_parser;
+		text::iparser_t utf8_parser;
+		text::iparser_t utf16_parser;
+		text::iparser_t utf16_se_parser;
+		text::iparser_t utf16_le_parser;
+		text::iparser_t utf16_be_parser;
+		text::iparser_t utf32_parser;
+		text::iparser_t utf32_se_parser;
+		text::iparser_t utf32_le_parser;
+		text::iparser_t utf32_be_parser;
 	};
 
 	static struct ang_main_instance_constructor
@@ -258,22 +258,22 @@ text::iencoder_t text::iencoder::get_encoder(text::encoding_t e)
 
 
 
-text::iformat_parser_t text::iformat_parser::get_parser(text::encoding_t e)
+text::iparser_t text::iparser::get_parser(text::encoding_t e)
 {
 	static struct _initializer
 	{
 		_initializer() {
-			ang_main_instance::instance()->ascii_parser = new text::format_parser_interface<text::encoding::ascii>();
-			ang_main_instance::instance()->unicode_parser = new text::format_parser_interface<text::encoding::unicode>();
-			ang_main_instance::instance()->utf8_parser = new text::format_parser_interface<text::encoding::utf8>();
-			ang_main_instance::instance()->utf16_parser = new text::format_parser_interface<text::encoding::utf16>();
-			ang_main_instance::instance()->utf16_se_parser = new text::format_parser_interface<text::encoding::utf16_se>();
-			ang_main_instance::instance()->utf16_le_parser = new text::format_parser_interface<text::encoding::utf16_le>();
-			ang_main_instance::instance()->utf16_be_parser = new text::format_parser_interface<text::encoding::utf16_be>();
-			ang_main_instance::instance()->utf32_parser = new text::format_parser_interface<text::encoding::utf32>();
-			ang_main_instance::instance()->utf32_se_parser = new text::format_parser_interface<text::encoding::utf32_se>();
-			ang_main_instance::instance()->utf32_le_parser = new text::format_parser_interface<text::encoding::utf32_le>();
-			ang_main_instance::instance()->utf32_be_parser = new text::format_parser_interface<text::encoding::utf32_be>();
+			ang_main_instance::instance()->ascii_parser = new text::parser_interface<text::encoding::ascii>();
+			ang_main_instance::instance()->unicode_parser = new text::parser_interface<text::encoding::unicode>();
+			ang_main_instance::instance()->utf8_parser = new text::parser_interface<text::encoding::utf8>();
+			ang_main_instance::instance()->utf16_parser = new text::parser_interface<text::encoding::utf16>();
+			ang_main_instance::instance()->utf16_se_parser = new text::parser_interface<text::encoding::utf16_se>();
+			ang_main_instance::instance()->utf16_le_parser = new text::parser_interface<text::encoding::utf16_le>();
+			ang_main_instance::instance()->utf16_be_parser = new text::parser_interface<text::encoding::utf16_be>();
+			ang_main_instance::instance()->utf32_parser = new text::parser_interface<text::encoding::utf32>();
+			ang_main_instance::instance()->utf32_se_parser = new text::parser_interface<text::encoding::utf32_se>();
+			ang_main_instance::instance()->utf32_le_parser = new text::parser_interface<text::encoding::utf32_le>();
+			ang_main_instance::instance()->utf32_be_parser = new text::parser_interface<text::encoding::utf32_be>();
 		}
 	}s_initializer;
 

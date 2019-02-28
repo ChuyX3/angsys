@@ -11,7 +11,7 @@
 namespace ang{namespace dom{namespace xml{
 
 template<xml_encoding E>
-inline xml_node<E>::xml_collection::xml_collection(xml_node_ptr<E> parent, xml_type_t type)
+/*inline*/ xml_node<E>::xml_collection::xml_collection(xml_node_ptr<E> parent, xml_type_t type)
 	: m_type(type)
 	, m_count(0)
 	, m_first(null)
@@ -22,28 +22,76 @@ inline xml_node<E>::xml_collection::xml_collection(xml_node_ptr<E> parent, xml_t
 }
 
 template<xml_encoding E>
-inline xml_node<E>::xml_collection::~xml_collection()
+/*inline*/ xml_node<E>::xml_collection::~xml_collection()
 {
 	clear();
 }
 
+
 template<xml_encoding E>
-inline void xml_node<E>::xml_collection::clear() {
+/*inline*/ ang::rtti_t const& xml_node<E>::xml_collection::class_info()
+{
+	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::dom::xml::xml_collection<"_s) += xml_encoding_t(E).to_string()) += ">"_s);
+	static rtti_t const* parents[] = { &runtime::type_of<object>(), &runtime::type_of<ixml_collection>() };
+	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<xml_node<E>::xml_collection>(), align_of<xml_node<E>::xml_collection>(), parents, &default_query_interface);
+	return info;
+}
+
+template<xml_encoding E>
+/*inline*/ ang::rtti_t const& xml_node<E>::xml_collection::runtime_info()const
+{
+	return class_info();
+}
+
+
+template<xml_encoding E>
+/*inline*/ bool xml_node<E>::xml_collection::query_interface(ang::rtti_t const& id, ang::unknown_ptr_t out)
+{
+	if (id.type_id() == class_info().type_id())
+	{
+		if (out == null) return false;
+		*out = static_cast<xml_node<E>::xml_collection*>(this);
+		return true;
+	}
+	else if (object::query_interface(id, out))
+	{
+		return true;
+	}
+	else if (id.type_id() == type_of<ixml_collection>().type_id()) {
+		if (out == null) return false;
+		*out = static_cast<ixml_collection*>(this);
+		return true;
+	}
+	else if (id.type_id() == type_of<ixml_object>().type_id()) {
+		if (out == null) return false;
+		*out = static_cast<ixml_object*>(this);
+		return true;
+	}
+	else if (id.type_id() == type_of<collections::ienum<ixml_node>>().type_id()) {
+		if (out == null) return false;
+		*out = static_cast<collections::ienum<ixml_node>*>(this);
+		return true;
+	}
+	return false;
+}
+
+template<xml_encoding E>
+/*inline*/ void xml_node<E>::xml_collection::clear() {
 	while (pop());
 }
 
 template<xml_encoding E>
-inline xml_type_t xml_node<E>::xml_collection::xml_type()const {
+/*inline*/ xml_type_t xml_node<E>::xml_collection::xml_type()const {
 	return m_type;
 }
 
 template<xml_encoding E>
-inline bool xml_node<E>::xml_collection::xml_is_type_of(xml_type_t type)const {
+/*inline*/ bool xml_node<E>::xml_collection::xml_is_type_of(xml_type_t type)const {
 	return m_type == type || xml_type::store == type;
 }
 
 template<xml_encoding E>
-inline streams::itext_output_stream_t& xml_node<E>::xml_collection::xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flag, ushort level = 0)const {
+/*inline*/ streams::itext_output_stream_t& xml_node<E>::xml_collection::xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flag, ushort level = 0)const {
 
 	switch (m_type)
 	{
@@ -65,30 +113,30 @@ inline streams::itext_output_stream_t& xml_node<E>::xml_collection::xml_print(st
 }
 
 template<xml_encoding E>
-inline ixml_node_t xml_node<E>::xml_collection::xml_parent()const {
+/*inline*/ ixml_node_t xml_node<E>::xml_collection::xml_parent()const {
 	return m_parent.lock();
 }
 
 template<xml_encoding E>
-inline ixml_document_t xml_node<E>::xml_collection::xml_parent_doc()const {
+/*inline*/ ixml_document_t xml_node<E>::xml_collection::xml_parent_doc()const {
 	ixml_node_t parent = xml_parent();
 	return parent.is_empty() ? null : parent->xml_parent_doc();
 }
 
 template<xml_encoding E>
-inline wsize xml_node<E>::xml_collection::counter()const {
+/*inline*/ wsize xml_node<E>::xml_collection::counter()const {
 	return m_count;
 }
 
 template<xml_encoding E>
-inline xml::ixml_node_t xml_node<E>::xml_collection::at(xml_base_iterator_t const& it) {
+/*inline*/ xml::ixml_node_t xml_node<E>::xml_collection::at(xml_base_iterator_t const& it) {
 	if (!counter()) throw(ang::exception_t(except_code::invalid_memory));
 	if (it.parent() != this)throw(ang::exception_t(except_code::invalid_param));
 	return reinterpret_cast<ixml_node*>(it.current());
 }
 
 template<xml_encoding E>
-inline bool xml_node<E>::xml_collection::increase(xml_base_iterator_t& it)const {
+/*inline*/ bool xml_node<E>::xml_collection::increase(xml_base_iterator_t& it)const {
 	if (it.parent() != this || !it.is_valid()) throw(ang::exception_t(except_code::invalid_param));
 	it.current(reinterpret_cast<ixml_node*>(it.current())->xml_next_sibling());
 	if (it.current() == null)
@@ -97,7 +145,7 @@ inline bool xml_node<E>::xml_collection::increase(xml_base_iterator_t& it)const 
 }
 
 template<xml_encoding E>
-inline bool xml_node<E>::xml_collection::increase(xml_base_iterator_t& it, int offset)const {
+/*inline*/ bool xml_node<E>::xml_collection::increase(xml_base_iterator_t& it, int offset)const {
 	if (it.parent() != this || !it.is_valid()) throw(ang::exception_t(except_code::invalid_param));
 	auto node = reinterpret_cast<ixml_node*>(it.current());
 	int c = 0;
@@ -112,7 +160,7 @@ inline bool xml_node<E>::xml_collection::increase(xml_base_iterator_t& it, int o
 }
 
 template<xml_encoding E>
-inline bool xml_node<E>::xml_collection::decrease(xml_base_iterator_t& it)const {
+/*inline*/ bool xml_node<E>::xml_collection::decrease(xml_base_iterator_t& it)const {
 	if (it.parent() != this) throw(ang::exception_t(except_code::invalid_memory));
 	it.current(reinterpret_cast<ixml_node*>(it.current())->xml_prev_sibling());
 	if (it.current() == null)
@@ -121,7 +169,7 @@ inline bool xml_node<E>::xml_collection::decrease(xml_base_iterator_t& it)const 
 }
 
 template<xml_encoding E>
-inline bool xml_node<E>::xml_collection::decrease(xml_base_iterator_t& it, int offset)const {
+/*inline*/ bool xml_node<E>::xml_collection::decrease(xml_base_iterator_t& it, int offset)const {
 
 	if (it.parent() != this) throw(ang::exception_t(except_code::invalid_memory));
 	auto node = reinterpret_cast<ixml_node*>(it.current());
@@ -138,58 +186,58 @@ inline bool xml_node<E>::xml_collection::decrease(xml_base_iterator_t& it, int o
 
 
 template<xml_encoding E>
-inline xml_forward_iterator_t xml_node<E>::xml_collection::begin() {
+/*inline*/ xml_forward_iterator_t xml_node<E>::xml_collection::begin() {
 	return xml_iterator_t(const_cast<self_t*>(this), (pointer)(ixml_node*)xml_first());
 }
 
 template<xml_encoding E>
-inline xml_forward_iterator_t xml_node<E>::xml_collection::end() {
+/*inline*/ xml_forward_iterator_t xml_node<E>::xml_collection::end() {
 	return xml_iterator_t(const_cast<self_t*>(this), null);
 }
 
 template<xml_encoding E>
-inline xml_const_forward_iterator_t xml_node<E>::xml_collection::begin()const {
+/*inline*/ xml_const_forward_iterator_t xml_node<E>::xml_collection::begin()const {
 	return xml_iterator_t(const_cast<self_t*>(this), (pointer)(ixml_node*)xml_first());
 }
 
 template<xml_encoding E>
-inline xml_const_forward_iterator_t xml_node<E>::xml_collection::end()const {
+/*inline*/ xml_const_forward_iterator_t xml_node<E>::xml_collection::end()const {
 	return xml_iterator_t(const_cast<self_t*>(this), null);
 }
 
 template<xml_encoding E>
-inline xml_forward_iterator_t xml_node<E>::xml_collection::last() {
+/*inline*/ xml_forward_iterator_t xml_node<E>::xml_collection::last() {
 	return xml_iterator_t(const_cast<self_t*>(this), (pointer)(ixml_node*)xml_last());
 }
 
 template<xml_encoding E>
-inline xml_const_forward_iterator_t xml_node<E>::xml_collection::last()const {
+/*inline*/ xml_const_forward_iterator_t xml_node<E>::xml_collection::last()const {
 	return xml_iterator_t(const_cast<self_t*>(this), (pointer)(ixml_node*)xml_last());
 }
 
 template<xml_encoding E>
-inline xml_backward_iterator_t xml_node<E>::xml_collection::rbegin() {
+/*inline*/ xml_backward_iterator_t xml_node<E>::xml_collection::rbegin() {
 	return xml_iterator_t(const_cast<self_t*>(this), (pointer)(ixml_node*)xml_last());
 }
 
 template<xml_encoding E>
-inline xml_backward_iterator_t xml_node<E>::xml_collection::rend() {
+/*inline*/ xml_backward_iterator_t xml_node<E>::xml_collection::rend() {
 	return xml_iterator_t(const_cast<self_t*>(this), null);
 }
 
 template<xml_encoding E>
-inline xml_const_backward_iterator_t xml_node<E>::xml_collection::rbegin()const {
+/*inline*/ xml_const_backward_iterator_t xml_node<E>::xml_collection::rbegin()const {
 	return xml_iterator_t(const_cast<self_t*>(this), (pointer)(ixml_node*)xml_last());
 }
 
 template<xml_encoding E>
-inline xml_const_backward_iterator_t xml_node<E>::xml_collection::rend()const {
+/*inline*/ xml_const_backward_iterator_t xml_node<E>::xml_collection::rend()const {
 	return xml_iterator_t(const_cast<self_t*>(this), null);
 }
 
 
 template<xml_encoding E>
-inline xml_iterator_t xml_node<E>::xml_collection::find(raw_str_t value, bool invert)const {
+/*inline*/ xml_iterator_t xml_node<E>::xml_collection::find(raw_str_t value, bool invert)const {
 	ixml_node_t node;
 	if (invert)
 	{
@@ -215,7 +263,7 @@ inline xml_iterator_t xml_node<E>::xml_collection::find(raw_str_t value, bool in
 }
 
 template<xml_encoding E>
-inline xml_iterator_t xml_node<E>::xml_collection::find(raw_str_t value, xml_iterator_t next_to, bool invert)const {
+/*inline*/ xml_iterator_t xml_node<E>::xml_collection::find(raw_str_t value, xml_iterator_t next_to, bool invert)const {
 	ixml_node_t node = null;
 	if (next_to.is_valid() && next_to.parent() == this)
 		node = reinterpret_cast<xml_node*>(next_to.current());
@@ -245,7 +293,7 @@ inline xml_iterator_t xml_node<E>::xml_collection::find(raw_str_t value, xml_ite
 }
 
 template<xml_encoding E>
-inline bool xml_node<E>::xml_collection::push(ixml_node_t node, bool last) {
+/*inline*/ bool xml_node<E>::xml_collection::push(ixml_node_t node, bool last) {
 	if (node.is_empty()
 		|| (xml_is_type_of(xml_type::attribute_list) && !node->xml_is_type_of(xml_type::attribute))
 		|| (xml_is_type_of(xml_type::element_list) && !node->xml_is_type_of(xml_type::element) && !node->xml_is_type_of(xml_type::comment))
@@ -285,7 +333,7 @@ inline bool xml_node<E>::xml_collection::push(ixml_node_t node, bool last) {
 }
 
 template<xml_encoding E>
-inline bool xml_node<E>::xml_collection::insert(ixml_node_t node, xml_iterator_t at, bool next_to) {
+/*inline*/ bool xml_node<E>::xml_collection::insert(ixml_node_t node, xml_iterator_t at, bool next_to) {
 	if (node.is_empty()
 		|| (xml_is_type_of(xml_type::attribute_list) && !node->xml_is_type_of(xml_type::attribute))
 		|| (xml_is_type_of(xml_type::element_list) && !node->xml_is_type_of(xml_type::element) && !node->xml_is_type_of(xml_type::comment))
@@ -321,7 +369,7 @@ inline bool xml_node<E>::xml_collection::insert(ixml_node_t node, xml_iterator_t
 }
 
 template<xml_encoding E>
-inline bool xml_node<E>::xml_collection::pop(ixml_node_ptr_t out, bool last) {
+/*inline*/ bool xml_node<E>::xml_collection::pop(ixml_node_ptr_t out, bool last) {
 	if (m_count == 0)
 		return false;
 	if (m_count == 1)
@@ -364,7 +412,7 @@ inline bool xml_node<E>::xml_collection::pop(ixml_node_ptr_t out, bool last) {
 }
 
 template<xml_encoding E>
-inline bool xml_node<E>::xml_collection::pop_at(xml_iterator_t it, xml::ixml_node_ptr_t out) {
+/*inline*/ bool xml_node<E>::xml_collection::pop_at(xml_iterator_t it, xml::ixml_node_ptr_t out) {
 	if (m_count == 0)
 		return false;
 
@@ -398,17 +446,17 @@ inline bool xml_node<E>::xml_collection::pop_at(xml_iterator_t it, xml::ixml_nod
 }
 
 template<xml_encoding E>
-inline ixml_node* xml_node<E>::xml_collection::xml_first()const {
+/*inline*/ ixml_node* xml_node<E>::xml_collection::xml_first()const {
 	return m_first;
 }
 
 template<xml_encoding E>
-inline ixml_node* xml_node<E>::xml_collection::xml_last()const {
+/*inline*/ ixml_node* xml_node<E>::xml_collection::xml_last()const {
 	return m_last;
 }
 
 template<xml_encoding E>
-inline void xml_node<E>::xml_collection::xml_first(ixml_node* node) {
+/*inline*/ void xml_node<E>::xml_collection::xml_first(ixml_node* node) {
 	if (m_first == node) return;
 	auto old = m_first;
 	m_first = (node) ? node->xml_as<xml_node<E>>().get() : null;
@@ -417,7 +465,7 @@ inline void xml_node<E>::xml_collection::xml_first(ixml_node* node) {
 }
 
 template<xml_encoding E>
-inline void xml_node<E>::xml_collection::xml_last(ixml_node* node) {
+/*inline*/ void xml_node<E>::xml_collection::xml_last(ixml_node* node) {
 	if (m_last == node) return;
 	auto old = m_last;
 	m_last = (node) ? node->xml_as<xml_node<E>>().get() : null;

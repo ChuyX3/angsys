@@ -3,8 +3,8 @@
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer()
 	: basic_string_buffer_base()
 {
-	_encoder = iencoder::get_encoder(MY_ENCODING);
-	_parser = iformat_parser::get_parser(MY_ENCODING);
+	m_encoder = iencoder::get_encoder(MY_ENCODING);
+	m_parser = iparser::get_parser(MY_ENCODING);
 }
 
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(wsize reserv)
@@ -75,28 +75,23 @@ bool basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::is_readonly(void) const
 	return false;
 }
 
-text::encoding_t basic_string_buffer<MY_ENCODING>::encoding(void) const
-{
-	return MY_ENCODING;
-}
-
 void basic_string_buffer<MY_ENCODING>::clear()
 {
 	allocator_t alloc;
-	if(_data._storage_type == storage_type_allocated)
-		alloc.deallocate((unsafe_str_t)_data._allocated_buffer);
-	else if (_data._storage_type == storage_type_string_pool)
-		_data._const_string->release();	
-	memset(&_data, 0, sizeof(_data));
+	if(m_data.m_storage_type == storage_type_allocated)
+		alloc.deallocate((unsafe_str_t)m_data.m_allocated_buffer);
+	else if (m_data.m_storage_type == storage_type_string_pool)
+		m_data.m_const_string->release();	
+	memset(&m_data, 0, sizeof(m_data));
 }
 
 bool basic_string_buffer<MY_ENCODING>::realloc(wsize new_size, bool save)
 {
 	allocator_t alloc;
-	if (_map_index != (wsize)invalid_index || _map_size != (wsize)invalid_index)
+	if (m_map_index != (wsize)invalid_index || m_map_size != (wsize)invalid_index)
 		return false;
-	if (_data._storage_type == storage_type_string_pool)
-		new_size = save ? max(_data._const_string->cstr().count(), new_size) : new_size;
+	if (m_data.m_storage_type == storage_type_string_pool)
+		new_size = save ? max(m_data.m_const_string->cstr().count(), new_size) : new_size;
 	else if (capacity() > new_size)
 		return true;
 
@@ -113,10 +108,10 @@ bool basic_string_buffer<MY_ENCODING>::realloc(wsize new_size, bool save)
 		text::encoder<ENCODING>::convert(new_buffer, len, data.cstr(), j, true, size - 1, data.size());
 
 	clear();
-	_data._allocated_length = len;
-	_data._allocated_capacity = size - 1;
-	_data._allocated_buffer = new_buffer;
-	_data._storage_type = storage_type_allocated;
+	m_data.m_allocated_length = len;
+	m_data.m_allocated_capacity = size - 1;
+	m_data.m_allocated_buffer = new_buffer;
+	m_data.m_storage_type = storage_type_allocated;
 	return true;
 }
 
@@ -136,18 +131,6 @@ str_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING>
 cstr_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING> basic_string_buffer<MY_ENCODING>::cstr()const
 {
 	return this ? cstr(0).to_cstr<ENCODING>() : cstr_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING>();
-}
-
-
-
-void basic_string_buffer<MY_ENCODING>::format(cstr_t f, args_t args)
-{
-	format_parser<MY_ENCODING>::format(this, f, args);
-}
-
-void basic_string_buffer<MY_ENCODING>::format(cstr_t f, var_args_t args)
-{
-	format_parser<MY_ENCODING>::format(this, f, args);
 }
 
 //////////////////////////////////////////////////////////////////////////////

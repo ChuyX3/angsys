@@ -83,19 +83,19 @@ namespace ang
 				};
 
 			private:
-				const xml_type_t _xml_type;
-				mutable weak_ptr<ixml_node> _xml_parent;
-				mutable weak_ptr<ixml_document> _xml_parent_doc;
+				const xml_type_t m_type;
+				mutable weak_ptr<ixml_node> m_parent;
+				mutable weak_ptr<ixml_document> m_parent_doc;
 
-				xml_node* _xml_prev;
-				xml_node* _xml_next;
+				xml_node* m_prev;
+				xml_node* m_next;
 
 			protected:
-				strings::basic_string<E> _xml_name;
-				strings::basic_string<E> _xml_value;
-				xml_namespace_ptr<E> _xml_namespace;
-				ixml_collection_t _xml_attributes; //attributes and namespaces 
-				object_wrapper<xml_collection> _xml_children;
+				strings::basic_string<E> m_name;
+				strings::basic_string<E> m_value;
+				xml_namespace_ptr<E> m_namespace;
+				ixml_collection_t m_attributes; //attributes and namespaces 
+				object_wrapper<xml_collection> m_children;
 
 			protected:
 				xml_node(ixml_document_t, xml_type_t);

@@ -22,9 +22,7 @@ namespace ang
 			typedef cstr_view<char_t, MY_ENCODING> cstr_t;
 			typedef basic_string_buffer_base string_base, base_t;
 			typedef basic_string_buffer<ENCODING, memory::buffer_allocator> string, self_t;
-
-	//	private:
-	//		allocator_t alloc;
+			typedef object_wrapper<string> string_t;
 
 		public:
 			basic_string_buffer();
@@ -38,65 +36,35 @@ namespace ang
 			}
 		public: //overides
 			ANG_DECLARE_INTERFACE();
-			virtual variant clone()const override;
 
-		public:
-			virtual bool is_readonly(void) const override;
-			virtual text::encoding_t encoding(void) const override;
 			virtual void clear()override;
 			virtual bool realloc(wsize new_size, bool save = true)override;
 
+		private: //ivariant override
+			virtual variant clone()const override;
+
+		public:		
 			str_t str();
 			cstr_t cstr()const;
 
-		private:
+		private:	
+			virtual bool is_readonly(void) const override;
 			raw_str_t str(int)override;
 			raw_cstr_t cstr(int)const override;
 
 		public:
-			using string_base::copy;
-			using string_base::concat;
-			using string_base::compare;
-			using string_base::compare_until;
-			using string_base::find;
-			using string_base::find_reverse;
 			using string_base::sub_string;
-
-			template<typename T, text::encoding E> void copy(str_view<T, E> const& str) { string_base::copy(str); }
-			template<text::encoding E, template<typename>class _alloc> void copy(basic_string<E, _alloc> const& str) { string_base::copy((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str); }
-
-			template<typename T, text::encoding E> void concat(str_view<T, E> const& str) { string_base::concat(str); }
-			template<text::encoding E, template<typename>class _alloc> void concat(basic_string<E, _alloc> const& str) { string_base::concat((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str); }
-
-			template<typename T, text::encoding E> int compare(str_view<T, E> const& str)const { string_base::compare(str); }
-			template<text::encoding E, template<typename>class _alloc> int compare(basic_string<E, _alloc> const& str)const { return string_base::compare((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str); }
-
-			template<typename T, text::encoding E> wsize compare_until(str_view<T, E> const& str)const { string_base::compare_until(str); }
-			template<text::encoding E, template<typename>class _alloc> wsize compare_until(basic_string<E, _alloc> const& str)const { return string_base::compare_until((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str); }
-
-			template<typename T, text::encoding E> windex find(str_view<T, E> const& str, windex start = 0, windex end = -1)const { string_base::find(str, start, end); }
-			template<text::encoding E, template<typename>class _alloc> windex find(basic_string<E, _alloc> const& str, windex start = 0, windex end = -1)const { string_base::find((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str, start, end); }
-
-			template<typename T, text::encoding E> windex find_reverse(str_view<T, E> const& str, windex start = 0, windex end = -1)const { string_base::find_reverse(str, start, end); }
-			template<text::encoding E, template<typename>class _alloc> windex find_reverse(basic_string<E, _alloc> const& str, windex start = 0, windex end = -1)const { string_base::find_reverse((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str, start, end); }
-
-			template<typename T, text::encoding E> str_view<T, E> sub_string(str_view<T, E>& str, windex start, windex end)const {
-
-			}
 			template<text::encoding E, template<typename>class _alloc> basic_string<E>& sub_string(basic_string<E, _alloc>& str, windex start = 0, windex end = -1)const {
 				if (str.is_empty())str = new basic_string_buffer<E, _alloc>();
-				cstr_t my_str = cstr();
-				my_str.set(my_str.cstr() + start, min(my_str.size(), end) - start);
-				str->copy(my_str);
+				string_base::sub_string(str.get(), start, end);
 				return str;
 			}
+			string_t sub_string(windex start = 0, windex end = -1)const;	
 
-			void format(cstr_t f, args_t);
-			void format(cstr_t f, var_args_t);
-			template<typename... Ts> void format(cstr_t f, Ts...args) {
-				format(f, var_args_t{ ((var)args)... });
+			template<typename...Ts>
+			void format(raw_cstr_t f, Ts... args) {
+				string_base::format(f, var_args_t({ ang::forward<Ts>(args)... }));
 			}
-			
 
 		private:
 			virtual~basic_string_buffer();

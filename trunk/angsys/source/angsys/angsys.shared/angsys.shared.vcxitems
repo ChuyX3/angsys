@@ -50,11 +50,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_node.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_object.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\exception.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\ibuffers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\com_wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\const_string_declaration.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\intf_wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\object_wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\string_declaration.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\istring.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float2.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float3.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float4.h" />
@@ -69,6 +71,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\platform\events.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\platform\input.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\platform\platform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\raw_str.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\singleton.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\smart_ptr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\streams.h" />
@@ -98,7 +101,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\async\thread.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\async\thread_manager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\encoder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\exception.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\core_file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\files.cpp" />
@@ -113,6 +115,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\runtime.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\streams.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\const_string.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\encoder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\parser.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\raw_str.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\string_pool.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\text_format.cpp" />

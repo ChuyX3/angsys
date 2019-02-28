@@ -208,26 +208,26 @@ bool aligned_buffer::realloc_buffer(wsize) { return false; };
 //////////////////////////////////////////////////////////////////////////////////////////
 
 buffer_view::buffer_view()
-	: _start(0)
-	, _size(0)
-	, _buffer(null)
+	: m_start(0)
+	, m_size(0)
+	, m_buffer(null)
 {
 
 }
 
 buffer_view::buffer_view(ibuffer_t buff, windex start, wsize size)
-	: _start(start)
-	, _size(size)
-	, _buffer(buff)
+	: m_start(start)
+	, m_size(size)
+	, m_buffer(buff)
 {
 
 }
 
 buffer_view::~buffer_view()
 {
-	_start = 0;
-	_size = 0;
-	_buffer = null;
+	m_start = 0;
+	m_size = 0;
+	m_buffer = null;
 }
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::buffer_view);
@@ -236,31 +236,35 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::buffer_view, object, ibuffer_view);
 
 void buffer_view::set(ibuffer_t buff, windex start, wsize size)
 {
-	_start = start;
-	_size = size;
-	_buffer = buff;
+	m_start = start;
+	m_size = size;
+	m_buffer = buff;
 }
 
 ibuffer_t buffer_view::parent()const
 {
-	return _buffer;
+	return m_buffer;
+}
+
+text::encoding_t buffer_view::encoding()const {
+	return m_buffer->encoding();
 }
 
 bool buffer_view::is_readonly()const { return false; }
 
 pointer buffer_view::buffer_ptr()
 {
-	return _buffer.is_empty() ? null : pointer(wsize(_buffer->buffer_ptr()) + _start);
+	return m_buffer.is_empty() ? null : pointer(wsize(m_buffer->buffer_ptr()) + m_start);
 }
 
 const_pointer buffer_view::buffer_ptr()const
 {
-	return _buffer.is_empty() ? null : pointer(wsize(_buffer->buffer_ptr()) + _start);
+	return m_buffer.is_empty() ? null : pointer(wsize(m_buffer->buffer_ptr()) + m_start);
 }
 
 wsize buffer_view::buffer_size()const
 {
-	return _size;
+	return m_size;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

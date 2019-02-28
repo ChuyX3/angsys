@@ -83,67 +83,23 @@ namespace ang
 		}
 	}
 
-	template<> class LINK intf_wrapper<dom::xml::ixml_collection>
-	{
-	public:
-		typedef dom::xml::ixml_collection type;
-		typedef dom::xml::ixml_collection* type_ptr;
-		typedef dom::xml::ixml_collection& type_ref;
-		typedef dom::xml::ixml_collection const* ctype_ptr;
-		typedef dom::xml::ixml_collection const& ctype_ref;
-
-	private:
-		type* m_ptr;
-
-	public:
-		intf_wrapper();
-		intf_wrapper(type*);
-		intf_wrapper(intf_wrapper &&);
-		intf_wrapper(intf_wrapper const&);
-		intf_wrapper(std::nullptr_t const&);
-		~intf_wrapper();
-
-	public:
-		void reset();
-		void reset_unsafe();
-		type* get(void)const;
-		void set(type*);
-		bool is_empty()const;
-		void move(intf_wrapper& ptr);
-		type ** addres_of(void);
-		type ** addres_for_init(void);
-		
-		dom::xml::xml_forward_iterator_t begin() {
+	ANG_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_collection)
+		inline dom::xml::xml_forward_iterator_t begin() {
 			return m_ptr ? m_ptr->begin() : dom::xml::xml_forward_iterator_t(null);
 		}
-		dom::xml::xml_forward_iterator_t end() {
+		inline dom::xml::xml_forward_iterator_t end() {
 			return m_ptr ? m_ptr->end() : dom::xml::xml_forward_iterator_t(null);
 		}
-
-		dom::xml::xml_const_forward_iterator_t begin()const {
+		inline dom::xml::xml_const_forward_iterator_t begin()const {
 			return m_ptr ? ((dom::xml::ixml_collection const*)m_ptr)->begin() : dom::xml::xml_const_forward_iterator_t(null);
 		}
-		dom::xml::xml_const_forward_iterator_t end()const {
+		inline dom::xml::xml_const_forward_iterator_t end()const {
 			return m_ptr ? ((dom::xml::ixml_collection const*)m_ptr)->end() : dom::xml::xml_const_forward_iterator_t(null);
 		}
-
-	public:
-		intf_wrapper& operator = (type*);
-		intf_wrapper& operator = (ang::nullptr_t const&);
-		intf_wrapper& operator = (intf_wrapper &&);
-		intf_wrapper& operator = (intf_wrapper const&);
-
-		intf_wrapper_ptr<type> operator & (void);
-		type * operator -> (void);
-		type const* operator -> (void)const;
-		operator type * (void);
-		operator type const* (void)const;
-
 		operator dom::xml::ixml_string_t()const;
-
 		dom::xml::ixml_node_t operator[](raw_str_t)const;
 		template<typename T, text::encoding E> dom::xml::ixml_node_t operator[](str_view<T, E> str)const;
-	};
+	ANG_END_INTF_WRAPPER();
 
 }
 

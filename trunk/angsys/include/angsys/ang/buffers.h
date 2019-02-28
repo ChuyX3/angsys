@@ -4,73 +4,6 @@
 
 namespace ang
 {
-	namespace text
-	{
-		struct LINK encoding_t : public ang::value<encoding>
-		{
-			static encoding_t parse(cstr_t);
-			static encoding_t parse(cwstr_t);
-			static encoding_t parse(cmstr_t);
-			static rtti_t const& class_info();
-			encoding_t() : value(default_value<type>::value) {}
-			encoding_t(type const& v) : value(v) {}
-			encoding_t(encoding_t const& v) : value(v) {}
-			encoding_t(type && v) : value(ang::forward<type>(v)) { }
-			encoding_t(encoding_t && v) : value(ang::forward<value>(v)) { }
-			ang::wstring to_string()const;
-			encoding_t& operator = (type const& v) { get() = v; return*this; }
-			encoding_t& operator = (encoding_t const& v) { get() = v.get(); return*this; }
-			encoding_t& operator = (type && v) { get() = ang::move(v); v = default_value<type>::value; return*this; }
-			encoding_t& operator = (encoding_t && v) { get() = ang::move(v.get()); v.set(default_value<type>::value); return*this; }
-			friend inline bool operator == (encoding_t const& a1, encoding_t const& a2) { return a1.get() == a2.get(); }
-			friend inline bool operator != (encoding_t const& a1, encoding_t const& a2) { return a1.get() != a2.get(); }
-			friend inline bool operator >= (encoding_t const& a1, encoding_t const& a2) { return a1.get() >= a2.get(); }
-			friend inline bool operator <= (encoding_t const& a1, encoding_t const& a2) { return a1.get() <= a2.get(); }
-			friend inline bool operator > (encoding_t const& a1, encoding_t const& a2) { return a1.get() > a2.get(); }
-			friend inline bool operator < (encoding_t const& a1, encoding_t const& a2) { return a1.get() < a2.get(); }
-			friend inline bool operator == (encoding_t const& a1, encoding a2) { return a1.get() == a2; }
-			friend inline bool operator == (encoding a1, encoding_t const& a2) { return a1 == a2.get(); }
-			friend inline bool operator != (encoding_t const& a1, encoding a2) { return a1.get() != a2; }
-			friend inline bool operator != (encoding a1, encoding_t const& a2) { return a1 != a2.get(); }
-			friend inline bool operator >= (encoding_t const& a1, encoding a2) { return a1.get() >= a2; }
-			friend inline bool operator >= (encoding a1, encoding_t const& a2) { return a1 >= a2.get(); }
-			friend inline bool operator <= (encoding_t const& a1, encoding a2) { return a1.get() <= a2; }
-			friend inline bool operator <= (encoding a1, encoding_t const& a2) { return a1 <= a2.get(); }
-			friend inline bool operator > (encoding_t const& a1, encoding a2) { return a1.get() > a2; }
-			friend inline bool operator > (encoding a1, encoding_t const& a2) { return a1 > a2.get(); }
-			friend inline bool operator < (encoding_t const& a1, encoding a2) { return a1.get() < a2; }
-			friend inline bool operator < (encoding a1, encoding_t const& a2) { return a1 < a2.get(); }
-		};
-	}
-
-
-	ang_interface(ibuffer);
-	ang_interface(ibuffer_view);
-
-	ang_object(buffer);
-	ang_object(aligned_buffer);
-	ang_object(buffer_view);
-
-	ang_begin_interface(LINK ibuffer_view)
-		visible vcall bool is_readonly()const pure;
-		visible vcall pointer buffer_ptr() pure;
-		visible vcall const_pointer buffer_ptr()const pure;
-		visible vcall wsize buffer_size()const pure;
-	ang_end_interface();
-
-	ANG_INTF_WRAPPER_DECLARATION(LINK, ibuffer_view);
-
-	ang_begin_interface(LINK ibuffer, ibuffer_view)
-		visible vcall text::encoding_t encoding()const pure;
-		visible vcall wsize mem_copy(wsize, pointer, text::encoding_t = text::encoding::binary) pure;
-		visible vcall ibuffer_view_t map_buffer(windex, wsize) pure;
-		visible vcall bool unmap_buffer(ibuffer_view_t&, wsize used) pure;
-		visible vcall bool can_realloc_buffer()const pure;
-		visible vcall bool realloc_buffer(wsize) pure;
-	ang_end_interface();
-
-	ANG_INTF_WRAPPER_DECLARATION(LINK, ibuffer);
-
 
 	class LINK buffer
 		: public object
@@ -149,9 +82,9 @@ namespace ang
 		, public ibuffer_view
 	{
 	private:
-		windex _start;
-		wsize _size;
-		ibuffer_t _buffer;
+		windex m_start;
+		wsize m_size;
+		ibuffer_t m_buffer;
 
 	public:
 		buffer_view();
@@ -163,6 +96,7 @@ namespace ang
 		void set(ibuffer_t, windex, wsize);
 
 		ibuffer_t parent()const;
+		virtual text::encoding_t encoding()const override;
 		virtual bool is_readonly()const override;
 		virtual pointer buffer_ptr() override;
 		virtual const_pointer buffer_ptr()const override;
@@ -178,7 +112,7 @@ namespace ang
 	{
 	private:
 		static constexpr wsize SIZE = _SIZE;
-		byte _memory[SIZE];
+		byte m_memory[SIZE];
 
 	private:
 		pointer operator new(wsize)throw();

@@ -657,6 +657,7 @@ namespace ang //constants
 		public:
 			text_format();//default format-> bad format
 			text_format(cstr_t format);
+			text_format(qword format);
 			text_format(const text_format&);
 			text_format(const text_format_flags&);
 			virtual~text_format();
@@ -674,6 +675,7 @@ namespace ang //constants
 		};
 
 		typedef text_format text_format_t;
+		typedef text_format::target text_format_target, text_format_target_t;
 		typedef text_format::text_format_flags text_format_flags, text_format_flags_t;
 
 

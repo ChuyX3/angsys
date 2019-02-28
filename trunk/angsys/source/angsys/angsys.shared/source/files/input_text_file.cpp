@@ -185,8 +185,8 @@ uint input_text_file::read_format(raw_cstr_t format, var_args_t& args)
 
 	text::iencoder_t ie = text::iencoder::get_encoder(m_hfile->format());
 	text::iencoder_t oe = text::iencoder::get_encoder(format.encoding());
-	text::iformat_parser_t ip = text::iformat_parser::get_parser(m_hfile->format());
-	text::iformat_parser_t op = text::iformat_parser::get_parser(format.encoding());
+	text::iparser_t ip = text::iparser::get_parser(m_hfile->format());
+	text::iparser_t op = text::iparser::get_parser(format.encoding());
 
 	wsize format_idx = 0, buffer_idx = 0, temp,
 		ics = ie->char_type().size(),
@@ -344,7 +344,7 @@ wsize input_text_file::read(text::istring_t str, wsize sz, wsize* written)
 	text::iencoder_t encoder = text::iencoder::get_encoder(m_hfile->format());
 	wsize cs = encoder->char_type().size();
 
-	windex eos = str->eos();
+	windex eos = str->length();
 	wsize readed, total = 0;
 	auto cur = cursor();
 	scope_array<byte> buff(100 * cs);
@@ -357,7 +357,7 @@ wsize input_text_file::read(text::istring_t str, wsize sz, wsize* written)
 		sz -= min(readed / cs, sz);
 		total += min(readed, sz * cs);
 	}
-	if (written)*written = str->eos() - eos;
+	if (written)*written = str->length() - eos;
 	cursor(cur + total, stream_reference::begin);
 	return total;
 }
@@ -398,7 +398,7 @@ wsize input_text_file::read_line(text::istring_t str, array_view<const char32_t>
 	text::iencoder_t encoder = text::iencoder::get_encoder(e);
 	wsize cs = encoder->char_type().size();
 
-	wsize readed, total = 0, eos = str->eos();
+	wsize readed, total = 0, eos = str->length();
 	auto cur = cursor();
 	scope_array<byte> buff(100 * cs);
 
@@ -420,7 +420,7 @@ wsize input_text_file::read_line(text::istring_t str, array_view<const char32_t>
 		str->concat(raw_str(buff.data() + (beg * cs), (end - beg) * cs, e));
 		total += end * cs;	
 	}
-	if (written)*written = str->eos() - eos;
+	if (written)*written = str->length() - eos;
 	cursor(cur + total, stream_reference::begin);
 	return total;
 }

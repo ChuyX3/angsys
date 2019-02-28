@@ -4,215 +4,6 @@
 
 namespace ang
 {
-
-	struct LINK raw_str {
-		raw_str();
-		raw_str(void* v, wsize s, text::encoding e);
-		raw_str(raw_str const& str);
-		template<typename T, text::encoding E> inline raw_str(str_view<T, E> str)
-			: raw_str(str.str(), str.size() * sizeof(typename text::char_type_by_encoding<E>::char_t), E) {
-		}
-
-		void* ptr()const;
-		wsize size()const;
-		wsize count()const;
-		wsize char_size()const;
-		text::encoding encoding()const;
-
-		template<text::encoding E> inline operator str_view<typename text::char_type_by_encoding<E>::char_t, E>() {
-			return E == _encoding ? str_view<typename text::char_type_by_encoding<E>::char_t, E>(
-				(typename text::char_type_by_encoding<E>::str_t)_value,
-				_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
-				: str_view<typename text::char_type_by_encoding<E>::char_t, E>();
-		}
-		template<text::encoding E> inline operator cstr_view<typename text::char_type_by_encoding<E>::char_t, E>()const {
-			return E == _encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_t, E>(
-				(typename text::char_type_by_encoding<E>::cstr_t)_value,
-				_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
-				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
-		}
-		template<text::encoding E> inline str_view<typename text::char_type_by_encoding<E>::char_t, E> to_str() {
-			return E == _encoding ? str_view<typename text::char_type_by_encoding<E>::char_t, E>(
-				(typename text::char_type_by_encoding<E>::str_t)_value,
-				_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
-				: str_view<typename text::char_type_by_encoding<E>::char_t, E>();
-		}
-		template<text::encoding E> inline cstr_view<typename text::char_type_by_encoding<E>::char_t, E> to_cstr()const {
-			return E == _encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_t, E>(
-				(typename text::char_type_by_encoding<E>::cstr_t)_value,
-				_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
-				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
-		}
-
-		friend LINK bool operator == (raw_str_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator == (raw_str_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator != (raw_str_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator != (raw_str_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator >= (raw_str_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator >= (raw_str_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator <= (raw_str_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator <= (raw_str_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator > (raw_str_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator > (raw_str_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator < (raw_str_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator < (raw_str_t const& str1, raw_cstr_t const& str2);
-
-		template<typename T, text::encoding E> friend inline bool operator == (raw_str_t const& str1, str_view<T, E> const& str2) { return operator == (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator == (str_view<T, E> const& str1, raw_str_t const& str2) { return operator == (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator != (raw_str_t const& str1, str_view<T, E> const& str2) { return operator != (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator != (str_view<T, E> const& str1, raw_str_t const& str2) { return operator != (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator >= (raw_str_t const& str1, str_view<T, E> const& str2) { return operator >= (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator >= (str_view<T, E> const& str1, raw_str_t const& str2) { return operator >= (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator <= (raw_str_t const& str1, str_view<T, E> const& str2) { return operator <= (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator <= (str_view<T, E> const& str1, raw_str_t const& str2) { return operator <= (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator > (raw_str_t const& str1, str_view<T, E> const& str2) { return operator > (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator > (str_view<T, E> const& str1, raw_str_t const& str2) { return operator > (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator < (raw_str_t const& str1, str_view<T, E> const& str2) { return operator < (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator < (str_view<T, E> const& str1, raw_str_t const& str2) { return operator < (raw_cstr(str1), str2); }
-
-	private:
-		void* _value;
-		wsize _size;
-		text::encoding _encoding;
-	};
-
-	struct LINK raw_cstr {
-		raw_cstr();
-		raw_cstr(void const* v, wsize s, text::encoding e);
-		raw_cstr(raw_cstr const& str);
-		raw_cstr(raw_str const& str);
-		template<typename T, text::encoding E> inline raw_cstr(str_view<T, E> str)
-			: raw_cstr(str.cstr(), str.size() * sizeof(typename text::char_type_by_encoding<E>::char_t), E) {
-		}
-		template<typename T, text::encoding E> inline raw_cstr(cstr_view<T, E> str)
-			: raw_cstr(str.cstr(), str.size() * sizeof(typename text::char_type_by_encoding<E>::char_t), E) {
-		}
-		template<typename T, wsize N> inline raw_cstr(const T (&str)[N])
-			: raw_cstr(str, (N - 1)* sizeof(T), text::encoding_by_char_type<T>::value) {
-		}
-
-		void const* ptr()const;
-		wsize size()const;
-		wsize count()const;
-		wsize char_size()const;
-		text::encoding encoding()const;
-
-		template<text::encoding E> inline operator cstr_view<typename text::char_type_by_encoding<E>::char_t, E>()const {
-			return E == _encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_t, E>(
-				(typename text::char_type_by_encoding<E>::cstr_t)_value,
-				_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
-				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
-		}
-
-		template<text::encoding E> inline cstr_view<typename text::char_type_by_encoding<E>::char_t, E> to_cstr()const {
-			return E == _encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_t, E>(
-				(typename text::char_type_by_encoding<E>::cstr_t)_value,
-				_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
-				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
-		}
-
-		friend LINK bool operator == (raw_cstr_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator == (raw_cstr_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator != (raw_cstr_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator != (raw_cstr_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator >= (raw_cstr_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator >= (raw_cstr_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator <= (raw_cstr_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator <= (raw_cstr_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator > (raw_cstr_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator > (raw_cstr_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator < (raw_cstr_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator < (raw_cstr_t const& str1, raw_str_t const& str2);
-
-		template<typename T, text::encoding E> friend inline bool operator == (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator == (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator == (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator == (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator != (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator != (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator != (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator != (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator >= (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator >= (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator >= (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator >= (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator <= (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator <= (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator <= (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator <= (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator > (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator > (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator > (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator > (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator < (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator < (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator < (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator < (raw_cstr(str1), str2); }
-
-	private:
-		void const* _value;
-		wsize _size;
-		text::encoding _encoding;
-	};
-
-	namespace text
-	{
-		typedef void* unknown_str_t;
-		typedef  void const* unknown_cstr_t;
-
-		//ang_interface(itext_buffer);
-		ang_interface(istring);
-		ang_interface(iencoder);
-		ang_interface(iformat_parser);
-		
-		/*ang_begin_interface(LINK itext_buffer, ibuffer)
-			visible vcall raw_str_t text_buffer() pure;
-			visible vcall raw_cstr_t text_buffer()const pure;
-		ang_end_interface();*/
-
-		ang_begin_interface(LINK istring)
-			visible vcall encoding_t encoding()const pure;
-			visible vcall raw_str_t str(int = 0) pure;
-			visible vcall raw_cstr_t cstr(int = 0)const pure;
-			visible vcall void eos(windex) pure;
-			visible vcall windex eos()const pure;
-			visible vcall void copy(raw_cstr_t)pure;
-			visible vcall void concat(raw_cstr_t)pure;
-			visible vcall int compare(raw_cstr_t)const pure;
-			visible vcall windex compare_until(raw_cstr_t)const pure;
-			visible vcall windex find(raw_cstr_t, windex start = 0, windex end = -1)const pure;
-			visible vcall windex find_reverse(raw_cstr_t, windex start = -1, windex end = 0)const pure;
-			visible vcall raw_str_t sub_string(raw_str_t, windex start, windex end)const pure;
-		ang_end_interface();
-
-		ang_begin_interface(LINK iencoder)
-			visible scall iencoder_t get_encoder(encoding_t);
-			visible vcall encoding_t format()const pure;
-			visible vcall rtti_t const& char_type()const pure;
-			visible vcall char32 to_char32(unknown_cstr_t str, windex& i, bool increment = true)const pure;
-			visible vcall void set_eos(unknown_str_t str, windex at)const pure;
-			visible vcall wsize lenght(unknown_cstr_t)const pure;
-			visible vcall wsize size(unknown_cstr_t, encoding_t, windex = 0, windex = -1)const pure;
-			visible vcall int compare(unknown_cstr_t, unknown_cstr_t, encoding_t)const pure;
-			visible vcall wsize compare_until(unknown_cstr_t, unknown_cstr_t, encoding_t)const pure;
-			visible vcall wsize find(unknown_cstr_t, wsize, unknown_cstr_t, wsize, encoding_t, windex)const pure;
-			visible vcall wsize find_any(unknown_cstr_t cstr, wsize sz, wsize start, array_view<const char32>)const pure;
-			visible vcall wsize find_reverse(unknown_cstr_t, wsize, unknown_cstr_t, wsize, encoding_t, windex)const pure;
-			visible vcall raw_str_t convert(unknown_str_t dest, unknown_cstr_t src, encoding_t e, bool set_eos = true, wsize max_out_size = -1, wsize max_in_size = -1)const pure;
-			visible vcall raw_str_t convert(unknown_str_t dest, wsize& i, unknown_cstr_t src, wsize& j, encoding_t e, bool set_eos = true, wsize max_out_size = -1, wsize max_in_size = -1)const pure;
-		ang_end_interface();
-
-		ang_begin_interface(LINK iformat_parser)
-			visible scall iformat_parser_t get_parser(encoding_t);
-			visible vcall encoding_t format()const pure;
-			visible vcall long64 to_signed(unknown_cstr_t str, wsize sz, windex& i, bool increment = true, int base = 10)const pure;
-			visible vcall ulong64 to_unsigned(unknown_cstr_t str, wsize sz, windex& i, bool increment = true, int base = 10)const pure;
-			visible vcall double to_floating(unknown_cstr_t str, wsize sz, windex& i, bool increment = true, bool ex = false)const pure;
-			visible vcall bool format(unknown_cstr_t format, wsize sz, args_t args, encoding_t e, ibuffer_ptr_t out)const pure;
-			visible vcall bool format(unknown_cstr_t format, wsize sz, var_args_t args, encoding_t e, ibuffer_ptr_t out)const pure;
-			visible vcall text_format_t parse(unknown_cstr_t format, wsize sz)const pure;
-			visible vcall text_format_t parse(unknown_cstr_t format, wsize sz, wsize& beg, int& arg)const pure;
-		ang_end_interface();
-	}
-
-	ANG_INTF_WRAPPER_DECLARATION(LINK, text::istring);
-	ANG_INTF_WRAPPER_DECLARATION(LINK, text::iencoder);
-	ANG_INTF_WRAPPER_DECLARATION(LINK, text::iformat_parser);
-
-}
-
-
-
-namespace ang
-{
 	namespace strings
 	{
 		class LINK basic_const_string_buffer_base
@@ -326,74 +117,81 @@ namespace ang
 
 		protected:
 			
-			struct _str_data {
+			struct str_data {
 				union {
-					storage_type_t _storage_type;
+					storage_type_t m_storage_type;
 					struct {
 						wsize _unused;
-						wsize _allocated_length;
-						wsize _allocated_capacity;
-						pointer _allocated_buffer;
+						wsize m_allocated_length;
+						wsize m_allocated_capacity;
+						pointer m_allocated_buffer;
 					};
 					struct {
-						wsize _stack_length;
-						byte _stack_buffer[RAW_CAPACITY];
+						wsize m_stack_length;
+						byte m_stack_buffer[RAW_CAPACITY];
 					};
 					struct {
 						wsize __unused;
-						basic_const_string_buffer_base* _const_string;
-						pointer _const_string_view;
+						basic_const_string_buffer_base* m_const_string;
+						pointer m_const_string_view;
 					};
 				};
-			} _data;
-			wsize _map_index, _map_size;
-			iencoder_t _encoder;
-			iformat_parser_t _parser;
+			} m_data;
+			wsize m_map_index, m_map_size;
+			iencoder_t m_encoder;
+			iparser_t m_parser;
 
 		protected:
 			basic_string_buffer_base();
 
-		public: //overides
-			ANG_DECLARE_INTERFACE();
-
-		public:
+		public: //utils
 			bool is_empty()const;
 			storage_type_t storage_type()const;
 			void length(wsize len);
-			wsize length() const;
 			wsize capacity() const;
-
-		public:
 			void set(basic_const_string_buffer_base*);
-			virtual text::encoding_t encoding()const = 0;
+			
+
+		protected: //utils
+			void copy_at(raw_str_t, windex at);
+
+		public: //overides
+			ANG_DECLARE_INTERFACE();
+			virtual comparision_result_t compare(object const* obj)const override;
+			virtual bool realloc(wsize new_size, bool save = true) = 0;
+
+		public: //istring_view overrides
+			virtual text::encoding_t encoding()const override;
+			virtual wsize length() const override;
+			virtual unknown_str_t data()const override;
+			virtual rtti_t const& char_type()const override;
 			virtual raw_str_t str(int = 0)override;
 			virtual raw_cstr_t cstr(int = 0)const override;
-
-			virtual void copy(raw_cstr_t)override;
-			virtual void concat(raw_cstr_t)override;
 			virtual int compare(raw_cstr_t)const override;
 			virtual windex compare_until(raw_cstr_t)const override;
 			virtual windex find(raw_cstr_t, windex start = 0, windex end = -1)const override;
 			virtual windex find_reverse(raw_cstr_t, windex start = -1, windex end = 0)const override;
-			virtual raw_str_t sub_string(raw_str_t, windex start, windex end)const override;
+			virtual istring_t sub_string(istring_t, windex start, windex end)const override;
 
-		protected:
-			virtual void eos(windex)override;
-			virtual windex eos()const override;
-			void copy_at(raw_str_t, windex at);
+		public: //istring overrides
+			virtual void clear() = 0;
+			virtual void copy(raw_cstr_t)override;
+			virtual void concat(raw_cstr_t)override;
+			virtual void insert(windex, raw_cstr_t)override;
+			virtual void format(raw_cstr_t, var_args_t)override;
+			virtual void concat_format(raw_cstr_t, var_args_t)override;
+			virtual void insert_format(windex, raw_cstr_t, var_args_t)override;
 
-		public:
-			virtual comparision_result_t compare(object const* obj)const override;
-
+		public: //ivariant override
 			virtual wstring to_string()const override;
 			virtual wstring to_string(text::text_format_t)const override;
+
+		private: //ivariant override
 			virtual rtti_t const& value_type()const override;
 			virtual bool set_value(rtti_t const&, unknown_t) override;
 			virtual bool get_value(rtti_t const&, unknown_t)const override;
-			virtual bool realloc(wsize new_size, bool save = true) pure;
-			virtual void clear() pure;
 
-		protected:
+		private: //ibuffer override
 			virtual pointer buffer_ptr() override;
 			virtual const_pointer buffer_ptr()const override;
 			virtual wsize buffer_size()const override;
@@ -403,6 +201,7 @@ namespace ang
 			virtual bool can_realloc_buffer()const override;
 			virtual bool realloc_buffer(wsize) override;
 
+		protected:
 			virtual~basic_string_buffer_base();
 		};
 
@@ -422,39 +221,29 @@ namespace ang
 			typedef str_view<char_t const, ENCODING> cstr_t;
 			typedef basic_string_buffer_base string_base, base_t;
 			typedef basic_string_buffer<ENCODING, allocator> string, self_t;
-
-		//private:
-			
-
+			typedef object_wrapper<string> string_t;
 		public:
 			basic_string_buffer();
 
 		public: //overides
 			ANG_DECLARE_INTERFACE();
-
-			variant clone()const override
-			{
-				return (ivariant*)new self_t(cstr());
-			}
-
-		public:
 			virtual void clear()override {
 				allocator_t alloc;
 				if (storage_type_allocated == storage_type())
-					alloc.deallocate((str_t)_data._allocated_buffer);
+					alloc.deallocate((str_t)m_data.m_allocated_buffer);
 				else if (storage_type_string_pool == storage_type())
-					_data._const_string->release();
-				memset(&_data, 0, sizeof(_data));
+					m_data.m_const_string->release();
+				memset(&m_data, 0, sizeof(m_data));
 			}
 			virtual bool realloc(wsize new_size, bool save = true)override {
 				allocator_t alloc;
 
-				if (_map_index != invalid_index || _map_size != invalid_index)
+				if (m_map_index != invalid_index || m_map_size != invalid_index)
 					return false;
 
-				if (capacity() > new_size) 
+				if (capacity() > new_size)
 					return true;
-		
+
 				wsize cs = sizeof(char_t), size = 32U, i = 0;
 				while (size <= new_size)
 					size *= 2U;
@@ -468,58 +257,41 @@ namespace ang
 					text::encoder<ENCODING>::convert(new_buffer, len, data.cstr(), j, true, size - 1, data.size());
 
 				clear();
-				_data._allocated_length = len;
-				_data._allocated_capacity = size - 1;
-				_data._allocated_buffer = new_buffer;
-				_data._storage_type = invalid_index;
+				m_data.m_allocated_length = len;
+				m_data.m_allocated_capacity = size - 1;
+				m_data.m_allocated_buffer = new_buffer;
+				m_data.m_storage_type = invalid_index;
 				return true;
 			}
-			
-			inline str_t str() { return this ? istring::str().template to_str<ENCODING>() : str_t(); }
-			inline cstr_t cstr()const { return this ? istring::cstr().template to_cstr<ENCODING>() : cstr_t();}
+
+		private: //ivariant override
+			variant clone()const override {
+				return static_cast<ivariant*>(new self_t(cstr()));
+			}
+			bool is_readonly(void) const override {
+				return false;
+			}
 
 		public:
-			using string_base::copy;
-			using string_base::concat;
-			using string_base::compare;
-			using string_base::compare_until;
-			using string_base::find;
-			using string_base::find_reverse;
+			inline str_t str(void) { return this ? istring::str().template to_str<ENCODING>() : str_t(); }
+			inline cstr_t cstr(void)const { return this ? istring::cstr().template to_cstr<ENCODING>() : cstr_t();}
+
+		public:
 			using string_base::sub_string;
-
-			template<typename T, text::encoding E> void copy(str_view<T, E> const& str) { string_base::copy(str); }
-			template<text::encoding E, template<typename>class _alloc> void copy(basic_string<E, _alloc> const& str) { string_base::copy((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str); }
-
-			template<typename T, text::encoding E> void concat(str_view<T, E> const& str) { string_base::concat(str); }
-			template<text::encoding E, template<typename>class _alloc> void concat(basic_string<E, _alloc> const& str) { string_base::concat((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str); }
-
-			template<typename T, text::encoding E> int compare(str_view<T, E> const& str)const { string_base::compare(str); }
-			template<text::encoding E, template<typename>class _alloc> int compare(basic_string<E, _alloc> const& str)const { return string_base::compare((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str);	}
-
-			template<typename T, text::encoding E> wsize compare_until(str_view<T, E> const& str)const { string_base::compare_until(str); }
-			template<text::encoding E, template<typename>class _alloc> wsize compare_until(basic_string<E, _alloc> const& str)const { return string_base::compare_until((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str); }
-
-			template<typename T, text::encoding E> windex find(str_view<T, E> const& str, windex start = 0, windex end = -1)const { string_base::find(str, start, end); }
-			template<text::encoding E, template<typename>class _alloc> windex find(basic_string<E, _alloc> const& str, windex start = 0, windex end = -1)const { string_base::find((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str, start, end); }
-
-			template<typename T, text::encoding E> windex find_reverse(str_view<T, E> const& str, windex start = 0, windex end = -1)const { string_base::find_reverse(str, start, end); }
-			template<text::encoding E, template<typename>class _alloc> windex find_reverse(basic_string<E, _alloc> const& str, windex start = 0, windex end = -1)const { string_base::find_reverse((cstr_view<typename char_type_by_encoding<E>::char_t, E>)str, start, end); }
-
-			template<typename T, text::encoding E> str_view<T, E> sub_string(str_view<T, E>& str, windex start = 0, windex end = - 1)const {
-				return string_base::sub_string(str, start, end).template to_str<E>();
-			}
-			template<text::encoding E, template<typename>class _alloc> basic_string<E, _alloc>& sub_string(basic_string<E, _alloc>& str, windex start = 0, windex end = -1)const {
+			template<text::encoding E, template<typename>class _alloc> basic_string<E>& sub_string(basic_string<E, _alloc>& str, windex start = 0, windex end = -1)const {
 				if (str.is_empty())str = new basic_string_buffer<E, _alloc>();
-				cstr_t my_str = cstr();
-				my_str.set(my_str.cstr() + start, min(my_str.size(), end) - start);
-				str->copy(my_str);
+				string_base::sub_string(str.get(), start, end);
 				return str;
+			}
+			string_t sub_string(windex start = 0, windex end = -1)const {
+				string_t str = new string();
+				string_base::sub_string(static_cast<istring*>(str.get()), start, end);
+				return str.get();
 			}
 
 		private:
 			virtual~basic_string_buffer() { clear(); }
 		};
-
 
 		class LINK string_pool
 			: public singleton<string_pool, memory::unmanaged_allocator>

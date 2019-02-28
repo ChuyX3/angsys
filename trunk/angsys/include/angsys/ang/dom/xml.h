@@ -179,12 +179,26 @@ namespace ang
 	}
 }
 
-//#include <ang/dom/xml/xml_node.h>
-//#include <ang/dom/xml/xml_text.h>
-//#include <ang/dom/xml/xml_attribute.h>
-//#include <ang/dom/xml/xml_comment.h>
-//#include <ang/dom/xml/xml_element.h>
-//#include <ang/dom/xml/xml_document.h>
+
+inline ang::collections::iterator<ang::dom::xml::ixml_node>::operator ang::dom::xml::ixml_node*()const {
+	return reinterpret_cast<ang::dom::xml::ixml_node*>(current());
+}
+inline ang::dom::xml::ixml_node_t ang::collections::iterator<ang::dom::xml::ixml_node>::operator -> ()const {
+	return reinterpret_cast<ang::dom::xml::ixml_node*>(current());
+}
+inline ang::dom::xml::ixml_node_t ang::collections::iterator<ang::dom::xml::ixml_node>::operator * ()const {
+	return reinterpret_cast<ang::dom::xml::ixml_node*>(current());
+}
+
+inline ang::collections::iterator<const ang::dom::xml::ixml_node>::operator ang::dom::xml::ixml_node const*()const {
+	return reinterpret_cast<ang::dom::xml::ixml_node*>(current());
+}
+inline const ang::dom::xml::ixml_node_t ang::collections::iterator<const ang::dom::xml::ixml_node>::operator -> ()const {
+	return reinterpret_cast<ang::dom::xml::ixml_node*>(current());
+}
+inline const ang::dom::xml::ixml_node_t ang::collections::iterator<const ang::dom::xml::ixml_node>::operator * ()const {
+	return reinterpret_cast<ang::dom::xml::ixml_node*>(current());
+}
 
 #ifdef  LINK
 #undef  LINK

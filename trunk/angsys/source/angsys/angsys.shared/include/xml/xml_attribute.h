@@ -76,7 +76,7 @@ namespace ang
 				using xml_node::xml_next_sibling;
 
 				virtual~xml_namespace();
-				friend xml_document;
+				friend xml_document<E>;
 			};
 
 			

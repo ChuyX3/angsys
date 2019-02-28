@@ -15,6 +15,11 @@ text_format::text_format(cstr_t format)
 	flags.value = format_parser<encoding::ascii>::parse(format);
 }
 
+text_format::text_format(qword format)
+{
+	flags.value = format;
+}
+
 text_format::text_format(const text_format& val)
 {
 	flags.value = val.flags.value;

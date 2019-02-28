@@ -136,7 +136,7 @@ namespace ang
 	using collections::vector;
 
 	using args_t = vector<objptr>;
-	using args = collections::vector_buffer<var>;
+	using args = collections::vector_buffer<objptr>;
 
 	using vars_t = vector<var>;
 	using vars = collections::vector_buffer<var>;
@@ -148,8 +148,11 @@ namespace ang
 	ang_object(exception);
 }
 
+#include <ang/raw_str.h>
 #include <ang/smart_ptr.h>
 #include <ang/object.h>
+#include <ang/ibuffers.h>
+#include <ang/istring.h>
 #include <ang/variable.h>
 #include <ang/singleton.h>
 #include <ang/collections.h>

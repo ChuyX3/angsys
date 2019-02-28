@@ -653,7 +653,7 @@ color_t  graphics::color::parse(raw_cstr_t cstr)
 	wsize i = 0;
 	if (text::iencoder::get_encoder(cstr.encoding())->to_char32(cstr.ptr(),i) == U'#')
 	{
-		return text::iformat_parser::get_parser(cstr.encoding())->to_signed(cstr.ptr(), cstr.count(), i, true, 16);
+		return text::iparser::get_parser(cstr.encoding())->to_signed(cstr.ptr(), cstr.count(), i, true, 16);
 	}
 	else
 	{

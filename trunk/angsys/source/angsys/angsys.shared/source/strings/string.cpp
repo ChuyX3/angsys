@@ -14,15 +14,15 @@ ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::istring, interface);
 
 basic_string_buffer_base::basic_string_buffer_base()
 {
-	memset(&_data, 0, sizeof(_data));
-	_map_index = (wsize)invalid_index;
-	_map_size = (wsize)invalid_index;
+	memset(&m_data, 0, sizeof(m_data));
+	m_map_index = (wsize)invalid_index;
+	m_map_size = (wsize)invalid_index;
 }
 
 basic_string_buffer_base::~basic_string_buffer_base()
 {
-	_map_index = (wsize)invalid_index;
-	_map_size = (wsize)invalid_index;
+	m_map_index = (wsize)invalid_index;
+	m_map_size = (wsize)invalid_index;
 	//clear();
 }
 
@@ -179,7 +179,7 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 		windex i = 0;
 		short& value = *reinterpret_cast<short*>(ptr);
 		auto str = cstr();
-		value = (short)_parser->to_signed(str.ptr(), str.count(), i);
+		value = (short)m_parser->to_signed(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<ushort>())
@@ -187,7 +187,7 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 		windex i = 0;
 		ushort& value = *reinterpret_cast<ushort*>(ptr);
 		auto str = cstr();
-		value = (ushort)_parser->to_unsigned(str.ptr(), str.count(), i);
+		value = (ushort)m_parser->to_unsigned(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<int>())
@@ -195,7 +195,7 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 		windex i = 0;
 		int& value = *reinterpret_cast<int*>(ptr);
 		auto str = cstr();
-		value = (int)_parser->to_signed(str.ptr(), str.count(), i);
+		value = (int)m_parser->to_signed(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<uint>())
@@ -203,7 +203,7 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 		windex i = 0;
 		uint& value = *reinterpret_cast<uint*>(ptr);
 		auto str = cstr();
-		value = (uint)_parser->to_unsigned(str.ptr(), str.count(), i);
+		value = (uint)m_parser->to_unsigned(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<long>())
@@ -211,7 +211,7 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 		windex i = 0;
 		long& value = *reinterpret_cast<long*>(ptr);
 		auto str = cstr();
-		value = (int)_parser->to_signed(str.ptr(), str.count(), i);
+		value = (int)m_parser->to_signed(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<ulong>())
@@ -219,7 +219,7 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 		windex i = 0;
 		ulong& value = *reinterpret_cast<ulong*>(ptr);
 		auto str = cstr();
-		value = (ulong)_parser->to_unsigned(str.ptr(), str.count(), i);
+		value = (ulong)m_parser->to_unsigned(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<long64>())
@@ -227,7 +227,7 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 		windex i = 0;
 		long64& value = *reinterpret_cast<long64*>(ptr);
 		auto str = cstr();
-		value = _parser->to_signed(str.ptr(), str.count(), i);
+		value = m_parser->to_signed(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<ulong64>())
@@ -235,7 +235,7 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 		windex i = 0;
 		ulong64& value = *reinterpret_cast<ulong64*>(ptr);
 		auto str = cstr();
-		value = _parser->to_unsigned(str.ptr(), str.count(), i);
+		value = m_parser->to_unsigned(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<float>())
@@ -243,7 +243,7 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 		windex i = 0;
 		float& value = *reinterpret_cast<float*>(ptr);
 		auto str = cstr();
-		value = (float)_parser->to_floating(str.ptr(), str.count(), i);
+		value = (float)m_parser->to_floating(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	else if (id.is_type_of<double>())
@@ -251,7 +251,7 @@ bool basic_string_buffer_base::get_value(rtti_t const& id, unknown_t ptr)const
 		windex i = 0;
 		double& value = *reinterpret_cast<double*>(ptr);
 		auto str = cstr();
-		value = _parser->to_floating(str.ptr(), str.count(), i);
+		value = m_parser->to_floating(str.ptr(), str.count(), i);
 		return i > 0;
 	}
 	return false;
@@ -269,7 +269,7 @@ const_pointer basic_string_buffer_base::buffer_ptr()const
 
 wsize basic_string_buffer_base::buffer_size()const
 {
-	return capacity() * _encoder->char_type().size();
+	return capacity() * m_encoder->char_type().size();
 }
 
 wsize basic_string_buffer_base::mem_copy(wsize sz, pointer ptr, text::encoding_t format)
@@ -277,11 +277,11 @@ wsize basic_string_buffer_base::mem_copy(wsize sz, pointer ptr, text::encoding_t
 	//if (format == encoding::binary
 	//	|| format == encoding::auto_detect)
 	//	throw exception_t(except_code::unsupported);
-	auto char_size = _encoder->char_type().size();
-	if (_map_index != (wsize)invalid_index || _map_size != (wsize)invalid_index)
+	auto char_size = m_encoder->char_type().size();
+	if (m_map_index != (wsize)invalid_index || m_map_size != (wsize)invalid_index)
 	{
-		copy_at(raw_str(ptr, min(_map_size, sz) / char_size, format), _map_index / char_size);
-		return min(_map_size, sz);
+		copy_at(raw_str(ptr, min(m_map_size, sz) / char_size, format), m_map_index / char_size);
+		return min(m_map_size, sz);
 	}
 	else {
 		copy(raw_str(ptr, sz / char_size, format));
@@ -291,12 +291,12 @@ wsize basic_string_buffer_base::mem_copy(wsize sz, pointer ptr, text::encoding_t
 
 ibuffer_view_t basic_string_buffer_base::map_buffer(windex start, wsize size)
 {
-	if (_map_index != (wsize)invalid_index || _map_size != (wsize)invalid_index)
+	if (m_map_index != (wsize)invalid_index || m_map_size != (wsize)invalid_index)
 		return null;
-	if ((start + size) > (capacity() * _encoder->char_type().size()))
+	if ((start + size) > (capacity() * m_encoder->char_type().size()))
 		return null;
-	_map_index = start;
-	_map_size = size;
+	m_map_index = start;
+	m_map_size = size;
 	return this;
 }
 
@@ -304,43 +304,49 @@ bool basic_string_buffer_base::unmap_buffer(ibuffer_view_t& view, wsize used)
 {
 	if (view.get() != static_cast<ibuffer_view*>(this))
 		return false;
-	length((_map_index + used) / _encoder->char_type().size());
+	length((m_map_index + used) / m_encoder->char_type().size());
 	view = null;
 	return true;
 }
 
-bool basic_string_buffer_base::can_realloc_buffer()const { return (_map_index == (wsize)invalid_index && _map_size == (wsize)invalid_index); };
+bool basic_string_buffer_base::can_realloc_buffer()const { return (m_map_index == (wsize)invalid_index && m_map_size == (wsize)invalid_index); };
 
-bool basic_string_buffer_base::realloc_buffer(wsize size) { return realloc(size / _encoder->char_type().size(), true); };
+bool basic_string_buffer_base::realloc_buffer(wsize size) { return realloc(size / m_encoder->char_type().size(), true); };
+
+text::encoding_t basic_string_buffer_base::encoding()const
+{
+	return m_encoder->format();
+}
+
+rtti_t const& basic_string_buffer_base::char_type()const
+{
+	return m_encoder->char_type();
+}
 
 raw_str_t  basic_string_buffer_base::str(int) {
-	auto char_size = _encoder->char_type().size();
-	if (_map_index != (wsize)invalid_index || _map_size != (wsize)invalid_index)
-		return storage_type_stack == storage_type() ? raw_str((pointer)(_data._stack_buffer + _map_index), _map_size, encoding()) : raw_str(((byte*)_data._allocated_buffer) + _map_index, _map_size, encoding());
+	auto char_size = m_encoder->char_type().size();
+	if (m_map_index != (wsize)invalid_index || m_map_size != (wsize)invalid_index)
+		return storage_type_stack == storage_type() ? raw_str((pointer)(m_data.m_stack_buffer + m_map_index), m_map_size, encoding()) : raw_str(((byte*)m_data.m_allocated_buffer) + m_map_index, m_map_size, encoding());
 	else
-		return storage_type_stack == storage_type() ? raw_str((pointer)_data._stack_buffer, _data._stack_length * char_size, encoding()) 
-		: storage_type_allocated == storage_type() ? raw_str(_data._allocated_buffer, _data._allocated_length * char_size, encoding())
-		: _data._const_string->str();
+		return storage_type_stack == storage_type() ? raw_str((pointer)m_data.m_stack_buffer, m_data.m_stack_length * char_size, encoding()) 
+		: storage_type_allocated == storage_type() ? raw_str(m_data.m_allocated_buffer, m_data.m_allocated_length * char_size, encoding())
+		: m_data.m_const_string->str();
 }
 
 raw_cstr_t  basic_string_buffer_base::cstr(int)const {
-	auto char_size = _encoder->char_type().size();
-	if (_map_index != (wsize)invalid_index || _map_size != (wsize)invalid_index)
-		return storage_type_stack == storage_type() ? raw_cstr((pointer)(_data._stack_buffer + _map_index), _map_size, encoding()) : raw_cstr(((byte*)_data._allocated_buffer) + _map_index, _map_size, encoding());
+	auto char_size = m_encoder->char_type().size();
+	if (m_map_index != (wsize)invalid_index || m_map_size != (wsize)invalid_index)
+		return storage_type_stack == storage_type() ? raw_cstr((pointer)(m_data.m_stack_buffer + m_map_index), m_map_size, encoding()) : raw_cstr(((byte*)m_data.m_allocated_buffer) + m_map_index, m_map_size, encoding());
 	else
-		return storage_type_stack == storage_type() ? raw_cstr((pointer)_data._stack_buffer, _data._stack_length * char_size, encoding())
-		: storage_type_allocated == storage_type() ? raw_cstr(_data._allocated_buffer, _data._allocated_length * char_size, encoding())
-		: ((basic_const_string_buffer_base const*)_data._const_string)->cstr();
+		return storage_type_stack == storage_type() ? raw_cstr((pointer)m_data.m_stack_buffer, m_data.m_stack_length * char_size, encoding())
+		: storage_type_allocated == storage_type() ? raw_cstr(m_data.m_allocated_buffer, m_data.m_allocated_length * char_size, encoding())
+		: ((basic_const_string_buffer_base const*)m_data.m_const_string)->cstr();
 }
 
 /////////////////////////////////////////////////////////////////////////
 
-windex basic_string_buffer_base::eos()const {
-	return length();
-}
-
-void basic_string_buffer_base::eos(windex i) {
-	length(i);
+unknown_str_t basic_string_buffer_base::data()const {
+	return const_cast<basic_string_buffer_base*>(this)->str(0).ptr();
 }
 
 comparision_result_t basic_string_buffer_base::compare(object const* obj)const
@@ -348,55 +354,55 @@ comparision_result_t basic_string_buffer_base::compare(object const* obj)const
 	istring_t other = interface_cast<istring>(const_cast<object*>(obj));
 	if (other.is_empty())
 		return comparision_result::diferent;
-	return (comparision_result)_encoder->compare(cstr().ptr(), other->cstr().ptr(), other->encoding());
+	return (comparision_result)m_encoder->compare(cstr().ptr(), other->cstr().ptr(), other->encoding());
 }
 
 basic_string_buffer_base::storage_type_t basic_string_buffer_base::storage_type()const
 {
-	return _data._storage_type == storage_type_allocated ? storage_type_allocated 
-		: _data._storage_type == storage_type_string_pool ? storage_type_string_pool
+	return m_data.m_storage_type == storage_type_allocated ? storage_type_allocated 
+		: m_data.m_storage_type == storage_type_string_pool ? storage_type_string_pool
 		: storage_type_stack;
 }
 
 void basic_string_buffer_base::length(wsize len)
 {
 	dword end = 0; wsize i = 0;
-	auto char_size = _encoder->char_type().size();
+	auto char_size = m_encoder->char_type().size();
 	if (storage_type_stack == storage_type()) {
 		len = min(len, 128u / char_size - 1);
-		_data._stack_length = len;
-		_encoder->set_eos(_data._stack_buffer, len); //set end of string
+		m_data.m_stack_length = len;
+		m_encoder->set_eos(m_data.m_stack_buffer, len); //set end of string
 	}
 	else if (storage_type_allocated == storage_type()) {
-		len = min(len, _data._allocated_capacity - 1);
-		_data._allocated_length = len;
-		_encoder->set_eos(_data._allocated_buffer, len); //set end of string
+		len = min(len, m_data.m_allocated_capacity - 1);
+		m_data.m_allocated_length = len;
+		m_encoder->set_eos(m_data.m_allocated_buffer, len); //set end of string
 	}
 }
 
 bool basic_string_buffer_base::is_empty()const
 {
-	return (_data._stack_length == 0 || _data._allocated_length == 0) ? true : false;
+	return (m_data.m_stack_length == 0 || m_data.m_allocated_length == 0) ? true : false;
 }
 
 wsize basic_string_buffer_base::length() const
 {
-	if (_map_index != (wsize)invalid_index || _map_size != (wsize)invalid_index)
-		return _map_size;
+	if (m_map_index != (wsize)invalid_index || m_map_size != (wsize)invalid_index)
+		return m_map_size;
 	else
-		return storage_type_stack == storage_type() ? _data._stack_length 
-		: storage_type_allocated == storage_type() ? _data._allocated_length
-		: _data._const_string->cstr().count();
+		return storage_type_stack == storage_type() ? m_data.m_stack_length 
+		: storage_type_allocated == storage_type() ? m_data.m_allocated_length
+		: m_data.m_const_string->cstr().count();
 }
 
 wsize basic_string_buffer_base::capacity() const
 {
-	if (_map_index != (wsize)invalid_index || _map_size != (wsize)invalid_index)
-		return _map_size;
+	if (m_map_index != (wsize)invalid_index || m_map_size != (wsize)invalid_index)
+		return m_map_size;
 	else
-		return storage_type_stack == storage_type() ? 128u / _encoder->char_type().size() - 1
-		: storage_type_allocated == storage_type() ? _data._allocated_capacity - 1
-		: _data._const_string->cstr().count();
+		return storage_type_stack == storage_type() ? 128u / m_encoder->char_type().size() - 1
+		: storage_type_allocated == storage_type() ? m_data.m_allocated_capacity - 1
+		: m_data.m_const_string->cstr().count();
 }
 
 void basic_string_buffer_base::set(basic_const_string_buffer_base* ptr)
@@ -404,52 +410,53 @@ void basic_string_buffer_base::set(basic_const_string_buffer_base* ptr)
 	clear();
 	if (ptr != null && encoding() == ptr->encoding())
 	{
-		_data._storage_type = storage_type_string_pool;
-		_data._const_string = ptr;
-		_data._const_string->add_ref();
-		_data._const_string_view = ptr->str().ptr();
+		m_data.m_storage_type = storage_type_string_pool;
+		m_data.m_const_string = ptr;
+		m_data.m_const_string->add_ref();
+		m_data.m_const_string_view = ptr->str().ptr();
 	}
 }
 
 void basic_string_buffer_base::copy(raw_cstr_t str)
 {
-	wsize sz = str.count(), j = 0;
+	wsize sz = (encoding()==str.encoding()?str.count() : m_encoder->lenght(str.ptr())), j = 0;
+	wsize char_size = m_encoder->char_type().size();
 	if (sz == 0U)
 		return;
-	auto lc = 128u / _encoder->char_type().size();
+	auto lc = 128u / char_size;
 	if (sz < lc)
 	{
 		clear();
-		_encoder->convert(_data._stack_buffer, _data._stack_length, str.ptr(), j, str.encoding(), true, lc - 1, sz);
+		m_encoder->convert(m_data.m_stack_buffer, m_data.m_stack_length, str.ptr(), j, str.encoding(), true, lc - 1, sz);
 	}
 	else
 	{
 		realloc(sz, false);
-		_encoder->convert(_data._allocated_buffer, _data._allocated_length, str.ptr(), j, str.encoding(), true, _data._allocated_capacity - 1, sz);
+		m_encoder->convert(m_data.m_allocated_buffer, m_data.m_allocated_length, str.ptr(), j, str.encoding(), true, m_data.m_allocated_capacity - 1, sz);
 	}
 }
 
 void basic_string_buffer_base::concat(raw_cstr_t str)
 {
-	wsize sz = str.count(), j = 0;
+	wsize sz = (encoding() == str.encoding() ? str.count() : m_encoder->lenght(str.ptr())), j = 0;
 	if (sz == 0U)
 		return;
-	auto lc = 128u / _encoder->char_type().size();
+	auto lc = 128u / m_encoder->char_type().size();
 	wsize my_len = length();
 	realloc(my_len + sz, true);
 	if (storage_type_stack == storage_type())
 	{
-		_encoder->convert(_data._stack_buffer, _data._stack_length, str.ptr(), j, str.encoding(), true, lc - my_len - 1, sz);
+		m_encoder->convert(m_data.m_stack_buffer, m_data.m_stack_length, str.ptr(), j, str.encoding(), true, lc - my_len - 1, sz);
 	}
 	else if (storage_type_allocated == storage_type())
 	{
-		_encoder->convert(_data._allocated_buffer, _data._allocated_length, str.ptr(), j, str.encoding(), true, _data._allocated_capacity - my_len - 1, sz);
+		m_encoder->convert(m_data.m_allocated_buffer, m_data.m_allocated_length, str.ptr(), j, str.encoding(), true, m_data.m_allocated_capacity - my_len - 1, sz);
 	}
 	else
 	{	
-		basic_const_string_buffer_base* _const_string = _data._const_string;
+		basic_const_string_buffer_base* _const_string = m_data.m_const_string;
 		auto txt = _const_string->cstr();
-		memset(&_data, 0, sizeof(_data));
+		memset(&m_data, 0, sizeof(m_data));
 		realloc(txt.count() + str.count());
 		copy(txt);
 		concat(str);
@@ -459,27 +466,27 @@ void basic_string_buffer_base::concat(raw_cstr_t str)
 
 void basic_string_buffer_base::copy_at(raw_str_t str, windex at)
 {
-	wsize sz = str.count(), j = 0;
+	wsize sz = (encoding() == str.encoding() ? str.count() : m_encoder->lenght(str.ptr())), j = 0;
 	if (sz == 0U)
 		return;
-	auto lc = 128u / _encoder->char_type().size();
+	auto lc = 128u / m_encoder->char_type().size();
 	wsize my_len = min(length(), at);
 	realloc(my_len + sz, true);
 	if (storage_type_stack == storage_type())
 	{
-		_data._stack_length = my_len;
-		_encoder->convert(_data._stack_buffer, _data._stack_length, str.ptr(), j, str.encoding(), true, lc - my_len - 1, sz);
+		m_data.m_stack_length = my_len;
+		m_encoder->convert(m_data.m_stack_buffer, m_data.m_stack_length, str.ptr(), j, str.encoding(), true, lc - my_len - 1, sz);
 	}
 	else if (storage_type_allocated == storage_type())
 	{
-		_data._allocated_length = my_len;
-		_encoder->convert(_data._allocated_buffer, _data._allocated_length, str.ptr(), j, str.encoding(), true, _data._allocated_capacity - my_len - 1, sz);
+		m_data.m_allocated_length = my_len;
+		m_encoder->convert(m_data.m_allocated_buffer, m_data.m_allocated_length, str.ptr(), j, str.encoding(), true, m_data.m_allocated_capacity - my_len - 1, sz);
 	}
 	else
 	{
-		basic_const_string_buffer_base* _const_string = _data._const_string;
+		basic_const_string_buffer_base* _const_string = m_data.m_const_string;
 		auto txt = _const_string->cstr();
-		memset(&_data, 0, sizeof(_data));
+		memset(&m_data, 0, sizeof(m_data));
 		realloc(txt.count() + str.count());
 		copy(txt);
 		copy_at(str, at);
@@ -487,39 +494,122 @@ void basic_string_buffer_base::copy_at(raw_str_t str, windex at)
 	}
 }
 
+void basic_string_buffer_base::insert(windex at, raw_cstr_t str)
+{
+	wsize sz = (encoding() == str.encoding() ? str.count() : m_encoder->lenght(str.ptr())), j = 0;
+	if (sz == 0U)
+		return;
+	auto lc = 128u / m_encoder->char_type().size();
+	wsize my_len = length();
+	realloc(my_len + sz, true);
+	if (storage_type_stack == storage_type())
+	{
+		m_data.m_stack_length = my_len;
+		m_encoder->convert(m_data.m_stack_buffer, m_data.m_stack_length, str.ptr(), j, str.encoding(), true, lc - my_len - 1, sz);
+	}
+	else if (storage_type_allocated == storage_type())
+	{
+		m_data.m_allocated_length = my_len;
+		m_encoder->convert(m_data.m_allocated_buffer, m_data.m_allocated_length, str.ptr(), j, str.encoding(), true, m_data.m_allocated_capacity - my_len - 1, sz);
+	}
+	else
+	{
+		basic_const_string_buffer_base* _const_string = m_data.m_const_string;
+		auto txt = _const_string->cstr();
+		memset(&m_data, 0, sizeof(m_data));
+		realloc(txt.count() + str.count());
+		copy(txt);
+		insert(at, str);
+		_const_string->release();
+	}
+}
+
+void basic_string_buffer_base::format(raw_cstr_t cstr, var_args_t args)
+{
+	int a;
+	text::text_format_flags_t f;
+	iencoder_t encoder = iencoder::get_encoder(cstr.encoding());
+	iparser_t parser = iparser::get_parser(cstr.encoding());
+	wsize i = 0, t = 0, n = 0, l = 0, cs = encoder->char_type().size();
+	clear();
+	
+	while (char32_t c = encoder->to_char32(cstr.ptr(), i))
+	{
+		if (c == U'{') {
+			f.value = parser->parse(cstr.ptr(), cstr.size(), n, a).format_flags();
+			if (a > -1 && a < (long64)args->size()) {
+				concat(raw_cstr(&((byte*)cstr.ptr())[l * cs], (t - l) *cs, cstr.encoding()));
+				concat(f.value ? (raw_cstr_t)args[a]->to_string(f) : (raw_cstr_t)args[a]->to_string());
+				i = l = n;
+			}
+		}
+		t = n = i;
+	}
+	concat(raw_cstr(&((byte*)cstr.ptr())[l * cs], (i - l) * cs, cstr.encoding()));
+}
+
+void basic_string_buffer_base::concat_format(raw_cstr_t cstr, var_args_t args)
+{
+	int a;
+	text::text_format_flags_t f;
+	iencoder_t encoder = iencoder::get_encoder(cstr.encoding());
+	iparser_t parser = iparser::get_parser(cstr.encoding());
+	wsize i = 0, t = 0, n = 0, l = 0, cs = encoder->char_type().size();
+	//clear();
+
+	while (char32_t c = encoder->to_char32(cstr.ptr(), i))
+	{
+		if (c == U'{') {
+			f.value = parser->parse(cstr.ptr(), cstr.size(), n, a).format_flags();
+			if (a > -1 && a < (long64)args->size()) {
+				concat(raw_cstr(&((byte*)cstr.ptr())[l * cs], (t - l) *cs, cstr.encoding()));
+				concat(f.value ? (raw_cstr_t)args[a]->to_string(f) : (raw_cstr_t)args[a]->to_string());
+				i = l = n;
+			}
+		}
+		t = n = i;
+	}
+	concat(raw_cstr(&((byte*)cstr.ptr())[l * cs], (i - l) * cs, cstr.encoding()));
+}
+
+void basic_string_buffer_base::insert_format(windex, raw_cstr_t, var_args_t)
+{
+
+}
+
 int basic_string_buffer_base::compare(raw_cstr_t str)const
 {
-	return _encoder->compare(cstr().ptr(), str.ptr(), str.encoding());
+	return m_encoder->compare(cstr().ptr(), str.ptr(), str.encoding());
 }
 
 windex basic_string_buffer_base::compare_until(raw_cstr_t str)const
 {
-	return _encoder->compare_until(cstr().ptr(), str.ptr(), str.encoding());
+	return m_encoder->compare_until(cstr().ptr(), str.ptr(), str.encoding());
 }
 
 windex basic_string_buffer_base::find(raw_cstr_t str, windex start, windex end)const
 {
 	auto my_data = cstr();
-	return _encoder->find(my_data.ptr(), min(my_data.count(), end), str.ptr(), str.count(), str.encoding(), start);
+	return m_encoder->find(my_data.ptr(), min(my_data.count(), end), str.ptr(), str.count(), str.encoding(), start);
 }
 
 windex basic_string_buffer_base::find_reverse(raw_cstr_t str, windex start, windex end)const
 {
 	auto my_data = cstr();
-	return _encoder->find_reverse(my_data.ptr(), min(my_data.count(), end), str.ptr(), str.count(), str.encoding(), start);
+	return m_encoder->find_reverse(my_data.ptr(), min(my_data.count(), end), str.ptr(), str.count(), str.encoding(), start);
 }
 
-raw_str_t basic_string_buffer_base::sub_string(raw_str_t raw, windex start, windex end)const
+istring_t basic_string_buffer_base::sub_string(istring_t str, windex start, windex end)const
 {
-	if (start >= end || start > length()) 
-		return raw_str_t();
+	if (str.is_empty() || start >= end || start > length())
+		return str;
 
-	auto encoder = iencoder::get_encoder(raw.encoding());
+	auto encoder = iencoder::get_encoder(str->encoding());
 	auto my_data = cstr();
-	wsize i = 0, j = start, cs = encoder->char_type().size();
-
-	encoder->convert(raw.ptr(), i, my_data.ptr(), j, my_data.encoding(), true, raw.size() / cs, end);
-	return raw_str_t(raw.ptr(), i * cs, raw.encoding());
+	wsize cs = encoder->char_type().size();
+	raw_cstr_t raw = raw_cstr((byte*)my_data.ptr() + start * cs, cs * (end - start), encoder->format());
+	str->copy(raw);
+	return str;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

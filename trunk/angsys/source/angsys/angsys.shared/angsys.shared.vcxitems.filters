@@ -311,6 +311,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\timer.h">
       <Filter>header\angsys\core</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\istring.h">
+      <Filter>header\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\ibuffers.h">
+      <Filter>header\angsys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\raw_str.h">
+      <Filter>header\angsys</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
@@ -400,8 +409,14 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml.cpp">
       <Filter>source\xml</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\encoder.cpp">
-      <Filter>source</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\encoder.cpp">
+      <Filter>source\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Jesus Rocha\Documents\GitHub\angsys\trunk\angsys\source\angsys\angsys.shared\source\strings\parser.cpp">
+      <Filter>source\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\raw_str.cpp">
+      <Filter>source\strings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
