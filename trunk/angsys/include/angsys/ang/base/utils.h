@@ -30,6 +30,20 @@ namespace ang //constants
 		static constexpr value_type value = VALUE;
 		constexpr operator value_type() const { return (value); }
 		constexpr value_type operator()() const { return (value); }
+
+		template<typename U> friend bool operator == (self_type const&, U const& b) { return U(value) == b; }
+		template<typename U> friend bool operator == (U const& b, self_type const&) { return b == U(value); }
+		template<typename U> friend bool operator != (self_type const&, U const& b) { return U(value) != b; }
+		template<typename U> friend bool operator != (U const& b, self_type const&) { return b != U(value); }
+		template<typename U> friend bool operator >= (self_type const&, U const& b) { return U(value) >= b; }
+		template<typename U> friend bool operator >= (U const& b, self_type const&) { return b >= U(value);  }
+		template<typename U> friend bool operator <= (self_type const&, U const& b) { return U(value) <= b; }
+		template<typename U> friend bool operator <= (U const& b, self_type const&) { return b <= U(value); }
+		template<typename U> friend bool operator > (self_type const&, U const& b) { return U(value) > b; }
+		template<typename U> friend bool operator > (U const& b, self_type const&) { return b > U(value); }
+		template<typename U> friend bool operator < (self_type const&, U const& b) { return U(value) < b; }
+		template<typename U> friend bool operator < (U const& b, self_type const&) { return b < U(value); }
+
 	};
 
 	typedef integer_constant<bool, true> true_type;
