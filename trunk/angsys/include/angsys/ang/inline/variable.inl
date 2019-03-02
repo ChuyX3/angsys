@@ -68,7 +68,7 @@ namespace ang
 	template<typename T>
 	inline rtti_t const& variable<T>::class_info()
 	{
-		static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::variable<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+		static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::variable<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 		static rtti_t const* parents[] = { &runtime::type_of<object>(), &runtime::type_of<ivariant>() };
 		static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<variable<T>>(), alignof(variable<T>), parents, &default_query_interface);
 		return info;
@@ -100,7 +100,7 @@ namespace ang
 		}
 		else if (id.type_id() == type_of<T>().type_id()) {
 			if (out == null) return false;
-			*out = &get();
+			*out = (T*)&get();
 			return true;
 		}
 	}
@@ -162,37 +162,37 @@ namespace ang
 	template<wsize N>
 	inline intf_wrapper<ivariant>::intf_wrapper(const char(&ar)[N])
 		: intf_wrapper<ivariant>(null) {
-		set(new strings::basic_string_buffer<text::encoding::ascii>(ar));
+		set(new text::basic_string_buffer<text::encoding::ascii>(ar));
 	}
 
 	template<wsize N>
 	inline intf_wrapper<ivariant>::intf_wrapper(const wchar(&ar)[N])
 		: intf_wrapper<ivariant>(null) {
-		set(new strings::basic_string_buffer<text::encoding::unicode>(ar));
+		set(new text::basic_string_buffer<text::encoding::unicode>(ar));
 	}
 
 	template<wsize N>
 	inline intf_wrapper<ivariant>::intf_wrapper(const mchar(&ar)[N])
 		: intf_wrapper<ivariant>(null) {
-		set(new strings::basic_string_buffer<text::encoding::utf8>(ar));
+		set(new text::basic_string_buffer<text::encoding::utf8>(ar));
 	}
 
 	template<wsize N>
 	inline intf_wrapper<ivariant>::intf_wrapper(const char16(&ar)[N])
 		: intf_wrapper<ivariant>(null) {
-		set(new strings::basic_string_buffer<text::encoding::utf16>(ar));
+		set(new text::basic_string_buffer<text::encoding::utf16>(ar));
 	}
 
 	template<wsize N>
 	inline intf_wrapper<ivariant>::intf_wrapper(const char32(&ar)[N])
 		: intf_wrapper<ivariant>(null) {
-		set(new strings::basic_string_buffer<text::encoding::utf32>(ar));
+		set(new text::basic_string_buffer<text::encoding::utf32>(ar));
 	}
 
 	template<typename T, text::encoding E>
 	inline intf_wrapper<ivariant>::intf_wrapper(str_view<T, E> str)
 		: intf_wrapper<ivariant>(null) {
-		set(new strings::basic_string_buffer<E>(str));
+		set(new text::basic_string_buffer<E>(str));
 	}
 
 	template<typename T, wsize N>
@@ -202,7 +202,7 @@ namespace ang
 	}
 
 	template<text::encoding E, template<typename>class A>
-	inline intf_wrapper<ivariant>::intf_wrapper(strings::basic_string<E, A> const& str) 
+	inline intf_wrapper<ivariant>::intf_wrapper(text::basic_string<E, A> const& str) 
 		: intf_wrapper<ivariant>(null) {
 		set(str.is_empty() ? null : str.get());
 	}
@@ -237,7 +237,7 @@ namespace ang
 		}
 		else
 		{
-			strings::basic_string<E> ptr = str;
+			text::basic_string<E> ptr = str;
 			set(ptr.get());
 		}
 		return*this;

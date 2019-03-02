@@ -648,7 +648,7 @@ graphics::color::color(byte r, byte g, byte b, byte a)
 
 graphics::color::~color() {}
 
-color_t  graphics::color::parse(raw_cstr_t cstr)
+color_t  graphics::color::parse(text::raw_cstr_t cstr)
 {
 	wsize i = 0;
 	if (text::iencoder::get_encoder(cstr.encoding())->to_char32(cstr.ptr(),i) == U'#')

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010"> 
+  <Type Name="ang::dom::xml::xml_text">
+    <DisplayString>{*m_value.m_ptr}</DisplayString>
+    <Expand>
+      <Item Name="[value]" ExcludeView="simple">m_value.m_ptr</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::dom::xml::xml_node">
+    <DisplayString Condition="m_type.m_value == 9U">xmlns:{m_name} = {*m_content.m_ptr,na}</DisplayString>
+    <DisplayString Condition="m_type.m_value == 8U">{m_name} = {*m_content.m_ptr,na}</DisplayString>
+    <DisplayString Condition="m_type.m_value == 7U">&lt;!--{*m_content.m_ptr,na}--&gt;</DisplayString>
+    <DisplayString Condition="m_type.m_value == 6U">&lt;{m_name}/&gt;</DisplayString>
+    <DisplayString>xml_node</DisplayString>
+    <Expand>
+      <Item Name="[name]" ExcludeView="simple" Condition="m_name.m_ptr != 0">m_name</Item>
+      <Item Name="[attributes]" ExcludeView="simple" Condition="m_attributes.m_ptr != 0">*m_attributes.m_ptr</Item>
+      <Item Name="[content]" ExcludeView="simple" Condition="m_content.m_ptr != 0">*m_content.m_ptr</Item>
+      <Item Name="[prev]" ExcludeView="simple" Condition="m_prev != 0">*m_prev</Item>
+      <Item Name="[next]" ExcludeView="simple" Condition="m_next != 0">*m_next</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::dom::xml::xml_collection">
+    <DisplayString Condition="m_type.m_value == 11U">attributes[count = {m_count}]</DisplayString>
+    <DisplayString Condition="m_type.m_value == 10U">elements[count = {m_count}];</DisplayString>
+    <DisplayString>xml_collection</DisplayString>
+    <Expand>
+      <Item Name="[count]" ExcludeView="simple">m_count</Item>
+      <LinkedListItems>
+        <Size>m_count</Size>
+        <HeadPointer>m_first</HeadPointer>
+        <NextPointer>m_next</NextPointer>
+        <ValueNode>*this</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::dom::xml::xml_document">
+    <DisplayString>&lt;?xml ... ?&gt;</DisplayString>
+    <Expand>
+      <Item Name="[version]" ExcludeView="simple">m_version</Item>
+      <Item Name="[encoding]" ExcludeView="simple">m_encoding</Item>
+      <Item Name="[standalone]" ExcludeView="simple" Condition="m_stand_alone.m_ptr != 0">m_stand_alone</Item>
+      <Item Name="[root]" ExcludeView="simple" Condition="m_root != 0">*m_root</Item>
+    </Expand>
+  </Type>
+
+</AutoVisualizer>

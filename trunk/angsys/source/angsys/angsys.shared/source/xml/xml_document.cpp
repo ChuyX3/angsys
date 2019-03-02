@@ -8,8 +8,8 @@
 /*                                                                                                                   */
 /*********************************************************************************************************************/
 #include "pch.h"
-#include "ang/xml.hpp"
-#include "xml_entity_values.hpp"
+#include "ang/dom/xml.h"
+#include "xml/xml_internal.h"
 
 #if defined _DEBUG
 #define NEW new(__FILE__, __LINE__)
@@ -21,125 +21,29 @@
 
 
 using namespace ang;
-using namespace ang::xml;
+using namespace ang::dom::xml;
 
+#define MY_TYPE ang::dom::xml::ixml_document
+#include "ang/inline/intf_wrapper_specialization.inl"
+#undef MY_TYPE
 
-ang::intf_wrapper<ixml_document>::intf_wrapper() : _ptr(null) {
-
-}
-
-ang::intf_wrapper<ixml_document>::intf_wrapper(ixml_document* ptr) : _ptr(null) {
-	set(ptr);
-}
-
-ang::intf_wrapper<ixml_document>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
-	ixml_document * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
-}
-
-ang::intf_wrapper<ixml_document>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
-	set(other._ptr);
-}
-
-ang::intf_wrapper<ixml_document>::intf_wrapper(std::nullptr_t const&)
-	: _ptr(null)
-{
-}
-
-
-ang::intf_wrapper<ixml_document>::~intf_wrapper() {
-	clean();
-}
-
-void ang::intf_wrapper<ixml_document>::clean()
-{
-	iobject * _obj = interface_cast<iobject>(_ptr);
-	if (_obj)_obj->release();
-	_ptr = null;
-}
-
-bool ang::intf_wrapper<ixml_document>::is_empty()const
-{
-	return _ptr == null;
-}
-
-ixml_document* ang::intf_wrapper<ixml_document>::get(void)const
-{
-	return _ptr;
-}
-
-void ang::intf_wrapper<ixml_document>::set(ixml_document* ptr)
-{
-	if (ptr == _ptr) return;
-	iobject * _old = interface_cast<iobject>(_ptr);
-	iobject * _new = interface_cast<iobject>(ptr);
-	_ptr = ptr;
-	if (_new)_new->add_ref();
-	if (_old)_old->release();
-}
-
-ang::intf_wrapper<ixml_document>& ang::intf_wrapper<ixml_document>::operator = (ixml_document* ptr)
-{
-	set(ptr);
-	return*this;
-}
-
-ang::intf_wrapper<ixml_document>& ang::intf_wrapper<ixml_document>::operator = (ang::intf_wrapper<ixml_document> && other)
-{
-	if (this == &other)
-		return *this;
-	clean();
-	_ptr = other._ptr;
-	other._ptr = null;
-	return*this;
-}
-
-ang::intf_wrapper<ixml_document>& ang::intf_wrapper<ixml_document>::operator = (ang::intf_wrapper<ixml_document> const& other)
-{
-	set(other._ptr);
-	return*this;
-}
-
-ixml_document ** ang::intf_wrapper<ixml_document>::addres_of(void)
-{
-	return &_ptr;
-}
-
-ang::intf_wrapper_ptr<ixml_document> ang::intf_wrapper<ixml_document>::operator & (void)
-{
-	return this;
-}
-
-ixml_document * ang::intf_wrapper<ixml_document>::operator -> (void)
-{
-	return get();
-}
-
-ixml_document const* ang::intf_wrapper<ixml_document>::operator -> (void)const
-{
-	return get();
-}
-
-ang::intf_wrapper<ixml_document>::operator xml::ixml_document * (void) { return _ptr; }
-
-ang::intf_wrapper<ixml_document>::operator xml::ixml_document const* (void)const { return _ptr; }
-
+#define MY_TYPE ang::dom::xml::xml_document
+#include "ang/inline/object_wrapper_specialization.inl"
+#undef MY_TYPE
 
 /////////////////////////////////////////////////////////////////////////////////////
 
 xml_document::xml_document_iterator::xml_document_iterator()
-	: _xml_doc(null)
-	, _xml_current(null)
-	, _xml_child(null)
+	: m_doc(null)
+	, m_current(null)
+	, m_child(null)
 {
-
 }
 
 xml_document::xml_document_iterator::xml_document_iterator(xml_document* store)
-	: _xml_doc(store)
-	, _xml_current(null)
-	, _xml_child(null)
+	: m_doc(store)
+	, m_current(null)
+	, m_child(null)
 {
 	xml_iterator_t it;
 	if (store && store->begin().is_valid())
@@ -147,9 +51,9 @@ xml_document::xml_document_iterator::xml_document_iterator(xml_document* store)
 }
 
 xml_document::xml_document_iterator::xml_document_iterator(const xml_document_iterator& it)
-	: _xml_doc(it._xml_doc)
-	, _xml_current(null)
-	, _xml_child(null)
+	: m_doc(it.m_doc)
+	, m_current(null)
+	, m_child(null)
 {
 	xml_current(it.xml_current());
 	xml_child(it.xml_child());
@@ -157,49 +61,49 @@ xml_document::xml_document_iterator::xml_document_iterator(const xml_document_it
 
 xml_document::xml_document_iterator::~xml_document_iterator()
 {
-	_xml_child = null;
-	_xml_current = null;
-	_xml_doc = null;
+	m_child = null;
+	m_current = null;
+	m_doc = null;
 }
 
-ixml_node_t xml_document::xml_document_iterator::xml_current()const
+xml_node_t xml_document::xml_document_iterator::xml_current()const
 {
-	return _xml_current;
+	return m_current;
 }
 
-ixml_node_t xml_document::xml_document_iterator::xml_child()const
+xml_node_t xml_document::xml_document_iterator::xml_child()const
 {
-	return _xml_child;
+	return m_child;
 }
 
-void xml_document::xml_document_iterator::xml_current(ixml_node_t xmlNode)
+void xml_document::xml_document_iterator::xml_current(xml_node_t xmlNode)
 {
-	_xml_current = xmlNode;
+	m_current = xmlNode;
 }
 
-void xml_document::xml_document_iterator::xml_child(ixml_node_t xmlNode)
+void xml_document::xml_document_iterator::xml_child(xml_node_t xmlNode)
 {
-	_xml_child = xmlNode;
+	m_child = xmlNode;
 }
 
 void xml_document::xml_document_iterator::xml_parent(xml_document_t store)
 {
-	_xml_doc = store;
+	m_doc = store.get();
 }
 
-ixml_document_t xml_document::xml_document_iterator::xml_parent()const
+xml_document_t xml_document::xml_document_iterator::xml_parent()const
 {
-	return _xml_doc.lock();
+	return m_doc.lock();
 }
 
 xml_iterator_t xml_document::xml_document_iterator::current()const
 {
-	return xml_iterator_t(xml_parent().get(), _xml_current.get());
+	return xml_iterator_t(xml_parent().get(), m_current.get());
 }
 
 xml_iterator_t xml_document::xml_document_iterator::child()const
 {
-	return xml_iterator_t(xml_parent().get(), _xml_child.get());
+	return xml_iterator_t(xml_parent().get(), m_child.get());
 }
 
 bool xml_document::xml_document_iterator::begin_child()
@@ -236,7 +140,7 @@ bool xml_document::xml_document_iterator::next()
 {
 	if (xml_current() && xml_current()->xml_next_sibling())
 	{
-		xml_current(_xml_current->xml_next_sibling());
+		xml_current(m_current->xml_next_sibling());
 		return true;
 	}
 	return false;
@@ -246,7 +150,7 @@ bool xml_document::xml_document_iterator::prev()
 {
 	if (xml_current() && xml_current()->xml_prev_sibling())
 	{
-		xml_current(_xml_current->xml_prev_sibling());
+		xml_current(m_current->xml_prev_sibling());
 		return true;
 	}
 	return false;
@@ -303,26 +207,34 @@ xml_document_t xml_document::from_file(core::files::input_text_file_t file)
 	return doc;
 }
 
-xml_document::xml_document()
-	: _count(0)
-	, _xml_first(null)
-	, _xml_root(null)
-	, _xml_last(null)
-	, _current(this)
+xml_document::xml_document(xml_encoding_t e)
+	: m_count(0)
+	, m_stand_alone(null)
+	, m_version(null)
+	, m_encoding(e)
+	, m_first(null)
+	, m_root(null)
+	, m_last(null)
+	, m_current(this)
 {
-
+	m_factory = text::istring_factory::get_factory(e == xml_encoding::auto_detect ? xml_encoding::utf8 : e.get());
+	m_version = m_factory->create_string("1.0");
+	m_encoding = m_factory->encoding();
 }
 
 xml_document::xml_document(xml_document const* doc)
-	: _count(0)
-	, _xml_first(null)
-	, _xml_root(null)
-	, _xml_last(null)
-	, _current(this)
+	: m_count(0)
+	, m_stand_alone(null)
+	, m_version(null)
+	, m_encoding(xml_encoding::auto_detect)
+	, m_first(null)
+	, m_root(null)
+	, m_last(null)
+	, m_current(this)
 {
 	if (doc)
 	{
-		ixml_node_t node = doc->xml_first();
+		xml_node_t node = doc->xml_first();
 		if(node) 
 			insert_first(node->xml_clone(this));
 		while (!node.is_empty())
@@ -333,49 +245,24 @@ xml_document::xml_document(xml_document const* doc)
 			node = node->xml_next_sibling();
 		}
 	}
+	m_factory = text::istring_factory::get_factory(doc->xml_encoding() == xml_encoding::auto_detect ? xml_encoding::utf8 : doc->xml_encoding());
+	m_version = m_factory->create_string("1.0");
+	m_encoding = m_factory->encoding();
 }
 
 
 xml_document::~xml_document()
 {
-	clean();
+	clear();
 }
 
-ANG_IMPLEMENT_CLASSNAME(ang::xml::xml_document);
-ANG_IMPLEMENT_OBJECTNAME(ang::xml::xml_document);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(xml_document);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::dom::xml::xml_document, object, ixml_document);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(xml_document, object, ixml_document, ixml_object, ixml_items);
 
-bool xml_document::is_inherited_of(type_name_t name)
+xml_encoding_t xml_document::xml_encoding()const
 {
-	return name == type_of<xml_document>()
-		|| object::is_inherited_of(name)
-		|| ixml_document::is_inherited_of(name);
-}
-
-bool xml_document::is_kind_of(type_name_t name)const
-{
-	return name == type_of<xml_document>()
-		|| object::is_kind_of(name)
-		|| ixml_document::is_kind_of(name);
-}
-
-bool xml_document::query_object(type_name_t name, unknown_ptr_t out)
-{
-	if (out == null)
-		return false;
-	if (name == type_of<xml_document>())
-	{
-		*out = static_cast<xml_document*>(this);
-		return true;
-	}
-	else if (object::query_object(name, out))
-	{
-		return true;
-	}
-	else if (ixml_document::query_object(name, out))
-	{
-		return true;
-	}
-	return false;
+	return m_encoding;
 }
 
 xml_type_t xml_document::xml_type()const
@@ -388,13 +275,13 @@ bool xml_document::xml_is_type_of(xml_type_t type)const
 	return xml_type::document == type;
 }
 
-void xml_document::clean()
+void xml_document::clear()
 {
-	_current.xml_child(null);
-	_current.xml_current(null);
+	m_current.xml_child(null);
+	m_current.xml_current(null);
 
-	ixml_node_t node = xml_first();
-	ixml_node_t temp;
+	xml_node_t node = xml_first();
+	xml_node_t temp;
 	while (!node.is_empty())
 	{
 		temp = node->xml_next_sibling();
@@ -406,39 +293,45 @@ void xml_document::clean()
 	xml_first(null);
 	xml_root(null);
 	xml_last(null);
-	_last_parsing_error = null;
+	m_last_parsing_error = null;
 }
 
-wstring& xml_document::xml_print(wstring& out, const xml_format_t& flags, ushort level)const
+streams::itext_output_stream_t& xml_document::xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flags, ushort level)const
 {
-	ixml_node_t node = xml_first();
+	stream << L"<?xml "_s << L"version=\""_s << (xml_cstr_t)m_version << L"\""_s;
+	stream << L" encoding="_s << L"\""_s << (m_factory.is_empty() ? "utf-8"_s : m_factory->encoding().to_string()) << L"\""_s;
+	if (!m_stand_alone.is_empty())
+		stream << L" standalone=\""_s << m_stand_alone->to_string() << "\""_s;
+	stream << L"?>"_s;	
+
+	xml_node_t node = xml_first();
 	while (!node.is_empty())
 	{
-		node->xml_print(out, flags, level);
+		node->xml_print(stream, flags, level);
 		node = node->xml_next_sibling();
-		if (flags.is_active(xml_format_t::wrap_text_space) || flags.is_active(xml_format_t::wrap_text_tab))
-			out << L"\n"_s;
+		if (bool(flags & xml_format::wrap_text_space) || bool(flags & xml_format::wrap_text_tab))
+			stream << L"\n"_s;
 	}
-	return out;
+	return stream;
 }
 
 
 wsize xml_document::counter()const
 {
-	return _count;
+	return m_count;
 }
 
-ixml_node_t xml_document::at(const xml_base_iterator_t& it)
+xml_node_t xml_document::at(const xml_base_iterator_t& it)
 {
 	//if (!counter()) throw(ang::exception_t(except_code::invalid_memory));
 	if (it.parent() != this)throw(ang::exception_t(except_code::invalid_param));
-	return reinterpret_cast<ixml_node*>(it.current());
+	return reinterpret_cast<xml_node*>(it.current());
 }
 
 bool xml_document::increase(xml_base_iterator_t& it)const
 {
 	if (it.parent() != this || !it.is_valid()) throw(ang::exception_t(except_code::invalid_param));
-	ixml_node * other,* node = reinterpret_cast<ixml_node*>(it.current());
+	xml_node * other,* node = reinterpret_cast<xml_node*>(it.current());
 	
 	if (node)
 	{
@@ -457,7 +350,7 @@ bool xml_document::increase(xml_base_iterator_t& it)const
 bool xml_document::increase(xml_base_iterator_t& it, int offset)const
 {
 	if (it.parent() != this || !it.is_valid()) throw(ang::exception_t(except_code::invalid_param));
-	ixml_node * other, *node = reinterpret_cast<ixml_node*>(it.current());
+	xml_node * other, *node = reinterpret_cast<xml_node*>(it.current());
 	while (node && offset > 0)
 	{
 		offset--;
@@ -477,7 +370,7 @@ bool xml_document::increase(xml_base_iterator_t& it, int offset)const
 bool xml_document::decrease(xml_base_iterator_t&it)const
 {
 	if (it.parent() != this || !it.is_valid()) throw(ang::exception_t(except_code::invalid_param));
-	ixml_node * other, *node = reinterpret_cast<ixml_node*>(it.current());
+	xml_node * other, *node = reinterpret_cast<xml_node*>(it.current());
 
 	if (node)
 	{
@@ -494,7 +387,7 @@ bool xml_document::decrease(xml_base_iterator_t&it)const
 bool xml_document::decrease(xml_base_iterator_t&it, int offset)const
 {
 	if (it.parent() != this || !it.is_valid()) throw(ang::exception_t(except_code::invalid_param));
-	ixml_node * other, *node = reinterpret_cast<ixml_node*>(it.current());
+	xml_node * other, *node = reinterpret_cast<xml_node*>(it.current());
 
 	while (node && offset > 0)
 	{
@@ -511,7 +404,7 @@ bool xml_document::decrease(xml_base_iterator_t&it, int offset)const
 
 xml_forward_iterator_t xml_document::begin()
 {
-	return xml_iterator_t(const_cast<xml_document*>(this), (ixml_node*)xml_first());
+	return xml_iterator_t(const_cast<xml_document*>(this), (xml_node*)xml_first());
 }
 
 xml_forward_iterator_t xml_document::end()
@@ -521,7 +414,7 @@ xml_forward_iterator_t xml_document::end()
 
 xml_const_forward_iterator_t xml_document::begin()const
 {
-	return xml_iterator_t(const_cast<xml_document*>(this), (ixml_node*)xml_first());
+	return xml_iterator_t(const_cast<xml_document*>(this), (xml_node*)xml_first());
 }
 
 xml_const_forward_iterator_t xml_document::end()const
@@ -531,19 +424,19 @@ xml_const_forward_iterator_t xml_document::end()const
 
 xml_forward_iterator_t xml_document::last()
 {
-	return xml_iterator_t(const_cast<xml_document*>(this), (ixml_node*)xml_last());
+	return xml_iterator_t(const_cast<xml_document*>(this), (xml_node*)xml_last());
 }
 
 xml_const_forward_iterator_t xml_document::last()const
 {
-	return xml_iterator_t(const_cast<xml_document*>(this), (ixml_node*)xml_last());
+	return xml_iterator_t(const_cast<xml_document*>(this), (xml_node*)xml_last());
 }
 
 xml_backward_iterator_t xml_document::rbegin()
 {
-	ixml_node* child = null, *node = xml_last();
+	xml_node* child = null, *node = xml_last();
 	while (node && (child = node->xml_last_child())) node = child;
-	return xml_iterator_t(const_cast<xml_document*>(this), (ixml_node*)node);
+	return xml_iterator_t(const_cast<xml_document*>(this), (xml_node*)node);
 }
 
 xml_backward_iterator_t xml_document::rend()
@@ -553,9 +446,9 @@ xml_backward_iterator_t xml_document::rend()
 
 xml_const_backward_iterator_t xml_document::rbegin()const
 {
-	ixml_node* child = null, *node = xml_last();
+	xml_node* child = null, *node = xml_last();
 	while (node && (child = node->xml_last_child())) node = child;
-	return xml_iterator_t(const_cast<xml_document*>(this), (ixml_node*)node);
+	return xml_iterator_t(const_cast<xml_document*>(this), (xml_node*)node);
 }
 
 xml_const_backward_iterator_t xml_document::rend()const
@@ -564,35 +457,97 @@ xml_const_backward_iterator_t xml_document::rend()const
 }
 
 /////////////////////////////////////////////////////////////////////////
-
-xml_header_t xml_document::xml_header()const
+ixml_text_t xml_document::create_cdata(xml_cstr_t cstr)const
 {
-	return _xml_first ? _xml_first->xml_as<xml::xml_header>() : null;
+	return m_factory->create_string(cstr);
 }
 
-ixml_node_t xml_document::xml_data_type()const
+ixml_text_t xml_document::create_pcdata(xml_cstr_t cstr)const
+{
+	//TODO: validate characters
+	return m_factory->create_string(cstr);
+}
+
+bool xml_document::begin_element(xml_cstr_t name)
+{
+	return begin_element(m_factory->create_string(name));
+}
+
+bool xml_document::push_element(xml_cstr_t name, xml_cstr_t value)
+{
+	return push_element(m_factory->create_string(name), m_factory->create_string(value));
+}
+
+bool xml_document::push_element(xml_cstr_t name)
+{
+	return push_element(m_factory->create_string(name));
+}
+
+bool xml_document::push_data(xml_cstr_t value)
+{
+	return push_data(m_factory->create_string(value));
+}
+
+bool xml_document::push_value(xml_cstr_t value)
+{
+	return push_value(m_factory->create_string(value));
+}
+
+bool xml_document::push_attribute(xml_cstr_t name, xml_cstr_t value)
+{
+	return push_attribute(m_factory->create_string(name), m_factory->create_string(value));
+}
+
+bool xml_document::push_namespace(xml_cstr_t name, xml_cstr_t value)
+{
+	ixml_text_t ns = m_factory->create_string("xmlns"_s);
+	if (name.size() != 0)
+	{
+		ns->concat(":"_s);
+		ns->concat(name);
+	}	
+	return push_attribute(ns, m_factory->create_string(value));
+}
+
+bool xml_document::push_comment(xml_cstr_t value)
+{
+	return push_comment(m_factory->create_string(value));
+}
+
+
+
+ixml_text_view_t xml_document::xml_version()const
+{
+	return m_version.get();
+}
+
+bool xml_document::xml_stand_alone()const
+{
+	return m_stand_alone;
+}
+
+xml_node_t xml_document::xml_data_type()const
 {
 	return null;
 }
 
-xml_element_t xml_document::xml_root_element()const
+xml_node_t xml_document::xml_root_element()const
 {
-	return _xml_root ? _xml_root->xml_as<xml::xml_element>() : null;
+	return m_root;
 }
 
-ixml_document_t xml_document::xml_clone()const
+xml_document_t xml_document::xml_clone()const
 {
 	return NEW xml_document(this);
 }
 
-
-xml_iterator_t xml_document::find(raw_str_t name, bool invert)const
+xml_iterator_t xml_document::find(xml_cstr_t name, bool invert)const
 {
 	if (invert)
 	{
 		for (xml_const_backward_iterator_t it = rbegin(); it != rend(); it++)
 		{
-			if(text::UNIC().compare((cwstr_t)it->xml_name(), name) == 0)
+			if((xml_cstr_t)it->xml_name() == name)
 				return it;
 		}
 	}
@@ -600,14 +555,14 @@ xml_iterator_t xml_document::find(raw_str_t name, bool invert)const
 	{
 		for (xml_const_forward_iterator_t it = begin(); it != end(); it++)
 		{
-			if (text::UNIC().compare((cwstr_t)it->xml_name(), name) == 0)
+			if ((xml_cstr_t)it->xml_name() == name)
 				return it;
 		}
 	}
 	return xml_iterator_t(const_cast<xml_document*>(this), null);
 }
 
-xml_iterator_t xml_document::find(raw_str_t name, xml_iterator_t nextTo, bool invert)const
+xml_iterator_t xml_document::find(xml_cstr_t name, xml_iterator_t nextTo, bool invert)const
 {
 	if (!nextTo.is_valid() || nextTo.parent() != this)
 		nextTo = (invert) ? xml_iterator_t(rbegin()) : xml_iterator_t(begin());
@@ -616,7 +571,7 @@ xml_iterator_t xml_document::find(raw_str_t name, xml_iterator_t nextTo, bool in
 	{
 		for (xml_const_backward_iterator_t it = nextTo; it != rend(); it--)
 		{
-			if (text::UNIC().compare((cwstr_t)it->xml_name(), name) == 0)
+			if ((xml_cstr_t)it->xml_name() == name)
 				return it;
 		}
 	}
@@ -624,7 +579,7 @@ xml_iterator_t xml_document::find(raw_str_t name, xml_iterator_t nextTo, bool in
 	{
 		for (xml_const_forward_iterator_t it = nextTo; it != end(); it++)
 		{
-			if (text::UNIC().compare((cwstr_t)it->xml_name(), name) == 0)
+			if ((xml_cstr_t)it->xml_name() == name)
 				return it;
 		}
 	}
@@ -633,57 +588,57 @@ xml_iterator_t xml_document::find(raw_str_t name, xml_iterator_t nextTo, bool in
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-ixml_node* xml_document::xml_first()const { return _xml_first; }
-ixml_node* xml_document::xml_root()const { return _xml_root; }
-ixml_node* xml_document::xml_last()const { return _xml_last; }
+xml_node* xml_document::xml_first()const { return m_first; }
+xml_node* xml_document::xml_root()const { return m_root; }
+xml_node* xml_document::xml_last()const { return m_last; }
 
-//void xml_document::insert_next_to(ixml_node*, ixml_node*);
-//void xml_document::insert_prev_to(ixml_node*, ixml_node*);
-//void xml_document::insert_in_head(ixml_node*);
-//void xml_document::insert_in_tail(ixml_node*);
+//void xml_document::insert_next_to(xml_node*, xml_node*);
+//void xml_document::insert_prev_to(xml_node*, xml_node*);
+//void xml_document::insert_in_head(xml_node*);
+//void xml_document::insert_in_tail(xml_node*);
 
 
-void xml_document::xml_first(ixml_node_t node)
+void xml_document::xml_first(xml_node_t node)
 {
-	if (node.is_empty() || (node->xml_is_type_of(xml_type::header)
+	if (node.is_empty()
 		|| node->xml_is_type_of(xml_type::element)
-		|| node->xml_is_type_of(xml_type::comment)))
+		|| node->xml_is_type_of(xml_type::comment))
 	{
-		if (_xml_first == node.get()) return;
-		auto _old = _xml_first;
-		_xml_first = (!node.is_empty()) ? node->xml_as<xml_node>().get() : null;
-		if (_xml_first)_xml_first->add_ref();
-		if (_old)_old->release();
+		if (m_first == node.get()) return;
+		auto old = m_first;
+		m_first = node.get();
+		if (m_first)m_first->add_ref();
+		if (old)old->release();
 	}
 }
 
-void xml_document::xml_root(ixml_node_t node)
+void xml_document::xml_root(xml_node_t node)
 {
 	if (node.is_empty() || node->xml_is_type_of(xml_type::element))
 	{
-		if (_xml_root == node.get()) return;
-		auto _old = _xml_root;
-		_xml_root = (!node.is_empty()) ? node->xml_as<xml_node>().get() : null;
-		if (_xml_root)_xml_root->add_ref();
-		if (_old)_old->release();
+		if (m_root == node.get()) return;
+		auto old = m_root;
+		m_root = (!node.is_empty()) ? node->xml_as<xml_element>().get() : null;
+		if (m_root)m_root->add_ref();
+		if (old)old->release();
 	}
 }
 
-void xml_document::xml_last(ixml_node_t node)
+void xml_document::xml_last(xml_node_t node)
 {
-	if (node.is_empty() || (node->xml_is_type_of(xml_type::header)
+	if (node.is_empty()
 		|| node->xml_is_type_of(xml_type::element)
-		|| node->xml_is_type_of(xml_type::comment)))
+		|| node->xml_is_type_of(xml_type::comment))
 	{
-		if (_xml_last == node.get()) return;
-		auto _old = _xml_last;
-		_xml_last = (!node.is_empty()) ? node->xml_as<xml_node>().get() : null;
-		if (_xml_last)_xml_last->add_ref();
-		if (_old)_old->release();
+		if (m_last == node.get()) return;
+		auto old = m_last;
+		m_last = node.get();
+		if (m_last)m_last->add_ref();
+		if (old)old->release();
 	}
 }
 
-void xml_document::insert_next_to(ixml_node* refNode, ixml_node* newNode)
+void xml_document::insert_next_to(xml_node* refNode, xml_node* newNode)
 {
 	refNode->xml_next_sibling()->xml_prev_sibling(newNode);
 	newNode->xml_next_sibling(refNode->xml_next_sibling());
@@ -691,7 +646,7 @@ void xml_document::insert_next_to(ixml_node* refNode, ixml_node* newNode)
 	refNode->xml_next_sibling(newNode);
 }
 
-void xml_document::insert_prev_to(ixml_node* refNode, ixml_node* newNode)
+void xml_document::insert_prev_to(xml_node* refNode, xml_node* newNode)
 {
 	refNode->xml_prev_sibling()->xml_next_sibling(newNode);
 	newNode->xml_prev_sibling(refNode->xml_prev_sibling());
@@ -699,14 +654,14 @@ void xml_document::insert_prev_to(ixml_node* refNode, ixml_node* newNode)
 	refNode->xml_prev_sibling(newNode);
 }
 
-void xml_document::insert_first(ixml_node* newNode)
+void xml_document::insert_first(xml_node* newNode)
 {
 	xml_first()->xml_prev_sibling(newNode);
 	newNode->xml_next_sibling(xml_first());
 	xml_first(newNode);
 }
 
-void xml_document::insert_last(ixml_node* newNode)
+void xml_document::insert_last(xml_node* newNode)
 {
 	xml_last()->xml_next_sibling(newNode);
 	newNode->xml_prev_sibling(xml_last());
@@ -717,21 +672,21 @@ void xml_document::insert_last(ixml_node* newNode)
 
 xml_iterator_t xml_document::xml_current()const
 {
-	return _current.current();
+	return m_current.current();
 }
 
-xml_element_t xml_document::xml_current_element()const
+xml_node_t xml_document::xml_current_element()const
 {
-	if (!_current.current().is_valid()) return null;
-	return _current.current()->xml_as<xml_element>();
+	if (!m_current.current().is_valid()) return null;
+	return m_current.current()->xml_as<xml_element>();
 }
 
 bool xml_document::move_to(xml_iterator_t current)
 {
 	if (!current.is_valid() || current.parent() != static_cast<ixml_items*>(this))
 		return false;
-	_current.xml_current(*current);
-	_current.end_child();
+	m_current.xml_current(*current);
+	m_current.end_child();
 	return true;
 }
 
@@ -741,155 +696,92 @@ bool xml_document::move_to_child(xml_iterator_t child)
 		return false;
 	if (child->xml_parent() == null)//IS a root
 		return false;
-	_current.xml_current(child->xml_parent());
-	_current.xml_child(*child);
+	m_current.xml_current(child->xml_parent());
+	m_current.xml_child(*child);
 	return true;
 }
 
 
 bool xml_document::move_up()
 {
-	return _current.prev_Child();
+	return m_current.prev_Child();
 }
 
 bool xml_document::move_down()
 {
-	return _current.next_child();
+	return m_current.next_child();
 }
 
 bool xml_document::move_forward()
 {
-	return _current.forward();
+	return m_current.forward();
 }
 
 bool xml_document::move_backward()
 {
-	return _current.backward();
+	return m_current.backward();
 }
 
-void xml_document::push_default_header()
+void xml_document::push_header(xml_cstr_t version, nullable<bool> standalone)
 {
-	ixml_node_t node = NEW xml::xml_header(this);
-	if (xml_first() == null)
-	{
-		xml_first(node.get());
-		xml_last(node.get());
-	}
-	else
-	{
-		if (xml_first()->xml_is_type_of(xml_type::header))
-		{
-			xml_node_t old = xml_first()->xml_as<xml_node>();
-			xml_first(node.get());
-			if (old->xml_next_sibling())
-			{
-				old->xml_next_sibling()->xml_prev_sibling(node.get());
-				((xml_node*)node.get())->xml_next_sibling(old->xml_next_sibling());
-			}
-			else
-			{
-				xml_last(node.get());
-			}
-		}
-		else
-		{
-			ixml_node_t old = xml_first();
-			xml_first(node.get());
-			old->xml_prev_sibling(node.get());
-			node->xml_next_sibling(old);
-		}
-	}
+	m_version = m_factory->create_string(version);
+	m_stand_alone = standalone;
 }
 
-void xml_document::push_header(wstring version, xml_encoding_t encoding, bool standalone)
-{
-	ixml_node_t node = xml::xml_header::create_new(this, version, encoding, standalone);;
-	if (xml_first() == null)
-	{
-		xml_first(node.get());
-		xml_last(node.get());
-	}
-	else
-	{
-		if (xml_first()->xml_is_type_of(xml_type::header))
-		{
-			xml_node_t old = xml_first()->xml_as<xml_node>();;
-			xml_first(node.get());
-			if (old->xml_next_sibling())
-			{
-				old->xml_next_sibling()->xml_prev_sibling(node.get());
-				((xml_node*)node.get())->xml_next_sibling(old->xml_next_sibling());
-			}
-			else
-			{
-				xml_last(node.get());
-			}
-		}
-		else
-		{
-			ixml_node_t old = xml_first();
-			xml_first(node.get());
-			old->xml_prev_sibling(node.get());
-			node->xml_next_sibling(old);
-		}
-	}
-}
-
-bool xml_document::begin_element(wstring name)
+bool xml_document::begin_element(ixml_text_t name)
 {
 	if (xml_last() == null)
 	{
-		xml_element_t element = xml_element::create_new(this, name);
+		xml_node_t element = xml_element::create_new(this, name);
 		xml_first(element.get());
 		xml_last(element.get());
 		xml_root(element.get());
-		_current.xml_current(element.get());
+		m_current.xml_current(element.get());
 	}
 	else if (xml_root() == null)
 	{
 		xml_root(xml_element::create_new(this, name));
-		_current.xml_current(xml_root());
+		m_current.xml_current(xml_root());
 		xml_last()->xml_next_sibling(xml_root());
 		xml_root()->xml_prev_sibling(xml_last());
 		xml_last(xml_root());
 	}
-	else if (_current.xml_current().get() == null)
+	else if (m_current.xml_current().get() == null)
 	{
 		return false;
 	}
 	else
 	{
-		xml_node_t current = _current.xml_current()->xml_as<xml_node>();
+		xml_node_t current = m_current.xml_current();
 		if (current.get() == null || !current->xml_is_type_of(xml_type::element))
 			return false;
 
-		current->push_child(xml_element::create_new(this, name), xml_iterator_t(current->xml_children(), _current.xml_child().get()));
-		_current.next_child();
-		_current.forward();
+		current->push_child((xml_node_t)xml_element::create_new(this, name), xml_iterator_t(current->xml_children(), m_current.xml_child().get()));
+		m_current.next_child();
+		m_current.forward();
 	}
 	return true;
 }
 
 bool xml_document::end_element()
 {
-	if (_current.xml_current() == null)
+	if (m_current.xml_current() == null)
 		return false;
-	_current.backward();
+	m_current.backward();
 	return true;
 }
 
-
-bool xml_document::push_element(wstring name)
+bool xml_document::push_element(ixml_text_t name)
 {
 	if (xml_last() == null)
 	{
-		xml_root(xml_element::create_new(this, ang::move(name)));
+		xml_root(xml_element::create_new(this, name));
 		xml_first(xml_root());
 		xml_last(xml_first());
 	}
 	else if (xml_root() == null)
 	{
-		xml_root(xml_element::create_new(this, ang::move(name)));
+		xml_root(xml_element::create_new(this, name));
 
 		xml_last()->xml_next_sibling(xml_root());
 		xml_root()->xml_prev_sibling(xml_last());
@@ -897,33 +789,33 @@ bool xml_document::push_element(wstring name)
 	}
 	else
 	{
-		if (_current.xml_current().get() == null)
+		if (m_current.xml_current().get() == null)
 		{
 			return false;
 		}
 		else
 		{
-			xml_node_t current = _current.xml_current()->xml_as<xml_node>();
+			xml_node_t current = m_current.xml_current();
 			if (current.get() == null || !current->xml_is_type_of(xml_type::element))
 				return false;
-			current->push_child(xml_element::create_new(this, name), xml_iterator_t(current->xml_children(), _current.xml_child().get()));
-			_current.next_child();
+			current->push_child(xml_element::create_new(this, name), xml_iterator_t(current->xml_children(), m_current.xml_child().get()));
+			m_current.next_child();
 		}
 	}
 	return true;
 }
 
-bool xml_document::push_element(wstring name, wstring value)
+bool xml_document::push_element(ixml_text_t name, ixml_text_t value)
 {
 	if (xml_last() == null)
 	{
-		xml_root(xml_element::create_new(this, ang::move(name), ang::move(value)));
+		xml_root(xml_element::create_new(this, name, value));
 		xml_first(xml_root());
 		xml_last(xml_first());
 	}
 	else if (xml_root() == null)
 	{
-		xml_root(xml_element::create_new(this, ang::move(name), ang::move(value)));
+		xml_root(xml_element::create_new(this, name, value));
 
 		xml_last()->xml_next_sibling(xml_root());
 		xml_root()->xml_prev_sibling(xml_last());
@@ -931,81 +823,80 @@ bool xml_document::push_element(wstring name, wstring value)
 	}
 	else
 	{
-		if (_current.xml_current().get() == null)
+		if (m_current.xml_current().get() == null)
 		{
 			return false;
 		}
 		else
 		{
-			xml_node_t current = _current.xml_current()->xml_as<xml_node>();
+			xml_node_t current = m_current.xml_current();
 			if (current.get() == null || !current->xml_is_type_of(xml_type::element))
 				return false;
-			current->push_child(xml_element::create_new(this, ang::move(name), ang::move(value)), xml_iterator_t(current->xml_children(), _current.xml_child().get()));
-			_current.next_child();
+			current->push_child(xml_element::create_new(this, name, value), xml_iterator_t(current->xml_children(), m_current.xml_child().get()));
+			m_current.next_child();
 		}
 	}
 	return true;
 }
 
-
-bool xml_document::push_comment(wstring value)
+bool xml_document::push_comment(ixml_text_t value)
 {
 	if (xml_last() == null)
 	{
-		xml_first(xml_comment::create_new(this, ang::move(value)));
+		xml_first(xml_comment::create_new(this, value));
 		xml_last(xml_first());
 	}
 	else
 	{
-		if (_current.xml_current().get() == null)
+		if (m_current.xml_current().get() == null)
 		{
-			xml_last()->xml_next_sibling(xml_comment::create_new(this, ang::move(value)));
+			xml_last()->xml_next_sibling(xml_comment::create_new(this, value));
 			xml_last()->xml_next_sibling()->xml_prev_sibling(xml_last());
 			xml_last(xml_last()->xml_next_sibling());
 		}
 		else
 		{
-			xml_node_t current = _current.xml_current()->xml_as<xml_node>();
+			xml_node_t current = m_current.xml_current();
 			if (!current->xml_is_type_of(xml_type::element))
 				return false;
-			current->push_child(xml_comment::create_new(this, ang::move(value)), xml_iterator_t(current->xml_children(), _current.xml_child().get()));
-			_current.next_child();
+			current->push_child(xml_comment::create_new(this, value), xml_iterator_t(current->xml_children(), m_current.xml_child().get()));
+			m_current.next_child();
 		}
 	}
 	return true;
 }
 
 
-bool xml_document::push_data(wstring value)
+bool xml_document::push_data(ixml_text_t value)
 {
-	if (_current.xml_current().get() == null)
+	if (m_current.xml_current().get() == null)
 		return false;
-	xml_node_t current = _current.xml_current()->xml_as<xml_node>();
+	xml_node_t current = m_current.xml_current();
 	if (!current->xml_is_type_of(xml_type::element))
 		return false;
-	current->push_data(ang::move(value));
+	current->push_data(value);
 	return true;
 }
 
-bool xml_document::push_value(wstring value)
+bool xml_document::push_value(ixml_text_t value)
 {
-	if (_current.xml_current().get() == null)
+	if (m_current.xml_current().get() == null)
 		return false;
-	xml_node_t current = _current.xml_current()->xml_as<xml_node>();
+	xml_node_t current = m_current.xml_current();
 	if (!current->xml_is_type_of(xml_type::element))
 		return false;
-	current->push_value(ang::move(value));
+	current->push_value(value);
 	return true;
 }
 
-bool xml_document::push_attribute(wstring name, wstring value)
+bool xml_document::push_attribute(ixml_text_t name, ixml_text_t value)
 {
-	if (_current.xml_current() == null)
+	if (m_current.xml_current() == null)
 		return false;
-	xml_node_t current = _current.xml_current()->xml_as<xml_node>();
+	xml_node_t current = m_current.xml_current();
 	if (!current->xml_is_type_of(xml_type::element))
 		return false;
-	current->push_attribute(xml_attribute::create_new(this, ang::move(name), ang::move(value)));
+	current->push_attribute(xml_attribute::create_new(this, name, value));
 	return true;
 }
 
@@ -1013,54 +904,55 @@ bool xml_document::push_attribute(wstring name, wstring value)
 
 ////////////////////////////////////////////////////////////////////////////
 
-static xml_encoding_t  xml_detect_encoding(raw_str_t text, windex& idx)
+static xml_encoding_t  xml_detect_encoding(pointer bom, xml_encoding_t e, windex& idx)
 {
-	if (text.size() < 4) return xml_encoding::none;
-
-	alignas(4) static byte utf8_bom[4] = { 0xef, 0xbb, 0xbf, 0x0 };
+	if (bom == null)
+		return xml_encoding::none;
+	
+	/*alignas(4) static byte utf8_bom[4] = { 0xef, 0xbb, 0xbf, 0x0 };
 	alignas(4) static byte utf16_le_bom[4] = { 0xff, 0xfe, 0x0, 0x0 };
 	alignas(4) static byte utf16_be_bom[4] = { 0xfe, 0xff, 0x0, 0x0 };
 	alignas(4) static byte utf32_le_bom[8] = { 0xff, 0xfe, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
-	alignas(4) static byte utf32_be_bom[8] = { 0x0, 0x0, 0xfe, 0xff, 0x0, 0x0, 0x0, 0x0 };
+	alignas(4) static byte utf32_be_bom[8] = { 0x0, 0x0, 0xfe, 0xff, 0x0, 0x0, 0x0, 0x0 };*/
 
-	switch (text.encoding())
+	switch (e.get())
 	{
 	case text::encoding::auto_detect:
-		if (text::UTF8().compare_until((utf8_char_t const*)text.ptr(), (utf8_char_t const*)utf8_bom) == 3)
+		if (text::load_bom<text::encoding::utf8>(bom) > 0)
 		{
 			idx += 3; 
 			return text::encoding::utf8;
 		}
-		else if (text::UTF32().compare_until((utf32_char_t const*)text.ptr(), (utf32_char_t const*)utf32_le_bom) == 1)
+		else if (text::load_bom<text::encoding::utf32_le>(bom) > 0)
 		{
 			idx += 1;
 			return text::native_encoding<text::encoding::utf32_le>();
 		}
-		else if (text::UTF32().compare_until((utf32_char_t const*)text.ptr(), (utf32_char_t const*)utf32_be_bom) == 1)
+		else  if (text::load_bom<text::encoding::utf32_be>(bom) > 0)
 		{
 			idx += 1;
-			return text::native_encoding<text::encoding::utf16_be>();
+			return text::native_encoding<text::encoding::utf32_be>();
 		}
-		else if (text::UTF16().compare_until((utf16_char_t const*)text.ptr(), (utf16_char_t const*)utf16_le_bom) == 1)
+		else if (text::load_bom<text::encoding::utf16_le>(bom) > 0)
 		{
 			idx += 1;
 			return text::native_encoding<text::encoding::utf16_le>();
 		}
-		else if (text::UTF16().compare_until((utf16_char_t const*)text.ptr(), (utf16_char_t const*)utf16_be_bom) == 1)
+		else  if (text::load_bom<text::encoding::utf16_be>(bom) > 0)
 		{
 			idx += 1;
 			return text::native_encoding<text::encoding::utf16_be>();
 		}
 
-		else if (text::UTF8().compare_until((utf8_char_t const*)text.ptr(), u8"<?xml"_sm.cstr()) == 5)
+		else if (text::utf8::compare_until((mchar const*)bom, u8"<?xml"_sm.cstr()) == 5)
 			return text::encoding::utf8;
-		else if (text::UTF32().compare_until((utf32_char_t const*)text.ptr(), U"<?xml") == 5)
+		else if (text::utf32::compare_until((char32_t const*)bom, U"<?xml") == 5)
 			return text::encoding::utf32;
-		else if (text::UTF32_SE().compare_until((utf32_char_t const*)text.ptr(), U"<?xml") == 5)
+		else if (text::utf32_se::compare_until((char32_t const*)bom, U"<?xml") == 5)
 			return text::encoding::utf32_se;
-		else if (text::UTF16().compare_until((utf16_char_t const*)text.ptr(), u"<?xml") == 5)
+		else if (text::utf16::compare_until((char16_t const*)bom, u"<?xml") == 5)
 			return text::encoding::utf16;
-		else if (text::UTF16_SE().compare_until((utf16_char_t const*)text.ptr(), u"<?xml") == 5)
+		else if (text::utf16_se::compare_until((char16_t const*)bom, u"<?xml") == 5)
 			return text::encoding::utf16_se;	
 
 		return text::encoding::utf8;
@@ -1070,7 +962,7 @@ static xml_encoding_t  xml_detect_encoding(raw_str_t text, windex& idx)
 	case text::encoding::utf32_le: return text::native_encoding<text::encoding::utf32_le>();
 	case text::encoding::utf32_be: return text::native_encoding<text::encoding::utf32_be>();
 	default:
-		return text.encoding();
+		return e;
 	}
 }
 
@@ -1078,13 +970,14 @@ static xml_encoding_t  xml_detect_encoding(raw_str_t text, windex& idx)
 void xml_document::load(core::files::input_text_file_t file)
 {
 	ang::exception_t ex;
-	if (!file->read([&](streams::itext_input_stream_t stream)
+	if (!file->map([&](ibuffer_view_t data)
 	{
-		ibuffer_t buffer = interface_cast<ibuffer>(stream.get());
-		if (buffer.is_empty()) return false;
-		raw_str_t text(buffer->buffer_ptr(), buffer->buffer_size(), stream->format());
-		try { parse(text); return true; }
-		catch (ang::exception_t e) { ex = e; return false; }
+		try {
+			parse(data); return true;
+		}
+		catch (ang::exception_t e) {
+			ex = e; return false; 
+		}
 	})) {
 
 		if (ex.is_empty())throw_exception(except_code::unknown);
@@ -1098,54 +991,85 @@ void xml_document::save(core::files::output_text_file_t file)const
 }
 
 
-void xml_document::parse(raw_str_t text)
+void xml_document::parse(ixml_text_view_t view)
 {
 	windex idx = 0;
-	if (text.size() < 4)
-		throw(exception_t((dword)xml_exception_code::parsing_error, "invalid input"));
-	
-	text._encoding = xml_detect_encoding(text, idx);
-
-	wstring version;
+	ixml_text_t version = null;
+	nullable<bool> standalone = null;
 	xml_encoding_t encoding;
-	bool standalone;
 
-	text::string_util code = text;
-
-	if (decode_header(code,	idx, version, encoding, standalone))
+	encoding = xml_detect_encoding(view->data(), xml_encoding::auto_detect, idx);
+	
+	if (decode_header(view, idx, version, encoding, standalone))
 	{
-		text._encoding = encoding != xml_encoding::auto_detect ? encoding.get() : text._encoding;
-		push_header(version, text._encoding, standalone);
+		if (m_encoding != encoding && encoding != xml_encoding::auto_detect)
+		{
+			m_encoding = encoding;
+			m_factory = text::istring_factory::get_factory(encoding);
+			//code = doc->m_factory->create_wrapper()
+		}
+		push_header(version, standalone);
 	}
 	
-	if (!decode_elements(this, code, idx))
+	if (!decode_elements(this, view, idx))
 	{
-		clean();
+		clear();
 		string error = "";
-		error->format("exception: ang::xml::xml_document: %s"_s, (char const*)(cstr_t)_last_parsing_error);
+		error->format("exception: ang::xml::xml_document: {0}"_s, m_last_parsing_error);
 		throw(exception_t((dword)xml_exception_code::parsing_error, ang::move(error)));
 	}
 }
 
-
-bool xml_document::decode_header(text::string_util& code, windex& idx, wstring& version, xml_encoding_t& encoding, bool& standalone)
+void xml_document::parse(ibuffer_view_t data)
 {
-	wstring value;
-	xml::xml_text_t txt;
-	wstring header = "";
+	windex idx = 0;
+	ixml_text_t version = null;
+	nullable<bool> standalone = null;
+	xml_encoding_t encoding;
+
+	encoding = xml_detect_encoding(data->buffer_ptr(), xml_encoding::auto_detect, idx);
+	m_encoding = encoding;
+	m_factory = text::istring_factory::get_factory(encoding);
+	ixml_text_view_t view = m_factory->create_wrapper(data);
+
+	if (decode_header(view, idx, version, encoding, standalone))
+	{
+		if (m_encoding != encoding && encoding != xml_encoding::auto_detect)
+		{
+			m_encoding = encoding;
+			m_factory = text::istring_factory::get_factory(encoding);
+			view = m_factory->create_wrapper(data);
+		}
+		push_header(version, standalone);
+	}
+
+	if (!decode_elements(this, view, idx))
+	{
+		clear();
+		string error = "";
+		error->format("exception: ang::xml::xml_document: {0}"_s, m_last_parsing_error);
+		throw(exception_t((dword)xml_exception_code::parsing_error, ang::move(error)));
+	}
+}
+
+bool xml_document::decode_header(text::istring_view_t code, windex& idx, ixml_text_t& version, xml_encoding_t& encoding, nullable<bool>& standalone)
+{
+	ixml_text_t value = null;
+	ixml_text_t header = null;
+
 	windex beg;
 	windex end;
 
-	beg = code.find("<?xml"_s, 0, 5);
+	beg = code->find("<?xml"_s, idx, idx + 5);
 
 	if (beg == invalid_index)
 		return false;
 
-	end = code.find("?>"_s, beg);
+	end = code->find("?>"_s, beg);
 	if (end == invalid_index)
 		return false;
 
-	code.sub_string(header, beg, end + 2);
+	code->sub_string(&header, beg, end + 2);
 
 	idx = end + 2;
 
@@ -1155,7 +1079,7 @@ bool xml_document::decode_header(text::string_util& code, windex& idx, wstring& 
 		beg = header->find("\""_s, beg);
 		beg++;
 		end = header->find(L"\""_s, beg);
-		header->sub_string(version, beg, end);
+		header->sub_string(&version, beg, end);
 	}
 
 	beg = header->find("encoding"_s, beg);
@@ -1164,57 +1088,58 @@ bool xml_document::decode_header(text::string_util& code, windex& idx, wstring& 
 		beg = header->find("\""_s, beg);
 		beg++;
 		end = header->find("\""_s, beg);
-		header->sub_string(value, beg, end);
-		encoding = xml_encoding_t::parse(value);
+		header->sub_string(&value, beg, end);
+		encoding = xml_encoding_t::parse(value->cstr());
 	}
+
 	return true;
 }
 
 
 #if defined _DEBUG
-bool xml_document::decode_elements(xml_document_t doc, text::string_util& code, windex& __begin)
+bool xml_document::decode_elements(xml_document_t doc, text::istring_view_t code, windex& beg)
 #else
-bool xml_document::decode_elements(xml_document_t doc, text::string_util& code, windex& beg)
+bool xml_document::decode_elements(xml_document_t doc, text::istring_view_t code, windex& beg)
 #endif
 {
-#if defined _DEBUG
-	xml_parsing_iterator beg(code.data(), __begin);
-#endif
+//#if defined _DEBUG
+//	xml_parsing_iterator beg(code.data(), __beg);
+//#endif
 
 	windex end;
 	uint c = 0;
-	wstring name = null;// = { 0 };
-	wstring value = null;
+	ixml_text_t name = null;// = { 0 };
+	ixml_text_t value = null;
 
-	beg = code.find("<"_s, beg);
+	beg = code->find("<"_s, beg);
 	while (beg != invalid_index)
 	{
 		c = 0;
 		//Check if the node is a comment
-		auto find = code.find("<!--"_s, beg, beg + 5);
+		auto find = code->find("<!--"_s, beg, beg + 5);
 		if (find == beg)
 		{
-			end = code.find("-->"_s, beg);
+			end = code->find("-->"_s, beg);
 			if (end != invalid_index)
 			{
 				//get comment value
-				code.sub_string(value, beg + 4, end - 4);
+				code->sub_string(&value, beg + 4, end - 4);
 
 				//insert comment
-				doc->push_comment(value.get());
+				doc->push_comment(value);
 			}
 			//Finding next node start position
-			beg = code.find("<"_s, end);
+			beg = code->find("<"_s, end);
 			continue;
 		}
 
 		//checking if it is a node ending
 		if (code[beg + 1] == U'/')
 		{
-			xml_element_t current = doc->xml_current_element();
+			xml_node_t current = doc->xml_current_element();
 			if (current == null)//unkown error
 			{
-				doc->_last_parsing_error = "unknown Error"_s;
+				doc->m_last_parsing_error = "unknown Error"_s;
 				return false;
 			}
 			beg += 2;
@@ -1222,7 +1147,7 @@ bool xml_document::decode_elements(xml_document_t doc, text::string_util& code, 
 			//get element name
 			bool same = true;
 			char32 nC = 0;
-			cwstr_t temp = current->xml_name()->cstr();
+			ixml_text_view_t temp = current->xml_name();
 			wsize length = current->xml_name()->length();
 			c = 0;
 			while (same)
@@ -1246,31 +1171,31 @@ bool xml_document::decode_elements(xml_document_t doc, text::string_util& code, 
 
 			if (!same)
 			{
-				doc->_last_parsing_error = "";
-				doc->_last_parsing_error->format("bad end of element <%ls> in position %u"_s, (wchar const*)(cwstr_t)current->xml_name(), (index)beg);
+				doc->m_last_parsing_error = "";
+				doc->m_last_parsing_error->format("bad end of element <{0}> in position {1}"_s, interface_cast<ivariant>(current->xml_name().get()), (index)beg);
 				return false;
 			}//parsing error
 
 			beg += c;
 
-			find = code.find(">"_s, beg);
+			find = code->find(">"_s, beg);
 			if (find == invalid_index)
 			{
-				doc->_last_parsing_error = "";
-				doc->_last_parsing_error->format("missing character > in position %u"_s, (index)beg + current->xml_name()->length());
+				doc->m_last_parsing_error = "";
+				doc->m_last_parsing_error->format("missing character > in position {0}"_s, (index)beg + current->xml_name()->length());
 				return false;
 			}//parsing error
 			beg = find;
 
 			doc->end_element();
-			beg = code.find("<"_s, beg);
+			beg = code->find("<"_s, beg);
 			continue;
 		}
 
 		//get element name
-		name.clean();
-		c = xml_get_element_name(code, beg);
-		code.sub_string(name, beg + 1, beg + c);
+		name.reset();
+		c = xml_utils<void,xml_encoding::auto_detect>::xml_get_element_name(code, beg);
+		code->sub_string(&name, beg + 1, beg + c);
 
 		doc->begin_element(name.get());
 		beg += c;
@@ -1279,7 +1204,7 @@ bool xml_document::decode_elements(xml_document_t doc, text::string_util& code, 
 		//parse attributes
 		while (code[beg] != U'>')
 		{
-			beg += xml_skip_space(code, beg);
+			beg += xml_utils<void, xml_encoding::auto_detect>::xml_skip_space(code, beg);
 			if (code[beg] == U'>')
 			{
 				break;
@@ -1290,47 +1215,47 @@ bool xml_document::decode_elements(xml_document_t doc, text::string_util& code, 
 				break;
 			}
 
-			name.clean();
-			c = xml_get_attibute_name(code, beg);
-			code.sub_string(name, beg, beg + c);
+			name.reset();
+			c = xml_utils<void, xml_encoding::auto_detect>::xml_get_attibute_name(code, beg);
+			code->sub_string(&name, beg, beg + c);
 			beg += c;
 			c = 0;
-			beg = code.find("="_s, beg);
+			beg = code->find("="_s, beg);
 			if (beg == invalid_index)
 			{
-				doc->_last_parsing_error = "";
-				doc->_last_parsing_error->format("unexpected end of file parsing element %ls"_s, (wchar const*)(cwstr_t)name);
+				doc->m_last_parsing_error = "";
+				doc->m_last_parsing_error->format("unexpected end of file parsing element {0}"_s, interface_cast<ivariant>(name.get()));
 				return false;
 			}
 
 			++beg;
 
-			beg += xml_skip_space(code, beg);
+			beg += xml_utils<void, xml_encoding::auto_detect>::xml_skip_space(code, beg);
 			c = 0;
 
 			if (code[beg] == U'"')
 			{
-				end = code.find("\""_s, beg + 1);
+				end = code->find("\""_s, beg + 1);
 			}
 			else if (code[beg] == U'\'')
 			{
-				end = code.find("\'"_s, beg + 1);
+				end = code->find("\'"_s, beg + 1);
 			}
 			else//parsing error
 			{
-				doc->_last_parsing_error = "";
-				doc->_last_parsing_error->format("unexpected character in position %u"_s, (index)beg);
+				doc->m_last_parsing_error = "";
+				doc->m_last_parsing_error->format("unexpected character in position {0}"_s, (index)beg);
 				return false;
 			}
 			if (end == invalid_index)//parsing error
 			{
-				doc->_last_parsing_error = "";
-				doc->_last_parsing_error->format("missing character \' or \" in position %u"_s, (index)beg);
+				doc->m_last_parsing_error = "";
+				doc->m_last_parsing_error->format("missing character \' or \" in position {0}"_s, (index)beg);
 				return false;
 			}
 
-			value.clean();
-			code.sub_string(value, beg + 1, end);
+			value.reset();
+			code->sub_string(&value, beg + 1, end);
 			doc->push_attribute(name.get(), value.get());
 			beg = end + 1;
 
@@ -1340,29 +1265,29 @@ bool xml_document::decode_elements(xml_document_t doc, text::string_util& code, 
 		if (code[beg - 1] == U'/')
 		{
 			doc->end_element();
-			beg = code.find("<"_s, beg);
+			beg = code->find("<"_s, beg);
 			continue;
 		}
 		else
 		{
 			++beg;
 
-			c = xml_skip_space(code, beg);
+			c = xml_utils<void, xml_encoding::auto_detect>::xml_skip_space(code, beg);
 
 			if (code[beg + c] == '<')
 			{
 				//checking if it is a node ending
 				if (code[beg + c + 1] == '\'')
 				{
-					value.clean();
-					code.sub_string(value, beg, beg + c);
+					value.reset();
+					code->sub_string(&value, beg, beg + c);
 					doc->push_value(value.get());
 					beg += c;
 
-					xml_element* current = doc->xml_current_element();
-					if (current == null)//unkown error
+					xml_node_t current = doc->xml_current_element();
+					if (current.is_empty())//unkown error
 					{
-						doc->_last_parsing_error = "unknown Error"_s;
+						doc->m_last_parsing_error = "unknown Error"_s;
 						return false;
 					}
 					beg += 2;
@@ -1370,7 +1295,7 @@ bool xml_document::decode_elements(xml_document_t doc, text::string_util& code, 
 					//get element name
 					bool same = true;
 					char32_t _c = 0;
-					cwstr_t temp = current->xml_name();
+					ixml_text_t temp = current->xml_name();
 					wsize length = current->xml_name()->length();
 					c = 0;
 					while (same)
@@ -1394,23 +1319,23 @@ bool xml_document::decode_elements(xml_document_t doc, text::string_util& code, 
 
 					if (!same)
 					{
-						doc->_last_parsing_error = "";
-						doc->_last_parsing_error->format("bad end of element <%ls> in position %u"_s, (wchar const*)(cwstr_t)current->xml_name(), (index)beg);
+						doc->m_last_parsing_error = "";
+						doc->m_last_parsing_error->format("bad end of element <{0}> in position {1}"_s, interface_cast<ivariant>(current->xml_name().get()), (index)beg);
 						return false;
 					}//parsing error
 
 					beg += c;
 
-					find = code.find(">"_s, beg);
+					find = code->find(">"_s, beg);
 					if (find == invalid_index)
 					{
-						doc->_last_parsing_error = "";
-						doc->_last_parsing_error->format("missing character > in position %u"_s, (index)beg + current->xml_name()->length());
+						doc->m_last_parsing_error = "";
+						doc->m_last_parsing_error->format("missing character > in position {0}"_s, (index)beg + current->xml_name()->length());
 						return false;
 					}//parsing error
 					beg = find;
 					doc->end_element();
-					beg = code.find("<"_s, beg);
+					beg = code->find("<"_s, beg);
 					continue;
 				}
 				else
@@ -1422,15 +1347,15 @@ bool xml_document::decode_elements(xml_document_t doc, text::string_util& code, 
 			}
 			else
 			{
-				end = code.find("<"_s, beg + c);
+				end = code->find("<"_s, beg + c);
 				if (end == invalid_index)
 				{
-					doc->_last_parsing_error = "";
-					doc->_last_parsing_error->format("missing character < in position %u"_s, (index)beg + c);
+					doc->m_last_parsing_error = "";
+					doc->m_last_parsing_error->format("missing character < in position {0}"_s, (index)beg + c);
 					return false;
 				}//parsing error
-				value.clean();
-				code.sub_string(value, beg, end);
+				value.reset();
+				code->sub_string(&value, beg, end);
 				doc->push_value(value.get());
 				beg = end;
 				continue;

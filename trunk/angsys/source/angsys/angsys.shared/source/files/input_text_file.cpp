@@ -74,9 +74,27 @@ stream_mode_t input_text_file::mode()const
 	return stream_mode::out;
 }
 
+bool input_text_file::map(function<bool(ibuffer_view_t)> func, wsize sz, file_offset_t offset)
+{
+	ibuffer_t buff =  file::map(min(size(), sz), min(size(), offset));
+	if (buff.is_empty())
+		return false;
+	func(buff.get());
+	unmap(buff, min(size(), sz));
+	return true;
+}
 
+//bool input_text_file::map(function<bool(text::istring_view_t)> func, wsize sz, file_offset_t offset)
+//{
+//	ibuffer_t buff = file::map(min(size(), sz), min(size(), offset));
+//	if (buff.is_empty())
+//		return false;
+//	func(text::istring_factory::get_factory(format())->create_wrapper((ibuffer_view*)buff.get()));
+//	unmap(buff, min(size(), sz));
+//	return true;
+//}
 
-uint input_text_file::seek(raw_cstr_t format)
+uint input_text_file::seek(text::raw_cstr_t format)
 {
 	if (m_hfile.is_empty())
 		throw_exception(except_code::invalid_access);
@@ -178,7 +196,7 @@ uint input_text_file::seek(raw_cstr_t format)
 	return format_idx;
 }
 
-uint input_text_file::read_format(raw_cstr_t format, var_args_t& args)
+uint input_text_file::read_format(text::raw_cstr_t format, var_args_t& args)
 {
 	if (m_hfile.is_empty())
 		throw_exception(except_code::invalid_access);
@@ -353,7 +371,7 @@ wsize input_text_file::read(text::istring_t str, wsize sz, wsize* written)
 	{
 		readed = (wsize)(m_hfile->read(99 * cs, buff.data()) - cur);
 		encoder->set_eos(buff.data(), readed / cs);
-		str->concat(raw_str(buff.data(), min(readed, sz * cs), encoder->format()));
+		str->concat(text::raw_str(buff.data(), min(readed, sz * cs), encoder->format()));
 		sz -= min(readed / cs, sz);
 		total += min(readed, sz * cs);
 	}
@@ -417,7 +435,7 @@ wsize input_text_file::read_line(text::istring_t str, array_view<const char32_t>
 			endl = true;
 		else
 			end = readed / cs;
-		str->concat(raw_str(buff.data() + (beg * cs), (end - beg) * cs, e));
+		str->concat(text::raw_str(buff.data() + (beg * cs), (end - beg) * cs, e));
 		total += end * cs;	
 	}
 	if (written)*written = str->length() - eos;

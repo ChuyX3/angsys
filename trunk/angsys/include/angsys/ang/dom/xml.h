@@ -15,6 +15,7 @@
 
 #include <angsys.h>
 #include <ang/core/files.h>
+#include <ang/collections/hash_map.h>
 
 #ifdef  LINK
 #undef  LINK
@@ -44,40 +45,56 @@ namespace ang
 
 			ang_interface(ixml_object);
 			ang_interface(ixml_node);
-			ang_interface(ixml_header);
 			ang_interface(ixml_document);
 			ang_interface(ixml_collection);
 
+			ang_object(xml_document);
+			ang_object(xml_collection);
+			ang_object(xml_node);
+			ang_object(xml_text);
+			ang_object(xml_cdata);
+			ang_object(xml_attribute);
+			ang_object(xml_namespace);
+			ang_object(xml_comment);
+			ang_object(xml_element);
+
 			typedef class xml_attributes xml_attributes_t;
-			typedef collections::ienum<struct ixml_node > ixml_items;
+			typedef collections::ienum<xml_node> ixml_items;
 			typedef intf_wrapper<ixml_items> ixml_items_t;
-			typedef collections::iterator<struct ixml_node > xml_iterator_t;
-			typedef collections::base_iterator<struct ixml_node > xml_base_iterator_t;
-			typedef collections::forward_iterator<struct ixml_node > xml_forward_iterator_t;
-			typedef collections::backward_iterator<struct ixml_node > xml_backward_iterator_t;
-			typedef collections::const_iterator<struct ixml_node > xml_const_iterator_t;
-			typedef collections::const_forward_iterator<struct ixml_node > xml_const_forward_iterator_t;
-			typedef collections::const_backward_iterator<struct ixml_node > xml_const_backward_iterator_t;
+			typedef collections::iterator<xml_node> xml_iterator_t;
+			typedef collections::base_iterator<xml_node> xml_base_iterator_t;
+			typedef collections::forward_iterator<xml_node> xml_forward_iterator_t;
+			typedef collections::backward_iterator<xml_node> xml_backward_iterator_t;
+			typedef collections::const_iterator<xml_node> xml_const_iterator_t;
+			typedef collections::const_forward_iterator<xml_node> xml_const_forward_iterator_t;
+			typedef collections::const_backward_iterator<xml_node> xml_const_backward_iterator_t;
 
 			typedef text::encoding xml_encoding;
 			typedef text::encoding_t xml_encoding_t;
 
-			typedef text::istring ixml_string;
-			typedef text::istring_t ixml_string_t;
+			typedef text::raw_str_t xml_str, xml_str_t;
+			typedef text::raw_cstr_t xml_cstr, xml_cstr_t;
+
+			typedef text::istring ixml_text;
+			typedef text::istring_t ixml_text_t;
+			typedef text::istring_ptr_t ixml_text_ptr_t;
+
+			typedef text::istring_view ixml_text_view;
+			typedef text::istring_view_t ixml_text_view_t;
+			typedef text::istring_view_ptr_t ixml_text_view_ptr_t;
 
 			safe_enum(LINK, xml_type, byte)
 			{
 				abstract = 0,
 				text,
 				cdata,
-				pcdata,
 				node,
-				store,
+				collection,
 				tree,
-				header,
 				element,
 				comment,
 				attribute,
+				name_space,
 				element_list,
 				attribute_list,
 				finder,
@@ -105,10 +122,65 @@ namespace ang
 }
 
 #include <ang/dom/xml/ixml_object.h>
-#include <ang/dom/xml/ixml_header.h>
 #include <ang/dom/xml/ixml_collection.h>
 #include <ang/dom/xml/ixml_node.h>
 #include <ang/dom/xml/ixml_document.h>
+
+
+namespace ang
+{
+
+	template<> struct is_inherited_from<dom::xml::xml_node, object> : true_type {};
+	template<> struct is_inherited_from<dom::xml::xml_node, interface> : true_type {};
+
+	template<> struct is_inherited_from<dom::xml::xml_document, object> : true_type {};
+	template<> struct is_inherited_from<dom::xml::xml_document, interface> : true_type {};
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_document)
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_collection)
+		dom::xml::xml_forward_iterator_t begin();
+		dom::xml::xml_forward_iterator_t end();
+		dom::xml::xml_const_forward_iterator_t begin()const;
+		dom::xml::xml_const_forward_iterator_t end()const;
+		operator dom::xml::ixml_text_view_t()const;
+		dom::xml::xml_node_t operator[](text::raw_str_t)const;
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_node)
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_cdata)
+		inline operator ang::dom::xml::xml_node_t()const;
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_attribute)
+		inline operator ang::dom::xml::xml_node_t()const;
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_namespace)
+		inline operator ang::dom::xml::xml_node_t()const;
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_comment)
+		inline operator ang::dom::xml::xml_node_t()const;
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_element)
+		inline operator ang::dom::xml::xml_node_t()const;
+	ANG_END_OBJECT_WRAPPER();
+
+
+}
+
+#include <ang/dom/xml/xml_text.h>
+#include <ang/dom/xml/xml_node.h>
+#include <ang/dom/xml/xml_cdata.h>
+#include <ang/dom/xml/xml_attribute.h>
+#include <ang/dom/xml/xml_comment.h>
+#include <ang/dom/xml/xml_element.h>
+#include <ang/dom/xml/xml_document.h>
 
 namespace ang
 {
@@ -116,88 +188,46 @@ namespace ang
 	{
 		namespace xml
 		{
-			class xml_attributes
-			{
-			public:
-				typedef xml::ixml_collection type;
-
-			private:
-				xml::ixml_collection* m_ptr;
-
-			public:
-				xml_attributes();
-				xml_attributes(xml::ixml_collection*);
-				xml_attributes(xml_attributes_t &&);
-				xml_attributes(xml_attributes_t const&);
-				xml_attributes(std::nullptr_t const&);
-				~xml_attributes();
-
-			public:
-				void reset();
-				void reset_unsafe();
-				bool is_empty()const;
-				xml::ixml_collection* get(void)const;
-				void set(xml::ixml_collection*);
-				xml::ixml_collection ** addres_of(void);
-
-				xml::xml_forward_iterator_t begin() {
-					return m_ptr ? m_ptr->begin() : xml::xml_forward_iterator_t(null);
-				}
-				xml::xml_forward_iterator_t end() {
-					return m_ptr ? m_ptr->end() : xml::xml_forward_iterator_t(null);
-				}
-
-				xml::xml_const_forward_iterator_t begin()const {
-					return m_ptr ? ((xml::ixml_collection const*)m_ptr)->begin() : xml::xml_const_forward_iterator_t(null);
-				}
-				xml::xml_const_forward_iterator_t end()const {
-					return m_ptr ? ((xml::ixml_collection const*)m_ptr)->end() : xml::xml_const_forward_iterator_t(null);
-				}
-
-				//xml_attribute_t xml_attribute(raw_str_t);
-				//xml_namespace_t xml_namespace(raw_str_t);
-
-				//template<typename T, xml_encoding E> xml_attribute_t xml_attribute(str_view<T, E> str)const { return xml_attribute(raw_str(str)); }
-				//template<typename T, xml_encoding E> xml_namespace_t xml_namespace(str_view<T, E> str)const { return xml_namespace(raw_str(str)); }
-
-			public:
-				xml_attributes_t& operator = (xml::ixml_collection*);
-				xml_attributes_t& operator = (xml_attributes_t &&);
-				xml_attributes_t& operator = (xml_attributes_t const&);
-
-				//intf_wrapper_ptr<xml::ixml_collection> operator & (void);
-				xml::ixml_collection * operator -> (void);
-				xml::ixml_collection const* operator -> (void)const;
-
-				operator xml::ixml_collection * (void);
-				operator xml::ixml_collection const* (void)const;
-
-				ixml_string_t operator[](raw_str_t)const;
-				template<typename T, xml_encoding E> ixml_string_t operator[](str_view<T, E> str)const { return operator[](raw_str(str)); }
-			};
+			template<> ixml_text_t  LINK ixml_object::xml_as<ixml_text>()const;
+			template<> xml_text_t  LINK ixml_object::xml_as<xml_text>()const;
+			template<> ixml_node_t  LINK ixml_object::xml_as<ixml_node>()const;
+			template<> xml_node_t  LINK ixml_object::xml_as<xml_node>()const;
+			template<> xml_attribute_t  LINK ixml_object::xml_as<xml_attribute>()const;
+			template<> xml_comment_t  LINK ixml_object::xml_as<xml_comment>()const;
+			template<> xml_element_t  LINK ixml_object::xml_as<xml_element>()const;
+			template<> ixml_collection_t  LINK ixml_object::xml_as<ixml_collection>()const;
+			template<> xml_collection_t  LINK ixml_object::xml_as<xml_collection>()const;
+			template<> ixml_document_t  LINK ixml_object::xml_as<ixml_document>()const;
+			template<> xml_document_t  LINK ixml_object::xml_as<xml_document>()const;
 		}
 	}
 }
 
+inline ang::object_wrapper<ang::dom::xml::xml_attribute>::operator ang::dom::xml::xml_node_t()const { return get(); }
+inline ang::object_wrapper<ang::dom::xml::xml_namespace>::operator ang::dom::xml::xml_node_t()const { return get(); }
+inline ang::object_wrapper<ang::dom::xml::xml_cdata>::operator ang::dom::xml::xml_node_t()const { return get(); }
+inline ang::object_wrapper<ang::dom::xml::xml_comment>::operator ang::dom::xml::xml_node_t()const { return get(); }
+inline ang::object_wrapper<ang::dom::xml::xml_element>::operator ang::dom::xml::xml_node_t()const { return get(); }
 
-inline ang::collections::iterator<ang::dom::xml::ixml_node>::operator ang::dom::xml::ixml_node*()const {
-	return reinterpret_cast<ang::dom::xml::ixml_node*>(current());
+
+inline ang::collections::iterator<ang::dom::xml::xml_node>::operator ang::dom::xml::xml_node*()const {
+	return reinterpret_cast<ang::dom::xml::xml_node*>(current());
 }
-inline ang::dom::xml::ixml_node_t ang::collections::iterator<ang::dom::xml::ixml_node>::operator -> ()const {
-	return reinterpret_cast<ang::dom::xml::ixml_node*>(current());
+inline ang::dom::xml::xml_node_t ang::collections::iterator<ang::dom::xml::xml_node>::operator -> ()const {
+	return reinterpret_cast<ang::dom::xml::xml_node*>(current());
 }
-inline ang::dom::xml::ixml_node_t ang::collections::iterator<ang::dom::xml::ixml_node>::operator * ()const {
-	return reinterpret_cast<ang::dom::xml::ixml_node*>(current());
+inline ang::dom::xml::xml_node_t ang::collections::iterator<ang::dom::xml::xml_node>::operator * ()const {
+	return reinterpret_cast<ang::dom::xml::xml_node*>(current());
 }
 
-inline ang::collections::iterator<const ang::dom::xml::ixml_node>::operator ang::dom::xml::ixml_node const*()const {
-	return reinterpret_cast<ang::dom::xml::ixml_node*>(current());
+inline ang::collections::iterator<const ang::dom::xml::xml_node>::operator ang::dom::xml::xml_node const*()const {
+	return reinterpret_cast<ang::dom::xml::xml_node*>(current());
 }
-inline const ang::dom::xml::ixml_node_t ang::collections::iterator<const ang::dom::xml::ixml_node>::operator -> ()const {
-	return reinterpret_cast<ang::dom::xml::ixml_node*>(current());
+inline const ang::dom::xml::xml_node_t ang::collections::iterator<const ang::dom::xml::xml_node>::operator -> ()const {
+	return reinterpret_cast<ang::dom::xml::xml_node*>(current());
 }
-inline const ang::dom::xml::ixml_node_t ang::collections::iterator<const ang::dom::xml::ixml_node>::operator * ()const {
-	return reinterpret_cast<ang::dom::xml::ixml_node*>(current());
+inline const ang::dom::xml::xml_node_t ang::collections::iterator<const ang::dom::xml::xml_node>::operator * ()const {
+	return reinterpret_cast<ang::dom::xml::xml_node*>(current());
 }
 
 #ifdef  LINK

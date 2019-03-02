@@ -367,7 +367,8 @@ namespace ang
 				j = 0;
 				k = 0;
 				l = 0;
-				while (k < s2 && to_char32<false, SWAP1>(beg, j) == to_char32<false, SWAP2>(second, k)) 
+				char32 c1, c2;
+				while (k < s2 && (c1 = to_char32<false, SWAP1>(beg, j)) == (c2 = to_char32<false, SWAP2>(second, k))) 
 					l = k;
 				if (l == s2) return i;
 				t = 0;

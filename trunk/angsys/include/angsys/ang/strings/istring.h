@@ -24,11 +24,12 @@ namespace ang
 			visible vcall rtti_t const& char_type()const pure;
 			visible vcall raw_str_t str(int = 0)pure;
 			visible vcall raw_cstr_t cstr(int = 0)const pure;
+			visible vcall char32_t at(windex i, wsize* = null)const pure;
 			visible vcall int compare(raw_cstr_t)const pure;
 			visible vcall windex compare_until(raw_cstr_t)const pure;
 			visible vcall windex find(raw_cstr_t, windex start = 0, windex end = -1)const pure;
 			visible vcall windex find_reverse(raw_cstr_t, windex start = -1, windex end = 0)const pure;
-			visible vcall istring_t sub_string(istring_t, windex start, windex end)const pure;
+			visible vcall istring_t sub_string(istring_ptr_t, windex start, windex end)const pure;
 		ang_end_interface();
 
 		ang_begin_interface(LINK istring, istring_view)
@@ -45,8 +46,8 @@ namespace ang
 			visible scall istring_factory_t get_factory(encoding_t);
 			visible vcall encoding_t encoding()const pure;
 			visible vcall istring_t create_string(raw_cstr_t = raw_cstr_t())const pure;
-			visible vcall istring_t create_wrapper(ibuffer_t, encoding_t = encoding::auto_detect)const pure; //ibuffer must be reallocable otherwise it fail
-			visible vcall istring_view_t create_wrapper(ibuffer_view_t, encoding_t = encoding::auto_detect)const pure;
+			visible vcall istring_t create_wrapper(ibuffer_t)const pure; //ibuffer must be reallocable otherwise it fail
+			visible vcall istring_view_t create_wrapper(ibuffer_view_t)const pure;
 		ang_end_interface();
 
 		ang_begin_interface(LINK iencoder)
@@ -82,11 +83,20 @@ namespace ang
 
 	ANG_INTF_WRAPPER_DECLARATION(LINK, text::iencoder);
 	ANG_INTF_WRAPPER_DECLARATION(LINK, text::iparser);
-	ANG_INTF_WRAPPER_DECLARATION(LINK, text::istring);
-	ANG_INTF_WRAPPER_DECLARATION(LINK, text::istring_view);
 	ANG_INTF_WRAPPER_DECLARATION(LINK, text::istring_factory);
+	
+	ANG_BEGIN_INTF_WRAPPER(LINK, text::istring)
+		intf_wrapper(text::raw_cstr_t cstr);
+		operator text::raw_cstr_t ()const;
+		char32_t operator [](windex)const;
+	ANG_END_INTF_WRAPPER();
 
+	ANG_BEGIN_INTF_WRAPPER(LINK, text::istring_view)
+		operator text::raw_cstr_t()const;
+		char32_t operator [](windex)const;
+	ANG_END_INTF_WRAPPER();
 
+	using text::istring_t;
 }
 
 

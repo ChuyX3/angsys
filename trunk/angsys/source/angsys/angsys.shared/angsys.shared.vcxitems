@@ -46,9 +46,16 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_collection.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_document.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_header.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_node.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\ixml_object.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_attribute.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_cdata.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_comment.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_document.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_element.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_header.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_node.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_text.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\exception.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\ibuffers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\com_wrapper.hpp" />
@@ -56,7 +63,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\intf_wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\object_wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\inline\string_declaration.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\istring.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float2.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float3.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\maths\float4.h" />
@@ -71,11 +77,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\platform\events.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\platform\input.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\platform\platform.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\raw_str.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\singleton.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\smart_ptr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\streams.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\string.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\strings\const_string.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\strings\istring.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\strings\raw_str.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\strings\string.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\variable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_memory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
@@ -84,15 +92,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\file_system.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\format_parser.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\runtime_manager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\string_factory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\thread_manager.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_attribute.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_comment.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_document.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_element.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_header.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_internal.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_node.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_text.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp" />
@@ -127,6 +129,14 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\uinteger.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\variant\variant.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_attribute.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_cdata.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_comment.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_document.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_element.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_node.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_collection.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\xml\xml_text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\APPLY_FUNCX_N.inl" />
@@ -151,5 +161,6 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)utils\angsys.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)utils\xml.natvis" />
   </ItemGroup>
 </Project>

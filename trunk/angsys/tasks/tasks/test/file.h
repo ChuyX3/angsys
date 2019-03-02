@@ -49,7 +49,7 @@ namespace ang
 			ANG_DECLARE_INTERFACE();
 			virtual bool open(wstring) override;
 
-			void seek(raw_cstr_t);
+			void seek(text::raw_cstr_t);
 
 		private:
 			

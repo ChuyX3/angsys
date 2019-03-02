@@ -12,9 +12,9 @@ basic_const_string_buffer<MY_ENCODING>::~basic_const_string_buffer()
 
 }
 
-ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::strings::basic_const_string_buffer<MY_ENCODING>, ang::strings::basic_const_string_buffer_base);
-ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::strings::basic_const_string_buffer<MY_ENCODING>);
-ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::strings::basic_const_string_buffer<MY_ENCODING>, ang::strings::basic_const_string_buffer_base);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::basic_const_string_buffer<MY_ENCODING>, ang::text::basic_const_string_buffer_base);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_const_string_buffer<MY_ENCODING>);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_const_string_buffer<MY_ENCODING>, ang::text::basic_const_string_buffer_base);
 
 
 comparision_result_t basic_const_string_buffer<MY_ENCODING>::compare(object const* obj)const

@@ -29,6 +29,25 @@ namespace ang
 		typedef object_wrapper<T> smart_ptr_t; typedef typename smart_ptr_t::type type;
 	};
 
+	template<typename T, bool IS_OBJECT = is_object<T>::value>
+	struct ___static_interface_cast_imp {
+		static interface* cast(T* ptr) {
+			static_assert(is_interface<T>::value ,"");
+			return reinterpret_cast<interface*>(ptr);
+		}
+	};
+
+	template<typename T>
+	struct ___static_interface_cast_imp<T,true> {
+		static interface* cast(T* ptr) {
+			return static_cast<interface*>(static_cast<object*>(ptr));
+		}
+	};
+
+	template<typename T>
+	interface* static_interface_cast(T* ptr) {
+		return ___static_interface_cast_imp<T>::cast(ptr);
+	}
 
 	ang_interface(iobject);
 

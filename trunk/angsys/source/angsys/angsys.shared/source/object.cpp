@@ -184,7 +184,7 @@ object* ang_alloc_object_memory(ang_size_t sz, ang_memory_hint_t hint)
 	ptr->_mem_ref_counter = 0;
 	ptr->allocator = allocator;
 	ptr->_object = (interface*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
-	return (object*)ptr->_object;
+	return static_cast<object*>(ptr->_object);
 }
 
 #ifdef _DEBUG

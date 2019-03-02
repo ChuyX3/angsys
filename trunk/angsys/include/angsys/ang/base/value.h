@@ -216,7 +216,7 @@ namespace ang //constants
 #define safe_enum(_LINK, _name, _type)  enum class _name : _type; \
 	struct _LINK _name##_t : public ang::value<_name> { \
 		static rtti_t const& class_info(); \
-		static _name##_t parse(raw_cstr_t);\
+		static _name##_t parse(text::raw_cstr_t);\
 		_name##_t() : value(default_value<type>::value) {} \
 		_name##_t(type const& v) : value(v) {} \
 		_name##_t(_name##_t const& v) : value(v) {} \

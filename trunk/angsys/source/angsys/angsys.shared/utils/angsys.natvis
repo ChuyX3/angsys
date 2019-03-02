@@ -10,12 +10,12 @@
   </Type>
   
   <Type Name="ang::collections::array_view&lt;*&gt;">
-    <DisplayString>array[{_size}]</DisplayString>
+    <DisplayString>array[{m_size}]</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <ArrayItems>
-        <Size>_size</Size>
-        <ValuePointer>_data</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_data</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
@@ -26,126 +26,126 @@
       <Item Name="[size]" ExcludeView="simple">SIZE</Item>
       <ArrayItems>
         <Size>SIZE</Size>
-        <ValuePointer>_data</ValuePointer>
+        <ValuePointer>m_data</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
   
   <Type Name="ang::collections::scope_array&lt;*&gt;">
-    <DisplayString>array[{_size}]</DisplayString>
+    <DisplayString>array[{m_size}]</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <ArrayItems>
-        <Size>_size</Size>
-        <ValuePointer>_data</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_data</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
 
   <Type Name="ang::str_view&lt;*&gt;">
-    <DisplayString Condition="view_ != 0">{view_, s}</DisplayString>
+    <DisplayString Condition="m_view != 0">{m_view, s}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">size_</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <ArrayItems>
-        <Size>size_</Size>
-        <ValuePointer>view_</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_view</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
 
   <Type Name="ang::str_view&lt;wchar_t,*&gt;">
-    <DisplayString Condition="view_ != 0">{view_, su}</DisplayString>
+    <DisplayString Condition="m_view != 0">{m_view, su}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">size_</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <ArrayItems>
-        <Size>size_</Size>
-        <ValuePointer>view_</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_view</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
 
   <Type Name="ang::str_view&lt;wchar_t const,*&gt;">
-    <DisplayString Condition="view_ != 0">{view_, su}</DisplayString>
+    <DisplayString Condition="m_view != 0">{m_view, su}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">size_</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <ArrayItems>
-        <Size>size_</Size>
-        <ValuePointer>view_</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_view</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
 
   <Type Name="ang::str_view&lt;unsigned char,*&gt;">
-    <DisplayString Condition="view_ != 0">{view_, s8}</DisplayString>
+    <DisplayString Condition="m_view != 0">{m_view, s8}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">size_</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <ArrayItems>
-        <Size>size_</Size>
-        <ValuePointer>view_</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_view</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
 
   <Type Name="ang::str_view&lt;unsigned char const,*&gt;">
-    <DisplayString Condition="view_ != 0">{view_, s8}</DisplayString>
+    <DisplayString Condition="m_view != 0">{m_view, s8}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">size_</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <ArrayItems>
-        <Size>size_</Size>
-        <ValuePointer>view_</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_view</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
 
   <Type Name="ang::str_view&lt;char16_t,*&gt;">
-    <DisplayString Condition="view_ != 0">{view_, su}</DisplayString>
+    <DisplayString Condition="m_view != 0">{m_view, su}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">size_</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <ArrayItems>
-        <Size>size_</Size>
-        <ValuePointer>view_</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_view</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
 
   <Type Name="ang::str_view&lt;char16_t const,*&gt;">
-    <DisplayString Condition="view_ != 0">{view_, su}</DisplayString>
+    <DisplayString Condition="m_view != 0">{m_view, su}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">size_</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <ArrayItems>
-        <Size>size_</Size>
-        <ValuePointer>view_</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_view</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
 
   <Type Name="ang::str_view&lt;char32_t,*&gt;">
-    <DisplayString Condition="view_ != 0">{view_, s32}</DisplayString>
+    <DisplayString Condition="m_view != 0">{m_view, s32}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">size_</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <ArrayItems>
-        <Size>size_</Size>
-        <ValuePointer>view_</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_view</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
 
   <Type Name="ang::str_view&lt;char32_t const,*&gt;">
-    <DisplayString Condition="view_ != 0">{view_, s32}</DisplayString>
+    <DisplayString Condition="m_view != 0">{m_view, s32}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">size_</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <ArrayItems>
-        <Size>size_</Size>
-        <ValuePointer>view_</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_view</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
@@ -153,103 +153,139 @@
   <Type Name="ang::runtime::__type_info">
     <DisplayString>{_type_name}</DisplayString>
     <Expand>
-      <Item Name="[type_name]" ExcludeView="simple">_type_name</Item>
-      <Item Name="[genre]" ExcludeView="simple">_genre,en</Item>
-      <Item Name="[size]" ExcludeView="simple">_size,x</Item>
-      <Item Name="[aligment]" ExcludeView="simple">_aligment,x</Item>
-      <Item Name="[parents]" Condition="_parents._data != 0" ExcludeView="simple">_parents</Item>
+      <Item Name="[type_name]" ExcludeView="simple">m_type_name</Item>
+      <Item Name="[genre]" ExcludeView="simple">m_genre,en</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size,x</Item>
+      <Item Name="[aligment]" ExcludeView="simple">m_aligment,x</Item>
+      <Item Name="[parents]" Condition="m_parents.m_data != 0" ExcludeView="simple">m_parents</Item>
     </Expand>
   </Type>
 
   <Type Name="ang::object_wrapper&lt;*&gt;">
-    <DisplayString Condition="_ptr != 0">{*_ptr}</DisplayString>
+    <DisplayString Condition="m_ptr != 0">{*m_ptr}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <ExpandedItem>_ptr</ExpandedItem>
+      <ExpandedItem>m_ptr</ExpandedItem>
     </Expand>
   </Type>
 
   <Type Name="ang::intf_wrapper&lt;*&gt;">
-    <DisplayString Condition="_ptr != 0">{*_ptr}</DisplayString>
+    <DisplayString Condition="m_ptr != 0">{*m_ptr}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <ExpandedItem>_ptr</ExpandedItem>
+      <ExpandedItem>m_ptr</ExpandedItem>
     </Expand>
   </Type>
 
 
   <Type Name="ang::collections::array_buffer&lt;*&gt;">
-    <DisplayString>array[{_size}]</DisplayString>
+    <DisplayString>array[{m_size}]</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">_size</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <ArrayItems>
-        <Size>_size</Size>
-        <ValuePointer>_data</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_data</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
 
   <Type Name="ang::collections::vector_buffer&lt;*&gt;">
-    <DisplayString>vector[{_size}]</DisplayString>
+    <DisplayString>vector[{m_size}]</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">_size</Item>
-      <Item Name="[capacity]" ExcludeView="simple">_capacity</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
+      <Item Name="[capacity]" ExcludeView="simple">m_capacity</Item>
       <ArrayItems>
-        <Size>_size</Size>
-        <ValuePointer>_data</ValuePointer>
+        <Size>m_size</Size>
+        <ValuePointer>m_data</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
 
 
-  <Type Name="ang::strings::basic_const_string_buffer&lt;*&gt;">
-    <DisplayString Condition="view_ != 0">{((this + 1) + sizeof(wsize)), s}</DisplayString>
+  <Type Name="ang::text::basic_const_string_buffer&lt;*&gt;">
+    <DisplayString Condition="m_view != 0">{((this + 1) + sizeof(wsize)), s}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
       <Item Name="[size]" ExcludeView="simple">*(wsize*)(this + 1)</Item>
       <ArrayItems>
-        <Size>size_</Size>
+        <Size>m_size</Size>
         <ValuePointer>(char*)(wsize(this + 1) + sizeof(wsize))</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
-
-  <Type Name="ang::strings::basic_string_buffer&lt;1,*&gt;">
-    <DisplayString Condition="_data._storage_type &gt;= 0">{_data._stack_buffer, s}</DisplayString>
-    <DisplayString Condition="_data._storage_type == -1">{_data._allocated_buffer, s}</DisplayString>
+  
+  <Type Name="ang::text::basic_string_buffer&lt;*&gt;">
+    <DisplayString Condition="m_data.m_storage_type &gt;= 0">{m_data.m_stack_buffer, s}</DisplayString>
+    <DisplayString Condition="m_data.m_storage_type == -1">{m_data.m_allocated_buffer, s}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type &gt;= 0">_data._stack_length</Item>
-      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_length</Item>
-      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type &gt;= 0">CAPACITY</Item>
-      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_capacity</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">CAPACITY</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_capacity</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::text::basic_string_buffer&lt;1,*&gt;">
+    <DisplayString Condition="m_data.m_storage_type &gt;= 0">{m_data.m_stack_buffer, s}</DisplayString>
+    <DisplayString Condition="m_data.m_storage_type == -1">{m_data.m_allocated_buffer, s}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">CAPACITY</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_capacity</Item>
     </Expand>
   </Type>
   
-  <Type Name="ang::strings::basic_string_buffer&lt;2,*&gt;">
-    <DisplayString Condition="_data._storage_type &gt;= 0">{_data._stack_buffer, su}</DisplayString>
-    <DisplayString Condition="_data._storage_type == -1">{_data._allocated_buffer, su}</DisplayString>
+  <Type Name="ang::text::basic_string_buffer&lt;2,*&gt;">
+    <DisplayString Condition="m_data.m_storage_type &gt;= 0">{m_data.m_stack_buffer, su}</DisplayString>
+    <DisplayString Condition="m_data.m_storage_type == -1">{m_data.m_allocated_buffer, su}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type &gt;= 0">_data._stack_length</Item>
-      <Item Name="[length]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_length</Item>
-      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type &gt;= 0">CAPACITY</Item>
-      <Item Name="[capacity]" ExcludeView="simple" Condition="_data._storage_type == -1">_data._allocated_capacity</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">CAPACITY</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_capacity</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::text::basic_string_buffer&lt;3,*&gt;">
+    <DisplayString Condition="m_data.m_storage_type &gt;= 0">{m_data.m_stack_buffer,s8}</DisplayString>
+    <DisplayString Condition="m_data.m_storage_type == -1">{m_data.m_allocated_buffer,s8}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">CAPACITY</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_capacity</Item>
+  </Expand>
+  </Type>
+
+  <Type Name="ang::text::string_view&lt;*&gt;">
+    <DisplayString Condition="m_view != 0">{m_view}</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
+      <Item Name="[buffer]" ExcludeView="simple">m_view</Item>
+      <ArrayItems>
+        <Size>m_size</Size>
+        <ValuePointer>m_view</ValuePointer>
+      </ArrayItems>
     </Expand>
   </Type>
 
   <Type Name="ang::collections::hash_map_object&lt;*&gt;">
-    <DisplayString>map[{_count}]</DisplayString>
+    <DisplayString>map[{m_count}]</DisplayString>
     <Expand>
-      <Item Name="[size]" ExcludeView="simple">_count</Item>
+      <Item Name="[size]" ExcludeView="simple">m_count</Item>
       <CustomListItems MaxItemsPerView="5000" ExcludeView="Test">
         <Variable Name="i_" InitialValue="0" />
-        <Variable Name="node_" InitialValue="_table._data == nullptr ? nullptr : *_table._data" />
-        <Size>_count</Size>
-        <Loop Condition="i_ &lt; _table._size">
+        <Variable Name="node_" InitialValue="m_table.m_data == nullptr ? nullptr : *m_table.m_data" />
+        <Size>m_count</Size>
+        <Loop Condition="i_ &lt; m_table.m_size">
           <If Condition="node_ == nullptr">
             <Exec>i_++</Exec>
-            <Exec>node_ = _table._data[i_]</Exec>
+            <Exec>node_ = m_table.m_data[i_]</Exec>
           </If>
           <Else>
             <Item>node_->data</Item>
@@ -262,9 +298,12 @@
 
   <Type Name="ang::value&lt;*&gt;">
     <DisplayString Condition="genre_id == 2 || genre_id == 3">{this}</DisplayString>
-    <DisplayString Condition="genre_id != 2 &amp;&amp; genre_id != 3">{_value}</DisplayString>
+    <DisplayString Condition="genre_id != 2 &amp;&amp; genre_id != 3">{(type)m_value}</DisplayString>
     <Expand>
     </Expand>
   </Type>
+  
+
+
 
 </AutoVisualizer>

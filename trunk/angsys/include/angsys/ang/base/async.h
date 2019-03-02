@@ -38,7 +38,7 @@ namespace ang //constants
 				mutex& operator = (const mutex&) = delete;
 
 			protected:
-				pointer _handle;
+				pointer m_handle;
 
 			public:
 				mutex();
@@ -91,7 +91,7 @@ namespace ang //constants
 				cond& operator = (const cond&);
 
 			protected:
-				pointer _handle;
+				pointer m_handle;
 
 			public:
 				cond();

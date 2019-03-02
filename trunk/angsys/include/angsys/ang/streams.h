@@ -105,8 +105,8 @@ namespace ang
 
 		
 		ang_begin_interface(LINK itext_input_stream, iinput_stream)
-			visible vcall uint seek(raw_cstr_t format)pure;
-			visible vcall uint read_format(raw_cstr_t format, var_args_t&)pure;
+			visible vcall uint seek(text::raw_cstr_t format)pure;
+			visible vcall uint read_format(text::raw_cstr_t format, var_args_t&)pure;
 			visible vcall wsize read(text::istring_t, wsize, wsize*written = null)pure;
 			visible vcall wsize read(text::unknown_str_t, wsize sz, text::encoding_t, wsize*written = null)pure;
 			visible vcall wsize read_line(text::istring_t, array_view<const char32_t> = U"\n\r", wsize*written = null)pure;
@@ -120,9 +120,9 @@ namespace ang
 
 		ang_begin_interface(LINK itext_output_stream, ioutput_stream)
 			visible vcall bool command(special_command_t) pure;
-			visible vcall wsize write(raw_cstr_t)pure;
-			visible vcall wsize write_line(raw_cstr_t)pure;
-			visible vcall wsize write_format(raw_cstr_t, var_args_t)pure;
+			visible vcall wsize write(text::raw_cstr_t)pure;
+			visible vcall wsize write_line(text::raw_cstr_t)pure;
+			visible vcall wsize write_format(text::raw_cstr_t, var_args_t)pure;
 			template<typename T> wsize write(T const&);
 			template<typename C, text::encoding E, typename...Ts> wsize write_format(str_view<C, E> format, Ts... args) {
 				return write_format(raw_cstr(format), var_args_t{ ang::forward<Ts>(args)... });
@@ -192,15 +192,15 @@ namespace ang
 		struct write_text_helper<S, str_view<T,E>>
 		{
 			static wsize write_text(S stream, str_view<T, E> const& val) {
-				return stream->write(raw_cstr(val));
+				return stream->write(text::raw_cstr(val));
 			}
 		};
 
 		template<typename S, text::encoding E, template<typename> class A>
-		struct write_text_helper<S, strings::basic_string<E,A>>
+		struct write_text_helper<S, text::basic_string<E,A>>
 		{
-			static wsize write_text(S stream, strings::basic_string<E, A> const& val) {
-				return val.is_empty() ? 0 : stream->write(raw_cstr(val->cstr()));
+			static wsize write_text(S stream, text::basic_string<E, A> const& val) {
+				return val.is_empty() ? 0 : stream->write(text::raw_cstr(val->cstr()));
 			}
 		};
 

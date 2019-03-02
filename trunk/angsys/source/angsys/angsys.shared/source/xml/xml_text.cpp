@@ -9,8 +9,8 @@
 /*********************************************************************************************************************/
 
 #include "pch.h"
-#include "ang/xml.hpp"
-#include "xml_entity_values.hpp"
+#include "ang/dom/xml.h"
+#include "xml/xml_internal.h"
 
 #if defined _DEBUG
 #define NEW new(__FILE__, __LINE__)
@@ -21,9 +21,13 @@
 #endif
 
 using namespace ang;
-using namespace ang::xml;
+using namespace ang::dom::xml;
 
-xml_entity_values_t xml::xml_entity_values[5] = {
+#define MY_TYPE ang::dom::xml::xml_text
+#include "ang/inline/object_wrapper_specialization.inl"
+#undef MY_TYPE
+
+xml_entity_values_t xml_entity_values[5] = {
 	{ xml_entity::amp, "&amp;"_s, "&"_s },
 	{ xml_entity::lt, "&lt;"_s, "<"_s },
 	{ xml_entity::gt, "&gt;"_s, ">" },
@@ -33,420 +37,153 @@ xml_entity_values_t xml::xml_entity_values[5] = {
 
 /////////////////////////////////////////////////////////////////////////
 
-ang::object_wrapper<xml_text>::object_wrapper()
-	: _ptr(null)
+xml_text::xml_text(xml_document* doc)
+	: m_doc(doc)
+	, m_value(null)
 {
+	m_value = doc->create_cdata(""_s);
 }
 
-ang::object_wrapper<xml_text>::object_wrapper(xml_text* ptr)
-	: _ptr(null)
+xml_text::xml_text(xml_document* doc, ixml_text_t value)
+	: m_doc(doc)
+	, m_value(null)
 {
-	set(ptr);
-}
-
-ang::object_wrapper<xml_text>::object_wrapper(object_wrapper && other)
-	: _ptr(null)
-{
-	xml_text * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
-}
-
-ang::object_wrapper<xml_text>::object_wrapper(object_wrapper const& other)
-	: _ptr(null)
-{
-	set(other._ptr);
-}
-
-ang::object_wrapper<xml_text>::object_wrapper(std::nullptr_t const&)
-	: _ptr(null)
-{
-}
-
-ang::object_wrapper<xml_text>::~object_wrapper()
-{
-	clean();
-}
-
-void ang::object_wrapper<xml_text>::clean()
-{
-	if (_ptr)_ptr->release();
-	_ptr = null;
-}
-
-void ang::object_wrapper<xml_text>::clean_unsafe()
-{
-	_ptr = null;
-}
-
-bool ang::object_wrapper<xml_text>::is_empty()const
-{
-	return _ptr == null;
-}
-
-xml_text* ang::object_wrapper<xml_text>::get(void)const
-{
-	return _ptr;
-}
-
-void ang::object_wrapper<xml_text>::set(xml_text* ptr)
-{
-	xml_text * temp = _ptr;
-	if (ptr == _ptr) return;
-	_ptr = ptr;
-	if (_ptr)_ptr->add_ref();
-	if (temp)temp->release();
-}
-
-ang::object_wrapper<xml_text>& ang::object_wrapper<xml_text>::operator = (nullptr_t const&)
-{
-	clean();
-	return*this;
-}
-
-ang::object_wrapper<xml_text>& ang::object_wrapper<xml_text>::operator = (xml_text* ptr)
-{
-	set(ptr);
-	return*this;
-}
-
-ang::object_wrapper<xml_text>& ang::object_wrapper<xml_text>::operator = (ang::object_wrapper<xml_text> && other)
-{
-	if (this == &other)
-		return *this;
-	clean();
-	_ptr = other._ptr;
-	other._ptr = null;
-	return*this;
-}
-
-ang::object_wrapper<xml_text>& ang::object_wrapper<xml_text>::operator = (ang::object_wrapper<xml_text> const& other)
-{
-	set(other._ptr);
-	return*this;
-}
-
-xml_text ** ang::object_wrapper<xml_text>::addres_of(void)
-{
-	return &_ptr;
-}
-
-ang::object_wrapper_ptr<xml_text> ang::object_wrapper<xml_text>::operator& (void)
-{
-	return this;
-}
-
-xml_text * ang::object_wrapper<xml_text>::operator -> (void)
-{
-	return get();
-}
-
-xml_text const* ang::object_wrapper<xml_text>::operator -> (void)const
-{
-	return get();
-}
-
-ang::object_wrapper<xml_text>::operator xml_text * (void)
-{
-	return get();
-}
-
-ang::object_wrapper<xml_text>::operator xml_text const* (void)const
-{
-	return get();
-}
-
-ang::object_wrapper<xml_text>::operator wstring (void)const
-{
-	return get();
-}
-
-ang::object_wrapper<xml_text>::operator wstr_t (void)
-{
-	return is_empty()? wstr_t(): _ptr->str();
-}
-
-ang::object_wrapper<xml_text>::operator cwstr_t (void)const
-{
-	return is_empty() ? cwstr_t() : _ptr->cstr();
-}
-
-/////////////////////////////////////////////////////////////////////////
-
-xml_text::xml_text()
-	: strings::string_buffer<text::encoding::unicode>()
-	, _xml_parent(null) 
-{
-
-}
-
-xml_text::xml_text(xml_text const* value)
-	: strings::string_buffer<text::encoding::unicode>()
-	, _xml_parent(null) 
-{
-	if (value)copy(value->cstr());
-}
-
-xml_text::xml_text(xml_text const& value)
-	: strings::string_buffer<text::encoding::unicode>()
-	, _xml_parent(null)
-{
-	copy(value.cstr());
-}
-
-xml_text::xml_text(wstring && value)
-	: strings::string_buffer<text::encoding::unicode>()
-	, _xml_parent(null)
-{
-	if (!value.is_empty())move(value);
+	m_value = value.is_empty() ? doc->create_cdata(""_s) : value;
 }
 
 xml_text::~xml_text()
 {
-	clean();
+	m_value = null;
+	m_doc = null;
 }
 
-ANG_IMPLEMENT_CLASSNAME(ang::xml::xml_text);
-ANG_IMPLEMENT_OBJECTNAME(ang::xml::xml_text);
-
-bool ang::xml::xml_text::is_kind_of(ang::type_name_t name)const
+void xml_text::clear()
 {
-	return name == ang::xml::xml_text::class_name()
-		|| ang::strings::unicode_string_buffer::is_kind_of(name)
-		|| ang::xml::ixml_object::is_kind_of(name);
+	m_value->clear();
 }
 
-bool ang::xml::xml_text::is_inherited_of(ang::type_name_t name)
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(xml_text);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::dom::xml::xml_text, object, ixml_object, ixml_text);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(xml_text, object, ixml_object, ixml_text, ixml_text_view);
+
+xml_type_t xml_text::xml_type()const
 {
-	return name == ang::xml::xml_text::class_name()
-		|| ang::strings::unicode_string_buffer::is_inherited_of(name)
-		|| ang::xml::ixml_object::is_inherited_of(name);
+	return xml_type::text;
 }
 
-bool ang::xml::xml_text::query_object(ang::type_name_t name, ang::unknown_ptr_t out)
+bool xml_text::xml_is_type_of(xml_type_t type)const
 {
-	if (out == null)
-		return false;
-	if (name == class_name())
-	{
-		*out = static_cast<ang::xml::xml_text*>(this);
-		return true;
-	}
-	else if (ang::strings::unicode_string_buffer::query_object(name, out))
-	{
-		return true;
-	}
-	else if (xml::ixml_node::query_object(name, out))
-	{
-		return true;
-	}
-	return false;
+	return type == xml_type::text;
 }
 
-xml_type_t xml_text::xml_type()const { return xml_type::text; }
-
-bool xml_text::xml_is_type_of(xml_type_t type)const {return type == xml_type::text; }
-
-wstring& xml_text::xml_print(wstring& out, xml_format_t const& format, ushort)const
+streams::itext_output_stream_t& xml_text::xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flag, ushort level)const
 {
-	if (is_empty()) return out;
-	out << this->cstr();
-	return out;
+	return stream;
 }
 
-ixml_node_t xml_text::xml_parent()const
+xml_encoding_t xml_text::encoding()const
 {
-	return _xml_parent.lock();
+	return m_value->encoding();
 }
 
-ixml_document_t xml_text::xml_parent_doc()const
+wsize xml_text::length()const
 {
-	return _xml_parent_doc.lock();
+	return m_value->length();
 }
 
-ixml_node_t xml_text::xml_clone(ixml_document_t doc)const 
+pointer xml_text::data()const
 {
-	auto text = NEW xml_text(this);
-	text->xml_parent_doc(doc);
-	return text;
+	return m_value->data();
 }
 
-void xml_text::xml_parent(ixml_node_t node)
-{ 
-	_xml_parent = node;
-	_xml_parent_doc = (node) ? node->xml_parent_doc() : null;
-}
-
-void xml_text::xml_parent_doc(ixml_document_t doc)
+rtti_t const& xml_text::char_type()const
 {
-	_xml_parent_doc = doc;
+	return m_value->char_type();
 }
 
-void xml_text::xml_prev_sibling(ixml_node_t node)
+xml_str_t xml_text::str(int)
 {
+	return m_value->str();
 }
 
-void xml_text::xml_next_sibling(ixml_node_t node)
+xml_cstr_t xml_text::cstr(int)const
 {
+	return m_value->cstr();
 }
 
-ixml_node_t xml_text::xml_first_child()const { return null; }
-ixml_node_t xml_text::xml_last_child()const { return null; }
-ixml_node_t xml_text::xml_prev_sibling()const { return null; }
-ixml_node_t xml_text::xml_next_sibling()const { return null; }
-
-bool xml_text::xml_has_name()const { return false; }
-bool xml_text::xml_has_value()const { return false; }
-bool xml_text::xml_has_children()const { return false; }
-bool xml_text::xml_has_attributes()const { return false; }
-
-xml_text_t xml_text::xml_name()const { return null; }
-xml_text_t xml_text::xml_value()const { return null; }
-ixml_store_t xml_text::xml_children()const { return null; }
-ixml_attributes_t xml_text::xml_attributes()const { return null; }
-
-
-
-template<> cstr_t xml::xml_text::xml_as<cstr_t>()const { return null; }
-template<> cwstr_t xml::xml_text::xml_as<cwstr_t>()const { return this? this->cstr() : null; }
-template<> string xml::xml_text::xml_as<string>()const { return this ? this->cstr() : null; } //make a copy
-template<> wstring xml::xml_text::xml_as<wstring>()const { return this ? this->cstr() : null; } //make a copy
-template<> mstring xml::xml_text::xml_as<mstring>()const { return this ? this->cstr() : null; } //make a copy
-
-template<> short xml::xml_text::xml_as<short>()const { return integer::parse(xml_as<cwstr_t>()); }
-template<> ushort xml::xml_text::xml_as<ushort>()const { return uinteger::parse(xml_as<cwstr_t>()); }
-template<> int xml::xml_text::xml_as<int>()const { return integer::parse(xml_as<cwstr_t>()); }
-template<> uint xml::xml_text::xml_as<uint>()const { return uinteger::parse(xml_as<cwstr_t>()); }
-template<> long xml::xml_text::xml_as<long>()const { return integer::parse(xml_as<cwstr_t>()); }
-template<> ulong xml::xml_text::xml_as<ulong>()const { return uinteger::parse(xml_as<cwstr_t>()); }
-template<> long64 xml::xml_text::xml_as<long64>()const { return integer64::parse(xml_as<cwstr_t>()); }
-template<> ulong64 xml::xml_text::xml_as<ulong64>()const { return uinteger64::parse(xml_as<cwstr_t>()); }
-template<> float xml::xml_text::xml_as<float>()const { return floating::parse(xml_as<cwstr_t>()); }
-template<> double xml::xml_text::xml_as<double>()const { return floating64::parse(xml_as<cwstr_t>()); }
-template<> bool xml::xml_text::xml_as<bool>()const { return boolean::parse(xml_as<cwstr_t>()); }
-template<> xml::xml_encoding_t xml::xml_text::xml_as<xml::xml_encoding_t>()const { return xml::xml_encoding_t::parse(xml_as<cwstr_t>()); }
-
-/////////////////////////////////////////////////////////////////////////////
-
-xml_pcdata::xml_pcdata()
-	: xml_text()
+char32_t xml_text::at(windex i, wsize* sz)const
 {
+	return m_value->at(i, sz);
 }
 
-xml_pcdata::xml_pcdata(xml_pcdata const* value)
-	: xml_text(value)
+int xml_text::compare(xml_cstr_t cstr)const
 {
-	
+	return m_value->compare(cstr);
 }
 
-xml_pcdata::xml_pcdata(xml_pcdata const& value)
-	: xml_text(value)
+windex xml_text::compare_until(xml_cstr_t cstr)const
 {
+	return m_value->compare_until(cstr);
 }
 
-xml_pcdata::xml_pcdata(wstring && value)
-	: xml_text(value)
+windex xml_text::find(xml_cstr_t cstr, windex start, windex end)const
 {
-
+	return m_value->find(cstr, start, end);
 }
 
-xml_pcdata::xml_pcdata(wstring const& value)
-	: xml_text(value)
+windex xml_text::find_reverse(xml_cstr_t cstr, windex start, windex end)const
 {
+	return m_value->find_reverse(cstr, start, end);
 }
 
-
-xml_pcdata::~xml_pcdata()
+ixml_text_t xml_text::sub_string(ixml_text_ptr_t out, windex start, windex end)const
 {
+	return m_value->sub_string(out, start, end);
 }
 
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::xml::xml_pcdata, xml_text);
-
-xml_type_t xml_pcdata::xml_type()const { return xml_type::pcdata; }
-
-bool xml_pcdata::xml_is_type_of(xml_type_t type)const { 
-	return type == xml_type::pcdata
-	|| xml_text::xml_is_type_of(type);
-}
-
-ixml_node_t xml_pcdata::xml_clone(ixml_document_t doc)const
+void xml_text::copy(xml_cstr_t cstr)
 {
-	auto text = NEW xml_pcdata(this);
-	text->xml_parent_doc(doc);
-	return text;
+	copy_cdata(cstr);
 }
 
-wstring& xml_pcdata::xml_print(wstring& out, xml_format_t const& format, ushort)const
+void xml_text::move(ixml_text_t str)
 {
-	if (is_empty())
-		return out;
-
-	wstring str = this->cstr(); //make a copy
-	cwstr_t cstr = str;
-	index idx = 0;
-	while (cstr[idx] != 0 && idx < cstr.size())
-	{
-		for (int i = 0; i < 5; i++)
-		{
-			if (xml_entity_values[i].code[0] == cstr[idx])
-			{
-				//TODO: str->replace(xml_entity_values[i].code, str->at(idx), str->at(idx + 1));
-				cstr = str;
-				break;
-			}
-		}
-		idx++;
-	}
-	out << str;
-	return out;
+	if(!str.is_empty())
+		m_value = str;
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-
-xml_cdata::xml_cdata()
-	: xml_text()
+void xml_text::copy_cdata(xml_cstr_t cstr)
 {
+	m_value->copy(cstr);
 }
 
-xml_cdata::xml_cdata(xml_cdata const* value)
-	: xml_text(value)
+void xml_text::copy_pcdata(xml_cstr_t cstr)
 {
+	m_value->copy(cstr); //TODO:
 }
 
-xml_cdata::xml_cdata(xml_cdata const& value)
-	: xml_text(value)
+void xml_text::concat(xml_cstr_t cstr)
 {
+	m_value->concat(cstr);
 }
 
-xml_cdata::xml_cdata(wstring && value)
-	: xml_text(value)
+void xml_text::insert(windex i, xml_cstr_t cstr)
 {
-
+	m_value->insert(i, cstr);
 }
 
-xml_cdata::xml_cdata(wstring const& value)
-	: xml_text(value)
+void xml_text::format(xml_cstr_t cstr, var_args_t args)
 {
+	m_value->format(cstr, args);
 }
 
-
-xml_cdata::~xml_cdata()
+void xml_text::concat_format(xml_cstr_t cstr, var_args_t args)
 {
+	m_value->concat_format(cstr, args);
 }
 
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::xml::xml_cdata, xml_text);
-
-xml_type_t xml_cdata::xml_type()const { return xml_type::cdata; }
-
-bool xml_cdata::xml_is_type_of(xml_type_t type)const { 
-	return type == xml_type::pcdata
-	|| xml_text::xml_is_type_of(type);
-}
-
-ixml_node_t xml_cdata::xml_clone(ixml_document_t doc)const
+void xml_text::insert_format(windex i, xml_cstr_t cstr, var_args_t args)
 {
-	auto text = NEW xml_cdata(this);
-	text->xml_parent_doc(doc);
-	return text;
+	m_value->insert_format(i, cstr, args);
 }
+

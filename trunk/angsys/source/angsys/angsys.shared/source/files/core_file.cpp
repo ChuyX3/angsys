@@ -133,8 +133,8 @@ wsize mapped_file_buffer::mem_copy(wsize size, pointer data, text::encoding_t en
 		if (encoding == text::encoding::binary)
 			return 0; 
 
-		raw_str_t dest(m_buffer_ptr, m_buffer_size, this->encoding());
-		raw_str_t src(data, size, encoding);
+		text::raw_str_t dest(m_buffer_ptr, m_buffer_size, this->encoding());
+		text::raw_str_t src(data, size, encoding);
 		windex written = 0;
 
 		text::iencoder_t encoder = text::iencoder::get_encoder(dest.encoding());
@@ -490,8 +490,8 @@ bool core_file::create(path_view_t path, open_flags_t flags)
 		m_flags += open_flags::format_binary;
 	}
 
-	m_flags += (bool(flags & open_flags::access_inout) ? open_flags::access_inout
-		: bool(flags & open_flags::access_in) ? open_flags::access_in
+	m_flags += ((flags & open_flags::access_inout) == open_flags::access_inout ? open_flags::access_inout
+		: (flags & open_flags::access_in) == open_flags::access_in ? open_flags::access_in
 		: open_flags::access_out);
 
 	return true;
@@ -531,6 +531,7 @@ file_handle_t core_file::map_handle(ulong64 _min)
 	if (m_hmap == 0)
 	{
 #ifdef WINAPI_FAMILY
+		HRESULT hr;
 		dword accessFlags = bool(m_flags & open_flags::access_out) ? PAGE_READWRITE : PAGE_READONLY;
 
 #if WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
@@ -541,6 +542,11 @@ file_handle_t core_file::map_handle(ulong64 _min)
 #else//STOREAPP
 		m_hmap = CreateFileMappingFromApp(m_hfile, NULL, accessFlags, 0, NULL);
 #endif//DESKTOP
+		if (m_hmap == null)
+		{
+			hr = GetLastError();
+		}
+
 		m_hmap_size = m_hmap ? size() : 0;
 #else//LINUX|ANDROID
 		m_hmap = 0;//not used

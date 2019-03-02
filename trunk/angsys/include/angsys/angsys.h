@@ -45,9 +45,6 @@ namespace ang
 	typedef ang::object_wrapper<object> object_t, objptr;
 	typedef ang::object_wrapper_ptr<object> object_ptr_t;
 
-	typedef struct raw_str raw_str_t;
-	typedef struct raw_cstr raw_cstr_t;
-
 	ang_interface(ivariant);
 
 	typedef ivariant_t variant, var;
@@ -55,6 +52,7 @@ namespace ang
 	template<typename T> class variable;
 	template<typename T> using variable_t = object_wrapper<variable<T>>;
 	template<typename T> using shared_ptr = variable_t<T>;
+	template<typename T> using nullable = variable_t<T>;
 	template<typename T, typename...Ts> shared_ptr<T> make_shared(Ts... args);
 
 	typedef variable<bool> boolean;
@@ -75,9 +73,10 @@ namespace ang
 	typedef shared_ptr<float> floating_t;
 	typedef shared_ptr<double> floating64_t;
 
-	namespace strings
+	namespace text
 	{
-		using namespace text;
+		typedef struct raw_str raw_str_t;
+		typedef struct raw_cstr raw_cstr_t;
 
 		template<encoding ENCODING> class basic_const_string_buffer;
 		template<encoding ENCODING> using basic_const_string = object_wrapper<basic_const_string_buffer<ENCODING>>;
@@ -126,14 +125,22 @@ namespace ang
 		}
 	}
 
-	using strings::string;
-	using strings::wstring;
-	using strings::mstring;
-	using strings::string16;
-	using strings::string32;
+	using text::string;
+	using text::wstring;
+	using text::mstring;
+	using text::string16;
+	using text::string32;
+
+	using text::string_buffer;
+	using text::wstring_buffer;
+	using text::mstring_buffer;
+	using text::string_buffer16;
+	using text::string_buffer32;
 
 	using collections::array;
 	using collections::vector;
+
+	using core::delegates::function;
 
 	using args_t = vector<objptr>;
 	using args = collections::vector_buffer<objptr>;
@@ -148,11 +155,11 @@ namespace ang
 	ang_object(exception);
 }
 
-#include <ang/raw_str.h>
+#include <ang/strings/raw_str.h>
 #include <ang/smart_ptr.h>
 #include <ang/object.h>
 #include <ang/ibuffers.h>
-#include <ang/istring.h>
+#include <ang/strings/istring.h>
 #include <ang/variable.h>
 #include <ang/singleton.h>
 #include <ang/collections.h>
@@ -160,7 +167,8 @@ namespace ang
 #include <ang/core/function.h>
 #include <ang/collections/array.h>
 #include <ang/collections/vector.h>
-#include <ang/string.h>
+#include <ang/strings/const_string.h>
+#include <ang/strings/string.h>
 #include <ang/exception.h>
 #include <ang/core/listener.h>
 

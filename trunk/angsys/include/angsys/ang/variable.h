@@ -41,7 +41,7 @@ namespace ang
 		template<typename T, wsize N> intf_wrapper(T(&ar)[N]);
 		//template<typename T> intf_wrapper(array_view<T> const& ar);
 		template<typename T, text::encoding E> intf_wrapper(str_view<T, E>);
-		template<text::encoding E, template<typename>class A> intf_wrapper(strings::basic_string<E,A> const&);
+		template<text::encoding E, template<typename>class A> intf_wrapper(text::basic_string<E,A> const&);
 
 		intf_wrapper(bool); //bool convertible
 		intf_wrapper(int); //int convertible
@@ -679,6 +679,106 @@ namespace ang
 	protected:
 		virtual~variable();
 	};
+
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, variable<bool>)
+		object_wrapper(bool const& value) : m_ptr(null) { set(new variable<bool>(value)); }
+		object_wrapper<variable<bool>>& operator = (const bool& value){
+			if (is_empty())
+				set(new variable<bool>(value));
+			else
+				m_ptr->set(value);
+			return*this;
+		}
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, variable<int>)
+		object_wrapper(int const& value) : m_ptr(null) { set(new variable<int>(value)); }
+		object_wrapper<variable<int>>& operator = (const int& value){
+			if (is_empty())
+				set(new variable<int>(value));
+			else
+				m_ptr->set(value);
+			return*this;
+		}
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, variable<uint>)
+		object_wrapper(uint const& value) : m_ptr(null) { set(new variable<uint>(value)); }
+		object_wrapper<variable<uint>>& operator = (const int& value){
+			if (is_empty())
+				set(new variable<uint>(value));
+			else
+				m_ptr->set(value);
+			return*this;
+		}
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, variable<long>)
+		object_wrapper(long const& value) : m_ptr(null) { set(new variable<long>(value)); }
+		object_wrapper<variable<long>>& operator = (const long& value){
+			if (is_empty())
+				set(new variable<long>(value));
+			else
+				m_ptr->set(value);
+			return*this;
+		}
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, variable<ulong>)
+		object_wrapper(ulong const& value) : m_ptr(null) { set(new variable<ulong>(value)); }
+		object_wrapper<variable<ulong>>& operator = (const ulong& value){
+			if (is_empty())
+				set(new variable<ulong>(value));
+			else
+				m_ptr->set(value);
+			return*this;
+		}
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, variable<long64>)
+		object_wrapper(long64 const& value) : m_ptr(null) { set(new variable<long64>(value)); }
+		object_wrapper<variable<long64>>& operator = (const long64& value){
+			if (is_empty())
+				set(new variable<long64>(value));
+			else
+				m_ptr->set(value);
+			return*this;
+		}
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, variable<ulong64>)
+		object_wrapper(ulong64 const& value) : m_ptr(null) { set(new variable<ulong64>(value)); }
+		object_wrapper<variable<ulong64>>& operator = (const ulong64& value){
+			if (is_empty())
+				set(new variable<ulong64>(value));
+			else
+				m_ptr->set(value);
+			return*this;
+		}
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, variable<float>)
+		object_wrapper(float const& value) : m_ptr(null) { set(new variable<float>(value)); }
+		object_wrapper<variable<float>>& operator = (const float& value){
+			if (is_empty())
+				set(new variable<float>(value));
+			else
+				m_ptr->set(value);
+			return*this;
+		}
+	ANG_END_OBJECT_WRAPPER();
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, variable<double>)
+		object_wrapper(double const& value) : m_ptr(null) { set(new variable<double>(value)); }
+		object_wrapper<variable<double>>& operator = (const double& value){
+			if (is_empty())
+				set(new variable<double>(value));
+			else
+				m_ptr->set(value);
+			return*this;
+		}
+	ANG_END_OBJECT_WRAPPER();
 
 	template<typename T>
 	struct ivariant_setter {

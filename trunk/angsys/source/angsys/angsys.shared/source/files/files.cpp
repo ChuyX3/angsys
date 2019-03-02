@@ -41,7 +41,7 @@ static collections::pair<cstr_t, file_system_priority> s_file_system_priority_pa
 };
 
 
-file_system_priority_t file_system_priority_t::parse(raw_cstr_t str)
+file_system_priority_t file_system_priority_t::parse(text::raw_cstr_t str)
 {
 	auto idx = algorithms::binary_search(str, collections::to_array(s_file_system_priority_parsing_map));
 	if (idx >= algorithms::array_size(s_file_system_priority_parsing_map))

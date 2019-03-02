@@ -104,7 +104,7 @@ inline ang::collections::array_buffer<T, allocator>::~array_buffer()
 template<typename T, template <typename> class allocator>
 inline ang::rtti_t const& ang::collections::array_buffer<T, allocator>::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::array<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::collections::array<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<iarray<T>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<ang::collections::array_buffer<T, allocator>>(), alignof(ang::collections::array_buffer<T, allocator>), parents, &default_query_interface);
 	return info;
@@ -582,39 +582,46 @@ template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::object_wrapper()
 	: m_ptr(null)
 {
+	set(new ang::collections::array_buffer<T, allocator>());
+}
 
+template<typename T, template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::object_wrapper(wsize reserve)
+	: m_ptr(null)
+{
+	set(new ang::collections::array_buffer<T, allocator>(reserve));
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::object_wrapper(ang::collections::array_buffer<T, allocator>* ptr)
-	: object_wrapper<ang::collections::array_buffer<T, allocator>>()
+	: m_ptr(null)
 {
-	set(ptr);
+	set(ptr ? ptr : new ang::collections::array_buffer<T, allocator>());
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::object_wrapper(std::nullptr_t const&)
-	: object_wrapper<ang::collections::array_buffer<T, allocator>>()
+	: m_ptr(null)
 {
 }
 
 template<typename T, template <typename> class allocator> template<typename U>
 inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::object_wrapper(std::initializer_list<U> list)
-	: object_wrapper<ang::collections::array_buffer<T, allocator>>()
+	: m_ptr(null)
 {
 	set(new collections::array_buffer<T, allocator>(ang::move(list)));
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::object_wrapper(const ang::collections::ienum<data_type>* store)
-	: object_wrapper<ang::collections::array_buffer<T, allocator>>()
+	: m_ptr(null)
 {
 	set(new collections::array_buffer<T, allocator>(store));
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::array_buffer<T, allocator>> && other)
-	: object_wrapper<collections::array_buffer<T, allocator>>()
+	: m_ptr(null)
 {
 	collections::array_buffer<T, allocator> * temp = other.m_ptr;
 	other.m_ptr = null;
@@ -623,7 +630,7 @@ inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::object
 
 template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::array_buffer<T, allocator>> const& other)
-	: object_wrapper<collections::array_buffer<T, allocator>>()
+	: m_ptr(null)
 {
 	set(other.get());
 }

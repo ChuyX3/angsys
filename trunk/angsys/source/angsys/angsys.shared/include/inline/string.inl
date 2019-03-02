@@ -239,12 +239,22 @@ ang::object_wrapper_ptr<basic_string_buffer<MY_ENCODING>> ang::object_wrapper<ba
 }
 
 
-basic_string_buffer<MY_ENCODING>* ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator -> (void)const
+basic_string_buffer<MY_ENCODING>* ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator -> (void)
 {
 	return get();
 }
 
-ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator basic_string_buffer<MY_ENCODING>* (void)const
+basic_string_buffer<MY_ENCODING>const* ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator -> (void)const
+{
+	return get();
+}
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator basic_string_buffer<MY_ENCODING>* (void)
+{
+	return get();
+}
+
+ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::operator basic_string_buffer<MY_ENCODING>const* (void)const
 {
 	return get();
 }

@@ -150,8 +150,9 @@ namespace ang
 		template<typename U, wsize SIZE> inline object_wrapper(stack_array<U, SIZE> const& ar) : m_ptr(null) {
 			set(new collections::array_buffer<T, allocator>(ar));
 		}
-		object_wrapper(collections::array_buffer<T, allocator>*);
 		template<typename U> object_wrapper(ang::initializer_list<U> list);
+		object_wrapper(wsize reserve);
+		object_wrapper(collections::array_buffer<T, allocator>*);
 		object_wrapper(const collections::ienum<data_type>* store);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);

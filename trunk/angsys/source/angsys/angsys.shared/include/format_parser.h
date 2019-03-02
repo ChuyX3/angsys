@@ -714,7 +714,7 @@ namespace ang
 			}
 
 			template<template<typename>class Allocator>
-			static inline bool format(strings::basic_string_buffer<E, Allocator>* out, str_view<const char_t, E> format, args_t args) {
+			static inline bool format(text::basic_string_buffer<E, Allocator>* out, str_view<const char_t, E> format, args_t args) {
 				if (out == null) return false;
 				out->clear();
 				int a;
@@ -737,7 +737,7 @@ namespace ang
 			}
 
 			template<template<typename>class Allocator>
-			static inline bool format(strings::basic_string<E, Allocator>& out, str_view<const char_t, E> format, args_t args) {
+			static inline bool format(text::basic_string<E, Allocator>& out, str_view<const char_t, E> format, args_t args) {
 				out = "";
 				int a;
 				text::text_format_flags_t f;
@@ -762,7 +762,7 @@ namespace ang
 
 
 			template<template<typename>class Allocator>
-			static inline bool format(strings::basic_string_buffer<E, Allocator>* out, str_view<const char_t, E> format, var_args_t args) {
+			static inline bool format(text::basic_string_buffer<E, Allocator>* out, str_view<const char_t, E> format, var_args_t args) {
 				if (out == null) return false;
 				out->clear();
 				int a;
@@ -785,7 +785,7 @@ namespace ang
 			}
 
 			template<template<typename>class Allocator>
-			static inline bool format(strings::basic_string<E, Allocator>& out, str_view<const char_t, E> format, var_args_t args) {
+			static inline bool format(text::basic_string<E, Allocator>& out, str_view<const char_t, E> format, var_args_t args) {
 				out = "";
 				int a;
 				text::text_format_flags_t f;

@@ -9,21 +9,20 @@ namespace ang
 	{
 		namespace xml
 		{
-			template<xml_encoding E>
-			class xml_comment final : public xml_node<E>
+			class LINK xml_comment final
+				: public xml_node
 			{
 			public:
-				static xml_comment_ptr<E> create_new(const xml_comment&);
-				static xml_comment_ptr<E> create_new(xml_document_ptr<E>, const xml_comment*);
-				static xml_comment_ptr<E> create_new(xml_document_ptr<E>, strings::basic_string<E>);
+				static xml_comment_t create_new(xml_document_t, const xml_comment*);
+				static xml_comment_t create_new(xml_document_t, ixml_text_t);
 
 			protected:
-				xml_comment(xml_document_ptr<E>);
+				xml_comment(xml_document_t);
 
 			public:
 				ANG_DECLARE_INTERFACE();
 
-				ixml_node_t xml_clone(ixml_document_t)const override;
+				xml_node_t xml_clone(xml_document_t)const override;
 				bool xml_has_value()const override;
 
 			private:

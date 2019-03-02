@@ -8,37 +8,37 @@ namespace ang
 	template<wsize N> 
 	inline object_wrapper<object>::object_wrapper(const char(&ar)[N]) 
 		: object_wrapper<object>(null) {
-		set(new strings::basic_string_buffer<text::encoding::ascii>(ar));
+		set(new text::basic_string_buffer<text::encoding::ascii>(ar));
 	}
 
 	template<wsize N> 
 	inline object_wrapper<object>::object_wrapper(const wchar(&ar)[N])
 		: object_wrapper<object>(null) {
-		set(new strings::basic_string_buffer<text::encoding::unicode>(ar));
+		set(new text::basic_string_buffer<text::encoding::unicode>(ar));
 	}
 
 	template<wsize N>
 	inline object_wrapper<object>::object_wrapper(const mchar(&ar)[N])
 		: object_wrapper<object>(null) {
-		set(new strings::basic_string_buffer<text::encoding::utf8>(ar));
+		set(new text::basic_string_buffer<text::encoding::utf8>(ar));
 	}
 
 	template<wsize N>
 	inline object_wrapper<object>::object_wrapper(const char16(&ar)[N])
 		: object_wrapper<object>(null) {
-		set(new strings::basic_string_buffer<text::encoding::utf16>(ar));
+		set(new text::basic_string_buffer<text::encoding::utf16>(ar));
 	}
 
 	template<wsize N> 
 	inline object_wrapper<object>::object_wrapper(const char32(&ar)[N])
 		: object_wrapper<object>(null) {
-		set(new strings::basic_string_buffer<text::encoding::utf32>(ar));
+		set(new text::basic_string_buffer<text::encoding::utf32>(ar));
 	}
 	
 	template<typename T, text::encoding E>
 	inline object_wrapper<object>::object_wrapper(str_view<T, E> str)
 		: object_wrapper<object>(null) {
-		set(new strings::basic_string_buffer<E>(str));
+		set(new text::basic_string_buffer<E>(str));
 	}
 
 	template<typename T, wsize N>

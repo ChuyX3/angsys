@@ -39,8 +39,10 @@
 		object_wrapper& operator = (ang::nullptr_t const&); \
 		object_wrapper_ptr<type> operator & (void); \
 		inline operator ang::objptr()const{ return (object*)get(); } \
-		type* operator -> (void)const; \
-		operator type* (void)const;
+		type* operator -> (void); \
+		type const* operator -> (void)const; \
+		operator type* (void); \
+		operator type const* (void)const;
 
 #define ANG_END_OBJECT_WRAPPER() }
 

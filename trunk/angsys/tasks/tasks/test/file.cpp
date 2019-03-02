@@ -167,11 +167,11 @@ void text_input_file::size(long64) {
 	throw_exception(except_code::invalid_access); 
 }
 
-void text_input_file::seek(raw_cstr_t str)
+void text_input_file::seek(text::raw_cstr_t str)
 {
 	wsize i = 0, j = 0, readed = 0, temp;
 	byte buffer[204];
-	raw_str raw;
+	text::raw_str raw;
 	text::iencoder_t e1 = text::iencoder::get_encoder(e);
 	text::iencoder_t e2 = text::iencoder::get_encoder(str.encoding());
 	wsize cs1 = e1->char_type().size();

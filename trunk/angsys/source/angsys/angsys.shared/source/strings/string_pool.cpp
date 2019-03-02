@@ -3,7 +3,7 @@
 #include "core_hash_table.h"
 
 using namespace ang;
-using namespace ang::strings;
+using namespace ang::text;
 
 typedef collections::internal_hash_map<cstr_t, const_string>* pool_handle;
 

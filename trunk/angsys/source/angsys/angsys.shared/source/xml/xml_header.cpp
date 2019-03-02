@@ -9,7 +9,7 @@
 /*********************************************************************************************************************/
 
 #include "pch.h"
-#include "ang/xml.hpp"
+#include <ang/dom/xml.h>
 
 #if defined _DEBUG
 #define NEW new(__FILE__, __LINE__)
@@ -20,222 +20,124 @@
 #endif
 
 using namespace ang;
-using namespace ang::xml;
+using namespace ang::dom::xml;
 
-
-ang::object_wrapper<xml_header>::object_wrapper() : _ptr(null) {
-
-}
-
-ang::object_wrapper<xml_header>::object_wrapper(xml_header* ptr) : _ptr(null) {
-	set(ptr);
-}
-
-ang::object_wrapper<xml_header>::object_wrapper(object_wrapper && other) : _ptr(null) {
-	xml_header * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
-}
-
-ang::object_wrapper<xml_header>::object_wrapper(object_wrapper const& other) : _ptr(null) {
-	set(other._ptr);
-}
-
-ang::object_wrapper<xml_header>::object_wrapper(std::nullptr_t const&)
-	: _ptr(null)
-{
-}
-
-ang::object_wrapper<xml_header>::~object_wrapper() {
-	clean();
-}
-
-void ang::object_wrapper<xml_header>::clean()
-{
-	iobject * _obj = interface_cast<iobject>(_ptr);
-	if (_obj)_obj->release();
-	_ptr = null;
-}
-
-bool ang::object_wrapper<xml_header>::is_empty()const
-{
-	return _ptr == null;
-}
-
-xml_header* ang::object_wrapper<xml_header>::get(void)const
-{
-	return _ptr;
-}
-
-void ang::object_wrapper<xml_header>::set(xml_header* ptr)
-{
-	if (ptr == _ptr) return;
-	iobject * _old = interface_cast<iobject>(_ptr);
-	iobject * _new = interface_cast<iobject>(ptr);
-	_ptr = ptr;
-	if (_new)_new->add_ref();
-	if (_old)_old->release();
-}
-
-ang::object_wrapper<xml_header>& ang::object_wrapper<xml_header>::operator = (xml_header* ptr)
-{
-	set(ptr);
-	return*this;
-}
-
-ang::object_wrapper<xml_header>& ang::object_wrapper<xml_header>::operator = (ang::object_wrapper<xml_header> && other)
-{
-	if (this == &other)
-		return *this;
-	clean();
-	_ptr = other._ptr;
-	other._ptr = null;
-	return*this;
-}
-
-ang::object_wrapper<xml_header>& ang::object_wrapper<xml_header>::operator = (ang::object_wrapper<xml_header> const& other)
-{
-	set(other._ptr);
-	return*this;
-}
-
-xml_header ** ang::object_wrapper<xml_header>::addres_of(void)
-{
-	return &_ptr;
-}
-
-ang::object_wrapper_ptr<xml_header> ang::object_wrapper<xml_header>::operator & (void)
-{
-	return this;
-}
-
-xml_header * ang::object_wrapper<xml_header>::operator -> (void)
-{
-	return get();
-}
-
-xml_header const* ang::object_wrapper<xml_header>::operator -> (void)const
-{
-	return get();
-}
-
-ang::object_wrapper<xml_header>::operator xml::xml_header * (void) { return _ptr; }
-
-ang::object_wrapper<xml_header>::operator xml::xml_header const* (void)const { return _ptr; }
-
-ang::object_wrapper<xml_header>::operator xml::xml_node_t(void)const { return _ptr; }
-
-ang::object_wrapper<xml_header>::operator xml::ixml_node_t(void)const { return _ptr; }
-
-xml_text_t object_wrapper<xml_header>::operator[](raw_str_t value)const
-{
-	return _ptr ? _ptr->xml_attributes()[value] : xml_text_t();
-}
-
+#define MY_TYPE ang::dom::xml::xml_header
+#include "ang/inline/object_wrapper_specialization.inl"
+#undef MY_TYPE
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-xml_header_t xml_header::create_new(const xml_header& head) {
-	xml_header_t header = NEW xml_header(head.xml_parent_doc());
-	header->version(head.version());
-	header->encoding(head.encoding());
-	header->is_stand_alone(head.is_stand_alone());
+xml_header_t xml_header::create_new(xml_document_t doc) {
+	xml_header_t header = NEW xml_header(doc);
+	header->version(doc->create_pcdata("1.0"_s));
+	header->encoding(doc->xml_encoding());
+	header->is_stand_alone(true);
 	return header;
 }
 
-xml_header_t xml_header::create_new(ixml_document_t doc, const xml_header* head) {
+xml_header_t xml_header::create_new(xml_document_t doc, const xml_header* head) {
 	xml_header_t header = NEW xml_header(doc);
 	if (head) {
-		header->version(head->version());
-		header->encoding(head->encoding());
-		header->is_stand_alone(head->is_stand_alone());
+		header->version((xml_cstr_t)head->xml_version());
+		header->encoding(head->xml_encoding());
+		header->is_stand_alone(head->xml_stand_alone());
 	}
 	else
 	{
-		header->version("1.0"_s);
+		header->version(doc->create_pcdata("1.0"_s));
 		header->encoding(xml_encoding::utf8);
 		header->is_stand_alone(true);
 	}
 	return header;
 }
 
-xml_header_t xml_header::create_new(ixml_document_t doc, wstring version, xml_encoding_t encoding, bool standalone) {
+xml_header_t xml_header::create_new(xml_document_t doc, xml_cstr_t version, bool standalone) {
 	xml_header_t header = NEW xml_header(doc);
-	header->version(version);
-	header->encoding(encoding);
+	header->version(doc->create_pcdata(version));
+	header->encoding(doc->xml_encoding());
 	header->is_stand_alone(standalone);
 	return header;
 }
 
-xml_header::xml_header(ixml_document_t doc)
-	: xml_node(doc, xml_type_t::header)
+xml_header::xml_header(xml_document_t doc)
+	: xml_node(doc, xml_type::header)
 {
 }
 
 xml_header::~xml_header()
 {
-	clean();
+	clear();
 }
 
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::xml::xml_header, xml_node);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(xml_header);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::dom::xml::xml_header, xml_node, ixml_header);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(xml_header, xml_node, ixml_header);
 
-
-ixml_node_t xml_header::xml_clone(ixml_document_t doc)const
+xml_node_t xml_header::xml_clone(xml_document_t doc)const
 {
 	return create_new(doc, this);
 }
 
 
-wstring xml_header::version()const
+ixml_text_view_t xml_header::xml_version()const
 {
-	xml_text_t version = xml_attributes()["version"_s];
+	xml_text_t version = m_attributes["version"_s];
 	return version;
 }
 
-xml_encoding xml_header::encoding()const
+xml_encoding_t xml_header::xml_encoding()const
 {
-	xml_text_t encoding = xml_attributes()["encoding"_s];
+	xml_text_t encoding = m_attributes["encoding"_s];
 	return encoding->xml_as<xml_encoding_t>();
 }
 
-bool xml_header::is_stand_alone()const
+bool xml_header::xml_stand_alone()const
 {
-	xml_text_t standalone = xml_attributes()["standalone"_s];
+	xml_text_t standalone = m_attributes["standalone"_s];
 	return standalone->xml_as<bool>();
 }
 
-void xml_header::version(wstring value)
+void xml_header::version(ixml_text_t value)
 {
-	xml_text_t att = xml_attributes()["version"_s];
-	if (att.is_empty())
-		push_attribute(xml_attribute::create_new(xml_parent_doc(), "version"_s, value));
-	else
-		att->move(value.get());
+	xml_document_t doc = xml_parent_doc();
+	auto it = m_attributes->find("version"_s);
+	if (it.is_valid())
+	{
+		it->push_value(value);
+	}
+	push_attribute(xml_attribute::create_new(doc, doc->create_pcdata("version"_s), value));
 }
 
 void xml_header::encoding(xml_encoding_t value)
 {
-	xml_text_t att = xml_attributes()["encoding"_s];
-	if (att.is_empty())
-		push_attribute(xml_attribute::create_new(xml_parent_doc(), "encoding"_s, value.to_string()));
-	else
-		att->copy(value.to_string());
+	xml_document_t doc = xml_parent_doc();
+	auto it = m_attributes->find("encoding"_s);
+	if (it.is_valid())
+	{
+		it->push_value(doc->create_pcdata((xml_cstr_t)value.to_string()));
+	}
+	push_attribute(xml_attribute::create_new(doc, doc->create_pcdata("encoding"_s), doc->create_pcdata((xml_cstr_t)value.to_string())));
 }
 
-void xml_header::encoding(wstring value)
+void xml_header::encoding(ixml_text_t value)
 {
-	xml_text_t att = xml_attributes()["encoding"_s];
-	if (att.is_empty())
-		push_attribute(xml_attribute::create_new(xml_parent_doc(), "encoding"_s, value));
-	else
-		att->move(value.get());
+	xml_document_t doc = xml_parent_doc();
+	auto it = m_attributes->find("encoding"_s);
+	if (it.is_valid())
+	{
+		it->push_value(value);
+	}
+	push_attribute(xml_attribute::create_new(doc, doc->create_pcdata("encoding"_s), value));
 }
 
 void xml_header::is_stand_alone(bool value)
 {
-	xml_text_t att = xml_attributes()["standalone"_s];
-	if (att.is_empty())
-		push_attribute(xml_attribute::create_new(xml_parent_doc(), "standalone"_s, value ? "yes"_s : "no"_s));
-	else
-		att->copy(value ? "yes"_s : "no"_s);
+	xml_document_t doc = xml_parent_doc();
+	auto it = m_attributes->find("standalone"_s);
+	if (it.is_valid())
+	{
+		it->push_value(doc->create_pcdata(value ? "true"_s : "false"_s));
+	}
+	push_attribute(xml_attribute::create_new(doc, doc->create_pcdata("standalone"_s), doc->create_pcdata(value ? "true"_s : "false"_s)));
 }

@@ -7,7 +7,7 @@
 template<typename T, typename... Ts>
 inline ang::rtti_t const& ang::core::delegates::ifunction<T(Ts...)>::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::core::delegates::ifunction<"_s) += rtti::type_of<T(Ts...)>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::core::delegates::ifunction<"_s) += rtti::type_of<T(Ts...)>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<interface>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::core::delegates::ifunction<T(Ts...)>), alignof(wsize), parents, &default_query_interface);
 	return info;
@@ -16,7 +16,7 @@ inline ang::rtti_t const& ang::core::delegates::ifunction<T(Ts...)>::class_info(
 template<typename... Ts>
 inline ang::rtti_t const& ang::core::delegates::ifunction<void(Ts...)>::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::core::delegates::ifunction<"_s) += rtti::type_of<void(Ts...)>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::core::delegates::ifunction<"_s) += rtti::type_of<void(Ts...)>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<interface>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::core::delegates::ifunction<void(Ts...)>), alignof(wsize), parents, &default_query_interface);
 	return info;
@@ -27,7 +27,7 @@ inline ang::rtti_t const& ang::core::delegates::ifunction<void(Ts...)>::class_in
 template<typename T, typename... Ts>
 inline ang::rtti_t const& ang::core::delegates::function_object<T(Ts...)>::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::core::delegates::function<"_s) += rtti::type_of<T(Ts...)>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::core::delegates::function<"_s) += rtti::type_of<T(Ts...)>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<object>(), &runtime::type_of<ifunction<T(Ts...)>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::core::delegates::function_object<T(Ts...)>), alignof(wsize), parents, &default_query_interface);
 	return info;
@@ -65,7 +65,7 @@ inline bool ang::core::delegates::function_object<T(Ts...)>::query_interface(ang
 template<typename... Ts>
 inline ang::rtti_t const& ang::core::delegates::function_object<void(Ts...)>::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::core::delegates::function<"_s) += rtti::type_of<void(Ts...)>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::core::delegates::function<"_s) += rtti::type_of<void(Ts...)>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<object>(), &runtime::type_of<ifunction<void(Ts...)>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::core::delegates::function_object<void(Ts...)>), alignof(wsize), parents, &default_query_interface);
 	return info;

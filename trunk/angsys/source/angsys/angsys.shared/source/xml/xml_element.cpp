@@ -9,7 +9,7 @@
 /*********************************************************************************************************************/
 
 #include "pch.h"
-#include "ang/xml.hpp"
+#include <ang/dom/xml.h>
 
 #if defined _DEBUG
 #define NEW new(__FILE__, __LINE__)
@@ -20,216 +20,89 @@
 #endif
 
 using namespace ang;
-using namespace ang::xml;
+using namespace ang::dom::xml;
 
-
-ang::object_wrapper<xml_element>::object_wrapper() : _ptr(null) {
-
-}
-
-ang::object_wrapper<xml_element>::object_wrapper(xml_element* ptr) : _ptr(null) {
-	set(ptr);
-}
-
-ang::object_wrapper<xml_element>::object_wrapper(object_wrapper && other) : _ptr(null) {
-	xml_element * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
-}
-
-ang::object_wrapper<xml_element>::object_wrapper(object_wrapper const& other) : _ptr(null) {
-	set(other._ptr);
-}
-
-ang::object_wrapper<xml_element>::object_wrapper(std::nullptr_t const&)
-	: _ptr(null)
-{
-}
-
-ang::object_wrapper<xml_element>::~object_wrapper() {
-	clean();
-}
-
-void ang::object_wrapper<xml_element>::clean()
-{
-	iobject * _obj = interface_cast<iobject>(_ptr);
-	if (_obj)_obj->release();
-	_ptr = null;
-}
-
-bool ang::object_wrapper<xml_element>::is_empty()const
-{
-	return _ptr == null;
-}
-
-xml_element* ang::object_wrapper<xml_element>::get(void)const
-{
-	return _ptr;
-}
-
-void ang::object_wrapper<xml_element>::set(xml_element* ptr)
-{
-	if (ptr == _ptr) return;
-	iobject * _old = interface_cast<iobject>(_ptr);
-	iobject * _new = interface_cast<iobject>(ptr);
-	_ptr = ptr;
-	if (_new)_new->add_ref();
-	if (_old)_old->release();
-}
-
-ang::object_wrapper<xml_element>& ang::object_wrapper<xml_element>::operator = (xml_element* ptr)
-{
-	set(ptr);
-	return*this;
-}
-
-ang::object_wrapper<xml_element>& ang::object_wrapper<xml_element>::operator = (ang::object_wrapper<xml_element> && other)
-{
-	if (this == &other)
-		return *this;
-	clean();
-	_ptr = other._ptr;
-	other._ptr = null;
-	return*this;
-}
-
-ang::object_wrapper<xml_element>& ang::object_wrapper<xml_element>::operator = (ang::object_wrapper<xml_element> const& other)
-{
-	set(other._ptr);
-	return*this;
-}
-
-xml_element ** ang::object_wrapper<xml_element>::addres_of(void)
-{
-	return &_ptr;
-}
-
-ang::object_wrapper_ptr<xml_element> ang::object_wrapper<xml_element>::operator & (void)
-{
-	return this;
-}
-
-xml_element * ang::object_wrapper<xml_element>::operator -> (void)
-{
-	return get();
-}
-
-xml_element const* ang::object_wrapper<xml_element>::operator -> (void)const
-{
-	return get();
-}
-
-ang::object_wrapper<xml_element>::operator xml::xml_element * (void) { return _ptr; }
-
-ang::object_wrapper<xml_element>::operator xml::xml_element const* (void)const { return _ptr; }
-
-ang::object_wrapper<xml_element>::operator xml::xml_node_t (void)const { return _ptr; }
-
-ang::object_wrapper<xml_element>::operator xml::ixml_node_t(void)const { return _ptr; }
-
-ang::object_wrapper<xml_element>::operator xml::xml_text_t()const { return _ptr ? _ptr->xml_value() : null; }
-
-ixml_node_t object_wrapper<xml_element>::operator[](raw_str_t value)const
-{
-	xml_iterator_t it;
-	if (_ptr)
-	{
-		if (_ptr->xml_has_attributes())
-			it = _ptr->xml_attributes()->find(value);
-		if (!it.is_valid() && _ptr->xml_has_children())
-			it = _ptr->xml_children()->find(value);
-	}
-	return it.is_valid() ? (ixml_node*)it : null;
-}
+#define MY_TYPE ang::dom::xml::xml_element
+#include "ang/inline/object_wrapper_specialization.inl"
+#undef MY_TYPE
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-xml_element_t xml_element::create_new(const xml_element& element) {
-	xml_element_t node = NEW xml_element(element.xml_parent_doc());
-
-	if (!element._xml_name.is_empty())
-		node->push_name(element._xml_name);
-
-	if (!element._xml_content.is_empty() && element._xml_content->xml_is_type_of(xml_type_t::pcdata))
-		node->push_value(element._xml_content.get()->xml_as<xml_text>());
-	else if (!element._xml_content.is_empty() && element._xml_content->xml_is_type_of(xml_type_t::cdata))
-		node->push_data(element._xml_content.get()->xml_as<xml_text>());
-	else if (!element._xml_content.is_empty() && element._xml_content->xml_is_type_of(xml_type_t::element_list))
-		node->push_children(element._xml_content.get()->xml_as<ixml_store>());
-	if (element.xml_has_attributes())
-		node->push_attributes(element._xml_attributes);
-	return node;
-}
-
-xml_element_t xml_element::create_new(ixml_document_t doc, const xml_element* element) {
+xml_element_t xml_element::create_new(xml_document_t doc, const xml_element* element) {
 	xml_element_t node = NEW xml_element(doc);
 	if (element)
 	{
-		if (!element->_xml_name.is_empty())
-			node->push_name(element->_xml_name);
+		if (!element->m_name.is_empty())
+			node->push_name(element->m_name);
 
-		if (!element->_xml_content.is_empty() && element->_xml_content->xml_is_type_of(xml_type_t::pcdata))
-			node->push_value(element->_xml_content.get()->xml_as<xml_text>());
-		else if (!element->_xml_content.is_empty() && element->_xml_content->xml_is_type_of(xml_type_t::cdata))
-			node->push_data(element->_xml_content.get()->xml_as<xml_text>());
-		else if (!element->_xml_content.is_empty() && element->_xml_content->xml_is_type_of(xml_type_t::element_list))
-			node->push_children(element->_xml_content.get()->xml_as<ixml_store>());
+		if (!element->m_content.is_empty() && element->m_content->xml_is_type_of(xml_type::text))
+			node->push_value(element->m_content.get()->xml_as<xml_text>());
+		else if (!element->m_content.is_empty() && element->m_content->xml_is_type_of(xml_type::cdata))
+			node->push_data(element->m_content.get()->xml_as<xml_text>());
+		else if (!element->m_content.is_empty() && element->m_content->xml_is_type_of(xml_type::element_list))
+			node->push_children(element->m_content.get()->xml_as<ixml_collection>());
 		if (element->xml_has_attributes())
-			node->push_attributes(element->_xml_attributes);
+			node->push_attributes(element->m_attributes.get());
 	}
 	return node;
 }
 
-xml_element_t xml_element::create_new(ixml_document_t doc, wstring name) {
+xml_element_t xml_element::create_new(xml_document_t doc, ixml_text_t name) {
 	xml_element_t node = NEW xml_element(doc);
-	node->push_name(name.get());
+	node->push_name(name);
 	return node;
 }
 
-xml_element_t xml_element::create_new(ixml_document_t doc, wstring name, wstring value) {
+xml_element_t xml_element::create_new(xml_document_t doc, ixml_text_t name, ixml_text_t value) {
 	xml_element_t node = NEW xml_element(doc);
-	node->push_name(name.get());
-	node->push_value(value.get());
+	node->push_name(name);
+	node->push_value(value);
 	return node;
 }
 
 
-xml_element::xml_element(ixml_document_t doc)
-	: xml_node(doc, xml_type_t::element)
+xml_element::xml_element(xml_document_t doc)
+	: xml_node(doc, xml_type::element)
 {
 
 }
 
 xml_element::~xml_element()
 {
-	clean();
+	clear();
 }
 
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::xml::xml_element, xml_node);
-
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(xml_element);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::dom::xml::xml_element, xml_node);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(xml_element, xml_node);
 
 bool xml_element::xml_has_name()const
 {
-	return !_xml_name.is_empty();
+	return !m_name.is_empty();
+}
+
+bool xml_element::xml_has_namespace()const
+{
+	return !m_namespace.is_empty();
 }
 
 bool xml_element::xml_has_value()const
 {
-	return !_xml_content.is_empty() && _xml_content ->xml_is_type_of(xml_type_t::text);
+	return !m_content.is_empty() && m_content ->xml_is_type_of(xml_type::text);
 }
 
 bool xml_element::xml_has_children()const
 {
-	return !_xml_content.is_empty() && _xml_content->xml_is_type_of(xml_type_t::element_list);
+	return !m_content.is_empty() && m_content->xml_is_type_of(xml_type::element_list);
 }
 
 bool xml_element::xml_has_attributes()const
 {
-	return !_xml_attributes.is_empty();
+	return !m_attributes.is_empty();
 }
 
-ixml_node_t xml_element::xml_clone(ixml_document_t doc)const
+xml_node_t xml_element::xml_clone(xml_document_t doc)const
 {
 	return xml_element::create_new(doc, this);
 }

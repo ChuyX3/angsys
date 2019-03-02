@@ -9,7 +9,8 @@
 /*********************************************************************************************************************/
 #include "pch.h"
 #include "ang/dom/xml.h"
-//#include "ang_inlines.h"
+#include "xml/xml_internal.h"
+
 
 using namespace ang;
 using namespace ang::dom::xml;
@@ -23,386 +24,101 @@ using namespace ang::dom::xml;
 #endif
 
 
-ang::intf_wrapper<ixml_node>::intf_wrapper() : _ptr(null) {
+#define MY_TYPE ang::dom::xml::ixml_node
+#include "ang/inline/intf_wrapper_specialization.inl"
+#undef MY_TYPE
 
-}
-
-ang::intf_wrapper<ixml_node>::intf_wrapper(ixml_node* ptr) : _ptr(null) {
-	set(ptr);
-}
-
-ang::intf_wrapper<ixml_node>::intf_wrapper(intf_wrapper && other) : _ptr(null) {
-	ixml_node * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
-}
-
-ang::intf_wrapper<ixml_node>::intf_wrapper(intf_wrapper const& other) : _ptr(null) {
-	set(other._ptr);
-}
-
-ang::intf_wrapper<ixml_node>::intf_wrapper(std::nullptr_t const&)
-	: _ptr(null)
-{
-}
-
-ang::intf_wrapper<ixml_node>::~intf_wrapper() {
-	reset();
-}
-
-void ang::intf_wrapper<ixml_node>::reset()
-{
-	iobject * _obj = interface_cast<iobject>(_ptr);
-	if (_obj)_obj->release();
-	_ptr = null;
-}
-
-bool ang::intf_wrapper<ixml_node>::is_empty()const
-{
-	return _ptr == null;
-}
-
-ixml_node* ang::intf_wrapper<ixml_node>::get(void)const
-{
-	return _ptr;
-}
-
-void ang::intf_wrapper<ixml_node>::set(ixml_node* ptr)
-{
-	if (ptr == _ptr) return;
-	iobject * _old = interface_cast<iobject>(_ptr);
-	iobject * _new = interface_cast<iobject>(ptr);
-	_ptr = ptr;
-	if (_new)_new->add_ref();
-	if (_old)_old->release();
-}
-
-ang::intf_wrapper<ixml_node>& ang::intf_wrapper<ixml_node>::operator = (ixml_node* ptr)
-{
-	set(ptr);
-	return*this;
-}
-
-ang::intf_wrapper<ixml_node>& ang::intf_wrapper<ixml_node>::operator = (ang::intf_wrapper<ixml_node> && other)
-{
-	if (this == &other)
-		return *this;
-	clean();
-	_ptr = other._ptr;
-	other._ptr = null;
-	return*this;
-}
-
-ang::intf_wrapper<ixml_node>& ang::intf_wrapper<ixml_node>::operator = (ang::intf_wrapper<ixml_node> const& other)
-{
-	set(other._ptr);
-	return*this;
-}
-
-ixml_node ** ang::intf_wrapper<ixml_node>::addres_of(void)
-{
-	return &_ptr;
-}
-
-ang::intf_wrapper_ptr<ixml_node> ang::intf_wrapper<ixml_node>::operator & (void)
-{
-	return this;
-}
-
-ixml_node * ang::intf_wrapper<ixml_node>::operator -> (void)
-{
-	return get();
-}
-
-ixml_node const* ang::intf_wrapper<ixml_node>::operator -> (void)const
-{
-	return get();
-}
-
-ang::intf_wrapper<ixml_node>::operator xml::ixml_node * (void) { return _ptr; }
-
-ang::intf_wrapper<ixml_node>::operator xml::ixml_node const* (void)const { return _ptr; }
-
-ang::intf_wrapper<ixml_node>::operator xml::xml_text_t()const { return _ptr ? _ptr->xml_value() : null; }
-
-ixml_node_t intf_wrapper<ixml_node>::operator[](raw_str_t value)const
-{
-	xml_iterator_t it;
-	if (_ptr)
-	{
-		if (_ptr->xml_has_attributes())
-			it = _ptr->xml_attributes()->find(value);
-		if (!it.is_valid() && _ptr->xml_has_children())
-			it = _ptr->xml_children()->find(value);
-	}
-	return it.is_valid() ? (ixml_node*)it : null;
-}
-
+#define MY_TYPE ang::dom::xml::xml_node
+#include "ang/inline/object_wrapper_specialization.inl"
+#undef MY_TYPE
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-ang::object_wrapper<xml_node>::object_wrapper() : _ptr(null) {
-
-}
-
-ang::object_wrapper<xml_node>::object_wrapper(xml_node* ptr) : _ptr(null) {
-	set(ptr);
-}
-
-ang::object_wrapper<xml_node>::object_wrapper(object_wrapper && other) : _ptr(null) {
-	xml_node * temp = other._ptr;
-	other._ptr = null;
-	_ptr = temp;
-}
-
-ang::object_wrapper<xml_node>::object_wrapper(object_wrapper const& other) : _ptr(null) {
-	set(other._ptr);
-}
-
-ang::object_wrapper<xml_node>::object_wrapper(std::nullptr_t const&)
-	: _ptr(null)
+xml_node::xml_node(xml_document_t doc, xml_type_t type)
+	: m_type(type)
+	, m_parent(null)
+	, m_doc(doc)
+	, m_prev(null)
+	, m_next(null)
+	, m_name(null)
+	, m_content(null)
+	, m_namespace(null)
+	, m_attributes(null)
 {
-}
-
-ang::object_wrapper<xml_node>::~object_wrapper() {
-	clean();
-}
-
-void ang::object_wrapper<xml_node>::clean()
-{
-	iobject * _obj = interface_cast<iobject>(_ptr);
-	if (_obj)_obj->release();
-	_ptr = null;
-}
-
-bool ang::object_wrapper<xml_node>::is_empty()const
-{
-	return _ptr == null;
-}
-
-xml_node* ang::object_wrapper<xml_node>::get(void)const
-{
-	return _ptr;
-}
-
-void ang::object_wrapper<xml_node>::set(xml_node* ptr)
-{
-	if (ptr == _ptr) return;
-	iobject * _old = interface_cast<iobject>(_ptr);
-	iobject * _new = interface_cast<iobject>(ptr);
-	_ptr = ptr;
-	if (_new)_new->add_ref();
-	if (_old)_old->release();
-}
-
-ang::object_wrapper<xml_node>& ang::object_wrapper<xml_node>::operator = (xml_node* ptr)
-{
-	set(ptr);
-	return*this;
-}
-
-ang::object_wrapper<xml_node>& ang::object_wrapper<xml_node>::operator = (ang::object_wrapper<xml_node> && other)
-{
-	if (this == &other)
-		return *this;
-	clean();
-	_ptr = other._ptr;
-	other._ptr = null;
-	return*this;
-}
-
-ang::object_wrapper<xml_node>& ang::object_wrapper<xml_node>::operator = (ang::object_wrapper<xml_node> const& other)
-{
-	set(other._ptr);
-	return*this;
-}
-
-xml_node ** ang::object_wrapper<xml_node>::addres_of(void)
-{
-	return &_ptr;
-}
-
-ang::object_wrapper_ptr<xml_node> ang::object_wrapper<xml_node>::operator & (void)
-{
-	return this;
-}
-
-xml_node * ang::object_wrapper<xml_node>::operator -> (void)
-{
-	return get();
-}
-
-xml_node const* ang::object_wrapper<xml_node>::operator -> (void)const
-{
-	return get();
-}
-
-ang::object_wrapper<xml_node>::operator xml::xml_node * (void) { return _ptr; }
-
-ang::object_wrapper<xml_node>::operator xml::xml_node const* (void)const { return _ptr; }
-
-ang::object_wrapper<xml_node>::operator xml::ixml_node_t(void)const { return _ptr; }
-
-ang::object_wrapper<xml_node>::operator xml::xml_text_t()const { return _ptr ? _ptr->xml_value() : null; }
-
-ixml_node_t object_wrapper<xml_node>::operator[](raw_str_t value)const
-{
-	xml_iterator_t it;
-	if (_ptr)
-	{
-		if (_ptr->xml_has_attributes())
-			it = _ptr->xml_attributes()->find(value);
-		if (!it.is_valid() && _ptr->xml_has_children())
-			it = _ptr->xml_children()->find(value);
-	}
-	return it.is_valid() ? (ixml_node*)it : null;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-xml_node::xml_node(ixml_document_t doc, xml_type_t type)
-	: _xml_type(type)
-	, _xml_parent(null)
-	, _xml_parent_doc(doc)
-	, _xml_prev(null)
-	, _xml_next(null)
-	, _xml_name(null)
-	, _xml_attributes(null)
-{
-	_xml_content = null;
 }
 
 xml_node::~xml_node()
 {
-
+	//m_doc = null;
 }
 
-ANG_IMPLEMENT_CLASSNAME(ang::xml::xml_node);
-ANG_IMPLEMENT_OBJECTNAME(ang::xml::xml_node);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(xml_node);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::dom::xml::xml_node, object, ixml_node);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(xml_node, object, ixml_node, ixml_object);
 
-bool xml_node::is_inherited_of(type_name_t className)
+void xml_node::clear()
 {
-	if (className == type_of<xml_node>()
-		|| object::is_inherited_of(className)
-		|| ixml_node::is_inherited_of(className))
-		return true;
-	return false;
+	m_name = null;
+	m_attributes = null;
+	m_content = null;
+	m_doc = null;
 }
-
-bool xml_node::is_kind_of(type_name_t className)const
-{
-	if (className == type_of<xml_node>()
-		|| object::is_kind_of(className)
-		|| ixml_node::is_kind_of(className))
-		return true;
-	return false;
-}
-
-bool xml_node::query_object(type_name_t className, unknown_ptr_t out)
-{
-	if (out == null)
-		return false;
-	if (className == type_of<xml_node>())
-	{
-		*out = static_cast<xml_node*>(this);
-		return true;
-	}
-	else if (object::query_object(className, out))
-	{
-		return true;
-	}
-	else if (ixml_node::query_object(className, out))
-	{
-		return true;
-	}
-	return false;
-}
-
-void xml_node::clean()
-{
-	//_xml_parent;
-	//_xml_prev;
-	//_xml_next;
-	_xml_name = null;
-	_xml_attributes = null;
-	_xml_content = null;
-}
-
-//template<> xml_header_t xml_node::xml_as<xml_header>() { return xml_is_type_of(xml_type::header) ? static_cast<xml_header*>(this) : null; }
-//template<> xml_comment_t xml_node::xml_as<xml_comment>() { return xml_is_type_of(xml_type::comment) ? static_cast<xml_comment*>(this) : null; }
-//template<> xml_element_t xml_node::xml_as<xml_element>() { return xml_is_type_of(xml_type::element) ? static_cast<xml_element*>(this) : null; }
-//template<> xml_attribute_t xml_node::xml_as<xml_attribute>() { return xml_is_type_of(xml_type::attribute) ? static_cast<xml_attribute*>(this) : null; }
 
 xml_type_t xml_node::xml_type()const
 {
-	return _xml_type;
+	return m_type;
 }
 
 bool xml_node::xml_is_type_of(xml_type_t type)const
 {
-	return (_xml_type == type || xml_type_t::node == type);
+	return (m_type == type || xml_type::node == type);
 }
 
-wstring& xml_node::xml_print(wstring& stream, xml_format_t const& flag, ushort level)const
+streams::itext_output_stream_t& xml_node::xml_print(streams::itext_output_stream_t& stream, xml_format_t const& flag, ushort level)const
 {
-	switch (_xml_type)
+	switch (m_type)
 	{
-	case xml_type_t::header:
-	{
-		auto version = (xml_text_t)_xml_attributes["version"_s];
-		auto encoding = (xml_text_t)_xml_attributes["encoding"_s];
-		auto standalone = (xml_text_t)_xml_attributes["standalone"_s];
-		stream << L"<?xml "_s << L"version=\""_s << (wstring)version << L"\""_s;
-		stream << L" encoding="_s << L"\""_s << (encoding.is_empty() ? L"utf-8"_s : encoding->cstr()) << L"\""_s;
-		if (!standalone.is_empty())
-			stream << L" standalone=\""_s << (wstring)standalone << L"\""_s;
-		stream << L"?>"_s;
-	}
 	break;
-	case xml_type_t::element:
+	case xml_type::element:
 		if (xml_has_name())
 		{
-			if (flag.is_active(xml_format::wrap_text_tab))
+			if (flag & xml_format::wrap_text_tab)
 			{
 				for (index i = 0; i < level; i++)
 					stream << L"\t"_s;
 			}
-			else if (flag.is_active(xml_format::wrap_text_space))
+			else if (flag & xml_format::wrap_text_space)
 			{
 				for (index i = 0; i < level; i++)
 					stream << L"  "_s;
 			}
 
-			stream << L"<"_s << (wstring)_xml_name;
+			stream << L"<"_s << m_name->cstr();
 
 			if (xml_has_attributes())
 			{
 				stream << L" "_s;
-				_xml_attributes->xml_print(stream, flag, level);
+				m_attributes->xml_print(stream, flag, level);
 			}
 
-			if (!_xml_content.is_empty())
+			if (!m_content.is_empty())
 			{
 				stream << L">"_s;
-				_xml_content->xml_print(stream, flag, level + 1);
-				if (!_xml_content->xml_is_type_of(xml_type_t::pcdata))
+				m_content->xml_print(stream, flag, level + 1);
+				if (!m_content->xml_is_type_of(xml_type::text))
 				{	
 					stream << L"\n"_s;
-					if (flag.is_active(xml_format::wrap_text_tab))
+					if (flag & xml_format::wrap_text_tab)
 					{
 						for (index i = 0; i < level; i++)
 							stream << L"\t"_s;
 					}
-					else if (flag.is_active(xml_format::wrap_text_space))
+					else if (flag & xml_format::wrap_text_space)
 					{
 						for (index i = 0; i < level; i++)
 							stream << L"  "_s;
 					}
 				}
-				stream << L"</"_s << (wstring)_xml_name << L">"_s;
+				stream << L"</"_s << (xml_cstr_t)m_name << L">"_s;
 			}
 			else
 			{
@@ -410,38 +126,40 @@ wstring& xml_node::xml_print(wstring& stream, xml_format_t const& flag, ushort l
 			}
 		}
 		break;
-	case xml_type_t::comment:
-		if (flag.is_active(xml_format::wrap_text_tab))
+	case xml_type::comment:
+		if (flag & xml_format::wrap_text_tab)
 		{
 			for (index i = 0; i < level; i++)
 				stream << L"\t"_s;
 		}
-		else if (flag.is_active(xml_format::wrap_text_space))
+		else if (flag & xml_format::wrap_text_space)
 		{
 			for (index i = 0; i < level; i++)
 				stream << L"  "_s;
 		}
 		stream << L"<!--"_s;
-		if (xml_has_value()) _xml_content->xml_print(stream, flag, level + 1);
+		if (xml_has_value()) m_content->xml_print(stream, flag, level + 1);
 		else stream << " "_s;
 		stream << L"-->"_s;
 		break;
-	case xml_type_t::attribute:
+	case xml_type::attribute:
 		if (xml_has_name() && xml_has_value())
 		{
-			stream << (wstring)_xml_name;
-			xml_text_t val = _xml_content.get()->xml_as<xml_text>();
+			stream << (wstring)m_name;
+			ixml_text_t val = m_content.get()->xml_as<ixml_text>();
 			
 			if (val->find("\""_s, 0) != invalid_index)
 			{
 				stream << L"='"_s;
-				val->xml_print(stream, xml_format::none, 0);
+				stream << (xml_cstr_t)val;
+				//val->xml_print(stream, xml_format::none, 0);
 				stream << L"'"_s;
 			}
 			else
 			{
 				stream << L"=\""_s;
-				val->xml_print(stream, xml_format::none, 0);
+				stream << (xml_cstr_t)val;
+				//val->xml_print(stream, xml_format::none, 0);
 				stream << L"\""_s;
 			}
 		}
@@ -452,166 +170,269 @@ wstring& xml_node::xml_print(wstring& stream, xml_format_t const& flag, ushort l
 
 bool xml_node::xml_has_name()const { return false; }
 bool xml_node::xml_has_value()const { return false; }
+bool xml_node::xml_has_namespace()const { return false; }
 bool xml_node::xml_has_children()const { return false; }
 bool xml_node::xml_has_attributes()const { return false; }
 
-ixml_node_t xml_node::xml_parent()const
+xml_node_t xml_node::xml_parent()const
 {
-	return _xml_parent.lock();
+	return m_parent.lock();
 }
 
-ixml_document_t xml_node::xml_parent_doc()const
+xml_document_t xml_node::xml_parent_doc()const
 {
-	return _xml_parent_doc.lock();
+	return m_doc.lock();
 }
 
-ixml_node_t xml_node::xml_prev_sibling()const
+xml_node_t xml_node::xml_prev_sibling()const
 {
-	return _xml_prev;
+	return m_prev;
 }
 
-ixml_node_t xml_node::xml_next_sibling()const
+xml_node_t xml_node::xml_next_sibling()const
 {
-	return _xml_next;
+	return m_next;
 }
 
-void xml_node::xml_parent(ixml_node_t node)
+void xml_node::xml_parent(xml_node_t node)
 {
-	_xml_parent = node;
+	m_parent = node;
 }
 
 
-void xml_node::xml_prev_sibling(ixml_node_t node)
+void xml_node::xml_prev_sibling(xml_node_t node)
 {
-	if (_xml_prev == node) return;
-	auto _old = _xml_prev;
-	_xml_prev = (node) ? node->xml_as<xml_node>().get() : null;
-	if (_xml_prev)_xml_prev->add_ref();
+	if (m_prev == node) return;
+	auto _old = m_prev;
+	m_prev = (node) ? node->xml_as<xml_node>().get() : null;
+	if (m_prev)m_prev->add_ref();
 	if (_old)_old->release();
 }
 
 
-void xml_node::xml_next_sibling(ixml_node_t node)
+void xml_node::xml_next_sibling(xml_node_t node)
 {
-	if (_xml_next == node) return;
-	auto _old = _xml_next;
-	_xml_next = (node) ? node->xml_as<xml_node>().get() : null;
-	if(_xml_next)_xml_next->add_ref();
+	if (m_next == node) return;
+	auto _old = m_next;
+	m_next = (node) ? node->xml_as<xml_node>().get() : null;
+	if(m_next)m_next->add_ref();
 	if (_old)_old->release();
 }
 
-ixml_node_t xml_node::xml_first_child()const
+xml_node_t xml_node::xml_first_child()const
 {
-	if(_xml_content.is_empty() || !_xml_content->xml_is_type_of(xml_type::store))
+	if(m_content.is_empty() || !m_content->xml_is_type_of(xml_type::collection))
 		return null;
-	return *_xml_content.get()->xml_as<ixml_store>()->begin();
+	return *m_content.get()->xml_as<ixml_collection>()->begin();
 }
 
-ixml_node_t xml_node::xml_last_child()const
+xml_node_t xml_node::xml_last_child()const
 {
-	if (_xml_content.is_empty() || !_xml_content->xml_is_type_of(xml_type::store))
+	if (m_content.is_empty() || !m_content->xml_is_type_of(xml_type::collection))
 		return null;
-	return *_xml_content.get()->xml_as<ixml_store>()->rbegin();
+	return *m_content.get()->xml_as<ixml_collection>()->rbegin();
 }
 
-xml_text_t xml_node::xml_name()const
+ixml_text_view_t xml_node::xml_name()const
 {
-	return _xml_name.get();
+	return m_name.get();
 }
 
-xml_text_t xml_node::xml_value()const
+ixml_text_view_t xml_node::xml_value()const
 {
-	if (_xml_content.is_empty())
+	if (m_content.is_empty())
 		return null;
-	return _xml_content.get()->xml_as<xml_text>();
+	return m_content.get()->xml_as<xml_text>();
 }
 
-ixml_store_t xml_node::xml_children()const
+ixml_text_view_t xml_node::xml_namespace()const
 {
-	if (_xml_content.is_empty())
+	return m_namespace.get();
+}
+
+xml_node_t xml_node::xml_namespace(xml_cstr_t key)const
+{
+	try {
+		return m_ns_map[key].lock();
+	}
+	catch (exception_t const& e) {
+		xml_node_t parent = m_parent.lock();
+		return parent.is_empty() ? null : parent->xml_namespace(key);
+	}
+}
+
+ixml_collection_t xml_node::xml_children()const
+{
+	if (m_content.is_empty())
 		return null;
-	return _xml_content.get()->xml_as<ixml_store>();
+	return m_content.get()->xml_as<ixml_collection>();
 }
 
-ixml_attributes_t xml_node::xml_attributes()const
+xml_attributes_t xml_node::xml_attributes()const
 {
-	return _xml_attributes.get();
+	return m_attributes.get();
 }
 
-bool xml_node::push_name(wstring value)
+bool xml_node::push_data(xml_cstr_t value)
 {
-	if (_xml_type != xml_type::attribute
-		&& _xml_type != xml_type::element)
+	if (m_type != xml_type::element)
 		return false;
-	if(_xml_name.is_empty())
-		_xml_name = NEW xml_text();
-	_xml_name->move(value.get());
+	xml_document_t doc = xml_parent_doc();
+	xml_node_t child = NEW xml_cdata(doc);
+	child->push_value(doc->create_cdata(value));
+	return push_child(child);
+}
+
+bool xml_node::push_name(xml_cstr_t value)
+{
+	if (m_type != xml_type::attribute
+		&& m_type != xml_type::name_space
+		&& m_type != xml_type::element)
+		return false;
+	xml_document_t doc = m_doc.lock();
+	if (m_name.is_empty())
+		m_name = new xml_text(doc, doc->create_pcdata(value));
+	else
+		m_name->move(doc->create_pcdata(value));
 	return true;
 }
 
-bool xml_node::push_value(wstring value)
+bool xml_node::push_value(xml_cstr_t value)
 {
+	xml_document_t doc = xml_parent_doc();
 	if (xml_is_type_of(xml_type::attribute) || xml_is_type_of(xml_type::comment))
 	{
-		if (_xml_content.is_empty() || _xml_content->xml_is_type_of(xml_type::pcdata) || _xml_content->xml_is_type_of(xml_type::cdata))
-			_xml_content = NEW xml_text();
-		_xml_content->xml_as<xml_text>()->move(value.get());
+		if (m_content.is_empty())
+			m_content = NEW xml_text(doc, doc->create_pcdata(value));
+		else
+			m_content->xml_as<xml_text>()->move(doc->create_pcdata(value));
+		return true;
+	}
+	else if (xml_is_type_of(xml_type::cdata))
+	{
+		if (m_content.is_empty())
+			m_content = NEW xml_text(doc, doc->create_pcdata(value));
+		else
+			m_content->xml_as<xml_text>()->move(doc->create_pcdata(value));
 		return true;
 	}
 	else if (xml_is_type_of(xml_type::element))
 	{
-		if (_xml_content.is_empty() || !_xml_content->xml_is_type_of(xml_type::pcdata) )
-			_xml_content = NEW xml_pcdata();
-		_xml_content->xml_as<xml_text>()->move(value.get());
+		if (m_content.is_empty() || m_content->xml_is_type_of(xml_type::element_list))
+			m_content = NEW xml_text(doc, doc->create_pcdata(value));
+		else if (m_content->xml_is_type_of(xml_type::cdata))
+			m_content->xml_as<xml_cdata>()->push_value(doc->create_pcdata(value));
+		else if (m_content->xml_is_type_of(xml_type::text))
+			m_content->xml_as<xml_text>()->move(doc->create_pcdata(value));
+		else
+			return false;
 		return true;
 	}
 	return false;
 }
 
-bool xml_node::push_data(wstring value)
+bool xml_node::push_name(ixml_text_t value)
 {
-	if (_xml_type != xml_type::element)
+	if (m_type != xml_type::attribute
+		&& m_type != xml_type::name_space
+		&& m_type != xml_type::element)
 		return false;
-	if (_xml_content.is_empty() || !_xml_content->xml_is_type_of(xml_type::cdata))
-		_xml_content = NEW xml_cdata();
-	_xml_content->xml_as<xml_text>()->move(value.get());
+
+	if (m_name.is_empty())
+		m_name = new xml_text(m_doc.lock(), value);
+	else
+		m_name->move(value);
 	return true;
 }
 
-xml_iterator_t xml_node::push_attribute(xml_attribute_t attribute)
+bool xml_node::push_value(ixml_text_t value)
+{
+	xml_document_t doc = xml_parent_doc();
+	if (xml_is_type_of(xml_type::attribute) || xml_is_type_of(xml_type::comment))
+	{	
+		if (m_content.is_empty())
+			m_content = NEW xml_text(doc, value);
+		else
+			m_content->xml_as<xml_text>()->move(value);
+		return true;
+	}
+	else if (xml_is_type_of(xml_type::cdata))
+	{
+		if (m_content.is_empty())
+			m_content = NEW xml_text(doc, value);
+		else
+			m_content->xml_as<xml_text>()->move(value);
+		return true;
+	}
+	else if (xml_is_type_of(xml_type::element))
+	{
+		if (m_content.is_empty() || m_content->xml_is_type_of(xml_type::element_list))
+			m_content = NEW xml_text(doc, value);
+		else if (m_content->xml_is_type_of(xml_type::cdata))
+			m_content->xml_as<xml_cdata>()->push_value(value);
+		else if (m_content->xml_is_type_of(xml_type::text))
+			m_content->xml_as<xml_text>()->move(value);
+		else 
+			return false;
+		return true;
+	}
+	return false;
+}
+
+bool xml_node::push_data(ixml_text_t value)
+{
+	if (m_type != xml_type::element)
+		return false;
+	xml_document_t doc = xml_parent_doc();
+	xml_node_t child = NEW xml_cdata(doc);
+	child->push_value(value);
+	return push_child(child);
+}
+
+xml_iterator_t xml_node::push_attribute(xml_node_t attribute)
 {
 	if (attribute.is_empty())
 		return xml_iterator_t(null, null);
 
-	if (_xml_attributes.is_empty() || !_xml_attributes->xml_is_type_of(xml_type::attribute_list))
-		_xml_attributes = NEW xml_store(this, xml_type::attribute_list);
-	return _xml_attributes->xml_as<xml_store>()->push(attribute.get())
-		? xml_iterator_t(static_cast<ixml_store*>(_xml_attributes.get()), (ixml_node*)attribute.get())
+	if (attribute->xml_is_type_of(xml_type::name_space) && attribute->xml_has_name())
+	{
+		m_ns_map[attribute->xml_name()] = attribute.get();
+	}
+
+	if (m_attributes.is_empty() || !m_attributes->xml_is_type_of(xml_type::attribute_list))
+		m_attributes = NEW xml_collection(this, xml_type::attribute_list);
+	return m_attributes->xml_as<xml_collection>()->push(attribute.get())
+		? xml_iterator_t(static_cast<ixml_collection*>(m_attributes.get()), (xml_node*)attribute.get())
 		: xml_iterator_t(null, null);
 }
 
-xml_iterator_t xml_node::push_attribute(xml_attribute_t attribute, xml_iterator_t next)
+xml_iterator_t xml_node::push_attribute(xml_node_t attribute, xml_iterator_t next)
 {
 	if (attribute.is_empty())
 		return xml_iterator_t(null, null);
 
-	if (_xml_attributes.is_empty() || !_xml_attributes->xml_is_type_of(xml_type::attribute_list))
-		_xml_attributes = NEW xml_store(this, xml_type::attribute_list);
-	return _xml_attributes->xml_as<xml_store>()->insert(attribute.get(), next, true)
-		? xml_iterator_t(static_cast<ixml_store*>(_xml_attributes.get()), (ixml_node*)attribute.get())
+	if (attribute->xml_is_type_of(xml_type::name_space) && attribute->xml_has_name())
+	{
+		m_ns_map[attribute->xml_name()] = attribute.get();
+	}
+
+	if (m_attributes.is_empty() || !m_attributes->xml_is_type_of(xml_type::attribute_list))
+		m_attributes = NEW xml_collection(this, xml_type::attribute_list);
+	return m_attributes->xml_as<xml_collection>()->insert(attribute.get(), next, true)
+		? xml_iterator_t(static_cast<ixml_collection*>(m_attributes.get()), (xml_node*)attribute.get())
 		: xml_iterator_t(null, null);
 }
 
-bool xml_node::push_attributes(ixml_store_t attributes)
+bool xml_node::push_attributes(ixml_collection_t attributes)
 {
 	if (attributes.is_empty() || !attributes->xml_is_type_of(xml_type::attribute_list))
 		return false;
-	if (_xml_attributes.is_empty() || !_xml_attributes->xml_is_type_of(xml_type::attribute_list))
-		_xml_attributes = NEW xml_store(this, xml_type::element_list);
-	auto store = _xml_attributes->xml_as<xml_store>();
+	if (m_attributes.is_empty() || !m_attributes->xml_is_type_of(xml_type::attribute_list))
+		m_attributes = NEW xml_collection(this, xml_type::element_list);
+	auto collection = m_attributes->xml_as<xml_collection>();
 	auto doc = xml_parent_doc();
 	for (auto it = attributes->begin(); it != attributes->end(); it++)
-		store->push(it->xml_clone(doc));
+		collection->push(it->xml_clone(doc));
 	return true;
 }
 
@@ -621,10 +442,10 @@ xml_iterator_t xml_node::push_child(xml_node_t element)
 	if (element.is_empty() || (!element->xml_is_type_of(xml_type::element) && !element->xml_is_type_of(xml_type::comment)))
 		return xml_iterator_t(null, null);
 
-	if (_xml_content.is_empty() || !_xml_content->xml_is_type_of(xml_type::element_list))
-		_xml_content = NEW xml_store(this, xml_type::element_list);
-	return _xml_content->xml_as<xml_store>()->push(element.get())
-		? xml_iterator_t(static_cast<ixml_store*>(_xml_content.get()), (ixml_node*)element.get())
+	if (m_content.is_empty() || !m_content->xml_is_type_of(xml_type::element_list))
+		m_content = NEW xml_collection(this, xml_type::element_list);
+	return m_content->xml_as<xml_collection>()->push(element.get())
+		? xml_iterator_t(static_cast<ixml_collection*>(m_content.get()), (ixml_node*)element.get())
 		: xml_iterator_t(null, null);
 }
 
@@ -633,20 +454,20 @@ xml_iterator_t xml_node::push_child(xml_node_t element, xml_iterator_t next)
 	if (element.is_empty() || (!element->xml_is_type_of(xml_type::element) && !element->xml_is_type_of(xml_type::comment)))
 		return xml_iterator_t(null, null);
 
-	if (_xml_content.is_empty() || !_xml_content->xml_is_type_of(xml_type::element_list))
-		_xml_content = NEW xml_store(this, xml_type::element_list);
-	return _xml_content->xml_as<xml_store>()->insert(element.get(), next, true)
-		? xml_iterator_t(static_cast<ixml_store*>(_xml_content.get()), (ixml_node*)element.get())
+	if (m_content.is_empty() || !m_content->xml_is_type_of(xml_type::element_list))
+		m_content = NEW xml_collection(this, xml_type::element_list);
+	return m_content->xml_as<xml_collection>()->insert(element.get(), next, true)
+		? xml_iterator_t(static_cast<ixml_collection*>(m_content.get()), (ixml_node*)element.get())
 		: xml_iterator_t(null, null);
 }
 
-bool xml_node::push_children(ixml_store_t children)
+bool xml_node::push_children(ixml_collection_t children)
 {
 	if (children.is_empty() || !children->xml_is_type_of(xml_type::element_list))
 		return false;
-	if (_xml_content.is_empty() || !_xml_content->xml_is_type_of(xml_type::element_list))
-		_xml_content = NEW xml_store(this, xml_type::element_list);
-	auto store = _xml_content->xml_as<xml_store>();
+	if (m_content.is_empty() || !m_content->xml_is_type_of(xml_type::element_list))
+		m_content = NEW xml_collection(this, xml_type::element_list);
+	auto store = m_content->xml_as<xml_collection>();
 	auto doc = xml_parent_doc();
 	for (auto it = children->begin(); it != children->end(); it++)
 		store->push(it->xml_clone(doc));

@@ -6,32 +6,33 @@ namespace ang
 	{
 		namespace xml
 		{
-			template<xml_encoding E>
-			class xml_header final : public xml_node<E>, public ixml_header
+			class LINK xml_header final
+				: public xml_node
+				, public ixml_header
 			{
 			public:
-				static xml_header_ptr<E> create_new(const xml_header&);
-				static xml_header_ptr<E> create_new(xml_document_ptr<E>, const xml_header*);
-				static xml_header_ptr<E> create_new(xml_document_ptr<E>, strings::basic_string<E> version = "1.0"_s, bool standalone = true);
+				static xml_header_t create_new(xml_document_t);
+				static xml_header_t create_new(xml_document_t, const xml_header*);
+				static xml_header_t create_new(xml_document_t, xml_cstr_t version, bool standalone = true);
 
 			protected:
-				xml_header(xml_document_ptr<E>);
+				xml_header(xml_document_t);
 
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
-				ixml_node_t xml_clone(ixml_document_t)const override;
+				xml_node_t xml_clone(xml_document_t)const override;
 
 			public:
-				ixml_string_t xml_version()const;
+				ixml_text_view_t xml_version()const;
 				xml_encoding_t xml_encoding()const;
 				bool xml_stand_alone()const;
 
-				void version(strings::basic_string<E>);
+				void version(ixml_text_t);
 				void encoding(xml_encoding_t);
 				void is_stand_alone(bool);
 
-				void encoding(strings::basic_string<E>);
-				void is_stand_alone(strings::basic_string<E>);
+				void encoding(ixml_text_t);
+				void is_stand_alone(ixml_text_t);
 
 			private:
 				using xml_node::xml_has_name;

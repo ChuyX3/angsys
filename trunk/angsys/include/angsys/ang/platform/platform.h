@@ -407,7 +407,7 @@ namespace ang
 		public:
 			typedef colors::enum_t enum_t;
 
-			static color_t parse(raw_cstr_t);
+			static color_t parse(text::raw_cstr_t);
 
 		public:
 			color();

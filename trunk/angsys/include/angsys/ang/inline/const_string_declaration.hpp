@@ -1,10 +1,10 @@
-#ifndef __STRING_H__
+#ifndef __CONST_STRING_H__
 #error ...
 #else
 
 namespace ang
 {
-	namespace strings
+	namespace text
 	{
 		template<> class MY_LINKAGE basic_const_string_buffer<MY_ENCODING>
 			: public basic_const_string_buffer_base

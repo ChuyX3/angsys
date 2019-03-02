@@ -11,8 +11,8 @@
 #include "ang/dom/xml.h"
 #include "xml/xml_internal.h"
 
-#include "xml/inline/xml_node.inl"
-#include "xml/inline/xml_collection.inl"
+//#include "xml/inline/xml_node.inl"
+//#include "xml/inline/xml_collection.inl"
 
 using namespace ang;
 using namespace ang::dom;
@@ -21,11 +21,13 @@ using namespace ang::dom::xml;
 extern int ang_exceptions_regist_code(uint error_code, cstr_t error_message);
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_object, interface);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::collections::ienum<ang::dom::xml::ixml_node>, interface);
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_node, ixml_object);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_collection, ixml_object, collections::ienum<ang::dom::xml::ixml_node>);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_document, ixml_object, collections::ienum<ang::dom::xml::ixml_node>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_items, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_collection, ixml_object, ixml_items);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_document, ixml_object, ixml_items);
+
+
 
 //safe_enum_rrti2(ang::dom::xml, xml_type);
 
@@ -34,11 +36,9 @@ static collections::pair<ang::dom::xml::xml_type, cstr_t> s_xml_type_to_string_m
 	{ ang::dom::xml::xml_type::abstract, "abstract"_s },
 	{ ang::dom::xml::xml_type::text, "text"_s },
 	{ ang::dom::xml::xml_type::cdata, "cdata"_s },
-	{ ang::dom::xml::xml_type::pcdata, "pcdata"_s },
 	{ ang::dom::xml::xml_type::node, "node"_s },
-	{ ang::dom::xml::xml_type::store, "store"_s },
+	{ ang::dom::xml::xml_type::collection, "collection"_s },
 	{ ang::dom::xml::xml_type::tree, "tree"_s },
-	{ ang::dom::xml::xml_type::header, "header"_s },
 	{ ang::dom::xml::xml_type::element, "element"_s },
 	{ ang::dom::xml::xml_type::comment, "comment"_s },
 	{ ang::dom::xml::xml_type::attribute, "attribute"_s },
@@ -56,45 +56,70 @@ static collections::pair<cstr_t, ang::dom::xml::xml_type> s_xml_type_parsing_map
 	{ "attribute_list"_s, ang::dom::xml::xml_type::attribute_list },
 	{ "builder"_s, ang::dom::xml::xml_type::builder },
 	{ "cdata"_s, ang::dom::xml::xml_type::cdata },
+	{ "collection"_s, ang::dom::xml::xml_type::collection },
 	{ "comment"_s, ang::dom::xml::xml_type::comment },
 	{ "document"_s, ang::dom::xml::xml_type::document },
 	{ "element"_s, ang::dom::xml::xml_type::element },
 	{ "element_list"_s, ang::dom::xml::xml_type::element_list },
 	{ "finder"_s, ang::dom::xml::xml_type::finder },
-	{ "header"_s, ang::dom::xml::xml_type::header },
 	{ "node"_s, ang::dom::xml::xml_type::node },
-	{ "pcdata"_s, ang::dom::xml::xml_type::pcdata },
-	{ "store"_s, ang::dom::xml::xml_type::store },
 	{ "text"_s, ang::dom::xml::xml_type::text },
 	{ "tree"_s, ang::dom::xml::xml_type::tree },
 };
 
-
-ixml_document_t xml::xml_create_document(xml_encoding_t e, core::files::input_text_file_t file)
+template<> ixml_text_t ixml_object::xml_as<ixml_text>()const
 {
-	ixml_document_t doc;
-	
-	ixml_items_t items = new xml_element<xml_encoding::ascii>::xml_collection(null, xml_type::element_list);
+	return xml_is_type_of(xml_type::text) ? static_cast<xml_text*>(const_cast<ixml_object*>(this)) : null;
+}
 
-	switch (e.get())
-	{
-	case xml_encoding::ascii: doc = new xml_document<xml_encoding::ascii>(); break;
-	case xml_encoding::utf8: doc = new xml_document<xml_encoding::utf8>(); break;
-	case xml_encoding::utf16: doc = new xml_document<xml_encoding::utf16>(); break;
-	case xml_encoding::utf32: doc = new xml_document<xml_encoding::utf32>(); break;
-	case xml_encoding::unicode: doc = new xml_document<xml_encoding::unicode>(); break;
-	default:
-		return null;
-		break;
-	}
-	try {
-		doc->load(file);
-		return doc;
-	}
-	catch (exception_t const& e) {
-		return null;
-	}
-	
+template<> xml_text_t ixml_object::xml_as<xml_text>()const
+{
+	return xml_is_type_of(xml_type::text) ? static_cast<xml_text*>(const_cast<ixml_object*>(this)) : null;
+}
+
+template<> ixml_node_t ixml_object::xml_as<ixml_node>()const
+{
+	return xml_is_type_of(xml_type::node) ? static_cast<xml_node*>(const_cast<ixml_object*>(this)) : null;
+}
+
+template<> xml_node_t ixml_object::xml_as<xml_node>()const
+{
+	return xml_is_type_of(xml_type::node) ? static_cast<xml_node*>(const_cast<ixml_object*>(this)) : null;
+}
+
+template<> xml_attribute_t ixml_object::xml_as<xml_attribute>()const
+{
+	return xml_is_type_of(xml_type::attribute) ? static_cast<xml_attribute*>(const_cast<ixml_object*>(this)) : null;
+}
+
+template<> xml_comment_t ixml_object::xml_as<xml_comment>()const
+{
+	return xml_is_type_of(xml_type::comment) ? static_cast<xml_comment*>(const_cast<ixml_object*>(this)) : null;
+}
+
+template<> xml_element_t ixml_object::xml_as<xml_element>()const
+{
+	return xml_is_type_of(xml_type::element) ? static_cast<xml_element*>(const_cast<ixml_object*>(this)) : null;
+}
+
+template<> ixml_collection_t ixml_object::xml_as<ixml_collection>()const
+{
+	return xml_is_type_of(xml_type::collection) ? static_cast<xml_collection*>(const_cast<ixml_object*>(this)) : null;
+}
+
+template<> xml_collection_t ixml_object::xml_as<xml_collection>()const
+{
+	return xml_is_type_of(xml_type::collection) ? static_cast<xml_collection*>(const_cast<ixml_object*>(this)) : null;
+}
+
+template<> ixml_document_t ixml_object::xml_as<ixml_document>()const
+{
+	return xml_is_type_of(xml_type::document) ? static_cast<xml_document*>(const_cast<ixml_object*>(this)) : null;
+}
+
+template<> xml_document_t ixml_object::xml_as<xml_document>()const
+{
+	return xml_is_type_of(xml_type::document) ? static_cast<xml_document*>(const_cast<ixml_object*>(this)) : null;
 }
 
 
@@ -135,11 +160,3 @@ wstring xml_exception_code_t::to_string()const
 safe_flags_implement(ang::dom::xml, xml_format);
 
 ///////////////////////////////////////////////////////////////////
-
-#define MY_TYPE	ang::dom::xml::ixml_node
-#include "ang/inline/intf_wrapper_specialization.inl"
-#undef MY_TYPE
-
-intf_wrapper<ixml_node>::operator dom::xml::ixml_string_t()const {
-	return is_empty() || !m_ptr->xml_has_value() ? null : m_ptr->xml_name();
-}

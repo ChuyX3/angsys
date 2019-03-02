@@ -20,7 +20,7 @@ namespace ang
 		template<typename K, typename T>
 		struct __type_info_builder_genre_class_helper<collections::pair<K, T>, false> : true_type {
 			static rtti_t const& type_of() {
-				static const cstr_view<char> name = strings::string_pool::instance()->save_string((((string("ang::collections::pair<"_s) += rtti::type_of<K>().type_name()) += ","_s) += rtti::type_of<T>().type_name()) += ">"_s);
+				static const cstr_view<char> name = text::string_pool::instance()->save_string((((string("ang::collections::pair<"_s) += rtti::type_of<K>().type_name()) += ","_s) += rtti::type_of<T>().type_name()) += ">"_s);
 				static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<collections::pair<K, T>>(), align_of<collections::pair<K, T>>());
 				return info;
 			}
@@ -32,7 +32,7 @@ namespace ang
 template<typename T>
 inline ang::rtti_t const& ang::collections::ienum<T>::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::ienum<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::collections::ienum<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<interface>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::ienum<T>), alignof(wsize), parents, &default_query_interface);
 	return info;
@@ -41,7 +41,7 @@ inline ang::rtti_t const& ang::collections::ienum<T>::class_info()
 template<typename T>
 inline ang::rtti_t const& ang::collections::iarray<T>::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::iarray<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::collections::iarray<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<collections::ienum<T>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::iarray<T>), alignof(wsize), parents, &default_query_interface);
 	return info;
@@ -50,7 +50,7 @@ inline ang::rtti_t const& ang::collections::iarray<T>::class_info()
 template<typename T>
 inline ang::rtti_t const& ang::collections::ilist<T>::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::ilist<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::collections::ilist<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<collections::iarray<T>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::ilist<T>), alignof(wsize), parents, &default_query_interface);
 	return info;
@@ -59,7 +59,7 @@ inline ang::rtti_t const& ang::collections::ilist<T>::class_info()
 template<typename T>
 inline ang::rtti_t const& ang::collections::isequence<T>::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::isequence<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::collections::isequence<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<collections::ienum<T>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::isequence<T>), alignof(wsize), parents, &default_query_interface);
 	return info;
@@ -68,9 +68,29 @@ inline ang::rtti_t const& ang::collections::isequence<T>::class_info()
 template<typename K, typename T>
 inline ang::rtti_t const& ang::collections::imap<K, T>::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((((string("ang::collections::imap<"_s) += rtti::type_of<K>().type_name()) += ","_s)+= rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((((string("ang::collections::imap<"_s) += rtti::type_of<K>().type_name()) += ","_s)+= rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<collections::ienum<pair<K,T>>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::imap<K, T>), alignof(wsize), parents, &default_query_interface);
+	return info;
+}
+
+
+template<ang::text::encoding E, template<typename>class A, typename T>
+inline ang::rtti_t const& ang::collections::imap<ang::text::basic_string<E,A>, T>::class_info()
+{
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((((string("ang::collections::imap<"_s) += rtti::type_of<ang::text::basic_string<E, A>>().type_name()) += ","_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static rtti_t const* parents[] = { &runtime::type_of<collections::ienum<pair<text::basic_string<E,A>,T>>>() };
+	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::imap<text::basic_string<E, A>, T>), alignof(wsize), parents, &default_query_interface);
+	return info;
+}
+
+
+template<typename T>
+inline ang::rtti_t const& ang::collections::imap<ang::text::istring_view_t, T>::class_info()
+{
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::collections::imap<ang::text::istring_view_t,"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static rtti_t const* parents[] = { &runtime::type_of<collections::ienum<pair<text::istring_view_t,T>>>() };
+	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::imap<text::istring_view_t, T>), alignof(wsize), parents, &default_query_interface);
 	return info;
 }
 

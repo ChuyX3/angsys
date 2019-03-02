@@ -296,9 +296,9 @@ namespace ang
 			inline bool copy(const ienum_t*) override;
 			inline void extend(const ienum_t*) override;
 			inline bool insert(K, T) override;
-			inline bool insert(pair<K, T>) override;
-			inline bool update(K, T) override;
-			inline bool update(pair<K, T>) override;
+			inline iterator<type> insert(pair<K, T>) override;
+			inline iterator<type> update(K, T) override;
+			inline iterator<type> update(pair<K, T>) override;
 			inline bool remove(K const&) override;
 			inline bool remove(K const&, T&) override;
 			inline bool remove(base_iterator<pair<K, T>> it) override;

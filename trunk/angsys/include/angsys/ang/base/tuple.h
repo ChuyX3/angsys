@@ -73,8 +73,8 @@ namespace ang //constants
 		struct tuple<T> {
 			static constexpr wsize field_count = 1;
 
-			T& first() { return first_; }
-			T const& first()const { return first_; }
+			T& first() { return m_first; }
+			T const& first()const { return m_first; }
 
 			tuple<void> & rest() { return rest_; }
 			tuple<void> const& rest()const { return rest_; }
@@ -85,7 +85,7 @@ namespace ang //constants
 			}
 
 		private:
-			T first_;
+			T m_first;
 			static tuple<void> rest_;
 		};
 
@@ -93,8 +93,8 @@ namespace ang //constants
 		struct tuple {
 			static constexpr wsize field_count = tuple<Ts...>::field_count + 1;
 
-			T& first() { return first_; }
-			T const& first()const { return first_; }
+			T& first() { return m_first; }
+			T const& first()const { return m_first; }
 
 			tuple<Ts...>& rest() { return rest_; }
 			tuple<Ts...> const& rest()const { return rest_; }
@@ -105,7 +105,7 @@ namespace ang //constants
 			}
 
 		private:
-			T first_;
+			T m_first;
 			tuple<Ts...> rest_;
 		};
 

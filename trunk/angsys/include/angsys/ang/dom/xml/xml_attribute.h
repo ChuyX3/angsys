@@ -5,21 +5,20 @@ namespace ang
 	{
 		namespace xml
 		{
-			template<xml_encoding E>
-			class xml_attribute final : public xml_node<E>
+			class LINK xml_attribute final
+				: public xml_node
 			{
 			public:
-				static xml_attribute_ptr<E> create_new(const xml_attribute&);
-				static xml_attribute_ptr<E> create_new(xml_document_ptr<E>, const xml_attribute*);
-				static xml_attribute_ptr<E> create_new(xml_document_ptr<E>, strings::basic_string<E>, strings::basic_string<E>);
+				static xml_attribute_t create_new(xml_document_t, const xml_attribute*);
+				static xml_attribute_t create_new(xml_document_t, ixml_text_t, ixml_text_t);
 
 			protected:
-				xml_attribute(xml_document_ptr<E>);
+				xml_attribute(xml_document_t);
 
 			public:
 				ANG_DECLARE_INTERFACE();
 
-				ixml_node_t xml_clone(ixml_document_t)const override;
+				xml_node_t xml_clone(xml_document_t)const override;
 				bool xml_has_name()const override;
 				bool xml_has_value()const override;
 
@@ -42,21 +41,20 @@ namespace ang
 				friend xml_document;
 			};
 
-			template<xml_encoding E>
-			class xml_namespace final : public xml_node<E>
+			class LINK xml_namespace final
+				: public xml_node
 			{
 			public:
-				static xml_namespace_ptr<E> create_new(const xml_namespace&);
-				static xml_namespace_ptr<E> create_new(xml_document_ptr<E>, const xml_namespace*);
-				static xml_namespace_ptr<E> create_new(xml_document_ptr<E>, strings::basic_string<E>, strings::basic_string<E>);
+				static xml_namespace_t create_new(xml_document_t, const xml_namespace*);
+				static xml_namespace_t create_new(xml_document_t, ixml_text_t, ixml_text_t);
 
 			protected:
-				xml_namespace(xml_document_ptr<E>);
+				xml_namespace(xml_document_t);
 
 			public:
 				ANG_DECLARE_INTERFACE();
 
-				ixml_node_t xml_clone(ixml_document_t)const override;
+				xml_node_t xml_clone(xml_document_t)const override;
 				bool xml_has_name()const override;
 				bool xml_has_value()const override;
 
@@ -76,7 +74,7 @@ namespace ang
 				using xml_node::xml_next_sibling;
 
 				virtual~xml_namespace();
-				friend xml_document<E>;
+				friend xml_document;
 			};
 
 			

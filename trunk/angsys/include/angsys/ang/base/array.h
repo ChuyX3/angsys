@@ -27,45 +27,45 @@ namespace ang //constants
 			typedef T element_type;
 
 		private:
-			element_type* _data;
-			wsize _size;
+			element_type* m_data;
+			wsize m_size;
 
 		public:
-			array_view() : _size(0), _data(null) {}
-			array_view(wsize size, type val) : _size(size), _data(val) {}
-			array_view(nullptr_t const&) : _size(0), _data(null) {}
-			array_view(array_view const& other) : _size(other._size), _data(other._data) {}
-			array_view(array_view && other) : _size(ang::move(other._size)), _data(ang::move(other._data)) {}
+			array_view() : m_size(0), m_data(null) {}
+			array_view(wsize size, type val) : m_size(size), m_data(val) {}
+			array_view(nullptr_t const&) : m_size(0), m_data(null) {}
+			array_view(array_view const& other) : m_size(other.m_size), m_data(other.m_data) {}
+			array_view(array_view && other) : m_size(ang::move(other.m_size)), m_data(ang::move(other.m_data)) {}
 			template<wsize N>
-			array_view(T(&ar)[N]) : _size(N), _data(ar) { }
+			array_view(T(&ar)[N]) : m_size(N), m_data(ar) { }
 			~array_view() {}
 
 		public: /*getters and setters*/
-			type & get() { return _data; }
-			type const& get()const { return _data; }
-			void set(type val, wsize size) { _data = ang::move(val); _size = ang::move(size); }
-			type data()const { return _data; }
-			wsize size()const { return _size; }
+			type & get() { return m_data; }
+			type const& get()const { return m_data; }
+			void set(type val, wsize size) { m_data = ang::move(val); m_size = ang::move(size); }
+			type data()const { return m_data; }
+			wsize size()const { return m_size; }
 
 			type begin()const { 
 				static element_type _dummy_data[1];
-				return _data ? _data : _dummy_data;
+				return m_data ? m_data : _dummy_data;
 			}
 			type end()const { 
-				return _data ? _data + _size : begin();
+				return m_data ? m_data + m_size : begin();
 			}
 
 		public: /*operators*/
 			array_view& operator = (type val) { set(ang::move(val), 1u); return*this; }
-			array_view& operator = (array_view const& val) { set(val._data, val._size); return*this; }
-			array_view& operator = (array_view && val) { set(ang::move(val._data), ang::move(val._size)); return*this; }
+			array_view& operator = (array_view const& val) { set(val.m_data, val.m_size); return*this; }
+			array_view& operator = (array_view && val) { set(ang::move(val.m_data), ang::move(val.m_size)); return*this; }
 			template<wsize N> array_view& operator = (element_type(&ar)[N]) { set(ar, N); return*this; }
 
 			operator type& () { return get(); }
 			operator type ()const { return get(); }
 
-			template<typename I>element_type& operator [](I idx) { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return _data[idx]; }
-			template<typename I>element_type const& operator [](I idx)const { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return _data[idx]; }
+			template<typename I>element_type& operator [](I idx) { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return m_data[idx]; }
+			template<typename I>element_type const& operator [](I idx)const { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return m_data[idx]; }
 
 			element_type** operator & () { return &get(); }
 		};
@@ -87,7 +87,7 @@ namespace ang //constants
 			typedef T element_type;
 		private:
 			static constexpr wsize SIZE = _SIZE;
-			T _data[_SIZE];
+			T m_data[_SIZE];
 
 		public:
 			stack_array() { }
@@ -96,61 +96,61 @@ namespace ang //constants
 			template<wsize _OTHER_SIZE>
 			stack_array(const stack_array<T, _OTHER_SIZE>& other) {
 				for (windex i = 0; i < min<_OTHER_SIZE, _SIZE>(); ++i) {
-					_data[i] = other._data[i];
+					m_data[i] = other.m_data[i];
 				}
 			}
 
 			template<wsize N>
 			stack_array(T(&ar)[N]) {
 				for (windex i = 0; i < min<N, _SIZE>(); ++i) {
-					_data[i] = ar[i];
+					m_data[i] = ar[i];
 				}
 			}
 
 			template<wsize N>
 			stack_array(const T(&ar)[N]) {
 				for (windex i = 0; i < min<N, _SIZE>(); ++i) {
-					_data[i] = ar[i];
+					m_data[i] = ar[i];
 				}
 			}
 
 			~stack_array() {}
 
 		public: /*getters and setters*/
-			type get() { return &_data[0]; }
-			ctype get()const { return &_data[0]; }
+			type get() { return &m_data[0]; }
+			ctype get()const { return &m_data[0]; }
 
 			void copy(type val, wsize size) {
 				for (windex i = 0, c = min(size, _SIZE); i < c; ++i) {
-					_data[i] = val[i];
+					m_data[i] = val[i];
 				}
 			}
 
-			type data()const { return (type)_data; }
+			type data()const { return (type)m_data; }
 			constexpr wsize size()const { return _SIZE; }
 
-			type begin()const { return (type)_data; }
-			type end()const { return (type)_data + _SIZE; }
+			type begin()const { return (type)m_data; }
+			type end()const { return (type)m_data + _SIZE; }
 
 		public: /*operators*/
 			stack_array& operator = (stack_array && val) = default;
 			template<wsize _OTHER_SIZE>
 			stack_array& operator = (const stack_array<element_type, _OTHER_SIZE>& other) {
 				for (windex i = 0; i < min<_OTHER_SIZE, _SIZE>(); ++i) {
-					_data[i] = other._data[i];
+					m_data[i] = other.m_data[i];
 				}
 				return*this;
 			}
 			template<wsize N> stack_array& operator = (element_type(&ar)[N]) {
 				for (windex i = 0; i < min<N, _SIZE>(); ++i) {
-					_data[i] = ar[i];
+					m_data[i] = ar[i];
 				}
 				return*this;
 			}
 
 			template<wsize N> stack_array& operator = (const element_type(&ar)[N]) {
 				for (windex i = 0; i < min<N, _SIZE>(); ++i) {
-					_data[i] = ar[i];
+					m_data[i] = ar[i];
 				}
 				return*this;
 			}
@@ -159,8 +159,8 @@ namespace ang //constants
 			operator ctype ()const { return get(); }
 			operator array_view<T>()const { return array_view<T>(size(), get()); }
 
-			template<typename I>element_type& operator [](I idx) { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return _data[idx]; }
-			template<typename I>element_type const& operator [](I idx)const { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return _data[idx]; }
+			template<typename I>element_type& operator [](I idx) { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return m_data[idx]; }
+			template<typename I>element_type const& operator [](I idx)const { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return m_data[idx]; }
 
 			element_type** operator & () { return &get(); }
 		};
@@ -172,146 +172,146 @@ namespace ang //constants
 			typedef T element_type;
 
 		private:
-			element_type* _data; wsize _size;
+			element_type* m_data; wsize m_size;
 			allocator<element_type> alloc;
 
 		public:
-			scope_array() : _size(0), _data(null) { }
+			scope_array() : m_size(0), m_data(null) { }
 			scope_array(ang::nullptr_t const&) : scope_array() {}
 			scope_array(wsize sz, type val = null) : scope_array() {
-				_size = min(wsize(-1) / size_of<T>(), sz);
-				if (_size > 0) {
-					_data = alloc.allocate(_size);
-					if(val) for (windex i = 0; i < _size; ++i)
-						alloc.template construct<T, T const&>((T*)&_data[i], val[i]);
-					else for (windex i = 0; i < _size; ++i)
-						alloc.template construct<T>((T*)&_data[i]);
+				m_size = min(wsize(-1) / size_of<T>(), sz);
+				if (m_size > 0) {
+					m_data = alloc.allocate(m_size);
+					if(val) for (windex i = 0; i < m_size; ++i)
+						alloc.template construct<T, T const&>((T*)&m_data[i], val[i]);
+					else for (windex i = 0; i < m_size; ++i)
+						alloc.template construct<T>((T*)&m_data[i]);
 				}
 			}			
 			scope_array(scope_array const& other) : scope_array() {
-				_size = min(wsize(-1) / size_of<T>(), other._size);
-				if (_size > 0) {
-					_data = alloc.allocate(_size);
-					for (windex i = 0; i < _size; ++i)
-						alloc.template construct<T, T const&>((T*)&_data[i], other._data[i]);
+				m_size = min(wsize(-1) / size_of<T>(), other.m_size);
+				if (m_size > 0) {
+					m_data = alloc.allocate(m_size);
+					for (windex i = 0; i < m_size; ++i)
+						alloc.template construct<T, T const&>((T*)&m_data[i], other.m_data[i]);
 				}
 			}
 			scope_array(scope_array && other) : scope_array() {
-				_size = other._size;
-				_data = other._data;
-				other._size = 0;
-				other._data = null;
+				m_size = other.m_size;
+				m_data = other.m_data;
+				other.m_size = 0;
+				other.m_data = null;
 			}
 			template<typename U, wsize N>scope_array(U(&ar)[N]) : scope_array() {
-				_size = min(wsize(-1) / size_of<T>(), N);
-				if (_size > 0) {
-					_data = alloc.allocate(_size);
-					for (windex i = 0; i < _size; ++i)
-						alloc.template construct<T, U const&>((T*)&_data[i], ar[i]);
+				m_size = min(wsize(-1) / size_of<T>(), N);
+				if (m_size > 0) {
+					m_data = alloc.allocate(m_size);
+					for (windex i = 0; i < m_size; ++i)
+						alloc.template construct<T, U const&>((T*)&m_data[i], ar[i]);
 				}
 			}
 			template<typename U, wsize N>scope_array(const U(&ar)[N]) : scope_array() {
-				_size = min(wsize(-1) / size_of<T>(), N);
-				if (_size > 0) {
-					_data = alloc.allocate(_size);
-					for (windex i = 0; i < _size; ++i)
-						alloc.template construct<T, U const&>((T*)&_data[i], ar[i]);
+				m_size = min(wsize(-1) / size_of<T>(), N);
+				if (m_size > 0) {
+					m_data = alloc.allocate(m_size);
+					for (windex i = 0; i < m_size; ++i)
+						alloc.template construct<T, U const&>((T*)&m_data[i], ar[i]);
 				}
 			}
 			~scope_array() { clear(); }
 
 		public: /*getters and setters*/
-			type & get() { return _data; }
-			type const& get()const { return _data; }
+			type & get() { return m_data; }
+			type const& get()const { return m_data; }
 			void set(type val, wsize sz) {
 				clear();
-				_size = min(wsize(-1) / size_of<T>(), sz);
-				if (_size > 0) {
-					_data = alloc.allocate(_size);
-					for (windex i = 0; i < _size; ++i)
-						alloc.template construct<T, T const&>((T*)&_data[i], val[i]);
+				m_size = min(wsize(-1) / size_of<T>(), sz);
+				if (m_size > 0) {
+					m_data = alloc.allocate(m_size);
+					for (windex i = 0; i < m_size; ++i)
+						alloc.template construct<T, T const&>((T*)&m_data[i], val[i]);
 				}
 			}
 			void move(scope_array& other) {
 				if ((scope_array*)&other == this) return;
 				clear();
-				_size = other._size;
-				_data = other._data;
-				other._size = 0;
-				other._data = null;
+				m_size = other.m_size;
+				m_data = other.m_data;
+				other.m_size = 0;
+				other.m_data = null;
 			}
 			void move(array_view<T>& other) {
 				clear();
 				if (other.size() > 0)
-					_data = alloc.allocate(other.size());
-				_size = other.size();
+					m_data = alloc.allocate(other.size());
+				m_size = other.size();
 
-				for (windex i = 0; i < _size; ++i)
-					alloc.template construct<T, T&&>(&_data[i], ang::move(other.get()[i]));
+				for (windex i = 0; i < m_size; ++i)
+					alloc.template construct<T, T&&>(&m_data[i], ang::move(other.get()[i]));
 				other.set(null, 0);
 			}
 			template<typename U, template<typename> class allocator2> void copy(scope_array<U, allocator2> const& other) {
 				clear();
 				if (other.size() > 0)
-					_data = alloc.allocate(other.size());
-				_size = other.size();
-				for (windex i = 0; i < _size; ++i)
-					alloc.template construct<T, U const&>(&_data[i], other[i]);
+					m_data = alloc.allocate(other.size());
+				m_size = other.size();
+				for (windex i = 0; i < m_size; ++i)
+					alloc.template construct<T, U const&>(&m_data[i], other[i]);
 				other.set(null, 0);
 			}
 			template<typename U> void copy(array_view<U> const& other) {
 				clear();
 				if (other.size() > 0)
-					_data = alloc.allocate(other.size());
-				_size = other.size();
-				for (windex i = 0; i < _size; ++i)
-					alloc.template construct<T, U const&>(&_data[i], other[i]);
+					m_data = alloc.allocate(other.size());
+				m_size = other.size();
+				for (windex i = 0; i < m_size; ++i)
+					alloc.template construct<T, U const&>(&m_data[i], other[i]);
 			}
 			template<typename U, wsize N> void copy(U(&ar)[N]) {
-				clear(); _size = N;
-				if (_size > 0) {
-					_data = alloc.allocate(_size);
-					for (windex i = 0; i < _size; ++i)
-						alloc.template construct<T, U const&>((T*)&_data[i], ar[i]);
+				clear(); m_size = N;
+				if (m_size > 0) {
+					m_data = alloc.allocate(m_size);
+					for (windex i = 0; i < m_size; ++i)
+						alloc.template construct<T, U const&>((T*)&m_data[i], ar[i]);
 				}
 			}
 			template<typename U, wsize N> void copy(const U(&ar)[N]) {
-				clear(); _size = N;
-				if (_size > 0) {
-					_data = alloc.allocate(_size);
-					for (windex i = 0; i < _size; ++i)
-						alloc.template construct<T, U const&>((T*)&_data[i], ar[i]);
+				clear(); m_size = N;
+				if (m_size > 0) {
+					m_data = alloc.allocate(m_size);
+					for (windex i = 0; i < m_size; ++i)
+						alloc.template construct<T, U const&>((T*)&m_data[i], ar[i]);
 				}
 			}
 
-			type data()const { return _data; }
-			wsize size()const { return _size; }
+			type data()const { return m_data; }
+			wsize size()const { return m_size; }
 			void clear() {
-				if (_data) {
-					for (windex i = 0; i < _size; ++i)
-						alloc.template destroy<T>((T*)&_data[i]);
-					alloc.deallocate(_data);
+				if (m_data) {
+					for (windex i = 0; i < m_size; ++i)
+						alloc.template destroy<T>((T*)&m_data[i]);
+					alloc.deallocate(m_data);
 				}
-				_size = 0;
-				_data = null;
+				m_size = 0;
+				m_data = null;
 			}
 			type allocate(wsize size) {
 				clear(); 
 				if (size > 0) {
-					_size = size;
-					_data = alloc.allocate(_size);
-					for (index i = 0; i < _size; ++i)
-						alloc.template construct<T, T const&>((T*)&_data[i], default_value<T>::value);
+					m_size = size;
+					m_data = alloc.allocate(m_size);
+					for (index i = 0; i < m_size; ++i)
+						alloc.template construct<T, T const&>((T*)&m_data[i], default_value<T>::value);
 				}
-				return _data;
+				return m_data;
 			}
-			bool is_empty()const { return _size == 0; }
-			type begin()const { return _data; }
-			type end()const { return _data + _size; }
+			bool is_empty()const { return m_size == 0; }
+			type begin()const { return m_data; }
+			type end()const { return m_data + m_size; }
 
 		public: /*operators*/
 			scope_array& operator = (type val) { set(ang::move(val), 1u); return*this; }
-			scope_array& operator = (scope_array const& val) { set(val._data, val._size); return*this; }
+			scope_array& operator = (scope_array const& val) { set(val.m_data, val.m_size); return*this; }
 			scope_array& operator = (scope_array && val) { move(val); return*this; }
 			template<typename U, wsize N> scope_array& operator = (U(&ar)[N]) { copy(ar); return*this; }
 			template<typename U, wsize N> scope_array& operator = (const U(&ar)[N]) { copy(ar); return*this; }
@@ -320,8 +320,8 @@ namespace ang //constants
 			explicit operator type ()const { return get(); }
 			operator array_view<T>()const { return array_view<T>(size(), get()); }
 
-			template<typename I>element_type& operator [](I const& idx) { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return _data[idx]; }
-			template<typename I>element_type const& operator [](I const& idx)const { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return _data[idx]; }
+			template<typename I>element_type& operator [](I const& idx) { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return m_data[idx]; }
+			template<typename I>element_type const& operator [](I const& idx)const { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return m_data[idx]; }
 
 			element_type** operator & () { return &get(); }
 		};
@@ -343,8 +343,8 @@ namespace ang //constants
 			long64 mid;
 			while (first <= last) {
 				mid = (first + last) / 2;
-				if (operation<T, K>::operate(vec[mid], key)) last = mid - 1;
-				else if (operation<K, T>::operate(key, vec[mid])) first = mid + 1;
+				if (operation<T, K>::operate(vec[mid], key)) first = mid + 1;
+				else if (operation<K, T>::operate(key, vec[mid])) last = mid - 1;
 				else return (wsize)mid;
 			}
 			return (wsize)invalid_index;

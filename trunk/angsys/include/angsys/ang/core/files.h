@@ -176,15 +176,18 @@ namespace ang
 				bool is_eos()const override;
 				bool cursor(file_offset_t size, stream_reference_t ref)override;
 
-				uint seek(raw_cstr_t format)override;
-				uint read_format(raw_cstr_t format, var_args_t&)override;
+				uint seek(text::raw_cstr_t format)override;
+				uint read_format(text::raw_cstr_t format, var_args_t&)override;
 				wsize read(text::istring_t, wsize, wsize*written = null)override;
 				wsize read(text::unknown_str_t, wsize, text::encoding_t, wsize*written = null)override;
 				wsize read_line(text::istring_t, array_view<const char32_t> = U"\n\r", wsize* written = null)override;
 				wsize read_line(text::unknown_str_t, wsize, text::encoding_t, array_view<const char32_t> = U"\n\r", wsize* written = null)override;
 
+				bool map(function<bool(ibuffer_view_t)> func, wsize = -1, file_offset_t = 0);
+				//bool map(function<bool(text::istring_view_t)> func, wsize = -1, file_offset_t = 0);
+
 				template<text::encoding E, template<typename> class A>
-				wsize read(strings::basic_string<E, A>& str, wsize max) {
+				wsize read(text::basic_string<E, A>& str, wsize max) {
 					if (str.is_empty()) str = "";
 					max = ang::min(max, 1 << 10);
 					str->realloc(max, false);
@@ -196,7 +199,7 @@ namespace ang
 				}
 
 				template<text::encoding E, template<typename> class A>
-				wsize read_line(strings::basic_string<E, A>& str, wsize max, array_view<const char32_t> end = U"\n\r") {
+				wsize read_line(text::basic_string<E, A>& str, wsize max, array_view<const char32_t> end = U"\n\r") {
 					if (str.is_empty()) str = "";
 					max = ang::min(max, 1 << 10);
 					str->realloc(max, false);
@@ -209,12 +212,14 @@ namespace ang
 				}
 
 				template<typename C, text::encoding E> uint read_format(str_view<C, E> format, var_args_t& va) {
-					return read_format(raw_cstr(format), ang::forward<var_args_t&>(va));
+					return read_format(text::raw_cstr(format), ang::forward<var_args_t&>(va));
 				}
 				template<typename C, text::encoding E, typename...Ts> uint read_format(str_view<C, E> format, Ts&...args) {
 					var_args_t va = new var_args();
 					return streams::read_format_helper<input_text_file_t, C, E, Ts...>::read_format(this, format, va, args...);
 				}
+
+
 
 			private:
 				virtual~input_text_file();
@@ -238,9 +243,9 @@ namespace ang
 				bool cursor(file_offset_t size, stream_reference_t ref)override;
 
 				bool command(streams::special_command_t) override;
-				wsize write(raw_cstr_t)override;
-				wsize write_line(raw_cstr_t)override;
-				wsize write_format(raw_cstr_t, var_args_t)override;
+				wsize write(text::raw_cstr_t)override;
+				wsize write_line(text::raw_cstr_t)override;
+				wsize write_format(text::raw_cstr_t, var_args_t)override;
 				template<typename T> wsize write(T const& val) {
 					streams::write_text_helper<output_text_file_t, T>::write_text(this, val);
 				}

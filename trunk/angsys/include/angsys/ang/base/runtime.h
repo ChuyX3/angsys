@@ -50,16 +50,16 @@ namespace ang //constants
 			rtti_t& operator = (rtti_t&&) = delete;
 			rtti_t& operator = (const rtti_t&) = delete;
 
-			inline type_name_t const& type_name()const { return _type_name; }
-			inline type_id_t type_id()const { return (type_id_t)_type_name.cstr(); }
-			inline genre_t genre()const { return _genre; }
-			inline wsize size()const { return _size; }
-			inline wsize aligment()const { return _aligment; }
-			inline array_view<rtti_t const*> const& parents()const { return _parents; }
+			inline type_name_t const& type_name()const { return m_type_name; }
+			inline type_id_t type_id()const { return (type_id_t)m_type_name.cstr(); }
+			inline genre_t genre()const { return m_genre; }
+			inline wsize size()const { return m_size; }
+			inline wsize aligment()const { return m_aligment; }
+			inline array_view<rtti_t const*> const& parents()const { return m_parents; }
 			inline bool is_type_of(rtti_t const& id)const {
 				if (type_id() == id.type_id())
 					return true;
-				for (rtti_t const* type : _parents) {
+				for (rtti_t const* type : m_parents) {
 					if (type->is_type_of(id))
 						return true;
 				}
@@ -80,12 +80,12 @@ namespace ang //constants
 			}
 			template<typename To, typename From> static inline To* interface_cast(From* from) {
 				To* out = null;
-				type_of<From>()._dyn_cast(type_of<From>(), from, rtti::type_of<To>(), (unknown_ptr_t)&out);
+				type_of<From>().m_dyn_cast(type_of<From>(), from, rtti::type_of<To>(), (unknown_ptr_t)&out);
 				return out;
 			}
 			template<typename To, typename From> static inline To const* interface_cast(From const* from) {
 				To* out = null;
-				type_of<From>()._dyn_cast(type_of<From>(), const_cast<From*>(from), rtti::type_of<To>(), (unknown_ptr_t)&out);
+				type_of<From>().m_dyn_cast(type_of<From>(), const_cast<From*>(from), rtti::type_of<To>(), (unknown_ptr_t)&out);
 				return out;
 			}
 
@@ -95,20 +95,20 @@ namespace ang //constants
 			inline ~__type_info() {}
 		private:
 			inline __type_info(type_name_t name, genre_t g, wsize sz, wsize a, array_view<rtti_t const *> parents, dynamic_cast_proc cast) {
-				_type_name = name;
-				_genre = g;
-				_size = sz;
-				_aligment = a;
-				_parents = ang::move(parents);
-				_dyn_cast = cast;
+				m_type_name = name;
+				m_genre = g;
+				m_size = sz;
+				m_aligment = a;
+				m_parents = ang::move(parents);
+				m_dyn_cast = cast;
 			}
 
-			type_name_t _type_name;
-			genre_t _genre;
-			wsize _size;
-			wsize _aligment;
-			dynamic_cast_proc _dyn_cast;
-			array_view<rtti_t const*> _parents;
+			type_name_t m_type_name;
+			genre_t m_genre;
+			wsize m_size;
+			wsize m_aligment;
+			dynamic_cast_proc m_dyn_cast;
+			array_view<rtti_t const*> m_parents;
 		};
 
 		template<typename To, typename From, bool VALUE = is_same_type<To, From>::value || is_base_of<To, From>::value >

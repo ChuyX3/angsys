@@ -1,7 +1,7 @@
 #ifndef __ANG_DOM_XML_H__
 #error ...
-#elif !defined __ANG_DOM_XML_XML_TEXT_H__
-#define __ANG_DOM_XML_XML_TEXT_H__
+#elif !defined __ANG_DOM_XML_XML_CDATA_H__
+#define __ANG_DOM_XML_XML_CDATA_H__
 
 namespace ang
 {
@@ -9,21 +9,22 @@ namespace ang
 	{
 		namespace xml
 		{
-			template<xml_encoding E>
-			class xml_cdata final : public xml_node<E>
+
+			class LINK xml_cdata final
+				: public xml_node
 			{
 			public:
-				static xml_cdata_ptr<E> create_new(const xml_cdata<E>&);
-				static xml_cdata_ptr<E> create_new(xml_document_ptr<E>, const xml_cdata<E>*);
-				static xml_cdata_ptr<E> create_new(xml_document_ptr<E>, strings::basic_string<E>);
+				static xml_cdata_t create_new(const xml_cdata&);
+				static xml_cdata_t create_new(xml_document_t, const xml_cdata*);
+				static xml_cdata_t create_new(xml_document_t, ixml_text_t);
 
-			protected:
-				xml_cdata(xml_document_ptr<E>);
+			public:
+				xml_cdata(xml_document_t);
 
 			public:
 				ANG_DECLARE_INTERFACE();
 
-				ixml_node_t xml_clone(ixml_document_t)const override;
+				xml_node_t xml_clone(xml_document_t)const override;
 				bool xml_has_value()const override;
 
 			private:
@@ -48,4 +49,4 @@ namespace ang
 }
 
 
-#endif//__ANG_DOM_XML_XML_TEXT_H__
+#endif//__ANG_DOM_XML_XML_CDATA_H__

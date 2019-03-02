@@ -3,6 +3,18 @@
 
 using namespace ang;
 
+#define MY_TYPE ang::variable<int>
+#include "ang/inline/object_wrapper_specialization.inl"
+#undef MY_TYPE
+
+#define MY_TYPE ang::variable<long>
+#include "ang/inline/object_wrapper_specialization.inl"
+#undef MY_TYPE
+
+#define MY_TYPE ang::variable<long64>
+#include "ang/inline/object_wrapper_specialization.inl"
+#undef MY_TYPE
+
 namespace ang
 {
 	static char hexl[18] = { "0123456789abcdefx" };

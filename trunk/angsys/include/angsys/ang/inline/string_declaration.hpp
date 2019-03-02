@@ -4,7 +4,7 @@
 
 namespace ang
 {
-	namespace strings
+	namespace text
 	{
 		template<> class MY_LINKAGE basic_string_buffer<MY_ENCODING , MY_ALLOCATOR>
 			: public basic_string_buffer_base
@@ -63,7 +63,7 @@ namespace ang
 
 			template<typename...Ts>
 			void format(raw_cstr_t f, Ts... args) {
-				string_base::format(f, var_args_t({ ang::forward<Ts>(args)... }));
+				string_base::format(f, var_args_t(initializer_list<var>{ ang::forward<Ts>(args)... }));
 			}
 
 		private:
@@ -72,109 +72,109 @@ namespace ang
 	}
 
 
-	ANG_BEGIN_OBJECT_WRAPPER(MY_LINKAGE, strings::basic_string_buffer<MY_ENCODING COMA MY_ALLOCATOR>)
+	ANG_BEGIN_OBJECT_WRAPPER(MY_LINKAGE, text::basic_string_buffer<MY_ENCODING COMA MY_ALLOCATOR>)
 		visible scall const text::encoding ENCODING = MY_ENCODING;
 		template<typename T, typename...Ts> 
-		inline static ang::strings::basic_string<MY_ENCODING, MY_ALLOCATOR> format(ang::str_view<T, MY_ENCODING> f, Ts... args) {
-			ang::strings::basic_string<MY_ENCODING, MY_ALLOCATOR> str;
+		inline static ang::text::basic_string<MY_ENCODING, MY_ALLOCATOR> format(ang::str_view<T, MY_ENCODING> f, Ts... args) {
+			ang::text::basic_string<MY_ENCODING, MY_ALLOCATOR> str;
 			str->format(f, ang::forward<Ts>(args)...);
 			return str;
 		}
-		object_wrapper(strings::basic_const_string_buffer<MY_ENCODING>* str) : object_wrapper() {
-			set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
+		object_wrapper(text::basic_const_string_buffer<MY_ENCODING>* str) : object_wrapper() {
+			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 		}
-		object_wrapper(raw_cstr_t const& str) : object_wrapper() {
-			set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
+		object_wrapper(text::raw_cstr_t const& str) : object_wrapper() {
+			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 		}
 		template<typename T, text::encoding E> 
 		object_wrapper(str_view<T, E> const& str) : object_wrapper() {
-			set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
+			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 		}
 		template<text::encoding E>
-		object_wrapper(object_wrapper<strings::basic_string_buffer<E>> const& str) : object_wrapper() {
-			if(str) set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str->cstr()));
+		object_wrapper(object_wrapper<text::basic_string_buffer<E>> const& str) : object_wrapper() {
+			if(str) set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str->cstr()));
 		}
 		template<typename T, wsize N> 
 		object_wrapper(const T(&ar)[N]) : object_wrapper() {
-			set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(cstr_view<T>(ar)));
+			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(cstr_view<T>(ar)));
 		}	
 
-		object_wrapper& operator = (strings::basic_const_string_buffer<MY_ENCODING>* str) {
-			if (is_empty()) set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
+		object_wrapper& operator = (text::basic_const_string_buffer<MY_ENCODING>* str) {
+			if (is_empty()) set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 			else get()->set(str);
 			return *this;
 		}
 		template<typename T, text::encoding E>
 		object_wrapper& operator = (str_view<T, E> const& str) {
-			if(is_empty()) set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
+			if(is_empty()) set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 			else get()->copy(str);
 			return *this;
 		}
 		template<typename T, wsize N> 
 		object_wrapper& operator = (const T(&ar)[N]) {
-			if (is_empty()) set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(cstr_view<T>(ar)));
+			if (is_empty()) set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(cstr_view<T>(ar)));
 			else get()->copy(cstr_view<T>(ar));
 			return *this;
 		}
-		template<text::encoding E> object_wrapper& operator = (object_wrapper<strings::basic_string_buffer<E>> const& str) {
-			if (is_empty()) set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str->cstr()));
+		template<text::encoding E> object_wrapper& operator = (object_wrapper<text::basic_string_buffer<E>> const& str) {
+			if (is_empty()) set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str->cstr()));
 			else get()->copy(str->cstr());
 			return *this;
 		}
 		template<typename T, text::encoding E> 
 		object_wrapper& operator += (str_view<T, E> const& str) {
-			if (is_empty()) set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
+			if (is_empty()) set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 			else get()->concat(str);
 			return *this;
 		}
 		template<typename T, wsize N>
 		object_wrapper& operator += (const T(&ar)[N]) {
-			if (is_empty()) set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(cstr_view<T>(ar)));
+			if (is_empty()) set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(cstr_view<T>(ar)));
 			else get()->concat(cstr_view<T>(ar));
 			return *this;
 		}
 		template<text::encoding E>
-		object_wrapper& operator += (object_wrapper<strings::basic_string_buffer<E>> const& str) {
-			if (is_empty()) set(new strings::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str->cstr()));
+		object_wrapper& operator += (object_wrapper<text::basic_string_buffer<E>> const& str) {
+			if (is_empty()) set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str->cstr()));
 			else get()->concat(str->cstr());
 			return *this;
 		}
 
 		operator str_view<typename text::char_type_by_encoding<ENCODING>::char_t, ENCODING>(void) { return get()->str(); }
 		operator cstr_view<typename text::char_type_by_encoding<ENCODING>::char_t, ENCODING>(void)const { return get()->cstr(); }
-		explicit operator raw_str_t (void)const { return get()->str(); }
-		explicit operator raw_cstr_t (void)const { return get()->cstr(); }
+		explicit operator text::raw_str_t (void)const { return get()->str(); }
+		explicit operator text::raw_cstr_t (void)const { return get()->cstr(); }
 		template<typename I>typename text::char_type_by_encoding<ENCODING>::char_t& operator [](I idx) { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return get()->str()[idx]; }
 		template<typename I>typename text::char_type_by_encoding<ENCODING>::char_t const& operator [](I idx)const { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return get()->cstr()[idx]; }
 		template<text::encoding E> 
-		friend object_wrapper<strings::basic_string_buffer<ENCODING>> operator + 
-			(object_wrapper<strings::basic_string_buffer<ENCODING>> const& str1, object_wrapper<strings::basic_string_buffer<E>> const& str2) {
-			object_wrapper<strings::basic_string_buffer<ENCODING>> out = str1;
+		friend object_wrapper<text::basic_string_buffer<ENCODING>> operator + 
+			(object_wrapper<text::basic_string_buffer<ENCODING>> const& str1, object_wrapper<text::basic_string_buffer<E>> const& str2) {
+			object_wrapper<text::basic_string_buffer<ENCODING>> out = str1;
 			out += str2;
 			return ang::move(out);
 		}
 
-		template<typename T, text::encoding E> friend object_wrapper<strings::basic_string_buffer<ENCODING>> operator +
-			(object_wrapper<strings::basic_string_buffer<ENCODING>> const& str1, str_view<T, E> const& str2) {
-			object_wrapper<strings::basic_string_buffer<ENCODING>> out = str1;
+		template<typename T, text::encoding E> friend object_wrapper<text::basic_string_buffer<ENCODING>> operator +
+			(object_wrapper<text::basic_string_buffer<ENCODING>> const& str1, str_view<T, E> const& str2) {
+			object_wrapper<text::basic_string_buffer<ENCODING>> out = str1;
 			out += str2;
 			return ang::move(out);
 		}
 
-		template<typename T, text::encoding E> friend object_wrapper<strings::basic_string_buffer<ENCODING>> operator +
-			(str_view<T, E> const& str1, object_wrapper<strings::basic_string_buffer<ENCODING>> const& str2) {
-			object_wrapper<strings::basic_string_buffer<ENCODING>> out = str1;
+		template<typename T, text::encoding E> friend object_wrapper<text::basic_string_buffer<ENCODING>> operator +
+			(str_view<T, E> const& str1, object_wrapper<text::basic_string_buffer<ENCODING>> const& str2) {
+			object_wrapper<text::basic_string_buffer<ENCODING>> out = str1;
 			out += str2;
 			return ang::move(out);
 		}
 
-		template<text::encoding E> friend object_wrapper<strings::basic_string_buffer<ENCODING>>& operator <<
-			(object_wrapper<strings::basic_string_buffer<ENCODING>>& str1, object_wrapper<strings::basic_string_buffer<E>> const& str2) {
+		template<text::encoding E> friend object_wrapper<text::basic_string_buffer<ENCODING>>& operator <<
+			(object_wrapper<text::basic_string_buffer<ENCODING>>& str1, object_wrapper<text::basic_string_buffer<E>> const& str2) {
 			return str1 += str2;
 		}
 
-		template<typename T, text::encoding E> friend object_wrapper<strings::basic_string_buffer<ENCODING>>& operator <<
-			(object_wrapper<strings::basic_string_buffer<ENCODING>>& str1, str_view<T, E> const& str2) {
+		template<typename T, text::encoding E> friend object_wrapper<text::basic_string_buffer<ENCODING>>& operator <<
+			(object_wrapper<text::basic_string_buffer<ENCODING>>& str1, str_view<T, E> const& str2) {
 			return str1 += str2;	
 		}
 	ANG_END_OBJECT_WRAPPER();

@@ -91,7 +91,7 @@ inline ang::collections::vector_buffer<T, allocator>::~vector_buffer()
 template<typename T, template <typename> class allocator>
 inline ang::rtti_t const& ang::collections::vector_buffer<T, allocator>::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::collections::vector<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::collections::vector<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<ilist<T>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::vector_buffer<T, allocator>), alignof(ang::collections::vector_buffer<T, allocator>), parents, &default_query_interface);
 	return info;
@@ -1010,5 +1010,244 @@ inline T & ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::o
 #endif
 	return m_ptr->data()[idx];
 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper()
+	: m_ptr(null)
+{
+	set(new ang::collections::vector_buffer<ang::var, allocator>());
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(ang::collections::vector_buffer<ang::var, allocator>* ptr)
+	: m_ptr(null)
+{
+	set(ptr ? ptr : new ang::collections::vector_buffer<ang::var, allocator>());
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(std::nullptr_t const&)
+	: m_ptr(null)
+{
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(std::initializer_list<ang::var> list)
+	: m_ptr(null)
+{
+	set(new collections::vector_buffer<ang::var, allocator>(ang::move(list)));
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(const ang::collections::ienum<data_type>* store)
+	: m_ptr(null)
+{
+	set(new collections::vector_buffer<ang::var, allocator>(store));
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>> && ptr)
+	: object_wrapper<collections::vector_buffer<ang::var, allocator>>()
+{
+	if (ptr.is_empty())
+	{
+		set(new ang::collections::vector_buffer<ang::var, allocator>());
+	}
+	else
+	{
+		auto temp = ptr.m_ptr;
+		ptr.m_ptr = null;
+		m_ptr = temp;
+	}
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>> const& ptr)
+	: object_wrapper<collections::vector_buffer<ang::var, allocator>>()
+{
+	set(!ptr.is_empty() ? ptr.get() : new ang::collections::vector_buffer<ang::var, allocator>());
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::~object_wrapper()
+{
+	reset();
+}
+
+template<template <typename> class allocator>
+inline void ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::reset()
+{
+	if (m_ptr)
+		m_ptr->release();
+	m_ptr = null;
+}
+
+template<template <typename> class allocator>
+inline void ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::reset_unsafe()
+{
+	m_ptr = null;
+}
+
+template<template <typename> class allocator>
+inline bool ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::is_empty()const
+{
+	return m_ptr == null;
+}
+
+template<template <typename> class allocator>
+inline ang::collections::vector_buffer<ang::var, allocator>* ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::get(void)const
+{
+	return m_ptr;
+}
+
+template<template <typename> class allocator>
+inline void ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::set(ang::collections::vector_buffer<ang::var, allocator>* ptr)
+{
+	ang::collections::vector_buffer<ang::var, allocator> * temp = m_ptr;
+	if (ptr == m_ptr) return;
+	m_ptr = ptr;
+	if (m_ptr)m_ptr->add_ref();
+	if (temp)temp->release();
+}
+
+template<template <typename> class allocator>
+inline ang::collections::vector_buffer<ang::var, allocator>** ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::addres_of(void)
+{
+	return &m_ptr;
+}
+
+template<template <typename> class allocator>
+inline ang::collections::vector_buffer<ang::var, allocator>** ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::addres_for_init(void)
+{
+	reset();
+	return &m_ptr;
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator = (ang::collections::vector_buffer<ang::var, allocator>* ptr)
+{
+	set(ptr);
+	return*this;
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator = (const std::nullptr_t&)
+{
+	clear();
+	return*this;
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator = (ang::collections::ienum<data_type> const* items)
+{
+	if (m_ptr == null)
+		set(new collections::vector_buffer<ang::var, allocator>(items));
+	else
+		m_ptr->copy(items);
+	return *this;
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator = (ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>> && other)
+{
+	if (this == &other)
+		return *this;
+	reset();
+	m_ptr = other.m_ptr;
+	other.m_ptr = null;
+	return*this;
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator = (ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>> const& other)
+{
+	set(other.m_ptr);
+	return*this;
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator += (ang::var item)
+{
+	if (is_empty())
+		set(new collections::vector_buffer<ang::var, allocator>());
+	m_ptr->push(item);
+	return*this;
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator += (collections::ienum<data_type> const* items)
+{
+	if (is_empty())
+		set(new collections::vector_buffer<ang::var, allocator>(items));
+	else m_ptr->extend(items);
+	return*this;
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator += (object_wrapper const& items)
+{
+	if (is_empty())
+		set(new collections::vector_buffer<ang::var, allocator>(items.get()));
+	else m_ptr->extend((array_view<ang::var>)items);
+	return*this;
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper_ptr<ang::collections::vector_buffer<ang::var, allocator>> ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator & (void)
+{
+	return this;
+}
+
+template<template <typename> class allocator>
+inline ang::collections::vector_buffer<ang::var, allocator> * ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator -> (void)
+{
+	return get();
+}
+
+template<template <typename> class allocator>
+inline ang::collections::vector_buffer<ang::var, allocator> const* ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator -> (void)const
+{
+	return get();
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator ang::collections::vector_buffer<ang::var, allocator> * (void)
+{
+	return get();
+}
+
+template<template <typename> class allocator>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator ang::collections::vector_buffer<ang::var, allocator> const* (void)const
+{
+	return get();
+}
+
+template<template <typename> class allocator> template<typename I>
+inline ang::var const& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator[](I const& idx)const
+{
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->size()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return m_ptr->data()[idx];
+}
+
+template<template <typename> class allocator> template<typename I>
+inline ang::var & ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator[](I const& idx)
+{
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->size()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return m_ptr->data()[idx];
+}
+
 
 #endif//__ANG_VECTOR_INL__

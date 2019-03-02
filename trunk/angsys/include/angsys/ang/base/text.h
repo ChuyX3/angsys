@@ -319,41 +319,41 @@ namespace ang //constants
 		typedef typename text::char_type_by_encoding<ENCODING>::cstr_t cstr_t;
 
 
-		str_view() : size_(0), view_(nullptr) {
+		str_view() : m_size(0), m_view(nullptr) {
 		}
-		str_view(str_t str, wsize sz = -1) : size_(0), view_(nullptr) {
+		str_view(str_t str, wsize sz = -1) : m_size(0), m_view(nullptr) {
 			set(str, sz);
 		}
-		template<wsize SIZE> str_view(char_t(&str)[SIZE]) : size_(0), view_(nullptr) {
+		template<wsize SIZE> str_view(char_t(&str)[SIZE]) : m_size(0), m_view(nullptr) {
 			set(str, SIZE - 1);
 		}
 		wsize size()const {
-			return size_;
+			return m_size;
 		};
 		str_t str() {
-			return view_;
+			return m_view;
 		};
 		cstr_t cstr()const {
-			return view_;
+			return m_view;
 		};
 		void set(str_t str, wsize sz = -1) {
 			if (str) {
-				view_ = str;
-				size_ = (sz == wsize(-1)) ? size_ = text::encoder<ENCODING>::lenght(str) : sz;
+				m_view = str;
+				m_size = (sz == wsize(-1)) ? m_size = text::encoder<ENCODING>::lenght(str) : sz;
 			}
 			else {
-				view_ = nullptr;
-				size_ = 0;
+				m_view = nullptr;
+				m_size = 0;
 			}
 		}
 		sefl_t begin()const {
-			return sefl_t(view_, size_);
+			return sefl_t(m_view, m_size);
 		}
 		sefl_t end()const {
-			return sefl_t(view_ + size_, 0);
+			return sefl_t(m_view + m_size, 0);
 		}
 		sefl_t& operator = (sefl_t const& str) {
-			set(str.view_, str.size_);
+			set(str.m_view, str.m_size);
 			return*this;
 		}
 		sefl_t& operator = (str_t str) {
@@ -371,7 +371,7 @@ namespace ang //constants
 			return *cstr();
 		}
 		char_t** operator & () { 
-			return &view_;
+			return &m_view;
 		}
 		operator str_t () {
 			return str();
@@ -399,12 +399,12 @@ namespace ang //constants
 			return ang::move(ret);
 		}
 		friend sefl_t operator + (sefl_t const& str, wsize i) {
-			return sefl_t(str.view_ + i, str.size() - i);
+			return sefl_t(str.m_view + i, str.size() - i);
 		}
 
 	private:
-		str_t view_;
-		wsize size_;
+		str_t m_view;
+		wsize m_size;
 	};
 
 	template<typename T, text::encoding ENCODING_>
@@ -414,38 +414,38 @@ namespace ang //constants
 		typedef typename text::char_type_by_encoding<ENCODING>::char_t char_t;
 		typedef typename text::char_type_by_encoding<ENCODING>::cstr_t cstr_t;
 
-		str_view() : size_(0), view_(nullptr) {
+		str_view() : m_size(0), m_view(nullptr) {
 		}
-		str_view(cstr_t str, wsize sz = -1) : size_(0), view_(nullptr) {
+		str_view(cstr_t str, wsize sz = -1) : m_size(0), m_view(nullptr) {
 			set(str, sz);
 		}
-		template<wsize SIZE> str_view(const char_t(&str)[SIZE]) : size_(0), view_(nullptr) {
+		template<wsize SIZE> str_view(const char_t(&str)[SIZE]) : m_size(0), m_view(nullptr) {
 			set(str, SIZE - 1);
 		}
 		wsize size()const {
-			return size_;
+			return m_size;
 		};
 		cstr_t cstr()const {
-			return view_;
+			return m_view;
 		};
 		sefl_t begin()const {
-			return sefl_t(view_, size_);
+			return sefl_t(m_view, m_size);
 		}
 		sefl_t end()const {
-			return sefl_t(view_ + size_, 0);
+			return sefl_t(m_view + m_size, 0);
 		}
 		void set(cstr_t str, wsize sz = -1) {
 			if (str) {
-				view_ = str;
-				size_ = (sz == wsize(-1)) ? size_ = text::encoder<ENCODING>::lenght(str) : sz;
+				m_view = str;
+				m_size = (sz == wsize(-1)) ? m_size = text::encoder<ENCODING>::lenght(str) : sz;
 			}
 			else {
-				view_ = nullptr;
-				size_ = 0;
+				m_view = nullptr;
+				m_size = 0;
 			}
 		}
 		sefl_t& operator = (sefl_t const& str) {
-			set(str.view_, str.size_);
+			set(str.m_view, str.m_size);
 			return*this;
 		}
 		sefl_t& operator = (cstr_t str) {
@@ -460,7 +460,7 @@ namespace ang //constants
 			return *cstr();
 		}
 		char_t const** operator & () { 
-			return &view_;
+			return &m_view;
 		}
 		operator cstr_t () {
 			return cstr();
@@ -486,8 +486,8 @@ namespace ang //constants
 		}
 
 	private:
-		cstr_t view_;
-		wsize size_;
+		cstr_t m_view;
+		wsize m_size;
 	};
 
 

@@ -31,7 +31,7 @@ template<xml_encoding E>
 template<xml_encoding E>
 /*inline*/ ang::rtti_t const& xml_node<E>::xml_collection::class_info()
 {
-	static const cstr_view<char> name = strings::string_pool::instance()->save_string((string("ang::dom::xml::xml_collection<"_s) += xml_encoding_t(E).to_string()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::dom::xml::xml_collection<"_s) += xml_encoding_t(E).to_string()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<object>(), &runtime::type_of<ixml_collection>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<xml_node<E>::xml_collection>(), align_of<xml_node<E>::xml_collection>(), parents, &default_query_interface);
 	return info;
@@ -237,7 +237,7 @@ template<xml_encoding E>
 
 
 template<xml_encoding E>
-/*inline*/ xml_iterator_t xml_node<E>::xml_collection::find(raw_str_t value, bool invert)const {
+/*inline*/ xml_iterator_t xml_node<E>::xml_collection::find(xml_cstr_t value, bool invert)const {
 	ixml_node_t node;
 	if (invert)
 	{
@@ -263,7 +263,7 @@ template<xml_encoding E>
 }
 
 template<xml_encoding E>
-/*inline*/ xml_iterator_t xml_node<E>::xml_collection::find(raw_str_t value, xml_iterator_t next_to, bool invert)const {
+/*inline*/ xml_iterator_t xml_node<E>::xml_collection::find(xml_cstr_t value, xml_iterator_t next_to, bool invert)const {
 	ixml_node_t node = null;
 	if (next_to.is_valid() && next_to.parent() == this)
 		node = reinterpret_cast<xml_node*>(next_to.current());

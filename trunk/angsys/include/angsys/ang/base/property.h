@@ -1,5 +1,5 @@
 /*********************************************************************************************************************/
-/*   File Name: ang/base/value.h                                                                                     */
+/*   File Name: ang/base/property.h                                                                                     */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
 /*                                                                                                                   */
 /*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
@@ -29,35 +29,35 @@ namespace ang //constants
 	template<typename T, class owner, property_style TYPE>
 	class property {
 	public:
-		property(T val) : value(val) {}
-		const T& get()const { return value; }
-		void set(const T& val) { value = val; }
-		operator T &() { return value; }
-		operator T const&()const { return value; }
+		property(T val) : m_value(val) {}
+		const T& get()const { return m_value; }
+		void set(const T& val) { m_value = val; }
+		operator T &() { return m_value; }
+		operator T const&()const { return m_value; }
 		property& operator = (property const& val) { set(val.get()); return*this; }
 		property& operator = (T const& val) { set(val); return*this; }
-		T* operator ->()const { return const_cast<T*>(&value); }
+		T* operator ->()const { return const_cast<T*>(&m_value); }
 
 	protected:
-		typename ang::remove_constant<T>::type value;
+		typename ang::remove_constant<T>::type m_value;
 		friend owner;
 	};
 
 	template<typename T, class owner, property_style TYPE>
 	class property<const T, owner, TYPE> {
 	public:
-		property(T val) : value(val) {}
-		const T& get()const { return value; }
-		operator T const&()const { return value; }
-		T* operator ->()const { return const_cast<T*>(&value); }
+		property(T val) : m_value(val) {}
+		const T& get()const { return m_value; }
+		operator T const&()const { return m_value; }
+		T* operator ->()const { return const_cast<T*>(&m_value); }
 
 	protected:
-		void set(const T& val) { value = val; }
+		void set(const T& val) { m_value = val; }
 		property& operator = (property const& val) { set(val.get()); return*this; }
 		property& operator = (T const& val) { set(val); return*this; }
 
 	private:
-		typename ang::remove_constant<T>::type value;
+		typename ang::remove_constant<T>::type m_value;
 		friend owner;
 	};
 
@@ -65,17 +65,17 @@ namespace ang //constants
 	template<typename T, class owner, property_style TYPE>
 	class property<T*, owner, TYPE> {
 	public:
-		property(T val) : value(val) {}
-		const T& get()const { return value; }
-		void set(const T& val) { value = val; }
-		operator T &() { return value; }
-		operator T const&()const { return value; }
+		property(T val) : m_value(val) {}
+		const T& get()const { return m_value; }
+		void set(const T& val) { m_value = val; }
+		operator T &() { return m_value; }
+		operator T const&()const { return m_value; }
 		property& operator = (property const& val) { set(val.get()); return*this; }
 		property& operator = (T const& val) { set(val); return*this; }
-		T* operator ->()const { return const_cast<T*>(&value); }
+		T* operator ->()const { return const_cast<T*>(&m_value); }
 
 	protected:
-		typename ang::remove_constant<T>::type value;
+		typename ang::remove_constant<T>::type m_value;
 		friend owner;
 	};
 

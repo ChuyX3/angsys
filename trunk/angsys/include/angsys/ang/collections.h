@@ -139,10 +139,10 @@ namespace ang
 		ang_begin_interface_inline(imap, ienum<pair<K COMA T>>)
 			visible vcall bool copy(const ienum<pair<K, T>>*) pure;
 			visible vcall void extend(const ienum<pair<K, T>>*) pure;
-			visible vcall bool insert(K, T) pure;
-			visible vcall bool insert(pair<K, T>) pure;
-			visible vcall bool update(K, T) pure;
-			visible vcall bool update(pair<K, T>) pure;
+			visible vcall iterator<pair<K, T>> insert(K, T) pure;
+			visible vcall iterator<pair<K, T>> insert(pair<K, T>) pure;
+			visible vcall iterator<pair<K, T>> update(K, T) pure;
+			visible vcall iterator<pair<K, T>> update(pair<K, T>) pure;
 			visible vcall bool remove(K const&) pure;
 			visible vcall bool remove(K const&, T&) pure;
 			visible vcall bool remove(base_iterator<pair<K, T>> it) pure;
@@ -153,24 +153,45 @@ namespace ang
 		ang_end_interface();
 	
 		template<text::encoding E, template<typename>class A, typename T>
-		struct _DECLSPEC_NOVTABLE imap<strings::basic_string<E, A>, T>
-			: ienum<pair<strings::basic_string<E, A>, T>> {
+		struct _DECLSPEC_NOVTABLE imap<text::basic_string<E, A>, T>
+			: ienum<pair<text::basic_string<E, A>, T>> {
 			inline ANG_DECLARE_CLASS_INFO();
 			inline ANG_DECLARE_RUNTIME_INFO();
 			inline ANG_DECLARE_QUERY_INTERFACE();
-			visible vcall bool copy(const ienum<pair<strings::basic_string<E, A>, T>>*) pure;
-			visible vcall void extend(const ienum<pair<strings::basic_string<E, A>, T>>*) pure;
-			visible vcall bool insert(raw_cstr_t, T) pure;
-			visible vcall bool insert(pair<strings::basic_string<E, A>, T>) pure;
-			visible vcall bool update(raw_cstr_t, T) pure;
-			visible vcall bool update(pair<strings::basic_string<E, A>, T>) pure;
-			visible vcall bool remove(raw_cstr_t) pure;
-			visible vcall bool remove(raw_cstr_t, T&) pure;
-			visible vcall bool remove(base_iterator<pair<strings::basic_string<E, A>, T>> it) pure;
-			visible vcall bool remove(base_iterator<pair<strings::basic_string<E, A>, T>> it, T&) pure;
-			visible vcall bool has_key(raw_cstr_t)const pure;
-			visible vcall iterator<pair<strings::basic_string<E, A>, T>> find(raw_cstr_t) pure;
-			visible vcall const_iterator<pair<strings::basic_string<E, A>, T>> find(raw_cstr_t)const pure;
+			visible vcall bool copy(const ienum<pair<text::basic_string<E, A>, T>>*) pure;
+			visible vcall void extend(const ienum<pair<text::basic_string<E, A>, T>>*) pure;
+			visible vcall iterator<pair<text::basic_string<E, A>, T>> insert(text::raw_cstr_t, T) pure;
+			visible vcall iterator<pair<text::basic_string<E, A>, T>> insert(pair<text::basic_string<E, A>, T>) pure;
+			visible vcall iterator<pair<text::basic_string<E, A>, T>> update(text::raw_cstr_t, T) pure;
+			visible vcall iterator<pair<text::basic_string<E, A>, T>> update(pair<text::basic_string<E, A>, T>) pure;
+			visible vcall bool remove(text::raw_cstr_t) pure;
+			visible vcall bool remove(text::raw_cstr_t, T&) pure;
+			visible vcall bool remove(base_iterator<pair<text::basic_string<E, A>, T>> it) pure;
+			visible vcall bool remove(base_iterator<pair<text::basic_string<E, A>, T>> it, T&) pure;
+			visible vcall bool has_key(text::raw_cstr_t)const pure;
+			visible vcall iterator<pair<text::basic_string<E, A>, T>> find(text::raw_cstr_t) pure;
+			visible vcall const_iterator<pair<text::basic_string<E, A>, T>> find(text::raw_cstr_t)const pure;
+		};
+
+		template<typename T>
+		struct _DECLSPEC_NOVTABLE imap<text::istring_view_t, T>
+			: ienum<pair<text::istring_view_t, T>> {
+			inline ANG_DECLARE_CLASS_INFO();
+			inline ANG_DECLARE_RUNTIME_INFO();
+			inline ANG_DECLARE_QUERY_INTERFACE();
+			visible vcall bool copy(const ienum<pair<text::istring_view_t, T>>*) pure;
+			visible vcall void extend(const ienum<pair<text::istring_view_t, T>>*) pure;
+			visible vcall iterator<pair<text::istring_view_t, T>> insert(text::raw_cstr_t, T) pure;
+			visible vcall iterator<pair<text::istring_view_t, T>> insert(pair<text::istring_view_t, T>) pure;
+			visible vcall iterator<pair<text::istring_view_t, T>> update(text::raw_cstr_t, T) pure;
+			visible vcall iterator<pair<text::istring_view_t, T>> update(pair<text::istring_view_t, T>) pure;
+			visible vcall bool remove(text::raw_cstr_t) pure;
+			visible vcall bool remove(text::raw_cstr_t, T&) pure;
+			visible vcall bool remove(base_iterator<pair<text::istring_view_t, T>> it) pure;
+			visible vcall bool remove(base_iterator<pair<text::istring_view_t, T>> it, T&) pure;
+			visible vcall bool has_key(text::raw_cstr_t)const pure;
+			visible vcall iterator<pair<text::istring_view_t, T>> find(text::raw_cstr_t) pure;
+			visible vcall const_iterator<pair<text::istring_view_t, T>> find(text::raw_cstr_t)const pure;
 		};
 
 		template<typename T>

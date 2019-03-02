@@ -1,15 +1,120 @@
 #include "pch.h"
 #include "angsys.h"
 #include "format_parser.h"
+#include "string_factory.h"
 
 using namespace ang;
-using namespace ang::strings;
+using namespace ang::text;
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::istring, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::istring_view, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::istring, istring_view);
+
+#define MY_TYPE ang::text::istring_view
+#include "ang/inline/intf_wrapper_specialization.inl"
+#undef MY_TYPE
 
 #define MY_TYPE ang::text::istring
 #include "ang/inline/intf_wrapper_specialization.inl"
 #undef MY_TYPE
+
+//intf_wrapper<istring>::intf_wrapper(raw_str_t str)
+//	: m_ptr(null)
+//{
+//	istring_factory_t factory = istring_factory::get_factory(str.encoding());
+//	if (!factory.is_empty())
+//		set(factory->create_string(str));
+//}
+
+intf_wrapper<istring>::intf_wrapper(raw_cstr_t str)
+	: m_ptr(null)
+{
+	istring_factory_t factory = istring_factory::get_factory(str.encoding());
+	if (!factory.is_empty())
+		set(factory->create_string(str));
+}
+
+intf_wrapper<istring>::operator raw_cstr_t()const {
+#ifdef _DEBUG
+	return is_empty() ? raw_cstr() : m_ptr->cstr();
+#else
+	return m_ptr->cstr();
+#endif
+}
+
+char32_t intf_wrapper<istring>::operator [](windex i)const {
+	
+#ifdef _DEBUG
+	return is_empty() ? 0 : m_ptr->at(i);
+#else
+	return m_ptr->at(i);
+#endif
+}
+
+intf_wrapper<istring_view>::operator text::raw_cstr_t()const {
+#ifdef _DEBUG
+	return is_empty() ? raw_cstr() : m_ptr->cstr();
+#else
+	return m_ptr->cstr();
+#endif
+}
+
+char32_t intf_wrapper<istring_view>::operator [](windex i)const {
+#ifdef _DEBUG
+	return is_empty() ? 0 : m_ptr->at(i);
+#else
+	return m_ptr->at(i);
+#endif
+}
+
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::istring_factory, interface);
+
+#define MY_TYPE ang::text::istring_factory
+#include "ang/inline/intf_wrapper_specialization.inl"
+#undef MY_TYPE
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::string_factory<encoding::ascii>, object, istring_factory);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::string_factory<encoding::ascii>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::string_factory<encoding::ascii>, object, istring_factory);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::string_factory<encoding::unicode>, object, istring_factory);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::string_factory<encoding::unicode>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::string_factory<encoding::unicode>, object, istring_factory);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::string_factory<encoding::utf8>, object, istring_factory);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::string_factory<encoding::utf8>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::string_factory<encoding::utf8>, object, istring_factory);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::string_factory<encoding::utf16>, object, istring_factory);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::string_factory<encoding::utf16>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::string_factory<encoding::utf16>, object, istring_factory);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::string_factory<encoding::utf16_se>, object, istring_factory);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::string_factory<encoding::utf16_se>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::string_factory<encoding::utf16_se>, object, istring_factory);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::string_factory<encoding::utf16_le>, object, istring_factory);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::string_factory<encoding::utf16_le>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::string_factory<encoding::utf16_le>, object, istring_factory);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::string_factory<encoding::utf16_be>, object, istring_factory);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::string_factory<encoding::utf16_be>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::string_factory<encoding::utf16_be>, object, istring_factory);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::string_factory<encoding::utf32>, object, istring_factory);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::string_factory<encoding::utf32>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::string_factory<encoding::utf32>, object, istring_factory);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::string_factory<encoding::utf32_se>, object, istring_factory);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::string_factory<encoding::utf32_se>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::string_factory<encoding::utf32_se>, object, istring_factory);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::string_factory<encoding::utf32_le>, object, istring_factory);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::string_factory<encoding::utf32_le>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::string_factory<encoding::utf32_le>, object, istring_factory);
+
+template<> ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::text::string_factory<encoding::utf32_be>, object, istring_factory);
+template<> ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::string_factory<encoding::utf32_be>);
+template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::string_factory<encoding::utf32_be>, object, istring_factory);
 
 
 basic_string_buffer_base::basic_string_buffer_base()
@@ -26,9 +131,9 @@ basic_string_buffer_base::~basic_string_buffer_base()
 	//clear();
 }
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::strings::basic_string_buffer_base, object, istring, ibuffer);
-ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::strings::basic_string_buffer_base);
-ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::strings::basic_string_buffer_base, object, istring, ibuffer, ibuffer_view);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::basic_string_buffer_base, object, istring, ibuffer);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_string_buffer_base);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer_base, object, istring, ibuffer, ibuffer_view);
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -577,6 +682,14 @@ void basic_string_buffer_base::insert_format(windex, raw_cstr_t, var_args_t)
 
 }
 
+char32_t basic_string_buffer_base::at(windex i, wsize* sz)const
+{
+	windex idx = i;
+	char32_t c = m_encoder->to_char32(data(), idx, true);
+	if (sz) *sz = idx - i;
+	return c;
+}
+
 int basic_string_buffer_base::compare(raw_cstr_t str)const
 {
 	return m_encoder->compare(cstr().ptr(), str.ptr(), str.encoding());
@@ -599,11 +712,16 @@ windex basic_string_buffer_base::find_reverse(raw_cstr_t str, windex start, wind
 	return m_encoder->find_reverse(my_data.ptr(), min(my_data.count(), end), str.ptr(), str.count(), str.encoding(), start);
 }
 
-istring_t basic_string_buffer_base::sub_string(istring_t str, windex start, windex end)const
+istring_t basic_string_buffer_base::sub_string(istring_ptr_t out, windex start, windex end)const
 {
-	if (str.is_empty() || start >= end || start > length())
-		return str;
+	if (start >= end || start > length())
+		return null;
 
+	istring_t str = istring_factory::get_factory(encoding())->create_string();
+
+	if (!out.is_empty())
+		*out = str;
+	
 	auto encoder = iencoder::get_encoder(str->encoding());
 	auto my_data = cstr();
 	wsize cs = encoder->char_type().size();

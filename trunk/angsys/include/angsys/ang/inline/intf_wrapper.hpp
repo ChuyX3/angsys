@@ -331,8 +331,8 @@ namespace ang
 		weak_ptr(weak_ptr&& other) : safe_pointer((safe_pointer&&)other) {}
 		weak_ptr(weak_ptr const& other) : safe_pointer((safe_pointer const&)other) {}
 		weak_ptr(ang::nullptr_t const&) : safe_pointer(null) {}
-		weak_ptr(T* obj) : safe_pointer(obj) {}
-		weak_ptr(typename smart_ptr_type<T>::smart_ptr_t obj) : safe_pointer(obj.get()) {}
+		weak_ptr(T* obj) : safe_pointer(static_interface_cast(obj)) {}
+		weak_ptr(typename smart_ptr_type<T>::smart_ptr_t obj) : safe_pointer(static_interface_cast(obj.get())) {}
 		~weak_ptr() {}
 
 	public: //properties
@@ -341,8 +341,8 @@ namespace ang
 			return reinterpret_cast<T*>(ptr.get());
 		}
 
-		weak_ptr& operator = (typename smart_ptr_type<T>::smart_ptr_t obj) { safe_pointer::operator=(obj.get()); return *this; }
-		weak_ptr& operator = (T* obj) { safe_pointer::operator=(obj);  return *this; }
+		weak_ptr& operator = (typename smart_ptr_type<T>::smart_ptr_t obj) { safe_pointer::operator=(static_interface_cast(obj.get())); return *this; }
+		weak_ptr& operator = (T* obj) { safe_pointer::operator=(static_interface_cast(obj));  return *this; }
 		weak_ptr& operator = (weak_ptr&& other) { safe_pointer::operator=(other); return *this; }
 		weak_ptr& operator = (weak_ptr const& other) { safe_pointer::operator=(other);  return *this; }
 		weak_ptr& operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }

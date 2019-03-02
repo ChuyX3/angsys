@@ -3,6 +3,9 @@
 
 using namespace ang;
 
+#define MY_TYPE ang::variable<bool>
+#include "ang/inline/object_wrapper_specialization.inl"
+#undef MY_TYPE
 
 wstring variable<bool>::to_string(value<bool> val,text::text_format_t f_)
 {

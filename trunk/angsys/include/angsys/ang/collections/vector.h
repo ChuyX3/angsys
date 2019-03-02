@@ -172,8 +172,9 @@ namespace ang
 		template<typename U, wsize SIZE> inline object_wrapper(stack_array<U, SIZE> const& ar) : m_ptr(null) {
 			set(new type(ar));
 		}
-		object_wrapper(type*);
 		template<typename U> object_wrapper(ang::initializer_list<U> list);
+		object_wrapper(wsize reserve);
+		object_wrapper(type*);
 		object_wrapper(const collections::ienum<data_type>* store);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
@@ -228,6 +229,103 @@ namespace ang
 		operator array_view<T>()const { return m_ptr ? collections::to_array(m_ptr->data(), m_ptr->size()) : array_view<T>(); }
 		template<typename I>T& operator[](I const& idx);
 		template<typename I>T const& operator[](I const& idx)const;
+	};
+
+
+
+
+	/******************************************************************/
+	 /* template class ang::object_wrapper<vector_buffer> :             */
+	 /*  -> specialization of object_wrapper<vector_buffer> -> array    */
+	 /******************************************************************/
+	template<template<typename> class allocator>
+	class object_wrapper<collections::vector_buffer<var, allocator>>
+	{
+	public:
+		typedef collections::vector_buffer<var, allocator> type;
+		typedef typename collections::vector_buffer<var, allocator>::type data_type;
+
+	private:
+		type* m_ptr;
+
+	public:
+		object_wrapper();
+		template<typename U> inline object_wrapper(array_view<U> const& ar) : m_ptr(null) {
+			set(new type());
+			for (U& val : ar) {
+				get()->push(var(val));
+			}
+		}
+		template<typename U, template<typename> class allocator2> inline object_wrapper(scope_array<U, allocator2> const& ar) : m_ptr(null) {
+			set(new type());
+			for (U& val : ar) {
+				get()->push(var(val));
+			}
+		}
+		template<typename U, wsize SIZE> inline object_wrapper(stack_array<U, SIZE> const& ar) : m_ptr(null) {
+			set(new type());
+			for (U& val : ar) {
+				get()->push(var(val));
+			}
+		}
+		
+		object_wrapper(ang::initializer_list<var> list);
+		object_wrapper(wsize reserve);
+		object_wrapper(type*);
+		object_wrapper(const collections::ienum<data_type>* store);
+		object_wrapper(object_wrapper &&);
+		object_wrapper(object_wrapper const&);
+		object_wrapper(ang::nullptr_t const&);
+		template<typename U, wsize N>
+		object_wrapper(U(&ar)[N]) : m_ptr(null) {
+			set(new type(to_array(ar, N)));
+		}
+		~object_wrapper();
+
+	public:
+		void reset();
+		void reset_unsafe();
+		bool is_empty()const;
+		type* get(void)const;
+		void set(type*);
+		type** addres_of(void);
+		type** addres_for_init(void);
+
+		collections::forward_iterator<var> begin() { return m_ptr ? m_ptr->begin() : collections::iterator<var>(); }
+		collections::forward_iterator<var> end() { return m_ptr ? m_ptr->end() : collections::iterator<var>(); }
+		collections::forward_iterator<const var> begin()const { return m_ptr ? m_ptr->begin() : collections::iterator<const var>(); }
+		collections::forward_iterator<const var> end()const { return m_ptr ? m_ptr->end() : collections::iterator<const var>(); }
+
+	public:
+		object_wrapper& operator = (type*);
+		object_wrapper& operator = (const ang::nullptr_t&);
+		object_wrapper& operator = (collections::ienum<data_type> const* items);
+		object_wrapper& operator = (object_wrapper &&);
+		object_wrapper& operator = (object_wrapper const&);
+		template<wsize N>
+		object_wrapper& operator = (var(&ar)[N]) {
+			set(new type(to_array(ar, N)));
+			return *this;
+		}
+
+		object_wrapper& operator += (var items);
+		object_wrapper& operator += (collections::ienum<data_type> const* items);
+		object_wrapper& operator += (object_wrapper const&);
+		template<wsize N>
+		object_wrapper& operator += (var(&ar)[N]) {
+			if (is_empty())set(new type(to_array(ar, N)));
+			else m_ptr->extend(to_array(ar, N));
+			return *this;
+		}
+
+		object_wrapper_ptr<type> operator & (void);
+		type * operator -> (void);
+		type const* operator -> (void)const;
+		explicit operator type * (void);
+		explicit operator type const* (void)const;
+		operator array_view<var>()const { return m_ptr ? collections::to_array(m_ptr->data(), m_ptr->size()) : array_view<var>(); }
+		template<typename I>var& operator[](I const& idx);
+		template<typename I>var const& operator[](I const& idx)const;
 	};
 
 }//ang

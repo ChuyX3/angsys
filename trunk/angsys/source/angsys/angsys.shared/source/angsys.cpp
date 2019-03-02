@@ -17,6 +17,7 @@
 
 #include "encoder_interface.h"
 #include "format_parser.h"
+#include "string_factory.h"
 
 #include <ang/dom/xml.h>
 #include <ang/platform/platform.h>
@@ -96,7 +97,7 @@ namespace ang
 			free(thread_manager);
 			thread_manager = null;
 
-			strings::string_pool::release_instance();
+			text::string_pool::release_instance();
 
 			ascii_encoder = null;
 			unicode_encoder = null;
@@ -121,6 +122,18 @@ namespace ang
 			utf32_se_parser = null;
 			utf32_le_parser = null;
 			utf32_be_parser = null;
+
+			ascii_factory = null;
+			unicode_factory = null;
+			utf8_factory = null;
+			utf16_factory = null;
+			utf16_se_factory = null;
+			utf16_le_factory = null;
+			utf16_be_factory = null;
+			utf32_factory = null;
+			utf32_se_factory = null;
+			utf32_le_factory = null;
+			utf32_be_factory = null;
 			
 			objects->~object_manager();	
 			free(objects);			
@@ -162,6 +175,18 @@ namespace ang
 		text::iparser_t utf32_se_parser;
 		text::iparser_t utf32_le_parser;
 		text::iparser_t utf32_be_parser;
+
+		text::istring_factory_t ascii_factory;
+		text::istring_factory_t unicode_factory;
+		text::istring_factory_t utf8_factory;
+		text::istring_factory_t utf16_factory;
+		text::istring_factory_t utf16_se_factory;
+		text::istring_factory_t utf16_le_factory;
+		text::istring_factory_t utf16_be_factory;
+		text::istring_factory_t utf32_factory;
+		text::istring_factory_t utf32_se_factory;
+		text::istring_factory_t utf32_le_factory;
+		text::istring_factory_t utf32_be_factory;
 	};
 
 	static struct ang_main_instance_constructor
@@ -256,8 +281,6 @@ text::iencoder_t text::iencoder::get_encoder(text::encoding_t e)
 	}
 }
 
-
-
 text::iparser_t text::iparser::get_parser(text::encoding_t e)
 {
 	static struct _initializer
@@ -294,6 +317,41 @@ text::iparser_t text::iparser::get_parser(text::encoding_t e)
 	}
 }
 
+text::istring_factory_t text::istring_factory::get_factory(text::encoding_t e)
+{
+	static struct _initializer
+	{
+		_initializer() {
+			ang_main_instance::instance()->ascii_factory = new text::string_factory<text::encoding::ascii>();
+			ang_main_instance::instance()->unicode_factory = new text::string_factory<text::encoding::unicode>();
+			ang_main_instance::instance()->utf8_factory = new text::string_factory<text::encoding::utf8>();
+			ang_main_instance::instance()->utf16_factory = new text::string_factory<text::encoding::utf16>();
+			ang_main_instance::instance()->utf16_se_factory = new text::string_factory<text::encoding::utf16_se>();
+			ang_main_instance::instance()->utf16_le_factory = new text::string_factory<text::encoding::utf16_le>();
+			ang_main_instance::instance()->utf16_be_factory = new text::string_factory<text::encoding::utf16_be>();
+			ang_main_instance::instance()->utf32_factory = new text::string_factory<text::encoding::utf32>();
+			ang_main_instance::instance()->utf32_se_factory = new text::string_factory<text::encoding::utf32_se>();
+			ang_main_instance::instance()->utf32_le_factory = new text::string_factory<text::encoding::utf32_le>();
+			ang_main_instance::instance()->utf32_be_factory = new text::string_factory<text::encoding::utf32_be>();
+		}
+	}s_initializer;
+
+	switch (e.get())
+	{
+	case text::encoding::ascii: return ang_main_instance::instance()->ascii_factory;
+	case text::encoding::unicode: return ang_main_instance::instance()->unicode_factory;
+	case text::encoding::utf8: return ang_main_instance::instance()->utf8_factory;
+	case text::encoding::utf16: return ang_main_instance::instance()->utf16_factory;
+	case text::encoding::utf16_se: return ang_main_instance::instance()->utf16_se_factory;
+	case text::encoding::utf16_le: return ang_main_instance::instance()->utf16_le_factory;
+	case text::encoding::utf16_be: return ang_main_instance::instance()->utf32_be_factory;
+	case text::encoding::utf32: return ang_main_instance::instance()->utf32_factory;
+	case text::encoding::utf32_se: return ang_main_instance::instance()->utf32_se_factory;
+	case text::encoding::utf32_le: return ang_main_instance::instance()->utf32_le_factory;
+	case text::encoding::utf32_be: return ang_main_instance::instance()->utf32_be_factory;
+	default: return null;
+	}
+}
 
 static const ang_uint32_t list[] = {
 	7u,
@@ -327,7 +385,7 @@ wsize algorithms::hash_table_get_next_size(wsize size) {
 }
 
 
-long64 algorithms::hash_index_maker<raw_str_t>::make(raw_str_t const& key_, ulong64 TS)
+long64 algorithms::hash_index_maker<text::raw_str_t>::make(text::raw_str_t const& key_, ulong64 TS)
 {
 	ulong64 h = 75025;
 	
@@ -343,7 +401,7 @@ long64 algorithms::hash_index_maker<raw_str_t>::make(raw_str_t const& key_, ulon
 	return ang_uint64_t(h % TS);
 }
 
-long64 algorithms::hash_index_maker<raw_cstr_t>::make(raw_cstr_t const& key_, ulong64 TS)
+long64 algorithms::hash_index_maker<text::raw_cstr_t>::make(text::raw_cstr_t const& key_, ulong64 TS)
 {
 	ulong64 h = 75025;
 

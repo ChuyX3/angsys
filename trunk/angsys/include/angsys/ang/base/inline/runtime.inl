@@ -45,7 +45,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string("const "_s) += rtti::type_of<type>().type_name())
+					text::string_pool::instance()->save_string(string("const "_s) += rtti::type_of<type>().type_name())
 					, ang::genre::value_type, sizeof(type), alignof(type));
 				return info;
 			}
@@ -56,7 +56,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&"_s)
+					text::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&"_s)
 					, ang::genre::value_type, sizeof(type), alignof(type));
 				return info;
 			}
@@ -67,7 +67,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&&"_s)
+					text::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&&"_s)
 					, ang::genre::value_type, sizeof(type), alignof(type));
 				return info;
 			}
@@ -78,7 +78,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string((string("const "_s) += rtti::type_of<type>().type_name()) += "&"_s)
+					text::string_pool::instance()->save_string((string("const "_s) += rtti::type_of<type>().type_name()) += "&"_s)
 					, ang::genre::value_type, sizeof(type), alignof(type));
 				return info;
 			}
@@ -89,7 +89,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string(rtti::type_of<T>().type_name()) += "*"_s)
+					text::string_pool::instance()->save_string(string(rtti::type_of<T>().type_name()) += "*"_s)
 					, ang::genre::value_type, sizeof(type*), alignof(type*));
 				return info;
 			}
@@ -113,7 +113,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string("const "_s) += rtti::type_of<type>().type_name())
+					text::string_pool::instance()->save_string(string("const "_s) += rtti::type_of<type>().type_name())
 					, ang::genre::union_type, sizeof(type), alignof(type));
 				return info;
 			}
@@ -124,7 +124,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&"_s)
+					text::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&"_s)
 					, ang::genre::union_type, sizeof(type), alignof(type));
 				return info;
 			}
@@ -135,7 +135,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&&"_s)
+					text::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&&"_s)
 					, ang::genre::union_type, sizeof(type), alignof(type));
 				return info;
 			}
@@ -146,7 +146,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string((string("const "_s) += rtti::type_of<type>().type_name()) += "&"_s)
+					text::string_pool::instance()->save_string((string("const "_s) += rtti::type_of<type>().type_name()) += "&"_s)
 					, ang::genre::union_type, sizeof(type), alignof(type));
 				return info;
 			}
@@ -170,7 +170,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string("const "_s) += rtti::type_of<type>().type_name())
+					text::string_pool::instance()->save_string(string("const "_s) += rtti::type_of<type>().type_name())
 					, ang::genre::enum_type, sizeof(type), alignof(type));
 				return info;
 			}
@@ -181,7 +181,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&"_s)
+					text::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&"_s)
 					, ang::genre::enum_type, sizeof(type), alignof(type));
 				return info;
 			}
@@ -192,7 +192,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&&"_s)
+					text::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&&"_s)
 					, ang::genre::enum_type, sizeof(type), alignof(type));
 				return info;
 			}
@@ -203,7 +203,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string((string("const "_s) += rtti::type_of<type>().type_name()) += "&"_s)
+					text::string_pool::instance()->save_string((string("const "_s) += rtti::type_of<type>().type_name()) += "&"_s)
 					, ang::genre::enum_type, sizeof(type), alignof(type));
 				return info;
 			}
@@ -221,7 +221,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string("const "_s) += rtti::type_of<type>().type_name())
+					text::string_pool::instance()->save_string(string("const "_s) += rtti::type_of<type>().type_name())
 					, ang::genre::class_type, rtti::type_of<type>().size(), rtti::type_of<type>().aligment());
 				return info;
 			}
@@ -232,7 +232,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&"_s)
+					text::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&"_s)
 					, ang::genre::class_type, rtti::type_of<type>().size(), rtti::type_of<type>().aligment());
 				return info;
 			}
@@ -243,7 +243,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&&"_s)
+					text::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&&"_s)
 					, ang::genre::class_type, rtti::type_of<type>().size(), rtti::type_of<type>().aligment());
 				return info;
 			}
@@ -254,7 +254,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string((string("const "_s) += rtti::type_of<type>().type_name()) += "&"_s)
+					text::string_pool::instance()->save_string((string("const "_s) += rtti::type_of<type>().type_name()) += "&"_s)
 					, ang::genre::class_type, rtti::type_of<type>().size(), rtti::type_of<type>().aligment());
 				return info;
 			}
@@ -279,7 +279,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string("const "_s) += rtti::type_of<type>().type_name())
+					text::string_pool::instance()->save_string(string("const "_s) += rtti::type_of<type>().type_name())
 					, ang::genre::class_type, rtti::type_of<type>().size(), rtti::type_of<type>().aligment());
 				return info;
 			}
@@ -290,7 +290,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&"_s)
+					text::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&"_s)
 					, ang::genre::class_type, rtti::type_of<type>().size(), rtti::type_of<type>().aligment());
 				return info;
 			}
@@ -301,7 +301,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&&"_s)
+					text::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "&&"_s)
 					, ang::genre::class_type, rtti::type_of<type>().size(), rtti::type_of<type>().aligment());
 				return info;
 			}
@@ -312,7 +312,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string((string("const "_s) += rtti::type_of<type>().type_name()) += "&"_s)
+					text::string_pool::instance()->save_string((string("const "_s) += rtti::type_of<type>().type_name()) += "&"_s)
 					, ang::genre::class_type, rtti::type_of<type>().size(), rtti::type_of<type>().aligment());
 				return info;
 			}
@@ -333,7 +333,7 @@ namespace ang
 			static rtti_t const& type_of() {
 				typedef typename remove_reference<typename remove_constant<T>::type>::type type;
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "[]"_s)
+					text::string_pool::instance()->save_string(string(rtti::type_of<type>().type_name()) += "[]"_s)
 					, ang::genre::class_type, rtti::type_of<type>().size(), rtti::type_of<type>().aligment());
 				return info;
 			}
@@ -347,7 +347,7 @@ namespace ang
 		struct __type_info_builder_genre_function_helper<T(Ts...)> { 
 			static rtti_t const& type_of() {
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(((string(rtti::type_of<T>().type_name()) += "("_s) += runtime::args_list_type_name<Ts...>()) += ")"_s)
+					text::string_pool::instance()->save_string(((string(rtti::type_of<T>().type_name()) += "("_s) += runtime::args_list_type_name<Ts...>()) += ")"_s)
 					, genre::function_type, sizeof(wsize), alignof(wsize));
 				return info;
 			} 
@@ -357,7 +357,7 @@ namespace ang
 		struct __type_info_builder_genre_function_helper<T(*)(Ts...)> {
 			static rtti_t const& type_of() {
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(((string(rtti::type_of<T>().type_name()) += "(*)("_s) += runtime::args_list_type_name<Ts...>()) += ")"_s)
+					text::string_pool::instance()->save_string(((string(rtti::type_of<T>().type_name()) += "(*)("_s) += runtime::args_list_type_name<Ts...>()) += ")"_s)
 					, genre::function_type, sizeof(wsize), alignof(wsize));
 				return info;
 			}
@@ -368,7 +368,7 @@ namespace ang
 		struct __type_info_builder_genre_function_helper<T(__stdcall*)(Ts...)> {
 			static rtti_t const& type_of() {
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(((string(rtti::type_of<T>().type_name()) += "(__stdcall*)("_s) += runtime::args_list_type_name<Ts...>()) += ")"_s)
+					text::string_pool::instance()->save_string(((string(rtti::type_of<T>().type_name()) += "(__stdcall*)("_s) += runtime::args_list_type_name<Ts...>()) += ")"_s)
 					, genre::function_type, sizeof(wsize), alignof(wsize));
 				return info;
 			}
@@ -381,7 +381,7 @@ namespace ang
 		struct __type_info_builder_genre_function_helper<T(O::*)(Ts...)> {
 			static rtti_t const& type_of() {
 				rtti_t const& info = rtti::regist(
-					strings::string_pool::instance()->save_string(((((string(rtti::type_of<T>().type_name()) +="("_s ) += rtti::type_of<O>().type_name()) += "::*)("_s) += runtime::args_list_type_name<Ts...>()) += ")"_s)
+					text::string_pool::instance()->save_string(((((string(rtti::type_of<T>().type_name()) +="("_s ) += rtti::type_of<O>().type_name()) += "::*)("_s) += runtime::args_list_type_name<Ts...>()) += ")"_s)
 					, genre::function_type, sizeof(wsize), alignof(wsize));
 				return info;
 			}
@@ -394,7 +394,7 @@ template<typename... Ts>
 inline ang::type_name_t ang::runtime::args_list_type_name()
 {
 	static string out;
-	static type_name_t name = strings::string_pool::instance()->save_string(
+	static type_name_t name = text::string_pool::instance()->save_string(
 		args_list_type_name_builder<Ts...>(out)
 	);
 	return name;
