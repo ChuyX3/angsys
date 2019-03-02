@@ -81,74 +81,74 @@ namespace ang
 		private:
 			typedef linked_node<pair<K, T>> node_t, *node_ptr_t;
 
-			wsize _size;
+			wsize m_size;
 			allocator<node_t> alloc;
-			scope_array<node_ptr_t, allocator> _table;
+			scope_array<node_ptr_t, allocator> m_table;
 
 		public:
 			internal_hash_map() {
-				_size = 0;
-				_table.allocate(127);
+				m_size = 0;
+				m_table.allocate(127);
 			}
 			~internal_hash_map() {
 				clear();
 			}
 
 			inline void clear() {
-				for (wsize i = 0; i < _table.size() && _size > 0; ++i) {
-					node_ptr_t temp = _table[i];
-					_table[i] = null;
+				for (wsize i = 0; i < m_table.size() && m_size > 0; ++i) {
+					node_ptr_t temp = m_table[i];
+					m_table[i] = null;
 					while (temp) {
 						node_ptr_t to_delete = temp;
 						temp = temp->next;
 						alloc.template destroy<node_t>(to_delete);
 						alloc.deallocate(to_delete);
-						_size--;
+						m_size--;
 					}
 				}
-				_size = 0;
-				_table.clear();
+				m_size = 0;
+				m_table.clear();
 			}
 			template<typename F>inline void clear(F f) {
-				for (wsize i = 0; i < _table.size() && _size > 0; ++i) {
-					node_ptr_t temp = _table[i];
-					_table[i] = null;
+				for (wsize i = 0; i < m_table.size() && m_size > 0; ++i) {
+					node_ptr_t temp = m_table[i];
+					m_table[i] = null;
 					while (temp) {
 						node_ptr_t to_delete = temp;
 						temp = temp->next;
 						f(to_delete->data);
 						alloc.template destroy<node_t>(to_delete);
 						alloc.deallocate(to_delete);
-						_size--;
+						m_size--;
 					}
 				}
-				_size = 0;
-				_table.clear();
+				m_size = 0;
+				m_table.clear();
 			}
 			inline bool insert(K key, T value) {
-				if (_size > (_table.size() * 0.75))
+				if (m_size > (m_table.size() * 0.75))
 					increase_capacity();
 				if (find_node(key) != null)
 					return false;
 
 
-				ulong64 hash = hash_code_maker<K>::make(key, _table.size());
+				ulong64 hash = hash_code_maker<K>::make(key, m_table.size());
 				node_ptr_t entry = alloc.allocate(1);
 				alloc.template construct<node_t>(entry);
 				entry->data.key = key;
 				entry->data.value = value;
-				entry->next = _table[hash];
-				_table[hash] = entry;
-				_size++;
+				entry->next = m_table[hash];
+				m_table[hash] = entry;
+				m_size++;
 				return true;
 			}
 			inline bool remove(K key, T* out = null) {
-				if (_table.is_empty())
+				if (m_table.is_empty())
 					return false;
 
-				ulong64 hash = hash_code_maker<K>::make(key, _table.size());
+				ulong64 hash = hash_code_maker<K>::make(key, m_table.size());
 
-				node_ptr_t *prev = &_table[hash];
+				node_ptr_t *prev = &m_table[hash];
 				node_ptr_t temp = *prev;
 
 				while (temp != null) {
@@ -157,7 +157,7 @@ namespace ang
 						if (out)*out = temp->data.value;
 						alloc.template destroy<node_t>(temp);
 						alloc.deallocate(temp);
-						_size--;
+						m_size--;
 						return true;
 					}
 					prev = &temp->next;
@@ -165,19 +165,21 @@ namespace ang
 				}
 				return false;
 			}
-			inline bool is_empty()const { return _size == 0; }
-			inline bool contains(K key)const { return find_node(key) != null; }
+			inline bool is_empty()const { return m_size == 0; }
+			inline bool contains(K key)const {
+				return find_node(key) != null;
+			}
 			inline bool find(K key, T* out = null)const {
 				node_ptr_t node = find_node(key);
 				if (node == null) return false;
 				if (out)*out = node->data.value;
 				return true;
 			}
-			inline wsize size()const { return _size; }
+			inline wsize size()const { return m_size; }
 
 			template<typename F> inline void iterate(F const& callback)const {
-				for (windex i = 0; i < _size; i++) {
-					node_ptr_t temp = _table[i];
+				for (windex i = 0; i < m_size; i++) {
+					node_ptr_t temp = m_table[i];
 					while (temp != null) {
 						callback(temp->data);
 						temp = temp->next;
@@ -187,10 +189,10 @@ namespace ang
 
 		private:
 			node_ptr_t find_node(K const& key)const {
-				if (_table.size() == 0)
+				if (m_table.size() == 0)
 					return null;
-				ulong64 hash = hash_code_maker<K>::make(key, _table.size());
-				node_ptr_t temp = _table[hash];
+				ulong64 hash = hash_code_maker<K>::make(key, m_table.size());
+				node_ptr_t temp = m_table[hash];
 				while (temp != null) {
 					if (logic_operation<K, K, logic_operation_type::same>::operate(temp->data.key, key))
 						return temp;
@@ -201,26 +203,25 @@ namespace ang
 			void increase_capacity() {
 		
 				scope_array<node_ptr_t, allocator> new_data;
-				wsize new_size = algorithms::hash_table_get_next_size(_table.size() + 20);
+				wsize new_size = algorithms::hash_table_get_next_size(m_table.size() + 20);
 				new_data.allocate(new_size);
 			
-				if (!_table.is_empty() && _size)
+				if (!m_table.is_empty() && m_size)
 				{
-					for (wsize i = 0, s = _size; i < _table.size() && s > 0; ++i) {
-						node_ptr_t temp = _table[i];
-						_table[i] = null;
+					for (wsize i = 0; i < m_table.size(); ++i) {
+						node_ptr_t temp = m_table[i];
+						m_table[i] = null;
 						while (temp) {
-							ulong64 hash = hash_code_maker<K>::make(temp->data.key, _table.size());
+							ulong64 hash = hash_code_maker<K>::make(temp->data.key, new_data.size());
 							node_ptr_t entry = temp;
 							temp = temp->next;
 							entry->next = new_data[hash];
 							new_data[hash] = entry;
-							s--;
 						}
 					}
-					_table.clear();
+					m_table.clear();
 				}
-				_table.move(new_data);
+				m_table.move(new_data);
 			}
 		};
 
@@ -232,71 +233,71 @@ namespace ang
 		private:
 			typedef linked_node<T> node_t, *node_ptr_t;
 
-			wsize _size;
+			wsize m_size;
 			allocator<node_t> alloc;
-			scope_array<node_ptr_t, allocator> _table;
+			scope_array<node_ptr_t, allocator> m_table;
 
 		public:
 			internal_hash_set() {
-				_size = 0;
-				_table.allocate(127);
+				m_size = 0;
+				m_table.allocate(127);
 			}
 			~internal_hash_set() {
 				clear();
 			}
 
 			inline void clear() {
-				for (wsize i = 0; i < _table.size() && _size > 0; ++i) {
-					node_ptr_t temp = _table[i];
-					_table[i] = null;
+				for (wsize i = 0; i < m_table.size() && m_size > 0; ++i) {
+					node_ptr_t temp = m_table[i];
+					m_table[i] = null;
 					while (temp) {
 						node_ptr_t to_delete = temp;
 						temp = temp->next;
 						alloc.template destroy<node_t>(to_delete);
 						alloc.deallocate(to_delete);
-						_size--;
+						m_size--;
 					}
 				}
-				_size = 0;
-				_table.clear();
+				m_size = 0;
+				m_table.clear();
 			}
 			template<typename F>inline void clear(F f) {
-				for (wsize i = 0; i < _table.size() && _size > 0; ++i) {
-					node_ptr_t temp = _table[i];
-					_table[i] = null;
+				for (wsize i = 0; i < m_table.size() && m_size > 0; ++i) {
+					node_ptr_t temp = m_table[i];
+					m_table[i] = null;
 					while (temp) {
 						node_ptr_t to_delete = temp;
 						temp = temp->next;
 						f(to_delete->data);
 						alloc.template destroy<node_t>(to_delete);
 						alloc.deallocate(to_delete);
-						_size--;
+						m_size--;
 					}
 				}
-				_size = 0;
-				_table.clear();
+				m_size = 0;
+				m_table.clear();
 			}
 			inline bool insert(T value) {
-				if (_size > (_table.size() * 0.75))
+				if (m_size > (m_table.size() * 0.75))
 					increase_capacity();
 				if (find_node(value) != null)
 					return false;
-				ulong64 hash = hash_code_maker<T>::make(value, _table.size());
+				ulong64 hash = hash_code_maker<T>::make(value, m_table.size());
 				node_ptr_t entry = alloc.allocate(1);
 				alloc.template construct<node_t>(entry);
 				entry->data = ang::move(value);
-				entry->next = _table[hash];
-				_table[hash] = entry;
-				_size++;
+				entry->next = m_table[hash];
+				m_table[hash] = entry;
+				m_size++;
 				return true;
 			}
 			inline bool remove(T const& out) {
-				if (_table.is_empty())
+				if (m_table.is_empty())
 					return false;
 
-				ulong64 hash = hash_code_maker<T>::make(out, _table.size());
+				ulong64 hash = hash_code_maker<T>::make(out, m_table.size());
 
-				node_ptr_t *prev = &_table[hash];
+				node_ptr_t *prev = &m_table[hash];
 				node_ptr_t temp = *prev;
 
 				while (temp != null) {
@@ -305,7 +306,7 @@ namespace ang
 						if (out)*out = temp->data;
 						alloc.template destroy<node_t>(temp);
 						alloc.deallocate(temp);
-						_size--;
+						m_size--;
 						return true;
 					}
 					prev = &temp->next;
@@ -313,7 +314,7 @@ namespace ang
 				}
 				return false;
 			}
-			inline bool is_empty()const { return _size == 0; }
+			inline bool is_empty()const { return m_size == 0; }
 			inline bool contains(T const& value)const { return find_node(value) != null; }
 			inline bool find(T const& value, T* out = null)const {
 				node_ptr_t node = find_node(value);
@@ -321,11 +322,11 @@ namespace ang
 				if (out) *out = node->data;
 				return true;
 			}
-			inline wsize size()const { return _size; }
+			inline wsize size()const { return m_size; }
 
 			template<typename F> inline void iterate(F const& callback)const {
-				for (windex i = 0; i < _size; i++) {
-					node_ptr_t temp = _table[i];
+				for (windex i = 0; i < m_size; i++) {
+					node_ptr_t temp = m_table[i];
 					while (temp != null) {
 						callback(temp->data);
 						temp = temp->next;
@@ -335,10 +336,10 @@ namespace ang
 
 		private:
 			node_ptr_t find_node(T const& value)const {
-				if (_table.size() == 0)
+				if (m_table.size() == 0)
 					return null;
-				ulong64 hash = hash_code_maker<T>::make(value, _table.size());
-				node_ptr_t temp = _table[hash];
+				ulong64 hash = hash_code_maker<T>::make(value, m_table.size());
+				node_ptr_t temp = m_table[hash];
 				while (temp != null) {
 					if (logic_operation<T, T, logic_operation_type::same>::operate(temp->data, value))
 						return temp;
@@ -349,26 +350,25 @@ namespace ang
 			void increase_capacity() {
 
 				scope_array<node_ptr_t, allocator> new_data;
-				wsize new_size = algorithms::hash_table_get_next_size(_table.size() + 20);
+				wsize new_size = algorithms::hash_table_get_next_size(m_table.size() + 20);
 				new_data.allocate(new_size);
 
-				if (!_table.is_empty() && _size)
+				if (!m_table.is_empty() && m_size)
 				{
-					for (wsize i = 0, s = _size; i < _table.size() && s > 0; ++i) {
-						node_ptr_t temp = _table[i];
-						_table[i] = null;
+					for (wsize i = 0; i < m_table.size(); ++i) {
+						node_ptr_t temp = m_table[i];
+						m_table[i] = null;
 						while (temp) {
-							ulong64 hash = hash_code_maker<T>::make(temp->data, _table.size());
+							ulong64 hash = hash_code_maker<T>::make(temp->data, new_data.size());
 							node_ptr_t entry = temp;
 							temp = temp->next;
 							entry->next = new_data[hash];
 							new_data[hash] = entry;
-							s--;
 						}
 					}
-					_table.clear();
+					m_table.clear();
 				}
-				_table.move(new_data);
+				m_table.move(new_data);
 			}
 		};
 

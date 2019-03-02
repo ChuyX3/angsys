@@ -108,6 +108,7 @@ namespace ang
 
 	public:
 		object* find_info(object* o)const {
+			core::async::scope_locker<core::async::mutex> lock(m_mutex);
 			object* out = null;
 			if (map.find((intptr_t)o, &out))
 				return out;
@@ -115,19 +116,22 @@ namespace ang
 		}
 
 		object* push(object* o) {
-			if (map.insert((intptr_t)o, o))
+			core::async::scope_locker<core::async::mutex> lock(m_mutex);
+			if (map.insert(reinterpret_cast<intptr_t>(o), o))
 				return o;
 			return null;
 		}
 
 		object* pop(object* o) {
+			core::async::scope_locker<core::async::mutex> lock(m_mutex);
 			object* out = null;
-			if (map.remove((intptr_t)o, &out))
+			if (map.remove(reinterpret_cast<intptr_t>(o), &out))
 				return out;
 			return null;
 		}
 
 	private:
+		mutable core::async::mutex_t m_mutex;
 		collections::internal_hash_map<intptr_t, object*> map;
 	};
 #endif
