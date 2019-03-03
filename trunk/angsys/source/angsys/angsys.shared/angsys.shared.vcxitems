@@ -36,6 +36,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\binary_tree.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\hash_map.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\iterators.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\list.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\vector.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\async.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\files.h" />
@@ -146,6 +147,7 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\binary_tree.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\collections.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\hash_map.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\list.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\vector.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\inline\async.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\inline\function.inl" />

@@ -201,6 +201,18 @@
     </Expand>
   </Type>
 
+  <Type Name="ang::collections::list_object&lt;*&gt;">
+    <DisplayString>list[{m_count}]</DisplayString>
+    <Expand>
+      <Item Name="[count]" ExcludeView="simple">m_count</Item>
+      <LinkedListItems>
+        <Size>m_count</Size>
+        <HeadPointer>m_head</HeadPointer>
+        <NextPointer>next</NextPointer>
+        <ValueNode>data</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
 
   <Type Name="ang::text::basic_const_string_buffer&lt;*&gt;">
     <DisplayString Condition="m_view != 0">{((this + 1) + sizeof(wsize)), s}</DisplayString>

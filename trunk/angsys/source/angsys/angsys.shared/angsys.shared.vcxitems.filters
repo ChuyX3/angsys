@@ -329,6 +329,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_cdata.h">
       <Filter>header\angsys\dom\xml</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\list.h">
+      <Filter>header\angsys\collections</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
@@ -509,6 +512,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)include\xml\inline\xml_collection.inl">
       <Filter>header\include\xml\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\list.inl">
+      <Filter>header\angsys\collections\inline</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
