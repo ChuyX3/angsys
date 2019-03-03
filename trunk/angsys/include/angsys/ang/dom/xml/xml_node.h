@@ -137,9 +137,9 @@ namespace ang
 				virtual bool xml_has_children()const override;
 				virtual bool xml_has_attributes()const override;
 
-				virtual ixml_text_view_t xml_name()const override;
-				virtual ixml_text_view_t xml_value()const override;
-				virtual ixml_text_view_t xml_namespace()const override;
+				virtual xml_text_t xml_name()const override;
+				virtual xml_text_t xml_value()const override;
+				virtual xml_text_t xml_namespace()const override;
 				virtual xml_node_t xml_namespace(xml_cstr_t)const override;
 				virtual ixml_collection_t xml_children()const override;
 				virtual xml_attributes_t xml_attributes()const override;

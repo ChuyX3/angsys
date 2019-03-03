@@ -12,6 +12,7 @@
     <DisplayString Condition="m_type.m_value == 8U">{m_name} = {*m_content.m_ptr,na}</DisplayString>
     <DisplayString Condition="m_type.m_value == 7U">&lt;!--{*m_content.m_ptr,na}--&gt;</DisplayString>
     <DisplayString Condition="m_type.m_value == 6U">&lt;{m_name}/&gt;</DisplayString>
+    <DisplayString Condition="m_type.m_value == 2U">&lt;![CDATA[ ... ]]&gt;</DisplayString>
     <DisplayString>xml_node</DisplayString>
     <Expand>
       <Item Name="[name]" ExcludeView="simple" Condition="m_name.m_ptr != 0">m_name</Item>

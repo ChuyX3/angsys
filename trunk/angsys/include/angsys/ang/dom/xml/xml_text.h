@@ -37,6 +37,8 @@ namespace ang
 				bool xml_is_type_of(xml_type_t)const override;
 				streams::itext_output_stream_t& xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flag, ushort level = 0)const override;
 
+				template<typename T> T xml_as()const;
+
 			public: //ixml_text overrides
 				virtual xml_encoding_t encoding()const override;
 				virtual wsize length()const override;
@@ -67,9 +69,6 @@ namespace ang
 		}
 	}
 
-	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_text)
-		inline operator dom::xml::xml_cstr()const { return is_empty() ? dom::xml::xml_cstr() : get()->cstr(); }
-	ANG_END_OBJECT_WRAPPER();
 }
 
 

@@ -123,15 +123,15 @@ template<> xml_document_t ixml_object::xml_as<xml_document>()const
 }
 
 
-//xml_type_t xml_type_t::parse(cstr_t text)
-//{
-//	auto idx = algorithms::binary_search(text, collections::to_array(s_xml_type_parsing_map));
-//	if (idx >= algorithms::array_size(s_xml_type_parsing_map))
-//		return xml_type::abstract;
-//	else
-//		return s_xml_type_parsing_map[idx].value;
-//}
-//
+xml_type_t xml_type_t::parse(xml_cstr_t text)
+{
+	auto idx = algorithms::binary_search(text, collections::to_array(s_xml_type_parsing_map));
+	if (idx >= algorithms::array_size(s_xml_type_parsing_map))
+		return xml_type::abstract;
+	else
+		return s_xml_type_parsing_map[idx].value;
+}
+
 //xml_type_t xml_type_t::parse(cwstr_t text)
 //{
 //	auto idx = algorithms::binary_search(text, collections::to_array(s_xml_type_parsing_map));

@@ -7,6 +7,37 @@ using namespace ang;
 #include "ang/inline/object_wrapper_specialization.inl"
 #undef MY_TYPE
 
+static collections::pair<cstr_t, bool> s_boolean_parsing_map[] =
+{
+	{ "FALSE"_s, false },
+	{ "False"_s, false },
+	{ "HIGH"_s, true },
+	{ "High"_s, true },
+	{ "LOW"_s, false },
+	{ "Low"_s, false },
+	{ "NO"_s, false },
+	{ "No"_s, false },
+	{ "TRUE"_s, true },
+	{ "True"_s, true },
+	{ "YES"_s, true },
+	{ "Yes"_s, true },
+	{ "false"_s, false },
+	{ "high"_s, true },
+	{ "low"_s, false },
+	{ "no"_s, false },
+	{ "true"_s, true },
+	{ "yes"_s, true },
+};
+
+value<bool> variable<bool>::parse(text::raw_cstr_t cstr)
+{
+	auto idx = algorithms::binary_search(cstr, collections::to_array(s_boolean_parsing_map));
+	if (idx >= algorithms::array_size(s_boolean_parsing_map))
+		return false;
+	else
+		return s_boolean_parsing_map[idx].value;
+}
+
 wstring variable<bool>::to_string(value<bool> val,text::text_format_t f_)
 {
 	text::text_format_flags_t f;

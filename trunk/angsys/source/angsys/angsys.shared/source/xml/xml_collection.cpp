@@ -127,7 +127,7 @@ bool xml_collection::push(xml_node_t node, bool last)
 {
 	if (node.is_empty() 
 		|| (xml_is_type_of(xml_type::attribute_list) && !node->xml_is_type_of(xml_type::name_space) && !node->xml_is_type_of(xml_type::attribute))
-		|| (xml_is_type_of(xml_type::element_list) && !node->xml_is_type_of(xml_type::element) && !node->xml_is_type_of(xml_type::comment))
+		|| (xml_is_type_of(xml_type::element_list) && !node->xml_is_type_of(xml_type::element) && !node->xml_is_type_of(xml_type::comment) && !node->xml_is_type_of(xml_type::cdata))
 		) return false;
 
 	node->xml_parent(m_parent.lock());
@@ -167,7 +167,7 @@ bool xml_collection::insert(xml_node_t node, xml_iterator_t at, bool nextTo)
 {
 	if (node.is_empty()
 		|| (xml_is_type_of(xml_type::attribute_list) && !node->xml_is_type_of(xml_type::name_space) && !node->xml_is_type_of(xml_type::attribute))
-		|| (xml_is_type_of(xml_type::element_list) && !node->xml_is_type_of(xml_type::element) && !node->xml_is_type_of(xml_type::comment))
+		|| (xml_is_type_of(xml_type::element_list) && !node->xml_is_type_of(xml_type::element) && !node->xml_is_type_of(xml_type::comment) && !node->xml_is_type_of(xml_type::cdata))
 		) return false;
 
 	if (node == null)

@@ -1116,7 +1116,7 @@ bool xml_document::decode_elements(xml_document_t doc, text::istring_view_t code
 	{
 		c = 0;
 		//Check if the node is a comment
-		auto find = code->find("<!--"_s, beg, beg + 5);
+		wsize find = code->find("<!--"_s, beg, beg + 5);
 		if (find == beg)
 		{
 			end = code->find("-->"_s, beg);
@@ -1127,6 +1127,24 @@ bool xml_document::decode_elements(xml_document_t doc, text::istring_view_t code
 
 				//insert comment
 				doc->push_comment(value);
+			}
+			//Finding next node start position
+			beg = code->find("<"_s, end);
+			continue;
+		}
+
+		//Check if the node is a CDATA
+		find = code->find("<![CDATA["_s, beg, beg + 10);
+		if (find == beg)
+		{
+			end = code->find("]]>"_s, beg);
+			if (end != invalid_index)
+			{
+				//get CDATA value
+				code->sub_string(&value, beg + 9, end - 4);
+
+				//insert comment
+				doc->push_data(value);
 			}
 			//Finding next node start position
 			beg = code->find("<"_s, end);

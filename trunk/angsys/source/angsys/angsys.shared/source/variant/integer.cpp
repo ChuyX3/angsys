@@ -21,6 +21,10 @@ namespace ang
 	static char hexu[18] = { "0123456789ABCDEFX" };
 }
 
+value<int> variable<int>::parse(text::raw_cstr_t str, windex i, int base) {
+	text::iparser_t parser = text::iparser::get_parser(str.encoding());
+	return parser->to_signed(str.ptr(), str.count(), i, true, base);
+}
 
 wstring variable<int>::to_string(value<int> val,text::text_format_t f)
 {
@@ -342,6 +346,11 @@ variant variable<int>::clone()const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+value<long> variable<long>::parse(text::raw_cstr_t str, windex i, int base) {
+	text::iparser_t parser = text::iparser::get_parser(str.encoding());
+	return parser->to_signed(str.ptr(), str.count(), i, true, base);
+}
 
 wstring variable<long>::to_string(value<long> val, text::text_format_t f)
 {
@@ -665,6 +674,11 @@ variant variable<long>::clone()const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+value<long64> variable<long64>::parse(text::raw_cstr_t str, windex i, int base) {
+	text::iparser_t parser = text::iparser::get_parser(str.encoding());
+	return parser->to_signed(str.ptr(), str.count(), i, true, base);
+}
 
 wstring variable<long64>::to_string(value<long64> val, text::text_format_t f)
 {

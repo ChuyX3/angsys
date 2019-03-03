@@ -24,9 +24,9 @@ namespace ang
 				visible vcall bool xml_has_children()const pure;
 				visible vcall bool xml_has_attributes()const pure;
 
-				visible vcall ixml_text_view_t xml_name()const pure;
-				visible vcall ixml_text_view_t xml_value()const pure;
-				visible vcall ixml_text_view_t xml_namespace()const pure;
+				visible vcall xml_text_t xml_name()const pure;
+				visible vcall xml_text_t xml_value()const pure;
+				visible vcall xml_text_t xml_namespace()const pure;
 				visible vcall xml_node_t xml_namespace(xml_cstr_t)const pure;
 				visible vcall ixml_collection_t xml_children()const pure;
 				visible vcall xml_attributes_t xml_attributes()const pure;
@@ -43,7 +43,7 @@ namespace ang
 
 	
 	ANG_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_node)
-		operator dom::xml::ixml_text_view_t()const;
+		operator dom::xml::xml_text_t()const;
 		dom::xml::xml_node_t operator[](dom::xml::xml_cstr_t)const;
 		template<typename T, text::encoding E> dom::xml::xml_node_t operator[](str_view<T, E> str)const;
 	ANG_END_INTF_WRAPPER();

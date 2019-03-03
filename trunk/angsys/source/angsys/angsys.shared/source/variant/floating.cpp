@@ -17,6 +17,12 @@ namespace ang
 	static char hexu[18] = { "0123456789ABCDEFX" };
 }
 
+value<float> variable<float>::parse(text::raw_cstr_t cstr, windex i, bool exp)
+{
+	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
+	return parser->to_floating(cstr.ptr(), cstr.count(), i, true, exp);
+}
+
 wstring variable<float>::to_string(value<float> val, text::text_format_t f)
 {
 
@@ -342,6 +348,11 @@ variant variable<float>::clone()const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+value<double> variable<double>::parse(text::raw_cstr_t cstr, windex i, bool exp)
+{
+	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
+	return parser->to_floating(cstr.ptr(), cstr.count(), i, true, exp);
+}
 
 wstring variable<double>::to_string(value<double> val, text::text_format_t f)
 {

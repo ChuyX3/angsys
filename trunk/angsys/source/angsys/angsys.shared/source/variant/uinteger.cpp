@@ -21,6 +21,10 @@ namespace ang
 	static char hexu[18] = { "0123456789ABCDEFX" };
 }
 
+value<uint> variable<uint>::parse(text::raw_cstr_t str, windex i, int base) {
+	text::iparser_t parser = text::iparser::get_parser(str.encoding());
+	return parser->to_unsigned(str.ptr(), str.count(), i, true, base);
+}
 
 wstring variable<uint>::to_string(value<uint> val, text::text_format_t f)
 {
@@ -341,6 +345,11 @@ variant variable<uint>::clone()const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+value<ulong> variable<ulong>::parse(text::raw_cstr_t str, windex i, int base) {
+	text::iparser_t parser = text::iparser::get_parser(str.encoding());
+	return parser->to_unsigned(str.ptr(), str.count(), i, true, base);
+}
+
 wstring variable<ulong>::to_string(value<ulong> val, text::text_format_t f)
 {
 	const byte max_char = 120;
@@ -659,6 +668,11 @@ variant variable<ulong>::clone()const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+value<ulong64> variable<ulong64>::parse(text::raw_cstr_t str, windex i, int base) {
+	text::iparser_t parser = text::iparser::get_parser(str.encoding());
+	return parser->to_unsigned(str.ptr(), str.count(), i, true, base);
+}
 
 wstring variable<ulong64>::to_string(value<ulong64> val, text::text_format_t f)
 {

@@ -21,6 +21,7 @@
 #endif
 
 using namespace ang;
+using namespace ang::dom;
 using namespace ang::dom::xml;
 
 #define MY_TYPE ang::dom::xml::xml_text
@@ -34,6 +35,29 @@ xml_entity_values_t xml_entity_values[5] = {
 	{ xml_entity::quot, "&quot;"_s, "\""_s },
 	{ xml_entity::apos, "&apos;"_s, "'"_s }
 };
+
+/////////////////////////////////////////////////////////////////////////
+template<> xml_cstr_t xml::xml_text::xml_as<xml_cstr_t>()const { return this ? this->cstr() : xml_cstr(); }
+template<> string xml::xml_text::xml_as<string>()const { return this ? this->cstr() : string(null); } //make a copy
+template<> wstring xml::xml_text::xml_as<wstring>()const { return this ? this->cstr() : wstring(null); } //make a copy
+template<> mstring xml::xml_text::xml_as<mstring>()const { return this ? this->cstr() : mstring(null); } //make a copy
+
+template<> short xml::xml_text::xml_as<short>()const { return variable<int>::parse(xml_as<xml_cstr>()); }
+template<> ushort xml::xml_text::xml_as<ushort>()const { return variable<uint>::parse(xml_as<xml_cstr>()); }
+template<> int xml::xml_text::xml_as<int>()const { return variable<int>::parse(xml_as<xml_cstr>()); }
+template<> uint xml::xml_text::xml_as<uint>()const { return variable<uint>::parse(xml_as<xml_cstr>()); }
+template<> long xml::xml_text::xml_as<long>()const { return variable<long>::parse(xml_as<xml_cstr>()); }
+template<> ulong xml::xml_text::xml_as<ulong>()const { return variable<ulong>::parse(xml_as<xml_cstr>()); }
+template<> long64 xml::xml_text::xml_as<long64>()const { return variable<long64>::parse(xml_as<xml_cstr>()); }
+template<> ulong64 xml::xml_text::xml_as<ulong64>()const { return variable<ulong64>::parse(xml_as<xml_cstr>()); }
+template<> float xml::xml_text::xml_as<float>()const { return variable<float>::parse(xml_as<xml_cstr>()); }
+template<> double xml::xml_text::xml_as<double>()const { return variable<double>::parse(xml_as<xml_cstr>()); }
+template<> bool xml::xml_text::xml_as<bool>()const { return variable<bool>::parse(xml_as<xml_cstr>()); }
+
+template<> xml::xml_encoding_t xml::xml_text::xml_as<xml::xml_encoding_t>()const { 
+	return xml::xml_encoding_t::parse(xml_as<xml_cstr_t>());
+}
+
 
 /////////////////////////////////////////////////////////////////////////
 

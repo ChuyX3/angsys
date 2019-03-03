@@ -147,7 +147,7 @@ namespace ang
 		dom::xml::xml_forward_iterator_t end();
 		dom::xml::xml_const_forward_iterator_t begin()const;
 		dom::xml::xml_const_forward_iterator_t end()const;
-		operator dom::xml::ixml_text_t()const;
+		operator dom::xml::xml_text_t()const;
 		dom::xml::xml_node_t operator[](text::raw_str_t)const;
 	ANG_END_INTF_WRAPPER();
 

@@ -306,6 +306,7 @@ namespace ang
 		, public value<bool>
 	{
 	public:
+		static value<bool> parse(text::raw_cstr_t);
 		static wstring to_string(value<bool>, text::text_format = text::default_text_format<bool>::format());
 
 	public:
@@ -343,13 +344,10 @@ namespace ang
 		, public value<int>
 	{
 	public:
-		template<typename T, text::encoding E> static inline value<int> parse(str_view<T, E> str, int b = 10) {
-			windex i = 0;
+		template<typename T, text::encoding E> static inline value<int> parse(str_view<T, E> str, windex i = 0, int b = 10) {
 			return (int)str_to_signed(str, i, b);
 		}
-		template<typename T, text::encoding E> static inline value<int> Parse(str_view<T, E> str, windex i, int b = 10) {
-			return (int)str_to_signed(str, i, b);
-		}
+		static value<int> parse(text::raw_cstr_t, windex i = 0, int b = 10);
 		static wstring to_string(value<int>, text::text_format = text::default_text_format<int>::format());
 
 	public:
@@ -386,13 +384,10 @@ namespace ang
 		, public value<uint>
 	{
 	public:
-		template<typename T, text::encoding E> static inline value<uint> parse(str_view<T, E> str, int b = 10) {
-			windex i = 0;
+		template<typename T, text::encoding E> static inline value<uint> parse(str_view<T, E> str, windex i = 0, int b = 10) {
 			return (uint)str_to_unsigned(str, i, b);
 		}
-		template<typename T, text::encoding E> static inline value<uint> Parse(str_view<T, E> str, windex i, int b = 10) {
-			return (uint)str_to_unsigned(str, i, b);
-		}
+		static value<uint> parse(text::raw_cstr_t, windex i = 0, int b = 10);
 		static wstring to_string(value<uint>, text::text_format = text::default_text_format<uint>::format());
 
 	public:
@@ -429,13 +424,10 @@ namespace ang
 		, public value<long>
 	{
 	public:
-		template<typename T, text::encoding E> static inline value<long> parse(str_view<T, E> str, int b = 10) {
-			windex i = 0;
+		template<typename T, text::encoding E> static inline value<long> parse(str_view<T, E> str, windex i = 0, int b = 10) {
 			return (long)str_to_signed(str, i, b);
 		}
-		template<typename T, text::encoding E> static inline value<long> Parse(str_view<T, E> str, windex i, int b = 10) {
-			return (long)str_to_signed(str, i, b);
-		}
+		static value<long> parse(text::raw_cstr_t, windex i = 0, int b = 10);
 		static wstring to_string(value<long>, text::text_format = text::default_text_format<long>::format());
 
 	public:
@@ -472,13 +464,10 @@ namespace ang
 		, public value<ulong>
 	{
 	public:
-		template<typename T, text::encoding E> static inline value<ulong> parse(str_view<T, E> str, int b = 10) {
-			windex i = 0;
+		template<typename T, text::encoding E> static inline value<ulong> parse(str_view<T, E> str, windex i = 0, int b = 10) {
 			return (ulong)str_to_unsigned(str, i, b);
 		}
-		template<typename T, text::encoding E> static inline value<ulong> Parse(str_view<T, E> str, windex i, int b = 10) {
-			return (ulong)str_to_unsigned(str, i, b);
-		}
+		static value<ulong> parse(text::raw_cstr_t, windex i = 0, int b = 10);
 		static wstring to_string(value<ulong>, text::text_format = text::default_text_format<ulong>::format());
 
 	public:
@@ -515,13 +504,10 @@ namespace ang
 		, public value<long64>
 	{
 	public:
-		template<typename T, text::encoding E> static inline value<long64> parse(str_view<T, E> str, int b = 10) {
-			windex i = 0;
+		template<typename T, text::encoding E> static inline value<long64> parse(str_view<T, E> str, windex i = 0, int b = 10) {
 			return (long64)str_to_signed(str, i, b);
 		}
-		template<typename T, text::encoding E> static inline value<long64> Parse(str_view<T, E> str, windex i, int b = 10) {
-			return (long64)str_to_signed(str, i, b);
-		}
+		static value<long64> parse(text::raw_cstr_t, windex i = 0, int b = 10);
 		static wstring to_string(value<long64>, text::text_format = text::default_text_format<long64>::format());
 
 	public:
@@ -558,13 +544,10 @@ namespace ang
 		, public value<ulong64>
 	{
 	public:
-		template<typename T, text::encoding E> static inline value<ulong64> parse(str_view<T, E> str, int b = 10) {
-			windex i = 0;
+		template<typename T, text::encoding E> static inline value<ulong64> parse(str_view<T, E> str, windex i = 0, int b = 10) {
 			return (ulong64)str_to_unsigned(str, i, b);
 		}
-		template<typename T, text::encoding E> static inline value<ulong64> Parse(str_view<T, E> str, windex i, int b = 10) {
-			return (ulong64)str_to_unsigned(str, i, b);
-		}
+		static value<ulong64> parse(text::raw_cstr_t, windex i = 0, int b = 10);
 		static wstring to_string(value<ulong64>, text::text_format = text::default_text_format<ulong64>::format());
 
 	public:
@@ -601,13 +584,10 @@ namespace ang
 		, public value<float>
 	{
 	public:
-		template<typename T, text::encoding E> static inline value<float> parse(str_view<T, E> str, bool exp = false) {
-			windex i = 0;
+		template<typename T, text::encoding E> static inline value<float> parse(str_view<T, E> str, windex i = 0, bool exp = false) {
 			return (float)str_to_floating(str, i, exp);
 		}
-		template<typename T, text::encoding E> static inline value<float> Parse(str_view<T, E> str, windex i, bool exp = false) {
-			return (float)str_to_floating(str, i, exp);
-		}
+		static value<float> parse(text::raw_cstr_t, windex i = 0, bool exp = false);
 		static wstring to_string(value<float>, text::text_format = text::default_text_format<float>::format());
 
 	public:
@@ -644,13 +624,10 @@ namespace ang
 		, public value<double>
 	{
 	public:
-		template<typename T, text::encoding E> static inline value<double> parse(str_view<T, E> str, bool exp = false) {
-			windex i = 0;
+		template<typename T, text::encoding E> static inline value<double> parse(str_view<T, E> str, windex i = 0, bool exp = false) {
 			return str_to_floating(str, i, exp);
 		}
-		template<typename T, text::encoding E> static inline value<double> Parse(str_view<T, E> str, windex i, bool exp = false) {
-			return str_to_floating(str, i, exp);
-		}
+		static value<double> parse(text::raw_cstr_t, windex i = 0, bool exp = false);
 		static wstring to_string(value<double>, text::text_format = text::default_text_format<double>::format());
 
 	public:

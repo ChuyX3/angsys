@@ -233,19 +233,19 @@ xml_node_t xml_node::xml_last_child()const
 	return *m_content.get()->xml_as<ixml_collection>()->rbegin();
 }
 
-ixml_text_view_t xml_node::xml_name()const
+xml_text_t xml_node::xml_name()const
 {
 	return m_name.get();
 }
 
-ixml_text_view_t xml_node::xml_value()const
+xml_text_t xml_node::xml_value()const
 {
 	if (m_content.is_empty())
 		return null;
 	return m_content.get()->xml_as<xml_text>();
 }
 
-ixml_text_view_t xml_node::xml_namespace()const
+xml_text_t xml_node::xml_namespace()const
 {
 	return m_namespace.get();
 }
@@ -439,7 +439,10 @@ bool xml_node::push_attributes(ixml_collection_t attributes)
 
 xml_iterator_t xml_node::push_child(xml_node_t element)
 {
-	if (element.is_empty() || (!element->xml_is_type_of(xml_type::element) && !element->xml_is_type_of(xml_type::comment)))
+	if (element.is_empty() || 
+		(!element->xml_is_type_of(xml_type::element) &&
+		!element->xml_is_type_of(xml_type::comment) &&
+		!element->xml_is_type_of(xml_type::cdata)))
 		return xml_iterator_t(null, null);
 
 	if (m_content.is_empty() || !m_content->xml_is_type_of(xml_type::element_list))
@@ -451,7 +454,10 @@ xml_iterator_t xml_node::push_child(xml_node_t element)
 
 xml_iterator_t xml_node::push_child(xml_node_t element, xml_iterator_t next)
 {
-	if (element.is_empty() || (!element->xml_is_type_of(xml_type::element) && !element->xml_is_type_of(xml_type::comment)))
+	if (element.is_empty() || 
+		(!element->xml_is_type_of(xml_type::element) &&
+		!element->xml_is_type_of(xml_type::comment) &&
+		!element->xml_is_type_of(xml_type::cdata)))
 		return xml_iterator_t(null, null);
 
 	if (m_content.is_empty() || !m_content->xml_is_type_of(xml_type::element_list))

@@ -259,6 +259,8 @@
       <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_length</Item>
       <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">CAPACITY</Item>
       <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_capacity</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_buffer, s8</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_buffer, s8</Item>
   </Expand>
   </Type>
 
