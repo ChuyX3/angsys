@@ -341,6 +341,11 @@ namespace ang
 		friend safe_pointer;
 	};
 
+
+	template<typename O, typename T, typename...Ts>
+	inline function<T(Ts...)> bind(O* o, T(O::*f)(Ts...)) {
+		return function<T(Ts...)>(o, f);
+	}
 }
 
 #endif//__CORE_FUNCTION_H__

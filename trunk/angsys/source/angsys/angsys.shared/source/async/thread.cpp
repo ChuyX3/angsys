@@ -8,7 +8,8 @@ using namespace ang::core::async;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::ithread, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::idispatcher, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::ithread, idispatcher);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -56,7 +57,7 @@ thread::~thread()
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::thread);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::thread, object, ithread);
-ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::thread, object, ithread);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::thread, object, ithread, idispatcher);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -103,7 +104,7 @@ thread_local bool autoRelease = false;
 
 bool worker_thread::auto_release()
 {
-	if (!is_current_thread() || _state == async_action_status::attached)
+	if (!has_thread_access() || _state == async_action_status::attached)
 		return object::auto_release();
 	autoRelease = true;
 	join();
@@ -236,7 +237,7 @@ thread_task_t worker_thread::post_task(thread_task_t task)
 	task->mutex().unlock();
 	_tasks += task;
 
-	if (!is_current_thread())
+	if (!has_thread_access())
 		thread_manager::instance()->main_cond().signal();
 	return task.get();
 }
@@ -249,19 +250,19 @@ thread_task_t worker_thread::post_task(core::delegates::function<void(iasync<voi
 	task->_state = async_action_status::wait_for_start;
 	_tasks += task;
 
-	if (!is_current_thread())
+	if (!has_thread_access())
 		thread_manager::instance()->main_cond().signal();
 	return task.get();
 }
 
-iasync<void> worker_thread::run(core::delegates::function<void(iasync<void>)> action)
+iasync<void> worker_thread::run_async(core::delegates::function<void(iasync<void>)> action)
 {
 	if ((async_action_status::finished | async_action_status::attached) & _state)
 		return null;
 	return post_task(action).get();
 }
 
-iasync<void> worker_thread::run(core::delegates::function<void(iasync<void>, var_args_t)> action, var_args_t args)
+iasync<void> worker_thread::run_async(core::delegates::function<void(iasync<void>, var_args_t)> action, var_args_t args)
 {
 	if ((async_action_status::finished | async_action_status::attached) & _state)
 		return null;
@@ -276,7 +277,7 @@ bool worker_thread::is_main_thread()const
 	return _is_main_thread;
 }
 
-bool worker_thread::is_current_thread()const
+bool worker_thread::has_thread_access()const
 {
 	return thread::this_thread_id() == thread_id();
 }
@@ -299,7 +300,7 @@ void worker_thread::join()const
 	mutex_t& mutex = thread_manager::instance()->main_mutex();
 	scope_locker<mutex_t> lock = mutex;
 	_state = async_action_status::canceled;
-	if (!is_current_thread()) {
+	if (!has_thread_access()) {
 		cond.signal();
 		cond.waitfor(mutex, [this]() {
 			return _state != async_action_status::completed;

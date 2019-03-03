@@ -39,12 +39,12 @@ namespace ang
 			typedef shared_ptr<cond> cond_ptr_t;
 			typedef shared_ptr<mutex> mutex_ptr_t;
 
-			ang_object(thread);
 			template<typename T> struct itask;
 			template<typename T> using itask_t = intf_wrapper<itask<T>>;
 			template<typename T> using iasync = intf_wrapper<itask<T>>;
 			template<typename T> using task_handler_ptr = object_wrapper<task_handler<T>>;
 
+			ang_object(thread);
 			ang_interface(ithread);
 			ang_interface(idispatcher);
 
@@ -96,12 +96,15 @@ namespace ang
 				template<typename U> iasync<U> then(delegates::function<U(iasync<T>)>);
 			ang_end_interface();
 			
+			ang_begin_interface(LINK idispatcher)
+				visible vcall bool has_thread_access()const pure;	
+				visible vcall iasync<void> run_async(core::delegates::function<void(iasync<void>)>)pure;
+				visible vcall iasync<void> run_async(core::delegates::function<void(iasync<void>, var_args_t)>, var_args_t)pure;
+				template<typename T, typename...Ts> iasync<T> run_async(delegates::function<T(Ts...)>, Ts...);
+			ang_end_interface();
 
-			ang_begin_interface(LINK ithread)
-				visible vcall iasync<void> run(core::delegates::function<void(iasync<void>)>)pure;
-				visible vcall iasync<void> run(core::delegates::function<void(iasync<void>, var_args_t)>, var_args_t)pure;
+			ang_begin_interface(LINK ithread, idispatcher)
 				visible vcall bool is_main_thread()const pure;
-				visible vcall bool is_current_thread()const pure;
 				visible vcall dword thread_id()const pure;			
 				visible vcall void join()const pure;
 			ang_end_interface();

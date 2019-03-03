@@ -43,6 +43,19 @@ inline ang::core::async::iasync<U> ang::core::async::itask<T>::then(ang::core::d
 	return handler.get();
 }
 
+template<typename T, typename...Ts>
+inline ang::core::async::iasync<T> ang::core::async::idispatcher::run_async(ang::core::delegates::function<T(Ts...)> func, Ts...args)
+{
+	task_handler_ptr<T> handler = new task_handler<T>();
+	iasync<T> this_ = this->run_async(function<void(iasync<void>)>([=](iasync<T>)
+	{
+		handler.get()->done(func.get()->invoke(forward<Ts>(args)...));
+	}));
+
+	return handler.get();
+}
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>

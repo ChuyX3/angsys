@@ -596,10 +596,11 @@ namespace ang
 			visible vcall graphics::size<float> core_view_size()const pure;
 			visible vcall graphics::size<float> core_view_scale_factor()const pure;
 			visible vcall imessage_listener_t listener()const pure;
+			visible vcall core::async::idispatcher_t dispatcher()const pure;
 		ang_end_interface();
 
 		ang_begin_interface(LINK icore_app)
-			visible static icore_app_t core_app();
+		//	visible scall icore_app_t core_app();
 			visible vcall pointer core_app_handle()const pure;
 			visible vcall icore_view_t main_core_view() pure;
 			visible vcall input::ikeyboard_t keyboard()pure;

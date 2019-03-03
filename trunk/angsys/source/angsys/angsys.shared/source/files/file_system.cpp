@@ -32,6 +32,9 @@ core::files::ifile_system_t core::files::ifile_system::fs_instance() {
 
 
 file_system::file_system()
+	: m_paths(null)
+	, m_highest_priority(null)
+	, m_lowest_priority(null)
 {
 	m_paths = new collections::vector_buffer<path_t>();
 	m_highest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();

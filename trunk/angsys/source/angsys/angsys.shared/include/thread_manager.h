@@ -66,11 +66,11 @@ namespace ang
 				virtual bool auto_release()override;
 				virtual void clear()override;
 
-				virtual iasync<void> run(core::delegates::function<void(iasync<void>)>)override;
-				virtual iasync<void> run(core::delegates::function<void(iasync<void>, var_args_t)>, var_args_t)override;
+				virtual iasync<void> run_async(core::delegates::function<void(iasync<void>)>)override;
+				virtual iasync<void> run_async(core::delegates::function<void(iasync<void>, var_args_t)>, var_args_t)override;
 
 				virtual bool is_main_thread()const override;
-				virtual bool is_current_thread()const override;
+				virtual bool has_thread_access()const override;
 				virtual dword thread_id()const override;
 				virtual void join()const override;
 

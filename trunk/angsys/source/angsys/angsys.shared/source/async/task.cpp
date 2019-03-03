@@ -76,7 +76,7 @@ template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<string32>,
 template<> iasync<void> task::run_async(core::delegates::function<void(iasync<void>)> callback)
 {
 	auto thread = thread::create_thread();
-	return thread->run(callback);
+	return thread->run_async(callback);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -195,7 +195,7 @@ iasync<void> thread_task::then(core::delegates::function<void(iasync<void>)> fun
 
 bool thread_task::wait(async_action_status_t st)const
 {
-	if (!_thread.is_empty() && _thread->is_current_thread())
+	if (!_thread.is_empty() && _thread->has_thread_access())
 		return false;
 	scope_locker<async::mutex_t> lock = _mutex;
 	if (_state > st)return false;
@@ -205,7 +205,7 @@ bool thread_task::wait(async_action_status_t st)const
 
 bool thread_task::wait(async_action_status_t st, dword ms)const
 {
-	if (_thread.is_empty() || _thread->is_current_thread())
+	if (_thread.is_empty() || _thread->has_thread_access())
 		return false;
 	dword last_time = (dword)(get_performance_time_us() / 1000.0);
 	dword current = 0;
@@ -239,7 +239,7 @@ bool thread_task::cancel()
 	_was_canceled = true;
 	_state = async_action_status::canceled;
 	action.empty();
-	if (!_thread->is_current_thread())
+	if (!_thread->has_thread_access())
 		_cond.signal();
 	_thread = null;
 	return true;
@@ -251,7 +251,7 @@ void thread_task::result()const
 	//	if (_thread.is_empty())
 	//		return;
 
-	if (!_thread.is_empty() && !_thread->is_current_thread()) _cond.waitfor(_mutex, [&]() ->bool
+	if (!_thread.is_empty() && !_thread->has_thread_access()) _cond.waitfor(_mutex, [&]() ->bool
 	{
 		return _state <= async_action_status::running;//  !(async_action_status::finished | async_action_status::wait_for_then).is_active(state);
 	});
@@ -263,7 +263,7 @@ void thread_task::result()const
 		return;
 
 	_state = async_action_status::completed;
-	if (!_thread->is_current_thread())
+	if (!_thread->has_thread_access())
 		_cond.signal();
 	const_cast<thread_task*>(this)->_thread = null;
 	const_cast<thread_task*>(this)->action.empty();
