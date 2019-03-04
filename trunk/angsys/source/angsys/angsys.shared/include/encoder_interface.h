@@ -10,6 +10,7 @@ namespace ang
 			, public iencoder
 		{
 		public:
+			const encoding ENCODING = E;
 			typedef typename char_type_by_encoding<E>::char_t char_t;
 			typedef typename char_type_by_encoding<E>::str_t str_t;
 			typedef typename char_type_by_encoding<E>::cstr_t cstr_t;

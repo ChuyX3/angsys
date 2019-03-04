@@ -83,6 +83,8 @@ raw_cstr::raw_cstr(void const* v, wsize s, text::encoding e)
 	: m_value(v)
 	, m_size(s)
 	, m_encoding(e) {
+	if (s == invalid_index)
+		m_size = iencoder::get_encoder(e)->lenght(v);
 }
 
 raw_cstr::raw_cstr(raw_cstr const& str)

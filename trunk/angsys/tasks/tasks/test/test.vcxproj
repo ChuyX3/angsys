@@ -190,6 +190,9 @@
     <ProjectReference Include="..\..\..\source\angsys\angsys.desktop\angsys.desktop.vcxproj">
       <Project>{6e24f0d8-08fb-4df2-9e07-d208c4faace3}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\source\platform\platform.desktop\platform.desktop.vcxproj">
+      <Project>{ccd7293a-0ab3-4987-a9c9-d6202df87def}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

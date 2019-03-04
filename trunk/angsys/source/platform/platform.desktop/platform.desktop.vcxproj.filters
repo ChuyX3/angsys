@@ -3,29 +3,26 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="include\async_msg_task.h">
+    <ClInclude Include="include\dispatcher.h">
       <Filter>header files\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\angwin.h">
-      <Filter>header files\ang\platform\angwin</Filter>
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\console\console.h">
+      <Filter>header files\ang\platform\console</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\events.h">
-      <Filter>header files\ang\platform\angwin</Filter>
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\events.h">
+      <Filter>header files\ang\platform\windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\gdi.h">
-      <Filter>header files\ang\platform\angwin</Filter>
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\gdi.h">
+      <Filter>header files\ang\platform\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\windows.h">
+      <Filter>header files\ang\platform\windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="source\angwin.cpp">
-      <Filter>source files</Filter>
-    </ClCompile>
     <ClCompile Include="source\app.cpp">
-      <Filter>source files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\async_msg_task.cpp">
       <Filter>source files</Filter>
     </ClCompile>
     <ClCompile Include="source\process.cpp">
@@ -43,6 +40,15 @@
     <ClCompile Include="source\wingdi.cpp">
       <Filter>source files</Filter>
     </ClCompile>
+    <ClCompile Include="source\dispatcher.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\console\console.cpp">
+      <Filter>source files\console</Filter>
+    </ClCompile>
+    <ClCompile Include="source\win32.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="header files">
@@ -54,14 +60,20 @@
     <Filter Include="header files\ang\platform">
       <UniqueIdentifier>{e8c17320-7f49-44b9-b7df-86c48fd58d6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="header files\ang\platform\angwin">
-      <UniqueIdentifier>{7a308f58-7dcd-4b36-a92a-ca840ed73f5a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source files">
       <UniqueIdentifier>{3a34bd0e-ae9f-4900-93bd-8e2cbecfc18d}</UniqueIdentifier>
     </Filter>
     <Filter Include="header files\include">
       <UniqueIdentifier>{c9ccfbfc-29ff-4b24-962b-a63e31037226}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang\platform\console">
+      <UniqueIdentifier>{99611a56-7ec5-4009-832f-110b99a708ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\console">
+      <UniqueIdentifier>{30407f00-a2e1-4207-a826-5e43eeb216ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files\ang\platform\windows">
+      <UniqueIdentifier>{7a308f58-7dcd-4b36-a92a-ca840ed73f5a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -151,7 +151,7 @@ int event_listener::invoke(platform::events::imsg_event_args_t args)const
 	{
 		int c = 0;
 		objptr caller = _parent.lock<object>();
-		auto msg = args->msg_info().msg();
+		auto msg = args->msg().msg();
 		for(event_t const & e : _functions) {
 			if (msg == e.get()->msg_type())
 			{

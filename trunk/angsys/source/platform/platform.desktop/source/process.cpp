@@ -1,7 +1,7 @@
 #include "pch.h"
 
-#include "ang/platform/angwin/angwin.h"
-#include "async_msg_task.h"
+#include "ang/platform/win32/windows.h"
+#include "dispatcher.h"
 #include <ang/collections/hash_map.h>
 #include <ang/core/timer.h>
 
@@ -22,8 +22,8 @@ namespace ang {
 			{
 				pointer hmodule = null;
 				core::async::thread_t main_thread = null;
+				dispatcher_t dispatcher;
 				collections::hash_map<string, var> properties;
-
 			};
 			process* s_current_process = null;
 		}
@@ -41,8 +41,8 @@ process_t process::current_process()
 
 process::process()
 	: m_process(null)
-	, start_app_event(this, [](events::core_msg_t code) { return code == events::win_msg_enum::start_app; })
-	, exit_app_event(this, [](events::core_msg_t code) { return code == events::win_msg_enum::exit_app; })
+	, start_app_event(this, [](events::core_msg_t code) { return (events::win_msg)code == events::win_msg::start_app; })
+	, exit_app_event(this, [](events::core_msg_t code) { return (events::win_msg)code == events::win_msg::exit_app; })
 {
 	if (s_current_process != null)
 		throw(exception_t(except_code::two_singleton));
@@ -55,9 +55,13 @@ process::process()
 	m_process->main_thread = core::async::thread::main_thread();
 
 	m_process->properties["cmd_args"] = null;
-	m_process->properties["main_cond"] = make_shared<core::async::cond_t>();
-	m_process->properties["main_mutex"] = make_shared<core::async::mutex_t>();
+	m_process->properties["main_cond"] = make_shared<core::async::cond>();
+	m_process->properties["main_mutex"] = make_shared<core::async::mutex>();
 	m_process->properties["step_timer"] = make_shared<core::time::step_timer>();
+	m_process->dispatcher = new windows::dispatcher(
+		bind(this, &process::listen_to),
+		bind(this, &process::send_msg),
+		bind(this, &process::post_task));
 }
 
 process::~process()
@@ -69,8 +73,8 @@ process::~process()
 }
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::windows::process);
-ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::platform::windows::process, object, ang::platform::imessage_listener);
-ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::windows::process, object, ang::platform::imessage_listener)
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::platform::windows::process, object);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::windows::process, object)
 
 pointer process::handle()const
 {
@@ -79,22 +83,27 @@ pointer process::handle()const
 
 bool process::close()
 {
-	auto handle = m_process;
-	m_process = null;
-	delete handle;
+	if (m_process)
+	{
+		auto handle = m_process;
+		m_process = null;
+		handle->dispatcher = null;
+		handle->main_thread = null;
+		delete handle;
+	}
 	return true;
 }
 
 bool process::is_worker_thread()const {
-	return m_process->main_thread->is_current_thread();
+	return m_process->main_thread->has_thread_access();
 }
 
 core::async::mutex_ptr_t process::main_mutex()const {
-	return m_process->properties["main_mutex"].as<core::async::mutex_t>();
+	return m_process->properties["main_mutex"].as<core::async::mutex>();
 }
 
 core::async::cond_ptr_t process::main_cond()const {
-	return m_process->properties["main_cond"].as<core::async::cond_t>();
+	return m_process->properties["main_cond"].as<core::async::cond>();
 }
 
 core::async::thread_t process::main_worker_thread()const {
@@ -148,6 +157,7 @@ dword process::run(array<string> args)
 int process::main_loop()
 {
 	MSG msg;
+	long64 last_time = core::time::get_performance_time_us();	
 	while (true)
 	{
 		if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE))
@@ -163,8 +173,11 @@ int process::main_loop()
 			if (msg.message == WM_QUIT)
 				break;
 		}
-		else
+
+		long64 curr_time = core::time::get_performance_time_us();
+		if((curr_time - last_time) > 8333)
 		{
+			last_time = curr_time;
 			update_app();
 		}
 	}
@@ -173,10 +186,12 @@ int process::main_loop()
 
 bool process::init_app(array<string> cmd)
 {
-	platform::events::message m = platform::events::message(events::win_msg_enum::start_app, 0, 0);
+	m_process->dispatcher->worker_thread(m_process->main_thread);
+	platform::events::message m = platform::events::message((events::core_msg_t)events::win_msg::start_app, 0, 0);
 	try { trigger(start_app_event).invoke(new platform::events::app_status_event_args(m, null)); }
 	catch (...) {}
 	m_process->properties["step_timer"].as<core::time::step_timer>()->reset();
+	
 	return true;
 }
 
@@ -187,12 +202,13 @@ void process::update_app()
 
 bool process::exit_app()
 {
-	platform::events::message m = platform::events::message(events::win_msg_enum::start_app, 0, 0);
+	platform::events::message m = platform::events::message((events::core_msg_t)events::win_msg::start_app, 0, 0);
 	try { trigger(exit_app_event).invoke(new platform::events::app_status_event_args(m, null)); }
 	catch (...) {}
 
 	return close();
 }
+
 
 bool process::listen_to(events::event_t)
 {
@@ -201,24 +217,33 @@ bool process::listen_to(events::event_t)
 
 dword process::send_msg(events::message msg)
 {
-	if (m_process->main_thread->is_current_thread())
-	{
-		return dispatch_msg(msg);
-	}
-	else
-	{
-		PostMessageW(NULL, msg.msg(), msg.wparam(), msg.lparam());
-		return -1; //TODO
-	}
+	return dispatch_msg(msg);
 }
 
-core::async::iasync<dword> process::post_msg(events::message msg)
+core::async::iasync<void> process::post_task(core::async::iasync<void> async)
 {
-	PostMessageW(NULL, msg.msg(), msg.wparam(), msg.lparam());
-	return null; //TODO
+	auto task = interface_cast<async_task>(async.get());
+	if (task == null)
+		return null;
+	task->add_ref();
+	if (PostThreadMessageW(m_process->main_thread->thread_id(), (events::core_msg_t)events::win_msg::system_reserved_event, 0, reinterpret_cast<LPARAM>(task)) == 0)
+	{
+		task->release();
+		return null;
+	}
+	return async;
 }
 
-dword process::dispatch_msg(events::message msg)
+dword process::dispatch_msg(events::message m)
 {
+	switch ((events::win_msg)m.msg())
+	{
+	case events::win_msg::system_reserved_event: {
+			auto task = reinterpret_cast<async_task*>(m.lparam());
+			task->execute();
+			task->release();
+			m.result(0);
+		} break;
+	}
 	return 0;
 }

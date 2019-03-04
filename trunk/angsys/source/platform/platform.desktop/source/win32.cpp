@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ang/platform/angwin/angwin.h"
+#include "ang/platform/win32/windows.h"
 
 using namespace ang;
 using namespace ang::platform;
@@ -163,7 +163,7 @@ wstring wnd_style_t::to_string()const
 	bool first = true;
 	for (int i = algorithms::array_size(to_string_wnd_style_map) - 1; i >= 0; --i)
 	{
-		if (val.get() == 0)
+		if (val == wnd_style::none)
 			break;
 		if (val & to_string_wnd_style_map[i].key)
 		{
@@ -179,7 +179,7 @@ wstring wnd_style_t::to_string()const
 	return ang::move(out);
 }
 
-//template<> wnd_style_t ang::xml::xml_value::as<wnd_style_t>()const
+//wnd_style_t wnd_style_t::parse(text::raw_cstr_t str)
 //{
 //	cwstr_t key = as<cwstr_t>();
 //	index idx = ang_binary_search<cwstr_t>(key, _parse_wnd_style_map);

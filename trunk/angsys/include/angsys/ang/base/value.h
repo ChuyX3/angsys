@@ -271,6 +271,7 @@ namespace ang //constants
 		_name##_t& operator -= (type v) { m_value &= ~(base)v;	return*this; } \
 		bool operator !(void)const { return m_value == 0; } \
 		operator bool(void)const { return m_value != 0; } \
+		operator base(void)const { return m_value; } \
 		friend _LINK _name##_t operator * (type, type); \
 		friend _LINK _name##_t operator * (const _name##_t&, type); \
 		friend _LINK _name##_t operator * (type, const _name##_t&); \

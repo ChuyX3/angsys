@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ang/platform/angwin/angwin.h"
+#include "ang/platform/win32/windows.h"
 
 using namespace ang;
 using namespace ang::graphics;
@@ -17,12 +17,6 @@ typedef struct _hdc
 	PAINTSTRUCT ps;
 }*hdc_t;
 
-//graphics::device_context::device_context()
-//	: handle(null)
-//{
-//
-//}
-
 graphics::device_context::device_context(window_t wnd)
 	: handle(null)
 {
@@ -34,45 +28,11 @@ graphics::device_context::~device_context()
 	close();
 }
 
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::device_context);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::device_context, object, icore_context);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::device_context, object, icore_context);
 
-ANG_IMPLEMENT_CLASSNAME(ang::graphics::device_context);
-ANG_IMPLEMENT_OBJECTNAME(ang::graphics::device_context);
-bool graphics::device_context::is_inherited_of(type_name_t name)
-{
-	return name == type_of<device_context>()
-		|| object::is_inherited_of(name)
-		|| icore_context::is_inherited_of(name);
-}
-
-bool graphics::device_context::is_kind_of(type_name_t name)const
-{
-	return name == type_of<device_context>()
-		|| object::is_kind_of(name)
-		|| icore_context::is_kind_of(name);
-}
-
-bool graphics::device_context::query_object(type_name_t name, unknown_ptr_t out)
-{
-	if (out == null)
-		return false;
-	if (name == type_of<device_context>())
-	{
-		*out = static_cast<device_context*>(this);
-		return true;
-	}
-	else if (object::query_object(name, out))
-	{
-		return true;
-	}
-	else if (icore_context::query_object(name, out))
-	{
-		return true;
-	}
-	return false;
-}
-
-
-pointer graphics::device_context::get_core_context_handle()const
+pointer graphics::device_context::core_context_handle()const
 {
 	return get_HDC();
 }
@@ -94,14 +54,14 @@ bool graphics::device_context::create(pointer args)
 
 	window_t wnd = reinterpret_cast<window*>(args);
 
-	if (!IsWindow((HWND)wnd->get_core_view_handle()))
+	if (!IsWindow((HWND)wnd->core_view_handle()))
 		return false;
 
 	hdc_t dc = new _hdc();
 	if (dc != null)
 	{
 		memset(dc, 0, sizeof(_hdc));
-		dc->hWnd = (HWND)wnd->get_core_view_handle();
+		dc->hWnd = (HWND)wnd->core_view_handle();
 		dc->hDC = GetDC((HWND)dc->hWnd);
 		if (!dc->hDC)
 		{
@@ -192,8 +152,9 @@ graphics::paint_dc::~paint_dc()
 	close();
 }
 
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::paint_dc, ang::graphics::device_context);
-
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::paint_dc);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::paint_dc, device_context);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::paint_dc, device_context);
 
 bool graphics::paint_dc::create(pointer args)
 {
@@ -201,7 +162,7 @@ bool graphics::paint_dc::create(pointer args)
 		return false;
 
 	window_t wnd = reinterpret_cast<window*>(args);
-	if (!IsWindow((HWND)wnd->get_core_view_handle()))
+	if (!IsWindow((HWND)wnd->core_view_handle()))
 		return false;
 
 	hdc_t dc = new _hdc();
@@ -209,9 +170,11 @@ bool graphics::paint_dc::create(pointer args)
 	{
 		memset(dc, 0, sizeof(_hdc));
 
-		dc->hWnd = (HWND)wnd->get_core_view_handle();
+		dc->hWnd = (HWND)wnd->core_view_handle();
 		BeginPaint((HWND)dc->hWnd, &dc->ps);
 		dc->hDC = dc->ps.hdc;
+
+		ValidateRect(dc->hWnd, &dc->ps.rcPaint);
 	}
 	handle = dc;
 	return handle ? true : false;
@@ -224,6 +187,7 @@ bool graphics::paint_dc::close()
 	EndPaint(hdc_t(handle)->hWnd, &hdc_t(handle)->ps);
 	delete hdc_t(handle);
 	handle = null;
+	
 	return true;
 }
 

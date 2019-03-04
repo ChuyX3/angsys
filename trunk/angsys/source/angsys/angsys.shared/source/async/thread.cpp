@@ -88,6 +88,15 @@ ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::worker_thread);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::worker_thread, thread);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::worker_thread, thread);
 
+dword worker_thread::add_ref()
+{
+	return object::add_ref();
+}
+
+dword worker_thread::release()
+{
+	return object::release();
+}
 
 void worker_thread::clear()
 {
@@ -231,8 +240,8 @@ thread_task_t worker_thread::post_task(thread_task_t task)
 {
 	scope_locker<mutex_t> lock = thread_manager::instance()->main_mutex();
 	task->mutex().lock();
-	task->_thread = this;
-	task->_state = async_action_status::wait_for_start;
+	task->m_thread = this;
+	task->m_status = async_action_status::wait_for_start;
 	task->cond().signal();
 	task->mutex().unlock();
 	_tasks += task;
@@ -247,7 +256,7 @@ thread_task_t worker_thread::post_task(core::delegates::function<void(iasync<voi
 	thread_task_t task = new thread_task(this);
 	task->action += action;
 	scope_locker<mutex_t> lock = thread_manager::instance()->main_mutex();
-	task->_state = async_action_status::wait_for_start;
+	task->m_status = async_action_status::wait_for_start;
 	_tasks += task;
 
 	if (!has_thread_access())

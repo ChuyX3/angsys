@@ -39,7 +39,7 @@ namespace ang
 			};
 
 			ang_begin_interface(LINK imsg_event_args)
-				visible vcall const message& msg_info()const pure;
+				visible vcall const message& msg()const pure;
 				visible vcall void handled(bool) pure;
 				visible vcall bool handled()const pure;
 			ang_end_interface();
@@ -57,29 +57,29 @@ namespace ang
 
 			ang_begin_interface(LINK idisplay_info_event_args, imsg_event_args)
 				visible vcall icore_view_t core_view()const pure;
-				visible vcall display_invalidate_reason_t invalidate_reason()const pure;
-				visible vcall display::display_info_t display_info()const pure;
+				visible vcall display_invalidate_reason_t const& invalidate_reason()const pure;
+				visible vcall display::display_info_t const& display_info()const pure;
 			ang_end_interface();
 
 			ang_begin_interface(LINK iactivate_event_args, imsg_event_args)
-				visible vcall activate_status_t status()const pure;
+				visible vcall activate_status_t const& status()const pure;
 			ang_end_interface();
 
 			ang_begin_interface(LINK idraw_event_args, imsg_event_args)
 				visible vcall icore_view_t core_view()const pure;
 				visible vcall icore_context_t core_context()const pure;
-				visible vcall graphics::size<float> canvas_size()const pure;
+				visible vcall graphics::size<float> const& canvas_size()const pure;
 			ang_end_interface();
 
 			ang_begin_interface(LINK ikey_event_args, imsg_event_args)
 				visible vcall char32_t key()const pure;
-				visible vcall input::key_info_t info()const pure;
+				visible vcall input::key_info_t const& info()const pure;
 			ang_end_interface();
 
 			ang_begin_interface(LINK ipointer_event_args, imsg_event_args)
-				visible vcall graphics::point<float> position()const pure;
-				visible vcall input::key_modifiers_t modifiers()const pure;
-				visible vcall input::poiner_info_t info()const pure;
+				visible vcall graphics::point<float> const& position()const pure;
+				visible vcall input::key_modifiers_t const& modifiers()const pure;
+				visible vcall input::poiner_info_t const& info()const pure;
 			ang_end_interface();
 
 			ang_begin_interface(LINK iapp_status_event_args, imsg_event_args)
@@ -92,7 +92,7 @@ namespace ang
 			ang_end_interface();
 
 			ang_begin_interface(LINK itext_change_event_args, imsg_event_args)
-				visible vcall mstring text()const pure;
+				visible vcall text::istring_t text()const pure;
 				visible vcall input::ikeyboard_t keyboard()const pure;
 			ang_end_interface();
 		}
@@ -169,6 +169,27 @@ namespace ang
 				created_event(F f)
 					: event((core_msg_t)core_msg_enum::created) {
 					set<icreated_event_args>(f);
+				}
+			};
+
+			class closed_event
+				: public event
+			{
+			public:
+				template<class T>
+				closed_event(T* o, void(T::*f)(objptr, imsg_event_args_t))
+					: event((core_msg_t)core_msg_enum::close) {
+					set<imsg_event_args>(o, f);
+				}
+				template<class T>
+				closed_event(typename smart_ptr_type<T>::smart_ptr_t o, void(T::*f)(objptr, imsg_event_args_t))
+					: event((core_msg_t)core_msg_enum::close) {
+					set<imsg_event_args>(o, f);
+				}
+				template<class F>
+				closed_event(F f)
+					: event((core_msg_t)core_msg_enum::close) {
+					set<imsg_event_args>(f);
 				}
 			};
 

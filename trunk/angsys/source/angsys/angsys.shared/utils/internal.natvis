@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+  <Type Name="ang::collections::internal_hash_map&lt;*&gt;">
+    <DisplayString>map[{m_size}]</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
+      <CustomListItems MaxItemsPerView="10000" ExcludeView="Test">
+        <Variable Name="i_" InitialValue="0" />
+        <Variable Name="node_" InitialValue="m_table.m_data == nullptr ? nullptr : *m_table.m_data" />
+        <Size>m_size</Size>
+        <Loop Condition="i_ &lt; m_table.m_size">
+          <If Condition="node_ == nullptr">
+            <Exec>i_++</Exec>
+            <Exec>node_ = m_table.m_data[i_]</Exec>
+          </If>
+          <Else>
+            <Item>node_->data</Item>
+            <Exec>node_ = node_->next</Exec>
+          </Else>
+        </Loop>
+      </CustomListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::text::encoder_interface&lt;*&gt;">
+    <DisplayString>encoder&lt;{ENCODING,en}&gt;</DisplayString>
+  </Type>
+
+  <Type Name="ang::text::parser_interface&lt;*&gt;">
+    <DisplayString>parser&lt;{ENCODING,en}&gt;</DisplayString>
+  </Type>
+
+</AutoVisualizer>

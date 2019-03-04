@@ -30,19 +30,19 @@ namespace ang
 
 				void run();
 
-				async::cond& cond()const { return _cond; }
-				async::mutex& mutex()const { return _mutex; }
+				async::cond& cond()const { return m_cond; }
+				async::mutex& mutex()const { return m_mutex; }
 				event<thread_task, void(iasync<void>)> action;
 
 			protected:
-				bool _was_canceled;
-				mutable async_action_status_t _state;
-				mutable async::cond_t _cond;
-				mutable async::mutex_t _mutex;
+				bool m_was_canceled;
+				mutable async_action_status_t m_status;
+				mutable async::cond_t m_cond;
+				mutable async::mutex_t m_mutex;
 
-				thread_task_t _parent_task;
-				thread_task_t _child_task;
-				worker_thread_t _thread;
+				thread_task_t m_parent_task;
+				thread_task_t m_child_task;
+				worker_thread_t m_thread;
 
 
 			private:
@@ -65,6 +65,8 @@ namespace ang
 				ANG_DECLARE_INTERFACE();
 				virtual bool auto_release()override;
 				virtual void clear()override;
+				virtual dword add_ref() override;
+				virtual dword release() override;
 
 				virtual iasync<void> run_async(core::delegates::function<void(iasync<void>)>)override;
 				virtual iasync<void> run_async(core::delegates::function<void(iasync<void>, var_args_t)>, var_args_t)override;

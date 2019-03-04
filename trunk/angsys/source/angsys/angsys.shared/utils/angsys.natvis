@@ -215,14 +215,11 @@
   </Type>
 
   <Type Name="ang::text::basic_const_string_buffer&lt;*&gt;">
-    <DisplayString Condition="m_view != 0">{((this + 1) + sizeof(wsize)), s}</DisplayString>
+    <DisplayString>{((this + 1) + sizeof(wsize)), s}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
       <Item Name="[size]" ExcludeView="simple">*(wsize*)(this + 1)</Item>
-      <ArrayItems>
-        <Size>m_size</Size>
-        <ValuePointer>(char*)(wsize(this + 1) + sizeof(wsize))</ValuePointer>
-      </ArrayItems>
+      <Item Name="[buffer]" ExcludeView="simple">pointer(wsize(this + 1) + sizeof(wsize))</Item>
     </Expand>
   </Type>
   

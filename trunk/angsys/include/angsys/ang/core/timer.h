@@ -53,10 +53,10 @@ namespace ang
 				}
 
 			public: //Properties
-				double total()const {
+				ulong64 total()const {
 					return m_curr_time - m_firtTime;
 				}
-				double delta()const {
+				ulong64 delta()const {
 					return m_curr_time - m_last_time;
 				}
 

@@ -1,9 +1,11 @@
-#ifndef __ANGWIN_H__
-#define __ANGWIN_H__
+#ifndef __ANG_WIN32_H__
+#define __ANG_WIN32_H__
 
 #include <angsys.h>
 #include <ang/core/async.h>
+#include <ang/dom/xml.h>
 #include <ang/platform/platform.h>
+#include <ang/collections/list.h>
 #include <ang/collections/hash_map.h>
 
 #if defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
@@ -26,17 +28,6 @@
 #define LINK
 #endif
 
-//#ifndef NOMINMAX
-//#define NOMINMAX
-//#endif//NOMINMAX
-//
-//#ifndef WIN32_LEAN_AND_MEAN
-//#define WIN32_LEAN_AND_MEAN
-//#endif//WIN32_LEAN_AND_MEAN
-//
-//#include <Windows.h>
-//#include <Windowsx.h>
-
 namespace ang
 {
 	namespace platform
@@ -48,6 +39,9 @@ namespace ang
 			ang_object(process);
 			ang_object(child_process);
 			ang_object(windows_file_system);
+
+			using appptr = app_t;
+			using wndptr = window_t;
 
 			safe_enum(LINK, showing_flag, dword)
 			{
@@ -149,8 +143,8 @@ namespace ang
 	}
 }
 
-#include <ang/platform/angwin/gdi.h>
-#include <ang/platform/angwin/events.h>
+#include <ang/platform/win32/gdi.h>
+#include <ang/platform/win32/events.h>
 
 namespace ang
 {
@@ -158,7 +152,6 @@ namespace ang
 	{
 		namespace windows
 		{
-
 
 			struct LINK class_regist_args
 				: public object
@@ -198,7 +191,7 @@ namespace ang
 				wnd_create_args(const wnd_create_args&);
 				wnd_create_args(wstring className, wstring wndName
 					, graphics::rect<float> area = graphics::rect<float>(100, 100, 900, 700)
-					, wnd_style_t wndStyle = wnd_style::overlapped_window
+					, wnd_style_t wndStyle = wnd_style::overlapped_window + wnd_style::shown
 					, pointer wndParent = null
 					, var_args_t userArgs = null);
 
@@ -246,16 +239,17 @@ namespace ang
 			};
 			typedef object_wrapper<wnd_create_args_ex> wnd_create_args_ex_t;
 
-
+	
 			class LINK window
 				: public object
 				, public icore_view
-				, public imessage_listener
+			//	, public imessage_listener
+			//	, public core::async::idispatcher
 			{
 			public:
 				static wstring regist_wnd_class(class_regist_args_t);
 				static void unregist_wnd_class(wstring);
-				static window_t handle_to_window(pointer wnd);
+				static wndptr handle_to_window(pointer wnd);
 				static void adjust_window_rect(graphics::rect<float>& rect, wnd_style_t style, bool hasMenu = false);
 
 			private: //Non copiable
@@ -266,6 +260,8 @@ namespace ang
 				struct _hwnd;
 				typedef _hwnd* hwnd_t;
 				hwnd_t m_handle;
+				//dispatcher_t m_dispatcher;
+				//collections::list<function<void(core::async::iasync<void>)>> m_stack;
 
 			public:
 				window();
@@ -284,6 +280,7 @@ namespace ang
 				events::event_listener orientation_event;
 				events::event_listener activate_event;
 				events::event_listener size_event;
+				events::event_listener display_change_event;
 
 				events::event_listener char_event;
 				events::event_listener key_pressed_event;
@@ -302,8 +299,8 @@ namespace ang
 				events::event_listener mouse_rbutton_released_event;
 
 			public: //properties
-				window_t parent();
-				void parent(window_t);
+				wndptr parent();
+				void parent(wndptr);
 				void parent_from_handle(pointer);
 				graphics::point<float> position();
 				graphics::size<float> wnd_size();
@@ -328,10 +325,11 @@ namespace ang
 				virtual graphics::size<float> core_view_size()const override;
 				virtual graphics::size<float> core_view_scale_factor()const override;
 				virtual imessage_listener_t listener()const override;
-
-				virtual dword send_msg(events::message) override;
-				virtual core::async::iasync<dword> post_msg(events::message) override;
-				virtual bool listen_to(events::event_t) override;
+				virtual core::async::idispatcher_t dispatcher()const override;
+				
+				//virtual dword send_msg(events::message) override;
+				//virtual core::async::iasync<dword> post_msg(events::message) override;
+				//virtual bool listen_to(events::event_t) override;
 
 				bool is_created()const;
 				virtual bool create(wnd_create_args_t);
@@ -341,36 +339,41 @@ namespace ang
 
 				virtual void attach(pointer);
 				virtual void detach();
-				virtual void def_window_proc(events::message msg);
+				virtual void def_window_proc(events::message& msg);
+
+				dword send_msg(events::message);
+				core::async::iasync<void> post_task(core::async::iasync<void>);
+				bool listen_to(events::event_t);
 
 			public: //Custom overrides
-				virtual void pre_create(wnd_create_args_t args);
-				virtual void window_proc(events::message msg);
+				virtual void window_proc(events::message& msg);
 				virtual void initial_update();
 
 			protected: //Internal Event Handlers
 				events::event_trigger<window>& owner(events::event_listener&);
-				uint trigger(events::event_listener const&, events::imsg_event_args_t)const;
+				int trigger(events::event_listener const&, events::imsg_event_args_t)const;
 
-				dword on_created(events::message m);
-				dword on_close(events::message m);
-				dword on_destroyed(events::message m);
-				dword on_paint(events::message m);
-				dword on_update(events::message m);
-				dword on_activate(events::message m);
+				dword on_created(events::message& m);
+				dword on_close(events::message& m);
+				dword on_destroyed(events::message& m);
+				dword on_draw(events::message& m);
+				dword on_update(events::message& m);
+				dword on_activate(events::message& m);
 
-				dword on_dysplay_event(events::message m);
+				dword on_dysplay_event(events::message& m);
 				
+				dword on_pointer_event(events::message& m);
+				dword on_mouse_event(events::message& m);
+				dword on_key_event(events::message& m);
 
-				dword on_pointer_event(events::message m);
-				dword on_mouse_event(events::message m);
-				dword on_key_event(events::message m);
+				dword on_task_command(events::message& m);
+
+				friend class dispatcher;
 			};
-
 
 			class LINK process
 				: public object
-				, public imessage_listener
+				//, public imessage_listener
 			{
 			public:
 				static process_t current_process();
@@ -402,14 +405,15 @@ namespace ang
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
 
-				virtual dword send_msg(events::message msg) override;
-				virtual core::async::iasync<dword> post_msg(events::message msg) override;
-				virtual bool listen_to(events::event_t) override;
-				virtual dword dispatch_msg(events::message);
-
 				pointer handle()const;
+				core::async::idispatcher_t dispatcher()const;
 
 			protected:
+				dword send_msg(events::message);
+				core::async::iasync<void> post_task(core::async::iasync<void>);
+				bool listen_to(events::event_t);
+				virtual dword dispatch_msg(events::message);
+
 				virtual bool close();
 
 			public: //Properties
@@ -432,17 +436,15 @@ namespace ang
 				virtual bool exit_app();
 			};
 
-
 			class LINK app
 				: public process
 				, public icore_app
 			{
 			public:
-				static app_t current_app();
+				static appptr current_app();
 
 			protected:
-				bool m_enable_update;
-				window_t m_main_wnd;
+				wndptr m_main_wnd;
 
 			public:
 				app();
@@ -451,11 +453,11 @@ namespace ang
 				virtual~app();
 
 			public: //Methods
-				core::async::iasync<dword> run_async(window_t wnd, wnd_create_args_t args);
+				core::async::iasync<dword> run_async(wndptr wnd, wnd_create_args_t args);
 
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
-				void set_main_wnd(window_t mainWindow);
+				void set_main_wnd(wndptr mainWindow);
 
 				virtual pointer core_app_handle()const override;
 				virtual icore_view_t main_core_view() override;
@@ -464,12 +466,11 @@ namespace ang
 				//virtual Core::Files::IFileSystem* GetFileSystem();
 
 			protected:
-				virtual dword on_run_async(core::async::iasync<dword>, window_t);
+				virtual dword on_run_async(core::async::iasync<dword>, wndptr);
 
 			public: //Properties
-				window_t main_wnd()const;
-				bool enable_update()const { return m_enable_update; }
-				void enable_update(bool value) { m_enable_update = value; }
+				wndptr main_wnd()const;
+				void main_wnd(wndptr);
 
 			public: //Custom Implementation
 				virtual bool init_app(array<string> cmdl) override;
@@ -477,8 +478,9 @@ namespace ang
 				virtual bool exit_app() override;
 
 			public: //Events
-				events::event_listener main_wnd_created_event;
-				events::event_listener main_wnd_destroyed_event;
+				void on_main_wnd_closed(objptr, platform::events::imsg_event_args_t);
+				//events::event_listener main_wnd_created_event;
+				//events::event_listener main_wnd_destroyed_event;
 
 			};
 		}

@@ -223,10 +223,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\angwin.h" />
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\events.h" />
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\angwin\gdi.h" />
-    <ClInclude Include="include\async_msg_task.h" />
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\console\console.h" />
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\events.h" />
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\gdi.h" />
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\windows.h" />
+    <ClInclude Include="include\dispatcher.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -259,9 +260,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\angwin.cpp" />
+    <ClCompile Include="source\win32.cpp" />
     <ClCompile Include="source\app.cpp" />
-    <ClCompile Include="source\async_msg_task.cpp" />
+    <ClCompile Include="source\console\console.cpp" />
+    <ClCompile Include="source\dispatcher.cpp" />
     <ClCompile Include="source\process.cpp" />
     <ClCompile Include="source\system_info.cpp" />
     <ClCompile Include="source\window.cpp" />

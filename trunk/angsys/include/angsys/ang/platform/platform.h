@@ -520,6 +520,7 @@ namespace ang
 				got_focus = 0x0007,
 				lost_focus = 0x0008,
 				draw = 0x000F,
+				close = 0x0010,
 				begin_drawing = 0x0407,
 				end_drawing = 0x0408,
 				visibility_change = 0x0018,

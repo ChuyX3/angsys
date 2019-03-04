@@ -1,8 +1,9 @@
 #include "pch.h"
 
 //#include "ang/core/time.h"
-#include "ang/platform/angwin/angwin.h"
-#include "async_msg_task.h"
+#include "ang/platform/win32/windows.h"
+#include "dispatcher.h"
+#include <ang/core/timer.h>
 
 using namespace ang;
 using namespace ang::core;
@@ -10,107 +11,68 @@ using namespace ang::platform;
 using namespace ang::platform::windows;
 
 #if defined _DEBUG
-#define new new(__FILE__, __LINE__)
+#define NEW new(__FILE__, __LINE__)
+#else 
+#define NEW new
 #endif
 
 namespace ang {
 	namespace platform {
 		namespace windows {
-			typedef struct _hprocess
+
+			struct process::_hprocess
 			{
-				pointer hmodule;
-				bool close_request;
-				events::message nonqueue_msg;
-				core::async::thread_t main_thread;
-			}*hprocess_t;
-			extern process* _current_process;
+				pointer hmodule = null;
+				core::async::thread_t main_thread = null;
+				dispatcher_t dispatcher;
+				collections::hash_map<string, var> properties;
+			};
+			extern process* s_current_process;
 		}
 	}
 }
 
 app_t app::current_app()
 {
-	if (_current_process == null)
-		_current_process = new app();
-	return _current_process->as<app>();
+	if (s_current_process == null)
+		s_current_process = new app();
+	return s_current_process->as<app>();
 }
 
-icore_app_t icore_app::core_app()
-{
-	return app::current_app().get();
-}
+//icore_app_t icore_app::core_app()
+//{
+//	return app::current_app().get();
+//}
 
 app::app()
-	: m_enable_update(true)
-	, m_main_wnd(null)
-	, main_wnd_created_event(this, [](events::core_msg_t code) { return events::win_msg_enum::created == code; })
-	, main_wnd_destroyed_event(this, [](events::core_msg_t code) { return events::win_msg_enum::destroyed == code; })
+	: m_main_wnd(null)
 {
 
 }
 
 app::~app()
 {
-	static_cast<events::event_trigger<app>&>(main_wnd_created_event).empty();
-	static_cast<events::event_trigger<app>&>(main_wnd_destroyed_event).empty();
 }
 
-ANG_IMPLEMENT_CLASSNAME(ang::platform::windows::app);
-ANG_IMPLEMENT_OBJECTNAME(ang::platform::windows::app);
-bool app::is_inherited_of(type_name_t name)
-{
-	return name == type_of<app>()
-		|| process::is_inherited_of(name)
-		|| icore_app::is_inherited_of(name);
-}
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::platform::windows::app, process, icore_app);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::windows::app);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::windows::app, process, icore_app);
 
-bool app::is_kind_of(type_name_t name)const
+void app::set_main_wnd(wndptr mainView)
 {
-	if (name == type_of<app>()
-		|| process::is_kind_of(name)
-		|| name == type_of<icore_app>())
-		return true;
-	return false;
-}
-
-bool app::query_object(type_name_t name, unknown_ptr_t out)
-{
-	if (out == null)
-		return false;
-	if (name == type_of<app>())
-	{
-		*out = static_cast<app*>(this);
-		return true;
-	}
-	else if (process::query_object(name, out))
-	{
-		return true;
-	}
-	else if (icore_app::query_object(name, out))
-	{
-		return true;
-	}
-	return false;
-}
-
-
-void app::set_main_wnd(window_t mainView)
-{
-	if (!_main_wnd.is_empty() || mainView == null)
+	if (!m_main_wnd.is_empty() || mainView == null)
 		return;
-	_main_wnd = mainView;
+	m_main_wnd = mainView;
 }
 
-pointer app::get_core_app_handle()const
+pointer app::core_app_handle()const
 {
-	if (is_created())
-		return hprocess_t(_process)->hmodule;
-	return null;
+	return m_process->hmodule;
 }
 
-icore_view_t app::get_main_core_view()
+icore_view_t app::main_core_view()
 {
-	return static_cast<icore_view*>(_main_wnd);
+	return static_cast<icore_view*>(m_main_wnd.get());
 }
 
 //imessage_reciever_t app::get_listener()const
@@ -118,29 +80,42 @@ icore_view_t app::get_main_core_view()
 //	return const_cast<app*>(this);
 //}
 
-input::ikeyboard_t app::get_keyboard()
+input::ikeyboard_t app::keyboard()
 {
 	return null;
 }
 
-window_t app::main_wnd()const
+wndptr app::main_wnd()const
 {
-	return _main_wnd;
+	return m_main_wnd;
+}
+
+void app::main_wnd(wndptr wnd)
+{
+	if (m_main_wnd.is_empty())
+		m_main_wnd = wnd;
 }
 
 bool app::init_app(array<string> cmdl)
 {
-	return process::init_app(move(cmdl));
+	process::init_app(move(cmdl));
+
+	if (!m_main_wnd.is_empty())
+		m_main_wnd->closed_event += new events::closed_event(this, &app::on_main_wnd_closed);
+	return true;
 }
 
 void app::update_app()
 {
 	process::update_app();
 
-	if (_enable_update && !_main_wnd.is_empty())
+	if (!m_main_wnd.is_empty() && m_main_wnd->is_created())
 	{
-		_main_wnd->send_msg(new events::message(events::core_msg_enum::update, 0, (LPARAM)(pointer)property("main_step_timer").get()));
-		_main_wnd->send_msg(new events::message(events::core_msg_enum::draw));
+		auto timer = m_process->properties["step_timer"].as<core::time::step_timer>();
+		timer->delta();
+		//pointer(currentTime - lastTime), pointer(currentTime - startTime)
+		m_main_wnd->listener()->send_msg(events::message((events::core_msg_t)events::core_msg_enum::update, timer->delta(), timer->total()));
+		m_main_wnd->listener()->send_msg(events::message((events::core_msg_t)events::core_msg_enum::draw));
 	}
 	
 }
@@ -150,27 +125,32 @@ bool app::exit_app()
 	return process::exit_app();
 }
 
-async::iasync_t<dword> app::run_async(window_t wnd, wnd_create_args_t args)
+void app::on_main_wnd_closed(objptr, platform::events::imsg_event_args_t)
+{
+	PostQuitMessage(0);
+}
+
+async::iasync<dword> app::run_async(wndptr w, wnd_create_args_t a)
 {
 	using namespace async;
-
-	auto ret = async::task::run_async<dword>([this](iasync<dword>* async, var_args_t args)->dword
+	app_t s_app = this;
+	auto ret = async::task::run_async<dword>([this, s_app, w, a](iasync<dword> async)->dword
 	{
-		window_t wnd = args[1]->as<window>();
-		wnd_create_args_t wndArgs = args[2]->as<wnd_create_args>();
+		wndptr wnd = w.get();
+		wnd_create_args_t args = a.get();
 
-		if (!wnd->create(wndArgs))
+		if (!wnd->create(args))
 			return -1;	
 
 		wnd->update_wnd();
 		wnd->show(showing_flag::show);
 		return on_run_async(async, wnd);
-	}, var_args_t{ this, wnd.get(), args.get() });
+	});
 	ret->wait(async_action_status::running, -1);
 	return ret;
 }
 
-dword app::on_run_async(core::async::iasync_t<dword> action, window_t wnd)
+dword app::on_run_async(core::async::iasync<dword> action, wndptr wnd)
 {
 	if (wnd == null || !wnd->is_created())
 		return -1;
@@ -182,50 +162,29 @@ dword app::on_run_async(core::async::iasync_t<dword> action, window_t wnd)
 	{
 		if (action->status() == core::async::async_action_status::canceled)
 		{
-			::SendMessageW((HWND)wnd->get_core_view_handle(), WM_CLOSE, 0, 0);
+			::SendMessageW((HWND)wnd->core_view_handle(), WM_CLOSE, 0, 0);
 			return -1;
 		}
 
 		if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE) != 0)
 		{
-			switch (msg.message)
+			switch ((events::win_msg)msg.message)
 			{
-			case events::win_msg_enum::system_reserved_event:
-				if (msg.wParam != 0 && msg.lParam != 0)
-				{
-					dword result = 0;
-					auto task = reinterpret_cast<async_msg_task*>(msg.wParam);
-					auto reciever = reinterpret_cast<imessage_reciever*>(msg.lParam);
-					
-					core::async::scope_locker<core::async::mutex_ptr_t> locker(main_mutex());
-					if (task->status_ != core::async::async_action_status::canceled)
-					{
-						task->status_ = core::async::async_action_status::running;
-						task->cond_->signal();
-						{//Executing command
-							mutex->unlock();
-							reciever->send_msg(task->msg_);
-							result = task->msg_->result();
-							mutex->lock();
-						}
-						task->status_ = core::async::async_action_status::completed;
-					}
-					task->complete(result);
+			case events::win_msg::system_reserved_event: {
+					auto task = reinterpret_cast<async_task*>(msg.lParam);
+					task->execute();
 					task->release();
-				}
-				break;
+				} break;
 			default:
 				TranslateMessage(&msg);
 				DispatchMessageW(&msg);
 				break;
 			}
 		}
-
-		if (_enable_update) {
+		else {
 			timer->update();
-			long64 lprm = (LPARAM)(void*)timer.get();
-			wnd->send_msg(new events::message(events::win_msg_enum::update, 0, lprm));
-			wnd->send_msg(new events::message(events::win_msg_enum::draw));
+			wnd->listener()->send_msg(events::message((events::core_msg_t)events::win_msg::update, timer->delta(), timer->total()));
+			wnd->listener()->send_msg(events::message((events::core_msg_t)events::win_msg::draw));
 		}
 		
 	}

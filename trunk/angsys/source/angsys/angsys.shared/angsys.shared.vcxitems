@@ -163,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)utils\angsys.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)utils\internal.natvis" />
     <Natvis Include="$(MSBuildThisFileDirectory)utils\xml.natvis" />
   </ItemGroup>
 </Project>

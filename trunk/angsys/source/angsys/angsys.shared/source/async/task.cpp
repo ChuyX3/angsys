@@ -98,11 +98,11 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::task, object, itask<void>
 ////////////////////////////////////////////////////////////////////////////////////////
 
 thread_task::thread_task(worker_thread_t th)
-	: _was_canceled(false)
-	, _state(async_action_status::initializing)
-	, _parent_task(null)
-	, _child_task(null)
-	, _thread(th)
+	: m_was_canceled(false)
+	, m_status(async_action_status::initializing)
+	, m_parent_task(null)
+	, m_child_task(null)
+	, m_thread(th)
 {
 
 }
@@ -118,76 +118,76 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::thread_task, task);
 
 void thread_task::run()
 {
-	_mutex.lock();
-	if (_state == async_action_status::canceled)
+	m_mutex.lock();
+	if (m_status == async_action_status::canceled)
 	{
-		_state = async_action_status::completed;
+		m_status = async_action_status::completed;
 		action.empty();
-		_cond.signal();
-		_mutex.unlock();
+		m_cond.signal();
+		m_mutex.unlock();
 		return;
 	}
-	_state = async_action_status::running;
+	m_status = async_action_status::running;
 
-	_mutex.unlock();
+	m_mutex.unlock();
 
 	action(this);
 	
-	_mutex.lock();
+	m_mutex.lock();
 
-	if (_state == async_action_status::canceled)
+	if (m_status == async_action_status::canceled)
 	{
-		_state = async_action_status::completed;
+		m_status = async_action_status::completed;
 		action.empty();
 	}
-	else if (_child_task.is_empty())
+	else if (m_child_task.is_empty())
 	{
-		_state = async_action_status::wait_for_then;
+		m_status = async_action_status::wait_for_then;
 	}
 	else
 	{
-		_child_task->mutex().lock();
-		if (_child_task->_state == async_action_status::canceled)
+		m_child_task->mutex().lock();
+		if (m_child_task->m_status == async_action_status::canceled)
 		{
-			_child_task->mutex().unlock();
-			_child_task = null;
-			_state = async_action_status::wait_for_then;
+			m_child_task->mutex().unlock();
+			m_child_task = null;
+			m_status = async_action_status::wait_for_then;
 		}
 		else
 		{
-			_thread->post_task(_child_task);
-			_child_task->mutex().unlock();
-			_child_task = null;
-			_thread = null; //unreference thread
-			_state = async_action_status::completed;
+			m_thread->post_task(m_child_task);
+			m_child_task->mutex().unlock();
+			m_child_task = null;
+			m_thread = null; //unreference thread
+			m_status = async_action_status::completed;
 			action.empty();
 		}
 	}
 
-	_cond.signal();
-	_mutex.unlock();
+	m_cond.signal();
+	m_mutex.unlock();
 }
 
 iasync<void> thread_task::then(core::delegates::function<void(iasync<void>)> func)
 {
-	scope_locker<async::mutex_t> lock = _mutex;
-	if (async_action_status::finished & _state)
+	scope_locker<async::mutex_t> lock = m_mutex;
+	if (async_action_status::finished & m_status)
 		return null;
 
-	if (_child_task.is_empty() || _child_task->_state == async_action_status::canceled)
-		_child_task = new thread_task(_thread);
+	if (m_child_task.is_empty() || m_child_task->m_status == async_action_status::canceled)
+		m_child_task = new thread_task(m_thread);
 
-	thread_task_t task = _child_task;
-	_child_task->action += func;
+	thread_task_t task = m_child_task;
+	m_child_task->action += func;
 
-	if (_state == async_action_status::wait_for_then)
+	if (m_status == async_action_status::wait_for_then)
 	{
-		_thread->post_task(_child_task);
-		_child_task = null;
-		_thread = null; //unreference thread
+		m_thread->post_task(m_child_task);
+		m_child_task = null;
+		m_thread = null; //unreference thread
 		action.empty();
-		_state = async_action_status::completed;
-		_cond.signal();
+		m_status = async_action_status::completed;
+		m_cond.signal();
 	}
 
 	return task.get();
@@ -195,26 +195,26 @@ iasync<void> thread_task::then(core::delegates::function<void(iasync<void>)> fun
 
 bool thread_task::wait(async_action_status_t st)const
 {
-	if (!_thread.is_empty() && _thread->has_thread_access())
+	if (!m_thread.is_empty() && m_thread->has_thread_access())
 		return false;
-	scope_locker<async::mutex_t> lock = _mutex;
-	if (_state > st)return false;
-	_cond.waitfor(_mutex, [&]() { return !(st & _state); });
+	scope_locker<async::mutex_t> lock = m_mutex;
+	if (m_status > st)return false;
+	m_cond.waitfor(m_mutex, [&]() { return !(st & m_status); });
 	return true;
 }
 
 bool thread_task::wait(async_action_status_t st, dword ms)const
 {
-	if (_thread.is_empty() || _thread->has_thread_access())
+	if (m_thread.is_empty() || m_thread->has_thread_access())
 		return false;
 	dword last_time = (dword)(get_performance_time_us() / 1000.0);
 	dword current = 0;
 
-	scope_locker<async::mutex_t> lock = _mutex;
-	if (_state > st)return false;
-	while (!(st & _state))
+	scope_locker<async::mutex_t> lock = m_mutex;
+	if (m_status > st)return false;
+	while (!(st & m_status))
 	{
-		_cond.wait(_mutex, ms);
+		m_cond.wait(m_mutex, ms);
 		thread::sleep(1);
 		current = (dword)(get_performance_time_us() / 1000);
 		if (ms <= (current - last_time))
@@ -222,50 +222,50 @@ bool thread_task::wait(async_action_status_t st, dword ms)const
 		else ms -= (current - last_time);
 		last_time = current;
 	}
-	return st&_state;
+	return st&m_status;
 }
 
 async_action_status_t thread_task::status()const
 {
-	return _state;
+	return m_status;
 }
 
 bool thread_task::cancel()
 {
-	scope_locker<async::mutex_t> lock = _mutex;
-	if (_thread.is_empty() || _state & (async_action_status::finished | async_action_status::attached))
+	scope_locker<async::mutex_t> lock = m_mutex;
+	if (m_thread.is_empty() || m_status & (async_action_status::finished | async_action_status::attached))
 		return false;
 
-	_was_canceled = true;
-	_state = async_action_status::canceled;
+	m_was_canceled = true;
+	m_status = async_action_status::canceled;
 	action.empty();
-	if (!_thread->has_thread_access())
-		_cond.signal();
-	_thread = null;
+	if (!m_thread->has_thread_access())
+		m_cond.signal();
+	m_thread = null;
 	return true;
 }
 
 void thread_task::result()const
 {
-	scope_locker<async::mutex_t> lock = _mutex;
-	//	if (_thread.is_empty())
+	scope_locker<async::mutex_t> lock = m_mutex;
+	//	if (m_thread.is_empty())
 	//		return;
 
-	if (!_thread.is_empty() && !_thread->has_thread_access()) _cond.waitfor(_mutex, [&]() ->bool
+	if (!m_thread.is_empty() && !m_thread->has_thread_access()) m_cond.waitfor(m_mutex, [&]() ->bool
 	{
-		return _state <= async_action_status::running;//  !(async_action_status::finished | async_action_status::wait_for_then).is_active(state);
+		return m_status <= async_action_status::running;//  !(async_action_status::finished | async_action_status::wait_for_then).is_active(state);
 	});
 
-	if (_was_canceled)
+	if (m_was_canceled)
 		throw_exception(except_code::operation_canceled);
 
-	if (_state == async_action_status::completed)
+	if (m_status == async_action_status::completed)
 		return;
 
-	_state = async_action_status::completed;
-	if (!_thread->has_thread_access())
-		_cond.signal();
-	const_cast<thread_task*>(this)->_thread = null;
+	m_status = async_action_status::completed;
+	if (!m_thread->has_thread_access())
+		m_cond.signal();
+	const_cast<thread_task*>(this)->m_thread = null;
 	const_cast<thread_task*>(this)->action.empty();
 }
 

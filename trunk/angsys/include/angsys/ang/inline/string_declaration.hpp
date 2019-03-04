@@ -80,25 +80,29 @@ namespace ang
 			str->format(f, ang::forward<Ts>(args)...);
 			return str;
 		}
-		object_wrapper(text::basic_const_string_buffer<MY_ENCODING>* str) : object_wrapper() {
+		object_wrapper(text::basic_const_string_buffer<MY_ENCODING>* str) : m_ptr(null) {
 			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 		}
-		object_wrapper(text::raw_cstr_t const& str) : object_wrapper() {
+		object_wrapper(text::raw_cstr_t const& str) : m_ptr(null) {
 			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 		}
 		template<typename T, text::encoding E> 
-		object_wrapper(str_view<T, E> const& str) : object_wrapper() {
+		object_wrapper(str_view<T, E> const& str) : m_ptr(null) {
 			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 		}
 		template<text::encoding E>
-		object_wrapper(object_wrapper<text::basic_string_buffer<E>> const& str) : object_wrapper() {
+		object_wrapper(object_wrapper<text::basic_string_buffer<E>> const& str) : m_ptr(null) {
 			if(str) set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str->cstr()));
 		}
+		
 		template<typename T, wsize N> 
-		object_wrapper(const T(&ar)[N]) : object_wrapper() {
+		object_wrapper(const T(&ar)[N]) : m_ptr(null) {
 			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(cstr_view<T>(ar)));
 		}	
-
+		template<typename T>
+		explicit object_wrapper(const T* str) : m_ptr(null) {
+			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(cstr_view<T>(str)));
+		}
 		object_wrapper& operator = (text::basic_const_string_buffer<MY_ENCODING>* str) {
 			if (is_empty()) set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 			else get()->set(str);

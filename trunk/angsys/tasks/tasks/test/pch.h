@@ -10,7 +10,8 @@
 
 #define ANGSYS_DYNAMIC_LIBRARY
 #include <angsys.h>
-#include <ang/platform/platform.h>
+#include <ang/platform/win32/windows.h>
 #pragma comment(lib, "angsys.lib")
+#pragma comment(lib, "angsys.platform.lib")
 
 // TODO: reference additional headers your program requires here

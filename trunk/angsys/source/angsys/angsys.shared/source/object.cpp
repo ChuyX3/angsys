@@ -179,7 +179,7 @@ safe_pointer& safe_pointer::operator = (std::nullptr_t const&)
 object* ang_alloc_object_memory(ang_size_t sz, ang_memory_hint_t hint)
 {
 	memory::iraw_allocator* allocator = memory::get_raw_allocator(hint);
-	smart_ptr_info_ptr_t ptr = new(allocator->memory_alloc(sz + align_up<16, sizeof(smart_ptr_info_t)>())) smart_ptr_info_t();
+	smart_ptr_info_ptr_t ptr = (smart_ptr_info_ptr_t)allocator->memory_alloc(sz + align_up<16, sizeof(smart_ptr_info_t)>());
 	ptr->_obj_ref_counter = 0;
 	ptr->_mem_ref_counter = 0;
 	ptr->allocator = allocator;

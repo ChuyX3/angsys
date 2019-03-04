@@ -1295,7 +1295,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string
 	if (m_count > (m_table.size() * 0.75))
 		increase_capacity();
 
-	if (find_node((raw_cstr_t)pair.key) != null)
+	if (find_node((text::raw_cstr_t)pair.key) != null)
 		return end();
 	wsize idx = index_maker::make(pair.key, m_table.size());
 	node_ptr_t entry = allocate_node<ang::text::basic_string<E,A>, T>(ang::forward<ang::text::basic_string<E, A>>(pair.key), ang::forward<T>(pair.value));
@@ -1343,7 +1343,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string
 		increase_capacity();
 
 	wsize idx = index_maker::make(pair.key, m_table.size());
-	node_ptr_t node = find_node((raw_cstr_t)pair.key);
+	node_ptr_t node = find_node((text::raw_cstr_t)pair.key);
 	if (node == null)
 	{
 		node = allocate_node<ang::text::basic_string<E,A>, T>(ang::forward<ang::text::basic_string<E, A>>(pair.key), ang::forward<T>(pair.value));
@@ -1465,7 +1465,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::text::raw_cstr_t, ang::text::raw_cstr_t, logic_operation_type::same>::operate(key, (text::raw_cstr_t)->data.key))
+		if (logic_operation<ang::text::raw_cstr_t, ang::text::raw_cstr_t, logic_operation_type::same>::operate(key, (text::raw_cstr_t)temp->data.key))
 			return iterator_t(const_cast<hash_map_object*>(this), temp, idx);
 		temp = temp->next;
 	}

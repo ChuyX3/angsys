@@ -1051,7 +1051,7 @@ inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>
 
 template<template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>> && ptr)
-	: object_wrapper<collections::vector_buffer<ang::var, allocator>>()
+	: m_ptr(null)
 {
 	if (ptr.is_empty())
 	{
@@ -1067,7 +1067,7 @@ inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>
 
 template<template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>> const& ptr)
-	: object_wrapper<collections::vector_buffer<ang::var, allocator>>()
+	: m_ptr(null)
 {
 	set(!ptr.is_empty() ? ptr.get() : new ang::collections::vector_buffer<ang::var, allocator>());
 }

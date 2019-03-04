@@ -524,5 +524,8 @@
     <Natvis Include="$(MSBuildThisFileDirectory)utils\xml.natvis">
       <Filter>utils</Filter>
     </Natvis>
+    <Natvis Include="$(MSBuildThisFileDirectory)utils\internal.natvis">
+      <Filter>utils</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>

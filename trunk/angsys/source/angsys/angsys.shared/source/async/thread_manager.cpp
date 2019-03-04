@@ -62,7 +62,7 @@ worker_thread_t thread_manager::main_thread()const
 
 worker_thread_t thread_manager::this_thread()const
 {
-	worker_thread_t thread = null;
+	worker_thread* thread = null;
 	_main_mutex.lock();
 	if (!_thread_map.find(this_thread_id(), &thread))
 	{

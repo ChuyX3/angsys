@@ -8,33 +8,41 @@ basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer()
 }
 
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(wsize reserv)
-	: basic_string_buffer()
+	: basic_string_buffer_base()
 {
+	m_encoder = iencoder::get_encoder(MY_ENCODING);
+	m_parser = iparser::get_parser(MY_ENCODING);
 	realloc(reserv, false);
 }
 
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(raw_cstr_t const& str)
-	: basic_string_buffer()
+	: basic_string_buffer_base()
 {
+	m_encoder = iencoder::get_encoder(MY_ENCODING);
+	m_parser = iparser::get_parser(MY_ENCODING);
 	copy(str);
 }
 
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(basic_string_buffer<MY_ENCODING> const* str)
-	: basic_string_buffer()
+	: basic_string_buffer_base()
 {
+	m_encoder = iencoder::get_encoder(MY_ENCODING);
+	m_parser = iparser::get_parser(MY_ENCODING);
 	copy(str->cstr());
 }
 
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(basic_const_string_buffer<MY_ENCODING>* str)
-	: basic_string_buffer()
+	: basic_string_buffer_base()
 {
+	m_encoder = iencoder::get_encoder(MY_ENCODING);
+	m_parser = iparser::get_parser(MY_ENCODING);
 	set(str);
 }
 
 
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::~basic_string_buffer()
 {
-	clear();
+	//clear();
 }
 
 ang::rtti_t const& basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::class_info()

@@ -9,7 +9,7 @@ namespace ang
 	{
 		namespace events
 		{
-			safe_enum(LINK, win_msg_enum, core_msg_t)
+			safe_enum(LINK, win_msg, core_msg_t)
 			{
 				none = 0x0000,
 				created = 0x0001,
@@ -158,7 +158,8 @@ namespace ang
 				pointer_moved = 0x0245,
 				pointer_pressed = 0x0246,
 				pointer_released = 0x0247,
-				pointer_canceled = 0x024C,
+				pointer_entered = 0x0249,
+				pointer_leaved = 0x024A,
 
 				system_reserved_event = 0x0401,
 				interprocess_command = 0x0402,
@@ -184,15 +185,13 @@ namespace ang
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
-				virtual const message& msg_info()const override;
+				virtual const message& msg()const override;
 				virtual void handled(bool value) override;
 				virtual bool handled()const override;
 
 			private:
 				virtual~msg_event_args();
 			};
-
-			//typedef object_wrapper<msg_event_args> msg_event_args_t;
 
 			class LINK app_status_event_args
 				: public object
@@ -208,7 +207,7 @@ namespace ang
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
 
-				virtual const message& msg_info()const override;
+				virtual const message& msg()const override;
 				virtual void handled(bool value) override;
 				virtual bool handled()const override;
 
@@ -218,23 +217,22 @@ namespace ang
 				virtual~app_status_event_args();
 			};
 
-
 			class LINK created_event_args
 				: public object
 				, public icreated_event_args
 			{
 			private:
 				message m_msg;
-				windows::window_t m_view;
+				windows::wndptr m_view;
 				windows::app_t m_app;
 				var_args_t m_args;
 
 			public:
-				created_event_args(message, windows::window_t, windows::app_t, var_args_t);
+				created_event_args(message, windows::wndptr, windows::app_t, var_args_t);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
-				virtual const message& msg_info()const override;
+				virtual const message& msg()const override;
 				virtual void handled(bool value) override;
 				virtual bool handled()const override;
 
@@ -246,28 +244,28 @@ namespace ang
 				virtual~created_event_args();
 			};
 
-
 			class LINK display_info_event_args
 				: public object
 				, public idisplay_info_event_args
 			{
 			private:
 				message m_msg;
+				windows::wndptr m_view;
 				display_invalidate_reason_t m_reason;
 				display::display_info_t m_info;
 
 			public:
-				display_info_event_args(message, display_invalidate_reason_t, display::display_info_t);
+				display_info_event_args(message, windows::wndptr, display_invalidate_reason_t, display::display_info_t);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
-				virtual const message& msg_info()const override;
+				virtual const message& msg()const override;
 				virtual void handled(bool value) override;
 				virtual bool handled()const override;
 
 				virtual icore_view_t core_view()const override;
-				virtual display_invalidate_reason_t invalidate_reason()const override;
-				virtual display::display_info_t display_info()const override;
+				virtual display_invalidate_reason_t const& invalidate_reason()const override;
+				virtual display::display_info_t const& display_info()const override;
 
 			private:
 				virtual~display_info_event_args();
@@ -279,14 +277,14 @@ namespace ang
 			{
 			private:
 				message m_msg;
-				windows::window_t m_view;
+				windows::wndptr m_view;
 				bool m_visible;
 			public:
-				visibility_change_event_args(message, windows::window_t, bool);
+				visibility_change_event_args(message, windows::wndptr, bool);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
-				virtual const message& msg_info()const override;
+				virtual const message& msg()const override;
 				virtual void handled(bool value) override;
 				virtual bool handled()const override;
 				virtual icore_view_t core_view()const override;
@@ -295,7 +293,6 @@ namespace ang
 			private:
 				virtual~visibility_change_event_args();
 			};
-
 
 			class LINK activate_event_args
 				: public object
@@ -310,42 +307,40 @@ namespace ang
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
-				virtual const message& msg_info()const override;
+				virtual const message& msg()const override;
 				virtual void handled(bool value) override;
 				virtual bool handled()const override;
-				virtual activate_status_t status()const override;
+				virtual activate_status_t const& status()const override;
 
 			private:
 				virtual~activate_event_args();
 			};
-
 
 			class LINK draw_event_args
 				: public object
 				, public idraw_event_args
 			{
 			private:
-				message msg;
-				windows::window_t m_view;
+				message m_msg;
+				windows::wndptr m_view;
 				graphics::device_context_t m_dc;
 				graphics::size<float> m_size;
 
 			public:
-				draw_event_args(message, windows::window_t, graphics::device_context_t, graphics::size<float>);
+				draw_event_args(message, windows::wndptr, graphics::device_context_t, graphics::size<float>);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
-				virtual const message& msg_info()const override;
+				virtual const message& msg()const override;
 				virtual void handled(bool value) override;
 				virtual bool handled()const override;
 				virtual icore_view_t core_view()const override;
 				virtual icore_context_t core_context()const override;
-				virtual graphics::size<float> canvas_size()const override;
+				virtual graphics::size<float> const& canvas_size()const override;
 
 			private:
 				virtual~draw_event_args();
 			};
-
 
 			class LINK update_event_args
 				: public object
@@ -361,7 +356,7 @@ namespace ang
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
-				virtual const message& msg_info()const override;
+				virtual const message& msg()const override;
 				virtual void handled(bool value) override;
 				virtual bool handled()const override;
 				virtual double delta()const override;
@@ -370,7 +365,6 @@ namespace ang
 			private:
 				virtual~update_event_args();
 			};
-
 
 			///////////////////////////////////////////////////
 			class LINK pointer_event_args
@@ -386,12 +380,12 @@ namespace ang
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
-				virtual const message& msg_info()const override;
+				virtual const message& msg()const override;
 				virtual void handled(bool value) override;
 				virtual bool handled()const override;
-				virtual graphics::point<float> position()const override;
-				virtual input::key_modifiers_t modifiers()const override;
-				virtual input::poiner_info_t info()const override;
+				virtual graphics::point<float> const& position()const override;
+				virtual input::key_modifiers_t const& modifiers()const override;
+				virtual input::poiner_info_t const& info()const override;
 
 			private:
 				virtual~pointer_event_args();
@@ -410,11 +404,11 @@ namespace ang
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
-				virtual const message& msg_info()const override;
+				virtual const message& msg()const override;
 				virtual void handled(bool value) override;
 				virtual bool handled()const override;
 				virtual char32_t key()const override;
-				virtual input::key_info_t info()const override;
+				virtual input::key_info_t const& info()const override;
 				
 
 			private:
@@ -427,18 +421,18 @@ namespace ang
 			{
 			private:
 				message m_msg;
-				mstring m_text;
+				wstring m_text;
 				input::ikeyboard_t m_keyboard;
 
 			public:
-				text_change_event_args(message, mstring, input::ikeyboard_t = null);
+				text_change_event_args(message, wstring, input::ikeyboard_t = null);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
-				virtual const message& msg_info()const override;
+				virtual const message& msg()const override;
 				virtual void handled(bool value) override;
 				virtual bool handled()const override;
-				virtual mstring text()const override;
+				virtual text::istring_t text()const override;
 				virtual input::ikeyboard_t keyboard()const override;
 
 			private:
@@ -454,12 +448,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_moved_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::mouse_move) {
+					: event((core_msg_t)win_msg::mouse_move) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_moved_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::mouse_move) {
+					: event((core_msg_t)win_msg::mouse_move) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -470,12 +464,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_lbutton_down_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::lbuttonDown) {
+					: event((core_msg_t)win_msg::lbutton_down) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_lbutton_down_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::lbuttonDown) {
+					: event((core_msg_t)win_msg::lbutton_down) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -486,12 +480,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_lbutton_up_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::lbuttonUp) {
+					: event((core_msg_t)win_msg::lbutton_up) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_lbutton_up_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::lbuttonUp) {
+					: event((core_msg_t)win_msg::lbutton_up) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -502,12 +496,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_lbutton_dblclick_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::lbuttonDblClk) {
+					: event((core_msg_t)win_msg::lbutton_dbl_clk) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_lbutton_dblclick_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::lbuttonDblClk) {
+					: event((core_msg_t)win_msg::lbutton_dbl_clk) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -519,12 +513,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_rbutton_down_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::rbuttonDown) {
+					: event((core_msg_t)win_msg::rbutton_down) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_rbutton_down_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::rbuttonDown) {
+					: event((core_msg_t)win_msg::rbutton_down) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -535,12 +529,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_rbutton_up_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::rbuttonUp) {
+					: event((core_msg_t)win_msg::rbutton_up) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_rbutton_up_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::rbuttonUp) {
+					: event((core_msg_t)win_msg::rbutton_up) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -551,12 +545,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_rbutton_dblclick_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::rbuttonDblClk) {
+					: event((core_msg_t)win_msg::rbutton_dbl_clk) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_rbutton_dblclick_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::rbuttonDblClk) {
+					: event((core_msg_t)win_msg::rbutton_dbl_clk) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -567,12 +561,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_xbutton_down_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::xbuttonDown) {
+					: event((core_msg_t)win_msg::xbutton_down) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_xbutton_down_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::xbuttonDown) {
+					: event((core_msg_t)win_msg::xbutton_down) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -583,12 +577,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_xbutton_up_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::xbuttonUp) {
+					: event((core_msg_t)win_msg::xbutton_up) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_xbutton_up_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::xbuttonUp) {
+					: event((core_msg_t)win_msg::xbutton_up) {
 					set<ipointer_event_args>(f);
 				}
 			};
@@ -599,12 +593,12 @@ namespace ang
 			public:
 				template<class obj_t>
 				mouse_xbutton_dblclick_event(obj_t* o, void(obj_t::*f)(object_t, ipointer_event_args_t))
-					: event((core_msg_t)win_msg_enum::xbuttonDblClk) {
+					: event((core_msg_t)win_msg::xbutton_dbl_clk) {
 					set<ipointer_event_args>(o, f);
 				}
 				template<class calleable_t>
 				mouse_xbutton_dblclick_event(calleable_t f)
-					: event((core_msg_t)win_msg_enum::xbuttonDblClk) {
+					: event((core_msg_t)win_msg::xbutton_dbl_clk) {
 					set<ipointer_event_args>(f);
 				}
 			};

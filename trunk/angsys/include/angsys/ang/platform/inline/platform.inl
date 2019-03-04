@@ -375,7 +375,7 @@ template<typename T> inline ang::graphics::rect<T> ang::graphics::operator / (co
 template<typename F, typename A>
 inline void ang::platform::events::static_event_function<F, A>::invoke(ang::objptr caller, ang::platform::events::imsg_event_args_t args)const
 {
-	_function(caller, static_cast<A*>(args));
+	_function(caller, static_cast<A*>(args.get()));
 }
 
 template<typename F, typename A>
