@@ -16,7 +16,7 @@ using namespace ang::platform::windows;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-dispatcher::dispatcher(function<bool(events::event_t)> listen_callback, function<dword(events::message)> send_msg_callback, function<core::async::iasync<void>(core::async::iasync<void>)> run_async_callback)
+dispatcher::dispatcher(function<events::event_token_t(events::event_t)> listen_callback, function<dword(events::message)> send_msg_callback, function<core::async::iasync<void>(core::async::iasync<void>)> run_async_callback)
 	: m_listen_callback(ang::move(listen_callback))
 	, m_dispatch_message(ang::move(send_msg_callback))
 	, m_run_async_callback(ang::move(run_async_callback))
@@ -65,15 +65,6 @@ core::async::iasync<void> dispatcher::run_async(core::delegates::function<void(c
 	return post_task(task.get());
 }
 
-core::async::iasync<void> dispatcher::run_async(core::delegates::function<void(core::async::iasync<void>, var_args_t)> func, var_args_t args)
-{
-	async_task_t task = new async_task(this, [=](core::async::iasync<void> task)
-	{
-		func.get()->invoke(task, args.get());
-	});
-	return post_task(task);
-}
-
 dword dispatcher::send_msg(events::message msg)
 {
 	return m_dispatch_message(msg);
@@ -89,7 +80,7 @@ core::async::iasync<dword> dispatcher::post_msg(events::message msg)
 	return handler.get();
 }
 
-bool dispatcher::listen_to(events::event_t event)
+events::event_token_t dispatcher::listen_to(events::event_t event)
 {
 	return m_listen_callback(event);
 }

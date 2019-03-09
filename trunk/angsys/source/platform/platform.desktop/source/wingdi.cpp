@@ -142,8 +142,8 @@ void graphics::device_context::draw_primitive(primitive_t, const collections::ie
 
 ///////////////////////////////////////////////////////
 
-graphics::paint_dc::paint_dc(window_t wnd)
-	: device_context(wnd)
+graphics::paint_dc::paint_dc(wndptr wnd)
+	: base(forward<wndptr>(wnd))
 {
 }
 

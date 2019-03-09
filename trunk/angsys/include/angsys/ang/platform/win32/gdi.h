@@ -11,8 +11,7 @@ namespace ang
 		ang_object(paint_dc);
 
 		class LINK device_context
-			: public object
-			, public platform::icore_context
+			: public smart<device_context, platform::icore_context>
 		{
 		protected:
 			pointer handle;
@@ -43,7 +42,7 @@ namespace ang
 		};
 
 		class LINK paint_dc
-			: public device_context
+			: public smart<paint_dc, device_context>
 		{
 		public:
 			paint_dc(platform::windows::window_t);

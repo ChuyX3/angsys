@@ -13,6 +13,7 @@
 #include <angsys.h>
 
 #pragma comment(lib, "angsys.lib")
+#pragma comment(lib, "Xinput.lib");
 
 //ANG_DECLARE_MEMORYMANAGER()
 

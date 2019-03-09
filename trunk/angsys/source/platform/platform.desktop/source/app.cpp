@@ -3,7 +3,9 @@
 //#include "ang/core/time.h"
 #include "ang/platform/win32/windows.h"
 #include "dispatcher.h"
+#include "event_args.h"
 #include <ang/core/timer.h>
+
 
 using namespace ang;
 using namespace ang::core;
@@ -58,12 +60,12 @@ ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::platform::windows::app, process, icore_app)
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::windows::app);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::windows::app, process, icore_app);
 
-void app::set_main_wnd(wndptr mainView)
-{
-	if (!m_main_wnd.is_empty() || mainView == null)
-		return;
-	m_main_wnd = mainView;
-}
+//void app::set_main_wnd(wndptr mainView)
+//{
+//	if (!m_main_wnd.is_empty() || mainView == null)
+//		return;
+//	m_main_wnd = mainView;
+//}
 
 pointer app::core_app_handle()const
 {
@@ -85,16 +87,16 @@ input::ikeyboard_t app::keyboard()
 	return null;
 }
 
-wndptr app::main_wnd()const
-{
-	return m_main_wnd;
-}
-
-void app::main_wnd(wndptr wnd)
-{
-	if (m_main_wnd.is_empty())
-		m_main_wnd = wnd;
-}
+//wndptr app::main_wnd()const
+//{
+//	return m_main_wnd;
+//}
+//
+//void app::main_wnd(wndptr wnd)
+//{
+//	if (m_main_wnd.is_empty())
+//		m_main_wnd = wnd;
+//}
 
 bool app::init_app(array<string> cmdl)
 {
@@ -109,13 +111,9 @@ void app::update_app()
 {
 	process::update_app();
 
-	if (!m_main_wnd.is_empty() && m_main_wnd->is_created())
+	if (!m_main_wnd.is_empty() && m_main_wnd->is_created)
 	{
-		auto timer = m_process->properties["step_timer"].as<core::time::step_timer>();
-		timer->delta();
-		//pointer(currentTime - lastTime), pointer(currentTime - startTime)
-		m_main_wnd->listener()->send_msg(events::message((events::core_msg_t)events::core_msg_enum::update, timer->delta(), timer->total()));
-		m_main_wnd->listener()->send_msg(events::message((events::core_msg_t)events::core_msg_enum::draw));
+		m_main_wnd->listener()->send_msg(events::message((events::core_msg_t)events::core_msg_enum::update, 0, 0));
 	}
 	
 }
@@ -152,13 +150,13 @@ async::iasync<dword> app::run_async(wndptr w, wnd_create_args_t a)
 
 dword app::on_run_async(core::async::iasync<dword> action, wndptr wnd)
 {
-	if (wnd == null || !wnd->is_created())
+	if (wnd == null || !wnd->is_created)
 		return -1;
 	MSG msg;
 	auto mutex = main_mutex();
-	auto timer = make_shared<core::time::step_timer>();
-	timer->reset();
-	while (wnd->is_created())
+	long64 last_time = core::time::get_performance_time_us();
+
+	while (wnd->is_created)
 	{
 		if (action->status() == core::async::async_action_status::canceled)
 		{
@@ -181,10 +179,12 @@ dword app::on_run_async(core::async::iasync<dword> action, wndptr wnd)
 				break;
 			}
 		}
-		else {
-			timer->update();
-			wnd->listener()->send_msg(events::message((events::core_msg_t)events::win_msg::update, timer->delta(), timer->total()));
-			wnd->listener()->send_msg(events::message((events::core_msg_t)events::win_msg::draw));
+
+		long64 curr_time = core::time::get_performance_time_us();
+		if ((curr_time - last_time) > 8333)
+		{
+			last_time = curr_time;
+			wnd->listener()->send_msg(events::message((events::core_msg_t)events::win_msg::update, 0, 0));
 		}
 		
 	}

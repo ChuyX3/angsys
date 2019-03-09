@@ -18,6 +18,12 @@
     <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\windows.h">
       <Filter>header files\ang\platform\windows</Filter>
     </ClInclude>
+    <ClInclude Include="include\event_args.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\controller.h">
+      <Filter>header files\ang\platform\windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -49,6 +55,9 @@
     <ClCompile Include="source\win32.cpp">
       <Filter>source files</Filter>
     </ClCompile>
+    <ClCompile Include="source\input\controller.cpp">
+      <Filter>source files\input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="header files">
@@ -74,6 +83,9 @@
     </Filter>
     <Filter Include="header files\ang\platform\windows">
       <UniqueIdentifier>{7a308f58-7dcd-4b36-a92a-ca840ed73f5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\input">
+      <UniqueIdentifier>{52ac6a95-d84a-4d38-923e-1b7ca1f16123}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

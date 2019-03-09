@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <ang/core/timer.h>
 #include "ang/platform/win32/windows.h"
+#include "event_args.h"
 
 using namespace ang;
 using namespace ang::platform;
@@ -295,48 +296,6 @@ void draw_event_args::handled(bool value)
 }
 
 bool draw_event_args::handled()const
-{
-	return m_msg.result() != -1;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-update_event_args::update_event_args(message msg, double delta, double total)
-	: m_msg(msg)
-	, m_delta(delta)
-	, m_total(total)
-{
-}
-
-update_event_args::~update_event_args()
-{
-}
-
-ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::events::update_event_args)
-ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::platform::events::update_event_args, object, iupdate_event_args);
-ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::events::update_event_args, object, iupdate_event_args, imsg_event_args);
-
-const message& update_event_args::msg()const
-{
-	return m_msg;
-}
-
-double update_event_args::delta()const
-{
-	return m_delta;
-}
-
-double update_event_args::total()const
-{
-	return m_total;
-}
-
-void update_event_args::handled(bool value)
-{
-	m_msg.result(value ? 0 : -1);
-}
-
-bool update_event_args::handled()const
 {
 	return m_msg.result() != -1;
 }

@@ -14,19 +14,17 @@ namespace ang
 			ang_object(dispatcher);
 
 			class LINK dispatcher
-				: public object
-				, public core::async::idispatcher
-				, public imessage_listener
+				: public smart<dispatcher, core::async::idispatcher, imessage_listener>
 			{
 			private:
 				core::async::thread_t m_thread;
-				function<bool(events::event_t)> m_listen_callback;
+				function<events::event_token_t(events::event_t)> m_listen_callback;
 				function<dword(events::message)> m_dispatch_message;
 				function<core::async::iasync<void>(core::async::iasync<void>)> m_run_async_callback;
 
 			public:
 				dispatcher(
-					function<bool(events::event_t)>,
+					function<events::event_token_t(events::event_t)>,
 					function<dword(events::message)>,
 					function<core::async::iasync<void>(core::async::iasync<void>)>
 				);
@@ -40,18 +38,16 @@ namespace ang
 
 				virtual bool has_thread_access()const override;
 				virtual core::async::iasync<void> run_async(core::delegates::function<void(core::async::iasync<void>)>)override;
-				virtual core::async::iasync<void> run_async(core::delegates::function<void(core::async::iasync<void>, var_args_t)>, var_args_t)override;
 				virtual dword send_msg(events::message) override;
 				virtual core::async::iasync<dword> post_msg(events::message) override;
-				virtual bool listen_to(events::event_t) override;
+				virtual events::event_token_t listen_to(events::event_t) override;
 
 			private:
 				virtual~dispatcher();
 			};
 
 			class async_task final
-				: public object
-				, public core::async::itask<void>
+				: public smart<async_task, core::async::itask<void>>
 			{
 				friend dispatcher;
 			public:

@@ -2,6 +2,7 @@
 
 #include "ang/platform/win32/windows.h"
 #include "dispatcher.h"
+#include "event_args.h"
 #include <ang/collections/hash_map.h>
 #include <ang/core/timer.h>
 
@@ -41,8 +42,8 @@ process_t process::current_process()
 
 process::process()
 	: m_process(null)
-	, start_app_event(this, [](events::core_msg_t code) { return (events::win_msg)code == events::win_msg::start_app; })
-	, exit_app_event(this, [](events::core_msg_t code) { return (events::win_msg)code == events::win_msg::exit_app; })
+	, m_start_app_event(this, [](events::core_msg_t code) { return (events::win_msg)code == events::win_msg::start_app; })
+	, m_exit_app_event(this, [](events::core_msg_t code) { return (events::win_msg)code == events::win_msg::exit_app; })
 {
 	if (s_current_process != null)
 		throw(exception_t(except_code::two_singleton));
@@ -57,7 +58,7 @@ process::process()
 	m_process->properties["cmd_args"] = null;
 	m_process->properties["main_cond"] = make_shared<core::async::cond>();
 	m_process->properties["main_mutex"] = make_shared<core::async::mutex>();
-	m_process->properties["step_timer"] = make_shared<core::time::step_timer>();
+	//m_process->properties["step_timer"] = make_shared<core::time::step_timer>();
 	m_process->dispatcher = new windows::dispatcher(
 		bind(this, &process::listen_to),
 		bind(this, &process::send_msg),
@@ -68,13 +69,16 @@ process::~process()
 {
 	close();
 	s_current_process = null;
-	static_cast<events::event_trigger<process>&>(start_app_event).empty();
-	static_cast<events::event_trigger<process>&>(exit_app_event).empty();
+	m_start_app_event.empty();
+	m_exit_app_event.empty();
 }
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::windows::process);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::platform::windows::process, object);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::windows::process, object)
+
+ang_platform_implement_event_handler(process, start_app_event);
+ang_platform_implement_event_handler(process, exit_app_event);
 
 pointer process::handle()const
 {
@@ -114,17 +118,12 @@ array<string> process::command_line_args()const {
 	return m_process->properties["cmd_args"].as<array<string>>();
 }
 
-var process::property(cstr_t key)const {
+var process::settings(cstr_t key)const {
 	return m_process->properties[key];
 }
 
-void process::property(cstr_t key, var obj) {
+void process::settings(cstr_t key, var obj) {
 	m_process->properties[key] = obj;
-}
-
-events::event_trigger<process>const& process::trigger(events::event_listener const& listener)const
-{
-	return static_cast<events::event_trigger<process>const&>(listener);
 }
 
 dword process::run()
@@ -188,31 +187,31 @@ bool process::init_app(array<string> cmd)
 {
 	m_process->dispatcher->worker_thread(m_process->main_thread);
 	platform::events::message m = platform::events::message((events::core_msg_t)events::win_msg::start_app, 0, 0);
-	try { trigger(start_app_event).invoke(new platform::events::app_status_event_args(m, null)); }
+	try { m_start_app_event(new platform::events::app_status_event_args(m, null)); }
 	catch (...) {}
-	m_process->properties["step_timer"].as<core::time::step_timer>()->reset();
+	//m_process->properties["step_timer"].as<core::time::step_timer>()->reset();
 	
 	return true;
 }
 
 void process::update_app()
 {
-	m_process->properties["step_timer"].as<core::time::step_timer>()->update();
+	//m_process->properties["step_timer"].as<core::time::step_timer>()->update();
 }
 
 bool process::exit_app()
 {
 	platform::events::message m = platform::events::message((events::core_msg_t)events::win_msg::start_app, 0, 0);
-	try { trigger(exit_app_event).invoke(new platform::events::app_status_event_args(m, null)); }
+	try { m_exit_app_event(new platform::events::app_status_event_args(m, null)); }
 	catch (...) {}
 
 	return close();
 }
 
 
-bool process::listen_to(events::event_t)
+events::event_token_t process::listen_to(events::event_t)
 {
-	return false;
+	return events::event_token();
 }
 
 dword process::send_msg(events::message msg)
