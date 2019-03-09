@@ -48,7 +48,7 @@ xml_cdata_t xml_cdata::create_new(xml_document_t doc, ixml_text_t text)
 }
 
 xml_cdata::xml_cdata(xml_document_t doc)
-	: xml_node(doc, xml_type::cdata)
+	: base(doc, xml_type::cdata)
 {
 }
 

@@ -10,8 +10,7 @@ namespace ang
 		{
 
 			class LINK xml_collection
-				: public object
-				, public ixml_collection
+				: public smart<xml_collection, ixml_collection>
 			{
 			public:
 				typedef xml_collection self_t;
@@ -83,8 +82,7 @@ namespace ang
 
 		
 			class LINK xml_node 
-				: public object
-				, public ixml_node
+				: public smart<xml_node, ixml_node>
 			{
 			public:
 				friend xml_document;

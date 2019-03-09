@@ -4,9 +4,8 @@
 #elif !defined  __ANG_WRAPPER_SPECIALIZATION_HPP__
 #define __ANG_WRAPPER_SPECIALIZATION_HPP__
 
-#define ANG_OBJECT_WRAPPER_DECLARATION(_LINK, MY_TYPE) ANG_OBJECT_WRAPPER_DECLARATION_(_LINK, MY_TYPE); ANG_CONST_OBJECT_WRAPPER_DECLARATION_(_LINK, MY_TYPE)
+#define ANG_OBJECT_WRAPPER_DECLARATION(_LINK, MY_TYPE) ANG_OBJECT_WRAPPER_DECLARATION_(_LINK, MY_TYPE)
 #define ANG_OBJECT_WRAPPER_DECLARATION_(_LINK, MY_TYPE) ANG_BEGIN_OBJECT_WRAPPER(_LINK, MY_TYPE) ANG_END_OBJECT_WRAPPER()
-#define ANG_CONST_OBJECT_WRAPPER_DECLARATION_(_LINK, MY_TYPE) ANG_BEGIN_CONST_OBJECT_WRAPPER(_LINK, MY_TYPE) ANG_END_CONST_OBJECT_WRAPPER()
 
 #define ANG_BEGIN_OBJECT_WRAPPER(_LINK, MY_TYPE) \
 	template<> class _LINK object_wrapper<MY_TYPE> { \
@@ -89,4 +88,43 @@
 
 #define ANG_END_INTF_WRAPPER() }
 
+
+#define ANG_BEGIN_INTF_WRAPPER_TEMPLATE(MY_TYPE, ...) \
+	ANG_EXPAND(TEMPLATE(__VA_ARGS__)) class intf_wrapper<ANG_EXPAND(MY_TYPE<__VA_ARGS__>)> { \
+	public: \
+		typedef ANG_EXPAND(MY_TYPE<__VA_ARGS__>) type; \
+		typedef ANG_EXPAND(MY_TYPE<__VA_ARGS__>)* type_ptr; \
+		typedef ANG_EXPAND(MY_TYPE<__VA_ARGS__>)& type_ref; \
+		typedef ANG_EXPAND(MY_TYPE<__VA_ARGS__>) const* ctype_ptr; \
+		typedef ANG_EXPAND(MY_TYPE<__VA_ARGS__>) const& ctype_ref; \
+	protected: \
+		type* m_ptr; \
+	public: \
+		intf_wrapper(); \
+		intf_wrapper(type*); \
+		intf_wrapper(ang::nullptr_t const&); \
+		intf_wrapper(intf_wrapper &&); \
+		intf_wrapper(intf_wrapper const&); \
+		~intf_wrapper(); \
+	public: \
+		void reset(); \
+		void reset_unsafe(); \
+		bool is_empty()const; \
+		type* get(void)const; \
+		void set(type*); \
+		type ** addres_of(void); \
+		type** addres_for_init(void); \
+	public: \
+		intf_wrapper& operator = (type*); \
+		intf_wrapper& operator = (ang::nullptr_t const&); \
+		intf_wrapper& operator = (intf_wrapper &&); \
+		intf_wrapper& operator = (intf_wrapper const&); \
+		intf_wrapper_ptr<type> operator & (void); \
+		operator ang::intfptr()const; \
+		type* operator -> (void); \
+		type const* operator -> (void)const; \
+		operator type* (void); \
+		operator type const* (void)const;
+
+#define ANG_END_INTF_WRAPPER() }
 #endif //__ANGSYS_HPP__

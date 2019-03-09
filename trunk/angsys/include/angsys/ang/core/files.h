@@ -136,7 +136,7 @@ namespace ang
 		namespace files
 		{
 			class LINK file
-				: public object
+				: public smart<file>
 			{
 			protected:
 				ifile_t m_hfile;
@@ -158,8 +158,7 @@ namespace ang
 			};
 
 			class LINK input_text_file final
-				: public core::files::file
-				, public streams::itext_input_stream
+				: public smart<input_text_file, core::files::file, streams::itext_input_stream>
 			{
 			public:
 				input_text_file();
@@ -177,6 +176,7 @@ namespace ang
 				bool cursor(file_offset_t size, stream_reference_t ref)override;
 
 				uint seek(text::raw_cstr_t format)override;
+				uint read(pointer, ang::rtti_t const&);
 				uint read_format(text::raw_cstr_t format, var_args_t&)override;
 				wsize read(text::istring_t, wsize, wsize*written = null)override;
 				wsize read(text::unknown_str_t, wsize, text::encoding_t, wsize*written = null)override;
@@ -184,7 +184,8 @@ namespace ang
 				wsize read_line(text::unknown_str_t, wsize, text::encoding_t, array_view<const char32_t> = U"\n\r", wsize* written = null)override;
 
 				bool map(function<bool(ibuffer_view_t)> func, wsize = -1, file_offset_t = 0);
-				//bool map(function<bool(text::istring_view_t)> func, wsize = -1, file_offset_t = 0);
+			
+				bool read(function<bool(streams::itext_input_stream_t)>);
 
 				template<text::encoding E, template<typename> class A>
 				wsize read(text::basic_string<E, A>& str, wsize max) {
@@ -226,8 +227,7 @@ namespace ang
 			};
 
 			class LINK output_text_file final
-				: public core::files::file
-				, public streams::itext_output_stream
+				: public smart<output_text_file, core::files::file, streams::itext_output_stream>
 			{
 			public:
 				output_text_file();
@@ -256,6 +256,59 @@ namespace ang
 				virtual~output_text_file();
 			};
 
+			class LINK input_binary_file final
+				: public smart<input_binary_file, core::files::file, streams::ibinary_input_stream>
+			{
+			public:
+				input_binary_file();
+				input_binary_file(path_view_t path);
+
+				ANG_DECLARE_INTERFACE();
+
+				bool open(path_view_t path);
+
+				stream_mode_t mode()const override;
+				text::encoding_t format()const override;
+				file_offset_t cursor()const override;
+				file_size_t size()const override;
+				bool is_eos()const override;
+				bool cursor(file_offset_t size, stream_reference_t ref)override;
+
+				wsize read(pointer, wsize)override;
+				wsize read(ibuffer_t)override;
+				wsize read(pointer, const rtti_t&)override;
+
+				bool map(function<bool(ibuffer_view_t)> func, wsize = -1, file_offset_t = 0);
+				//bool map(function<bool(text::istring_view_t)> func, wsize = -1, file_offset_t = 0);
+
+				bool read(function<bool(streams::ibinary_input_stream_t)>);
+				
+			private:
+				virtual~input_binary_file();
+			};
+
+			class LINK output_binary_file final
+				: public smart<output_binary_file, core::files::file, streams::ibinary_output_stream>
+			{
+			public:
+				output_binary_file();
+				output_binary_file(path_view_t path, text::encoding_t = text::encoding::ascii);
+
+				ANG_DECLARE_INTERFACE();
+
+				bool open(path_view_t path, text::encoding_t = text::encoding::ascii);
+				stream_mode_t mode()const override;
+				text::encoding_t format()const override;
+				file_offset_t cursor()const override;
+				file_size_t size()const override;
+				bool cursor(file_offset_t size, stream_reference_t ref)override;
+
+				wsize write(pointer, wsize)override;
+				wsize write(ibuffer_view_t)override;
+
+			private:
+				virtual~output_binary_file();
+			};
 		}
 	}
 }

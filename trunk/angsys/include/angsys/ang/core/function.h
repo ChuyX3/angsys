@@ -22,8 +22,7 @@ namespace ang
 
 			template<typename T, typename... Ts>
 			class function_object<T(Ts...)>
-				: public object
-				, public ifunction<T(Ts...)>
+				: public smart<function_object<T(Ts...)>, ifunction<T(Ts...)>>
 			{
 			public:
 				function_object() {}
@@ -35,8 +34,7 @@ namespace ang
 
 			template<typename... Ts>
 			class function_object<void(Ts...)>
-				: public object
-				, public ifunction<void(Ts...)>
+				: public smart<function_object<void(Ts...)>, ifunction<void(Ts...)>>
 			{
 			public:
 				function_object() {}
@@ -68,9 +66,13 @@ namespace ang
 				inline ifunction<T(Ts...)>* clone()const override {
 					return new static_function(_function);
 				}
-
+		
 			private:
-				inline virtual~static_function() {}
+				inline void clear()override {
+					//_function = null;
+				}
+				inline virtual~static_function() {
+				}
 			};
 
 			template<typename O, bool IS_INTERFACE, typename T, typename... Ts>
@@ -95,6 +97,10 @@ namespace ang
 				}
 
 			private:
+				inline void clear()override {
+					_obj = null;
+					_function = null;
+				}
 				inline virtual~member_function() {}
 			};
 
@@ -123,6 +129,10 @@ namespace ang
 				}
 
 			private:
+				inline void clear()override {
+					_obj = null;
+					_function = null;
+				}
 				inline virtual~member_function() {}
 			};
 
@@ -148,6 +158,10 @@ namespace ang
 				}
 
 			private:
+				inline void clear()override {
+					_obj = null;
+					_function = null;
+				}
 				inline virtual~pseudo_member_function() {}
 			};
 
@@ -173,6 +187,10 @@ namespace ang
 				}
 
 			private:
+				inline void clear()override {
+					_obj = null;
+					_function = null;
+				}
 				inline virtual~pseudo_member_function() {}
 			};
 		}
@@ -345,6 +363,16 @@ namespace ang
 	template<typename O, typename T, typename...Ts>
 	inline function<T(Ts...)> bind(O* o, T(O::*f)(Ts...)) {
 		return function<T(Ts...)>(o, f);
+	}
+
+	template<typename O, typename T, typename...Ts>
+	inline function<T(Ts...)> bind(object_wrapper<O> o, T(O::*f)(Ts...)) {
+		return function<T(Ts...)>(o.get(), f);
+	}
+
+	template<typename O, typename T, typename...Ts>
+	inline function<T(Ts...)> bind(intf_wrapper<O> o, T(O::*f)(Ts...)) {
+		return function<T(Ts...)>(o.get(), f);
 	}
 }
 

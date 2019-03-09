@@ -58,6 +58,8 @@ ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::idraw_event_args, imsg
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::ikey_event_args, imsg_event_args);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::ipointer_event_args, imsg_event_args);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::iapp_status_event_args, imsg_event_args);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::iupdate_event_args, imsg_event_args);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::itext_change_event_args, imsg_event_args);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::icontroller_status_args, imsg_event_args);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::icontroller_digital_input_args, imsg_event_args);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::icontroller_analog_input_args, imsg_event_args);
 

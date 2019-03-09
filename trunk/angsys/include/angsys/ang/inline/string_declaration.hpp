@@ -7,10 +7,10 @@ namespace ang
 	namespace text
 	{
 		template<> class MY_LINKAGE basic_string_buffer<MY_ENCODING , MY_ALLOCATOR>
-			: public basic_string_buffer_base
+			: public smart<basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>, basic_string_buffer_base>
 		{
 		public:
-			static constexpr text::encoding ENCODING = MY_ENCODING;
+			static const text::encoding ENCODING = MY_ENCODING;
 			typedef typename char_type_by_encoding<MY_ENCODING>::char_t char_t, type;
 			typedef typename char_type_by_encoding<MY_ENCODING>::str_t unsafe_str_t;
 			typedef typename char_type_by_encoding<MY_ENCODING>::cstr_t unsafe_cstr_t;
@@ -39,6 +39,8 @@ namespace ang
 
 			virtual void clear()override;
 			virtual bool realloc(wsize new_size, bool save = true)override;
+		protected:
+			virtual raw_str_t alloc(wsize new_size)override;
 
 		private: //ivariant override
 			virtual variant clone()const override;
@@ -71,6 +73,27 @@ namespace ang
 		};
 	}
 
+	template<>
+	struct MY_LINKAGE property_helper<text::basic_string<MY_ENCODING, MY_ALLOCATOR>, false> {
+		using type = text::basic_string<MY_ENCODING, MY_ALLOCATOR>;
+		using ret_type = text::basic_string<MY_ENCODING, MY_ALLOCATOR>;
+		using ptr_type = text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>*;
+		using arg_type = text::raw_cstr_t;
+		using property_class = base_property<type>;
+		using getter_type = ret_type(*)(property_class const*);
+		using setter_type = void(*)(property_class const*, arg_type);
+	};
+
+	template<>
+	struct MY_LINKAGE property_helper<const text::basic_string<MY_ENCODING, MY_ALLOCATOR>, false> {
+		using type = text::basic_string<MY_ENCODING, MY_ALLOCATOR>;
+		using ret_type = text::basic_string<MY_ENCODING, MY_ALLOCATOR>;
+		using ptr_type = text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>*;
+		using arg_type = text::raw_cstr_t;
+		using property_class = base_property<type>;
+		using getter_type = ret_type(*)(property_class const*);
+		using setter_type = void(*)(property_class const*, arg_type);
+	};
 
 	ANG_BEGIN_OBJECT_WRAPPER(MY_LINKAGE, text::basic_string_buffer<MY_ENCODING COMA MY_ALLOCATOR>)
 		visible scall const text::encoding ENCODING = MY_ENCODING;
@@ -79,6 +102,12 @@ namespace ang
 			ang::text::basic_string<MY_ENCODING, MY_ALLOCATOR> str;
 			str->format(f, ang::forward<Ts>(args)...);
 			return str;
+		}
+		object_wrapper(text::istring_t str) : m_ptr(null) {
+			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>((text::raw_cstr)str));
+		}
+		object_wrapper(text::istring_view_t str) : m_ptr(null) {
+			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>((text::raw_cstr)str));
 		}
 		object_wrapper(text::basic_const_string_buffer<MY_ENCODING>* str) : m_ptr(null) {
 			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));

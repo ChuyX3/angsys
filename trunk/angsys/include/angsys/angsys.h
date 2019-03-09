@@ -108,6 +108,20 @@ namespace ang
 		template<typename T, template<typename> class allocator = memory::object_allocator> class vector_buffer;
 		template<typename T, template<typename> class allocator = memory::object_allocator> using array = object_wrapper<array_buffer<T, allocator>>;
 		template<typename T, template<typename> class allocator = memory::object_allocator> using vector = object_wrapper<vector_buffer<T, allocator>>;
+	
+		template<typename T> struct ienum;
+		template<typename T> struct iarray;
+		template<typename T> struct ilist;
+
+		template<class T> using ienum_t = intf_wrapper<ienum<T>>;
+		template<class T> using ienum_ptr = intf_wrapper<ienum<T>>;
+
+		template<class T> using iarray_t = intf_wrapper<iarray<T>>;
+		template<class T> using iarray_ptr = intf_wrapper<iarray<T>>;
+
+		template<class T> using ilist_t = intf_wrapper<ilist<T>>;
+		template<class T> using ilist_ptr = intf_wrapper<ilist<T>>;
+
 	}
 
 	namespace core
@@ -158,6 +172,7 @@ namespace ang
 #include <ang/strings/raw_str.h>
 #include <ang/smart_ptr.h>
 #include <ang/object.h>
+#include <ang/base/property.h>
 #include <ang/ibuffers.h>
 #include <ang/strings/istring.h>
 #include <ang/variable.h>
@@ -167,6 +182,7 @@ namespace ang
 #include <ang/core/function.h>
 #include <ang/collections/array.h>
 #include <ang/collections/vector.h>
+#include <ang/collections/list.h>
 #include <ang/strings/const_string.h>
 #include <ang/strings/string.h>
 #include <ang/exception.h>
@@ -179,6 +195,7 @@ namespace ang
 #include <ang/collections/inline/collections.inl>
 #include <ang/collections/inline/array.inl>
 #include <ang/collections/inline/vector.inl>
+#include <ang/collections/inline/list.inl>
 #include <ang/core/inline/listener.inl>
 #endif//__cplusplus
 

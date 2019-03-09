@@ -41,21 +41,18 @@ namespace ang
 
 	template<typename T>
 	inline variable<T>::variable()
-		: value() 
 	{
 
 	}
 
 	template<typename T>
 	inline variable<T>::variable(T const& val)
-		: value()
 	{
 		__variable_constructor_helper<T>::construct(this, val);
 	}
 
 	template<typename T>
 	inline variable<T>::variable(variable<T> const* val)
-		: value()
 	{
 		__variable_constructor_helper<T>::construct(this, (value<T> const&)*val);
 	}
@@ -100,7 +97,7 @@ namespace ang
 		}
 		else if (id.type_id() == type_of<T>().type_id()) {
 			if (out == null) return false;
-			*out = (T*)&get();
+			*out = (T*)&this->get();
 			return true;
 		}
 	}
@@ -230,15 +227,14 @@ namespace ang
 
 	template<typename T, text::encoding E> 
 	intf_wrapper<ivariant>& intf_wrapper<ivariant>::operator = (str_view<T, E> const& str) {
-		text::itext_buffer *buffer;
-		if(buffer = interface_cast<text::itext_buffer>(get()))
+		text::istring *_string;
+		if(_string = interface_cast<text::istring>(get()))
 		{
-			buffer->mem_copy(str.size(), (pointer)str.cstr(), E);
+			_string->copy(str);
 		}
 		else
 		{
-			text::basic_string<E> ptr = str;
-			set(ptr.get());
+			set(new text::basic_string_buffer<E>(str));
 		}
 		return*this;
 	}
@@ -252,7 +248,7 @@ namespace ang
 		else
 		{
 			array<T> arr = ar;
-			set((ivariant*)arr.get())
+			set((ivariant*)arr.get());
 		}
 		return*this;
 	}

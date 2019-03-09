@@ -96,10 +96,10 @@ namespace ang
 		/******************************************************************/
 		template<typename K, typename T, template<typename> class allocator, template<typename> class hash_index_maker>
 		class hash_map_object final
-			: public object
-			, public imap<K, T>
+			: public smart<hash_map_object<K, T, allocator>, imap<K, T>>
 		{
 		public:
+			typedef smart<hash_map_object<K, T, allocator>, imap<K, T>> base;
 			typedef pair<K, T>							type, pair_type;
 			typedef T									value_type;
 			typedef K									key_type;
@@ -210,8 +210,7 @@ namespace ang
 
 		template<text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename> class hash_index_maker>
 		class hash_map_object<text::basic_string<E,A>, T, allocator, hash_index_maker> final
-			: public object
-			, public imap<text::basic_string<E,A>,T>
+			: public smart<hash_map_object<text::basic_string<E, A>, T, allocator>, imap<text::basic_string<E, A>, T>>
 		{
 		public:
 			typedef pair<text::basic_string<E,A>, T>							type, pair_type;
@@ -347,8 +346,7 @@ namespace ang
 
 		template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
 		class hash_map_object<text::istring_view_t, T, allocator, hash_index_maker> final
-			: public object
-			, public imap<text::istring_view_t, T>
+			: public smart<hash_map_object<text::istring_view_t, T, allocator>, imap<text::istring_view_t, T>>
 		{
 		public:
 			typedef pair<text::istring_view_t, T>							type, pair_type;

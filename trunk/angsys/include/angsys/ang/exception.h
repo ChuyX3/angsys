@@ -21,7 +21,7 @@ namespace ang
 	};
 
 	class LINK exception
-		: public object
+		: public smart<exception>
 	{
 		dword code;
 		string message;

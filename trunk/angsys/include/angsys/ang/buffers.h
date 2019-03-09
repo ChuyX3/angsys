@@ -5,9 +5,8 @@
 namespace ang
 {
 
-	class LINK buffer
-		: public object
-		, public ibuffer
+	class LINK buffer final
+		: public smart<buffer, ibuffer>
 	{
 	public:
 		static buffer_t new_buffer(wsize);
@@ -41,9 +40,8 @@ namespace ang
 		virtual ~buffer();
 	};
 
-	class LINK aligned_buffer
-		: public object
-		, public ibuffer
+	class LINK aligned_buffer final
+		: public smart<aligned_buffer, ibuffer>
 	{
 	public:
 		pointer operator new (wsize, ulong64, word ALIGMENT = 16U)throw();
@@ -77,9 +75,8 @@ namespace ang
 		virtual ~aligned_buffer();
 	};
 
-	class LINK buffer_view
-		: public object
-		, public ibuffer_view
+	class LINK buffer_view final
+		: public smart<buffer_view, ibuffer_view>
 	{
 	private:
 		windex m_start;
@@ -107,8 +104,8 @@ namespace ang
 	};
 
 	template<wsize _SIZE>
-	class stack_buffer
-		: public ibuffer
+	class stack_buffer final
+		: public smart<stack_buffer<_SIZE>, ibuffer>
 	{
 	private:
 		static constexpr wsize SIZE = _SIZE;
@@ -137,8 +134,8 @@ namespace ang
 		virtual bool realloc_buffer(wsize) override;
 	};
 
-	class LINK dummy_buffer
-		: public ibuffer
+	class LINK buffer_wrapper final
+		: public auto_self<buffer_wrapper, ibuffer>
 	{
 	private:
 		wsize m_size;
@@ -149,8 +146,8 @@ namespace ang
 		void operator delete(void*)throw();
 
 	public:
-		dummy_buffer(pointer ptr, wsize sz);
-		virtual ~dummy_buffer();
+		buffer_wrapper(pointer ptr, wsize sz);
+		virtual ~buffer_wrapper();
 
 	public: //overrides
 		ANG_DECLARE_INTERFACE();

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="__m128">
+    <DisplayString>vec&lt;{m128_f32[0]},{m128_f32[1]},{m128_f32[2]},{m128_f32[3]}&gt;</DisplayString>
+    <Expand>
+      <Item Name="[x]" ExcludeView="simple">m128_f32[0]</Item>
+      <Item Name="[y]" ExcludeView="simple">m128_f32[1]</Item>
+      <Item Name="[z]" ExcludeView="simple">m128_f32[2]</Item>
+      <Item Name="[w]" ExcludeView="simple">m128_f32[3]</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::maths::f32x4">
+    <DisplayString>vec&lt;{x},{y},{z},{w}&gt;</DisplayString>
+    <Expand>
+      <Item Name="[x]" ExcludeView="simple">x</Item>
+      <Item Name="[y]" ExcludeView="simple">y</Item>
+      <Item Name="[z]" ExcludeView="simple">z</Item>
+      <Item Name="[w]" ExcludeView="simple">w</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::maths::unaligned_float2">
+    <DisplayString>vec&lt;{_vector.x},{_vector.y}&gt;</DisplayString>
+    <Expand>
+      <Item Name="[x]" ExcludeView="simple">_vector.x</Item>
+      <Item Name="[y]" ExcludeView="simple">_vector.y</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::maths::unaligned_float3">
+    <DisplayString>vec&lt;{_vector.x},{_vector.y},{_vector.z}&gt;</DisplayString>
+    <Expand>
+      <Item Name="[x]" ExcludeView="simple">_vector.x</Item>
+      <Item Name="[y]" ExcludeView="simple">_vector.y</Item>
+      <Item Name="[z]" ExcludeView="simple">_vector.z</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::maths::unaligned_float4">
+    <DisplayString>vec&lt;{_vector.x},{_vector.y},{_vector.z},{_vector.w}&gt;</DisplayString>
+    <Expand>
+      <Item Name="[x]" ExcludeView="simple">_vector.x</Item>
+      <Item Name="[y]" ExcludeView="simple">_vector.y</Item>
+      <Item Name="[z]" ExcludeView="simple">_vector.z</Item>
+      <Item Name="[w]" ExcludeView="simple">_vector.w</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::maths::float4x4">
+    <DisplayString>mat&lt;4x4&gt;</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>4</Size>
+        <ValuePointer>_mat</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::maths::float2">
+    <DisplayString>vec&lt;{_vector.x},{_vector.y}&gt;</DisplayString>
+    <Expand>
+      <Item Name="[x]" ExcludeView="simple">_vector.x</Item>
+      <Item Name="[y]" ExcludeView="simple">_vector.y</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::maths::float3">
+    <DisplayString>vec&lt;{_vector.x},{_vector.y},{_vector.z}&gt;</DisplayString>
+    <Expand>
+      <Item Name="[x]" ExcludeView="simple">_vector.x</Item>
+      <Item Name="[y]" ExcludeView="simple">_vector.y</Item>
+      <Item Name="[z]" ExcludeView="simple">_vector.z</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::maths::float4">
+    <DisplayString>vec&lt;{_vector.m128_f32[0]},{_vector.m128_f32[1]},{_vector.m128_f32[2]},{_vector.m128_f32[3]}&gt;</DisplayString>
+    <Expand>
+      <Item Name="[x]" ExcludeView="simple">_vector.m128_f32[0]</Item>
+      <Item Name="[y]" ExcludeView="simple">_vector.m128_f32[1]</Item>
+      <Item Name="[z]" ExcludeView="simple">_vector.m128_f32[2]</Item>
+      <Item Name="[w]" ExcludeView="simple">_vector.m128_f32[3]</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::maths::float4x4">
+    <DisplayString>mat&lt;4x4&gt;</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>4</Size>
+        <ValuePointer>_mat</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  
+</AutoVisualizer>

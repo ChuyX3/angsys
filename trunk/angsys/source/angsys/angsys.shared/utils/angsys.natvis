@@ -42,6 +42,39 @@
     </Expand>
   </Type>
 
+  <Type Name="ang::text::raw_str">
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 1">{m_value, s}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 2">{m_value, su}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 3">{m_value, s8}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 4">{m_value, su}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 8">{m_value, s32}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <StringView Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 1">{m_value, s}</StringView>
+    <StringView Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 2">{m_value, su}</StringView>
+    <StringView Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 3">{m_value, s8}</StringView>
+    <StringView Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 4">{m_value, su}</StringView>
+    <StringView Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 8">{m_value, s32}</StringView>
+    <Expand>
+      <Item Name="[format]" ExcludeView="simple">m_encoding</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
+      <Item Name="[buffer]" ExcludeView="simple">m_value</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::text::raw_cstr">
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 1">{m_value, s}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 2">{m_value, su}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 3">{m_value, s8}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 4">{m_value, su}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 8">{m_value, s32}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[format]" ExcludeView="simple">m_encoding</Item>
+      <Item Name="[size]" ExcludeView="simple">m_size</Item>
+      <Item Name="[buffer]" ExcludeView="simple">m_value</Item>
+    </Expand>
+  </Type>
+
   <Type Name="ang::str_view&lt;*&gt;">
     <DisplayString Condition="m_view != 0">{m_view, s}</DisplayString>
     <DisplayString>null</DisplayString>
@@ -223,27 +256,18 @@
     </Expand>
   </Type>
   
-  <Type Name="ang::text::basic_string_buffer&lt;*&gt;">
-    <DisplayString Condition="m_data.m_storage_type &gt;= 0">{m_data.m_stack_buffer, s}</DisplayString>
-    <DisplayString Condition="m_data.m_storage_type == -1">{m_data.m_allocated_buffer, s}</DisplayString>
-    <DisplayString>null</DisplayString>
-    <Expand>
-      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_length</Item>
-      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_length</Item>
-      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">CAPACITY</Item>
-      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_capacity</Item>
-    </Expand>
-  </Type>
-
   <Type Name="ang::text::basic_string_buffer&lt;1,*&gt;">
     <DisplayString Condition="m_data.m_storage_type &gt;= 0">{m_data.m_stack_buffer, s}</DisplayString>
     <DisplayString Condition="m_data.m_storage_type == -1">{m_data.m_allocated_buffer, s}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
+      <Item Name="[format]" ExcludeView="simple">ENCODING,en</Item>
       <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_length</Item>
       <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_length</Item>
       <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">CAPACITY</Item>
       <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_capacity</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_buffer, s</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_buffer, s</Item>
     </Expand>
   </Type>
   
@@ -252,10 +276,13 @@
     <DisplayString Condition="m_data.m_storage_type == -1">{m_data.m_allocated_buffer, su}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
+      <Item Name="[format]" ExcludeView="simple">ENCODING,en</Item>
       <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_length</Item>
       <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_length</Item>
       <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">CAPACITY</Item>
       <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_capacity</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_buffer, su</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_buffer, su</Item>
     </Expand>
   </Type>
   
@@ -264,6 +291,7 @@
     <DisplayString Condition="m_data.m_storage_type == -1">{m_data.m_allocated_buffer,s8}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
+      <Item Name="[format]" ExcludeView="simple">ENCODING,en</Item>
       <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_length</Item>
       <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_length</Item>
       <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">CAPACITY</Item>
@@ -271,6 +299,36 @@
       <Item Name="[buffer]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_buffer, s8</Item>
       <Item Name="[buffer]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_buffer, s8</Item>
   </Expand>
+  </Type>
+
+  <Type Name="ang::text::basic_string_buffer&lt;4,*&gt;">
+    <DisplayString Condition="m_data.m_storage_type &gt;= 0">{m_data.m_stack_buffer,su}</DisplayString>
+    <DisplayString Condition="m_data.m_storage_type == -1">{m_data.m_allocated_buffer,su}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[format]" ExcludeView="simple">ENCODING,en</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">CAPACITY</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_capacity</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_buffer, su</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_buffer, su</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::text::basic_string_buffer&lt;8,*&gt;">
+    <DisplayString Condition="m_data.m_storage_type &gt;= 0">{m_data.m_stack_buffer,s32}</DisplayString>
+    <DisplayString Condition="m_data.m_storage_type == -1">{m_data.m_allocated_buffer,s32}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <Item Name="[format]" ExcludeView="simple">ENCODING,en</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_length</Item>
+      <Item Name="[length]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">CAPACITY</Item>
+      <Item Name="[capacity]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_capacity</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="m_data.m_storage_type &gt;= 0">m_data.m_stack_buffer, s32</Item>
+      <Item Name="[buffer]" ExcludeView="simple" Condition="m_data.m_storage_type == -1">m_data.m_allocated_buffer, s32</Item>
+    </Expand>
   </Type>
 
   <Type Name="ang::text::string_view&lt;*&gt;">
@@ -309,12 +367,19 @@
 
   <Type Name="ang::value&lt;*&gt;">
     <DisplayString Condition="genre_id == 2 || genre_id == 3">{this}</DisplayString>
-    <DisplayString Condition="genre_id != 2 &amp;&amp; genre_id != 3">{(type)m_value}</DisplayString>
+    <DisplayString Condition="genre_id == 0">{(type)m_value}</DisplayString>
+    <DisplayString Condition="genre_id == 1">{(type)m_value, en}</DisplayString>
     <Expand>
     </Expand>
   </Type>
-  
 
+  <Type Name="ang::core::files::file">
+    <DisplayString Condition="m_hfile.m_ptr != 0">{*m_hfile.m_ptr}</DisplayString>
+    <DisplayString>invalid</DisplayString>
+    <Expand>
+      <Item Name="[handle]" ExcludeView="simple">*m_hfile.m_ptr</Item>
+    </Expand>
+  </Type>
 
 
 </AutoVisualizer>

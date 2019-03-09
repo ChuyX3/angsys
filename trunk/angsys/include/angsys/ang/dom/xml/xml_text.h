@@ -11,9 +11,7 @@ namespace ang
 		{
 
 			class LINK xml_text
-				: public object
-				, public ixml_object
-				, public ixml_text
+				: public smart<xml_text, ixml_object, ixml_text>
 			{
 			public:
 				friend xml_document;
@@ -52,6 +50,8 @@ namespace ang
 				virtual windex find(xml_cstr_t, windex start = 0, windex end = -1)const override;
 				virtual windex find_reverse(xml_cstr_t, windex start = -1, windex end = 0)const override;
 				virtual ixml_text_t sub_string(ixml_text_ptr_t, windex start, windex end)const override;
+				virtual collections::ienum_ptr<ixml_text_t> split(xml_cstr_t)const override;
+
 				virtual void copy(xml_cstr_t)override;
 				virtual void move(ixml_text_t);
 				void copy_cdata(xml_cstr_t);

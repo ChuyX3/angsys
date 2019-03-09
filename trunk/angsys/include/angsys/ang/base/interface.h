@@ -18,8 +18,8 @@
 #define vcall virtual
 #define scall static
 #define visible public:
-#define inherit protected:
-#define intern private:
+#define intern protected:
+//#define intern private:
 #define allow	friend
 
 #define ang_object(_NAME) class _NAME; typedef ang::object_wrapper<_NAME> _NAME##_t; typedef ang::object_wrapper_ptr<_NAME> _NAME##_ptr_t;
@@ -80,6 +80,8 @@ ang::rtti_t const& _CLASS::class_info() { \
 	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<_CLASS>(), align_of<wsize>(), parents, &default_query_interface); \
 	return info; \
  }
+
+#define ANG_IMPLEMENT_INTERFACE_RUNTIME_INFO(_CLASS) ang::rtti_t const& _CLASS::runtime_info()const { return _CLASS::class_info();  }
 #define ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(_CLASS, ...) \
 bool _CLASS::query_interface(ang::rtti_t const& id, ang::unknown_ptr_t out) { ANG_EXPAND(QUERY_INTERFACE_SWITCH(_CLASS, __VA_ARGS__)) return false; }
 

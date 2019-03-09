@@ -155,6 +155,7 @@ namespace ang
 	ANG_END_OBJECT_WRAPPER();
 
 	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_node)
+		dom::xml::xml_node_t operator[] (dom::xml::xml_cstr_t)const;
 	ANG_END_OBJECT_WRAPPER();
 
 	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_cdata)

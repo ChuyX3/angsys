@@ -20,7 +20,7 @@ namespace ang
 value<float> variable<float>::parse(text::raw_cstr_t cstr, windex i, bool exp)
 {
 	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
-	return parser->to_floating(cstr.ptr(), cstr.count(), i, true, exp);
+	return parser->to_floating(cstr, i, true, exp);
 }
 
 wstring variable<float>::to_string(value<float> val, text::text_format_t f)
@@ -176,27 +176,23 @@ wstring variable<float>::to_string(value<float> val, text::text_format_t f)
 }
 
 variable<float>::variable()
-	: value<float>(false)
 {
 
 }
 
 variable<float>::variable(float const& val)
-	: value<float>(val)
 {
-
+	set(val);
 }
 
 variable<float>::variable(value<float> const& val) 
-	: value<float>(val)
 {
-
+	set(val);
 }
 
 variable<float>::variable(variable const* val)
-	: value<float>(val ? val->get() : false)
 {
-
+	set(val ? val->get() : 0);
 }
 
 variable<float>::~variable()
@@ -351,7 +347,7 @@ variant variable<float>::clone()const
 value<double> variable<double>::parse(text::raw_cstr_t cstr, windex i, bool exp)
 {
 	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
-	return parser->to_floating(cstr.ptr(), cstr.count(), i, true, exp);
+	return parser->to_floating(cstr, i, true, exp);
 }
 
 wstring variable<double>::to_string(value<double> val, text::text_format_t f)
@@ -507,27 +503,22 @@ wstring variable<double>::to_string(value<double> val, text::text_format_t f)
 }
 
 variable<double>::variable()
-	: value<double>(false)
 {
-
 }
 
 variable<double>::variable(double const& val)
-	: value<double>(val)
 {
-
+	set(val);
 }
 
 variable<double>::variable(value<double> const& val)
-	: value<double>(val)
 {
-
+	set(val);
 }
 
 variable<double>::variable(variable const* val)
-	: value<double>(val ? val->get() : false)
 {
-
+	set(val ? val->get() : 0);
 }
 
 variable<double>::~variable()

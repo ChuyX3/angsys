@@ -117,10 +117,8 @@ namespace ang
 	struct __variable_constructor_helper;
 
 	template<typename T>
-	class variable
-		: public object
-		, public ivariant
-		, public ang::value<T>
+	class variable final
+		: public smart<variable<T>, ivariant, ang::value<T>>
 	{
 	public:
 		friend __variable_constructor_helper<T>;
@@ -300,10 +298,8 @@ namespace ang
 namespace ang
 {
 	template<> 
-	class LINK variable<bool>
-		: public object
-		, public ivariant
-		, public value<bool>
+	class LINK variable<bool> final
+		: public smart<variable<bool>, ivariant, ang::value<bool>>
 	{
 	public:
 		static value<bool> parse(text::raw_cstr_t);
@@ -338,10 +334,8 @@ namespace ang
 	};
 
 	template<> 
-	class LINK variable<int>
-		: public object
-		, public ivariant
-		, public value<int>
+	class LINK variable<int> final
+		: public smart<variable<int>, ivariant, ang::value<int>>
 	{
 	public:
 		template<typename T, text::encoding E> static inline value<int> parse(str_view<T, E> str, windex i = 0, int b = 10) {
@@ -378,10 +372,8 @@ namespace ang
 	};
 
 	template<>
-	class LINK variable<uint>
-		: public object
-		, public ivariant
-		, public value<uint>
+	class LINK variable<uint> final
+		: public smart<variable<uint>, ivariant, ang::value<uint>>
 	{
 	public:
 		template<typename T, text::encoding E> static inline value<uint> parse(str_view<T, E> str, windex i = 0, int b = 10) {
@@ -418,10 +410,8 @@ namespace ang
 	};
 
 	template<>
-	class LINK variable<long>
-		: public object
-		, public ivariant
-		, public value<long>
+	class LINK variable<long> final
+		: public smart<variable<long>, ivariant, ang::value<long>>
 	{
 	public:
 		template<typename T, text::encoding E> static inline value<long> parse(str_view<T, E> str, windex i = 0, int b = 10) {
@@ -458,10 +448,8 @@ namespace ang
 	};
 
 	template<>
-	class LINK variable<ulong>
-		: public object
-		, public ivariant
-		, public value<ulong>
+	class LINK variable<ulong> final
+		: public smart<variable<ulong>, ivariant, ang::value<ulong>>
 	{
 	public:
 		template<typename T, text::encoding E> static inline value<ulong> parse(str_view<T, E> str, windex i = 0, int b = 10) {
@@ -498,10 +486,8 @@ namespace ang
 	};
 
 	template<>
-	class LINK variable<long64>
-		: public object
-		, public ivariant
-		, public value<long64>
+	class LINK variable<long64> final
+		: public smart<variable<long64>, ivariant, ang::value<long64>>
 	{
 	public:
 		template<typename T, text::encoding E> static inline value<long64> parse(str_view<T, E> str, windex i = 0, int b = 10) {
@@ -538,10 +524,8 @@ namespace ang
 	};
 
 	template<>
-	class LINK variable<ulong64>
-		: public object
-		, public ivariant
-		, public value<ulong64>
+	class LINK variable<ulong64> final
+		: public smart<variable<ulong64>, ivariant, ang::value<ulong64>>
 	{
 	public:
 		template<typename T, text::encoding E> static inline value<ulong64> parse(str_view<T, E> str, windex i = 0, int b = 10) {
@@ -578,10 +562,8 @@ namespace ang
 	};
 
 	template<>
-	class LINK variable<float>
-		: public object
-		, public ivariant
-		, public value<float>
+	class LINK variable<float> final
+		: public smart<variable<float>, ivariant, ang::value<float>>
 	{
 	public:
 		template<typename T, text::encoding E> static inline value<float> parse(str_view<T, E> str, windex i = 0, bool exp = false) {
@@ -618,10 +600,8 @@ namespace ang
 	};
 
 	template<>
-	class LINK variable<double>
-		: public object
-		, public ivariant
-		, public value<double>
+	class LINK variable<double> final
+		: public smart<variable<double>, ivariant, ang::value<double>>
 	{
 	public:
 		template<typename T, text::encoding E> static inline value<double> parse(str_view<T, E> str, windex i = 0, bool exp = false) {

@@ -135,8 +135,7 @@ namespace ang
 		/******************************************************************/
 		template<typename T, template<typename> class allocator>
 		class binary_set_object final
-			: public object
-			, public iset<T>
+			: public smart<binary_set_object<T, allocator>, iset<T>>
 		{
 		public:
 			typedef T										value_t;
@@ -228,8 +227,7 @@ namespace ang
 		/******************************************************************/
 		template<typename K, typename T, template<typename> class allocator>
 		class binary_map_object final
-			: public object
-			, public imap<K, T>
+			: public smart<binary_map_object<K, T, allocator>, imap<K, T>>
 		{
 		public:
 			typedef T										value_t;

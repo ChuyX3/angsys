@@ -40,10 +40,18 @@ bool ang::core::delegates::listener<T(Ts...)>::is_empty()const
 }
 
 template<typename T, typename... Ts>
-index ang::core::delegates::listener<T(Ts...)>::push(ang::core::delegates::function<T(Ts...)> func)
+ang::core::delegates::listen_token<T(Ts...)> ang::core::delegates::listener<T(Ts...)>::push(ang::core::delegates::function<T(Ts...)> func)
 {
 	functions += ang::move(func);
-	return functions.get()->size() - 1;
+	return functions->last();
+}
+
+template<typename T, typename... Ts>
+bool ang::core::delegates::listener<T(Ts...)>::pop(ang::core::delegates::listen_token<T(Ts...)> token)
+{
+	if (functions.is_empty())
+		return false;
+	return functions->pop_at(token);
 }
 
 template<typename T, typename... Ts>
@@ -61,10 +69,15 @@ ang::core::delegates::listener<T(Ts...)>& ang::core::delegates::listener<T(Ts...
 }
 
 template<typename T, typename... Ts>
-ang::core::delegates::listener<T(Ts...)>& ang::core::delegates::listener<T(Ts...)>::operator += (ang::core::delegates::function<T(Ts...)> func)
+ang::core::delegates::listen_token<T(Ts...)> ang::core::delegates::listener<T(Ts...)>::operator += (ang::core::delegates::function<T(Ts...)> func)
 {
-	push(ang::move(func));
-	return *this;
+	return push(ang::move(func));
+}
+
+template<typename T, typename... Ts>
+bool ang::core::delegates::listener<T(Ts...)>::operator -= (ang::core::delegates::listen_token<T(Ts...)> token)
+{
+	return pop(ang::move(token));
 }
 
 template<typename T, typename... Ts>
@@ -131,10 +144,18 @@ bool ang::core::delegates::listener<void(Ts...)>::is_empty()const
 }
 
 template<typename... Ts>
-index ang::core::delegates::listener<void(Ts...)>::push(ang::core::delegates::function<void(Ts...)> func)
+ang::core::delegates::listen_token<void(Ts...)> ang::core::delegates::listener<void(Ts...)>::push(ang::core::delegates::function<void(Ts...)> func)
 {
 	functions += ang::move(func);
-	return functions.get()->size() - 1;
+	return functions->last();
+}
+
+template<typename... Ts>
+bool ang::core::delegates::listener<void(Ts...)>::pop(ang::core::delegates::listen_token<void(Ts...)> token)
+{
+	if (functions.is_empty())
+		return false;
+	return functions->pop_at(token);
 }
 
 template<typename... Ts>
@@ -152,10 +173,15 @@ ang::core::delegates::listener<void(Ts...)>& ang::core::delegates::listener<void
 }
 
 template<typename... Ts>
-ang::core::delegates::listener<void(Ts...)>& ang::core::delegates::listener<void(Ts...)>::operator += (ang::core::delegates::function<void(Ts...)> func)
+ang::core::delegates::listen_token<void(Ts...)> ang::core::delegates::listener<void(Ts...)>::operator += (ang::core::delegates::function<void(Ts...)> func)
 {
-	push(ang::move(func));
-	return *this;
+	return push(ang::move(func));
+}
+
+template<typename... Ts>
+bool ang::core::delegates::listener<void(Ts...)>::operator -= (ang::core::delegates::listen_token<void(Ts...)> token)
+{
+	return pop(ang::move(token));
 }
 
 

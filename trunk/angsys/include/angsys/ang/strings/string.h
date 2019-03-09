@@ -7,10 +7,7 @@ namespace ang
 	namespace text
 	{
 		class LINK basic_string_buffer_base
-			: public object
-			, public istring
-			, public ibuffer
-			, public ivariant
+			: public smart<basic_string_buffer_base, istring, ibuffer, ivariant>
 		{
 		public:
 			static const wsize RAW_CAPACITY = 64u; //local storage capacity
@@ -66,6 +63,9 @@ namespace ang
 			virtual comparision_result_t compare(object const* obj)const override;
 			virtual bool realloc(wsize new_size, bool save = true) = 0;
 
+		protected:
+			virtual raw_str_t alloc(wsize new_size) = 0;
+
 		public: //istring_view overrides
 			virtual text::encoding_t encoding()const override;
 			virtual wsize length() const override;
@@ -79,6 +79,7 @@ namespace ang
 			virtual windex find(raw_cstr_t, windex start = 0, windex end = -1)const override;
 			virtual windex find_reverse(raw_cstr_t, windex start = -1, windex end = 0)const override;
 			virtual istring_t sub_string(istring_ptr_t, windex start, windex end)const override;
+			virtual collections::ienum_ptr<istring_t> split(raw_cstr_t)const override;
 
 		public: //istring overrides
 			virtual void clear() = 0;
@@ -110,94 +111,6 @@ namespace ang
 
 		protected:
 			virtual~basic_string_buffer_base();
-		};
-
-		template<encoding MY_ENCODING, template<typename> class allocator>
-		class basic_string_buffer : public basic_string_buffer_base
-		{
-		public:
-			static constexpr text::encoding ENCODING = MY_ENCODING;
-			typedef typename char_type_by_encoding<ENCODING>::char_t char_t, type;
-			typedef typename char_type_by_encoding<ENCODING>::str_t unsafe_str_t;
-			typedef typename char_type_by_encoding<ENCODING>::cstr_t unsafe_cstr_t;
-			typedef allocator<char_t> allocator_t;
-			typedef text::encoder<ENCODING> encoder;
-
-			static constexpr wsize CAPACITY = RAW_CAPACITY / sizeof(char_t);
-			typedef str_view<char_t, ENCODING> str_t;
-			typedef str_view<char_t const, ENCODING> cstr_t;
-			typedef basic_string_buffer_base string_base, base_t;
-			typedef basic_string_buffer<ENCODING, allocator> string, self_t;
-			typedef object_wrapper<string> string_t;
-		public:
-			basic_string_buffer();
-
-		public: //overides
-			ANG_DECLARE_INTERFACE();
-			virtual void clear()override {
-				allocator_t alloc;
-				if (storage_type_allocated == storage_type())
-					alloc.deallocate((str_t)m_data.m_allocated_buffer);
-				else if (storage_type_string_pool == storage_type())
-					m_data.m_const_string->release();
-				memset(&m_data, 0, sizeof(m_data));
-			}
-			virtual bool realloc(wsize new_size, bool save = true)override {
-				allocator_t alloc;
-
-				if (m_map_index != invalid_index || m_map_size != invalid_index)
-					return false;
-
-				if (capacity() > new_size)
-					return true;
-
-				wsize cs = sizeof(char_t), size = 32U, i = 0;
-				while (size <= new_size)
-					size *= 2U;
-				auto new_buffer = alloc.allocate(size);
-				if (new_buffer == null)
-					return false;
-				wsize len = 0U, j = 0;
-				new_buffer[0] = 0;
-				auto data = cstr();
-				if (save)
-					text::encoder<ENCODING>::convert(new_buffer, len, data.cstr(), j, true, size - 1, data.size());
-
-				clear();
-				m_data.m_allocated_length = len;
-				m_data.m_allocated_capacity = size - 1;
-				m_data.m_allocated_buffer = new_buffer;
-				m_data.m_storage_type = invalid_index;
-				return true;
-			}
-
-		private: //ivariant override
-			variant clone()const override {
-				return static_cast<ivariant*>(new self_t(cstr()));
-			}
-			bool is_readonly(void) const override {
-				return false;
-			}
-
-		public:
-			inline str_t str(void) { return this ? istring::str().template to_str<ENCODING>() : str_t(); }
-			inline cstr_t cstr(void)const { return this ? istring::cstr().template to_cstr<ENCODING>() : cstr_t();}
-
-		public:
-			using string_base::sub_string;
-			template<text::encoding E, template<typename>class _alloc> basic_string<E>& sub_string(basic_string<E, _alloc>& str, windex start = 0, windex end = -1)const {
-				if (str.is_empty())str = new basic_string_buffer<E, _alloc>();
-				string_base::sub_string(str.get(), start, end);
-				return str;
-			}
-			string_t sub_string(windex start = 0, windex end = -1)const {
-				string_t str = new string();
-				string_base::sub_string(static_cast<istring*>(str.get()), start, end);
-				return str.get();
-			}
-
-		private:
-			virtual~basic_string_buffer() { clear(); }
 		};
 
 		class LINK string_pool
@@ -272,14 +185,6 @@ namespace ang
 #undef MY_LINKAGE
 #undef MY_ALLOCATOR
 
-
-template<ang::text::encoding MY_ENCODING, template<typename> class allocator>
-inline ang::rtti_t const& ang::text::basic_string_buffer<MY_ENCODING, allocator>::class_info() {
-	static const cstr_view<char> name = string_pool::instance()->save_string((string("ang::string<"_s) += ang::to_string<ang::text::encoding, MY_ENCODING>::value) += ">"_s);
-	static rtti_t const* parents[] = { &runtime::type_of<string_base>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(basic_string_buffer<MY_ENCODING, allocator>), alignof(basic_string_buffer<MY_ENCODING, allocator>), parents, &default_query_interface);
-	return info;
-}
 
 namespace ang
 {

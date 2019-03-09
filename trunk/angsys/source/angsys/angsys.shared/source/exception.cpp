@@ -34,7 +34,7 @@ static collections::pair<except_code, cstr_t> def_except[] = {
 
 ///////////////////////////////////////////
 
-wstring except_code_t::to_string()const {
+cstr_t except_code_t::to_string()const {
 	wsize idx = algorithms::binary_search<except_code>(get(), to_array(def_except));
 	if (idx > algorithms::array_size(def_except))
 		return  "exception: unkown exception"_s;
@@ -43,7 +43,7 @@ wstring except_code_t::to_string()const {
 }
 
 exception::exception()throw()
-	: object()
+	: base()
 	, code((dword)except_code::unknown)
 	, message()
 {
@@ -51,7 +51,7 @@ exception::exception()throw()
 }
 
 exception::exception(except_code_t type)throw()
-	: object()
+	: base()
 	, code((dword)type.get())
 	, message(null)
 {
@@ -59,7 +59,7 @@ exception::exception(except_code_t type)throw()
 }
 
 exception::exception(dword errorCode, string msg)throw()
-	: object()
+	: base()
 	, code(errorCode)
 	, message(null)
 {
@@ -74,7 +74,7 @@ exception::exception(dword errorCode, string msg)throw()
 }
 
 exception::exception(string msg)throw()
-	: object()
+	: base()
 	, code((dword)except_code::custom)
 	, message(null)
 {
@@ -91,7 +91,7 @@ exception::exception(string msg)throw()
 }
 
 exception::exception(const exception& e)throw()
-	: object()
+	: base()
 	, code(e.code)
 	, message(null)
 {

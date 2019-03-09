@@ -16,12 +16,12 @@ using namespace ang::streams;
 using namespace ang::core::files;
 
 input_text_file::input_text_file()
-	: file()
+	: base()
 {
 }
 
 input_text_file::input_text_file(path_view_t path)
-	: input_text_file()
+	: base()
 {
 	open(path);
 }
@@ -94,6 +94,11 @@ bool input_text_file::map(function<bool(ibuffer_view_t)> func, wsize sz, file_of
 //	return true;
 //}
 
+bool input_text_file::read(function<bool(streams::itext_input_stream_t)> func)
+{
+	return func(this);
+}
+
 uint input_text_file::seek(text::raw_cstr_t format)
 {
 	if (m_hfile.is_empty())
@@ -112,7 +117,6 @@ uint input_text_file::seek(text::raw_cstr_t format)
 	file_offset_t cursor = m_hfile->cursor();
 	file_offset_t forward = 0;
 	int arg_idx = 0;
-	text::text_format_flags_t tff;
 
 	wsize readed = 0;
 	wsize size1 = format.size() / ocs;
@@ -121,8 +125,6 @@ uint input_text_file::seek(text::raw_cstr_t format)
 		detect = 0,
 		reading_spaces,
 		reading_endl,
-		read_file,
-		formating,
 	}state;
 	state = detect;
 	while (!m_hfile->is_eof() && format_idx < size1)
@@ -194,6 +196,48 @@ uint input_text_file::seek(text::raw_cstr_t format)
 	m_hfile->cursor(cursor + forward, stream_reference::begin);
 
 	return format_idx;
+}
+
+
+#define FUNCX_TEXT_READ(A0) \
+if (type.type_id() == ang::type_of<A0>().type_id()) { \
+	*(A0*)ptr = (A0)parser->to_value<A0>(text::raw_cstr(buffer.data(), readed, e), i); \
+	m_hfile->cursor(current + i * cs, stream_reference::begin); \
+	return i * cs; \
+}
+
+#define TEXT_READ_SWITCH(...) { ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TEXT_READ, ELSE_SEPARATOR,##__VA_ARGS__)) }
+
+
+wsize input_text_file::read(pointer ptr, const rtti_t& type)
+{
+	if (m_hfile.is_empty())
+		throw_exception(except_code::invalid_access);
+	text::encoding_t e = format();
+	text::iparser_t parser = text::iparser::get_parser(e);
+	wsize cs = text::encoder<text::encoding::auto_detect>::char_size_by_encoding(e);
+	scope_array<byte> buffer(2001 * cs);
+	auto current = m_hfile->cursor();
+	wsize i = 0, readed = (wsize)(m_hfile->read(buffer.size(), buffer.data()) - current);
+
+	TEXT_READ_SWITCH(
+		char,
+		byte,
+		wchar_t,
+		char16_t,
+		char32_t,
+		short,
+		ushort,
+		int,
+		uint,
+		long,
+		ulong,
+		long64,
+		ulong64,
+		float,
+		double
+	);
+	return 0;
 }
 
 uint input_text_file::read_format(text::raw_cstr_t format, var_args_t& args)
@@ -306,17 +350,17 @@ uint input_text_file::read_format(text::raw_cstr_t format, var_args_t& args)
 			else
 			{
 				var val = nullptr;
-				tff.value = op->parse(format.ptr(), format.size() / ocs, format_idx, arg_idx).format_flags();
+				tff.value = op->parse(format, format_idx, arg_idx).format_flags();
 				switch (tff.value)
 				{
 				case text::text_format::target::signed_:
-					val = (int) ip->to_signed(buffer.get(), size2, buffer_idx, true, tff.base);
+					val = (int) ip->to_signed(text::raw_cstr(buffer.get(), size2, ie->format()), buffer_idx, true, tff.base);
 					break;
 				case text::text_format::target::unsigned_:
-					val = (uint)ip->to_unsigned(buffer.get(), size2, buffer_idx, true, tff.base);
+					val = (uint)ip->to_unsigned(text::raw_cstr(buffer.get(), size2, ie->format()), buffer_idx, true, tff.base);
 					break;
 				case text::text_format::target::float_:
-					val = (float)ip->to_floating(buffer.get(), size2, buffer_idx, true, tff.exponent);
+					val = (float)ip->to_floating(text::raw_cstr(buffer.get(), size2, ie->format()), buffer_idx, true, tff.exponent);
 					break;
 				case 0: //no format readed
 					temp = buffer_idx;
@@ -385,18 +429,18 @@ wsize input_text_file::read(text::unknown_str_t buff, wsize sz, text::encoding_t
 	if (m_hfile.is_empty() || m_hfile->is_eof() || buff == null || sz == 0)
 		return 0;
 	text::iencoder_t encoder = text::iencoder::get_encoder(e);
-	wsize mycs = text::iencoder::get_encoder(m_hfile->format())->char_type().size();
+
 	wsize cs = encoder->char_type().size();
 	pointer ptr = buff;
 	wsize out_size = (sz / cs) - 1;
 	wsize readed, total = 0;
-	byte _buffer[200];
+	stack_array<byte, 200> _buffer;
 	auto cur = cursor();
 	if (written)*written = out_size;
 	while (!m_hfile->is_eof() && out_size > 0)
 	{
-		readed = (wsize)(m_hfile->read(200, _buffer) - cur);
-		auto str = encoder->convert(ptr, _buffer, this->format(), true, out_size, readed / mycs);
+		readed = (wsize)(m_hfile->read(200, _buffer.data()) - cur);
+		auto str = encoder->convert(text::raw_str(ptr, sz, text::encoding::auto_detect), text::raw_cstr(_buffer.data(), readed, format()), true);
 		ptr = &((byte*)str.ptr())[str.size()];
 		out_size -= str.size() / cs;
 		total += str.size();
@@ -415,30 +459,45 @@ wsize input_text_file::read_line(text::istring_t str, array_view<const char32_t>
 	text::encoding_t e = format();
 	text::iencoder_t encoder = text::iencoder::get_encoder(e);
 	wsize cs = encoder->char_type().size();
-
-	wsize readed, total = 0, eos = str->length();
+	str->clear();
+	wsize readed, total = 0;
 	auto cur = cursor();
 	scope_array<byte> buff(100 * cs);
 
 	bool endl = false;
 	while (!m_hfile->is_eof() && !endl)
 	{
-		wsize beg = 0, end = 0;
-		char32 ch;
+		wsize beg = 0, end = 0, temp = 0;
+		char32 ch = 0;
 		readed = (wsize)(m_hfile->read(buff.size() - cs, buff.data()) - cur);
-		do
-			ch = encoder->to_char32(buff.data(), beg);
-		while ((ch == U' ' || ch == U'\t') && beg < (readed / cs));
+		
+		while ((ch = encoder->to_char32(buff.data(), temp)) && (ch == U' ' || ch == U'\t') && beg < (readed / cs)) {
+			beg = temp;
+		}
 
-		end = encoder->find_any(buff.data(), readed / cs, beg, token);
+		end = encoder->find_any(text::raw_cstr(buff.data(), readed, text::encoding::auto_detect), beg, token);
 		if (end != invalid_index)
 			endl = true;
 		else
 			end = readed / cs;
 		str->concat(text::raw_str(buff.data() + (beg * cs), (end - beg) * cs, e));
+
+		if (endl) //removing all endline tokens
+		{
+			temp = end;
+			while ((ch = encoder->to_char32(buff.data(), temp)) && beg < (readed / cs)) {
+				bool b = false;
+				for (char32 ch2 : token) {
+					if (ch == ch2)
+						b = true;
+				}
+				if (!b)break;
+				end = temp;
+			}
+		}
 		total += end * cs;	
 	}
-	if (written)*written = str->length() - eos;
+	if (written)*written = str->length();
 	cursor(cur + total, stream_reference::begin);
 	return total;
 }
@@ -460,21 +519,22 @@ wsize input_text_file::read_line(text::unknown_str_t buff, wsize sz, text::encod
 	if (written)*written = out_size;
 	while (!m_hfile->is_eof() && out_size > 0 && !endl)
 	{
-		wsize beg = 0, end = 0;
-		char32 ch;
+		wsize beg = 0, end = 0, temp = 0;
+		char32 ch = 0;
 		readed = (wsize)(m_hfile->read(_buffer.size() - mycs, _buffer.data()) - cur);
-		do
-			ch = my_encoder->to_char32(_buffer.data(), beg);
-		while ((ch == U' ' || ch == U'\t') && beg < (readed / mycs));
+	
+		while (ch = my_encoder->to_char32(_buffer.data(), beg) && (ch == U' ' || ch == U'\t') && beg < (readed / mycs)) {
+			beg = temp;
+		}
 
-		end = my_encoder->find_any(_buffer.data(), readed / mycs, beg, token);
+		end = my_encoder->find_any(text::raw_cstr(_buffer.data(), readed, text::encoding::auto_detect), beg, token);
 
 		if (end != invalid_index)
 			endl = true;
 		else
 			end = readed / mycs;
 
-		auto str = encoder->convert(ptr, _buffer.data() + (beg * mycs), format(), true, out_size, end - beg);
+		auto str = encoder->convert(text::raw_str(ptr, out_size * cs, e), text::raw_cstr(_buffer.data() + (beg * mycs), (end - beg) * mycs, format()), true);
 
 		ptr = &((byte*)str.ptr())[str.size()];
 		out_size -= str.size() / cs;

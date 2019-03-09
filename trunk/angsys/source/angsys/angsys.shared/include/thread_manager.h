@@ -1,5 +1,7 @@
 #include <ang/core/async.h>
+#include <ang/collections/list.h>
 #include "core_hash_table.h"
+
 namespace ang
 {
 	namespace core
@@ -10,7 +12,7 @@ namespace ang
 			ang_object(worker_thread);
 
 			class thread_task
-				: public task
+				: public smart<thread_task, task>
 			{
 				friend worker_thread;
 
@@ -20,7 +22,7 @@ namespace ang
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
 
-
+				virtual void clear()override;
 				virtual iasync<void> then(core::delegates::function<void(iasync<void>)> func);
 				virtual bool wait(async_action_status_t state)const;
 				virtual bool wait(async_action_status_t state, dword ms)const;
@@ -32,7 +34,7 @@ namespace ang
 
 				async::cond& cond()const { return m_cond; }
 				async::mutex& mutex()const { return m_mutex; }
-				event<thread_task, void(iasync<void>)> action;
+				delegates::listener<void(iasync<void>)> action;
 
 			protected:
 				bool m_was_canceled;
@@ -51,7 +53,7 @@ namespace ang
 
 
 			class worker_thread
-				: public thread
+				: public smart< worker_thread,thread>
 			{
 				friend class thread_manager;
 
@@ -65,11 +67,9 @@ namespace ang
 				ANG_DECLARE_INTERFACE();
 				virtual bool auto_release()override;
 				virtual void clear()override;
-				virtual dword add_ref() override;
-				virtual dword release() override;
 
 				virtual iasync<void> run_async(core::delegates::function<void(iasync<void>)>)override;
-				virtual iasync<void> run_async(core::delegates::function<void(iasync<void>, var_args_t)>, var_args_t)override;
+				//virtual iasync<void> run_async(core::delegates::function<void(iasync<void>, var_args_t)>, var_args_t)override;
 
 				virtual bool is_main_thread()const override;
 				virtual bool has_thread_access()const override;
@@ -84,16 +84,18 @@ namespace ang
 				bool attach();
 
 			protected:
-				bool _is_main_thread;
-				vector<thread_task_t> _tasks;
-				mutable async_action_status_t _state;
+				bool m_is_main_thread;
+				//bool m_auto_release;
+				collections::list<thread_task_t> m_tasks;
+				mutable async_action_status_t m_state;
 
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 				pthread_t _thread;
 #elif defined WINDOWS_PLATFORM
-				dword _id;
-				pointer _thread;
+				dword m_id;
+				pointer m_thread;
 #endif
+
 
 			protected:
 				virtual~worker_thread();

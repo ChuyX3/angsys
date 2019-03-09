@@ -10,7 +10,7 @@ namespace ang
 		namespace xml
 		{
 			class LINK xml_comment final
-				: public xml_node
+				: public smart<xml_comment, xml_node>
 			{
 			public:
 				static xml_comment_t create_new(xml_document_t, const xml_comment*);

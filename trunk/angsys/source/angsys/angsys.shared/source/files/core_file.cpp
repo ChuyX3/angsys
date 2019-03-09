@@ -138,7 +138,7 @@ wsize mapped_file_buffer::mem_copy(wsize size, pointer data, text::encoding_t en
 		windex written = 0;
 
 		text::iencoder_t encoder = text::iencoder::get_encoder(dest.encoding());
-		return encoder->convert(dest.ptr(), src.ptr(), src.encoding(), true, dest.count(), src.count()).count();
+		return encoder->convert(dest, src, true).count();
 	}
 	else
 	{
@@ -420,6 +420,7 @@ bool core_file::create(path_view_t path, open_flags_t flags)
 	}
 #endif
 
+	m_path = path;
 	wsize size = (wsize)get_file_size(m_hfile);
 
 	if (bool(flags & open_flags::format_text)) //text file

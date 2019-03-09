@@ -141,7 +141,7 @@ xml_type_t xml_type_t::parse(xml_cstr_t text)
 //		return s_xml_type_parsing_map[idx].value;
 //}
 
-wstring xml_type_t::to_string()const
+cstr_t xml_type_t::to_string()const
 {
 	auto idx = algorithms::binary_search(get(), collections::to_array(s_xml_type_to_string_map));
 	if (idx >= algorithms::array_size(s_xml_type_to_string_map))
@@ -152,7 +152,7 @@ wstring xml_type_t::to_string()const
 
 safe_enum_rrti2(ang::dom::xml, xml_exception_code);
 
-wstring xml_exception_code_t::to_string()const
+cstr_t xml_exception_code_t::to_string()const
 {
 	return ang::move(except_code_t((except_code)get()).to_string());
 }

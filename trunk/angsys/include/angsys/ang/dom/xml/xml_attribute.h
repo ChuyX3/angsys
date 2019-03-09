@@ -6,7 +6,7 @@ namespace ang
 		namespace xml
 		{
 			class LINK xml_attribute final
-				: public xml_node
+				: public smart<xml_attribute, xml_node>
 			{
 			public:
 				static xml_attribute_t create_new(xml_document_t, const xml_attribute*);

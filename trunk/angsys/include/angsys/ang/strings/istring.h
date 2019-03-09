@@ -30,6 +30,7 @@ namespace ang
 			visible vcall windex find(raw_cstr_t, windex start = 0, windex end = -1)const pure;
 			visible vcall windex find_reverse(raw_cstr_t, windex start = -1, windex end = 0)const pure;
 			visible vcall istring_t sub_string(istring_ptr_t, windex start, windex end)const pure;
+			visible vcall collections::ienum_ptr<istring_t> split(raw_cstr_t)const pure;
 		ang_end_interface();
 
 		ang_begin_interface(LINK istring, istring_view)
@@ -60,25 +61,52 @@ namespace ang
 			visible vcall wsize size(unknown_cstr_t, encoding_t, windex = 0, windex = -1)const pure;
 			visible vcall int compare(unknown_cstr_t, unknown_cstr_t, encoding_t)const pure;
 			visible vcall wsize compare_until(unknown_cstr_t, unknown_cstr_t, encoding_t)const pure;
-			visible vcall wsize find(unknown_cstr_t, wsize, unknown_cstr_t, wsize, encoding_t, windex)const pure;
-			visible vcall wsize find_any(unknown_cstr_t cstr, wsize sz, wsize start, array_view<const char32>)const pure;
-			visible vcall wsize find_reverse(unknown_cstr_t, wsize, unknown_cstr_t, wsize, encoding_t, windex)const pure;
-			visible vcall raw_str_t convert(unknown_str_t dest, unknown_cstr_t src, encoding_t e, bool set_eos = true, wsize max_out_size = -1, wsize max_in_size = -1)const pure;
-			visible vcall raw_str_t convert(unknown_str_t dest, wsize& i, unknown_cstr_t src, wsize& j, encoding_t e, bool set_eos = true, wsize max_out_size = -1, wsize max_in_size = -1)const pure;
+			visible vcall wsize find(raw_cstr_t, raw_cstr_t, windex)const pure;
+			visible vcall wsize find_any(raw_cstr_t, wsize start, array_view<const char32>)const pure;
+			visible vcall wsize find_reverse(raw_cstr_t, raw_cstr_t, windex)const pure;
+			visible vcall raw_str_t convert(raw_str_t, raw_cstr_t, bool set_eos = true)const pure;
+			visible vcall raw_str_t convert(raw_str_t, wsize& i, raw_cstr_t, wsize& j, bool set_eos = true)const pure;
 		ang_end_interface();
 
 		ang_begin_interface(LINK iparser)
 			visible scall iparser_t get_parser(encoding_t);
 			visible vcall encoding_t format()const pure;
 			visible vcall text_format_t default_format(text_format_target_t)const pure;
-			visible vcall long64 to_signed(unknown_cstr_t str, wsize sz, windex& i, bool increment = true, int base = 10)const pure;
-			visible vcall ulong64 to_unsigned(unknown_cstr_t str, wsize sz, windex& i, bool increment = true, int base = 10)const pure;
-			visible vcall double to_floating(unknown_cstr_t str, wsize sz, windex& i, bool increment = true, bool ex = false)const pure;
-			visible vcall bool format(unknown_cstr_t format, wsize sz, args_t args, encoding_t e, istring_ptr_t out)const pure;
-			visible vcall bool format(unknown_cstr_t format, wsize sz, var_args_t args, encoding_t e, istring_ptr_t out)const pure;
-			visible vcall text_format_t parse(unknown_cstr_t format, wsize sz)const pure;
-			visible vcall text_format_t parse(unknown_cstr_t format, wsize sz, wsize& beg, int& arg)const pure;
+			visible vcall raw_cstr_t seek(raw_cstr_t, windex& i, raw_cstr_t)const pure;
+			visible vcall long64 to_signed(raw_cstr_t, windex& i, bool increment = true, int base = 10)const pure;
+			visible vcall ulong64 to_unsigned(raw_cstr_t, windex& i, bool increment = true, int base = 10)const pure;
+			visible vcall double to_floating(raw_cstr_t, windex& i, bool increment = true, bool ex = false)const pure;
+			visible vcall bool format(raw_cstr_t, args_t args, encoding_t e, istring_ptr_t out)const pure;
+			visible vcall bool format(raw_cstr_t, var_args_t args, encoding_t e, istring_ptr_t out)const pure;
+			visible vcall text_format_t parse(raw_cstr_t)const pure;
+			visible vcall text_format_t parse(raw_cstr_t, wsize& beg, int& arg)const pure;
+			template<typename T> T to_value(raw_cstr_t, windex& i)const;
 		ang_end_interface();
+
+		template<typename T, bool = ang::is_unsigned_value<T>::value, bool = ang::is_floating_value<T>::value>
+		struct parse_helper {
+			static T parse(iparser const* parser, raw_cstr_t cstr, windex& i) {
+				return parser->to_signed(cstr, i);
+			}
+		};
+
+		template<typename T>
+		struct parse_helper<T, true, false> {
+			static T parse(iparser const* parser, raw_cstr_t cstr, windex& i) {
+				return parser->to_unsigned(cstr, i);
+			}
+		};
+
+		template<typename T>
+		struct parse_helper<T, false, true> {
+			static T parse(iparser const* parser, raw_cstr_t cstr, windex& i) {
+				return parser->to_floating(cstr, i);
+			}
+		};
+
+		template<typename T> inline T iparser::to_value(raw_cstr_t cstr, windex& i)const {
+			return parse_helper<T>::parse(this, cstr, i);
+		}
 	}
 
 	ANG_INTF_WRAPPER_DECLARATION(LINK, text::iencoder);
@@ -89,6 +117,12 @@ namespace ang
 		intf_wrapper(text::raw_cstr_t cstr);
 		operator text::raw_cstr_t ()const;
 		char32_t operator [](windex)const;
+		inline bool operator == (text::istring_t cstr)const { return (text::raw_cstr)*this == (text::raw_cstr)cstr; }
+		inline bool operator != (text::istring_t cstr)const { return (text::raw_cstr)*this != (text::raw_cstr)cstr; }
+		inline bool operator >= (text::istring_t cstr)const { return (text::raw_cstr)*this >= (text::raw_cstr)cstr; }
+		inline bool operator <= (text::istring_t cstr)const { return (text::raw_cstr)*this <= (text::raw_cstr)cstr; }
+		inline bool operator > (text::istring_t cstr)const { return (text::raw_cstr)*this > (text::raw_cstr)cstr; }
+		inline bool operator < (text::istring_t cstr)const { return (text::raw_cstr)*this > (text::raw_cstr)cstr; }
 	ANG_END_INTF_WRAPPER();
 
 	ANG_BEGIN_INTF_WRAPPER(LINK, text::istring_view)

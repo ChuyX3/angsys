@@ -16,9 +16,19 @@ safe_enum_rrti2(ang::platform::input, pointer_hardware_type);
 safe_enum_rrti2(ang::platform::input, keyboard_type);
 safe_enum_rrti2(ang::platform::input, virtual_key);
 
+
+safe_enum_rrti2(ang::platform::input, controller_button);
+safe_enum_rrti2(ang::platform::input, controller_status);
+safe_enum_rrti2(ang::platform::input, controller_buttons_state);
+
 safe_flags_implement(ang::platform::input, key_modifiers);
+safe_flags_implement(ang::platform::input, controller_buttons_state);
+
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::input::ikeyboard, ang::interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::input::icontroller, ang::interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::input::icontroller_manager, ang::interface);
+
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::imessage_listener, ang::interface);
 //ANG_IMPLEMENT_BASIC_INTERFACE(ang::platform::icore_msg_dispatcher, imessage_reciever);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::icore_context, ang::interface);

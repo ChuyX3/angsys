@@ -9,12 +9,10 @@
 
 template<typename T, template<typename> class allocator>
 inline ang::collections::vector_buffer<T, allocator>::vector_buffer()
-	: object()
-	, m_size(0)
+	: m_size(0)
 	, m_capacity(0)
 	, m_data(null)
 {
-
 }
 
 template<typename T, template<typename> class allocator>  template<typename U>
@@ -742,6 +740,17 @@ inline void ang::collections::vector_buffer<T, allocator>::clear()
 }
 
 template<typename T, template<typename> class allocator>
+inline void ang::collections::vector_buffer<T, allocator>::empty()
+{
+	if (m_data != null)
+	{
+		for (wsize i = 0; i < m_size; ++i)
+			m_alloc.destroy((T*)&m_data[i]);
+		m_size = 0U;
+	}
+}
+
+template<typename T, template<typename> class allocator>
 inline bool ang::collections::vector_buffer<T, allocator>::realloc(wsize new_size, bool save)
 {
 	new_size++;
@@ -813,7 +822,7 @@ inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::objec
 
 template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<T, allocator>> && ptr)
-	: object_wrapper<collections::vector_buffer<T, allocator>>()
+	: m_ptr(null)
 {
 	if (ptr.is_empty())
 	{
@@ -829,7 +838,7 @@ inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::objec
 
 template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<T, allocator>> const& ptr)
-	: object_wrapper<collections::vector_buffer<T, allocator>>()
+	: m_ptr(null)
 {
 	set(!ptr.is_empty() ? ptr.get() : new ang::collections::vector_buffer<T, allocator>());
 }
@@ -899,7 +908,7 @@ inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>& ang::
 template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator = (const std::nullptr_t&)
 {
-	clear();
+	reset();
 	return*this;
 }
 

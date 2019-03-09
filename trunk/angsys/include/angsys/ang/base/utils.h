@@ -70,6 +70,7 @@ namespace ang //constants
 	nullptr_t const null = {};
 
 	template<typename T> using initializer_list = std::initializer_list<T>;
+
 }
 
 namespace ang //type utils
@@ -107,6 +108,27 @@ namespace ang //type utils
 	template<typename T> struct is_lvalue_reference<T&> : true_type { };
 
 	template<typename T> typename remove_reference<T>::type& declval();
+
+	template<typename T, bool IS_POINTER = is_pointer<T>::value> struct __to_pointer_helper;
+
+	template<typename T> 
+	struct __to_pointer_helper<T, true> {
+		using arg_type = T;
+		using ptr_type = T;
+		static constexpr T value(arg_type ptr) { return ptr; }
+	};
+
+	template<typename T>
+	struct __to_pointer_helper<T, false> {
+		using arg_type = T&;
+		using ptr_type = T*;
+		static T* value(arg_type val) { return addressof(forward<T>(val)); }
+	};
+
+	template<typename T>
+	auto to_pointer(typename __to_pointer_helper<T>::arg_type val)->decltype(__to_pointer_helper<T>::value(forward<T>(val))) {
+		return __to_pointer_helper<T>::value(forward<T>(val));
+	};
 }
 
 namespace ang //move operations
@@ -257,6 +279,16 @@ namespace ang //testing
 	template<typename child_type, typename base_type>
 	struct is_inherited_from : public yes_expression<__is_base_of(base_type, child_type)> { };
 
+	template<typename T1, typename T2>
+	struct are_convertible_types
+		: public integer_constant<bool, 
+		is_same_type<T1,T2>::value ||
+		is_inherited_from<T1, T2>::value ||
+		is_inherited_from<T2, T1>::value> {
+	};
+
+
+
 	template<typename T, typename = void> struct is_functor : false_type { };
 	template<typename T> struct is_functor<T, void_t<decltype(&T::operator())>> : true_type { };
 
@@ -308,6 +340,7 @@ namespace ang //testing
 
 
 	template<typename T> struct is_integer_value : false_type { };
+	
 	template<> struct is_integer_value<ang_int8_t> : true_type { };
 	template<> struct is_integer_value<ang_uint8_t> : true_type { };
 	template<> struct is_integer_value<ang_int16_t> : true_type { };
@@ -318,6 +351,13 @@ namespace ang //testing
 	template<> struct is_integer_value<ang_ulint32_t> : true_type { };
 	template<> struct is_integer_value<ang_int64_t> : true_type { };
 	template<> struct is_integer_value<ang_uint64_t> : true_type { };
+
+	template<typename T> struct is_unsigned_value : false_type { };
+	template<> struct is_unsigned_value<ang_uint8_t> : true_type { };
+	template<> struct is_unsigned_value<ang_uint16_t> : true_type { };
+	template<> struct is_unsigned_value<ang_uint32_t> : true_type { };
+	template<> struct is_unsigned_value<ang_ulint32_t> : true_type { };
+	template<> struct is_unsigned_value<ang_uint64_t> : true_type { };
 
 	template<typename T> struct is_floating_value : false_type { };
 	template<> struct is_floating_value<ang_float32_t> : true_type { };
@@ -530,6 +570,27 @@ namespace ang
 
 	template<typename T> using function_type = typename _function_type<T>::type_ptr;
 
+
+	template<typename T, typename U>
+	constexpr wsize offset_of(U T::*member) {
+		return wsize((byte*)&((T*)nullptr->*member) - (byte*)nullptr);
+	}
+
+	template<typename T, typename U, typename V>
+	T* field_to_parent(U T::*member, V* field) {
+		static_assert(are_convertible_types<U, V>::value, "can convert type V to U");
+		return (T*)(wsize(field)-offset_of(member));
+	}
+
+
+	template<typename... Ts> struct auto_self;
+	template<typename T, typename U, typename...Ts> struct auto_self<T, U, Ts...> : public U, public Ts...{
+	protected:
+		using self = T; using base = auto_self<T, U, Ts...>;
+		template<typename...Arsg>auto_self(Arsg&&... args)
+			: U(forward<Arsg>(args)...) { }
+	};
+template<typename T> struct auto_self<T> { protected: using self = T; };
 }
 
 #endif//__ANG_BASE_UTILS_H__

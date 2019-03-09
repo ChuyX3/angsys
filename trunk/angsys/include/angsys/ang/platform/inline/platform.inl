@@ -182,23 +182,46 @@ inline ang::graphics::rect<T>::rect(ang::graphics::point<T> lt, ang::graphics::s
 
 }
 
+template<typename T> 
+inline T ang::graphics::rect<T>::get_width_property(ang::base_property<T>const*prop) {
+	rect<T>* proxy = field_to_parent(&rect<T>::width, prop);
+	return proxy->right - proxy->left;
+}
+template<typename T> 
+inline void ang::graphics::rect<T>::set_width_property(ang::base_property<T>*prop, T&& value) {
+	rect<T>* proxy = field_to_parent(&rect<T>::width, prop);
+	proxy->right = proxy->left + forward<T>(value);
+}
 template<typename T>
-inline T ang::graphics::rect<T>::width()const { return right - left; }
-
+inline T ang::graphics::rect<T>::get_height_property(ang::base_property<T>const*prop) {
+	rect<T>* proxy = field_to_parent(&rect<T>::height, prop);
+	return proxy->bottom - proxy->top;
+}
+template<typename T> 
+inline void ang::graphics::rect<T>::set_height_property(ang::base_property<T>*prop, T&& value) {
+	rect<T>* proxy = field_to_parent(&rect<T>::height, prop);
+	proxy->bottom = proxy->top + forward<T>(value);
+}
 template<typename T>
-inline T ang::graphics::rect<T>::height()const { return bottom - top; }
-
+inline ang::graphics::point<T> ang::graphics::rect<T>::get_left_top_property(ang::base_property<point<T>>const*prop) {
+	rect<T>* proxy = field_to_parent(&rect<T>::left_top, prop);
+	return point<T>(proxy->left, proxy->top);
+}
+template<typename T> 
+inline ang::graphics::point<T> ang::graphics::rect<T>::get_right_top_property(ang::base_property<point<T>>const*prop) {
+	rect<T>* proxy = field_to_parent(&rect<T>::right_top, prop);
+	return point<T>(proxy->right, proxy->top);
+}
 template<typename T>
-inline ang::graphics::point<T> ang::graphics::rect<T>::left_top()const { return{ left, top }; }
-
+inline ang::graphics::point<T> ang::graphics::rect<T>::get_left_bottom_property(ang::base_property<point<T>>const*prop) {
+	rect<T>* proxy = field_to_parent(&rect<T>::left_bottom, prop);
+	return point<T>(proxy->left, proxy->bottom);
+}
 template<typename T>
-inline ang::graphics::point<T> ang::graphics::rect<T>::right_top()const { return{ right, top }; }
-
-template<typename T>
-inline ang::graphics::point<T> ang::graphics::rect<T>::left_bottom()const { return{ left, bottom }; }
-
-template<typename T>
-inline ang::graphics::point<T> ang::graphics::rect<T>::right_bottom()const { return{ right, bottom }; }
+inline ang::graphics::point<T> ang::graphics::rect<T>::get_right_bottom_property(ang::base_property<point<T>>const*prop) {
+	rect<T>* proxy = field_to_parent(&rect<T>::right_bottom, prop);
+	return point<T>(proxy->right, proxy->bottom);
+}
 
 template<typename T> 
 inline void ang::graphics::rect<T>::move_to(ang::graphics::point<T> p)

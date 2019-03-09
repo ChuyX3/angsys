@@ -1,14 +1,14 @@
 
 
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer()
-	: basic_string_buffer_base()
+	: base()
 {
 	m_encoder = iencoder::get_encoder(MY_ENCODING);
 	m_parser = iparser::get_parser(MY_ENCODING);
 }
 
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(wsize reserv)
-	: basic_string_buffer_base()
+	: base()
 {
 	m_encoder = iencoder::get_encoder(MY_ENCODING);
 	m_parser = iparser::get_parser(MY_ENCODING);
@@ -16,7 +16,7 @@ basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(wsize reserv
 }
 
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(raw_cstr_t const& str)
-	: basic_string_buffer_base()
+	: base()
 {
 	m_encoder = iencoder::get_encoder(MY_ENCODING);
 	m_parser = iparser::get_parser(MY_ENCODING);
@@ -24,7 +24,7 @@ basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(raw_cstr_t c
 }
 
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(basic_string_buffer<MY_ENCODING> const* str)
-	: basic_string_buffer_base()
+	: base()
 {
 	m_encoder = iencoder::get_encoder(MY_ENCODING);
 	m_parser = iparser::get_parser(MY_ENCODING);
@@ -32,7 +32,7 @@ basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(basic_string
 }
 
 basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>::basic_string_buffer(basic_const_string_buffer<MY_ENCODING>* str)
-	: basic_string_buffer_base()
+	: base()
 {
 	m_encoder = iencoder::get_encoder(MY_ENCODING);
 	m_parser = iparser::get_parser(MY_ENCODING);
@@ -93,6 +93,16 @@ void basic_string_buffer<MY_ENCODING>::clear()
 	memset(&m_data, 0, sizeof(m_data));
 }
 
+raw_str_t basic_string_buffer<MY_ENCODING>::alloc(wsize new_size)
+{
+	allocator_t alloc;
+	wsize size = 2 * RAW_CAPACITY / size_of<char_t>(), i = 0;
+	while (size <= new_size)
+		size *= 2U;
+	auto new_buffer = alloc.allocate(size);
+	return raw_str_t(new_buffer, size * size_of<char_t>(), MY_ENCODING);
+}
+
 bool basic_string_buffer<MY_ENCODING>::realloc(wsize new_size, bool save)
 {
 	allocator_t alloc;
@@ -102,8 +112,7 @@ bool basic_string_buffer<MY_ENCODING>::realloc(wsize new_size, bool save)
 		new_size = save ? max(m_data.m_const_string->cstr().count(), new_size) : new_size;
 	else if (capacity() > new_size)
 		return true;
-
-	wsize cs = sizeof(char_t), size = 32U, i = 0;
+	wsize size = 2 * RAW_CAPACITY / size_of<char_t>(), i = 0;
 	while (size <= new_size)
 		size *= 2U;
 	auto new_buffer = alloc.allocate(size);
@@ -111,9 +120,9 @@ bool basic_string_buffer<MY_ENCODING>::realloc(wsize new_size, bool save)
 		return false;
 	wsize len = 0U, j = 0;
 	new_buffer[0] = 0;
-	auto data = cstr();
+	str_view<const char_t, MY_ENCODING> data = cstr();
 	if (save)
-		text::encoder<ENCODING>::convert(new_buffer, len, data.cstr(), j, true, size - 1, data.size());
+		text::encoder<ENCODING>::convert(new_buffer, len, data, j, true, size - 1, data.size());
 
 	clear();
 	m_data.m_allocated_length = len;
@@ -159,7 +168,7 @@ ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(object_wra
 }
 
 ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::object_wrapper(object_wrapper const& other) : m_ptr(null) {
-	set(other.m_ptr);
+	set(new basic_string_buffer<MY_ENCODING>(other.m_ptr));
 }
 
 

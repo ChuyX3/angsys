@@ -1,5 +1,5 @@
 /*********************************************************************************************************************/
-/*   File Name: input_binary_file.cpp                                                                                */
+/*   File Name: input_binary_file.cpp                                                                                  */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
 /*   Copyright (C) Angsys, - All Rights Reserved                                                                     */
 /*   Confidential Information of Angsys. Not for disclosure or distribution without the author's prior written       */
@@ -8,77 +8,134 @@
 /*********************************************************************************************************************/
 
 #include "pch.h"
-#include "ang/core/files.hpp"
+#include <ang/core/files.h>
+#include "format_parser.h"
 
 using namespace ang;
 using namespace ang::streams;
 using namespace ang::core::files;
 
 input_binary_file::input_binary_file()
-	: file()
+	: base()
 {
 }
 
-input_binary_file::input_binary_file(path_view path)
-	: input_binary_file()
+input_binary_file::input_binary_file(path_view_t path)
+	: base()
 {
 	open(path);
 }
 
 input_binary_file::~input_binary_file()
 {
-	close();
+
 }
 
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::core::files::input_binary_file, file);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::files::input_binary_file)
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::files::input_binary_file, file, streams::ibinary_input_stream);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::files::input_binary_file, file, streams::ibinary_input_stream);
 
-bool input_binary_file::open(path_view path)
+bool input_binary_file::open(path_view_t path)
 {
 	if (is_valid())
 		return false;
-
-	if (!create(path, open_flags::access_in + open_flags::open_exist + open_flags::format_binary))
+	if (!create(path, open_flags::access_in + open_flags::open_exist + open_flags::format_text))
 		return false;
 	return true;
 }
 
-file_cursor_t input_binary_file::cursor()const
+bool input_binary_file::is_eos()const
 {
-	return hfile.is_empty() ? 0 : hfile->position();
+	return m_hfile.is_empty() ? true : m_hfile->is_eof();
 }
 
-void input_binary_file::cursor(file_cursor_t offset, file_reference_t ref)
+text::encoding_t input_binary_file::format()const
 {
-	if (!hfile.is_empty())	
-		hfile->move_to(offset, ref);
+	return m_hfile.is_empty() ? text::encoding::none : m_hfile->format().get();
 }
 
-bool input_binary_file::read(core::delegates::function<bool(streams::ibinary_input_stream_t)> func, file_cursor_t offset, wsize size)
+file_offset_t input_binary_file::cursor()const
 {
-		ibuffer_t buff = map(min<wsize>((wsize)size, wsize(hfile->stream_size() - offset)), offset);
-		if (buff.get() == null)
-			return false;	
-		return func(new streams::binary_buffer_input_stream(buff));
+	return m_hfile.is_empty() ? 0 : m_hfile->cursor();
 }
 
-//ang::core::async::iasync_t<bool> input_binary_file::read_async(core::delegates::function<bool(streams::ibinary_input_stream_t)> func, file_cursor_t offset, wsize size)
+bool input_binary_file::cursor(file_offset_t offset, stream_reference_t ref)
+{
+	return m_hfile.is_empty() ? false : m_hfile->cursor(offset, ref);
+}
+
+file_offset_t input_binary_file::size()const
+{
+	return m_hfile.is_empty() ? 0 : m_hfile->size();
+}
+
+stream_mode_t input_binary_file::mode()const
+{
+	return stream_mode::out;
+}
+
+bool input_binary_file::map(function<bool(ibuffer_view_t)> func, wsize sz, file_offset_t offset)
+{
+	ibuffer_t buff = file::map(min(size(), sz), min(size(), offset));
+	if (buff.is_empty())
+		return false;
+	func(buff.get());
+	unmap(buff, min(size(), sz));
+	return true;
+}
+
+//bool input_binary_file::map(function<bool(text::istring_view_t)> func, wsize sz, file_offset_t offset)
 //{
-//	add_ref();
-//	return core::async::async_task<bool>::run_async([=](async::iasync<bool>*, var_args_t)->bool
-//	{
-//		input_binary_file_t _this = this;
-//		release();
-//
-//		ibuffer_t buff = map(min<wsize>((wsize)size, wsize(hfile->file_size() - offset)), offset);
-//		if (buff.get() == null)
-//			return false;
-//		return func(new streams::binary_buffer_input_stream(buff));
-//	});
+//	ibuffer_t buff = file::map(min(size(), sz), min(size(), offset));
+//	if (buff.is_empty())
+//		return false;
+//	func(text::istring_factory::get_factory(format())->create_wrapper((ibuffer_view*)buff.get()));
+//	unmap(buff, min(size(), sz));
+//	return true;
 //}
 
-wsize input_binary_file::read(pointer out, wsize count)
+bool input_binary_file::read(function<bool(streams::ibinary_input_stream_t)> func)
 {
-	if (hfile.is_empty() || out == null || count == 0)
+	return func(this);
+}
+
+wsize input_binary_file::read(pointer ptr, wsize sz)
+{
+	if (m_hfile.is_empty() || ptr == null || sz == 0)
 		return 0U;
-	return hfile->read(out, count);
+	auto current = m_hfile->cursor();
+	return m_hfile->read(sz, ptr) - current;
+}
+
+wsize input_binary_file::read(ibuffer_t buff)
+{
+	if (m_hfile.is_empty() || buff.is_empty())
+		return 0U;
+	auto current = m_hfile->cursor();
+	return m_hfile->read(buff->buffer_size(), buff->buffer_ptr()) - current;
+}
+
+#define FUNCX_BINARY_READ(A0) if(type.type_id() == type_of<A0>().type_id()) { return read(ptr, size_of<A0>()); }
+#define BINARY_READ_SWITCH(...) { ANG_EXPAND(APPLY_FUNCX_N(FUNCX_BINARY_READ, ELSE_SEPARATOR,##__VA_ARGS__)) }
+ 
+wsize input_binary_file::read(pointer ptr, const rtti_t& type)
+{
+	BINARY_READ_SWITCH(
+		char,
+		byte,
+		wchar_t,
+		char16_t,
+		char32_t,
+		short,
+		ushort,
+		int,
+		uint,
+		long,
+		ulong,
+		long64,
+		ulong64,
+		float,
+		double
+	);
+	return 0;
 }

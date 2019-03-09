@@ -97,6 +97,8 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::task, object, itask<void>
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
+static ulong s_task_count = 0;
+
 thread_task::thread_task(worker_thread_t th)
 	: m_was_canceled(false)
 	, m_status(async_action_status::initializing)
@@ -104,20 +106,27 @@ thread_task::thread_task(worker_thread_t th)
 	, m_child_task(null)
 	, m_thread(th)
 {
-
+	s_task_count++;
 }
 
 thread_task::~thread_task()
 {
-	action.empty();
+	s_task_count--;
 }
 
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::thread_task, task);
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::thread_task);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::thread_task, task);
 
+void thread_task::clear()
+{
+	task::clear();
+	action.empty();
+}
+
 void thread_task::run()
 {
+	worker_thread_t thread = m_thread;
 	m_mutex.lock();
 	if (m_status == async_action_status::canceled)
 	{
@@ -135,10 +144,16 @@ void thread_task::run()
 	
 	m_mutex.lock();
 
+	
+
 	if (m_status == async_action_status::canceled)
 	{
 		m_status = async_action_status::completed;
-		action.empty();
+		if (!m_child_task.is_empty())
+		{
+			m_child_task->cancel();
+			m_child_task = null;
+		}
 	}
 	else if (m_child_task.is_empty())
 	{
@@ -160,10 +175,10 @@ void thread_task::run()
 			m_child_task = null;
 			m_thread = null; //unreference thread
 			m_status = async_action_status::completed;
-			action.empty();
 		}
 	}
-
+	
+	action.empty();
 	m_cond.signal();
 	m_mutex.unlock();
 }
@@ -235,6 +250,9 @@ bool thread_task::cancel()
 	scope_locker<async::mutex_t> lock = m_mutex;
 	if (m_thread.is_empty() || m_status & (async_action_status::finished | async_action_status::attached))
 		return false;
+
+	if (m_status & async_action_status::initializing && !m_child_task.is_empty())
+		m_child_task->cancel();
 
 	m_was_canceled = true;
 	m_status = async_action_status::canceled;

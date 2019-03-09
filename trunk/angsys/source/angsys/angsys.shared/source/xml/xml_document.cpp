@@ -202,9 +202,15 @@ bool xml_document::xml_document_iterator::forward()
 
 xml_document_t xml_document::from_file(core::files::input_text_file_t file)
 {
-	xml_document_t doc = new xml_document();
-	doc->load(file);
-	return doc;
+	try {
+		xml_document_t doc = new xml_document();
+		doc->load(file);
+		return doc;
+	}
+	catch (exception_t const& e) {
+		e->what();
+	}
+	
 }
 
 xml_document::xml_document(xml_encoding_t e)
@@ -969,7 +975,7 @@ static xml_encoding_t  xml_detect_encoding(pointer bom, xml_encoding_t e, windex
 
 void xml_document::load(core::files::input_text_file_t file)
 {
-	ang::exception_t ex;
+	ang::exception_t ex = null;
 	if (!file->map([&](ibuffer_view_t data)
 	{
 		try {

@@ -175,17 +175,47 @@ rect<float>::rect(point<float> lt, size<float> sz)
 
 }
 
-float rect<float>::width()const { return right - left; }
 
-float rect<float>::height()const { return bottom - top; }
+float ang::graphics::rect<float>::get_width_property(ang::base_property<float>const*prop) {
+	rect<float>* proxy = field_to_parent(&rect<float>::width, prop);
+	return proxy->right - proxy->left;
+}
 
-point<float> rect<float>::left_top()const { return{ left, top }; }
+void ang::graphics::rect<float>::set_width_property(ang::base_property<float>*prop, float&& value) {
+	rect<float>* proxy = field_to_parent(&rect<float>::width, prop);
+	proxy->right = proxy->left + forward<float>(value);
+}
 
-point<float> rect<float>::right_top()const { return{ right, top }; }
+float ang::graphics::rect<float>::get_height_property(ang::base_property<float>const*prop) {
+	rect<float>* proxy = field_to_parent(&rect<float>::height, prop);
+	return proxy->bottom - proxy->top;
+}
 
-point<float> rect<float>::left_bottom()const { return{ left, bottom }; }
+void ang::graphics::rect<float>::set_height_property(ang::base_property<float>*prop, float&& value) {
+	rect<float>* proxy = field_to_parent(&rect<float>::height, prop);
+	proxy->bottom = proxy->top + forward<float>(value);
+}
 
-point<float> rect<float>::right_bottom()const { return{ right, bottom }; }
+
+ang::graphics::point<float> ang::graphics::rect<float>::get_left_top_property(ang::base_property<point<float>>const*prop) {
+	rect<float>* proxy = field_to_parent(&rect<float>::left_top, prop);
+	return point<float>(proxy->left, proxy->top);
+}
+
+ang::graphics::point<float> ang::graphics::rect<float>::get_right_top_property(ang::base_property<point<float>>const*prop) {
+	rect<float>* proxy = field_to_parent(&rect<float>::right_top, prop);
+	return point<float>(proxy->right, proxy->top);
+}
+
+ang::graphics::point<float> ang::graphics::rect<float>::get_left_bottom_property(ang::base_property<point<float>>const*prop) {
+	rect<float>* proxy = field_to_parent(&rect<float>::left_bottom, prop);
+	return point<float>(proxy->left, proxy->bottom);
+}
+
+ang::graphics::point<float> ang::graphics::rect<float>::get_right_bottom_property(ang::base_property<point<float>>const*prop) {
+	rect<float>* proxy = field_to_parent(&rect<float>::right_bottom, prop);
+	return point<float>(proxy->right, proxy->bottom);
+}
 
 void rect<float>::move_to(point<float> p)
 {
@@ -653,7 +683,7 @@ color_t  graphics::color::parse(text::raw_cstr_t cstr)
 	wsize i = 0;
 	if (text::iencoder::get_encoder(cstr.encoding())->to_char32(cstr.ptr(),i) == U'#')
 	{
-		return text::iparser::get_parser(cstr.encoding())->to_signed(cstr.ptr(), cstr.count(), i, true, 16);
+		return text::iparser::get_parser(cstr.encoding())->to_signed(cstr, i, true, 16);
 	}
 	else
 	{

@@ -7,7 +7,7 @@ namespace ang
 	namespace text
 	{
 		template<> class MY_LINKAGE basic_const_string_buffer<MY_ENCODING>
-			: public basic_const_string_buffer_base
+			: public smart<basic_const_string_buffer<MY_ENCODING>, basic_const_string_buffer_base>
 		{
 		public:
 			static const text::encoding ENCODING = MY_ENCODING;

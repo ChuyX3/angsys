@@ -28,8 +28,7 @@ namespace ang
 		{
 
 			class mapped_file_buffer 
-				: public object
-				, public ibuffer
+				: public smart<mapped_file_buffer, ibuffer>
 			{
 			private:
 				system_file_t m_original_source;
@@ -69,9 +68,8 @@ namespace ang
 			typedef uint file_handle_t;
 #endif
 
-			class core_file :
-				public object,
-				public ifile
+			class core_file final
+				: public smart<core_file, ifile>
 			{
 			private:
 				file_handle_t m_hfile;
@@ -129,9 +127,7 @@ namespace ang
 
 
 			class file_system
-				: public object
-				, public ifile_system
-				, public singleton<file_system_t>
+				: public smart<file_system, ifile_system, singleton<file_system_t>>
 			{
 			private:
 				friend  singleton<file_system_t>;
@@ -161,8 +157,7 @@ namespace ang
 
 
 			class folder_file_system
-				: public object
-				, public ifile_system
+				: public smart<folder_file_system, ifile_system>
 			{
 			private:
 				path_t m_root_path;

@@ -16,8 +16,9 @@ namespace ang
 	{
 		namespace input
 		{
-			struct ikeyboard;
-			typedef intf_wrapper<ikeyboard> ikeyboard_t;
+			ang_interface(ikeyboard);
+			ang_interface(icontroller);
+			ang_interface(icontroller_manager);
 
 			safe_flags(LINK, key_modifiers, uint)
 			{
@@ -104,6 +105,34 @@ namespace ang
 				F17, F18, F19, F20, F21, F22, F23, F24,
 			};
 
+			safe_enum_flags(LINK, controller_button, controller_buttons_state, uint)
+			{
+				none = 0,
+				dpad_up = 1 << 0,
+				dpad_down = 1 << 1,
+				dpad_left = 1 << 2,
+				dpad_rigth = 1 << 3,
+				start = 1 << 4,
+				back = 1 << 5,
+				left_thumb = 1 << 6,
+				right_thumb = 1 << 7,
+				left_shoulder = 1 << 8,
+				right_shoulder = 1 << 9,
+				left_trigger = 1 << 10,
+				right_trigger = 1 << 11,
+				A = 1 << 12,
+				B = 1 << 13,
+				X = 1 << 14,
+				Y = 1 << 15
+			};
+
+			safe_enum(LINK, controller_status, uint)
+			{
+				disconnected = 0,
+				connected = 1,
+				low_battery = 2,
+			};
+
 			typedef struct poiner_info
 			{
 				graphics::point<float> point;
@@ -130,6 +159,20 @@ namespace ang
 				wstring text;
 			}text_selection_t;
 
+			typedef graphics::point<float> analog_input_value_t, thumb_stick_value_t;
+
+			typedef struct controller_button_state
+			{
+				controller_button_t button;
+				bool is_presed;
+			}controller_button_state_t;
+
+			typedef struct analog_input_state
+			{
+				controller_button_t button;
+				analog_input_value_t value; // 'y' for left_trigger and 'x' for right_trigger
+			}analog_input_state_t;
+
 			ang_begin_interface(LINK ikeyboard)
 				visible vcall bool show_touch_keyboard()pure;
 				visible vcall bool show_touch_keyboard(const text_selection_t& text_and_cursor)pure;
@@ -149,7 +192,29 @@ namespace ang
 			ang_end_interface();
 	
 			////////////////////////////////////////////////////
-			
+				
+
+			ang_begin_interface(LINK icontroller)
+				visible vcall uint get_controller_id()const pure;
+				visible vcall controller_buttons_state_t get_state()const pure;
+				visible vcall thumb_stick_value_t get_left_thumb_stick()const pure;
+				visible vcall thumb_stick_value_t get_right_thumb_stick()const pure;
+				visible vcall analog_input_value_t get_triggers()const pure; //'y' = left, 'x' = right
+				visible vcall events::event_token_t add_digital_input_event(events::event_t)pure;
+				visible vcall bool remove_digital_input_event(events::event_token_t)pure;
+				visible vcall events::event_token_t add_analog_input_event(events::event_t)pure;
+				visible vcall bool remove_analog_input_event(events::event_token_t)pure;
+			ang_end_interface();
+
+
+			ang_begin_interface(LINK icontroller_manager)
+				visible vcall icontroller_t get_controller(uint)const pure;
+				visible vcall events::event_token_t add_controller_connected_event(events::event_t)pure;
+				visible vcall bool remove_controller_connected_event(events::event_token_t)pure;
+				visible vcall events::event_token_t add_controller_disconnected_event(events::event_t)pure;
+				visible vcall bool remove_controller_disconnected_event(events::event_token_t)pure;
+			ang_end_interface();
+
 		}//input
 	}
 }

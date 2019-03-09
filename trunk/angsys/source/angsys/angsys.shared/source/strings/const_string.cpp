@@ -8,6 +8,7 @@ typedef struct const_str_data
 {
 	wsize size;
 	wsize buffer[1];
+	operator text::raw_str() { return text::raw_str(buffer, size, text::encoding::auto_detect); }
 }*const_str_data_ptr;
 
 pointer basic_const_string_buffer_base::operator new(wsize sz, text::encoding_t e, raw_cstr_t str)
@@ -15,9 +16,9 @@ pointer basic_const_string_buffer_base::operator new(wsize sz, text::encoding_t 
 	auto encoder = text::iencoder::get_encoder(e);
 	auto obj = ang_alloc_object_memory(align_up<8>(sz) + sizeof(const_str_data) + encoder->size(str.ptr(), str.encoding()), ang_buffer_memory);
 	auto data = const_str_data_ptr(wsize(obj) + align_up<8>(sz));
-	wsize j = 0;
-	data->size = 0; 
-	encoder->convert(data->buffer, data->size, str.ptr(), j, str.encoding());
+	wsize cs = text::encoder<encoding::auto_detect>::char_size_by_encoding(e);
+	data->size = sz; 
+	data->size = encoder->convert(*data, str, true).size() / cs;
 	return obj;
 }
 

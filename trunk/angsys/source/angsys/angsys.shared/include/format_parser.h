@@ -13,8 +13,7 @@ namespace ang
 
 		template<encoding E>
 		class parser_interface
-			: public object
-			, public iparser
+			: public smart<parser_interface<E>, iparser>
 		{
 		public:
 			const encoding ENCODING = E;
@@ -28,14 +27,15 @@ namespace ang
 
 			virtual encoding_t format()const override;
 			virtual text_format_t default_format(text_format_target_t)const override;
-			virtual long64 to_signed(unknown_cstr_t str, wsize sz, windex& i, bool increment, int base)const override;
-			virtual ulong64 to_unsigned(unknown_cstr_t str, wsize sz, windex& i, bool increment, int base)const override;
-			virtual double to_floating(unknown_cstr_t str, wsize sz, windex& i, bool increment, bool ex)const override;
-			virtual bool format(unknown_cstr_t format, wsize sz, args_t args, encoding_t e, istring_ptr_t out)const override;
-			virtual bool format(unknown_cstr_t format, wsize sz, var_args_t args, encoding_t e, istring_ptr_t out)const override;
-			virtual text_format_t parse(unknown_cstr_t format, wsize sz)const override;
-			virtual text_format_t parse(unknown_cstr_t format, wsize sz, wsize& beg, int& arg)const override;
-
+			virtual raw_cstr_t seek(raw_cstr_t cstr1, windex& i, raw_cstr_t cstr2)const override;
+			virtual long64 to_signed(raw_cstr_t cstr, windex& i, bool increment = true, int base = 10)const override;
+			virtual ulong64 to_unsigned(raw_cstr_t cstr, windex& i, bool increment = true, int base = 10)const override;
+			virtual double to_floating(raw_cstr_t cstr, windex& i, bool increment = true, bool ex = false)const override;
+			virtual bool format(raw_cstr_t cstr, args_t args, encoding_t e, istring_ptr_t out)const override;
+			virtual bool format(raw_cstr_t cstr, var_args_t args, encoding_t e, istring_ptr_t out)const override;
+			virtual text_format_t parse(raw_cstr_t cstr)const override;
+			virtual text_format_t parse(raw_cstr_t cstr, wsize& beg, int& arg)const override;
+			
 		private:
 			virtual~parser_interface();
 		};
@@ -846,55 +846,93 @@ namespace ang
 			return text_format();
 		}
 
-
 		template<encoding E>
-		inline long64 parser_interface<E>::to_signed(unknown_cstr_t str, wsize sz, windex& i, bool increment, int base)const {
-			windex j = i;
-			return str_to_signed<char_t const, E>(str_view<const char_t, E>((cstr_t)str, sz), increment ? i : j, base);
+		inline raw_cstr_t parser_interface<E>::seek(raw_cstr_t cstr1, windex& i, raw_cstr_t cstr2)const
+		{
+			int a = 0;
+			text::iencoder_t e = text::iencoder::get_encoder(cstr2.encoding());
+			wsize j = 0;
+			wsize size = cstr2.size() / encoder<encoding::auto_detect>::char_size_by_encoding(cstr2.encoding());;
+			str_view<const char_t, E> data((cstr_t)cstr1.ptr(), cstr1.size() / size_of<char_t>());
+
+			while (i < data.size() && j < size)
+			{
+				char32 ch = e->to_char32(cstr2.ptr(), j, true);
+
+				if (ch == U' ' || ch == U'\t') //character '\t' or ' ' means "read all spaces"
+				{
+					while (ch = e->to_char32(cstr2.ptr(), j, false) == U' ' || ch == U'\t') j++; //read all spaces
+					while (data[i] == U' ' || data[i] == U'\t') i++; //read all spaces	
+					continue;
+				}
+
+				if (ch == U'\n' || ch == U'\r')  //character '\n' or '\r' means "read all endlines"
+				{
+					while (ch = e->to_char32(cstr2.ptr(), j, false) == U'\n' || ch == U'\r') j++; //read all spaces
+					while (data[i] == U'\n' || data[i] == U'r') i++; //read all spaces	
+					continue;
+				}
+
+				if (char_to_char32(data[i++]) != ch) //diferent text
+				{
+					i--;
+					break;
+				}
+					
+			}
+			return raw_cstr_t(&data[i], (data.size() - i) * size_of<char_t>(), E);
 		}
 
 		template<encoding E>
-		inline ulong64 parser_interface<E>::to_unsigned(unknown_cstr_t str, wsize sz, windex& i, bool increment, int base)const {
+		inline long64 parser_interface<E>::to_signed(raw_cstr_t cstr, windex& i, bool increment, int base)const {
 			windex j = i;
-			return str_to_unsigned<char_t const, E>(str_view<const char_t, E>((cstr_t)str, sz), increment ? i : j, base);
+			return str_to_signed<char_t const, E>(cstr.to_cstr<E>(), increment ? i : j, base);
 		}
 
 		template<encoding E>
-		inline double parser_interface<E>::to_floating(unknown_cstr_t str, wsize sz, windex& i, bool increment, bool ex)const {
+		inline ulong64 parser_interface<E>::to_unsigned(raw_cstr_t cstr, windex& i, bool increment, int base)const {
 			windex j = i;
-			return str_to_floating<char_t const, E>(str_view<const char_t, E>((cstr_t)str, sz), increment ? i : j, ex);
+			return str_to_unsigned<char_t const, E>(cstr.to_cstr<E>(), increment ? i : j, base);
 		}
 
 		template<encoding E>
-		inline bool parser_interface<E>::format(unknown_cstr_t format, wsize sz, args_t args, encoding_t e, istring_ptr_t out)const {
+		inline double parser_interface<E>::to_floating(raw_cstr_t cstr, windex& i, bool increment, bool ex)const {
+			windex j = i;
+			return str_to_floating<char_t const, E>(cstr.to_cstr<E>(), increment ? i : j, ex);
+		}
+
+		template<encoding E>
+		inline bool parser_interface<E>::format(raw_cstr_t cstr, args_t args, encoding_t e, istring_ptr_t out)const {
 			if (out.is_empty())
 				return false;
+			auto format = cstr.to_cstr<E>();
 			istring_t str = istring_factory::get_factory(e)->create_string();
 			*out = str;
 			str->clear();
 			int a;
 			text::text_format_flags_t f;
 			wsize i = 0, t = 0, n = 0, l = 0;
-			while (char32_t c = text::to_char32<false, is_endian_swapped<E>::value>((cstr_t)format, i))
+			while (char32_t c = text::to_char32<false, is_endian_swapped<E>::value>(format, i))
 			{
 				if (c == U'{') {
-					f.value = parse(format, sz, n, a).format_flags();
+					f.value = format_parser<E>::parse(format, n, a);
 					if (a > -1 && a < (long64)args->size()) {
-						str->concat(str_view<const char_t, E>(&cstr_t(format)[l], t - l));
+						str->concat(str_view<const char_t, E>(&format[l], t - l));
 						str->concat(f.value ? (raw_cstr)args[a]->to_string(f) : (raw_cstr)args[a]->to_string());
 						i = l = n;
 					}
 				}
 				t = n = i;
 			}
-			str->concat(str_view<const char_t, E>(&cstr_t(format)[l], i - l));
+			str->concat(str_view<const char_t, E>(&format[l], i - l));
 			return false;
 		}
 
 		template<encoding E>
-		inline bool parser_interface<E>::format(unknown_cstr_t format, wsize sz, var_args_t args, encoding_t e, istring_ptr_t out) const {
+		inline bool parser_interface<E>::format(raw_cstr_t cstr, var_args_t args, encoding_t e, istring_ptr_t out) const {
 			if (out.is_empty())
 				return false;
+			auto format = cstr.to_cstr<E>();
 			istring_t str = istring_factory::get_factory(e)->create_string();
 			*out = str;
 			str->clear();
@@ -904,30 +942,30 @@ namespace ang
 			while (char32_t c = text::to_char32<false, is_endian_swapped<E>::value>((cstr_t)format, i))
 			{
 				if (c == U'{') {
-					f.value = parse(format, sz, n, a).format_flags();
+					f.value = format_parser<E>::parse(format, n, a);
 					if (a > -1 && a < (long64)args->size()) {
-						str->concat(str_view<const char_t, E>(&cstr_t(format)[l], t - l));
+						str->concat(str_view<const char_t, E>(&format[l], t - l));
 						str->concat(f.value ? (raw_cstr_t)args[a]->to_string(f) : (raw_cstr_t)args[a]->to_string());
 						i = l = n;
 					}
 				}
 				t = n = i;
 			}
-			str->concat(str_view<const char_t, E>(&cstr_t(format)[l], i - l));
+			str->concat(str_view<const char_t, E>(&format[l], i - l));
 			return false;
 		}
 
 		template<encoding E>
-		inline text_format_t parser_interface<E>::parse(unknown_cstr_t format, wsize sz)const {
+		inline text_format_t parser_interface<E>::parse(raw_cstr_t format)const {
 			text_format_flags f;
-			f.value = format_parser<E>::parse(str_view<const char_t, E>((cstr_t)format, sz));
+			f.value = format_parser<E>::parse(format.to_cstr<E>());
 			return f;
 		}
 
 		template<encoding E>
-		inline text_format_t parser_interface<E>::parse(unknown_cstr_t format, wsize sz, wsize& beg, int& arg)const {
+		inline text_format_t parser_interface<E>::parse(raw_cstr_t format, wsize& beg, int& arg)const {
 			text_format_flags f;
-			f.value = format_parser<E>::parse(str_view<const char_t, E>((cstr_t)format, sz), beg, arg);
+			f.value = format_parser<E>::parse(format.to_cstr<E>(), beg, arg);
 			return f;
 		}
 	}

@@ -84,7 +84,10 @@ namespace ang
 			, runtime_type_manager()
 			, thread_manager(null)
 		{
+#ifdef _DEBUG
 			objects = new(malloc(sizeof(object_manager))) object_manager();
+#endif // _DEBUG
+
 			thread_manager = new(malloc(sizeof(core::async::thread_manager))) core::async::thread_manager();
 
 			core::files::file_system::instance();
@@ -134,10 +137,11 @@ namespace ang
 			utf32_se_factory = null;
 			utf32_le_factory = null;
 			utf32_be_factory = null;
-			
-			objects->~object_manager();	
-			free(objects);			
+#ifdef _DEBUG
+			objects->~object_manager();
+			free(objects);
 			objects = null;
+#endif // _DEBUG
 		}
 
 		allocator_internal default_memory_allocator;

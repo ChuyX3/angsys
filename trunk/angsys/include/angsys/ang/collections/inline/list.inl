@@ -387,7 +387,7 @@ inline ang::collections::iterator<T> ang::collections::list_object<T, A>::at(win
 
 	if (idx <= (m_count / 2)) {
 		node_ptr_t node = m_head;
-		for (int i = 0; i < idx; i++)
+		for (windex i = 0; i < idx; i++)
 			node = node->next;
 		return iterator_t(const_cast<list_object*>(this), pointer(node));
 	}
@@ -395,7 +395,7 @@ inline ang::collections::iterator<T> ang::collections::list_object<T, A>::at(win
 	{
 		node_ptr_t node = m_tail;
 		idx = m_count - idx - 1;
-		for (int i = 0; i < idx; i++)
+		for (windex i = 0; i < idx; i++)
 			node = node->prev;
 		return iterator_t(const_cast<list_object*>(this), pointer(node));
 	}
@@ -409,7 +409,7 @@ inline ang::collections::const_iterator<T> ang::collections::list_object<T, A>::
 
 	if (idx <= (m_count / 2)) {
 		node_ptr_t node = m_head;
-		for (int i = 0; i < idx; i++)
+		for (windex i = 0; i < idx; i++)
 			node = node->next;
 		return const_iterator_t(const_cast<list_object*>(this), pointer(node));
 	}
@@ -417,7 +417,7 @@ inline ang::collections::const_iterator<T> ang::collections::list_object<T, A>::
 	{
 		node_ptr_t node = m_tail;
 		idx = m_count - idx - 1;
-		for (int i = 0; i < idx; i++)
+		for (windex i = 0; i < idx; i++)
 			node = node->prev;
 		return const_iterator_t(const_cast<list_object*>(this), pointer(node));
 	}

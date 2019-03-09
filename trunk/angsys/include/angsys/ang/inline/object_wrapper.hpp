@@ -287,26 +287,6 @@ namespace ang
 		object* m_ptr;
 		friend class safe_pointer;
 	};
-
-
-
-	template<typename T, class owner, property_style TYPE>
-	class property<const object_wrapper<T>, owner, TYPE> {
-	public:
-		property(T* val) : value(val) {}
-		T* get()const { return value.get(); }
-		operator T*()const { return value.get(); }
-		T* operator ->()const { return value.get(); }
-
-	protected:
-		void set(T* val) { value = val; }
-		property& operator = (property const& val) { set(val.get()); return*this; }
-		property& operator = (T* val) { set(val); return*this; }
-
-	private:
-		typename object_wrapper<T> value;
-		friend owner;
-	};
 }
 
 template<typename T>

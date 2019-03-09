@@ -24,35 +24,59 @@ inline ang::runtime::rtti_t const& ang::core::async::itask<T>::class_info() {
 template<typename T>
 inline ang::core::async::iasync<T> ang::core::async::task::run_async(delegates::function<T(iasync<T>)> func)
 {
-	object_wrapper<task_handler<T>> _task = new task_handler<T>();
-	_task->attach(run_async<void>([=](iasync<void> async)
+	object_wrapper<task_handler<T>> wrapper = new task_handler<T>();
+	wrapper->attach(run_async<void>([=](iasync<void>)
 	{
-		_task.get()->done(func.get()->invoke(_task.get()));
+		wrapper.get()->done(func.get()->invoke(wrapper.get()));
 	}));
-	return _task;
+	return wrapper;
+}
+
+namespace ang
+{
+	namespace core
+	{
+		namespace async
+		{
+			template<typename T, typename U>
+			struct task_then_helper {
+				static iasync<U> then(iasync<T> task, ang::core::delegates::function<U(ang::core::async::iasync<T>)> func) {
+					task_handler_ptr<U> wrapper = new task_handler<U>();
+					wrapper->attach(task->then([=](iasync<T> task) {
+						wrapper.get()->done(func.get()->invoke(ang::forward<iasync<T>>(task)));
+					}));
+					return wrapper.get();
+				}
+			};
+
+			template<typename T>
+			struct task_then_helper<T,void> {
+				static iasync<void> then(iasync<T> task, ang::core::delegates::function<void(ang::core::async::iasync<T>)> func) {
+					return task->then(func);
+				}
+			};
+		}
+	}
 }
 
 template<typename T> template<typename U>
 inline ang::core::async::iasync<U> ang::core::async::itask<T>::then(ang::core::delegates::function<U(ang::core::async::iasync<T>)> func)
 {
-	object_wrapper<task_handler<U>> handler = new task_handler<U>();
-	iasync<T> this_ = this;
-	handler->attach(then([=](iasync<T>) {
-		handler.get()->done(func.get()->invoke(this_.get()));
-	}));
-	return handler.get();
+	return task_then_helper<T, U>::then(this, forward<decltype(func)>(func));
 }
 
-template<typename T, typename...Ts>
-inline ang::core::async::iasync<T> ang::core::async::idispatcher::run_async(ang::core::delegates::function<T(Ts...)> func, Ts...args)
-{
-	task_handler_ptr<T> handler = new task_handler<T>();
-	iasync<T> this_ = this->run_async(function<void(iasync<void>)>([=](iasync<T>)
-	{
-		handler.get()->done(func.get()->invoke(forward<Ts>(args)...));
-	}));
 
-	return handler.get();
+template<typename T>
+inline ang::core::async::iasync<T> ang::core::async::idispatcher::run_async(ang::core::delegates::function<T(ang::core::async::iasync<T>)> func)
+{
+	task_handler_ptr<T> wrapper = new task_handler<T>();
+	wrapper->attach(this->run_async(function<void(iasync<void>)>([=](iasync<void>)
+	{
+		wrapper.get()->done(func.get()->invoke(wrapper.get()));
+		//wrapper = null;
+	})));
+
+	return wrapper;
 }
 
 
@@ -60,16 +84,16 @@ inline ang::core::async::iasync<T> ang::core::async::idispatcher::run_async(ang:
 
 template<typename T>
 inline ang::core::async::task_handler<T>::task_handler()
-	: _result(T())
-	, _task(null)
+	: m_result(T())
+	, m_task(null)
 {
 
 }
 
 template<typename T>
 inline ang::core::async::task_handler<T>::task_handler(ang::core::async::iasync<void> handle)
-	: _result(T())
-	, _task(handle)
+	: m_result(T())
+	, m_task(handle)
 {
 
 }
@@ -77,8 +101,8 @@ inline ang::core::async::task_handler<T>::task_handler(ang::core::async::iasync<
 template<typename T>
 inline ang::core::async::task_handler<T>::~task_handler()
 {
-	try { if(!_task.is_empty())_task->result(); }catch(...){}
-	_task = null;
+	try { if(!m_task.is_empty())m_task->result(); }catch(...){}
+	m_task = null;
 }
 
 template<typename T>
@@ -124,55 +148,56 @@ template<typename T>
 inline ang::core::async::iasync<void> ang::core::async::task_handler<T>::then(delegates::function<void(iasync<T>)> func)
 {
 	iasync<T> this_ = this;
-	return _task->then([=](iasync<void> async)
+	return m_task->then([=](iasync<void>)
 	{
-		func(this_.get());
+		func.get()->invoke(this_.get());
+		//this_ = null;
 	});
 }
 
 template<typename T>
 inline bool ang::core::async::task_handler<T>::wait(async_action_status_t s)const
 {
-	return _task->wait(s);
+	return m_task->wait(s);
 }
 
 template<typename T>
 inline bool ang::core::async::task_handler<T>::wait(async_action_status_t s, dword ms)const
 {
-	return _task->wait(s, ms);
+	return m_task->wait(s, ms);
 }
 
 template<typename T>
 inline ang::core::async::async_action_status_t ang::core::async::task_handler<T>::status()const
 {
-	return _task->status();
+	return m_task->status();
 }
 
 template<typename T>
 inline bool ang::core::async::task_handler<T>::cancel()
 {
-	return _task->cancel();
+	return m_task->cancel();
 }
 
 template<typename T>
 inline T ang::core::async::task_handler<T>::result()const
 {
-	_task->result();
-	return _result;
+	m_task->result();
+	return ang::move(m_result);
 }
 
 template<typename T>
-inline void ang::core::async::task_handler<T>::done(T const& res)
+inline void ang::core::async::task_handler<T>::done(T&& res)
 {
-	_result = res;
+	m_result = ang::forward<T>(res);
 }
 
 template<typename T>
 inline void ang::core::async::task_handler<T>::attach(ang::core::async::iasync<void> async)
 {
-	if (!_task.is_empty())
+	if (!m_task.is_empty())
 		throw_exception(except_code::invalid_access);
-	_task = async;
+	m_task = async;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////

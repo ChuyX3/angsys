@@ -46,6 +46,7 @@ namespace ang //constants
 			utf32_se,
 			utf32_le,
 			utf32_be,
+			encoding_count,
 			auto_detect = 0XFFFF
 		};
 
@@ -257,25 +258,21 @@ namespace ang //constants
 		template<> struct encoder<encoding::auto_detect> {
 
 			inline static wsize char_size_by_encoding(text::encoding encoding) {
-				switch (encoding)
-				{
-				case text::encoding::unicode:
-					return sizeof(wchar_t);
-				case text::encoding::utf16:
-				case text::encoding::utf16_be:
-				case text::encoding::utf16_le:
-				case text::encoding::utf16_se:
-					return sizeof(char16_t);
-				case text::encoding::utf32:
-				case text::encoding::utf32_be:
-				case text::encoding::utf32_le:
-				case text::encoding::utf32_se:
-					return sizeof(char32_t);
-				default:
-					//case text::encoding::ascii:
-					//case text::encoding::utf8:
-					return sizeof(char);
-				}
+				static const wsize sizes[] = {
+					0,
+					size_of<typename text::char_type_by_encoding<encoding::ascii>::char_t>(),
+					size_of<typename text::char_type_by_encoding<encoding::unicode>::char_t>(),
+					size_of<typename text::char_type_by_encoding<encoding::utf8>::char_t>(),
+					size_of<typename text::char_type_by_encoding<encoding::utf16>::char_t>(),
+					size_of<typename text::char_type_by_encoding<encoding::utf16_se>::char_t>(),
+					size_of<typename text::char_type_by_encoding<encoding::utf16_le>::char_t>(),
+					size_of<typename text::char_type_by_encoding<encoding::utf16_be>::char_t>(),
+					size_of<typename text::char_type_by_encoding<encoding::utf32>::char_t>(),
+					size_of<typename text::char_type_by_encoding<encoding::utf32_se>::char_t>(),
+					size_of<typename text::char_type_by_encoding<encoding::utf32_le>::char_t>(),
+					size_of<typename text::char_type_by_encoding<encoding::utf32_be>::char_t>()
+				};
+				return encoding < text::encoding::encoding_count ? sizes[(uint)encoding] : 0;
 			}
 
 			template<typename T>

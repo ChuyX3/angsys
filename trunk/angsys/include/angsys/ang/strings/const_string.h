@@ -7,8 +7,7 @@ namespace ang
 	namespace text
 	{
 		class LINK basic_const_string_buffer_base
-			: public object
-			, public ibuffer
+			: public smart<basic_const_string_buffer_base, ibuffer>
 		{
 		protected:
 			pointer operator new(wsize, text::encoding_t, raw_cstr_t);

@@ -23,7 +23,7 @@ namespace ang
 
 value<uint> variable<uint>::parse(text::raw_cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
-	return parser->to_unsigned(str.ptr(), str.count(), i, true, base);
+	return parser->to_unsigned(str, i, true, base);
 }
 
 wstring variable<uint>::to_string(value<uint> val, text::text_format_t f)
@@ -174,27 +174,23 @@ wstring variable<uint>::to_string(value<uint> val, text::text_format_t f)
 }
 
 variable<uint>::variable()
-	: value<uint>(0)
 {
 
 }
 
 variable<uint>::variable(uint const& val)
-	: value<uint>(val)
 {
-
+	set(val);
 }
 
 variable<uint>::variable(value<uint> const& val)
-	: value<uint>(val)
 {
-
+	set(val);
 }
 
 variable<uint>::variable(variable const* val)
-	: value<uint>(val ? val->get() : false)
 {
-
+	set(val ? val->get() : 0);
 }
 
 variable<uint>::~variable()
@@ -347,7 +343,7 @@ variant variable<uint>::clone()const
 
 value<ulong> variable<ulong>::parse(text::raw_cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
-	return parser->to_unsigned(str.ptr(), str.count(), i, true, base);
+	return parser->to_unsigned(str, i, true, base);
 }
 
 wstring variable<ulong>::to_string(value<ulong> val, text::text_format_t f)
@@ -497,27 +493,22 @@ wstring variable<ulong>::to_string(value<ulong> val, text::text_format_t f)
 }
 
 variable<ulong>::variable()
-	: value<ulong>(0)
 {
-
 }
 
 variable<ulong>::variable(ulong const& val)
-	: value<ulong>(val)
 {
-
+	set(val);
 }
 
 variable<ulong>::variable(value<ulong> const& val)
-	: value<ulong>(val)
 {
-
+	set(val);
 }
 
 variable<ulong>::variable(variable const* val)
-	: value<ulong>(val ? val->get() : false)
 {
-
+	set(val ? val->get() : 0);
 }
 
 variable<ulong>::~variable()
@@ -671,7 +662,7 @@ variant variable<ulong>::clone()const
 
 value<ulong64> variable<ulong64>::parse(text::raw_cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
-	return parser->to_unsigned(str.ptr(), str.count(), i, true, base);
+	return parser->to_unsigned(str, i, true, base);
 }
 
 wstring variable<ulong64>::to_string(value<ulong64> val, text::text_format_t f)
@@ -821,27 +812,22 @@ wstring variable<ulong64>::to_string(value<ulong64> val, text::text_format_t f)
 }
 
 variable<ulong64>::variable()
-	: value<ulong64>(0)
 {
-
 }
 
 variable<ulong64>::variable(ulong64 const& val)
-	: value<ulong64>(val)
 {
-
+	set(val);
 }
 
 variable<ulong64>::variable(value<ulong64> const& val)
-	: value<ulong64>(val)
 {
-
+	set(val);
 }
 
 variable<ulong64>::variable(variable const* val)
-	: value<ulong64>(val ? val->get() : false)
 {
-
+	set(val ? val->get() : 0);
 }
 
 variable<ulong64>::~variable()

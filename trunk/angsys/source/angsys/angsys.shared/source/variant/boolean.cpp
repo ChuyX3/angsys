@@ -80,27 +80,23 @@ wstring variable<bool>::to_string(value<bool> val,text::text_format_t f_)
 }
 
 variable<bool>::variable()
-	: value<bool>(false)
 {
-
+	set(false);
 }
 
 variable<bool>::variable(bool const& val)
-	: value<bool>(val)
 {
-
+	set(val);
 }
 
 variable<bool>::variable(value<bool> const& val) 
-	: value<bool>(val)
 {
-
+	set(val);
 }
 
 variable<bool>::variable(variable const* val)
-	: value<bool>(val ? val->get() : false)
 {
-
+	set(val ? val->get() : false);
 }
 
 variable<bool>::~variable()

@@ -46,7 +46,7 @@ xml_comment_t xml_comment::create_new(xml_document_t doc, ixml_text_t value) {
 }
 
 xml_comment::xml_comment(xml_document_t doc)
-	: xml_node(doc, xml_type::comment)
+	: base(doc, xml_type::comment)
 {
 
 }

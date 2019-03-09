@@ -45,7 +45,6 @@
 #include <ang/base/text.h>
 #include <ang/base/runtime.h>
 #include <ang/base/value.h>
-#include <ang/base/property.h>
 #include <ang/base/interface.h>
 #include <ang/base/async.h>
 #else

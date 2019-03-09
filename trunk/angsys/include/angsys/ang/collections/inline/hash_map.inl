@@ -1679,7 +1679,7 @@ void ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, 
 			node_ptr_t temp = m_table[i];
 			m_table[i] = null;
 			while (temp) {
-				windex hash = index_maker::make(temp->data.key, new_size);
+				windex hash = (windex)index_maker::make(temp->data.key, new_size);
 				node_ptr_t entry = temp;
 				temp = temp->next;
 				entry->next = new_data[hash];
@@ -1698,7 +1698,7 @@ inline ang::collections::double_linked_node<ang::collections::pair<ang::text::is
 	if (m_table.size() == 0)
 		return null;
 
-	wsize idx = index_maker::make(key, m_table.size());
+	wsize idx = (windex)index_maker::make(key, m_table.size());
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
@@ -2020,7 +2020,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 
 	if (find_node(key) != null)
 		return end();
-	wsize idx = index_maker::make(key, m_table.size());
+	wsize idx = (windex)index_maker::make(key, m_table.size());
 	node_ptr_t entry = allocate_node<ang::text::istring_view_t, T>(ang::forward<ang::text::istring_view_t>(wstring(key).get()), ang::forward<T>(value));
 
 	if (m_table[idx])
@@ -2041,7 +2041,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 
 	if (find_node((text::raw_cstr_t)pair.key) != null)
 		return end();
-	wsize idx = index_maker::make(pair.key, m_table.size());
+	wsize idx = (windex)index_maker::make(pair.key, m_table.size());
 	node_ptr_t entry = allocate_node<ang::text::istring_view_t, T>(ang::forward<ang::text::istring_view_t>(wstring((text::raw_cstr_t)pair.key).get()), ang::forward<T>(pair.value));
 	if (m_table[idx])
 	{
@@ -2059,7 +2059,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 	if (m_count > (m_table.size() * 0.75))
 		increase_capacity();
 
-	wsize idx = index_maker::make(key, m_table.size());
+	wsize idx = (windex)index_maker::make(key, m_table.size());
 	node_ptr_t node = find_node(key);
 	if (node == null)
 	{
@@ -2086,7 +2086,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 	if (m_count > (m_table.size() * 0.75))
 		increase_capacity();
 
-	wsize idx = index_maker::make(pair.key, m_table.size());
+	wsize idx = (windex)index_maker::make(pair.key, m_table.size());
 	node_ptr_t node = find_node((text::raw_cstr_t)pair.key);
 	if (node == null)
 	{
@@ -2113,7 +2113,7 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 	if (m_table.is_empty())
 		return false;
 
-	wsize idx = index_maker::make(key, m_table.size());
+	wsize idx = (windex)index_maker::make(key, m_table.size());
 	node_ptr_t temp = m_table[idx];
 
 	while (temp != nullptr)
@@ -2148,7 +2148,7 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 	if (m_table.is_empty())
 		return false;
 
-	wsize idx = index_maker::make(key, m_table.size());
+	wsize idx = (windex)index_maker::make(key, m_table.size());
 	node_ptr_t temp = m_table[idx];
 
 	while (temp != nullptr)
@@ -2205,7 +2205,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 	if (m_table.is_empty())
 		return iterator_t(const_cast<hash_map_object*>(this));
 
-	wsize idx = index_maker::make(key, m_table.size());
+	wsize idx = (windex)index_maker::make(key, m_table.size());
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
@@ -2223,7 +2223,7 @@ inline ang::collections::const_iterator<ang::collections::pair<ang::text::istrin
 	if (m_table.is_empty())
 		return iterator_t(const_cast<hash_map_object*>(this));
 
-	wsize idx = index_maker::make(key, m_table.size());
+	wsize idx = (windex)index_maker::make(key, m_table.size());
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
@@ -2645,7 +2645,7 @@ ang::object_wrapper<ang::collections::hash_map_object<ang::text::basic_string<E,
 {
 	if (is_empty())
 		set(new ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>());
-	m_ptr->push(item);
+	m_ptr->insert(item);
 	return*this;
 }
 

@@ -160,7 +160,7 @@ void aligned_allocator_internal::memory_release(pointer ptr) {
 	block->file = nullptr;
 	_aligned_free(block);
 #else
-	ang_free_unmanaged_memory(ptr);
+	_aligned_free(ptr);
 #endif
 }
 

@@ -50,7 +50,7 @@ file_system_priority_t file_system_priority_t::parse(text::raw_cstr_t str)
 		return s_file_system_priority_parsing_map[idx].value;
 }
 
-wstring file_system_priority_t::to_string()const
+cstr_t file_system_priority_t::to_string()const
 {
 	auto idx = algorithms::binary_search(get(), collections::to_array(s_file_system_priority_to_string_map));
 	if (idx >= algorithms::array_size(s_file_system_priority_to_string_map))

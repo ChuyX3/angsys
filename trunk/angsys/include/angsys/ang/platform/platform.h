@@ -39,7 +39,7 @@ namespace ang
 		template<typename T> struct size;
 		template<typename T> struct rect;
 
-		template<typename T> struct point
+		template<typename T> struct point : auto_self<point<T>>
 		{
 			T x;
 			T y;
@@ -56,7 +56,7 @@ namespace ang
 			point& operator /= (T);
 		};
 
-		template<typename T> struct size
+		template<typename T> struct size : auto_self<size<T>>
 		{
 			T width;
 			T height;
@@ -73,8 +73,19 @@ namespace ang
 			size& operator /= (T);
 		};
 
-		template<typename T> struct rect
+		template<typename T> struct rect :auto_self<rect<T>>
 		{
+		private:
+			static T get_width_property(base_property<T>const*);
+			static void set_width_property(base_property<T>*,T&&);
+			static T get_height_property(base_property<T>const*);
+			static void set_height_property(base_property<T>*, T&&);
+			static point<T> get_left_top_property(base_property<point<T>>const*);
+			static point<T> get_right_top_property(base_property<point<T>>const*);
+			static point<T> get_left_bottom_property(base_property<point<T>>const*);
+			static point<T> get_right_bottom_property(base_property<point<T>>const*);
+
+		public:
 			T left;
 			T top;
 			T right;
@@ -87,12 +98,13 @@ namespace ang
 			rect(point<T> lt, point<T> rb);
 			rect(point<T> lt, size<T> sz);
 
-			T width()const;
-			T height()const;
-			point<T> left_top()const;
-			point<T> right_top()const;
-			point<T> left_bottom()const;
-			point<T> right_bottom()const;
+			property<T, get_width_property> width;
+			property<T, get_height_property> height;
+
+			property<const point<T>, get_left_top_property> left_top;
+			property<const point<T>, get_right_top_property> right_top;
+			property<const point<T>, get_left_bottom_property> left_bottom;
+			property<const point<T>, get_right_bottom_property> right_bottom;
 
 			void move_to(point<T>);
 			void move_to(T x, T y);
@@ -179,6 +191,18 @@ namespace ang
 
 		template<> struct LINK rect<float>
 		{
+		private:
+			static float get_width_property(base_property<float>const*);
+			static void set_width_property(base_property<float>*, float&&);
+			static float get_height_property(base_property<float>const*);
+			static void set_height_property(base_property<float>*, float&&);
+			static point<float> get_left_top_property(base_property<point<float>>const*);
+			static point<float> get_right_top_property(base_property<point<float>>const*);
+			static point<float> get_left_bottom_property(base_property<point<float>>const*);
+			static point<float> get_right_bottom_property(base_property<point<float>>const*);
+
+		public:
+
 			float left;
 			float top;
 			float right;
@@ -191,12 +215,13 @@ namespace ang
 			rect(point<float> lt, point<float> rb);
 			rect(point<float> lt, size<float> sz);
 
-			float width()const;
-			float height()const;
-			point<float> left_top()const;
-			point<float> right_top()const;
-			point<float> left_bottom()const;
-			point<float> right_bottom()const;
+			property<float, get_width_property> width;
+			property<float, get_height_property> height;
+
+			property<const point<float>, get_left_top_property> left_top;
+			property<const point<float>, get_right_top_property> right_top;
+			property<const point<float>, get_left_bottom_property> left_bottom;
+			property<const point<float>, get_right_bottom_property> right_bottom;
 
 			void move_to(point<float>);
 			void move_to(float x, float y);
@@ -503,7 +528,6 @@ namespace ang
 			ang_interface(idraw_event_args);
 			ang_interface(ikey_event_args);
 			ang_interface(iapp_status_event_args);
-			ang_interface(iupdate_event_args);
 			ang_interface(itext_change_event_args);
 
 			class message;
@@ -543,13 +567,20 @@ namespace ang
 				text_change = 0x0408,
 
 				user_msg = 0x0450,
+
+				controller_status_change = 0x0460,
+				contorller_button_change = 0x0461,
+				contorller_analog_change = 0x0463,
 			};
 
 			typedef core::delegates::ifunction<void(object*, imsg_event_args*)> ievent;
-			typedef core::delegates::function_object<void(object*, imsg_event_args*)> event;
+			typedef core::delegates::function_object<void(object*, imsg_event_args*)> base_event_handler;
 			typedef core::delegates::function <void(object*, imsg_event_args*)> event_t;
 			typedef core::delegates::listener <void(object*, imsg_event_args*)> event_listener;
+			typedef core::delegates::listen_token<void(object*, imsg_event_args*)> event_token, event_token_t;
 
+			template<typename T, core_msg_enum MSG> class event_handler;
+		
 			ang_interface(icreated_event_args);
 			ang_interface(ivisibility_change_event_args);
 			ang_interface(idisplay_info_event_args);
@@ -559,8 +590,32 @@ namespace ang
 			ang_interface(ikey_event_args);
 			ang_interface(ipointer_event_args);
 			ang_interface(iapp_status_event_args);
-			ang_interface(iupdate_event_args);
 			ang_interface(itext_change_event_args);
+
+			ang_interface(icontroller_status_args);
+			ang_interface(icontroller_digital_input_args);
+			ang_interface(icontroller_analog_input_args);
+
+			using start_app_event = event_handler<iapp_status_event_args, core_msg_enum::start_app>;
+			using exit_app_event = event_handler<iapp_status_event_args, core_msg_enum::exit_app>;
+			using created_event = event_handler<icreated_event_args, core_msg_enum::created>;
+			using closed_event = event_handler<imsg_event_args, core_msg_enum::close>;
+			using destroyed_event = event_handler<imsg_event_args, core_msg_enum::destroyed>;
+			using update_event = event_handler<imsg_event_args, core_msg_enum::update>;
+			using draw_event = event_handler<idraw_event_args, core_msg_enum::draw>;
+			using activate_event = event_handler<iactivate_event_args, core_msg_enum::activate>;
+			using display_size_change_event = event_handler<idisplay_info_event_args, core_msg_enum::size>;
+			using display_orientation_change_event = event_handler<idisplay_info_event_args, core_msg_enum::orientation>;
+			using display_invalidate_event = event_handler<idisplay_info_event_args, core_msg_enum::display_change>;
+			using key_pressed_event = event_handler<ikey_event_args, core_msg_enum::key_down>;
+			using key_released_event = event_handler<ikey_event_args, core_msg_enum::key_up>;
+			using pointer_moved_event = event_handler<ipointer_event_args, core_msg_enum::pointer_moved>;
+			using pointer_pressed_event = event_handler<ipointer_event_args, core_msg_enum::pointer_pressed>;
+			using pointer_released_event = event_handler<ipointer_event_args, core_msg_enum::pointer_released>;
+			using controller_status_change_event = event_handler<icontroller_status_args, core_msg_enum::controller_status_change>;
+			using controller_button_change_event = event_handler<icontroller_digital_input_args, core_msg_enum::contorller_button_change>;
+			using controller_analog_change_event = event_handler<icontroller_analog_input_args, core_msg_enum::contorller_analog_change>;
+
 		}
 
 	}
@@ -579,7 +634,7 @@ namespace ang
 		ang_begin_interface(LINK imessage_listener)
 			visible vcall dword send_msg(events::message) pure;
 			visible vcall core::async::iasync<dword> post_msg(events::message) pure;
-			visible vcall bool listen_to(events::event_t) pure;
+			visible vcall events::event_token_t listen_to(events::event_t) pure;
 		ang_end_interface();
 
 		//ANG_BEGIN_INTERFACE_WITH_BASE(LINK, icore_msg_dispatcher, public imessage_reciever)

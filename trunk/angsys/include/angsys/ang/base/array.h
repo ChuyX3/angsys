@@ -119,6 +119,10 @@ namespace ang //constants
 		public: /*getters and setters*/
 			type get() { return &m_data[0]; }
 			ctype get()const { return &m_data[0]; }
+	
+			template<wsize i> T& get() { static_assert(i <SIZE, "array overflow"); return m_data[i]; }
+			template<wsize i> T const& get()const { static_assert(i < SIZE, "array overflow"); return m_data[i]; }
+			template<wsize i> void set(T&& value) { static_assert(i < SIZE, "array overflow"); m_data[i] = forward<T>(value); }
 
 			void copy(type val, wsize size) {
 				for (windex i = 0, c = min(size, _SIZE); i < c; ++i) {
@@ -330,6 +334,7 @@ namespace ang //constants
 	using collections::array_view;
 	using collections::stack_array;
 	using collections::scope_array;
+	using collections::to_array;
 
 	namespace algorithms
 	{

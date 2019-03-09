@@ -23,7 +23,7 @@ namespace ang
 
 value<int> variable<int>::parse(text::raw_cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
-	return parser->to_signed(str.ptr(), str.count(), i, true, base);
+	return parser->to_signed(str, i, true, base);
 }
 
 wstring variable<int>::to_string(value<int> val,text::text_format_t f)
@@ -177,27 +177,23 @@ wstring variable<int>::to_string(value<int> val,text::text_format_t f)
 }
 
 variable<int>::variable()
-	: value<int>(0)
 {
 
 }
 
 variable<int>::variable(int const& val)
-	: value<int>(val)
 {
-
+	set(val);
 }
 
 variable<int>::variable(value<int> const& val) 
-	: value<int>(val)
 {
-
+	set(val);
 }
 
 variable<int>::variable(variable const* val)
-	: value<int>(val ? val->get() : false)
 {
-
+	set(val ? val->get() : 0);
 }
 
 variable<int>::~variable()
@@ -349,7 +345,7 @@ variant variable<int>::clone()const
 
 value<long> variable<long>::parse(text::raw_cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
-	return parser->to_signed(str.ptr(), str.count(), i, true, base);
+	return parser->to_signed(str, i, true, base);
 }
 
 wstring variable<long>::to_string(value<long> val, text::text_format_t f)
@@ -503,27 +499,23 @@ wstring variable<long>::to_string(value<long> val, text::text_format_t f)
 }
 
 variable<long>::variable()
-	: value<long>(0)
 {
 
 }
 
 variable<long>::variable(long const& val)
-	: value<long>(val)
 {
-
+	set(val);
 }
 
 variable<long>::variable(value<long> const& val)
-	: value<long>(val)
 {
-
+	set(val);
 }
 
 variable<long>::variable(variable const* val)
-	: value<long>(val ? val->get() : false)
 {
-
+	set(val ? val->get() : 0);
 }
 
 variable<long>::~variable()
@@ -677,7 +669,7 @@ variant variable<long>::clone()const
 
 value<long64> variable<long64>::parse(text::raw_cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
-	return parser->to_signed(str.ptr(), str.count(), i, true, base);
+	return parser->to_signed(str, i, true, base);
 }
 
 wstring variable<long64>::to_string(value<long64> val, text::text_format_t f)
@@ -831,27 +823,23 @@ wstring variable<long64>::to_string(value<long64> val, text::text_format_t f)
 }
 
 variable<long64>::variable()
-	: value<long64>(0)
 {
 
 }
 
 variable<long64>::variable(long64 const& val)
-	: value<long64>(val)
 {
-
+	set(val);
 }
 
 variable<long64>::variable(value<long64> const& val)
-	: value<long64>(val)
 {
-
+	set(val);
 }
 
 variable<long64>::variable(variable const* val)
-	: value<long64>(val ? val->get() : false)
 {
-
+	set(val ? val->get() : 0);
 }
 
 variable<long64>::~variable()

@@ -342,6 +342,8 @@ namespace ang
 		template<typename T> using default_allocator = managed_allocator<T, ang_memory_hint::ang_default_memory>;
 		template<typename T> using object_allocator = managed_allocator<T, ang_memory_hint::ang_object_memory>;
 		template<typename T> using buffer_allocator = managed_allocator<T, ang_memory_hint::ang_buffer_memory>;
+
+		template<typename T> using aligned16_allocator = aligned_allocator<T, 16>;
 	}
 }
 

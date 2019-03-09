@@ -41,7 +41,7 @@ thread_manager::~thread_manager()
 worker_thread_t thread_manager::attach_this_thread(worker_thread_t thread, bool isMain)
 {
 	if (thread.is_empty()) thread = new worker_thread();
-	thread->_is_main_thread = isMain;
+	thread->m_is_main_thread = isMain;
 	thread->attach();
 	return thread;
 }

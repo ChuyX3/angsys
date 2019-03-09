@@ -63,7 +63,7 @@ xml_element_t xml_element::create_new(xml_document_t doc, ixml_text_t name, ixml
 
 
 xml_element::xml_element(xml_document_t doc)
-	: xml_node(doc, xml_type::element)
+	: base(doc, xml_type::element)
 {
 
 }

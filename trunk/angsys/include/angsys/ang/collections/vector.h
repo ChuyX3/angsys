@@ -10,17 +10,14 @@ namespace ang
 		/* template class vector_buffer :                                 */
 		/*  -> implements the buffer memory of vector object              */
 		/******************************************************************/
-		template<typename T, template<typename> class allocator>
+		template<typename T, template<typename> class A>
 		class vector_buffer final
-			: public object
-			, public ivariant
-			, public ibuffer
-			, public ilist<T>
+			: public smart<vector_buffer<T,A>, object, ivariant, ibuffer, ilist<T>>
 		{
 		public:
 			typedef T							type;
-			typedef vector_buffer<T, allocator> self_t;
-			typedef allocator<T>				allocator_t;
+			typedef vector_buffer<T, A> self_t;
+			typedef A<T>				allocator_t;
 			typedef ilist<T>					ilist_t;
 			typedef iarray<T>					iarray_t;
 			typedef ienum<T>					ienum_type;
@@ -65,7 +62,7 @@ namespace ang
 
 			inline void clear();
 			inline void empty();
-			inline bool move(vector_buffer<T, allocator>&);
+			inline bool move(vector_buffer<T, A>&);
 
 			template<typename U> inline void copy(array_view<U>const&);
 			template<typename U, template<typename> class allocator2> inline void copy(scope_array<U, allocator2>const&);
@@ -151,12 +148,12 @@ namespace ang
 	 /* template class ang::object_wrapper<vector_buffer> :             */
 	 /*  -> specialization of object_wrapper<vector_buffer> -> array    */
 	 /******************************************************************/
-	template<typename T, template<typename> class allocator>
-	class object_wrapper<collections::vector_buffer<T, allocator>>
+	template<typename T, template<typename> class A>
+	class object_wrapper<collections::vector_buffer<T, A>>
 	{
 	public:
-		typedef collections::vector_buffer<T, allocator> type;
-		typedef typename collections::vector_buffer<T, allocator>::type data_type;
+		typedef collections::vector_buffer<T, A> type;
+		typedef typename collections::vector_buffer<T, A>::type data_type;
 
 	private:
 		type* m_ptr;
@@ -227,6 +224,7 @@ namespace ang
 		explicit operator type * (void);
 		explicit operator type const* (void)const;
 		operator array_view<T>()const { return m_ptr ? collections::to_array(m_ptr->data(), m_ptr->size()) : array_view<T>(); }
+		operator array_view<const T>()const { return m_ptr ? collections::to_array((const T*)m_ptr->data(), m_ptr->size()) : array_view<const T>(); }
 		template<typename I>T& operator[](I const& idx);
 		template<typename I>T const& operator[](I const& idx)const;
 	};
@@ -238,12 +236,12 @@ namespace ang
 	 /* template class ang::object_wrapper<vector_buffer> :             */
 	 /*  -> specialization of object_wrapper<vector_buffer> -> array    */
 	 /******************************************************************/
-	template<template<typename> class allocator>
-	class object_wrapper<collections::vector_buffer<var, allocator>>
+	template<template<typename> class A>
+	class object_wrapper<collections::vector_buffer<var, A>>
 	{
 	public:
-		typedef collections::vector_buffer<var, allocator> type;
-		typedef typename collections::vector_buffer<var, allocator>::type data_type;
+		typedef collections::vector_buffer<var, A> type;
+		typedef typename collections::vector_buffer<var, A>::type data_type;
 
 	private:
 		type* m_ptr;
@@ -324,9 +322,34 @@ namespace ang
 		explicit operator type * (void);
 		explicit operator type const* (void)const;
 		operator array_view<var>()const { return m_ptr ? collections::to_array(m_ptr->data(), m_ptr->size()) : array_view<var>(); }
+		operator array_view<const var>()const { return m_ptr ? collections::to_array((const var*)m_ptr->data(), m_ptr->size()) : array_view<const var>(); }
 		template<typename I>var& operator[](I const& idx);
 		template<typename I>var const& operator[](I const& idx)const;
 	};
+
+
+	template<typename T, template<typename>class A>
+	struct property_helper<vector<T, A>, false> {
+		using type = vector<T, A>;
+		using ret_type = type & ;
+		using ptr_type = collections::vector_buffer<T, A>*;
+		using arg_type = array_view<T>;
+		using property_class = base_property<type>;
+		using getter_type = ret_type(*)(property_class const*);
+		using setter_type = void(*)(property_class const*, arg_type);
+	};
+
+	template<typename T, template<typename>class A>
+	struct property_helper<const vector<T, A>, false> {
+		using type = vector<T, A>;
+		using ret_type = array_view<const T>;
+		using ptr_type = collections::vector_buffer<T, A>*;
+		using arg_type = array_view<T>;
+		using property_class = base_property<type>;
+		using getter_type = ret_type(*)(property_class const*);
+		using setter_type = void(*)(property_class const*, arg_type);
+	};
+
 
 }//ang
 

@@ -298,9 +298,7 @@ namespace ang
 	public: //properties
 		bool is_valid()const;
 		template< typename T>
-		typename smart_ptr_type<T>::smart_ptr_t lock() {
-			return is_valid() ? interface_cast<typename smart_ptr_type<T>::type>(lock<interface>().get()) : nullptr;
-		}
+		typename smart_ptr_type<T>::smart_ptr_t lock();
 
 		safe_pointer& operator = (intfptr);
 		safe_pointer& operator = (interface*);
@@ -315,6 +313,10 @@ namespace ang
 	};
 
 	template<> LINK intfptr safe_pointer::lock<interface>();
+
+	template< typename T> inline typename smart_ptr_type<T>::smart_ptr_t safe_pointer::lock() {
+		return is_valid() ? interface_cast<typename smart_ptr_type<T>::type>(lock<interface>().get()) : nullptr;
+	}
 
 	template<typename T>
 	class weak_ptr : public safe_pointer
@@ -348,24 +350,6 @@ namespace ang
 		weak_ptr& operator = (ang::nullptr_t const&) { safe_pointer::operator=(null); return *this; }
 	};
 
-
-	template<typename T, class owner, property_style TYPE>
-	class property<const intf_wrapper<T>, owner, TYPE> {
-	public:
-		property(T* val) : value(val) {}
-		T* get()const { return value.get(); }
-		operator T*()const { return value.get(); }
-		T* operator ->()const { return value.get(); }
-
-	protected:
-		void set(T* val) { value = val; }
-		property& operator = (property const& val) { set(val.get()); return*this; }
-		property& operator = (T* val) { set(val); return*this; }
-
-	private:
-		typename intf_wrapper<T> value;
-		friend owner;
-	};
 }
 
 

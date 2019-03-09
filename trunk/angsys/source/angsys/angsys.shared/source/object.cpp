@@ -263,7 +263,7 @@ pointer object::operator new(wsize, pointer ptr)noexcept { return ptr; }
 void object::operator delete(pointer, pointer)noexcept { }
 
 object::object(bool inc_ref)
-	: _ref_count(GET_SMART_PTR_INFO(this)->_obj_ref_counter)
+	: m_ref_count(GET_SMART_PTR_INFO(this)->_obj_ref_counter)
 {
 	if (inc_ref)
 		add_ref();
@@ -279,25 +279,25 @@ object::~object()
 #endif
 }
 
-ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::object, ang::iobject);
-ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(object);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::object, ang::iobject);
+ANG_IMPLEMENT_INTERFACE_RUNTIME_INFO(object);
 ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(object, iobject, interface);
 
 dword object::add_ref()
 {
 #ifdef WINDOWS_PLATFORM
-	return InterlockedIncrement(&_ref_count);
+	return InterlockedIncrement(&m_ref_count);
 #else
-	return ++_ref_count;
+	return ++m_ref_count;
 #endif
 }
 
 dword object::release()
 {
 #ifdef WINDOWS_PLATFORM
-	auto count = InterlockedDecrement(&_ref_count);
+	auto count = InterlockedDecrement(&m_ref_count);
 #else
-	auto count = --_ref_count;
+	auto count = --m_ref_count;
 #endif
 	if (count == 0)
 		auto_release();

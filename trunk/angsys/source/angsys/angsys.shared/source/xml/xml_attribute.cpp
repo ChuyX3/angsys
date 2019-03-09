@@ -55,7 +55,7 @@ xml_attribute_t xml_attribute::create_new(xml_document_t doc, ixml_text_t name, 
 }
 
 xml_attribute::xml_attribute(xml_document_t doc)
-	: xml_node(doc, xml_type::attribute)
+	: base(doc, xml_type::attribute)
 {
 
 }
@@ -120,7 +120,7 @@ xml_namespace::~xml_namespace()
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(xml_namespace);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::dom::xml::xml_namespace, xml_node);
-ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(xml_namespace, xml_node);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::dom::xml::xml_namespace, xml_node);
 
 bool xml_namespace::xml_has_name()const
 {

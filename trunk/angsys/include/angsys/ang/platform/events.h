@@ -104,6 +104,7 @@ namespace ang
 					return new member_event_function(_obj.lock(), _function);
 				}
 			};
+
 		}
 	}
 
@@ -118,29 +119,28 @@ namespace ang
 			ang_end_interface();
 
 			template<> class LINK function_object <void(object*, platform::events::imsg_event_args*)>
-				: public object
-				, public ifunction<void(object*, platform::events::imsg_event_args*)>
+				: public smart<function_object <void(object*, platform::events::imsg_event_args*)>, ifunction<void(object*, platform::events::imsg_event_args*)>>
 			{
 			protected:
-				platform::events::core_msg_t _msg;
-				platform::events::ievent_function* _function;
+				platform::events::core_msg_t m_msg;
+				platform::events::ievent_function* m_function;
 
-				function_object(platform::events::core_msg_t _msg);
+				function_object(platform::events::core_msg_t msg);
 			
 
 				template<typename A, typename F>
 				inline void set(F const& f) {
-					_function = new platform::events::static_event_function<F, A>(f);
+					m_function = new platform::events::static_event_function<F, A>(f);
 				}
 
 				template<typename A, typename T>
 				inline void set(T* obj, void(T::*f)(objptr, intf_wrapper<A>)) {
-					_function = new platform::events::member_event_function<T, is_base_of<interface, T>::value, A>(obj, f);
+					m_function = new platform::events::member_event_function<T, is_base_of<interface, T>::value, A>(obj, f);
 				}
 
 				template<typename A, typename T>
 				inline void set(typename smart_ptr_type<T>::smart_ptr_t obj, void(T::*f)(objptr, intf_wrapper<A>)) {
-					_function = new platform::events::member_event_function<T, is_base_of<interface, T>::value, A>(obj, f);
+					m_function = new platform::events::member_event_function<T, is_base_of<interface, T>::value, A>(obj, f);
 				}
 
 			public: // Overrides
@@ -159,37 +159,37 @@ namespace ang
 	}
 
 
-	template<> class LINK object_wrapper<platform::events::event>
+	template<> class LINK object_wrapper<platform::events::base_event_handler>
 	{
 	public:
-		typedef platform::events::event type;
+		typedef platform::events::base_event_handler type;
 
 	protected:
-		platform::events::event* m_ptr;
+		platform::events::base_event_handler* m_ptr;
 
 	public:
 		object_wrapper();
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
-		object_wrapper(platform::events::event*);
+		object_wrapper(platform::events::base_event_handler*);
 		~object_wrapper();
 
 	public:
 		void reset();
 		void reset_unsafe();
 		bool is_empty()const;
-		platform::events::event* get(void)const;
-		void set(platform::events::event*);
+		platform::events::base_event_handler* get(void)const;
+		void set(platform::events::base_event_handler*);
 
 		object_wrapper& operator = (object_wrapper &&);
 		object_wrapper& operator = (object_wrapper const&);
-		object_wrapper& operator = (platform::events::event*);
+		object_wrapper& operator = (platform::events::base_event_handler*);
 		void operator () (objptr, platform::events::imsg_event_args_t)const;
 	};
 
 }
 
-//ANG_DECLARE_OBJECT_VECTOR_SPECIALIZATION(LINK, ang::platform::events::event)
+//ANG_DECLARE_OBJECT_VECTOR_SPECIALIZATION(LINK, ang::platform::events::base_event_handler)
 
 namespace ang
 {
@@ -203,9 +203,9 @@ namespace ang
 				typedef platform::events::event_t function;
 
 			protected:
-				mutable safe_pointer _parent;
-				function_type<bool(platform::events::core_msg_t)> _comp;
-				collections::vector<function> _functions;
+				mutable safe_pointer m_parent;
+				function_type<bool(platform::events::core_msg_t)> m_comp;
+				collections::list<function> m_functions;
 
 				listener(listener &&) = delete;
 				listener(listener const&) = delete;
@@ -219,18 +219,27 @@ namespace ang
 
 			public:
 				bool is_empty()const;
-				virtual index push(platform::events::event_t);
+				virtual platform::events::event_token_t push(platform::events::event_t);
+				virtual bool pop(platform::events::event_token_t);
 
-			protected:
+			public:
 				void empty();
 				virtual int invoke(platform::events::imsg_event_args_t)const;				
 				virtual bool remove(platform::events::event_t);
 				int operator ()(platform::events::imsg_event_args_t)const;
 
 			public:
-				listener& operator += (platform::events::event_t);
-				listener& operator -= (platform::events::event_t);
+				platform::events::event_token_t operator += (platform::events::event_t);
+				bool operator -= (platform::events::event_token_t);
 
+			};
+
+			template<> struct event_helper<void(object*, platform::events::imsg_event_args*)> {
+				using type = void(object*, platform::events::imsg_event_args*);
+				using listen_token = listen_token<type>;
+				using function_type = function_object<type>;
+				using add_event_handler = listen_token(*)(base_event*, object_wrapper<function_type>);
+				using remove_event_handler = bool(*)(base_event*, listen_token);
 			};
 		}
 	}
@@ -239,17 +248,71 @@ namespace ang
 	{
 		namespace events
 		{
-			template<typename owner_t>
-			class event_trigger final
-				: public event_listener
+
+			template<typename T, core_msg_enum MSG >
+			class event_handler final : public smart<event_handler<T, MSG>, base_event_handler>
 			{
-				friend owner_t;
-				using event_listener::invoke;
-				using event_listener::operator();
+			public:
+				template<class O>
+				event_handler(O* o, void(O::*f)(objptr, intf_wrapper<T>))
+					: base((core_msg_t)MSG) {
+					set<T>(o, f);
+				}
+				template<class O>
+				event_handler(typename smart_ptr_type<O>::smart_ptr_t o, void(O::*f)(objptr, intf_wrapper<T>))
+					: base((core_msg_t)MSG) {
+					set<T>(o, f);
+				}
+				template<class F>
+				event_handler(F f)
+					: base((core_msg_t)MSG) {
+					set<T>(f);
+				}
 			};
-			template<typename owner_t>using owner_event = event_trigger<owner_t>;
+
+			using core::delegates::base_event;
+		
+			template<typename T>
+			struct event_helper
+			{
+				using type = typename remove_reference<typename remove_constant<T>::type>::type;
+				using type_ptr = type*;
+				using arg_type = intf_wrapper<type>;
+				using add_event_type = event_token_t(*)(base_event*, event_t);
+				using remove_event_type = bool(*)(base_event*, event_token_t);
+			};
+
+			template<typename T, typename event_helper<T>::add_event_type add_event, typename event_helper<T>::remove_event_type remove_event>
+			struct event final : public base_event {
+				template<core_msg_enum MSG> inline auto operator += (event_handler<T, MSG>* e) {
+					return add_event(this, e);
+				}
+				template<core_msg_enum MSG> inline auto operator += (object_wrapper<event_handler<T, MSG>> e) {
+					return add_event(this, e.get());
+				}
+				inline auto operator -= (event_token_t token) {
+					return remove_event(this, token);
+				}
+			};
+
 		}
 	}
+}
+
+#define ang_platform_event(_TYPE, _NAME) \
+private: \
+	ang::platform::events::event_listener m_##_NAME; \
+	static ang::platform::events::event_token_t add_##_NAME##_event_handler(ang::platform::events::base_event*, ang::platform::events::event_t); \
+	static bool remove_##_NAME##_event_handler(ang::platform::events::base_event*, ang::platform::events::event_token_t); \
+public: \
+	ang::platform::events::event<_TYPE, add_##_NAME##_event_handler, remove_##_NAME##_event_handler> _NAME;
+
+#define ang_platform_implement_event_handler(_CLASS, _NAME) \
+ang::platform::events::event_token_t _CLASS::add_##_NAME##_event_handler(ang::platform::events::base_event* prop, ang::platform::events::event_t e) { \
+	return field_to_parent(&_CLASS::_NAME, prop)->m_##_NAME += e;	\
+} \
+bool _CLASS::remove_##_NAME##_event_handler(ang::platform::events::base_event* prop, ang::platform::events::event_token_t token) { \
+	return field_to_parent(&_CLASS::_NAME, prop)->m_##_NAME -= token;	\
 }
 
 #endif//__ANG_PLATFORM_EVENTS_H__

@@ -99,8 +99,8 @@ namespace ang
 			ang_begin_interface(LINK idispatcher)
 				visible vcall bool has_thread_access()const pure;	
 				visible vcall iasync<void> run_async(core::delegates::function<void(iasync<void>)>)pure;
-				visible vcall iasync<void> run_async(core::delegates::function<void(iasync<void>, var_args_t)>, var_args_t)pure;
-				template<typename T, typename...Ts> iasync<T> run_async(delegates::function<T(Ts...)>, Ts...);
+				//visible vcall iasync<void> run_async(core::delegates::function<void(iasync<void>, var_args_t)>, var_args_t)pure;
+				template<typename T> iasync<T> run_async(delegates::function<T(iasync<T>)>);
 			ang_end_interface();
 
 			ang_begin_interface(LINK ithread, idispatcher)
@@ -150,8 +150,7 @@ namespace ang
 		namespace async
 		{
 			class LINK thread
-				: public object
-				, public ithread
+				: public smart<thread, ithread>
 			{
 			public:
 				static void sleep(dword ms);
@@ -178,8 +177,7 @@ namespace ang
 		namespace async
 		{
 			class LINK task
-				: public object
-				, public itask<void>
+				: public smart<task, itask<void>>
 			{
 			public:
 				template<typename T>
@@ -197,12 +195,11 @@ namespace ang
 
 			template<typename T>
 			class task_handler final
-				: public object
-				, public itask<T>
+				: public smart<task_handler<T>, itask<T>>
 			{
 			private:
-				T _result;
-				iasync<void> _task;
+				T m_result;
+				iasync<void> m_task;
 
 			public:
 				task_handler();
@@ -211,7 +208,7 @@ namespace ang
 
 			public:
 				void attach(iasync<void> async);
-				void done(T const& res);
+				void done(T&& res);
 
 				virtual iasync<void> then(delegates::function<void(iasync<T>)>)override;
 				virtual bool wait(async_action_status_t)const override;

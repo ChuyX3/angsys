@@ -1,5 +1,5 @@
 /*********************************************************************************************************************/
-/*   File Name: ang/collections/binary_tree.h                                                                             */
+/*   File Name: ang/collections/list.h                                                                             */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
 /*   File description: Implements list object                                                                      */
 /*                                                                                                                   */
@@ -10,30 +10,10 @@
 /*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
 /*                                                                                                                   */
 /*********************************************************************************************************************/
-
-#ifndef __ANG_COLLECTION_LIST_H__
+#ifndef __ANG_COLLECTIONS_H__
+#elif !defined __ANG_COLLECTION_LIST_H__
 #define __ANG_COLLECTION_LIST_H__
 
-#include <angsys.h>
-
-#ifdef  LINK
-#undef  LINK
-#endif//LINK
-
-#if defined WINDOWS_PLATFORM
-#if defined ANGSYS_DYNAMIC_LIBRARY
-
-#ifdef ANGSYS_EXPORTS
-#define LINK __declspec(dllexport)
-#else
-#define LINK __declspec(dllimport)
-#endif//ANGSYS_EXPORTS
-#else//#elif defined ANGSYS_STATIC_LIBRARY
-#define LINK
-#endif//ANGSYS_DYNAMIC_LIBRARY
-#elif defined LINUX_PLATFORM || defined ANDROID_PLATFORM
-#define LINK
-#endif
 
 namespace ang
 {
@@ -49,8 +29,7 @@ namespace ang
 		/******************************************************************/
 		template<typename T, template<typename> class A>
 		class list_object final
-			: public object
-			, public ilist<T>
+			: public smart<list_object<T, A>, ilist<T>>
 		{
 		public:
 			typedef T							type;
@@ -237,12 +216,5 @@ namespace ang
 
 }
 
-
-
-#ifdef  LINK
-#undef  LINK
-#endif//LINK
-
-#include<ang/collections/inline/list.inl>
 
 #endif//__ANG_COLLECTION_LIST_H__

@@ -16,69 +16,155 @@
 
 namespace ang //constants
 {
-	typedef enum class property_style : uint 
-	{
-		def,
-		alertable,
-		no_storage
-	}property_style_t;
+	template<typename T> struct base_property { };
+	template<typename T, bool IS_OBJECT = is_object<T>::value> struct property_helper;
 
-
-	template<typename T, class owner, property_style TYPE = property_style::def> class property;
-
-	template<typename T, class owner, property_style TYPE>
-	class property {
-	public:
-		property(T val) : m_value(val) {}
-		const T& get()const { return m_value; }
-		void set(const T& val) { m_value = val; }
-		operator T &() { return m_value; }
-		operator T const&()const { return m_value; }
-		property& operator = (property const& val) { set(val.get()); return*this; }
-		property& operator = (T const& val) { set(val); return*this; }
-		T* operator ->()const { return const_cast<T*>(&m_value); }
-
-	protected:
-		typename ang::remove_constant<T>::type m_value;
-		friend owner;
+	template<typename T>
+	struct property_helper<T, false> {
+		using type = typename remove_reference<typename remove_constant<T>::type>::type;
+		using ret_type = type;
+		using ptr_type = typename __to_pointer_helper<type>::ptr_type;
+		using arg_type = type &&;
+		using property_class = base_property<type>;
+		using getter_type = ret_type(*)(property_class const*);
+		using setter_type = void(*)(property_class*, arg_type);
 	};
 
-	template<typename T, class owner, property_style TYPE>
-	class property<const T, owner, TYPE> {
-	public:
-		property(T val) : m_value(val) {}
-		const T& get()const { return m_value; }
-		operator T const&()const { return m_value; }
-		T* operator ->()const { return const_cast<T*>(&m_value); }
+	template<typename T>
+	struct property_helper<const T, false> {
+		using type = typename remove_reference<typename remove_constant<T>::type>::type;
+		using ret_type = type;
+		using ptr_type = typename __to_pointer_helper<type>::ptr_type;
+		using arg_type = type && ;
+		using property_class = base_property<type>;
+		using getter_type = ret_type(*)(property_class const*);
+		using setter_type = void(*)(property_class*, arg_type);
+	};
 
-	protected:
-		void set(const T& val) { m_value = val; }
-		property& operator = (property const& val) { set(val.get()); return*this; }
-		property& operator = (T const& val) { set(val); return*this; }
+	template<typename T, typename property_helper<T>::getter_type getter, typename property_helper<T>::setter_type setter = nullptr>
+	struct property : property_helper<T>::property_class {
+		using self = property<T, getter, setter>;
 
-	private:
-		typename ang::remove_constant<T>::type m_value;
-		friend owner;
+		inline typename property_helper<T>::ret_type operator = (typename property_helper<T>::arg_type value) {
+			static_assert(!is_const<T>::value, "can't asign value to a read only property");
+			setter(this, forward<typename property_helper<T>::arg_type>(value));
+			return getter(this);
+		}
+		inline operator typename property_helper<T>::ret_type()const {
+			return getter(this);
+		}
+
+		inline typename property_helper<T>::ptr_type operator ->()const {
+			static auto val = getter(this);//hack: saving value to static variable
+			return to_pointer<decltype(getter(this))>(val);
+		}
+		template<typename U>
+		operator U()const {
+			return U(getter(this));
+		}
+
+		template<typename I> 
+		auto operator[](I&& i)->decltype(getter(this)[i])
+		{
+			return getter(this)[i];
+		}
+		template<typename I>
+		auto operator[](I&& i)const->decltype(((decltype(getter(this))const&)getter(this))[i])
+		{
+			return getter(this)[i];
+		}
+
+		template<typename U> friend auto operator + (const self& a, const U& b) ->decltype(getter(&a) + b) { return getter(&a) + b; }
+		template<typename U> friend auto operator + (const U& a, const self& b) ->decltype(a + getter(&b)) { return a + getter(&b); }
+		template<typename U> friend auto operator - (const self& a, const U& b) ->decltype(getter(&a) - b) { return getter(&a) - b; }
+		template<typename U> friend auto operator - (const U& a, const self& b) ->decltype(a - getter(&b)) { return a - getter(&b); }
+		template<typename U> friend auto operator * (const self& a, const U& b) ->decltype(getter(&a) * b) { return getter(&a) * b; }
+		template<typename U> friend auto operator * (const U& a, const self& b) ->decltype(a * getter(&b)) { return a * getter(&b); }
+		template<typename U> friend auto operator / (const self& a, const U& b) ->decltype(getter(&a) / b) { return getter(&a) / b; }
+		template<typename U> friend auto operator / (const U& a, const self& b) ->decltype(a / getter(&b)) { return a / getter(&b); }
+		template<typename U> friend auto operator % (const self& a, const U& b) ->decltype(getter(&a) % b) { return getter(&a) % b; }
+		template<typename U> friend auto operator % (const U& a, const self& b) ->decltype(a % getter(&b)) { return a % getter(&b); }
+		
+
+		template<typename U> friend auto operator & (const self& a, const U& b) ->decltype(getter(&a) & b) { return getter(&a) & b; }
+		template<typename U> friend auto operator & (const U& a, const self& b) ->decltype(a & getter(&b)) { return a & getter(&b); }
+		template<typename U> friend auto operator | (const self& a, const U& b) ->decltype(getter(&a) | b) { return getter(&a) | b; }
+		template<typename U> friend auto operator | (const U& a, const self& b) ->decltype(a | getter(&b)) { return a | getter(&b); }
+		template<typename U> friend auto operator ^ (const self& a, const U& b) ->decltype(getter(&a) ^ b) { return getter(&a) ^ b; }
+		template<typename U> friend auto operator ^ (const U& a, const self& b) ->decltype(a ^ getter(&b)) { return a ^ getter(&b); }
+		
+		template<typename U> friend auto operator == (const self& a, const U& b) ->decltype(getter(&a) == b) { return getter(&a) == b; }
+		template<typename U> friend auto operator == (const U& a, const self& b) ->decltype(a == getter(&b)) { return a == getter(&b); }
+		template<typename U> friend auto operator != (const self& a, const U& b) ->decltype(getter(&a) != b) { return getter(&a) != b; }
+		template<typename U> friend auto operator != (const U& a, const self& b) ->decltype(a != getter(&b)) { return a != getter(&b); }
+		template<typename U> friend auto operator >= (const self& a, const U& b) ->decltype(getter(&a) >= b) { return getter(&a) >= b; }
+		template<typename U> friend auto operator >= (const U& a, const self& b) ->decltype(a >= getter(&b)) { return a >= getter(&b); }
+		template<typename U> friend auto operator <= (const self& a, const U& b) ->decltype(getter(&a) <= b) { return getter(&a) <= b; }
+		template<typename U> friend auto operator <= (const U& a, const self& b) ->decltype(a <= getter(&b)) { return a <= getter(&b); }
+		template<typename U> friend auto operator > (const self& a, const U& b) ->decltype(getter(&a) > b) { return getter(&a) > b; }
+		template<typename U> friend auto operator > (const U& a, const self& b) ->decltype(a > getter(&b)) { return a > getter(&b); }
+		template<typename U> friend auto operator < (const self& a, const U& b) ->decltype(getter(&a) < b) { return getter(&a) < b; }
+		template<typename U> friend auto operator < (const U& a, const self& b) ->decltype(a < getter(&b)) { return a < getter(&b); }
+		template<typename U> friend auto operator && (const U& a, const self& b) ->decltype(a && getter(&b)) { return a && getter(&b); }
+		template<typename U> friend auto operator || (const U& a, const self& b) ->decltype(a || getter(&b)) { return a || getter(&b); }
+
 	};
 
 
-	template<typename T, class owner, property_style TYPE>
-	class property<T*, owner, TYPE> {
-	public:
-		property(T val) : m_value(val) {}
-		const T& get()const { return m_value; }
-		void set(const T& val) { m_value = val; }
-		operator T &() { return m_value; }
-		operator T const&()const { return m_value; }
-		property& operator = (property const& val) { set(val.get()); return*this; }
-		property& operator = (T const& val) { set(val); return*this; }
-		T* operator ->()const { return const_cast<T*>(&m_value); }
-
-	protected:
-		typename ang::remove_constant<T>::type m_value;
-		friend owner;
+	template<typename T>
+	struct property_helper<object_wrapper<T>, false> {
+		using type = object_wrapper<T>;
+		using ret_type = type;
+		using ptr_type = T * ;
+		using arg_type = type const&;
+		using property_class = base_property<type>;
+		using getter_type = ptr_type(*)(property_class const*);
+		using setter_type = void(*)(property_class*, arg_type);
 	};
 
+	template<typename T>
+	struct property_helper<const object_wrapper<T>, false> {
+		using type = object_wrapper<T>;
+		using ret_type = type;
+		using ptr_type = T* ;
+		using arg_type = type const&;
+		using property_class = base_property<type>;
+		using getter_type = ptr_type(*)(property_class const*);
+		using setter_type = void(*)(property_class*, arg_type);
+	};
+
+	template<typename T>
+	struct property_helper<intf_wrapper<T>, false> {
+		using type = intf_wrapper<T>;
+		using ret_type = type;
+		using ptr_type = T * ;
+		using arg_type = type const&;
+		using property_class = base_property<type>;
+		using getter_type = ptr_type(*)(property_class const*);
+		using setter_type = void(*)(property_class*, arg_type);
+	};
+
+	template<typename T>
+	struct property_helper<const intf_wrapper<T>, false> {
+		using type = intf_wrapper<T>;
+		using ret_type = type;
+		using ptr_type = T * ;
+		using arg_type = type const&;
+		using property_class = base_property<type>;
+		using getter_type = ptr_type(*)(property_class const*);
+		using setter_type = void(*)(property_class*, arg_type);
+	};
+
+
+	template<typename T>
+	struct property_helper<T, true> 
+		: property_helper<object_wrapper<T>> {
+	};
+
+	template<typename T>
+	struct property_helper<const T, true>
+		: property_helper<const object_wrapper<T>> {
+	};
 }
 
 #endif//__ANG_BASE_PROPERTY_H__

@@ -11,7 +11,7 @@ namespace ang
 		{
 
 			class LINK xml_cdata final
-				: public xml_node
+				: public smart<xml_cdata, xml_node>
 			{
 			public:
 				static xml_cdata_t create_new(const xml_cdata&);

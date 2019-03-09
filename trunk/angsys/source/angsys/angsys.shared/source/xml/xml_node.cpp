@@ -32,6 +32,23 @@ using namespace ang::dom::xml;
 #include "ang/inline/object_wrapper_specialization.inl"
 #undef MY_TYPE
 
+dom::xml::xml_node_t object_wrapper<xml_node>::operator[] (dom::xml::xml_cstr_t key)const
+{
+	if (is_empty())
+		return null;
+	if (m_ptr->xml_has_attributes()) {
+		auto it = m_ptr->xml_attributes()->find(key);
+		if (it.is_valid())
+			return*it;
+	}
+	if (m_ptr->xml_has_children()) {
+		auto it = m_ptr->xml_children()->find(key);
+		if (it.is_valid())
+			return*it;
+	}
+	return null;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 xml_node::xml_node(xml_document_t doc, xml_type_t type)
 	: m_type(type)

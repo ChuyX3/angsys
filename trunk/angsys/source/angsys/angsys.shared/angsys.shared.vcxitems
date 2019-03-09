@@ -54,7 +54,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_comment.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_document.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_element.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_header.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_node.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml\xml_text.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\exception.h" />
@@ -108,7 +107,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\core_file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\files.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\file_system.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\files\input_binary_file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\files\input_text_file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\log.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\memory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\platform\events.cpp" />
@@ -117,6 +118,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\platform\platform.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\runtime.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\streams.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\string_input_stream.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\const_string.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\encoder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\parser.cpp" />
@@ -164,6 +166,7 @@
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)utils\angsys.natvis" />
     <Natvis Include="$(MSBuildThisFileDirectory)utils\internal.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)utils\maths.natvis" />
     <Natvis Include="$(MSBuildThisFileDirectory)utils\xml.natvis" />
   </ItemGroup>
 </Project>

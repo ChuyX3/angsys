@@ -165,6 +165,11 @@ ixml_text_t xml_text::sub_string(ixml_text_ptr_t out, windex start, windex end)c
 	return m_value->sub_string(out, start, end);
 }
 
+collections::ienum_ptr<ixml_text_t> xml_text::split(xml_cstr_t cstr)const
+{
+	return m_value->split(cstr);
+}
+
 void xml_text::copy(xml_cstr_t cstr)
 {
 	copy_cdata(cstr);

@@ -114,7 +114,7 @@ bool file_system::open_file(path_view_t path, open_flags_t flags, ifile_ptr_t ou
 	}
 	else
 	{
-		for (auto p : m_paths)
+		for (wstring p : m_paths)
 		{
 			path_t _path = (p + "/"_s) += path;
 			file->create(_path, flags);
@@ -164,8 +164,8 @@ bool file_system::open(path_view_t path, input_binary_file_ptr_t out)
 	ifile_t _hfile;
 	if (!open_file(path, open_flags::access_in + open_flags::format_binary + open_flags::open_exist, &_hfile))
 		return false;
-//	*out = new input_binary_file();
-//	(*out)->attach(_hfile);
+	*out = new input_binary_file();
+	(*out)->attach(_hfile);
 	return true;
 }
 

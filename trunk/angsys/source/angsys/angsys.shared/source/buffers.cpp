@@ -270,57 +270,57 @@ wsize buffer_view::buffer_size()const
 //////////////////////////////////////////////////////////////////////////////////
 
 
-ang_void_ptr_t dummy_buffer::operator new(wsize size)
+ang_void_ptr_t buffer_wrapper::operator new(wsize size)
 {
 	ang::memory::object_allocator<byte> allocator;
 	if (size) return allocator.allocate(size);
 	else return null;
 }
 
-void dummy_buffer::operator delete(ang_void_ptr_t ptr)
+void buffer_wrapper::operator delete(ang_void_ptr_t ptr)
 {
 	ang::memory::object_allocator<byte> allocator;
 	if (ptr) allocator.deallocate((byte*)ptr);
 }
 
-dummy_buffer::dummy_buffer(pointer ptr, wsize sz)
+buffer_wrapper::buffer_wrapper(pointer ptr, wsize sz)
 	: m_ptr(ptr)
 	, m_size(sz)
 {
 }
 
-dummy_buffer::~dummy_buffer()
+buffer_wrapper::~buffer_wrapper()
 {
 }
 
-ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::dummy_buffer);
-ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::dummy_buffer, ibuffer, ibuffer_view);
-ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(ang::dummy_buffer, ibuffer, ibuffer_view);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::buffer_wrapper);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::buffer_wrapper, ibuffer, ibuffer_view);
+ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(ang::buffer_wrapper, ibuffer, ibuffer_view);
 
-text::encoding_t dummy_buffer::encoding()const { return text::encoding::binary; }
+text::encoding_t buffer_wrapper::encoding()const { return text::encoding::binary; }
 
-bool dummy_buffer::is_readonly()const { return false; }
+bool buffer_wrapper::is_readonly()const { return false; }
 
-pointer dummy_buffer::buffer_ptr() { return m_ptr; }
+pointer buffer_wrapper::buffer_ptr() { return m_ptr; }
 
-const_pointer dummy_buffer::buffer_ptr()const { return m_ptr; }
+const_pointer buffer_wrapper::buffer_ptr()const { return m_ptr; }
 
-wsize dummy_buffer::buffer_size()const { return m_size; }
+wsize buffer_wrapper::buffer_size()const { return m_size; }
 
-wsize dummy_buffer::mem_copy(wsize size, pointer ptr, text::encoding_t) {
+wsize buffer_wrapper::mem_copy(wsize size, pointer ptr, text::encoding_t) {
 	wsize sz = min(size, buffer_size());
 	memcpy(BUFFER_HANDLER(wsize(this) + sizeof(aligned_buffer))->get_buffer(), ptr, sz);
 	return sz;
 }
 
-ibuffer_view_t dummy_buffer::map_buffer(windex start, wsize size)
+ibuffer_view_t buffer_wrapper::map_buffer(windex start, wsize size)
 {
 	if ((start + size) > buffer_size())
 		return null;
 	return new buffer_view(this, start, size);
 }
 
-bool dummy_buffer::unmap_buffer(ibuffer_view_t& view, wsize)
+bool buffer_wrapper::unmap_buffer(ibuffer_view_t& view, wsize)
 {
 	buffer_view_t buff = interface_cast<buffer_view>(view.get());
 	if (buff == null && buff->parent().get() != this)
@@ -329,6 +329,6 @@ bool dummy_buffer::unmap_buffer(ibuffer_view_t& view, wsize)
 	return true;
 }
 
-bool dummy_buffer::can_realloc_buffer()const { return false; }
+bool buffer_wrapper::can_realloc_buffer()const { return false; }
 
-bool dummy_buffer::realloc_buffer(wsize) { return false; }
+bool buffer_wrapper::realloc_buffer(wsize) { return false; }

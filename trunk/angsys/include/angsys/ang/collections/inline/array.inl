@@ -20,7 +20,7 @@
 
 template<typename T, template <typename> class allocator>
 inline ang::collections::array_buffer<T, allocator>::array_buffer()
-	: object()
+	: base()
 	, m_size(0)
 	, m_data(null)
 {
@@ -258,6 +258,19 @@ inline void ang::collections::array_buffer<T, allocator>::copy(ang::scope_array<
 	ar.set(null, 0);
 }
 
+template<typename T, template<typename> class allocator>  template<typename U>
+inline void ang::collections::array_buffer<T, allocator>::copy(ang::collections::ienum_ptr<U> const& items)
+{
+	clear();
+	if (items->counter() > 0)
+		m_data = m_alloc.allocate(items->counter());
+	m_size = items->counter();
+
+	windex i = 0;
+	for(U const& item : items)
+		m_alloc.template construct<T, U const&>(&m_data[i++], item);
+}
+
 template<typename T, template<typename> class allocator>
 inline ang::text::encoding_t ang::collections::array_buffer<T, allocator>::encoding()const
 {
@@ -354,16 +367,16 @@ template<typename T, template <typename> class allocator>
 inline ang::collections::iterator<T> ang::collections::array_buffer<T, allocator>::at(windex idx)
 {
 	if (idx >= m_size)
-		return  iterator_t(const_cast<self_t*>(this), null, 0);
-	return iterator_t(const_cast<self_t*>(this), (pointer)&m_data, idx);
+		return  iterator_t(const_cast<self*>(this), null, 0);
+	return iterator_t(const_cast<self*>(this), (pointer)&m_data, idx);
 }
 
 template<typename T, template <typename> class allocator>
 inline ang::collections::iterator<const T> ang::collections::array_buffer<T, allocator>::at(windex idx)const
 {
 	if (idx >= m_size)
-		return  const_iterator_t(const_cast<self_t*>(this), null, 0);
-	return const_iterator_t(const_cast<self_t*>(this), (pointer)&m_data, idx);
+		return  const_iterator_t(const_cast<self*>(this), null, 0);
+	return const_iterator_t(const_cast<self*>(this), (pointer)&m_data, idx);
 }
 
 template<typename T, template <typename> class allocator>
@@ -691,26 +704,26 @@ inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>& ang::o
 template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>& ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::operator = (const std::nullptr_t&)
 {
-	clear();
+	reset();
 	return*this;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>& ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::operator = (ang::collections::ienum<data_type> const* items)
-{
-	if (m_ptr == null)
-		set(new collections::array_buffer<T, allocator>(items));
-	else
-		m_ptr->copy(items);
-	return *this;
-}
+//template<typename T, template <typename> class allocator>
+//inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>& ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::operator = (ang::collections::ienum<data_type> const* items)
+//{
+//	if (m_ptr == null)
+//		set(new collections::array_buffer<T, allocator>(items));
+//	else
+//		m_ptr->copy(items);
+//	return *this;
+//}
 
 template<typename T, template <typename> class allocator>
 inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>& ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::operator = (ang::object_wrapper<ang::collections::array_buffer<T, allocator>> && other)
 {
 	if (this == &other)
 		return *this;
-	clear();
+	reset();
 	m_ptr = other.m_ptr;
 	other.m_ptr = null;
 	return*this;
@@ -756,7 +769,7 @@ inline ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::operat
 template<typename T, template <typename> class allocator> template<typename I>
 inline T const& ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::operator[](I const& idx)const
 {
-	static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted");
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
 #ifdef DEBUG_SAFE_CODE
 		if (is_empty()) throw_exception(except_code::invalid_memory);
 		if ((idx >= m_ptr->size()) || (idx < 0)) throw_exception(except_code::array_overflow);
@@ -767,7 +780,7 @@ inline T const& ang::object_wrapper<ang::collections::array_buffer<T, allocator>
 template<typename T, template <typename> class allocator> template<typename I>
 inline T & ang::object_wrapper<ang::collections::array_buffer<T, allocator>>::operator[](I const& idx)
 {
-	static_assert(integer_value<I>::is_integer_value, "no integer value is no accepted");
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
 #ifdef DEBUG_SAFE_CODE
 		if (is_empty()) throw_exception(except_code::invalid_memory);
 		if ((idx >= m_ptr->size()) || (idx < 0)) throw_exception(except_code::array_overflow);

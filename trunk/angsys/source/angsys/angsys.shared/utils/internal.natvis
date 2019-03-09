@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
+  <Type Name="ang::object">
+    <DisplayString>object[references = {m_ref_count}]</DisplayString>
+  </Type>
+  
   <Type Name="ang::collections::internal_hash_map&lt;*&gt;">
     <DisplayString>map[{m_size}]</DisplayString>
     <Expand>
@@ -29,6 +33,26 @@
 
   <Type Name="ang::text::parser_interface&lt;*&gt;">
     <DisplayString>parser&lt;{ENCODING,en}&gt;</DisplayString>
+  </Type>
+
+  <Type Name="ang::core::files::core_file">
+    <DisplayString Condition="m_hfile != 0">file:[{m_path}]</DisplayString>
+    <DisplayString>invalid</DisplayString>
+    <Expand>
+      <Item Name="[path]" ExcludeView="simple">m_path</Item>
+      <Item Name="[handle]" ExcludeView="simple">m_hfile</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::core::async::worker_thread">
+    <DisplayString Condition="m_thread != 0">thread:[{m_id}]</DisplayString>
+    <DisplayString>invalid</DisplayString>
+    <Expand>
+      <Item Name="[id]" ExcludeView="simple">m_id</Item>
+      <Item Name="[state]" ExcludeView="simple">m_state</Item>
+      <Item Name="[is_main_thread]" ExcludeView="simple">m_is_main_thread</Item>
+      <Item Name="[tasks]" ExcludeView="simple">m_tasks</Item>
+    </Expand>
   </Type>
 
 </AutoVisualizer>

@@ -13,6 +13,11 @@ namespace ang
 			return (dword)(typename integer_type_by_size<sizeof(T)>::uint_t)value;
 		}
 
+		template<typename T> inline char32 char_to_char32(T value) {
+			static_assert(is_char_type<T>::value, "T is not a char type");
+			return (char32)(dword)(typename integer_type_by_size<sizeof(T)>::uint_t)value;
+		}
+
 		template <bool SWAP, typename T> inline constexpr T swap_endian(T value) {
 			static_assert(is_char_type<T>::value, "T is not a char type"); return value;
 		}
@@ -353,7 +358,7 @@ namespace ang
 			typedef char_t char1_t;
 			typedef typename char_type_by_type<cstr2_t>::char_t char2_t;		
 			constexpr bool SWAP1 = is_endian_swapped<ENCODING>::value;
-			constexpr bool SWAP2 = is_endian_swapped<encoding_by_char_type<char2_t>::value>::value;
+			constexpr bool SWAP2 = is_endian_swapped<encoding_by_char_type<cstr2_t>::value>::value;
 
 			if (first == null || second == null) return (wsize)invalid_index;
 			if (s2 == 0 || start >= s1) return (wsize)invalid_index;
@@ -381,13 +386,14 @@ namespace ang
 
 		template<encoding ENCODING> inline windex encoder<ENCODING>::find_any(raw_cstr_t first, wsize s1, windex start, array_view<const char32> chars)
 		{
-			windex i = start;
+			windex i, j = start;
 			char32_t c1;
 		LOOP:
-			c1 = to_char32<false, is_endian_swapped<ENCODING>::value>(first, i);
+			i = j;
+			c1 = to_char32<false, is_endian_swapped<ENCODING>::value>(first, j);
 			for (auto c2 : chars)	
 				if (c1 == c2) return i;
-			if (c1 == 0) return (wsize)invalid_index;
+			if (c1 == 0) return (wsize)invalid_index;	
 			goto LOOP;
 		}
 
@@ -396,7 +402,7 @@ namespace ang
 			typedef char_t char1_t;
 			typedef typename char_type_by_type<cstr2_t>::char_t char2_t;
 			constexpr bool SWAP1 = is_endian_swapped<ENCODING>::value;
-			constexpr bool SWAP2 = is_endian_swapped<encoding_by_char_type<char2_t>::value>::value;
+			constexpr bool SWAP2 = is_endian_swapped<encoding_by_char_type<cstr2_t>::value>::value;
 
 			if (first == null || second == null) return (wsize)invalid_index;
 			if (s2 == 0 || start > s1) return (wsize)invalid_index;

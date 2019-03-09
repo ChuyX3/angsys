@@ -11,8 +11,7 @@ namespace ang
 		{
 			
 			class LINK xml_document final
-				: public object
-				, public ixml_document
+				: public smart<xml_document, ixml_document>
 			{
 			public:
 				static xml_document_t from_file(core::files::input_text_file_t);

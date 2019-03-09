@@ -222,7 +222,7 @@ namespace ang //constants
 		_name##_t(_name##_t const& v) : value(v) {} \
 		_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
 		_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
-		ang::wstring to_string()const; \
+		ang::cstr_t to_string()const; \
 		_name##_t& operator = (type const& v){ get() = v; return*this; } \
 		_name##_t& operator = (_name##_t const& v) { get() = v.get(); return*this; } \
 		_name##_t& operator = (type && v) { get() = ang::move(v); v = default_value<type>::value; return*this; } \
@@ -257,6 +257,7 @@ namespace ang //constants
 		_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
 		_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
 		ang::wstring to_string()const; \
+		template<_name VALUE> bool is_active()const { return ((base)VALUE & m_value) == (base)VALUE; } 	\
 		_name##_t& operator = (type const& v){ get() = v; return*this; } \
 		_name##_t& operator = (_name##_t const& v) { get() = v.get(); return*this; } \
 		_name##_t& operator = (type && v) { get() = ang::move(v); v = default_value<type>::value; return*this; } \
@@ -316,6 +317,110 @@ namespace ang //constants
 		friend _LINK bool operator <= (type, _name##_t const&); \
 		friend _LINK bool operator > (type, _name##_t const&); \
 		friend _LINK bool operator < (type, _name##_t const&); \
+	}; enum class _name : _type
+
+#define safe_enum_flags(_LINK, _name, _flag_name, _type) enum class _name : _type; \
+	struct _LINK _name##_t : public ang::value<_name>{ \
+		static rtti_t const& class_info(); \
+		static _name##_t parse(text::raw_cstr_t);\
+		_name##_t() : value(default_value<type>::value) {} \
+		_name##_t(type const& v) : value(v) {} \
+		_name##_t(_name##_t const& v) : value(v) {} \
+		_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
+		_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
+		ang::cstr_t to_string()const; \
+		_name##_t& operator = (type const& v){ get() = v; return*this; } \
+		_name##_t& operator = (_name##_t const& v) { get() = v.get(); return*this; } \
+		_name##_t& operator = (type && v) { get() = ang::move(v); v = default_value<type>::value; return*this; } \
+		_name##_t& operator = (_name##_t && v) { get() = ang::move(v.get()); v.set(default_value<type>::value); return*this; } \
+		friend inline bool operator == (_name##_t const& a1, _name##_t const& a2){return a1.get() == a2.get();} \
+		friend inline bool operator != (_name##_t const& a1, _name##_t const& a2){return a1.get() != a2.get();} \
+		friend inline bool operator >= (_name##_t const& a1, _name##_t const& a2){return a1.get() >= a2.get();} \
+		friend inline bool operator <= (_name##_t const& a1, _name##_t const& a2){return a1.get() <= a2.get();} \
+		friend inline bool operator > (_name##_t const& a1, _name##_t const& a2){return a1.get() > a2.get();} \
+		friend inline bool operator < (_name##_t const& a1, _name##_t const& a2){return a1.get() < a2.get();} \
+		friend inline bool operator == (_name##_t const& a1, _name a2){return a1.get() == a2;} \
+		friend inline bool operator == (_name a1, _name##_t const& a2){return a1 == a2.get();} \
+		friend inline bool operator != (_name##_t const& a1, _name a2){return a1.get() != a2;} \
+		friend inline bool operator != (_name a1, _name##_t const& a2){return a1 != a2.get();} \
+		friend inline bool operator >= (_name##_t const& a1, _name a2){return a1.get() >= a2;} \
+		friend inline bool operator >= (_name a1, _name##_t const& a2){return a1 >= a2.get();} \
+		friend inline bool operator <= (_name##_t const& a1, _name a2){return a1.get() <= a2;} \
+		friend inline bool operator <= (_name a1, _name##_t const& a2){return a1 <= a2.get();} \
+		friend inline bool operator > (_name##_t const& a1, _name a2){return a1.get() > a2;} \
+		friend inline bool operator > (_name a1, _name##_t const& a2){return a1 > a2.get();} \
+		friend inline bool operator < (_name##_t const& a1, _name a2){return a1.get() < a2;} \
+		friend inline bool operator < (_name a1, _name##_t const& a2){return a1 < a2.get();} \
+	}; \
+	typedef _name _flag_name;\
+	struct _LINK _flag_name##_t : public ang::value<_flag_name> { \
+		static rtti_t const& class_info(); \
+		_flag_name##_t() : value(default_value<type>::value) {} \
+		_flag_name##_t(type const& v) : value(v) {} \
+		_flag_name##_t(_flag_name##_t const& v) : value(v) {} \
+		_flag_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
+		_flag_name##_t(_flag_name##_t && v) : value(ang::forward<value>(v)) { } \
+		ang::wstring to_string()const; \
+		template<_name VALUE> bool is_active()const { return ((base)VALUE & m_value) == (base)VALUE; } 	\
+		_flag_name##_t& operator = (type const& v){ get() = v; return*this; } \
+		_flag_name##_t& operator = (_flag_name##_t const& v) { get() = v.get(); return*this; } \
+		_flag_name##_t& operator = (type && v) { get() = ang::move(v); v = default_value<type>::value; return*this; } \
+		_flag_name##_t& operator = (_flag_name##_t && v) { get() = ang::move(v.get()); v.set(default_value<type>::value); return*this; } \
+		_flag_name##_t& operator ^= (const _flag_name##_t& v) { m_value ^= (base)v.get(); return*this; } \
+		_flag_name##_t& operator ^= (type v) { m_value ^= (base)v;	return*this; } \
+		_flag_name##_t& operator *= (const _flag_name##_t& v) { m_value &= (base)v.get(); return*this; } \
+		_flag_name##_t& operator *= (type v) { m_value &= (base)v;	return*this; } \
+		_flag_name##_t& operator += (const _flag_name##_t& v) { m_value |= (base)v.get(); return*this; } \
+		_flag_name##_t& operator += (type v) { m_value |= (base)v;	return*this; } \
+		_flag_name##_t& operator -= (const _flag_name##_t& v) { m_value &= ~(base)v.get(); return*this; } \
+		_flag_name##_t& operator -= (type v) { m_value &= ~(base)v;	return*this; } \
+		bool operator !(void)const { return m_value == 0; } \
+		operator bool(void)const { return m_value != 0; } \
+		operator base(void)const { return m_value; } \
+		friend _LINK _flag_name##_t operator * (type, type); \
+		friend _LINK _flag_name##_t operator * (const _flag_name##_t&, type); \
+		friend _LINK _flag_name##_t operator * (type, const _flag_name##_t&); \
+		friend _LINK _flag_name##_t operator * (const _flag_name##_t&, const _flag_name##_t&); \
+		friend _LINK _flag_name##_t operator + (type, type); \
+		friend _LINK _flag_name##_t operator + (const _flag_name##_t&, type); \
+		friend _LINK _flag_name##_t operator + (type, const _flag_name##_t&); \
+		friend _LINK _flag_name##_t operator + (const _flag_name##_t&, const _flag_name##_t&); \
+		friend _LINK _flag_name##_t operator - (type, type); \
+		friend _LINK _flag_name##_t operator - (const _flag_name##_t&, type); \
+		friend _LINK _flag_name##_t operator - (type, const _flag_name##_t&); \
+		friend _LINK _flag_name##_t operator - (const _flag_name##_t&, const _flag_name##_t&); \
+		friend _LINK _flag_name##_t operator & (type, type); \
+		friend _LINK _flag_name##_t operator & (const _flag_name##_t&, type); \
+		friend _LINK _flag_name##_t operator & (type, const _flag_name##_t&); \
+		friend _LINK _flag_name##_t operator & (const _flag_name##_t&, const _flag_name##_t&); \
+		friend _LINK _flag_name##_t operator | (type, type); \
+		friend _LINK _flag_name##_t operator | (const _flag_name##_t&, type); \
+		friend _LINK _flag_name##_t operator | (type, const _flag_name##_t&); \
+		friend _LINK _flag_name##_t operator | (const _flag_name##_t&, const _flag_name##_t&); \
+		friend _LINK _flag_name##_t operator ^ (type, type); \
+		friend _LINK _flag_name##_t operator ^ (const _flag_name##_t&, type); \
+		friend _LINK _flag_name##_t operator ^ (type, const _flag_name##_t&); \
+		friend _LINK _flag_name##_t operator ^ (const _flag_name##_t&, const _flag_name##_t&); \
+		friend _LINK _flag_name##_t operator ~ (type); \
+		friend _LINK _flag_name##_t operator ~ (_flag_name##_t const&); \
+		friend _LINK bool operator == (_flag_name##_t const&, _flag_name##_t const&); \
+		friend _LINK bool operator != (_flag_name##_t const&, _flag_name##_t const&); \
+		friend _LINK bool operator >= (_flag_name##_t const&, _flag_name##_t const&); \
+		friend _LINK bool operator <= (_flag_name##_t const&, _flag_name##_t const&); \
+		friend _LINK bool operator > (_flag_name##_t const&, _flag_name##_t const&); \
+		friend _LINK bool operator < (_flag_name##_t const&, _flag_name##_t const&); \
+		friend _LINK bool operator == (_flag_name##_t const&, type); \
+		friend _LINK bool operator != (_flag_name##_t const&, type); \
+		friend _LINK bool operator >= (_flag_name##_t const&, type); \
+		friend _LINK bool operator <= (_flag_name##_t const&, type); \
+		friend _LINK bool operator > (_flag_name##_t const&, type); \
+		friend _LINK bool operator < (_flag_name##_t const&, type); \
+		friend _LINK bool operator == (type, _flag_name##_t const&); \
+		friend _LINK bool operator != (type, _flag_name##_t const&); \
+		friend _LINK bool operator >= (type, _flag_name##_t const&); \
+		friend _LINK bool operator <= (type, _flag_name##_t const&); \
+		friend _LINK bool operator > (type, _flag_name##_t const&); \
+		friend _LINK bool operator < (type, _flag_name##_t const&); \
 	}; enum class _name : _type
 
 

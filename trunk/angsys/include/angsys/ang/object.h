@@ -25,14 +25,14 @@ namespace ang
 	};
 
 	/******************************************************************/
-	/* class ang::object :                                            */
+	/* class ang::object :                                      */
 	/*  -> implements the base class for all library's objects        */
 	/******************************************************************/
 	class LINK object
 		: public iobject
 	{
 	private:
-		dword& _ref_count;
+		dword& m_ref_count;
 
 	public:
 		object(bool inc_ref = false);
@@ -121,6 +121,38 @@ namespace ang
 		return operator == (obj1, obj2);
 	}
 
+	
+	template<typename...Ts> struct inherit_helper : false_type {};
+	template<typename T, typename U, typename... Ts> struct inherit_helper<T,U,Ts...> : is_object<U> {};
+
+	template<bool, typename...Ts > struct object_inherit;
+
+	template<typename T, typename...Ts >
+	struct object_inherit<false, T, Ts...> 
+		: public object, public Ts... {
+	};
+
+	template<typename T, typename U, typename... Ts>
+	struct object_inherit<true, T, U, Ts...> : public U, public Ts... {
+		using object_base = U;
+		template<typename...Arsg> object_inherit(Arsg&&... args)
+			: U(forward<Arsg>(args)...) { }
+	};
+
+	template<typename...Ts> struct managed;
+	template<typename T, typename...Ts> struct managed<T, Ts...>
+		: object_inherit<inherit_helper<T, Ts...>::value, T, Ts...> {
+	protected:
+		using self = T;
+		using base = managed<T, Ts...>;
+
+		template<typename...Arsg>managed(Arsg&&... args)
+			: object_inherit<inherit_helper<T, Ts...>::value, T, Ts...>(forward<Arsg>(args)...) { }
+	};
+
+
+
+	template<typename...Ts> using smart = managed<Ts...>;
 }
 
 #endif//__SAMRT_PTR_H__
