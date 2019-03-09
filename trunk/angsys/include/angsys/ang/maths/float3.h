@@ -29,7 +29,8 @@ namespace ang
 			inline float3& operator *= (float);
 			inline float3& operator /= (float);
 
-			template<uint> float get()const { throw(exception(except_code::array_overflow)); }
+			template<uint> float& get() { throw(exception(except_code::array_overflow)); }
+			template<uint> float const& get()const { throw(exception(except_code::array_overflow)); }
 			template<uint> void set(float value) { throw(exception(except_code::array_overflow)); }
 
 			inline float operator [](uint)const;
@@ -50,9 +51,12 @@ namespace ang
 			friend inline float3 operator / (const float3&, float);
 		};
 
-		template<> inline float float3::get<0u>()const;
-		template<> inline float float3::get<1u>()const;
-		template<> inline float float3::get<2u>()const;
+		template<> inline float& float3::get<0u>();
+		template<> inline float& float3::get<1u>();
+		template<> inline float& float3::get<2u>();
+		template<> inline float const& float3::get<0u>()const;
+		template<> inline float const& float3::get<1u>()const;
+		template<> inline float const& float3::get<2u>()const;
 
 		template<> inline void float3::set<0u>(float value);
 		template<> inline void float3::set<1u>(float value);
@@ -99,7 +103,8 @@ namespace ang
 			inline double3& operator *= (double);
 			inline double3& operator /= (double);
 
-			template<uint> double get()const { throw(exception(except_code::array_overflow)); }
+			template<uint> double& get() { throw(exception(except_code::array_overflow)); }
+			template<uint> double const& get()const { throw(exception(except_code::array_overflow)); }
 			template<uint> void set(double value) { throw(exception(except_code::array_overflow)); }
 
 			inline double operator [](uint)const;
@@ -120,9 +125,13 @@ namespace ang
 			friend inline double3 operator / (const double3&, double);
 		};
 
-		template<> inline double double3::get<0u>()const;
-		template<> inline double double3::get<1u>()const;
-		template<> inline double double3::get<2u>()const;
+		template<> inline double& double3::get<0u>();
+		template<> inline double& double3::get<1u>();
+		template<> inline double& double3::get<2u>();
+
+		template<> inline double const& double3::get<0u>()const;
+		template<> inline double const& double3::get<1u>()const;
+		template<> inline double const& double3::get<2u>()const;
 
 		template<> inline void double3::set<0u>(double value);
 		template<> inline void double3::set<1u>(double value);

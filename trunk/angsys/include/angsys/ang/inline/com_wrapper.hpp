@@ -8,6 +8,8 @@ namespace ang
 
 	template<typename T> struct is_com_object : integer_constant<bool, is_same_type<T, ::IUnknown>::value || is_inherited_from<T, ::IUnknown>::value> {};
 
+	template<typename T> class com_wrapper;
+	template<typename T> class com_wrapper_ptr;
 
 	/******************************************************************/
 	/* template class ang::com_wrapper :                              */
@@ -199,6 +201,10 @@ namespace ang
 		com_wrapper<T>* m_ptr;
 	};
 
+	template<typename T>
+	inline com_wrapper_ptr<T> com_wrapper<T>::operator & (void) {
+		return this;
+	}
 }
 
 

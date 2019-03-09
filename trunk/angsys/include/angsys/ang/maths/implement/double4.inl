@@ -70,18 +70,15 @@ inline ang::maths::double4& ang::maths::double4::operator /= (double k) {
 	return*this;
 }
 
-template<> inline double ang::maths::double4::get<0>()const {
-	return _vector.x;
-}
-template<> inline double ang::maths::double4::get<1>()const {
-	return _vector.y;
-}
-template<> inline double ang::maths::double4::get<2>()const {
-	return _vector.z;
-}
-template<> inline double ang::maths::double4::get<3>()const {
-	return _vector.w;
-}
+template<> inline double& ang::maths::double4::get<0>() { return _vector.x; }
+template<> inline double& ang::maths::double4::get<1>() { return _vector.y; }
+template<> inline double& ang::maths::double4::get<2>() { return _vector.z; }
+template<> inline double& ang::maths::double4::get<3>() { return _vector.w; }
+template<> inline double const& ang::maths::double4::get<0>()const { return _vector.x; }
+template<> inline double const& ang::maths::double4::get<1>()const { return _vector.y; }
+template<> inline double const& ang::maths::double4::get<2>()const { return _vector.z; }
+template<> inline double const& ang::maths::double4::get<3>()const { return _vector.w; }
+
 template<> inline void ang::maths::double4::set<0>(double value) {
 	_vector.x = value;
 }

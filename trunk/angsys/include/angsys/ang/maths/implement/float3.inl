@@ -84,9 +84,13 @@ inline ang::maths::float3& ang::maths::float3::operator /= (float val) {
 	return*this;
 }
 
-template<> inline float ang::maths::float3::get<0u>()const { return _vector.x; }
-template<> inline float ang::maths::float3::get<1u>()const { return _vector.y; }
-template<> inline float ang::maths::float3::get<2u>()const { return _vector.z; }
+template<> inline float& ang::maths::float3::get<0u>() { return _vector.x; }
+template<> inline float& ang::maths::float3::get<1u>() { return _vector.y; }
+template<> inline float& ang::maths::float3::get<2u>() { return _vector.z; }
+
+template<> inline float const& ang::maths::float3::get<0u>()const { return _vector.x; }
+template<> inline float const& ang::maths::float3::get<1u>()const { return _vector.y; }
+template<> inline float const& ang::maths::float3::get<2u>()const { return _vector.z; }
 
 template<> inline void ang::maths::float3::set<0u>(float value) { _vector.x = value; }
 template<> inline void ang::maths::float3::set<1u>(float value) { _vector.y = value; }

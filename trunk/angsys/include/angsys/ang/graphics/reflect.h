@@ -2,7 +2,7 @@
 #elif !defined __ANG_GRAPHICS_REFLECT_H__
 #define __ANG_GRAPHICS_REFLECT_H__
 
-//ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::graphics::reflect::variable_desc_t, ang::memory::default_allocator)
+//ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::graphics::reflect::varying_desc_t, ang::memory::default_allocator)
 //ANG_VECTOR_VALUE_SPECIALIZATION_DECLARATION(LINK, ang::graphics::reflect::attribute_desc_t, ang::memory::default_allocator)
 
 namespace ang
@@ -11,21 +11,21 @@ namespace ang
 	{
 		namespace reflect
 		{
-			typedef collections::vector<variable_desc> uniform_fields_t;
+			typedef collections::vector<varying_desc> uniform_fields_t;
 
-			struct LINK variable_desc 
+			struct LINK varying_desc 
 			{
 			private:
-				var_type_t _var_type;
-				var_class_t _var_class;
-				string _var_name;
-				uint _array_count;
-				uint _aligment;
-				uint _position;
-				uniform_fields_t _fields;
+				var_type_t m_var_type;
+				var_class_t m_var_class;
+				string m_var_name;
+				uint m_array_count;
+				uint m_aligment;
+				uint m_position;
+				uniform_fields_t m_fields;
 
 			public:
-				variable_desc(
+				varying_desc(
 					var_type_t _type = var_type::none,
 					var_class_t _class = var_class::none,
 					string name = null,
@@ -33,14 +33,14 @@ namespace ang
 					uint aligment = 4U
 				);
 
-				variable_desc(string name, uniform_fields_t vars, uint _array = 1U, uint aligment = 4U);
+				varying_desc(string name, uniform_fields_t vars, uint _array = 1U, uint aligment = 4U);
 
-				variable_desc(variable_desc&& value);
-				variable_desc(const variable_desc& value);
-				~variable_desc();
+				varying_desc(varying_desc&& value);
+				varying_desc(const varying_desc& value);
+				~varying_desc();
 
-		//		bool load(xml::ixml_node_t, uint aligment = -1);
-		//		bool save(xml::xml_document_t)const;
+				bool load(dom::xml::xml_node_t, uint aligment = -1);
+				bool save(dom::xml::xml_document_t)const;
 
 				var_type_t var_type()const;
 				var_class_t var_class()const;
@@ -64,26 +64,26 @@ namespace ang
 
 				wsize calculate_positions(bool recursive = false);
 
-				variable_desc& operator = (variable_desc&& value);
-				variable_desc& operator = (const variable_desc& value);
-				bool operator == (const variable_desc& other)const;
-				bool operator != (const variable_desc& other)const;
+				varying_desc& operator = (varying_desc&& value);
+				varying_desc& operator = (const varying_desc& value);
+				bool operator == (const varying_desc& other)const;
+				bool operator != (const varying_desc& other)const;
 			};
 
 			struct LINK attribute_desc
 			{
 			private:
-				var_type_t _var_type;
-				var_class_t _var_class;
-				string _var_name;
-				var_semantic_t _semantic;
-				index _semantic_index;
-				uint _position;
+				var_type_t m_var_type;
+				var_class_t m_var_class;
+				string m_var_name;
+				var_semantic_t m_semantic;
+				index m_semantic_index;
+				uint m_position;
 
 			public:
 				static wsize calculate_positions(array_view<attribute_desc>&);
 				static wsize get_size_in_bytes(array_view<attribute_desc>, wsize aligment = 16, uint from = 0, uint to = -1);
-		//		static bool load(xml::ixml_node_t, collections::vector<attribute_desc>&);
+				static bool load(dom::xml::xml_node_t, collections::vector<attribute_desc>&);
 
 				attribute_desc(
 					var_type_t _type = var_type::none,
@@ -97,8 +97,8 @@ namespace ang
 				attribute_desc(const attribute_desc&);
 				attribute_desc(attribute_desc&&) = default;
 
-		//		bool load(xml::ixml_node_t);
-		//		bool save(xml::xml_document_t)const;
+				bool load(dom::xml::xml_node_t);
+				bool save(dom::xml::xml_document_t)const;
 
 				var_type_t var_type()const;
 				var_class_t var_class()const;
@@ -123,62 +123,59 @@ namespace ang
 				bool operator != (const attribute_desc& other)const;
 			};
 
-			class LINK variable
+			typedef class LINK varying
 			{
 			private:
 				array_view<byte> _raw_data;
-				variable_desc _descriptor;
+				varying_desc _descriptor;
 
-				template<typename T> struct variable_cast {
-					static T cast(variable*) {
-						static_assert(is_type_of(), "error: ang::graphics::reflect::variable: unsupported type cast");
+				template<typename T> struct varying_cast {
+					static T cast(varying*) {
+						static_assert(is_type_of(), "error: ang::graphics::reflect::varying: unsupported type cast");
 					}
-					static constexpr bool is_type_of(variable*) {
+					static constexpr bool is_type_of(varying*) {
 						return false;
 					}
 				};
 
 			public:
-				explicit variable(); //empty
-				variable(variable &&);
-				variable(variable const&);
-				variable(array_view<byte> bytes, variable_desc desc, wsize aligment = (wsize)invalid_index);
+				explicit varying(); //empty
+				varying(varying &&);
+				varying(varying const&);
+				varying(array_view<byte> bytes, varying_desc desc, wsize aligment = (wsize)invalid_index);
 
 				uint aligment()const;
 				array_view<byte> raw_data()const;
-				variable_desc const& descriptor()const;
-				variable field(index idx);
-				variable field(cstr_t idx);
-				variable field(cwstr_t idx);
-				index find_field(cstr_t)const;
-				index find_field(cwstr_t)const;
+				varying_desc const& descriptor()const;
+				varying field(index idx);
+				varying field(text::raw_cstr_t idx);
+				index find_field(text::raw_cstr_t)const;
 
-				variable& operator = (variable &&);
-				variable& operator = (variable const&);
-				collections::vector<variable> fragment();
+				varying& operator = (varying &&);
+				varying& operator = (varying const&);
+				collections::vector<varying> fragment();
 
-				variable operator [](index);
-				variable operator [](cstr_t);
-				variable operator [](cwstr_t);
+				varying operator [](index);
+				varying operator [](text::raw_cstr_t);
 
-				template<typename T> inline auto cast() -> decltype(variable_cast<T>::cast(this)) {
-					return variable_cast<T>::cast(this);
+				template<typename T> inline auto cast() -> decltype(varying_cast<T>::cast(this)) {
+					return varying_cast<T>::cast(this);
 				}
-				template<typename T> inline auto force_cast() -> decltype(variable_cast<T>::cast(this)) {
-					return variable_cast<T>::force_cast(this);
+				template<typename T> inline auto force_cast() -> decltype(varying_cast<T>::cast(this)) {
+					return varying_cast<T>::force_cast(this);
 				}
-				template<typename T> inline auto array_cast() -> decltype(variable_cast<ang::array_view<T>>::cast(this)) {
-					return variable_cast<ang::array_view<T>>::force_cast(this);
+				template<typename T> inline auto array_cast() -> decltype(varying_cast<ang::array_view<T>>::cast(this)) {
+					return varying_cast<ang::array_view<T>>::force_cast(this);
 				}
 				template<typename T> inline bool is_type_of()const {
-					return variable_cast<T>::is_type_of(this);
+					return varying_cast<T>::is_type_of(this);
 				}
 
-				bool operator == (const variable& other)const;
-				bool operator != (const variable& other)const;
-			};
+				bool operator == (const varying& other)const;
+				bool operator != (const varying& other)const;
+			}varying_t;
 
-			template<typename T> variable_desc type_desc(cstr_t);
+			template<typename T> varying_desc type_desc(text::raw_cstr_t);
 
 			inline wsize get_memory_size_aligned(wsize size, wsize aligment)
 			{
@@ -197,36 +194,36 @@ namespace ang
 	}
 }
 
-template<typename T> struct ang::graphics::reflect::variable::variable_cast<ang::array_view<T>>
+template<typename T> struct ang::graphics::reflect::varying::varying_cast<ang::array_view<T>>
 {
-	static ang::array_view<T> force_cast(ang::graphics::reflect::variable* var) {
+	static ang::array_view<T> force_cast(ang::graphics::reflect::varying* var) {
 		wsize size = var->_raw_data.size() / get_memory_size_aligned_less(sizeof(T), var->descriptor().aligment());
 		return ang::array_view<T>((T*)var->_raw_data.get(),  min(size, var->descriptor().array_count()));
 	}
-	static ang::array_view<T> cast(ang::graphics::reflect::variable* var) {
+	static ang::array_view<T> cast(ang::graphics::reflect::varying* var) {
 		return ang::array_view<T>((T*)var->_raw_data.get(), var->descriptor()->array_count);
 	}
-	static bool is_type_of(variable* var) { return variable_cast<T>::is_type_of(var); }
+	static bool is_type_of(varying* var) { return varying_cast<T>::is_type_of(var); }
 };
 
 
-template<> struct LINK ang::graphics::reflect::variable::variable_cast<ang::array_view<ang::graphics::reflect::variable>>
+template<> struct LINK ang::graphics::reflect::varying::varying_cast<ang::array_view<ang::graphics::reflect::varying>>
 {
-	static ang::collections::vector<ang::graphics::reflect::variable> force_cast(ang::graphics::reflect::variable* var);
-	static ang::collections::vector<ang::graphics::reflect::variable> cast(ang::graphics::reflect::variable* var);
-	static bool is_type_of(variable* var);
+	static ang::collections::vector<ang::graphics::reflect::varying> force_cast(ang::graphics::reflect::varying* var);
+	static ang::collections::vector<ang::graphics::reflect::varying> cast(ang::graphics::reflect::varying* var);
+	static bool is_type_of(varying* var);
 };
 
 #define ANG_GRAPHICS_REFLECT_DECLARE_TEMPLATE_VARIABLE_CAST(_LINK, _TYPE, _RETURNTYPE) \
-template<> struct _LINK ang::graphics::reflect::variable::variable_cast<_TYPE> { \
-	static _RETURNTYPE cast(ang::graphics::reflect::variable*); \
-	static _RETURNTYPE force_cast(ang::graphics::reflect::variable*); \
-	static bool is_type_of(ang::graphics::reflect::variable*); \
+template<> struct _LINK ang::graphics::reflect::varying::varying_cast<_TYPE> { \
+	static _RETURNTYPE cast(ang::graphics::reflect::varying*); \
+	static _RETURNTYPE force_cast(ang::graphics::reflect::varying*); \
+	static bool is_type_of(ang::graphics::reflect::varying*); \
 }; \
-template<> _LINK ang::graphics::reflect::variable_desc ang::graphics::reflect::type_desc<_TYPE>(cstr_t);
+template<> _LINK ang::graphics::reflect::varying_desc ang::graphics::reflect::type_desc<_TYPE>(text::raw_cstr_t);
 
 
-ANG_GRAPHICS_REFLECT_DECLARE_TEMPLATE_VARIABLE_CAST(LINK, ang::graphics::reflect::variable, ang::graphics::reflect::variable);
+ANG_GRAPHICS_REFLECT_DECLARE_TEMPLATE_VARIABLE_CAST(LINK, ang::graphics::reflect::varying, ang::graphics::reflect::varying);
 
 ANG_GRAPHICS_REFLECT_DECLARE_TEMPLATE_VARIABLE_CAST(LINK, float, float&);
 ANG_GRAPHICS_REFLECT_DECLARE_TEMPLATE_VARIABLE_CAST(LINK, ang::maths::float2, ang::maths::float2&);
@@ -253,13 +250,5 @@ ANG_GRAPHICS_REFLECT_DECLARE_TEMPLATE_VARIABLE_CAST(LINK, ang::maths::uint2, ang
 ANG_GRAPHICS_REFLECT_DECLARE_TEMPLATE_VARIABLE_CAST(LINK, ang::maths::uint3, ang::maths::uint3&);
 ANG_GRAPHICS_REFLECT_DECLARE_TEMPLATE_VARIABLE_CAST(LINK, ang::maths::uint4, ang::maths::uint4&);
 
-
-ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_INLINE(ang::graphics::reflect::variable)
-ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_INLINE(ang::graphics::reflect::variable_desc)
-ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_INLINE(ang::graphics::reflect::attribute_desc)
-
-//template<> inline ang::graphics::reflect::var_type_t ang::xml::xml_text::xml_as<ang::graphics::reflect::var_type_t>()const { return ang::graphics::reflect::var_type_t::parse(xml_as<cwstr_t>()); }
-//template<> inline ang::graphics::reflect::var_class_t ang::xml::xml_text::xml_as<ang::graphics::reflect::var_class_t>()const { return ang::graphics::reflect::var_class_t::parse(xml_as<cwstr_t>()); }
-//template<> inline ang::graphics::reflect::var_semantic_t ang::xml::xml_text::xml_as<ang::graphics::reflect::var_semantic_t>()const { return ang::graphics::reflect::var_semantic_t::parse(xml_as<cwstr_t>()); }
 
 #endif//__ANG_GRAPHICS_REFLECT_H__

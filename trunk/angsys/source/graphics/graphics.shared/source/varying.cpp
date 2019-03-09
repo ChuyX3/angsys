@@ -1,7 +1,7 @@
 #include "pch.h"
-#include <ang/graphics/angraph.hpp>
-#include "ang_inlines.h"
-#include "vector_specialization.inl"
+#include <ang/graphics/graphics.h>
+//#include "ang_inlines.h"
+//#include "vector_specialization.inl"
 
 #if defined _DEBUG
 #define new ANG_DEBUG_NEW()
@@ -11,25 +11,25 @@ using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::reflect;
 
-variable::variable()
+varying::varying()
 	: _raw_data()
 	, _descriptor()
 {
 }
 
-variable::variable(variable && other)
+varying::varying(varying && other)
 	: _raw_data(ang::move(other._raw_data))
 	, _descriptor(ang::move(other._descriptor))
 {
 }
 
-variable::variable(variable const& other)
+varying::varying(varying const& other)
 	: _raw_data(other._raw_data)
 	, _descriptor(other._descriptor)
 {
 }
 
-variable::variable(array_view<byte> bytes, variable_desc desc, wsize aligment)
+varying::varying(array_view<byte> bytes, varying_desc desc, wsize aligment)
 	: _raw_data(ang::move(bytes))
 	, _descriptor(ang::move(desc))
 {
@@ -41,60 +41,49 @@ variable::variable(array_view<byte> bytes, variable_desc desc, wsize aligment)
 
 }
 
-//variable& variable::operator = (variable && other)
+//varying& varying::operator = (varying && other)
 //{
 //
 //}
 //
-//variable& variable::operator = (variable const& other)
+//varying& varying::operator = (varying const& other)
 //{
 //
 //}
 
-uint variable::aligment()const { return _descriptor.aligment(); }
+uint varying::aligment()const { return _descriptor.aligment(); }
 
-array_view<byte> variable::raw_data()const { return _raw_data; }
+array_view<byte> varying::raw_data()const { return _raw_data; }
 
-variable_desc const& variable::descriptor()const { return _descriptor; }
+varying_desc const& varying::descriptor()const { return _descriptor; }
 
-variable variable::field(index idx) 
+varying varying::field(index idx) 
 {
 	if (_descriptor.var_type() != var_type::block)
-		variable();
+		varying();
 	uniform_fields_t const& fields = _descriptor.fields();
 	if(fields.is_empty() || fields->size() <= idx)
-		variable();
+		varying();
 
-	variable var;
+	varying var;
 	var._descriptor = fields[idx];
 	var._raw_data.set(&_raw_data[var._descriptor.position()], var._descriptor.get_size_in_bytes());
 	return ang::move(var);
 }
 
-variable variable::field(cstr_t name)
+varying varying::field(text::raw_cstr_t name)
 {
 	auto idx = find_field(name);
 	if (invalid_index == idx)
-		variable();
+		varying();
 
-	variable var;
+	varying var;
 	var._descriptor = _descriptor.fields()[idx];
 	var._raw_data.set(&_raw_data[var._descriptor.position()], var._descriptor.get_size_in_bytes());
 	return ang::move(var);
 }
 
-variable variable::field(cwstr_t name)
-{
-	auto idx = find_field(name);
-	if (invalid_index == idx)
-		variable();
-	variable var;
-	var._descriptor = _descriptor.fields()[idx];
-	var._raw_data.set(&_raw_data[var._descriptor.position()], var._descriptor.get_size_in_bytes());
-	return ang::move(var);
-}
-
-index variable::find_field(cstr_t name)const
+index varying::find_field(text::raw_cstr_t name)const
 {
 	if (_descriptor.var_type() != var_type::block)
 		return (index)invalid_index;
@@ -111,125 +100,105 @@ index variable::find_field(cstr_t name)const
 	return (index)invalid_index;
 }
 
-index variable::find_field(cwstr_t name)const
-{
-	if (_descriptor.var_type() != var_type::block)
-		return -1;
-	uniform_fields_t const& fields = _descriptor.fields();
-	if (fields.is_empty())
-		return -1;
-	index i = 0;
-	for (auto it = fields->begin(); it.is_valid(); ++it, ++i)
-		if (it->var_name() == name)
-			return i;
-	return -1;
-}
-
-variable variable::operator [](index idx)
+varying varying::operator [](index idx)
 {
 	auto count = _descriptor.array_count();
 	if (count > 1 && idx < count)
 	{
 		auto size = _descriptor.get_size_in_bytes() / count;
-		variable_desc desc = _descriptor;
+		varying_desc desc = _descriptor;
 		desc.array_count(1);
-		return variable(collections::to_array(&_raw_data.get()[idx * size], size), desc);
+		return varying(collections::to_array(&_raw_data.get()[idx * size], size), desc);
 	}
 	else
 		return field(idx);
 }
 
-variable variable::operator [](cstr_t name)
+varying varying::operator [](text::raw_cstr_t name)
 {
 	return field(name);
 }
 
-variable variable::operator [](cwstr_t name)
-{
-	return field(name);
-}
-
-
-collections::vector<variable> variable::fragment()
+collections::vector<varying> varying::fragment()
 {
 	if (_descriptor.array_count() > 1)
-		return ang::move(array_cast<variable>());
+		return ang::move(array_cast<varying>());
 	if (_descriptor.var_type() != var_type::block)
-		return collections::vector<variable>{*this};
-	collections::vector<variable> vars;
+		return collections::vector<varying>{*this};
+	collections::vector<varying> vars;
 	for (auto it = _descriptor.fields()->begin(); it.is_valid(); ++it)
 		vars += {collections::to_array(&_raw_data.get()[it->position()], it->get_size_in_bytes()), *it};
 	return ang::move(vars);
 }
 
-collections::vector<variable> variable::variable_cast<array_view<variable>>::force_cast(variable* var)
+collections::vector<varying> varying::varying_cast<array_view<varying>>::force_cast(varying* var)
 {
 	auto count = var->descriptor().array_count();
 	auto size = var->descriptor().get_size_in_bytes() / count;
-	variable_desc desc = var->descriptor();
+	varying_desc desc = var->descriptor();
 	desc.array_count(1);
 
-	collections::vector<variable> vars;
+	collections::vector<varying> vars;
 	for (index i = 0U; i < count; ++i)
-		vars += variable( collections::to_array(&var->_raw_data.get()[i * size], size), desc);
+		vars += varying( collections::to_array(&var->_raw_data.get()[i * size], size), desc);
 	return ang::move(vars);
 }
 
-collections::vector<variable> variable::variable_cast<array_view<variable>>::cast(variable* var)
+collections::vector<varying> varying::varying_cast<array_view<varying>>::cast(varying* var)
 {
 	auto count = var->descriptor().array_count();
 	auto size = var->descriptor().get_size_in_bytes() / count;
-	variable_desc desc = var->descriptor();
+	varying_desc desc = var->descriptor();
 	desc.array_count(1);
 
-	collections::vector<variable> out;
+	collections::vector<varying> out;
 	for (index i = 0U; i < count; ++i)
-		out += variable(collections::to_array(&var->_raw_data.get()[i * size], size), desc);
+		out += varying(collections::to_array(&var->_raw_data.get()[i * size], size), desc);
 	return out;
 }
 
-variable& variable::operator = (variable && other) {
+varying& varying::operator = (varying && other) {
 	_raw_data = ang::move(other._raw_data);
 	_descriptor = ang::move(other._descriptor);
 	return*this;
 }
 
-variable& variable::operator = (variable const& other) {
+varying& varying::operator = (varying const& other) {
 	_raw_data = other._raw_data;
 	_descriptor =other._descriptor;
 	return*this;
 }
 
-bool variable::operator == (const variable& other)const
+bool varying::operator == (const varying& other)const
 {
 	return _descriptor == other._descriptor;
 }
 
-bool variable::operator != (const variable& other)const
+bool varying::operator != (const varying& other)const
 {
 	return _descriptor != other._descriptor;
 }
 
-variable ang::graphics::reflect::variable::variable_cast<variable>::cast(ang::graphics::reflect::variable* var) { return *var; }
-variable ang::graphics::reflect::variable::variable_cast<variable>::force_cast(ang::graphics::reflect::variable* var) {	return *var;  } 
-bool ang::graphics::reflect::variable::variable_cast<variable>::is_type_of(ang::graphics::reflect::variable* var) { return true; }
+varying ang::graphics::reflect::varying::varying_cast<varying>::cast(ang::graphics::reflect::varying* var) { return *var; }
+varying ang::graphics::reflect::varying::varying_cast<varying>::force_cast(ang::graphics::reflect::varying* var) {	return *var;  } 
+bool ang::graphics::reflect::varying::varying_cast<varying>::is_type_of(ang::graphics::reflect::varying* var) { return true; }
 
 #define ANG_GRAPHICS_REFLECT_IMPLEMENT_TEMPLATE_VARIABLE_CAST(_TYPE, _RETURNTYPE, _VAR_CLASS, _VAR_TYPE, _ALIGNMENT) \
-_RETURNTYPE ang::graphics::reflect::variable::variable_cast<_TYPE>::cast(ang::graphics::reflect::variable* var) { \
+_RETURNTYPE ang::graphics::reflect::varying::varying_cast<_TYPE>::cast(ang::graphics::reflect::varying* var) { \
 	if (!is_type_of(var)) \
 		throw(ang::exception_t(ang::except_code::invalid_access)); \
 	return *(_TYPE*)var->_raw_data.get(); \
  } \
-_RETURNTYPE ang::graphics::reflect::variable::variable_cast<_TYPE>::force_cast(ang::graphics::reflect::variable* var) { \
+_RETURNTYPE ang::graphics::reflect::varying::varying_cast<_TYPE>::force_cast(ang::graphics::reflect::varying* var) { \
 	return *(_TYPE*)var->_raw_data.get(); \
  } \
-bool ang::graphics::reflect::variable::variable_cast<_TYPE>::is_type_of(ang::graphics::reflect::variable* var) { \
+bool ang::graphics::reflect::varying::varying_cast<_TYPE>::is_type_of(ang::graphics::reflect::varying* var) { \
 	return var->_raw_data.get() != nullptr \
 		&& var->_descriptor.aligment() >= _ALIGNMENT  \
 		&& (var->_descriptor.var_class().get() == _VAR_CLASS && var->_descriptor.var_type().get() == _VAR_TYPE); \
  } \
-template<> variable_desc reflect::type_desc<_TYPE>(cstr_t name) { \
-	return variable_desc(_VAR_TYPE, _VAR_CLASS, name, 1U, _ALIGNMENT); \
+template<> varying_desc reflect::type_desc<_TYPE>(text::raw_cstr_t name) { \
+	return varying_desc(_VAR_TYPE, _VAR_CLASS, name, 1U, _ALIGNMENT); \
 }
 
 

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <ang/graphics/angraph.hpp>
-
-#if DIRECTX_SUPPORT
+#if DIRECTX11_SUPPORT
 
 namespace ang
 {
@@ -16,16 +14,14 @@ namespace ang
 			typedef object_wrapper<d3d11_index_buffer> d3d11_index_buffer_t;
 			typedef object_wrapper<d3d11_vertex_buffer> d3d11_vertex_buffer_t;
 
-
 			class d3d11_index_buffer
-				: public object
-				, public buffers::iindex_buffer
+				: public smart<d3d11_index_buffer, buffers::iindex_buffer>
 			{
 			private:
-				wsize _index_count;
-				buffers::buffer_usage_t _usage;
-				reflect::var_type_t _index_type;
-				com_wrapper<ID3D11Buffer> d3d_index_buffer;
+				wsize m_index_count;
+				buffers::buffer_usage_t m_usage;
+				reflect::var_type_t m_index_type;
+				com_wrapper<ID3D11Buffer> m_index_buffer;
 
 			public:
 				d3d11_index_buffer();
@@ -51,23 +47,21 @@ namespace ang
 					array_view<byte> init_data);
 				bool close();
 				void use_buffer(d3d11_driver_t);
-				inline ID3D11Buffer* D3D11Buffer()const { return d3d_index_buffer.get(); }
+				inline ID3D11Buffer* D3D11Buffer()const { return m_index_buffer.get(); }
 
 			private:
 				virtual~d3d11_index_buffer();
 			};
 
-
 			class d3d11_vertex_buffer
-				: public object
-				, public buffers::ivertex_buffer
+				: public smart<d3d11_vertex_buffer, buffers::ivertex_buffer>
 			{
 			private:
-				uint _vertex_count;
-				uint _stride;
-				buffers::buffer_usage_t _usage;
-				collections::vector <reflect::attribute_desc> _vertex_desc;
-				com_wrapper<ID3D11Buffer> d3d_vertex_buffer;
+				uint m_vertex_count;
+				uint m_stride;
+				buffers::buffer_usage_t m_usage;
+				collections::vector<reflect::attribute_desc> m_vertex_desc;
+				com_wrapper<ID3D11Buffer> m_vertex_buffer;
 
 			public:
 				d3d11_vertex_buffer();
@@ -93,7 +87,7 @@ namespace ang
 					array_view<byte> init_data);
 				bool close();
 				void use_buffer(d3d11_driver_t);
-				inline ID3D11Buffer* D3D11Buffer()const { return d3d_vertex_buffer.get(); }
+				inline ID3D11Buffer* D3D11Buffer()const { return m_vertex_buffer.get(); }
 
 			private:
 				virtual~d3d11_vertex_buffer();

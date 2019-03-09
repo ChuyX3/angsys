@@ -2,6 +2,7 @@
 #define __ANG_GRAPHICS_H__
 
 #include <angsys.h>
+#include <ang/dom/xml.h>
 #include <ang/maths/maths.h>
 #include <ang/maths/vectors.h>
 #include <ang/platform/platform.h>
@@ -39,7 +40,7 @@ namespace ang
 
 		namespace reflect
 		{
-			typedef struct variable_desc variable_desc_t;
+			typedef struct varying_desc varying_desc_t;
 			typedef struct attribute_desc attribute_desc_t;
 
 			safe_enum(LINK, var_type, uint)
@@ -135,7 +136,6 @@ namespace ang
 {
 	namespace graphics
 	{
-
 		safe_enum(LINK, cull_mode, uint)
 		{
 			none = 0,
@@ -171,7 +171,7 @@ namespace ang
 		ang_end_interface();
 
 		ang_begin_interface(LINK isurface)
-			visible vcall void swap_buffers() pure;
+			visible vcall void swap_buffers(bool syncronize) pure;
 			visible vcall iframe_buffer_t frame_buffer()const pure;
 		ang_end_interface();
 

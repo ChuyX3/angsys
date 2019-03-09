@@ -1,7 +1,7 @@
 #pragma once
 
-#include "d3d11/driver.hpp"
-#include <ang/graphics/drawing.hpp>
+#include "d3d11/driver.h"
+#include <ang/graphics/drawing.h>
 
 #if DIRECTX_SUPPORT
 

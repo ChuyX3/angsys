@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "d3d11/driver.hpp"
+#include "d3d11/driver.h"
 
 #if defined _DEBUG
 #define new new(__FILE__, __LINE__)
@@ -11,12 +11,12 @@ using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
 
-#define MY_TYPE ang::graphics::d3d11::d3d11_surface
-#include <ang/inline/object_wrapper_specialization.inl>
-#undef MY_TYPE
+//#define MY_TYPE ang::graphics::d3d11::d3d11_surface
+//#include <ang/inline/object_wrapper_specialization.inl>
+//#undef MY_TYPE
 
 d3d11_surface::d3d11_surface(d3d11_driver* driver)
-	: _parent_driver(driver)
+	: m_parent_driver(driver)
 {
 	
 }
@@ -26,52 +26,19 @@ d3d11_surface::~d3d11_surface()
 	close();
 }
 
-ANG_IMPLEMENT_CLASSNAME(ang::graphics::d3d11::d3d11_surface);
-ANG_IMPLEMENT_OBJECTNAME(ang::graphics::d3d11::d3d11_surface);
-
-bool d3d11_surface::is_inherited_of(type_name_t name)
-{
-	return name == type_of<d3d11_surface>()
-		|| object::is_inherited_of(name)
-		|| isurface::is_inherited_of(name);
-}
-
-bool d3d11_surface::is_kind_of(type_name_t name)const
-{
-	return name == type_of<d3d11_surface>()
-		|| object::is_kind_of(name)
-		|| isurface::is_kind_of(name);
-}
-
-bool d3d11_surface::query_object(type_name_t name, unknown_ptr_t out)
-{
-	if (out == null)
-		return false;
-	if (name == type_of<d3d11_surface>())
-	{
-		*out = static_cast<d3d11_surface*>(this);
-		return true;
-	}
-	else if (object::query_object(name, out))
-	{
-		return true;
-	}
-	else if (isurface::query_object(name, out))
-	{
-		return true;
-	}
-	return false;
-}
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_surface);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_surface, object, isurface);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_surface, object, isurface);
 
 bool d3d11_surface::create(platform::icore_view_t view)
 {
 	HRESULT hr = S_OK;
-	d3d11_driver_t driver = _parent_driver.lock();
+	d3d11_driver_t driver = m_parent_driver.lock();
 	if (driver.is_empty())
 		return false;
 
-	graphics::size<float> size = view->get_core_view_size();
-	_current_size = size;
+	graphics::size<float> size = view->core_view_size();
+	m_current_size = size;
 
 	DXGI_SWAP_CHAIN_DESC1 sd;
 	ZeroMemory(&sd, sizeof(sd));
@@ -92,22 +59,22 @@ bool d3d11_surface::create(platform::icore_view_t view)
 	hr = driver->DXGIFactory()->CreateSwapChainForHwnd
 	(
 		driver->D3D11Device(),
-		(HWND)view->get_core_view_handle(),
+		(HWND)view->core_view_handle(),
 		&sd,
 		&fsd,
 		nullptr,
-		&dxgi_swap_chain
+		&m_dxgi_swap_chain
 	);
 
-	platform::icore_context_t context = view->get_core_context();
-	context->bind_graphic_native_surface(dxgi_swap_chain.get());
+	platform::icore_context_t context = view->core_context();
+	context->bind_graphic_native_surface(m_dxgi_swap_chain.get());
 
 //	driver->DXGIFactory()->MakeWindowAssociation((HWND)view->get_core_view_handle(), DXGI_MWA_NO_ALT_ENTER);
 
-	d3d_frame_buffer = new d3d11_frame_buffer(driver.get());
-	d3d_frame_buffer->create(this);
+	m_d3d_frame_buffer = new d3d11_frame_buffer(driver.get());
+	m_d3d_frame_buffer->create(this);
 
-	view->get_listener()->listen_to(new ang::platform::events::display_size_change_event(this, &d3d11_surface::on_display_size_changed_event));
+	view->listener()->listen_to(new ang::platform::events::display_size_change_event(this, &d3d11_surface::on_display_size_changed_event));
 
 	return true;
 }
@@ -117,7 +84,7 @@ bool d3d11_surface::update(platform::icore_view_t view, graphics::size<float> si
 	HRESULT hr = S_OK;
 	bool bind = false;
 
-	d3d11_driver_t driver = _parent_driver.lock();
+	d3d11_driver_t driver = m_parent_driver.lock();
 	if (driver.is_empty())
 		return false;
 
@@ -126,18 +93,18 @@ bool d3d11_surface::update(platform::icore_view_t view, graphics::size<float> si
 		size.height = max(size.height, 10.0f);
 		size.width = max(size.width, 10.0f);
 
-		if (dxgi_swap_chain.get())
+		if (m_dxgi_swap_chain.get())
 		{
-			if (driver->current_frame_buffer().get() == d3d_frame_buffer.get())
+			if (driver->current_frame_buffer().get() == m_d3d_frame_buffer.get())
 			{
 				driver->bind_frame_buffer(nullptr);
 				bind = true;
 			}
 		}
 
-		d3d_frame_buffer->close();
+		m_d3d_frame_buffer->close();
 
-		if (FAILED(dxgi_swap_chain->ResizeBuffers(
+		if (FAILED(m_dxgi_swap_chain->ResizeBuffers(
 			2, // Double-buffered swap chain.
 			(uint)maths::round(size.width),
 			(uint)maths::round(size.height),
@@ -146,9 +113,9 @@ bool d3d11_surface::update(platform::icore_view_t view, graphics::size<float> si
 		)))
 			return false;
 
-		_current_size = size;
-		d3d_frame_buffer->create(this);
-		if (bind) driver->bind_frame_buffer(d3d_frame_buffer.get());
+		m_current_size = size;
+		m_d3d_frame_buffer->create(this);
+		if (bind) driver->bind_frame_buffer(m_d3d_frame_buffer.get());
 
 		return true;
 	});
@@ -156,8 +123,8 @@ bool d3d11_surface::update(platform::icore_view_t view, graphics::size<float> si
 
 bool d3d11_surface::close()
 {
-	dxgi_swap_chain = null;
-	d3d_frame_buffer = null;
+	m_dxgi_swap_chain = null;
+	m_d3d_frame_buffer = null;
 	return true;
 }
 
@@ -165,19 +132,18 @@ void d3d11_surface::on_display_size_changed_event(objptr sender, ang::platform::
 {
 	auto info = args->display_info();
 	update(args->core_view(), info.display_resolution, info.display_scale_factor);
-
 }
 
 
 
-void d3d11_surface::swap_buffers()
+void d3d11_surface::swap_buffers(bool syncronize)
 {
-	dxgi_swap_chain->Present(1, 0);
+	m_dxgi_swap_chain->Present(syncronize ? 1 : 0, 0);
 }
 
 iframe_buffer_t d3d11_surface::frame_buffer()const
 {
-	return d3d_frame_buffer.get();
+	return m_d3d_frame_buffer.get();
 }
 
 #endif

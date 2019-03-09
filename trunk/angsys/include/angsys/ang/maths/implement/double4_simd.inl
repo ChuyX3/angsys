@@ -51,18 +51,14 @@ inline ang::maths::double4& ang::maths::double4::operator /= (double k) {
 	return*this;
 }
 
-template<> inline double ang::maths::double4::get<0>()const {
-	return _vector.xy.m128d_f64[0];
-}
-template<> inline double ang::maths::double4::get<1>()const {
-	return _vector.xy.m128d_f64[1];
-}
-template<> inline double ang::maths::double4::get<2>()const {
-	return _vector.zw.m128d_f64[0];
-}
-template<> inline double ang::maths::double4::get<3>()const {
-	return _vector.zw.m128d_f64[1];
-}
+template<> inline double& ang::maths::double4::get<0>() { return _vector.xy.m128d_f64[0]; }
+template<> inline double& ang::maths::double4::get<1>() { return _vector.xy.m128d_f64[1]; }
+template<> inline double& ang::maths::double4::get<2>() { return _vector.zw.m128d_f64[0]; }
+template<> inline double& ang::maths::double4::get<3>() { return _vector.zw.m128d_f64[1]; }
+template<> inline double const& ang::maths::double4::get<0>()const { return _vector.xy.m128d_f64[0]; }
+template<> inline double const& ang::maths::double4::get<1>()const { return _vector.xy.m128d_f64[1]; }
+template<> inline double const& ang::maths::double4::get<2>()const { return _vector.zw.m128d_f64[0]; }
+template<> inline double const& ang::maths::double4::get<3>()const { return _vector.zw.m128d_f64[1]; }
 template<> inline void ang::maths::double4::set<0>(double value) {
 	_vector.xy = _mm_setr_pd(value, get<1>());
 }

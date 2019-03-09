@@ -25,7 +25,7 @@ safe_enum_rrti2(ang::graphics::textures, tex_wrap_mode);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static ang_pair<graphics::textures::tex_type, cstr_t> to_string_tex_type_map[] =
+static collections::pair<graphics::textures::tex_type, cstr_t> s_to_string_tex_type_map[] =
 {
 	{ tex_type::null, "null"_s },
 	{ tex_type::tex1D, "tex1D,"_s },
@@ -34,7 +34,7 @@ static ang_pair<graphics::textures::tex_type, cstr_t> to_string_tex_type_map[] =
 	{ tex_type::texCube, "texCube,"_s },
 };
 
-static ang_pair<cstr_t, graphics::textures::tex_type> _parse_tex_type_map[] =
+static collections::pair<cstr_t, graphics::textures::tex_type> s_parse_tex_type_map[] =
 {
 	{ "null"_s, tex_type::null },
 	{ "tex1D"_s, tex_type::tex1D },
@@ -44,36 +44,27 @@ static ang_pair<cstr_t, graphics::textures::tex_type> _parse_tex_type_map[] =
 };
 
 
-tex_type_t graphics::textures::tex_type_t::parse(cstr_t cstr)
+tex_type_t graphics::textures::tex_type_t::parse(text::raw_cstr_t cstr)
 {
-	wsize idx = ang_binary_search<cstr_t>(cstr, _parse_tex_type_map);
-	if (idx > array_size(_parse_tex_type_map))
+	wsize idx = algorithms::binary_search(cstr, to_array(s_parse_tex_type_map));
+	if (idx > algorithms::array_size(s_parse_tex_type_map))
 		return tex_type::null;
 	else
-		return _parse_tex_type_map[idx].value;
+		return s_parse_tex_type_map[idx].value;
 }
 
-tex_type_t graphics::textures::tex_type_t::parse(cwstr_t cstr)
+cstr_t graphics::textures::tex_type_t::to_string()const
 {
-	wsize idx = ang_binary_search<cwstr_t>(cstr, _parse_tex_type_map);
-	if (idx > array_size(_parse_tex_type_map))
-		return tex_type::null;
-	else
-		return _parse_tex_type_map[idx].value;
-}
-
-wstring graphics::textures::tex_type_t::to_string()const
-{
-	wsize idx = ang_binary_search(_value, to_string_tex_type_map);
-	if (idx > array_size(to_string_tex_type_map))
+	wsize idx = algorithms::binary_search(get(), to_array(s_to_string_tex_type_map));
+	if (idx > algorithms::array_size(s_to_string_tex_type_map))
 		return "null"_s;
 	else
-		return to_string_tex_type_map[idx].value;
+		return s_to_string_tex_type_map[idx].value;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static ang_pair<graphics::textures::tex_format, cstr_t> to_string_tex_format_map[] =
+static collections::pair<graphics::textures::tex_format, cstr_t> s_to_string_tex_format_map[] =
 {
 	{ tex_format::null, "null"_s },
 	{ tex_format::R32G32B32, "R32G32B32,"_s },
@@ -89,7 +80,7 @@ static ang_pair<graphics::textures::tex_format, cstr_t> to_string_tex_format_map
 	{ tex_format::D24S8, "D24S8,"_s }
 };
 
-static ang_pair<cstr_t, graphics::textures::tex_format> _parse_tex_format_map[] =
+static collections::pair<cstr_t, graphics::textures::tex_format> s_parse_tex_format_map[] =
 {
 	{ "A8"_s, tex_format::A8 },
 	{ "D16"_s, tex_format::D16 },
@@ -105,36 +96,27 @@ static ang_pair<cstr_t, graphics::textures::tex_format> _parse_tex_format_map[] 
 	{ "null"_s, tex_format::null },
 };
 
-tex_format_t graphics::textures::tex_format_t::parse(cstr_t cstr)
+tex_format_t graphics::textures::tex_format_t::parse(text::raw_cstr_t cstr)
 {
-	wsize idx = ang_binary_search<cstr_t>(cstr, _parse_tex_format_map);
-	if (idx > array_size(_parse_tex_format_map))
+	wsize idx = algorithms::binary_search(cstr, to_array(s_parse_tex_format_map));
+	if (idx > algorithms::array_size(s_parse_tex_format_map))
 		return tex_format::null;
 	else
-		return _parse_tex_format_map[idx].value;
+		return s_parse_tex_format_map[idx].value;
 }
 
-tex_format_t graphics::textures::tex_format_t::parse(cwstr_t cstr)
+cstr_t graphics::textures::tex_format_t::to_string()const
 {
-	wsize idx = ang_binary_search<cwstr_t>(cstr, _parse_tex_format_map);
-	if (idx > array_size(_parse_tex_format_map))
-		return tex_format::null;
-	else
-		return _parse_tex_format_map[idx].value;
-}
-
-wstring graphics::textures::tex_format_t::to_string()const
-{
-	wsize idx = ang_binary_search(_value, to_string_tex_format_map);
-	if (idx > array_size(to_string_tex_format_map))
+	wsize idx = algorithms::binary_search(get(), to_array(s_to_string_tex_format_map));
+	if (idx > algorithms::array_size(s_to_string_tex_format_map))
 		return "null"_s;
 	else
-		return to_string_tex_format_map[idx].value;
+		return s_to_string_tex_format_map[idx].value;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static ang_pair<graphics::textures::tex_wrap_mode, cstr_t> to_string_tex_wrap_mode_map[] =
+static collections::pair<graphics::textures::tex_wrap_mode, cstr_t> s_to_string_tex_wrap_mode_map[] =
 {
 	{ tex_wrap_mode::def, "def"_s },
 	{ tex_wrap_mode::repeate, "repeate,"_s },
@@ -142,7 +124,7 @@ static ang_pair<graphics::textures::tex_wrap_mode, cstr_t> to_string_tex_wrap_mo
 	{ tex_wrap_mode::mirrored, "mirrored,"_s }
 };
 
-static ang_pair<cstr_t, graphics::textures::tex_wrap_mode> _parse_tex_wrap_mode_map[] =
+static collections::pair<cstr_t, graphics::textures::tex_wrap_mode> s_parse_tex_wrap_mode_map[] =
 {
 	{ "clamp"_s, tex_wrap_mode::clamp },
 	{ "def"_s, tex_wrap_mode::def },
@@ -151,31 +133,23 @@ static ang_pair<cstr_t, graphics::textures::tex_wrap_mode> _parse_tex_wrap_mode_
 };
 
 
-tex_wrap_mode_t graphics::textures::tex_wrap_mode_t::parse(cstr_t cstr)
+tex_wrap_mode_t graphics::textures::tex_wrap_mode_t::parse(text::raw_cstr_t cstr)
 {
-	wsize idx = ang_binary_search<cstr_t>(cstr, _parse_tex_wrap_mode_map);
-	if (idx > array_size(_parse_tex_wrap_mode_map))
+	wsize idx = algorithms::binary_search(cstr, to_array(s_parse_tex_wrap_mode_map));
+	if (idx > algorithms::array_size(s_parse_tex_wrap_mode_map))
 		return tex_wrap_mode::def;
 	else
-		return _parse_tex_wrap_mode_map[idx].value;
+		return s_parse_tex_wrap_mode_map[idx].value;
 }
 
-tex_wrap_mode_t graphics::textures::tex_wrap_mode_t::parse(cwstr_t cstr)
-{
-	wsize idx = ang_binary_search<cwstr_t>(cstr, _parse_tex_wrap_mode_map);
-	if (idx > array_size(_parse_tex_wrap_mode_map))
-		return tex_wrap_mode::def;
-	else
-		return _parse_tex_wrap_mode_map[idx].value;
-}
 
-wstring graphics::textures::tex_wrap_mode_t::to_string()const
+cstr_t graphics::textures::tex_wrap_mode_t::to_string()const
 {
-	wsize idx = ang_binary_search(_value, to_string_tex_wrap_mode_map);
-	if (idx > array_size(to_string_tex_wrap_mode_map))
+	wsize idx = algorithms::binary_search(get(), to_array(s_to_string_tex_wrap_mode_map));
+	if (idx > algorithms::array_size(s_to_string_tex_wrap_mode_map))
 		return "def"_s;
 	else
-		return to_string_tex_wrap_mode_map[idx].value;
+		return s_to_string_tex_wrap_mode_map[idx].value;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

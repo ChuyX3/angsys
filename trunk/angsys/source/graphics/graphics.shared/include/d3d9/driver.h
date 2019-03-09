@@ -6,7 +6,7 @@
 //ANG_OBJECT_WRAPPER_DECLARATION
 
 #include <d3d9.h>
-//#include <d3dcaps.h>
+#pragma comment (lib, "d3d9.lib")
 
 #include <ang/inline/com_wrapper.hpp>
 
@@ -130,33 +130,14 @@ namespace ang
 				: public object
 				, public idriver
 			{
-
-				com_wrapper<ID2D1Factory2> d2d_factory;
-				com_wrapper<ID2D1Device1> d2d_device;
-				com_wrapper<ID2D1DeviceContext1> d2d_context;
-				com_wrapper<ID2D1Bitmap1> d2d_target_bitmap;
-				com_wrapper<IDWriteFactory2> dwrite_factory;
-				//com_wrapper<IWICImagingFactory> wic_factory;
-				D2D1::Matrix3x2F orientation_transform2D;
-
-				D3D_FEATURE_LEVEL _feature_level;
-				com_wrapper<IDXGIFactory2> dxgi_factory;
-				com_wrapper<ID3D11Device2> d3d_device;
-				com_wrapper<ID3D11DeviceContext2> d3d_context;
-				com_wrapper<ID3D11BlendState> d3d_blend_state;
-
-				d3d9_frame_buffer_t _current_frame_buffer;
-				d3d9_shaders_t _current_shaders;	
-				primitive_t _primitive;
-
-				graphics::cull_mode_t _cull_mode;
-				graphics::front_face_t _front_face;
-				graphics::blend_mode_t _blend_mode;
-
+				
+				com_wrapper<IDirect3DDevice9> m_device;
+				
+				primitive_t m_primitive;
+				graphics::cull_mode_t m_cull_mode;
+				graphics::front_face_t m_front_face;
+				graphics::blend_mode_t m_blend_mode;
 				core::async::mutex_ptr_t main_mutex;
-
-			//	d3d9_index_buffer_t _current_index_buffer;
-			//	d3d9_vertex_buffer_t _current_vertex_buffer;
 
 			public:
 				d3d9_driver();
@@ -192,16 +173,10 @@ namespace ang
 				void draw(uint count, primitive_t) override;
 				void draw_indexed(uint count, primitive_t) override;
 				core::async::mutex_ptr_t driver_guard()const override;
+
 			private:
 				bool init_driver();
 				void close_driver();
-
-			public: //intenal
-				inline ID3D11Device2* D3D11Device()const { return d3d_device.get(); }
-				inline ID3D11DeviceContext2* D3D11Context()const { return d3d_context.get(); }
-				//	inline safe_thread_wrapper<ID3D11DeviceContext2> D3D11Context()const { return{ d3d_context.get(), main_mutex }; }
-				inline IDXGIFactory2* DXGIFactory()const { return dxgi_factory.get(); }
-				inline d3d9_frame_buffer_t current_frame_buffer()const { return _current_frame_buffer.get(); }
 
 			private:
 				virtual~d3d9_driver();
@@ -210,10 +185,5 @@ namespace ang
 	}
 }
 
-
-ANG_REGISTER_RUNTIME_TYPENAME(ID3D11Buffer);
-ANG_REGISTER_RUNTIME_TYPENAME(ID3D11SamplerState);
-ANG_REGISTER_RUNTIME_TYPENAME(ID3D11RenderTargetView);
-ANG_REGISTER_RUNTIME_TYPENAME(ID3D11ShaderResourceView);
 
 #endif

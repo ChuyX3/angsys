@@ -78,5 +78,22 @@
 #define DIRECTX_SUPPORT		(0)
 #endif
 
+#if defined WINDOWS_PLATFORM
+#if defined ANGSYS_DYNAMIC_LIBRARY
+#define LINK __declspec(dllimport)
+#else//#elif defined ANGSYS_STATIC_LIBRARY
+#define LINK
+#endif//ANGSYS_DYNAMIC_LIBRARY
+#elif defined LINUX_PLATFORM || defined ANDROID_PLATFORM
+#define LINK
+#else
+#define LINK
+#endif
+
+ANG_EXTERN void LINK ang_debug_output_info(const char* format, ...);
+ANG_EXTERN void LINK ang_debug_output_warning(const char* format, ...);
+ANG_EXTERN void LINK ang_debug_output_error(const char* format, ...);
+
+#undef LINK
 
 #endif//__COMPILE_CONFIG_H__

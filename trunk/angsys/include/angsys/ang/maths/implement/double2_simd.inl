@@ -48,16 +48,10 @@ inline ang::maths::double2& ang::maths::double2::operator /= (double k) {
 	return*this;
 }
 
-template<> inline double ang::maths::double2::get<0>()const {
-	//double_t res[2];
-	//_mm_store_pd(res, _vector);
-	return _vector.m128d_f64[0];
-}
-template<> inline double ang::maths::double2::get<1>()const {
-//	double_t res[2];
-//	_mm_store_pd(res, _vector);
-	return _vector.m128d_f64[1];
-}
+template<> inline double& ang::maths::double2::get<0>() { return _vector.m128d_f64[0]; }
+template<> inline double& ang::maths::double2::get<1>() { return _vector.m128d_f64[1]; }
+template<> inline double const& ang::maths::double2::get<0>()const { return _vector.m128d_f64[0]; }
+template<> inline double const& ang::maths::double2::get<1>()const { return _vector.m128d_f64[1]; }
 
 template<> inline void ang::maths::double2::set<0>(double value) {
 	_vector = _mm_setr_pd(value, get<1>()); 

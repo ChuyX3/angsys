@@ -1,7 +1,6 @@
 #include "pch.h"
 
 #include <ang/graphics/graphics.h>
-#include "ang_inlines.h"
 
 using namespace ang;
 using namespace ang::graphics;

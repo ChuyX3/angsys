@@ -70,16 +70,28 @@ inline ang::maths::float4& ang::maths::float4::operator /= (float k) {
 	return*this;
 }
 
-template<> inline float ang::maths::float4::get<0u>()const {
+template<> inline float& ang::maths::float4::get<0u>() {
 	return _vector.m128_f32[0];
 }
-template<> inline float ang::maths::float4::get<1u>()const {
+template<> inline float& ang::maths::float4::get<1u>() {
 	return _vector.m128_f32[1];
 }
-template<> inline float ang::maths::float4::get<2u>()const {
+template<> inline float& ang::maths::float4::get<2u>() {
 	return _vector.m128_f32[2];
 }
-template<> inline float ang::maths::float4::get<3u>()const {
+template<> inline float& ang::maths::float4::get<3u>() {
+	return _vector.m128_f32[3];
+}
+template<> inline float const& ang::maths::float4::get<0u>()const {
+	return _vector.m128_f32[0];
+}
+template<> inline float const& ang::maths::float4::get<1u>()const {
+	return _vector.m128_f32[1];
+}
+template<> inline float const& ang::maths::float4::get<2u>()const {
+	return _vector.m128_f32[2];
+}
+template<> inline float const& ang::maths::float4::get<3u>()const {
 	return _vector.m128_f32[3];
 }
 template<> inline void ang::maths::float4::set<0u>(float value) {

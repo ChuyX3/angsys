@@ -77,18 +77,15 @@ inline ang::maths::float4& ang::maths::float4::operator /= (float k) {
 	return*this;
 }
 
-template<> inline float ang::maths::float4::get<0>()const {
-	return _vector.x;
-}
-template<> inline float ang::maths::float4::get<1>()const {
-	return _vector.y;
-}
-template<> inline float ang::maths::float4::get<2>()const {
-	return _vector.z;
-}
-template<> inline float ang::maths::float4::get<3>()const {
-	return _vector.w;
-}
+template<> inline float& ang::maths::float4::get<0>() { return _vector.x; }
+template<> inline float& ang::maths::float4::get<1>() { return _vector.y; }
+template<> inline float& ang::maths::float4::get<2>() { return _vector.z; }
+template<> inline float& ang::maths::float4::get<3>() { return _vector.w; }
+template<> inline float const& ang::maths::float4::get<0>()const { return _vector.x; }
+template<> inline float const& ang::maths::float4::get<1>()const { return _vector.y; }
+template<> inline float const& ang::maths::float4::get<2>()const { return _vector.z; }
+template<> inline float const& ang::maths::float4::get<3>()const { return _vector.w; }
+
 template<> inline void ang::maths::float4::set<0>(float value) {
 	_vector.x = value;
 }

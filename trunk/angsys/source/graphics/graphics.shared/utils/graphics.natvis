@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+  <Type Name="ang::graphics::reflect::varying_desc">
+    <DisplayString Condition="m_var_name.m_ptr != 0">var:{m_var_name}</DisplayString>
+    <DisplayString>var:"unnamed"</DisplayString>
+    <Expand>
+      <Item Name="[name]" ExcludeView="simple">m_var_name</Item>
+      <Item Name="[type]" ExcludeView="simple">m_var_type</Item>
+      <Item Name="[class]" ExcludeView="simple">m_var_class</Item>
+      <Item Name="[aligment]" ExcludeView="simple">m_aligment</Item>
+      <Item Name="[array_size]" ExcludeView="simple">m_array_count</Item>
+      <Item Name="[index]" ExcludeView="simple">m_position</Item>
+      <Item Name="[fields]" ExcludeView="simple" Condition="m_var_type.m_value == 13">m_fields</Item>
+    </Expand>
+  </Type>
+  
+</AutoVisualizer>

@@ -68,9 +68,13 @@ inline ang::maths::double3& ang::maths::double3::operator /= (double val) {
 	return*this;
 }
 
-template<> inline double ang::maths::double3::get<0u>()const { return _vector.x; }
-template<> inline double ang::maths::double3::get<1u>()const { return _vector.y; }
-template<> inline double ang::maths::double3::get<2u>()const { return _vector.z; }
+template<> inline double& ang::maths::double3::get<0u>() { return _vector.x; }
+template<> inline double& ang::maths::double3::get<1u>() { return _vector.y; }
+template<> inline double& ang::maths::double3::get<2u>() { return _vector.z; }
+
+template<> inline double const& ang::maths::double3::get<0u>()const { return _vector.x; }
+template<> inline double const& ang::maths::double3::get<1u>()const { return _vector.y; }
+template<> inline double const& ang::maths::double3::get<2u>()const { return _vector.z; }
 
 template<> inline void ang::maths::double3::set<0u>(double value) { _vector.x = value; }
 template<> inline void ang::maths::double3::set<1u>(double value) { _vector.y = value; }

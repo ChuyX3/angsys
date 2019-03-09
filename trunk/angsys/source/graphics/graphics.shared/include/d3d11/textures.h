@@ -1,8 +1,6 @@
 #pragma once
 
-#include <ang/graphics/angraph.hpp>
-
-#if DIRECTX_SUPPORT
+#if DIRECTX11_SUPPORT
 
 namespace ang
 {
@@ -43,13 +41,13 @@ namespace ang
 				, public textures::itexture
 			{
 			private:
-				string _texture_name;
-				DXGI_FORMAT _tex_format;
-				textures::tex_type_t _tex_type;
-				graphics::size<float> _tex_dimentions;
-				float _tex_dimentions_depth;
-				com_wrapper<ID3D11Resource> d3d_raw_resource;
-				com_wrapper<ID3D11ShaderResourceView> d3d_shader_view;
+				string m_texture_name;
+				DXGI_FORMAT m_tex_format;
+				textures::tex_type_t m_tex_type;
+				graphics::size<float> m_tex_dimentions;
+				float m_tex_dimentions_depth;
+				com_wrapper<ID3D11Resource> m_d3d_raw_resource;
+				com_wrapper<ID3D11ShaderResourceView> m_d3d_shader_view;
 
 			public:
 				d3d11_texture();
@@ -62,22 +60,22 @@ namespace ang
 					//has_runtime_type_info<d3d11_texture>::value
 				}
 			public: //overrides
-				string resource_name()const override;
+				text::istring_view_t resource_name()const override;
 				textures::tex_type_t tex_type()const override;
 				textures::tex_format_t tex_format()const override;
 				graphics::size<float> tex_dimentions()const override;
 
 			public: //internal
-				bool load(d3d11_texture_loader_t, xml::ixml_node_t);
+				bool load(d3d11_texture_loader_t, dom::xml::xml_node_t);
 				bool use_texture(d3d11_driver_t, index idx)const;
 
 				bool attach(com_wrapper<ID3D11ShaderResourceView> _view);
 
-				inline ID3D11Texture1D* D3D11Texture1D()const { return static_cast<ID3D11Texture1D*>(d3d_raw_resource.get()); }
-				inline ID3D11Texture2D* D3D11Texture2D()const { return static_cast<ID3D11Texture2D*>(d3d_raw_resource.get()); }
-				inline ID3D11Texture3D* D3D11Texture3D()const { return static_cast<ID3D11Texture3D*>(d3d_raw_resource.get()); }
-				inline ID3D11ShaderResourceView* D3D11ShaderResourceView()const { return d3d_shader_view.get(); }
-				inline DXGI_FORMAT D3D11Format()const { return _tex_format; }
+				inline ID3D11Texture1D* D3D11Texture1D()const { return static_cast<ID3D11Texture1D*>(m_d3d_raw_resource.get()); }
+				inline ID3D11Texture2D* D3D11Texture2D()const { return static_cast<ID3D11Texture2D*>(m_d3d_raw_resource.get()); }
+				inline ID3D11Texture3D* D3D11Texture3D()const { return static_cast<ID3D11Texture3D*>(m_d3d_raw_resource.get()); }
+				inline ID3D11ShaderResourceView* D3D11ShaderResourceView()const { return m_d3d_shader_view.get(); }
+				inline DXGI_FORMAT D3D11Format()const { return m_tex_format; }
 
 			private:
 				virtual~d3d11_texture();
@@ -97,48 +95,41 @@ namespace ang
 				static bool load_texture(d3d11_driver_t, collections::vector<core::files::input_binary_file_t> const&, tex_file_info_t& info, ID3D11Resource**, ID3D11ShaderResourceView**, bool isCube = false);
 
 			private:
-				core::async::mutex_ptr_t main_mutex;
-				d3d11_driver_t _driver;
-				core::files::ifile_system_t _fs;
-				core::async::idispatcher_t _work_thead;
-				collections::unordered_map<string, wstring> _source_map;
-				collections::unordered_map<string, xml::ixml_node_t> _texture_info_map;
-				collections::unordered_map<string, weak_ptr<d3d11_texture>> _textures;
+				core::async::mutex_ptr_t m_mutex;
+				d3d11_driver_t m_driver;
+				core::files::ifile_system_t m_fs;
+				core::async::thread_t m_work_thead;
+				collections::hash_map<string, wstring> m_source_map;
+				collections::hash_map<string, dom::xml::xml_node_t> m_texture_info_map;
+				collections::hash_map<string, weak_ptr<d3d11_texture>> m_textures;
+
 			public:
 				d3d11_texture_loader(d3d11_driver_t parent);
 
 				ANG_DECLARE_INTERFACE();
 
 			public: //overrides
-				bool load_sources(xml::ixml_node_t) override;
+				bool load_sources(dom::xml::xml_node_t) override;
 				void set_file_system(core::files::ifile_system_t) override;
-				bool load_library(xml::ixml_node_t) override;
-				core::async::iasync_t<textures::itexture_loader_t> load_library_async(xml::ixml_node_t) override;
-				textures::itexture_t load_texture(string) override;
-				textures::itexture_t load_texture(xml::ixml_node_t) override;
-				core::async::iasync_t<textures::itexture_t> load_texture_async(string) override;
-				core::async::iasync_t<textures::itexture_t> load_texture_async(xml::ixml_node_t) override;
-				textures::itexture_t find_texture(cstr_t)const override;
-				textures::itexture_t find_texture(cwstr_t)const override;
+				bool load_library(dom::xml::xml_node_t) override;
+				core::async::iasync<textures::itexture_loader_t> load_library_async(dom::xml::xml_node_t) override;
+				textures::itexture_t load_texture(text::raw_cstr_t) override;
+				textures::itexture_t load_texture(dom::xml::xml_node_t) override;
+				core::async::iasync<textures::itexture_t> load_texture_async(text::raw_cstr_t) override;
+				core::async::iasync<textures::itexture_t> load_texture_async(dom::xml::xml_node_t) override;
+				textures::itexture_t find_texture(text::raw_cstr_t)const override;
 
 			public: //internal
 				inline core::files::ifile_system* get_file_system()const {
-					return _fs.is_empty() ? core::files::ifile_system::get_file_system() : _fs.get();
+					return m_fs.is_empty() ? core::files::ifile_system::fs_instance() : m_fs.get();
 				}
-				inline d3d11_driver* driver()const { return _driver.get(); }
-				inline wstring find_file(cstr_t sid)const {
-					core::async::scope_locker<core::async::mutex_ptr_t> lock = main_mutex;
-					if (_source_map.is_empty())
+				inline d3d11_driver* driver()const { return m_driver.get(); }
+				inline wstring find_file(text::raw_cstr_t sid)const {
+					core::async::scope_locker<core::async::mutex_ptr_t> lock = m_mutex;
+					if (m_source_map.is_empty())
 						return "";
-					auto it = _source_map->find(sid);
-					return it.is_valid() ? it->value : L"";
-				}
-				inline wstring find_file(cwstr_t sid)const {
-					core::async::scope_locker<core::async::mutex_ptr_t> lock = main_mutex;
-					if (_source_map.is_empty())
-						return "";
-					auto it = _source_map->find(sid);
-					return it.is_valid() ? it->value : L"";
+					auto it = m_source_map->find(sid);
+					return it.is_valid() ? it->value : wstring();
 				}
 
 			private:

@@ -1,7 +1,7 @@
 #ifndef __ANGRAPH_DRAWING_H__
 #define __ANGRAPH_DRAWING_H__
 
-#include <ang/graphics/angraph.hpp>
+#include <ang/graphics/graphics.h>
 
 #ifdef  LINK
 #undef  LINK
@@ -30,12 +30,13 @@ namespace ang
 	{
 		namespace textures
 		{
-			ANG_BEGIN_ENUM(LINK, tex_stretch_mode, uint)
+			safe_enum(LINK, tex_stretch_mode, uint)
+			{
 				none = 0,
 				fill = 1,
 				uniform = 2,
 				uniform_to_fill = 3,
-			ANG_END_ENUM(tex_stretch_mode);
+			};
 		}
 
 		namespace drawing
@@ -78,13 +79,13 @@ namespace ang
 			}texturing_info_t, *texturing_info_ptr_t;
 		
 
-			ANG_INTERFACE(ibrush);
-			ANG_INTERFACE(idraw_context);
+			ang_interface(ibrush);
+			ang_interface(idraw_context);
 
-			ANG_BEGIN_INTERFACE(LINK, ibrush)
-			ANG_END_INTERFACE();
+			ang_begin_interface(LINK ibrush)
+			ang_end_interface();
 
-			ANG_BEGIN_INTERFACE(LINK, idraw_context)
+			ang_begin_interface(LINK idraw_context)
 				visible vcall ibrush_t create_solid_brush(
 					color_t /*diffuse*/, 
 					color_t /*additive*/ = colors::null
@@ -106,7 +107,7 @@ namespace ang
 				visible vcall void end_draw() pure;
 				visible vcall void clear(color_t) pure;
 				visible vcall void draw_rect(ibrush_t brush, rect<float> rect)pure;
-			ANG_END_INTERFACE();
+			ang_end_interface();
 
 			LINK idraw_context_t create_drawing_context(idriver_t, core::files::ifile_system_t = null);
 		}
@@ -117,7 +118,7 @@ namespace ang
 #undef  LINK
 #endif//LINK
 
-ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::drawing::gradient_info_t)
-ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::drawing::gradient_info::stop_color_info_t)
+//ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::drawing::gradient_info_t)
+//ANG_REGISTER_RUNTIME_TYPENAME(ang::graphics::drawing::gradient_info::stop_color_info_t)
 
 #endif//__ANGRAPH_DRAWING_H__

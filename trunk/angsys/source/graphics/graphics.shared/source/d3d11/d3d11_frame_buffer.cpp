@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "d3d11/driver.hpp"
+#include "d3d11/driver.h"
 
 #if defined _DEBUG
 #define new new(__FILE__, __LINE__)
@@ -11,12 +11,12 @@ using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
 
-#define MY_TYPE ang::graphics::d3d11::d3d11_frame_buffer
-#include <ang/inline/object_wrapper_specialization.inl>
-#undef MY_TYPE
+//#define MY_TYPE ang::graphics::d3d11::d3d11_frame_buffer
+//#include <ang/inline/object_wrapper_specialization.inl>
+//#undef MY_TYPE
 
 d3d11_frame_buffer::d3d11_frame_buffer(d3d11_driver* driver)
-	: _parent_driver(driver)
+	: m_parent_driver(driver)
 {
 	
 }
@@ -26,49 +26,16 @@ d3d11_frame_buffer::~d3d11_frame_buffer()
 	
 }
 
-ANG_IMPLEMENT_CLASSNAME(ang::graphics::d3d11::d3d11_frame_buffer);
-ANG_IMPLEMENT_OBJECTNAME(ang::graphics::d3d11::d3d11_frame_buffer);
-
-bool d3d11_frame_buffer::is_inherited_of(type_name_t name)
-{
-	return name == type_of<d3d11_frame_buffer>()
-		|| object::is_inherited_of(name)
-		|| iframe_buffer::is_inherited_of(name);
-}
-
-bool d3d11_frame_buffer::is_kind_of(type_name_t name)const
-{
-	return name == type_of<d3d11_frame_buffer>()
-		|| object::is_kind_of(name)
-		|| iframe_buffer::is_kind_of(name);
-}
-
-bool d3d11_frame_buffer::query_object(type_name_t name, unknown_ptr_t out)
-{
-	if (out == null)
-		return false;
-	if (name == type_of<d3d11_frame_buffer>())
-	{
-		*out = static_cast<d3d11_frame_buffer*>(this);
-		return true;
-	}
-	else if (object::query_object(name, out))
-	{
-		return true;
-	}
-	else if (iframe_buffer::query_object(name, out))
-	{
-		return true;
-	}
-	return false;
-}
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_frame_buffer);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_frame_buffer, object, iframe_buffer);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_frame_buffer, object, iframe_buffer);
 
 bool d3d11_frame_buffer::create(array_view<textures::tex_format_t> color_format, textures::tex_format_t depth_stencil_format, graphics::size<float> dimentions)
 {
 	if (color_format.size() == 0)
 		return false;
 
-	d3d11_driver_t driver = _parent_driver.lock();
+	d3d11_driver_t driver = m_parent_driver.lock();
 
 	if (driver.is_empty())
 		return false;
@@ -134,11 +101,11 @@ bool d3d11_frame_buffer::create(array_view<textures::tex_format_t> color_format,
 		}
 
 		driver->D3D11Context()->ClearRenderTargetView(render_target, clear_color);
-		d3d_render_target += render_target;
+		m_d3d_render_target += render_target;
 
 		d3d11_texture_t _texture = new d3d11_texture();
 		_texture->attach(view);
-		d3d_texture2D += _texture;
+		m_d3d_texture2D += _texture;
 
 	}
 
@@ -176,7 +143,7 @@ bool d3d11_frame_buffer::create(array_view<textures::tex_format_t> color_format,
 	dsdesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	dsdesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	hr = driver->D3D11Device()->CreateDepthStencilState(&dsdesc, &d3d_depth_stencil_state);
+	hr = driver->D3D11Device()->CreateDepthStencilState(&dsdesc, &m_d3d_depth_stencil_state);
 	if (FAILED(hr))
 	{
 		close();
@@ -189,7 +156,7 @@ bool d3d11_frame_buffer::create(array_view<textures::tex_format_t> color_format,
 	dsvdesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	dsvdesc.Texture2D.MipSlice = 0;
 
-	hr = driver->D3D11Device()->CreateDepthStencilView(backBuffer, &dsvdesc, &d3d_depth_stencil);
+	hr = driver->D3D11Device()->CreateDepthStencilView(backBuffer, &dsvdesc, &m_d3d_depth_stencil);
 	
 	if (FAILED(hr))
 	{
@@ -205,12 +172,12 @@ bool d3d11_frame_buffer::create(d3d11_surface_t surface)
 	if (surface.get() == null)
 		return false;
 
-	d3d11_driver_t driver = _parent_driver.lock();
+	d3d11_driver_t driver = m_parent_driver.lock();
 	if (driver.is_empty())
 		return false;
 	
 	close();
-	_dimentions = surface->surface_size();
+	m_dimentions = surface->surface_size();
 	HRESULT hr;
 
 	ID3D11Texture2D* pBackBuffer = nullptr;
@@ -225,12 +192,12 @@ bool d3d11_frame_buffer::create(d3d11_surface_t surface)
 	if (FAILED(hr))
 		return false;
 
-	d3d_render_target += render_target;
+	m_d3d_render_target += render_target;
 
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
-	depthBufferDesc.Width = (uint)_dimentions.width;
-	depthBufferDesc.Height = (uint)_dimentions.height;
+	depthBufferDesc.Width = (uint)m_dimentions.width;
+	depthBufferDesc.Height = (uint)m_dimentions.height;
 	depthBufferDesc.MipLevels = 1;
 	depthBufferDesc.ArraySize = 1;
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -267,7 +234,7 @@ bool d3d11_frame_buffer::create(d3d11_surface_t surface)
 	depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	hr = driver->D3D11Device()->CreateDepthStencilState(&depthStencilDesc, &d3d_depth_stencil_state);
+	hr = driver->D3D11Device()->CreateDepthStencilState(&depthStencilDesc, &m_d3d_depth_stencil_state);
 	if (FAILED(hr))
 	{
 		close();
@@ -280,7 +247,7 @@ bool d3d11_frame_buffer::create(d3d11_surface_t surface)
 	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
 
-	hr = driver->D3D11Device()->CreateDepthStencilView(pBackBuffer, &depthStencilViewDesc, &d3d_depth_stencil);
+	hr = driver->D3D11Device()->CreateDepthStencilView(pBackBuffer, &depthStencilViewDesc, &m_d3d_depth_stencil);
 	pBackBuffer->Release();
 	if (FAILED(hr))
 	{
@@ -293,10 +260,10 @@ bool d3d11_frame_buffer::create(d3d11_surface_t surface)
 
 bool d3d11_frame_buffer::close()
 {
-	d3d_render_target = null;
-	d3d_depth_stencil = null;
-	d3d_depth_stencil_state = null;
-	d3d_texture2D = null;
+	m_d3d_render_target = null;
+	m_d3d_depth_stencil = null;
+	m_d3d_depth_stencil_state = null;
+	m_d3d_texture2D = null;
 	return true;
 }
 
@@ -304,24 +271,24 @@ bool d3d11_frame_buffer::close()
 
 graphics::size<float> d3d11_frame_buffer::dimentions()const
 {
-	return _dimentions;
+	return m_dimentions;
 }
 
 uint d3d11_frame_buffer::color_buffer_count()const
 {
-	return d3d_render_target.is_empty() ? 0 : (uint)d3d_render_target->counter();
+	return m_d3d_render_target.is_empty() ? 0 : (uint)m_d3d_render_target->counter();
 }
 
 textures::itexture_t d3d11_frame_buffer::color_buffer(index idx)const
 {
-	if (d3d_texture2D.is_empty() || d3d_texture2D->size() <= idx)
+	if (m_d3d_texture2D.is_empty() || m_d3d_texture2D->size() <= idx)
 		return null;
-	return d3d_texture2D[idx].get();
+	return m_d3d_texture2D[idx].get();
 }
 
 bool d3d11_frame_buffer::has_depth_stencil_buffer()const
 {
-	return !d3d_depth_stencil.is_empty();
+	return !m_d3d_depth_stencil.is_empty();
 }
 
 #endif

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "d3d11/driver.hpp"
+#include "d3d11/driver.h"
 
 #if defined _DEBUG
 #define NEW new(__FILE__, __LINE__)
@@ -121,7 +121,7 @@ const int IT_COMPRESSED = 10;
 const int IT_UNCOMPRESSED = 2;
 
 bool operator == (D3D11_SUBRESOURCE_DATA const&, D3D11_SUBRESOURCE_DATA const&) { return false; }
-ANG_REGISTER_RUNTIME_TYPENAME(D3D11_SUBRESOURCE_DATA);
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_INLINE(D3D11_SUBRESOURCE_DATA);
 
 //--------------------------------------------------------------------------------------
 // Return the BPP for a particular format
@@ -894,13 +894,14 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 	using namespace ang;
 
 	ang::ibuffer_t outData = null;
-	wsize dataSize = (wsize)file->file_size();
+	wsize dataSize = (wsize)file->size();
 	int offset = sizeof(DDS_HEADER) + sizeof(ang_uint32_t);
 	if (dataSize < (wsize)offset)
 		return null;
 
-	file->read([&](ang::streams::ibinary_input_stream_t stream)->bool
+	file->read([&](streams::ibinary_input_stream_t stream)->bool
 	{
+
 		ang_uint32_t dwMagicNumber;
 		DDS_HEADER header;
 		stream >> dwMagicNumber;
@@ -910,8 +911,6 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 			|| header.size != sizeof(DDS_HEADER)
 			|| header.ddspf.size != sizeof(DDS_PIXELFORMAT))
 			return false;
-
-
 
 		bool bDXT10Header = false;
 		if ((header.ddspf.flags & DDS_FOURCC) && (MAKEFOURCC('D', 'X', '1', '0') == header.ddspf.fourCC))
@@ -988,7 +987,6 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 
 		outData = new(dataSize - offset) ang::buffer();
 		stream->read(outData->buffer_ptr(), outData->buffer_size());
-		return true;
 	});
 
 	return outData;
@@ -1005,10 +1003,11 @@ ang::ibuffer_t d3d11_texture_loader::load_tga(ang::core::files::input_binary_fil
 			return false;
 		if (header.bits != 24 && header.bits != 32)
 			return false;
-		stream->move_to(header.identsize, ang::streams::stream_reference::current);
-		wsize bufferSize = wsize(stream->stream_size() - sizeof(header) - header.identsize);
-		byte* data = memory::default_allocator<byte>::alloc(bufferSize);
-		stream->read(data, bufferSize);
+		stream->cursor(header.identsize, ang::streams::stream_reference::current);
+		wsize bufferSize = wsize(stream->size() - sizeof(header) - header.identsize);
+		scope_array<byte> data(bufferSize);
+		//byte* data = memory::default_allocator<byte>::alloc(bufferSize);
+		stream->read(data.data(), bufferSize);
 
 		width = header.width;
 		height = header.height;
@@ -1018,13 +1017,13 @@ ang::ibuffer_t d3d11_texture_loader::load_tga(ang::core::files::input_binary_fil
 		switch (header.imagetype)
 		{
 		case IT_UNCOMPRESSED:
-			LoadUncompressedTGAImage((byte*)out_data->buffer_ptr(), data, &header);
+			LoadUncompressedTGAImage((byte*)out_data->buffer_ptr(), data.data(), &header);
 			break;
 		case IT_COMPRESSED:
-			LoadCompressedTGAImage((byte*)out_data->buffer_ptr(), data, &header);
+			LoadCompressedTGAImage((byte*)out_data->buffer_ptr(), data.data(), &header);
 			break;
 		}
-		memory::default_allocator<byte>::free(data);
+		//memory::default_allocator<byte>::free(data);
 		return true;
 	});
 
@@ -1287,11 +1286,12 @@ bool d3d11_texture_loader::load_texture(d3d11_driver_t driver, ang::core::files:
 	file->read(&info.fileType, sizeof(info.fileType));
 	if (info.fileType == ' SDD')
 	{
-		file->cursor(0);
+		file->cursor(0, streams::stream_reference::begin);
 		data = d3d11_texture_loader::load_dds(file, info);
 	}
 	else
 	{
+		file->cursor(0, streams::stream_reference::begin);
 		data = d3d11_texture_loader::load_tga(file, info.width, info.height, info.format);
 		info.depth = 1;
 		info.mipCount = 1;

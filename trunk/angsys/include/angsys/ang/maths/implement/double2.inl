@@ -54,8 +54,10 @@ inline ang::maths::double2& ang::maths::double2::operator /= (double val) {
 	return*this;
 }
 
-template<> inline double ang::maths::double2::get<0>()const { return _vector.x; }
-template<> inline double ang::maths::double2::get<1>()const { return _vector.y; }
+template<> inline double& ang::maths::double2::get<0>() { return _vector.x; }
+template<> inline double& ang::maths::double2::get<1>() { return _vector.y; }
+template<> inline double const& ang::maths::double2::get<0>()const { return _vector.x; }
+template<> inline double const& ang::maths::double2::get<1>()const { return _vector.y; }
 
 template<> inline void ang::maths::double2::set<0>(double value) { _vector.x = value; }
 template<> inline void ang::maths::double2::set<1>(double value) { _vector.y = value; }
