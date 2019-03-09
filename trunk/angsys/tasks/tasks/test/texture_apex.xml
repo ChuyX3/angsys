@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<texture_library>
+  <sources>
+    <file sid="_ea80e0f_dds">resources\Girl\Texture\3ea80e0f.dds</file>
+    <file sid="abbec2ad_dds">resources\Girl\Texture\abbec2ad.dds</file>
+    <file sid="cc5a76c0_dds">resources\Girl\Texture\cc5a76c0.dds</file>
+    <file sid="_919bbeb_dds">resources\Girl\Texture\3919bbeb.dds</file>
+    <file sid="_8be34e5_dds">resources\Girl\Texture\38be34e5.dds</file>
+    <file sid="c5b56029_dds">resources\Girl\Texture\c5b56029.dds</file>
+    <file sid="_7ed3ecb_dds">resources\Girl\Texture\67ed3ecb.dds</file>
+    <file sid="_c203d00_dds">resources\Girl\Texture\5c203d00.dds</file>
+    <file sid="_376b488_dds">resources\Girl\Texture\1376b488.dds</file>
+    <file sid="d117864b_dds">resources\Girl\Texture\d117864b.dds</file>
+
+    <file sid="textures_skybox1_tga">resources\models\textures\skybox1.tga</file>
+    <file sid="textures_skybox2_tga">resources\models\textures\skybox2.tga</file>
+    <file sid="12c14c70_dds">resources\BeautifulGirl\Texture\12c14c70.dds</file>
+    <file sid="12dbd6d0_dds">resources\BeautifulGirl\Texture\12dbd6d0.dds</file>
+    <file sid="16c2e0d0_dds">resources\BeautifulGirl\Texture\16c2e0d0.dds</file>
+    <file sid="16cecd10_dds">resources\BeautifulGirl\Texture\16cecd10.dds</file>
+    <file sid="19d89130_dds">resources\BeautifulGirl\Texture\19d89130.dds</file>
+    <file sid="13932ef0_dds">resources\BeautifulGirl\Texture\13932ef0.dds</file>
+  </sources>
+
+  <texture name="_ea80e0f_dds" type="tex2D" >_ea80e0f_dds</texture>
+  <texture name="abbec2ad_dds" type="tex2D" >abbec2ad_dds</texture>
+  <texture name="cc5a76c0_dds" type="tex2D" >cc5a76c0_dds</texture>
+  <texture name="_919bbeb_dds" type="tex2D" >_919bbeb_dds</texture>
+  <texture name="_8be34e5_dds" type="tex2D" >_8be34e5_dds</texture>
+  <texture name="c5b56029_dds" type="tex2D" >c5b56029_dds</texture>
+  <texture name="_7ed3ecb_dds" type="tex2D" >_7ed3ecb_dds</texture>
+  <texture name="_c203d00_dds" type="tex2D" >_c203d00_dds</texture>
+  <texture name="_376b488_dds" type="tex2D" >_376b488_dds</texture>
+  <texture name="d117864b_dds" type="tex2D" >d117864b_dds</texture>
+
+  <texture name="Material__25" type="tex2D" >12c14c70_dds</texture>
+  <texture name="Material__26" type="tex2D" >13932ef0_dds</texture>
+  <texture name="Material__27" type="tex2D" >19d89130_dds</texture>
+  <texture name="Material__28" type="tex2D" >16cecd10_dds</texture>
+  <texture name="Material__29" type="tex2D" >16c2e0d0_dds</texture>
+  <texture name="Material__30" type="tex2D" >12dbd6d0_dds</texture>
+  
+  <texture name="textures_skybox_tga" type="texCube" >textures_skybox2_tga</texture>
+
+</texture_library>

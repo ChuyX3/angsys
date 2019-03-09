@@ -127,10 +127,10 @@ namespace ang
 				core::delegates::listener<void(objptr, events::iconsole_mouse_event_args_t)> pointer_move_event;
 				core::delegates::listener<void(objptr, events::iconsole_mouse_event_args_t)> pointer_released_event;		
 
-				property<const pointer, app> input_handle;
-				property<const pointer, app> output_handle;
+				//property<pointer, app> input_handle;
+				//property<pointer, app> output_handle;
 
-				property<const output_t, app> output;
+				//property<output_t, app> output;
 			protected:
 				virtual int init();
 				virtual bool loop();

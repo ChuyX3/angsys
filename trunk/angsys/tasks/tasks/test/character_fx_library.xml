@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<effect_library>
+
+  <technique name="character00_fx">
+    <vertex_shader>
+      <uniforms name="wvp">
+        <var type="f32" class="mat4" name="world"/>
+        <var type="f32" class="mat4" name="view"/>
+        <var type="f32" class="mat4" name="proj"/>
+      </uniforms>
+      <input_layout>
+        <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+        <var type="f32" class="vec3" name="normal" semantic="NORMAL" semantic_idx="0"/>
+        <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
+      </input_layout>
+      <entry>main_vs</entry>
+      <code><![CDATA[
+#ifdef HIGHLIGHT
+#ifndef LIGHTING
+#define LIGHTING
+#endif//LIGHTING
+#endif//HIGHLIGHT
+
+struct ps_input
+{
+    float4 vposition : SV_POSITION;
+    float4 vnormal : NORMAL0;
+    float2 vtexcoord : TEXCOORD0;
+#ifdef LIGHTING
+    float4 vpos_world : TEXCOORD1;
+#endif
+};
+
+#ifdef VERTEX_SHADER
+
+cbuffer ConstantBuffer : register(b0)
+{
+    matrix world;
+    matrix view;
+    matrix proj;
+}
+
+struct vs_input
+{
+    float4 aposition : POSITION;
+    float4 anormal : NORMAL0;
+    float2 atexcoord : TEXCOORD0;
+};
+
+ps_input main_vs(vs_input input)
+{
+    ps_input output;
+    output.vposition =mul(mul(mul(float4(input.aposition.xyz, 1), world), view), proj);
+    output.vnormal = mul(float4(input.anormal.xyz ,0), world);
+    output.vtexcoord = input.atexcoord;
+#ifdef LIGHTING
+    output.vpos_world = mul(float4(input.aposition.xyz, 1), world);
+#endif
+    return output;
+}
+
+#endif
+#ifdef PIXEL_SHADER
+
+cbuffer material_data : register(b0)
+{
+    uint _mask : packoffset(c0.x);
+    float _alpha_color : packoffset(c0.y);
+    float4 _difusse_color : packoffset(c1);
+#ifdef LIGHTING
+    float4 _ambient_reflect : packoffset(c2);
+#ifdef HIGHLIGHT
+    float _specular_power : packoffset(c0.z);
+    float4 _specular_reflect : packoffset(c3);
+#endif
+#endif
+}
+
+#ifdef LIGHTING
+cbuffer light_data : register(b0)
+{
+	float3 ambient_color : packoffset(c0);
+	uint light_count : packoffset(c0.w);
+	struct {
+		float4 color;
+		float3 position;
+		uint type;
+	}light_data[10] : packoffset(c1);
+}
+#endif
+
+SamplerState _sampler : register(s0);
+
+Texture2D difusse_tex : register(t0);
+Texture2D alpha_channel_tex : register(t0);
+
+#ifdef LIGHTING
+Texture2D ambient_tex : register(t2);
+#ifdef HIGHLIGHT
+Texture2D specular_tex : register(t3);
+#endif
+#endif
+
+#ifdef LIGHTING
+
+float3 get_light_direction(float3 world_pos, float3 dir, uint type)
+{
+    if(type == 0)
+        return normalize(dir);
+    else
+        return normalize(world_pos - dir);
+}
+
+float3 get_light_difusse(float3 normal, float3 world_pos)
+{
+	float3 difusse = { 0,0,0 };
+	for (uint i = 0; i < light_count; ++i)
+	{
+		float3 light_dir = get_light_direction(world_pos, light_data[i].position, light_data[i].type);
+        float3 reflection = reflect(light_dir, normal);
+        difusse += light_data[i].color.xyz * max(dot(reflection, normal), 0.0);
+    }
+	return difusse;
+}
+
+#ifdef HIGHLIGHT
+float3 get_light_specular(float3 normal, float3 world_pos)
+{
+	float3 total = { 0,0,0 };
+	for (uint i = 0; i < light_count; ++i)
+	{
+        float3 light_dir = get_light_direction(world_pos, light_data[i].position, light_data[i].type);
+		float3 specular = light_data[i].color.xyz;
+		float3 reflection = reflect(light_dir, normal);
+		total += specular * pow(max(dot(reflection, normal), 0.0), _specular_power);
+	}
+	return total;
+}
+#endif //HIGHLIGHT
+#endif //LIGHTING
+
+float4 main_ps(ps_input input ) : SV_Target
+{
+    float3 normal = normalize(input.vnormal).xyz;
+
+    float4 color = _difusse_color;
+    if(_mask & 0X01)
+    {
+        float4 difusse = difusse_tex.Sample(_sampler, input.vtexcoord);
+        color.rgb = color.rgb * difusse.rgb;
+        if (_mask & 0X02)
+            color.a = alpha_channel_tex.Sample(_sampler, input.vtexcoord).a * _alpha_color;
+        else
+            color.a = difusse.a * _alpha_color;
+    }
+    
+#ifdef LIGHTING
+
+    float3 difusse = get_light_difusse(normal, input.vpos_world.xyz);
+    difusse = difusse / light_count;
+    float3 total_ambient = _ambient_reflect.xyz;
+    if (_mask & 0X04)
+        total_ambient = total_ambient * ambient_tex.Sample(_sampler, input.vtexcoord).rgb; 
+    float3 total = (ambient_color * total_ambient + difusse * (float3(1, 1, 1) - total_ambient)) * color.xyz;
+
+#ifdef HIGHLIGHT
+    if (_specular_power > 0)
+    {
+        float3 total_specular = _specular_reflect.xyz;
+        if (_mask & 0X08)
+            total_specular = total_specular * specular_tex.Sample(_sampler, input.vtexcoord).rgb;
+
+        total = total + get_light_specular(normal, input.vpos_world.xyz) * total_specular;
+    }
+#endif
+    color.xyz = total;
+#endif
+    return color;
+}
+
+#endif
+	  ]]></code>
+      <compile_config>-DVERTEX_SHADER</compile_config>
+    </vertex_shader>
+    <pixel_shader>
+      <samplers>
+        <sampler type="linear" wrap="clamp"/>
+      </samplers>
+      <uniforms name="material">
+        <var type="u32" class="scalar" name="mask"/>
+        <var type="f32" class="scalar" name="d"/>
+        <var type="f32" class="vec4" name="Kd"/>
+      </uniforms>
+      <entry>main_ps</entry>
+      <code>resources/shaders/character2.hlsl</code>
+      <compile_config>-DPIXEL_SHADER</compile_config>
+    </pixel_shader>
+  </technique>
+
+  <technique name="character01_fx">
+    <vertex_shader>
+      <uniforms name="wvp">
+        <var type="f32" class="mat4" name="world"/>
+        <var type="f32" class="mat4" name="view"/>
+        <var type="f32" class="mat4" name="proj"/>
+      </uniforms>
+      <input_layout>
+        <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+        <var type="f32" class="vec3" name="normal" semantic="NORMAL" semantic_idx="0"/>
+        <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
+      </input_layout>
+      <entry>main_vs</entry>
+      <code>resources/shaders/character2.hlsl</code>
+      <compile_config>-DVERTEX_SHADER-DLIGHTING</compile_config>
+    </vertex_shader>
+    <pixel_shader>
+      <samplers>
+        <sampler type="linear" wrap="clamp"/>
+      </samplers>
+      <uniforms name="material">
+        <var type="u32" class="scalar" name="mask"/>
+        <var type="f32" class="scalar" name="d"/>
+        <var type="f32" class="vec4" name="Kd"/>
+        <var type="f32" class="vec4" name="Ka"/>
+      </uniforms>
+      <uniforms name="lights">
+        <var type="f32" class="vec3" name="ambient" />
+        <var type="u32" class="scalar" name="lights_count" />
+        <block array="10" name="lights" >
+          <var type="f32" class="vec4" name="color" />
+          <var type="f32" class="vec3" name="position" />
+          <var type="u32" class="scalar" name="type" />
+        </block>
+      </uniforms>
+      <entry>main_ps</entry>
+      <code>resources/shaders/character2.hlsl</code>
+      <compile_config>-DPIXEL_SHADER-DLIGHTING</compile_config>
+    </pixel_shader>
+  </technique>
+
+
+  <technique name="character02_fx">
+    <vertex_shader>
+      <uniforms name="wvp">
+        <var type="f32" class="mat4" name="world"/>
+        <var type="f32" class="mat4" name="view"/>
+        <var type="f32" class="mat4" name="proj"/>
+      </uniforms>
+      <input_layout>
+        <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+        <var type="f32" class="vec3" name="normal" semantic="NORMAL" semantic_idx="0"/>
+        <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
+      </input_layout>
+      <entry>main_vs</entry>
+      <code>resources/shaders/character2.hlsl</code>
+      <compile_config>-DVERTEX_SHADER-DLIGHTING-DHIGHLIGHT</compile_config>
+    </vertex_shader>
+    <pixel_shader>
+      <samplers>
+        <sampler type="linear" wrap="clamp"/>
+      </samplers>
+      <uniforms name="material">
+        <var type="u32" class="scalar" name="mask"/>
+        <var type="f32" class="scalar" name="d"/>
+        <var type="f32" class="scalar" name="Ns"/>
+        <var type="f32" class="vec4" name="Kd"/>
+        <var type="f32" class="vec4" name="Ka"/>
+        <var type="f32" class="vec4" name="Ks"/>
+      </uniforms>
+      <uniforms name="lights">
+        <var type="f32" class="vec3" name="ambient" />
+        <var type="u32" class="scalar" name="lights_count" />
+        <block array="10" name="lights" >
+          <var type="f32" class="vec4" name="color" />
+          <var type="f32" class="vec3" name="position" />
+          <var type="u32" class="scalar" name="type" />
+        </block>
+      </uniforms>
+      <entry>main_ps</entry>
+      <code>resources/shaders/character2.hlsl</code>
+      <compile_config>-DPIXEL_SHADER-DLIGHTING-DHIGHLIGHT</compile_config>
+    </pixel_shader>
+  </technique>
+
+</effect_library>
