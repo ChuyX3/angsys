@@ -108,3 +108,13 @@ void framework::on_destroyed_event(objptr sender, platform::events::imsg_event_a
 {
 	close_graphics();
 }
+
+void framework::on_pointer_released(objptr, platform::events::ipointer_event_args_t args)
+{
+	auto keyboard = platform::icore_app::current_app()->keyboard();
+
+	//keyboard->visibility() ? keyboard->hide_touch_keyboard() : keyboard->show_touch_keyboard();
+}
+
+
+
