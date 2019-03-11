@@ -202,6 +202,9 @@
     <Xml Include="res\texture_apex.xml">
       <SubType>Designer</SubType>
     </Xml>
+    <Xml Include="res\window.xml">
+      <SubType>Designer</SubType>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic_shader.hlsl">

@@ -156,7 +156,6 @@ namespace ang
 			{
 				windex first;
 				windex last;
-				wstring text;
 			}text_selection_t;
 
 			typedef graphics::point<float> analog_input_value_t, thumb_stick_value_t;
@@ -175,20 +174,23 @@ namespace ang
 
 			ang_begin_interface(LINK ikeyboard)
 				visible vcall bool show_touch_keyboard()pure;
-				visible vcall bool show_touch_keyboard(const text_selection_t& text_and_cursor)pure;
+				visible vcall bool show_touch_keyboard(text::istring_t, const text_selection_t&)pure;
 				visible vcall bool hide_touch_keyboard()pure;
-				visible vcall bool is_visible()const pure;
-				visible vcall wstring text()const pure;
-				visible vcall void text(wstring)pure;
+
+				visible vcall bool visibility()const pure;
+				visible vcall text::istring_t text()const pure;
+				visible vcall void text(text::istring_t)pure;
 				visible vcall wsize text_lenght()const pure;
-				visible vcall bool select(const text_selection_t&)pure;
+				visible vcall bool selection(const text_selection_t&)pure;
 				visible vcall text_selection_t selection()const pure;
 				visible vcall bool is_multiline()const pure;
 				visible vcall void is_multiline(bool)pure;
-				visible vcall void type(keyboard_type)pure;
-				visible vcall keyboard_type type()const pure;
-				visible vcall wstring restriction()const pure;
-				visible vcall void restriction(wstring)pure;
+				visible vcall void type(keyboard_type_t)pure;
+				visible vcall keyboard_type_t type()const pure;
+				visible vcall text::istring_t restriction()const pure;
+				visible vcall void restriction(text::istring_t)pure;
+				visible vcall events::event_token_t add_text_change_event(events::event_t)pure;
+				visible vcall bool remove_text_change_event(events::event_token_t)pure;
 			ang_end_interface();
 	
 			////////////////////////////////////////////////////
@@ -208,6 +210,7 @@ namespace ang
 
 
 			ang_begin_interface(LINK icontroller_manager)
+				visible scall icontroller_manager_t get_instance();
 				visible vcall icontroller_t get_controller(uint)const pure;
 				visible vcall events::event_token_t add_controller_connected_event(events::event_t)pure;
 				visible vcall bool remove_controller_connected_event(events::event_token_t)pure;

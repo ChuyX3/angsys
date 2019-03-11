@@ -98,15 +98,18 @@ namespace ang
 			
 			ang_begin_interface(LINK idispatcher)
 				visible vcall bool has_thread_access()const pure;	
-				visible vcall iasync<void> run_async(core::delegates::function<void(iasync<void>)>)pure;
-				//visible vcall iasync<void> run_async(core::delegates::function<void(iasync<void>, var_args_t)>, var_args_t)pure;
+				visible vcall iasync<void> run_async(function<void(iasync<void>)>)pure;
+				//visible vcall iasync<void> run_async(function<void(iasync<void>, var_args_t)>, var_args_t)pure;
 				template<typename T> iasync<T> run_async(delegates::function<T(iasync<T>)>);
 			ang_end_interface();
 
 			ang_begin_interface(LINK ithread, idispatcher)
+				visible vcall bool attach_loop(function<void(void)>)pure;
 				visible vcall bool is_main_thread()const pure;
-				visible vcall dword thread_id()const pure;			
-				visible vcall void join()const pure;
+				visible vcall dword thread_id()const pure;
+				visible vcall async_action_status_t status()const pure;
+				visible vcall void exit(int code = 0)const pure;
+				visible vcall void wait()const pure;
 			ang_end_interface();
 
 		}

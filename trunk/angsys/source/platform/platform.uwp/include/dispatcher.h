@@ -1,7 +1,7 @@
 #ifndef __ASYNCMSGTASK_H__
 #define __ASYNCMSGTASK_H__
 
-#include <ang/platform/win32/windows.h>
+#include <ang/platform/uwp/windows.h>
 //#include <Queue.h>
 
 namespace ang

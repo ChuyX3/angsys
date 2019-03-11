@@ -74,7 +74,7 @@ bool d3d11_surface::create(platform::icore_view_t view)
 	m_d3d_frame_buffer = new d3d11_frame_buffer(driver.get());
 	m_d3d_frame_buffer->create(this);
 
-	view->listener()->listen_to(new ang::platform::events::display_size_change_event(this, &d3d11_surface::on_display_size_changed_event));
+	view->dispatcher()->listen_to(new ang::platform::events::display_size_change_event(this, &d3d11_surface::on_display_size_changed_event));
 
 	return true;
 }

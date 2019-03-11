@@ -9,7 +9,7 @@ namespace ang
 	{
 		namespace events
 		{
-			safe_enum(LINK, win_msg, core_msg_t)
+			safe_enum(LINK, win_msg, uint)
 			{
 				none = 0x0000,
 				created = 0x0001,
@@ -169,16 +169,17 @@ namespace ang
 				initial_update = 0x0406,
 				update = 0x0407,
 				text_change = 0x0408,
-				user_msg = 0x0450,
+				child_notify = 0x0409,
+				user_msg = 0x0420,
 			};
 
-			using mouse_moved_event = event_handler<ipointer_event_args, (core_msg_enum)win_msg::mouse_move>;
-			using mouse_lbutton_down_event = event_handler<ipointer_event_args, (core_msg_enum)win_msg::lbutton_down>;
-			using mouse_lbutton_up_event = event_handler<ipointer_event_args, (core_msg_enum)win_msg::lbutton_up>;
-			using mouse_lbutton_dblclick_event = event_handler<ipointer_event_args, (core_msg_enum)win_msg::lbutton_dbl_clk>;
-			using mouse_rbutton_down_event = event_handler<ipointer_event_args, (core_msg_enum)win_msg::rbutton_down>;
-			using mouse_rbutton_up_event = event_handler<ipointer_event_args, (core_msg_enum)win_msg::rbutton_up>;
-			using mouse_rbutton_dblclick_event = event_handler<ipointer_event_args, (core_msg_enum)win_msg::rbutton_dbl_clk>;
+			using mouse_moved_event = event_handler<ipointer_event_args, (core_msg)win_msg::mouse_move>;
+			using mouse_lbutton_down_event = event_handler<ipointer_event_args, (core_msg)win_msg::lbutton_down>;
+			using mouse_lbutton_up_event = event_handler<ipointer_event_args, (core_msg)win_msg::lbutton_up>;
+			using mouse_lbutton_dblclick_event = event_handler<ipointer_event_args, (core_msg)win_msg::lbutton_dbl_clk>;
+			using mouse_rbutton_down_event = event_handler<ipointer_event_args, (core_msg)win_msg::rbutton_down>;
+			using mouse_rbutton_up_event = event_handler<ipointer_event_args, (core_msg)win_msg::rbutton_up>;
+			using mouse_rbutton_dblclick_event = event_handler<ipointer_event_args, (core_msg)win_msg::rbutton_dbl_clk>;
 		}
 	}
 }

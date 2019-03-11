@@ -531,10 +531,10 @@ namespace ang
 			ang_interface(itext_change_event_args);
 
 			class message;
-			typedef uint core_msg_t;
+			//typedef uint core_msg_t;
 			//typedef object_wrapper<message> message_t;
 
-			safe_enum(LINK, core_msg_enum, core_msg_t)
+			safe_enum(LINK, core_msg, uint)
 			{	
 				none = 0x0000,
 				created = 0x0001,
@@ -555,17 +555,17 @@ namespace ang
 				pointer_moved = 0X0245,
 				pointer_pressed = 0X0246,
 				pointer_released = 0X0247,
-				pointer_enter = 0x0249,
-				pointer_leave = 0x024A,
+				pointer_entered = 0x0249,
+				pointer_leaved = 0x024A,
 				pointer_canceled = 0x024C,
 
+				system_reserved_event = 0x0401,
 				start_app = 0x0403,
 				exit_app = 0x0404,
 				orientation = 0x0405,
 				initial_update = 0x0406,
 				update = 0x0407,
 				text_change = 0x0408,
-
 				user_msg = 0x0450,
 
 				controller_status_change = 0x0460,
@@ -579,7 +579,7 @@ namespace ang
 			typedef core::delegates::listener <void(object*, imsg_event_args*)> event_listener;
 			typedef core::delegates::listen_token<void(object*, imsg_event_args*)> event_token, event_token_t;
 
-			template<typename T, core_msg_enum MSG> class event_handler;
+			template<typename T, core_msg MSG> class event_handler;
 		
 			ang_interface(icreated_event_args);
 			ang_interface(ivisibility_change_event_args);
@@ -596,25 +596,27 @@ namespace ang
 			ang_interface(icontroller_digital_input_args);
 			ang_interface(icontroller_analog_input_args);
 
-			using start_app_event = event_handler<iapp_status_event_args, core_msg_enum::start_app>;
-			using exit_app_event = event_handler<iapp_status_event_args, core_msg_enum::exit_app>;
-			using created_event = event_handler<icreated_event_args, core_msg_enum::created>;
-			using closed_event = event_handler<imsg_event_args, core_msg_enum::close>;
-			using destroyed_event = event_handler<imsg_event_args, core_msg_enum::destroyed>;
-			using update_event = event_handler<imsg_event_args, core_msg_enum::update>;
-			using draw_event = event_handler<idraw_event_args, core_msg_enum::draw>;
-			using activate_event = event_handler<iactivate_event_args, core_msg_enum::activate>;
-			using display_size_change_event = event_handler<idisplay_info_event_args, core_msg_enum::size>;
-			using display_orientation_change_event = event_handler<idisplay_info_event_args, core_msg_enum::orientation>;
-			using display_invalidate_event = event_handler<idisplay_info_event_args, core_msg_enum::display_change>;
-			using key_pressed_event = event_handler<ikey_event_args, core_msg_enum::key_down>;
-			using key_released_event = event_handler<ikey_event_args, core_msg_enum::key_up>;
-			using pointer_moved_event = event_handler<ipointer_event_args, core_msg_enum::pointer_moved>;
-			using pointer_pressed_event = event_handler<ipointer_event_args, core_msg_enum::pointer_pressed>;
-			using pointer_released_event = event_handler<ipointer_event_args, core_msg_enum::pointer_released>;
-			using controller_status_change_event = event_handler<icontroller_status_args, core_msg_enum::controller_status_change>;
-			using controller_button_change_event = event_handler<icontroller_digital_input_args, core_msg_enum::contorller_button_change>;
-			using controller_analog_change_event = event_handler<icontroller_analog_input_args, core_msg_enum::contorller_analog_change>;
+			using start_app_event = event_handler<iapp_status_event_args, core_msg::start_app>;
+			using exit_app_event = event_handler<iapp_status_event_args, core_msg::exit_app>;
+			using created_event = event_handler<icreated_event_args, core_msg::created>;
+			using initialize_event = event_handler<icreated_event_args, core_msg::initial_update>;
+			using closed_event = event_handler<imsg_event_args, core_msg::close>;
+			using destroyed_event = event_handler<imsg_event_args, core_msg::destroyed>;
+			using update_event = event_handler<imsg_event_args, core_msg::update>;
+			using draw_event = event_handler<idraw_event_args, core_msg::draw>;
+			using activate_event = event_handler<iactivate_event_args, core_msg::activate>;
+			using display_size_change_event = event_handler<idisplay_info_event_args, core_msg::size>;
+			using display_orientation_change_event = event_handler<idisplay_info_event_args, core_msg::orientation>;
+			using display_invalidate_event = event_handler<idisplay_info_event_args, core_msg::display_change>;
+			using key_pressed_event = event_handler<ikey_event_args, core_msg::key_down>;
+			using key_released_event = event_handler<ikey_event_args, core_msg::key_up>;
+			using text_changed_event = event_handler<itext_change_event_args, core_msg::text_change>;
+			using pointer_moved_event = event_handler<ipointer_event_args, core_msg::pointer_moved>;
+			using pointer_pressed_event = event_handler<ipointer_event_args, core_msg::pointer_pressed>;
+			using pointer_released_event = event_handler<ipointer_event_args, core_msg::pointer_released>;
+			using controller_status_change_event = event_handler<icontroller_status_args, core_msg::controller_status_change>;
+			using controller_button_change_event = event_handler<icontroller_digital_input_args, core_msg::contorller_button_change>;
+			using controller_analog_change_event = event_handler<icontroller_analog_input_args, core_msg::contorller_analog_change>;
 
 		}
 
@@ -631,7 +633,7 @@ namespace ang
 	namespace platform
 	{
 		
-		ang_begin_interface(LINK imessage_listener)
+		ang_begin_interface(LINK imessage_listener, core::async::idispatcher)
 			visible vcall dword send_msg(events::message) pure;
 			visible vcall core::async::iasync<dword> post_msg(events::message) pure;
 			visible vcall events::event_token_t listen_to(events::event_t) pure;
@@ -651,12 +653,11 @@ namespace ang
 			visible vcall icore_context_t core_context()const pure;
 			visible vcall graphics::size<float> core_view_size()const pure;
 			visible vcall graphics::size<float> core_view_scale_factor()const pure;
-			visible vcall imessage_listener_t listener()const pure;
-			visible vcall core::async::idispatcher_t dispatcher()const pure;
+			visible vcall imessage_listener_t dispatcher()const pure;
 		ang_end_interface();
 
 		ang_begin_interface(LINK icore_app)
-		//	visible scall icore_app_t core_app();
+			visible scall icore_app_t current_app();
 			visible vcall pointer core_app_handle()const pure;
 			visible vcall icore_view_t main_core_view() pure;
 			visible vcall input::ikeyboard_t keyboard()pure;

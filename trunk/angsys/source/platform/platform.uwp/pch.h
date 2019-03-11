@@ -10,7 +10,7 @@
 #define ANGYS_DYNAMIC_LIBRARY
 #include "compile_config.h"
 #include <windowsx.h>
-#include <angsys.hpp>
+#include <angsys.h>
 
 #pragma comment(lib, "angsys.lib")
 

@@ -2,14 +2,14 @@
 #include "ang/platform/win32/windows.h"
 #include "dispatcher.h"
 #include "event_args.h"
-
+#include "wnd_handle.h"
 
 using namespace ang;
 using namespace ang::platform;
 using namespace ang::platform::events;
 using namespace ang::platform::windows;
 
-LRESULT WINAPI window_procedure(HWND hWnd, UINT m, WPARAM wprm, LPARAM lprm);
+extern "C" LRESULT WINAPI window_procedure(HWND hWnd, UINT m, WPARAM wprm, LPARAM lprm);
 
 ////////////////////////////////////////////////////////////////////
 
@@ -66,15 +66,28 @@ wnd_create_args::wnd_create_args(const wnd_create_args&args)
 
 }
 
-wnd_create_args::wnd_create_args(wstring className, wstring wndName, graphics::rect<float> area, wnd_style_t wndStyle, pointer wndParent, var_args_t userArgs)
+wnd_create_args::wnd_create_args(wstring className, wstring wndName, graphics::rect<float> area, wnd_style_t wndStyle, pointer wndParent, ulong64 id, var_args_t userArgs)
 	: m_wnd_class_name(className.get())
 	, m_wnd_name(wndName.get())
 	, m_rect_area(area)
 	, m_wnd_style(wndStyle)
 	, m_parent(wndParent)
+	, m_id(id)
 	, m_user_args(userArgs)
 {
 
+}
+
+wnd_create_args::wnd_create_args(wstring className, wstring wndName, graphics::rect<float> area, wnd_style_t wndStyle, wndptr wndParent, ulong64 id, var_args_t userArgs)
+	: m_wnd_class_name(className.get())
+	, m_wnd_name(wndName.get())
+	, m_rect_area(area)
+	, m_wnd_style(wndStyle)
+	, m_parent(null)
+	, m_id(id)
+	, m_user_args(userArgs)
+{
+	m_parent = wndParent.is_empty() ? null : wndParent->core_view_handle();
 }
 
 wnd_create_args::~wnd_create_args()
@@ -101,6 +114,9 @@ wnd_style_t wnd_create_args::get_style_property(base_property<wnd_style_t>const*
 pointer wnd_create_args::get_parent_property(base_property<pointer>const*prop) {
 	return field_to_parent(&self::parent, prop)->m_parent;
 }
+ulong64 wnd_create_args::get_id_property(base_property<ulong64>const* prop) {
+	return field_to_parent(&self::id, prop)->m_id;
+}
 array_view<const var> wnd_create_args::get_user_args_property(base_property<var_args_t>const*prop) {
 	return (array_view<const var>)field_to_parent(&self::user_args, prop)->m_user_args;
 }
@@ -113,15 +129,30 @@ wnd_create_args_ex::wnd_create_args_ex(const wnd_create_args_ex&args)
 
 }
 
-wnd_create_args_ex::wnd_create_args_ex(string className, string wndName, graphics::rect<float> area, wnd_style_ex_t wndExStyle, wnd_style_t wndStyle, pointer wndParent, var_args_t userArgs)
+wnd_create_args_ex::wnd_create_args_ex(string className, string wndName, graphics::rect<float> area, wnd_style_ex_t wndExStyle, wnd_style_t wndStyle, pointer wndParent, ulong64 id, var_args_t userArgs)
 	: base(
 		forward<string>(className),
 		forward<string>(wndName), 
 		forward<graphics::rect<float>>(area),
 		forward<wnd_style_t>(wndStyle),
 		forward<pointer>(wndParent),
+		forward<ulong64>(id),
 		forward<var_args_t>(userArgs))
 	,m_wnd_style_ex(forward<wnd_style_ex_t>(wndExStyle))
+{
+
+}
+
+wnd_create_args_ex::wnd_create_args_ex(string className, string wndName, graphics::rect<float> area, wnd_style_ex_t wndExStyle, wnd_style_t wndStyle, wndptr wndParent, ulong64 id, var_args_t userArgs)
+	: base(
+		forward<string>(className),
+		forward<string>(wndName),
+		forward<graphics::rect<float>>(area),
+		forward<wnd_style_t>(wndStyle),
+		forward<pointer>(wndParent),
+		forward<ulong64>(id),
+		forward<var_args_t>(userArgs))
+	, m_wnd_style_ex(forward<wnd_style_ex_t>(wndExStyle))
 {
 
 }
@@ -140,28 +171,7 @@ wnd_style_ex_t wnd_create_args_ex::get_style_ex_property(base_property<wnd_style
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
-namespace ang
-{
-	namespace platform
-	{
-		namespace windows
-		{
-			typedef struct window::_hwnd
-			{
-				HWND m_hwnd = null;
-				window_t m_wnd = null;
-				dispatcher_t m_dispatcher;
-				core::async::mutex_ptr_t m_mutex = make_shared<core::async::mutex>();
-				core::async::cond_ptr_t m_cond = make_shared<core::async::cond>();
-				//display::orientation_t current_orientation;
-				var_args_t m_user_args = null;
-
-			}*hwnd;
-		}
-	}
-}
+//////////////////////////////////////////////////////////////////////////////////
 
 #if defined _DEBUG
 #define NEW new(__FILE__, __LINE__)
@@ -171,7 +181,6 @@ namespace ang
 
 void window::adjust_window_rect(graphics::rect<float>& rect, wnd_style_t style, bool hasMenu)
 {
-
 	RECT r = { (long)rect.left, (long)rect.top, (long)rect.right, (long)rect.bottom };
 	::AdjustWindowRect(&r, (dword)style, hasMenu);
 
@@ -236,38 +245,39 @@ window::window(wnd_create_args_t args)
 	create(args);
 }
 
-
-
 window::window()
 	: m_handle(null)
-	, m_created_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::created; })
-	, m_closed_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::close; })
-	, m_destroyed_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::destroyed; })
-	, m_draw_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::draw; })
-	, m_update_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::update; })
-	, m_orientation_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::orientation; })
-	, m_activate_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::got_focus || msg == (core_msg_t)win_msg::lost_focus; })
-	, m_size_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::size; })
-	, m_display_change_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::display_change; })
-	, m_char_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::put_char; })
-	, m_key_pressed_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::key_down; })
-	, m_key_released_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::key_up; })
-	, m_pointer_entered_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::pointer_entered; })
-	, m_pointer_leaved_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::pointer_leaved; })
-	, m_pointer_moved_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::pointer_moved; })
-	, m_pointer_pressed_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::pointer_pressed; })
-	, m_pointer_released_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::pointer_pressed; })
-	, m_mouse_moved_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::mouse_move; })
-	, m_mouse_lbutton_pressed_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::lbutton_down; })
-	, m_mouse_lbutton_released_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::lbutton_up; })
-	, m_mouse_rbutton_pressed_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::rbutton_down; })
-	, m_mouse_rbutton_released_event(this, [](core_msg_t msg) { return msg == (core_msg_t)win_msg::rbutton_up; })
+	//, m_created_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::created; })
+	, m_initialize_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::initial_update; })
+	, m_closed_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::close; })
+	, m_destroyed_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::destroyed; })
+	, m_draw_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::draw; })
+	, m_update_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::update; })
+	, m_orientation_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::orientation; })
+	, m_activate_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::got_focus || msg == (core_msg)win_msg::lost_focus; })
+	, m_size_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::size; })
+	, m_display_change_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::display_change; })
+	, m_char_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::put_char; })
+	, m_key_pressed_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::key_down; })
+	, m_key_released_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::key_up; })
+//	, m_text_change_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::text_change; })
+	, m_pointer_entered_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::pointer_entered; })
+	, m_pointer_leaved_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::pointer_leaved; })
+	, m_pointer_moved_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::pointer_moved; })
+	, m_pointer_pressed_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::pointer_pressed; })
+	, m_pointer_released_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::pointer_pressed; })
+	, m_mouse_moved_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::mouse_move; })
+	, m_mouse_lbutton_pressed_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::lbutton_down; })
+	, m_mouse_lbutton_released_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::lbutton_up; })
+	, m_mouse_rbutton_pressed_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::rbutton_down; })
+	, m_mouse_rbutton_released_event(this, [](core_msg_t msg) { return msg == (core_msg)win_msg::rbutton_up; })
 {
 }
 
 window::~window()
 {
-	m_created_event.empty();
+	//m_created_event.empty();
+	m_initialize_event.empty();
 	m_destroyed_event.empty();
 	m_draw_event.empty();
 	m_update_event.empty();
@@ -291,7 +301,8 @@ ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::windows::window);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::platform::windows::window, object, icore_view);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::windows::window, object, icore_view);
 
-ang_platform_implement_event_handler(window, created_event);
+//ang_platform_implement_event_handler(window, created_event);
+ang_platform_implement_event_handler(window, initialize_event);
 ang_platform_implement_event_handler(window, closed_event);
 ang_platform_implement_event_handler(window, destroyed_event);
 
@@ -306,6 +317,7 @@ ang_platform_implement_event_handler(window, display_change_event);
 ang_platform_implement_event_handler(window, char_event);
 ang_platform_implement_event_handler(window, key_pressed_event);
 ang_platform_implement_event_handler(window, key_released_event);
+//ang_platform_implement_event_handler(window, text_change_event);
 
 ang_platform_implement_event_handler(window, pointer_entered_event);
 ang_platform_implement_event_handler(window, pointer_pressed_event);
@@ -386,7 +398,7 @@ bool window::create(wnd_create_args_t args)
 		, (cwstr_t)args->wnd_name, style
 		, (int)args->rect_area->left, (int)args->rect_area->top
 		, (int)args->rect_area->width, (int)args->rect_area->height
-		, (HWND)parent, null
+		, (HWND)parent, (HMENU)args->id
 		, instance, h);
 
 	if (h->m_hwnd == null)
@@ -398,7 +410,7 @@ bool window::create(wnd_create_args_t args)
 		return false;
 	}
 
-	send_msg(message((core_msg_t)win_msg::initial_update));
+	send_msg(message((core_msg)win_msg::initial_update));
 	//attach(h);
 	if (args->style & wnd_style::shown)
 		show(showing_flag::show);
@@ -443,7 +455,7 @@ core::async::iasync<void> window::post_task(core::async::iasync<void> async)
 	if (task == null)
 		return null;
 	task->add_ref();
-	if (PostMessageW(handle->m_hwnd,(core_msg_t)win_msg::system_reserved_event, 0, reinterpret_cast<LPARAM>(task)) == 0)
+	if (PostMessageW(handle->m_hwnd,(uint)win_msg::system_reserved_event, 0, reinterpret_cast<LPARAM>(task)) == 0)
 	{
 		task->release();
 		return null;
@@ -451,22 +463,19 @@ core::async::iasync<void> window::post_task(core::async::iasync<void> async)
 	return async;
 }
 
-imessage_listener_t window::listener()const
-{
-	return is_created ? handle->m_dispatcher.get() : null;
-}
-
-core::async::idispatcher_t window::dispatcher()const
+imessage_listener_t window::dispatcher()const
 {
 	return is_created ? handle->m_dispatcher.get() : null;
 }
 
 events::event_token_t window::listen_to(event_t event)
 {
-	switch ((win_msg)event.get()->msg_type())
+	switch ((win_msg)(core_msg)event.get()->msg_type())
 	{
-	case win_msg::created:
-		return m_created_event += event;
+	//case win_msg::created:
+	//	return m_created_event += event;
+	case win_msg::initial_update:
+		return m_initialize_event += event;
 	case win_msg::destroyed:
 		return m_destroyed_event += event;
 	case win_msg::draw:
@@ -491,7 +500,7 @@ dword window::send_msg(message msg)
 {
 	return ::SendMessageW(
 			(HWND)core_view_handle(),
-			(UINT)msg.msg(),
+			(UINT)(core_msg)msg.msg(),
 			(WPARAM)msg.wparam(),
 			(LPARAM)msg.lparam()
 		);
@@ -620,10 +629,10 @@ void window::redraw()
 
 LRESULT WINAPI window_procedure(HWND hWnd, UINT m, WPARAM wprm, LPARAM lprm)
 {
-	message msg(m, wprm, lprm);
+	message msg((core_msg)m, wprm, lprm);
 	window_t wnd = null;
 
-	if (((core_msg_t)win_msg::created == m) && (lprm != 0))
+	if (((core_msg)win_msg::created == (core_msg)m) && (lprm != 0))
 	{
 		LPCREATESTRUCT pcs = (LPCREATESTRUCT)lprm;
 		auto h = (hwnd)pcs->lpCreateParams;
@@ -650,10 +659,11 @@ LRESULT WINAPI window_procedure(HWND hWnd, UINT m, WPARAM wprm, LPARAM lprm)
 
 void window::window_proc(message& msg)
 {
-	switch ((win_msg)msg.msg())
+	switch ((win_msg)(core_msg)msg.msg())
 	{
 	case win_msg::created: {
-		attach(LPCREATESTRUCT((LPARAM)msg.lparam())->lpCreateParams);
+		auto cs = LPCREATESTRUCT((LPARAM)msg.lparam());
+		attach(cs->lpCreateParams);
 		handle->m_dispatcher = new windows::dispatcher(
 			bind(this, &window::listen_to),
 			bind(this, &window::send_msg),
@@ -663,7 +673,7 @@ void window::window_proc(message& msg)
 	}break;
 
 	case win_msg::initial_update: {
-		initial_update();
+		on_initialize(msg);
 	} break;
 
 	case win_msg::close: {
@@ -704,6 +714,9 @@ void window::window_proc(message& msg)
 		on_pointer_event(msg);
 	} break;
 
+	case win_msg::command:
+		on_command(msg);
+		break;
 	
 	case win_msg::mouse_move:
 	case win_msg::lbutton_down:
@@ -729,7 +742,7 @@ void window::window_proc(message& msg)
 
 void window::def_window_proc(events::message& msg)
 {
-	msg.result(DefWindowProcW((HWND)core_view_handle(), msg.msg(), (WPARAM)msg.wparam(), (LPARAM)msg.lparam()));
+	msg.result(DefWindowProcW((HWND)core_view_handle(), (uint)(core_msg)msg.msg(), (WPARAM)msg.wparam(), (LPARAM)msg.lparam()));
 }
 
 void window::initial_update()
@@ -741,11 +754,23 @@ dword window::on_created(events::message& m)
 {
 	icreated_event_args_t args = new created_event_args(m, this, app::current_app(), handle->m_user_args);
 	try { 
-		m_created_event(args.get());
+		//m_created_event(args.get());
 	}
 	catch (const exception_t& e) { 
 	}
 	def_window_proc(m);
+	return m.result();
+}
+
+dword window::on_initialize(events::message& m)
+{
+	icreated_event_args_t args = new created_event_args(m, this, app::current_app(), handle->m_user_args);
+	try {
+		initial_update();
+		m_initialize_event(args.get());
+	}
+	catch (const exception_t& e) {
+	}
 	return m.result();
 }
 
@@ -804,7 +829,7 @@ dword window::on_update(events::message& m)
 dword window::on_activate(events::message& m)
 {
 	int handled = 0;
-	activate_status_t status = m.msg() == (core_msg_t)win_msg::got_focus ? activate_status::activated : activate_status::deactivated;
+	activate_status_t status = m.msg() == (core_msg)win_msg::got_focus ? activate_status::activated : activate_status::deactivated;
 
 	iactivate_event_args_t args = new activate_event_args(m, status);
 	try {
@@ -817,20 +842,14 @@ dword window::on_activate(events::message& m)
 	return m.result();
 }
 
-struct display_info_event_args2 {
-	display_invalidate_reason_t state;
-	display::display_info info;
-};
-
-
 dword window::on_dysplay_event(events::message& m)
 {
 	dword value = (dword)m.lparam();
 
 	display_invalidate_reason_t reason
-		= (win_msg)m.msg() == win_msg::size ? display_invalidate_reason::size_changed
-		: (win_msg)m.msg() == win_msg::display_change ? display_invalidate_reason::display_invalidate
-		: (win_msg)m.msg() == win_msg::orientation ? display_invalidate_reason::orientation_changed
+		= m.msg() == (core_msg)win_msg::size ? display_invalidate_reason::size_changed
+		: m.msg() == (core_msg)win_msg::display_change ? display_invalidate_reason::display_invalidate
+		: m.msg() == (core_msg)win_msg::orientation ? display_invalidate_reason::orientation_changed
 		: display_invalidate_reason::none;
 
 	display::display_info info = {
@@ -844,7 +863,7 @@ dword window::on_dysplay_event(events::message& m)
 	m.result(-1);
 	idisplay_info_event_args_t args = new display_info_event_args(m, this, reason, info);
 	try {
-		switch ((win_msg)m.msg())
+		switch ((win_msg)(core_msg)m.msg())
 		{
 		case win_msg::size: m_size_event(args.get()); break;
 		case win_msg::display_change: m_display_change_event(args.get()); break;
@@ -890,7 +909,7 @@ dword window::on_pointer_event(events::message& m)
 
 	int count = 0;
 	try { 
-		switch ((win_msg)m.msg())
+		switch ((win_msg)(core_msg)m.msg())
 		{
 		case win_msg::pointer_entered: count = m_pointer_entered_event(args.get()); m.result(0); break;
 		case win_msg::pointer_pressed: count = m_pointer_pressed_event(args.get()); m.result(0); break;
@@ -905,7 +924,6 @@ dword window::on_pointer_event(events::message& m)
 		def_window_proc(m);
 	return m.result();
 }
-
 
 dword window::on_mouse_event(events::message& m)
 {
@@ -935,7 +953,7 @@ dword window::on_mouse_event(events::message& m)
 		});
 	int count = 0;
 	try {
-		switch ((win_msg)m.msg())
+		switch ((win_msg)(core_msg)m.msg())
 		{
 		case win_msg::mouse_move: count = m_mouse_moved_event(args.get()); m.result(0); break;
 		case win_msg::lbutton_down: count = m_mouse_lbutton_pressed_event(args.get()); m.result(0); break;
@@ -951,7 +969,6 @@ dword window::on_mouse_event(events::message& m)
 		def_window_proc(m);
 	return m.result();
 }
-
 
 dword window::on_key_event(events::message& m)
 {
@@ -972,14 +989,14 @@ dword window::on_key_event(events::message& m)
 		(input::virtual_key)m.wparam(), //property<const virtual_key> key;
 		(char32_t)m.wparam(), //property<const virtual_key> key;
 		(word)(uint)m.lparam(), //property<const word> flags;
-		(win_msg)m.msg() == win_msg::key_down ? input::key_state::pressed
-		: (win_msg)m.msg() == win_msg::put_char ? input::key_state::pressed
+		(win_msg)(core_msg)m.msg() == win_msg::key_down ? input::key_state::pressed
+		: (win_msg)(core_msg)m.msg() == win_msg::put_char ? input::key_state::pressed
 		: input::key_state::released,
 		(input::key_modifiers)modifiers //property<const key_modifiers> modifiers;
 		});
 	m.result(-1);
 	try {
-		switch ((win_msg)m.msg())
+		switch ((win_msg)(core_msg)m.msg())
 		{
 		case win_msg::key_down: m_key_pressed_event(args.get()); m.result(0); break;
 		case win_msg::put_char: m_char_event(args.get()); m.result(0); break;
@@ -992,6 +1009,42 @@ dword window::on_key_event(events::message& m)
 	return m.result();
 }
 
+dword window::on_command(events::message& m)
+{
+	pointer lprm = (pointer)m.lparam();
+	uint wprm = (uint)m.wparam();
+	word id = LOWORD(wprm);
+	word cmd = HIWORD(wprm);
+	wndptr wnd = null;
+	if (lprm != null && !(wnd = handle_to_window(lprm)).is_empty())
+	{
+		dword res = 0;
+		if (!wnd.is_empty()) {
+			res = wnd->send_msg({ (events::core_msg)win_msg::child_notify, cmd, id});
+			if (res == FALSE) //unhandled
+			{
+
+			}
+		}
+	}
+	else {
+		/*switch (cmd)
+		{
+		case EN_CHANGE:
+			send_msg((events::core_msg_t)win_msg::text_change);
+			break;
+		case EN_SETFOCUS:
+		case EN_KILLFOCUS:
+
+			break;
+		default:
+			break;
+		}*/
+	}
+
+	return 0;
+}
+
 dword window::on_task_command(events::message& m)
 {
 	auto task = reinterpret_cast<async_task*>(m.lparam());
@@ -1000,3 +1053,4 @@ dword window::on_task_command(events::message& m)
 	m.result(0);
 	return 0;
 }
+

@@ -36,7 +36,7 @@ namespace ang
 		{
 			ang_object(app);
 			ang_object(window);
-			ang_object(process);
+			ang_object(ui_thread);
 			ang_object(child_process);
 			ang_object(windows_file_system);
 
@@ -127,8 +127,7 @@ namespace ang
 				app_window = 0x00040000L,
 				overlapped_window = 0x00000300L,
 				palette_window = 0x00000188L
-			}
-;
+			};
 
 			struct LINK system_info
 			{
@@ -139,6 +138,17 @@ namespace ang
 				static display::orientation_t current_screen_orientation();
 				static display::orientation_t native_screen_orientation();
 			};
+
+			namespace ui
+			{
+				ang_object(control);
+				ang_object(view);
+				ang_object(label);
+				ang_object(button);
+				ang_object(text_box);
+				ang_object(combo_box);
+
+			}
 		}
 	}
 }
@@ -203,6 +213,7 @@ namespace ang
 				graphics::rect<float> m_rect_area;
 				wnd_style_t m_wnd_style;
 				pointer m_parent;
+				ulong64 m_id;
 				var_args_t m_user_args;
 
 				static wstring get_wnd_name_property(base_property<wstring>const*);
@@ -210,6 +221,7 @@ namespace ang
 				static graphics::rect<float> get_rect_area_property(base_property<graphics::rect<float>>const*);
 				static wnd_style_t get_style_property(base_property<wnd_style_t>const*);
 				static pointer get_parent_property(base_property<pointer>const*);
+				static ulong64 get_id_property(base_property<ulong64>const*);
 				static array_view<const var> get_user_args_property(base_property<var_args_t>const*);
 
 			public:
@@ -218,6 +230,13 @@ namespace ang
 					, graphics::rect<float> area = graphics::rect<float>(100, 100, 900, 700)
 					, wnd_style_t wndStyle = wnd_style::overlapped_window + wnd_style::shown
 					, pointer wndParent = null
+					, ulong64 id = 0
+					, var_args_t userArgs = null);
+				wnd_create_args(wstring className, wstring wndName
+					, graphics::rect<float> area
+					, wnd_style_t wndStyle
+					, wndptr wndParent
+					, ulong64 id = 0
 					, var_args_t userArgs = null);
 
 				ANG_DECLARE_INTERFACE();
@@ -227,6 +246,7 @@ namespace ang
 				property<const graphics::rect<float>, get_rect_area_property> rect_area;
 				property<const wnd_style_t, get_style_property> style;
 				property<const pointer, get_parent_property> parent;
+				property<const ulong64, get_id_property> id;
 				property<const var_args_t, get_user_args_property> user_args;
 
 			protected:
@@ -249,6 +269,15 @@ namespace ang
 					, wnd_style_ex_t wndStyleEx = wnd_style_ex::none
 					, wnd_style_t wndStyle = wnd_style::overlapped_window
 					, pointer wndParent = null
+					, ulong64 id = 0
+					, var_args_t userArgs = null);
+
+				wnd_create_args_ex(string className, string wndName
+					, graphics::rect<float> area
+					, wnd_style_ex_t wndStyleEx
+					, wnd_style_t wndStyle
+					, wndptr wndParent
+					, ulong64 id = 0
 					, var_args_t userArgs = null);
 
 				ANG_DECLARE_INTERFACE();
@@ -296,7 +325,8 @@ namespace ang
 				virtual~window();
 
 			public: //Events
-				ang_platform_event(events::icreated_event_args, created_event);
+				//ang_platform_event(events::icreated_event_args, created_event);
+				ang_platform_event(events::icreated_event_args, initialize_event);
 				ang_platform_event(events::imsg_event_args, closed_event);
 				ang_platform_event(events::imsg_event_args, destroyed_event);
 
@@ -311,6 +341,7 @@ namespace ang
 				ang_platform_event(events::ikey_event_args, char_event);
 				ang_platform_event(events::ikey_event_args, key_pressed_event);
 				ang_platform_event(events::ikey_event_args, key_released_event);
+				//ang_platform_event(events::itext_change_event_args, text_change_event);
 
 				ang_platform_event(events::ipointer_event_args, pointer_entered_event);
 				ang_platform_event(events::ipointer_event_args, pointer_pressed_event);
@@ -350,8 +381,7 @@ namespace ang
 				virtual icore_context_t core_context()const override;
 				virtual graphics::size<float> core_view_size()const override;
 				virtual graphics::size<float> core_view_scale_factor()const override;
-				virtual imessage_listener_t listener()const override;
-				virtual core::async::idispatcher_t dispatcher()const override;
+				virtual imessage_listener_t dispatcher()const override;
 				
 				virtual bool create(wnd_create_args_t);
 
@@ -372,6 +402,7 @@ namespace ang
 
 			protected: //Internal Event Handlers
 				dword on_created(events::message& m);
+				dword on_initialize(events::message& m);
 				dword on_close(events::message& m);
 				dword on_destroyed(events::message& m);
 				dword on_draw(events::message& m);
@@ -383,45 +414,43 @@ namespace ang
 				dword on_pointer_event(events::message& m);
 				dword on_mouse_event(events::message& m);
 				dword on_key_event(events::message& m);
-
+				//dword on_text_change(events::message& m);
+				dword on_command(events::message& m);
 				dword on_task_command(events::message& m);
 
 				friend class dispatcher;
 			};
 
-			class LINK process
-				: public smart<process>
+			class LINK ui_thread
+				: public smart<ui_thread>
 			{
 			public:
-				static process_t current_process();
+				static ui_thread_t current_thread();
+				static ui_thread_t create_ui_thread();
 
 			protected:
-				struct _hprocess;
-				typedef _hprocess *hprocess_t;
-				hprocess_t m_process;
-				
-				//mutable core::async::mutex_ptr_t mutex;
-				//mutable core::async::cond_ptr_t cond;
-				//array<string> cmd_args;
-
-			public:
-				process();
+				struct _hthread;
+				typedef _hthread *hthread_t;
+				hthread_t m_thread;	
 
 			protected:
-				virtual~process();
+				ui_thread();
+				virtual~ui_thread();
 
 			public: //Methods
 				virtual dword run();
 				virtual dword run(array<string> args);
+				virtual core::async::iasync<dword> run_async();
 
 			protected:
-				int main_loop();
+				void loop();
+				int on_run();
 				void destroy();
 				dword on_message_dispatcher(events::message);
 				
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
-
+				void clear()override;
 				pointer handle()const;
 				core::async::idispatcher_t dispatcher()const;
 
@@ -434,7 +463,7 @@ namespace ang
 				virtual bool close();
 
 			public: //Properties
-				bool is_worker_thread()const;
+				bool is_current_thread()const;
 				core::async::mutex_ptr_t main_mutex()const;
 				core::async::cond_ptr_t main_cond()const;
 				core::async::thread_t main_worker_thread()const;
@@ -444,8 +473,8 @@ namespace ang
 				void settings(cstr_t, var);
 
 			public: //Events
-				ang_platform_event(events::iapp_status_event_args, start_app_event);
-				ang_platform_event(events::iapp_status_event_args, exit_app_event);
+				ang_platform_event(events::iapp_status_event_args, initialize_event);
+				ang_platform_event(events::iapp_status_event_args, finalize_event);
 
 			public: //Custom Implementation
 				virtual bool init_app(array<string> cmdl);
@@ -454,13 +483,15 @@ namespace ang
 			};
 
 			class LINK app
-				: public smart<app, process, icore_app>
+				: public smart<app, ui_thread, icore_app>
 			{
 			public:
 				static appptr current_app();
+				static core::async::iasync<dword> run_async(function<void(app_t)>start);
 
 			protected:
 				wndptr m_main_wnd;
+				events::event_token_t close_token;
 				static window* get_main_wnd_property(base_property<wndptr>const* prop) {
 					return field_to_parent(&app::main_wnd, prop)->m_main_wnd.get();
 				}
@@ -478,9 +509,6 @@ namespace ang
 			protected:
 				virtual~app();
 
-			public: //Methods
-				core::async::iasync<dword> run_async(wndptr wnd, wnd_create_args_t args);
-
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
 				//void set_main_wnd(wndptr mainWindow);
@@ -488,11 +516,10 @@ namespace ang
 				virtual pointer core_app_handle()const override;
 				virtual icore_view_t main_core_view() override;
 				virtual input::ikeyboard_t keyboard() override;
+				virtual bool close()override;
 				//virtual imessage_reciever_t get_listener()const override;
 				//virtual Core::Files::IFileSystem* GetFileSystem();
-
-			protected:
-				virtual dword on_run_async(core::async::iasync<dword>, wndptr);
+				using ui_thread::run_async;
 
 			public: //Properties
 				property<window, get_main_wnd_property, set_main_wnd_property> main_wnd;
@@ -508,6 +535,99 @@ namespace ang
 				//events::event_listener main_wnd_destroyed_event;
 
 			};
+		}
+
+
+
+		namespace windows
+		{
+			namespace ui
+			{
+				
+				class LINK control
+					: public smart<control, window>
+				{
+				private:
+					static bool get_focus_property(base_property<bool>const*);
+					static void set_focus_property(base_property<bool>*, bool&&);
+
+				protected:
+					control();
+					virtual~control();
+				
+				public:
+					ANG_DECLARE_INTERFACE();	
+
+				public: //custom overrides
+					virtual bool create(wnd_create_args_t);
+					virtual void window_proc(events::message& msg)override;
+
+				public: //events
+
+				public: //properties
+					ang::property<bool, get_focus_property, set_focus_property> focus;
+
+				protected:
+					virtual dword on_child_notify(events::message&) = 0;
+				};
+
+				class LINK button
+					: public smart<text_box, control>
+				{
+				private:
+
+
+				public:
+					button();
+
+					ANG_DECLARE_INTERFACE();
+
+					virtual bool create(wnd_create_args_t);
+
+				public: //events
+					//ang::event<
+
+				protected:
+					virtual dword on_child_notify(events::message&)override;
+
+				protected:
+					virtual~button();
+				};
+
+				class LINK text_box
+					: public smart<text_box, control>
+				{
+				private:
+					bool m_has_focus;
+					ang::listener<void(objptr, wstring)> m_text_changed_event;
+					static listen_token<void(objptr, wstring)> add_text_changed_event_handler(base_event*, function<void(objptr, wstring)>);
+					static bool remove_text_changed_event_handler(base_event*, listen_token<void(objptr, wstring)>);
+
+					static wstring get_text_property(base_property<wstring>const*);
+					static void set_text_property(base_property<wstring>*, ang::text::raw_cstr_t);
+
+				public:
+					text_box();
+
+					ANG_DECLARE_INTERFACE();
+
+					virtual bool create(wnd_create_args_t);
+
+				public: //events
+					ang::event<void(objptr, wstring), add_text_changed_event_handler, remove_text_changed_event_handler> text_changed_event;
+
+				public:
+					ang::property<wstring, get_text_property, set_text_property> text;
+					
+
+				protected:
+					virtual dword on_child_notify(events::message&)override;
+
+				protected:
+					virtual~text_box();
+				};
+
+			}
 		}
 	}
 }

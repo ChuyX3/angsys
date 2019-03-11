@@ -74,25 +74,25 @@ namespace ang
 	}
 
 	template<>
-	struct MY_LINKAGE property_helper<text::basic_string<MY_ENCODING, MY_ALLOCATOR>, false> {
+	struct MY_LINKAGE property_helper<text::basic_string<MY_ENCODING, MY_ALLOCATOR>, smart_type::none> {
 		using type = text::basic_string<MY_ENCODING, MY_ALLOCATOR>;
 		using ret_type = text::basic_string<MY_ENCODING, MY_ALLOCATOR>;
 		using ptr_type = text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>*;
 		using arg_type = text::raw_cstr_t;
 		using property_class = base_property<type>;
 		using getter_type = ret_type(*)(property_class const*);
-		using setter_type = void(*)(property_class const*, arg_type);
+		using setter_type = void(*)(property_class*, arg_type);
 	};
 
 	template<>
-	struct MY_LINKAGE property_helper<const text::basic_string<MY_ENCODING, MY_ALLOCATOR>, false> {
+	struct MY_LINKAGE property_helper<const text::basic_string<MY_ENCODING, MY_ALLOCATOR>, smart_type::none> {
 		using type = text::basic_string<MY_ENCODING, MY_ALLOCATOR>;
 		using ret_type = text::basic_string<MY_ENCODING, MY_ALLOCATOR>;
 		using ptr_type = text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>*;
 		using arg_type = text::raw_cstr_t;
 		using property_class = base_property<type>;
 		using getter_type = ret_type(*)(property_class const*);
-		using setter_type = void(*)(property_class const*, arg_type);
+		using setter_type = void(*)(property_class*, arg_type);
 	};
 
 	ANG_BEGIN_OBJECT_WRAPPER(MY_LINKAGE, text::basic_string_buffer<MY_ENCODING COMA MY_ALLOCATOR>)

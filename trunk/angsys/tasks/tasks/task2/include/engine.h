@@ -50,6 +50,8 @@ namespace ang
 			void on_update_event(objptr sender, platform::events::imsg_event_args_t args);
 			void on_destroyed_event(objptr sender, platform::events::imsg_event_args_t args);
 
+			void on_pointer_released(objptr, platform::events::ipointer_event_args_t args);
+
 		private:
 			virtual~framework();
 		};

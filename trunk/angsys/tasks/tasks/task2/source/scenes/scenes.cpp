@@ -111,7 +111,7 @@ void scene::clear()
 
 	m_lights.reset();
 	if(m_dispatcher)
-		m_dispatcher->join();
+		m_dispatcher->exit();
 	m_dispatcher = null;
 
 	m_driver = null;

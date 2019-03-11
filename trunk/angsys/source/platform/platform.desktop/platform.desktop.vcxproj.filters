@@ -24,14 +24,17 @@
     <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\controller.h">
       <Filter>header files\ang\platform\windows</Filter>
     </ClInclude>
+    <ClInclude Include="include\wnd_handle.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\keyboard.h">
+      <Filter>header files\ang\platform\windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="source\app.cpp">
-      <Filter>source files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\process.cpp">
       <Filter>source files</Filter>
     </ClCompile>
     <ClCompile Include="source\system_info.cpp">
@@ -57,6 +60,15 @@
     </ClCompile>
     <ClCompile Include="source\input\controller.cpp">
       <Filter>source files\input</Filter>
+    </ClCompile>
+    <ClCompile Include="source\input\keyboard.cpp">
+      <Filter>source files\input</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ui\controls.cpp">
+      <Filter>source files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ui_thread.cpp">
+      <Filter>source files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,6 +98,9 @@
     </Filter>
     <Filter Include="source files\input">
       <UniqueIdentifier>{52ac6a95-d84a-4d38-923e-1b7ca1f16123}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\ui">
+      <UniqueIdentifier>{0c4647bd-b11e-486f-a297-632681475934}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

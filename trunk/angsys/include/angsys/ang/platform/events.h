@@ -249,7 +249,7 @@ namespace ang
 		namespace events
 		{
 
-			template<typename T, core_msg_enum MSG >
+			template<typename T, core_msg MSG >
 			class event_handler final : public smart<event_handler<T, MSG>, base_event_handler>
 			{
 			public:
@@ -284,10 +284,10 @@ namespace ang
 
 			template<typename T, typename event_helper<T>::add_event_type add_event, typename event_helper<T>::remove_event_type remove_event>
 			struct event final : public base_event {
-				template<core_msg_enum MSG> inline auto operator += (event_handler<T, MSG>* e) {
+				template<core_msg MSG> inline auto operator += (event_handler<T, MSG>* e) {
 					return add_event(this, e);
 				}
-				template<core_msg_enum MSG> inline auto operator += (object_wrapper<event_handler<T, MSG>> e) {
+				template<core_msg MSG> inline auto operator += (object_wrapper<event_handler<T, MSG>> e) {
 					return add_event(this, e.get());
 				}
 				inline auto operator -= (event_token_t token) {

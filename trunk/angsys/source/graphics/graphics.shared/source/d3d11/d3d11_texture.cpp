@@ -181,7 +181,7 @@ d3d11_texture_loader::d3d11_texture_loader(d3d11_driver_t parent)
 
 d3d11_texture_loader::~d3d11_texture_loader()
 {
-	m_work_thead->join();
+	m_work_thead->exit();
 	m_mutex->lock();
 	m_textures.reset();
 	m_texture_info_map.reset();

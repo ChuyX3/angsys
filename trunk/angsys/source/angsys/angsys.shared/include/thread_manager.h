@@ -58,7 +58,7 @@ namespace ang
 				friend class thread_manager;
 
 			protected:
-				static void entry_point(worker_thread*);
+				static int entry_point(worker_thread*);
 
 			public:
 				worker_thread();
@@ -71,21 +71,25 @@ namespace ang
 				virtual iasync<void> run_async(core::delegates::function<void(iasync<void>)>)override;
 				//virtual iasync<void> run_async(core::delegates::function<void(iasync<void>, var_args_t)>, var_args_t)override;
 
+				virtual bool attach_loop(function<void(void)>)override;
 				virtual bool is_main_thread()const override;
 				virtual bool has_thread_access()const override;
 				virtual dword thread_id()const override;
-				virtual void join()const override;
+				virtual async_action_status_t status()const override;
+				virtual void exit(int code = 0)const override;
+				virtual void wait()const;
 
 				thread_task_t post_task(thread_task_t);
 				thread_task_t post_task(core::delegates::function<void(iasync<void>)>);
-				void dispatch();
+				int dispatch();
 
 				bool start();
 				bool attach();
 
 			protected:
+				mutable int m_exit_code;
 				bool m_is_main_thread;
-				//bool m_auto_release;
+				function<void(void)> m_main_loop;
 				collections::list<thread_task_t> m_tasks;
 				mutable async_action_status_t m_state;
 

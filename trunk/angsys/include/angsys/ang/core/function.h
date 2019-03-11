@@ -87,7 +87,8 @@ namespace ang
 				function_type _function;
 
 			public:
-				inline member_function(O* o, function_type const& f) : _obj(o), _function(f) {}
+				//inline member_function(O* o, function_type const& f) : _obj(o), _function(f) {}
+				template<typename D> inline member_function(D* o, function_type const& f) : _obj(o), _function(f) {}
 
 				inline T invoke(Ts... args)const override {
 					return (_obj->*_function)(ang::forward<Ts>(args)...);
@@ -116,7 +117,10 @@ namespace ang
 				function_type _function;
 
 			public:
-				inline member_function(O* o, function_type const& f)
+				/*inline member_function(O* o, function_type const& f)
+					: _obj(o), _function(f) {
+				}*/
+				template<typename D> inline member_function(D* o, function_type const& f)
 					: _obj(o), _function(f) {
 				}
 
@@ -125,7 +129,8 @@ namespace ang
 					return lock.is_empty() ? T() : (lock->*_function)(ang::forward<Ts>(args)...);
 				}
 				inline ifunction<T(Ts...)>* clone()const override {
-					return new member_function(_obj.lock(), _function);
+					object_wrapper<O> lock = _obj.lock();
+					return new member_function(lock.get(), _function);
 				}
 
 			private:
@@ -220,8 +225,13 @@ namespace ang
 			set(new core::delegates::static_function<F, T, Ts...>(func));
 		}
 
-		template<typename O>
+		/*template<typename O>
 		object_wrapper(O* obj, T(O::*f)(Ts...)) : object_wrapper() {
+			set(new core::delegates::member_function<O, is_base_of<interface, O>::value, T, Ts...>(obj, f));
+		}*/
+
+		template<typename O, typename D>
+		object_wrapper(D* obj, T(O::*f)(Ts...)) : object_wrapper() {
 			set(new core::delegates::member_function<O, is_base_of<interface, O>::value, T, Ts...>(obj, f));
 		}
 
@@ -360,18 +370,18 @@ namespace ang
 	};
 
 
-	template<typename O, typename T, typename...Ts>
-	inline function<T(Ts...)> bind(O* o, T(O::*f)(Ts...)) {
+	template<typename O, typename D, typename T, typename...Ts>
+	inline function<T(Ts...)> bind(D* o, T(O::*f)(Ts...)) {
 		return function<T(Ts...)>(o, f);
 	}
 
-	template<typename O, typename T, typename...Ts>
-	inline function<T(Ts...)> bind(object_wrapper<O> o, T(O::*f)(Ts...)) {
+	template<typename O, typename D, typename T, typename...Ts>
+	inline function<T(Ts...)> bind(object_wrapper<D> o, T(O::*f)(Ts...)) {
 		return function<T(Ts...)>(o.get(), f);
 	}
 
-	template<typename O, typename T, typename...Ts>
-	inline function<T(Ts...)> bind(intf_wrapper<O> o, T(O::*f)(Ts...)) {
+	template<typename O, typename D, typename T, typename...Ts>
+	inline function<T(Ts...)> bind(intf_wrapper<D> o, T(O::*f)(Ts...)) {
 		return function<T(Ts...)>(o.get(), f);
 	}
 }

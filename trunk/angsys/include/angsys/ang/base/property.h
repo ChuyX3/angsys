@@ -17,10 +17,10 @@
 namespace ang //constants
 {
 	template<typename T> struct base_property { };
-	template<typename T, bool IS_OBJECT = is_object<T>::value> struct property_helper;
+	template<typename T, smart_type TYPE = smart_ptr_type<T>::smart_type> struct property_helper;
 
 	template<typename T>
-	struct property_helper<T, false> {
+	struct property_helper<T, smart_type::none> {
 		using type = typename remove_reference<typename remove_constant<T>::type>::type;
 		using ret_type = type;
 		using ptr_type = typename __to_pointer_helper<type>::ptr_type;
@@ -31,7 +31,7 @@ namespace ang //constants
 	};
 
 	template<typename T>
-	struct property_helper<const T, false> {
+	struct property_helper<const T, smart_type::none> {
 		using type = typename remove_reference<typename remove_constant<T>::type>::type;
 		using ret_type = type;
 		using ptr_type = typename __to_pointer_helper<type>::ptr_type;
@@ -112,7 +112,7 @@ namespace ang //constants
 
 
 	template<typename T>
-	struct property_helper<object_wrapper<T>, false> {
+	struct property_helper<object_wrapper<T>, smart_type::none> {
 		using type = object_wrapper<T>;
 		using ret_type = type;
 		using ptr_type = T * ;
@@ -123,7 +123,7 @@ namespace ang //constants
 	};
 
 	template<typename T>
-	struct property_helper<const object_wrapper<T>, false> {
+	struct property_helper<const object_wrapper<T>, smart_type::none> {
 		using type = object_wrapper<T>;
 		using ret_type = type;
 		using ptr_type = T* ;
@@ -134,7 +134,7 @@ namespace ang //constants
 	};
 
 	template<typename T>
-	struct property_helper<intf_wrapper<T>, false> {
+	struct property_helper<intf_wrapper<T>, smart_type::none> {
 		using type = intf_wrapper<T>;
 		using ret_type = type;
 		using ptr_type = T * ;
@@ -145,7 +145,7 @@ namespace ang //constants
 	};
 
 	template<typename T>
-	struct property_helper<const intf_wrapper<T>, false> {
+	struct property_helper<const intf_wrapper<T>, smart_type::none> {
 		using type = intf_wrapper<T>;
 		using ret_type = type;
 		using ptr_type = T * ;
@@ -157,13 +157,23 @@ namespace ang //constants
 
 
 	template<typename T>
-	struct property_helper<T, true> 
+	struct property_helper<T, smart_type::smart_object>
 		: property_helper<object_wrapper<T>> {
 	};
 
 	template<typename T>
-	struct property_helper<const T, true>
+	struct property_helper<const T, smart_type::smart_object>
 		: property_helper<const object_wrapper<T>> {
+	};
+
+	template<typename T>
+	struct property_helper<T, smart_type::smart_interface>
+		: property_helper<intf_wrapper<T>> {
+	};
+
+	template<typename T>
+	struct property_helper<const T, smart_type::smart_interface>
+		: property_helper<const intf_wrapper<T>> {
 	};
 }
 

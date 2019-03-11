@@ -15,8 +15,8 @@ struct controller::handle
 	XINPUT_STATE last_state;
 
 	handle(controller* ptr)
-		: digital_input_event(ptr, [](events::core_msg_t msg) { return msg == (events::core_msg_t)events::core_msg_enum::contorller_button_change; })
-		, analog_input_event(ptr, [](events::core_msg_t msg) { return msg == (events::core_msg_t)events::core_msg_enum::contorller_analog_change; })
+		: digital_input_event(ptr, [](events::core_msg_t msg) { return msg == (events::core_msg_t)events::core_msg::contorller_button_change; })
+		, analog_input_event(ptr, [](events::core_msg_t msg) { return msg == (events::core_msg_t)events::core_msg::contorller_analog_change; })
 	{
 	}
 };
@@ -139,8 +139,8 @@ struct controller_manager::handle
 	events::event_listener m_controller_disconnected_event;
 
 	handle(controller_manager* ptr)
-		: m_controller_connected_event(ptr, [](events::core_msg_t msg) { return msg == (events::core_msg_t)events::core_msg_enum::controller_status_change; })
-		, m_controller_disconnected_event(ptr, [](events::core_msg_t msg) { return msg == (events::core_msg_t)events::core_msg_enum::controller_status_change; })
+		: m_controller_connected_event(ptr, [](events::core_msg_t msg) { return msg == (events::core_msg_t)events::core_msg::controller_status_change; })
+		, m_controller_disconnected_event(ptr, [](events::core_msg_t msg) { return msg == (events::core_msg_t)events::core_msg::controller_status_change; })
 	{
 		for (collections::pair<controller_status_t, XINPUT_STATE>& item : m_states)
 			ZeroMemory(&item.value, sizeof(XINPUT_STATE));
@@ -230,7 +230,7 @@ void controller_manager::update()
 				m_handle->m_states[i].key = controller_status::connected;
 				m_handle->m_controllers[i]->m_handle->last_state = state;
 				events::icontroller_status_args_t args = new events::controller_status_args(
-					(uint)events::core_msg_enum::controller_status_change,
+					events::message(events::core_msg::controller_status_change),
 					m_handle->m_controllers[i],
 					m_handle->m_states[i].key);
 
@@ -246,7 +246,7 @@ void controller_manager::update()
 		{
 			m_handle->m_states[i].key = controller_status::disconnected;
 			events::icontroller_status_args_t args = new events::controller_status_args(
-				(uint)events::core_msg_enum::controller_status_change, 
+				events::message(events::core_msg::controller_status_change),
 				m_handle->m_controllers[i],
 				m_handle->m_states[i].key
 			);

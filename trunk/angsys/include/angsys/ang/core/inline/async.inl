@@ -38,9 +38,29 @@ namespace ang
 	{
 		namespace async
 		{
-			template<typename T, typename U>
-			struct task_then_helper {
-				static iasync<U> then(iasync<T> task, ang::core::delegates::function<U(ang::core::async::iasync<T>)> func) {
+			template<typename Task, typename T>
+			struct __run_async_helper {
+				static iasync<T> run(Task* task, ang::core::delegates::function<T(ang::core::async::iasync<T>)> func) {
+					task_handler_ptr<T> wrapper = new task_handler<T>();
+					wrapper->attach(task->run_async(function<void(iasync<void>)>([=](iasync<void>)
+					{
+						wrapper.get()->done(func.get()->invoke(wrapper.get()));
+					})));
+					return wrapper;
+				}
+			};
+
+			template<typename Task>
+			struct __run_async_helper<Task, void> {
+				static iasync<void> run(Task* task, ang::core::delegates::function<void(ang::core::async::iasync<void>)> func) {
+					return task->run_async(func);
+				}
+			};
+
+
+			template<typename Task, typename T, typename U>
+			struct __then_helper {
+				static iasync<U> then(Task* task, ang::core::delegates::function<U(ang::core::async::iasync<T>)> func) {
 					task_handler_ptr<U> wrapper = new task_handler<U>();
 					wrapper->attach(task->then([=](iasync<T> task) {
 						wrapper.get()->done(func.get()->invoke(ang::forward<iasync<T>>(task)));
@@ -49,9 +69,9 @@ namespace ang
 				}
 			};
 
-			template<typename T>
-			struct task_then_helper<T,void> {
-				static iasync<void> then(iasync<T> task, ang::core::delegates::function<void(ang::core::async::iasync<T>)> func) {
+			template<typename Task, typename T>
+			struct __then_helper<Task, T,void> {
+				static iasync<void> then(Task* task, ang::core::delegates::function<void(ang::core::async::iasync<T>)> func) {
 					return task->then(func);
 				}
 			};
@@ -62,21 +82,14 @@ namespace ang
 template<typename T> template<typename U>
 inline ang::core::async::iasync<U> ang::core::async::itask<T>::then(ang::core::delegates::function<U(ang::core::async::iasync<T>)> func)
 {
-	return task_then_helper<T, U>::then(this, forward<decltype(func)>(func));
+	return __then_helper<itask<T>, T, U>::then(this, forward<decltype(func)>(func));
 }
 
 
 template<typename T>
 inline ang::core::async::iasync<T> ang::core::async::idispatcher::run_async(ang::core::delegates::function<T(ang::core::async::iasync<T>)> func)
 {
-	task_handler_ptr<T> wrapper = new task_handler<T>();
-	wrapper->attach(this->run_async(function<void(iasync<void>)>([=](iasync<void>)
-	{
-		wrapper.get()->done(func.get()->invoke(wrapper.get()));
-		//wrapper = null;
-	})));
-
-	return wrapper;
+	return __run_async_helper<idispatcher, T>::run(this, func);
 }
 
 

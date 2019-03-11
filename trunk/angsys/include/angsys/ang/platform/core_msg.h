@@ -27,7 +27,7 @@ namespace ang
 			public:
 				message(const message& m);
 				message(const message* m);
-				message(core_msg_t m = 0, ulong64 wparam = 0, long64 lparam = 0);
+				message(core_msg_t m = core_msg::none, ulong64 wparam = 0, long64 lparam = 0);
 				~message();
 				
 			public: //properties
@@ -36,6 +36,13 @@ namespace ang
 				long64 lparam()const;
 				dword result()const;
 				void result(dword)const;
+
+				friend inline bool operator == (message const& m1, message const& m2) {
+					return m1.m_msg == m2.m_msg;
+				}
+				friend inline bool operator != (message const& m1, message const& m2) {
+					return m1.m_msg != m2.m_msg;
+				}
 			};
 
 			ang_begin_interface(LINK imsg_event_args)

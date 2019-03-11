@@ -329,7 +329,7 @@ namespace ang
 
 
 	template<typename T, template<typename>class A>
-	struct property_helper<vector<T, A>, false> {
+	struct property_helper<vector<T, A>, smart_type::none> {
 		using type = vector<T, A>;
 		using ret_type = type & ;
 		using ptr_type = collections::vector_buffer<T, A>*;
@@ -340,7 +340,7 @@ namespace ang
 	};
 
 	template<typename T, template<typename>class A>
-	struct property_helper<const vector<T, A>, false> {
+	struct property_helper<const vector<T, A>, smart_type::none> {
 		using type = vector<T, A>;
 		using ret_type = array_view<const T>;
 		using ptr_type = collections::vector_buffer<T, A>*;

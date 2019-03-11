@@ -85,15 +85,24 @@
     <Xml Include="res\scenes\scenes.xml">
       <Filter>res\scenes</Filter>
     </Xml>
+    <Xml Include="res\window.xml">
+      <Filter>res</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\postfx_gray_scale.hlsl">
       <Filter>res\shaders</Filter>
     </None>
-    <None Include="res\shaders\basic_shader.hlsl" />
-    <None Include="res\shaders\character.hlsl" />
-    <None Include="res\shaders\character2.hlsl" />
     <None Include="res\shaders\sky_box.hlsl" />
+    <None Include="res\shaders\basic_shader.hlsl">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\character2.hlsl">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\character.hlsl">
+      <Filter>res\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="engine.natvis" />

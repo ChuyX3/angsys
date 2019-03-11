@@ -14,30 +14,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="source\Framework.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="source\engine.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="source\holographic_space.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core_window.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="include\Framework.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\engine.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core_window.h">
-      <Filter>include</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png">

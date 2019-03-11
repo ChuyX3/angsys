@@ -7,7 +7,7 @@ using namespace ang::core::delegates;
 using namespace ang::platform;
 using namespace ang::platform::events;
 
-safe_enum_rrti2(ang::platform::events, core_msg_enum);
+safe_enum_rrti2(ang::platform::events, core_msg);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::ievent, interface);
 
 ievent_function::~ievent_function()
@@ -163,7 +163,7 @@ int event_listener::invoke(platform::events::imsg_event_args_t args)const
 		int c = 0;
 		objptr caller = m_parent.lock<object>();
 		auto msg = args->msg().msg();
-		for(event_t const & e : m_functions) {
+		for(event_t e : m_functions) {
 			if (msg == e.get()->msg_type())
 			{
 				c++;

@@ -227,9 +227,11 @@
     <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\controller.h" />
     <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\events.h" />
     <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\gdi.h" />
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\keyboard.h" />
     <ClInclude Include="..\..\..\include\angsys\ang\platform\win32\windows.h" />
     <ClInclude Include="include\dispatcher.h" />
     <ClInclude Include="include\event_args.h" />
+    <ClInclude Include="include\wnd_handle.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -263,11 +265,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="source\input\controller.cpp" />
+    <ClCompile Include="source\input\keyboard.cpp" />
+    <ClCompile Include="source\ui\controls.cpp" />
     <ClCompile Include="source\win32.cpp" />
     <ClCompile Include="source\app.cpp" />
     <ClCompile Include="source\console\console.cpp" />
     <ClCompile Include="source\dispatcher.cpp" />
-    <ClCompile Include="source\process.cpp" />
+    <ClCompile Include="source\ui_thread.cpp" />
     <ClCompile Include="source\system_info.cpp" />
     <ClCompile Include="source\window.cpp" />
     <ClCompile Include="source\wingdi.cpp" />
@@ -276,6 +280,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\angsys\angsys.desktop\angsys.desktop.vcxproj">
       <Project>{6e24f0d8-08fb-4df2-9e07-d208c4faace3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\graphics\graphics.desktop\graphics.desktop.vcxproj">
+      <Project>{a120837b-d0ca-4716-ac65-fdd6877cbd25}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

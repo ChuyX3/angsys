@@ -1,52 +1,49 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="header files">
-      <UniqueIdentifier>{6fb3d595-964f-4c53-9161-e57c018103ed}</UniqueIdentifier>
+      <UniqueIdentifier>{eaf9c8d4-d239-46be-a10f-36e4552b38cb}</UniqueIdentifier>
     </Filter>
     <Filter Include="source files">
-      <UniqueIdentifier>{eb3a7787-f71f-4809-a234-12e037bab9ac}</UniqueIdentifier>
+      <UniqueIdentifier>{e63869b6-a7b2-4472-9184-e0ae2353466e}</UniqueIdentifier>
     </Filter>
     <Filter Include="header files\ang">
-      <UniqueIdentifier>{3fad4bb9-6974-4567-ae7a-fe2609c1aca1}</UniqueIdentifier>
+      <UniqueIdentifier>{9330ce29-3993-4f21-aa52-d0afc9aee8f5}</UniqueIdentifier>
     </Filter>
     <Filter Include="header files\ang\platform">
-      <UniqueIdentifier>{f621cd09-af8b-4df5-b5db-c2824a42e4ee}</UniqueIdentifier>
+      <UniqueIdentifier>{d8cc7349-05c7-4a4e-a1bb-dedb5112b509}</UniqueIdentifier>
     </Filter>
-    <Filter Include="header files\ang\platform\uwp">
-      <UniqueIdentifier>{a0d6963a-6d4b-466e-92ec-7470308d99d0}</UniqueIdentifier>
+    <Filter Include="header files\ang\platform\windows">
+      <UniqueIdentifier>{2dec1b49-7d24-4c8f-a4b0-4bc113b1cbcd}</UniqueIdentifier>
     </Filter>
     <Filter Include="header files\include">
-      <UniqueIdentifier>{4d087619-97c3-4f87-a155-3a5d4f683bc5}</UniqueIdentifier>
+      <UniqueIdentifier>{80de148d-0700-4646-8be8-0fe4ef539fff}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="source\angwin.cpp">
+    <ClCompile Include="source\uwp.cpp">
       <Filter>source files</Filter>
     </ClCompile>
-    <ClCompile Include="source\FrameworkView.cpp">
+    <ClCompile Include="source\core_app.cpp">
       <Filter>source files</Filter>
     </ClCompile>
-    <ClCompile Include="source\framework.cpp">
+    <ClCompile Include="source\dispatcher.cpp">
       <Filter>source files</Filter>
     </ClCompile>
-    <ClCompile Include="source\win_events.cpp">
+    <ClCompile Include="source\core_window.cpp">
       <Filter>source files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\uwp\angwin.hpp">
-      <Filter>header files\ang\platform\uwp</Filter>
+    <ClInclude Include="..\..\..\include\angsys\ang\platform\uwp\windows.h">
+      <Filter>header files\ang\platform\windows</Filter>
     </ClInclude>
-    <ClInclude Include="include\FrameworkView.hpp">
+    <ClInclude Include="include\dispatcher.h">
       <Filter>header files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\angsys\ang\platform\uwp\win_events.hpp">
-      <Filter>header files\ang\platform\uwp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -192,9 +192,6 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\core_window.h" />
-    <ClInclude Include="include\engine.h" />
-    <ClInclude Include="include\Framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -213,6 +210,7 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -223,14 +221,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\core_window.cpp" />
-    <ClCompile Include="source\engine.cpp" />
-    <ClCompile Include="source\Framework.cpp" />
-    <ClCompile Include="source\holographic_space.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\source\angsys\angsys.uwp\angsys.uwp.vcxproj">
       <Project>{be593fee-b4ef-41bf-965a-5fee2782d09e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\source\platform\platform.uwp\platform.uwp.vcxproj">
+      <Project>{d43a0c0b-bd73-414d-9fcb-8a1b4adf7b3c}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -207,7 +207,7 @@ namespace ang
 
 
 	template<typename T, template<typename>class A>
-	struct property_helper<array<T,A>, false> {
+	struct property_helper<array<T,A>, smart_type::none> {
 		using type = array<T, A>;
 		using ret_type = type&;
 		using ptr_type = collections::array_buffer<T, A>*;
@@ -218,7 +218,7 @@ namespace ang
 	};
 
 	template<typename T, template<typename>class A>
-	struct property_helper<const array<T, A>, false> {
+	struct property_helper<const array<T, A>, smart_type::none> {
 		using type = array<T, A>;
 		using ret_type = array_view<const T>;
 		using ptr_type = collections::array_buffer<T,A>*;

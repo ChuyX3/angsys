@@ -1,7 +1,7 @@
 
 //#define VERTEX_SHADER
-//#define PIXEL_SHADER
-//#define LIGHTING
+#define PIXEL_SHADER
+#define LIGHTING
 //#define USE_NORMAL_MAP
 //#define CEL
 

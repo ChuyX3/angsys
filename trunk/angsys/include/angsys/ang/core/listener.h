@@ -217,7 +217,10 @@ namespace ang
 		}
 	}
 
-	//using core::delegates::event;
+	using core::delegates::event;
+	using core::delegates::base_event;
+	using core::delegates::listener;
+	using core::delegates::listen_token;
 }
 
 

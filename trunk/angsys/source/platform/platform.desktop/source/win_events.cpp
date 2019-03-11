@@ -435,4 +435,53 @@ bool text_change_event_args::handled()const
 	return m_msg.result() != -1;
 }
 
+//////////////////////////////////////////////////////////////////////////
+
+controller_status_args::controller_status_args(message msg, input::controller_t controller, input::controller_status_t status)
+	: m_msg(msg)
+	, m_controller(controller)
+	, m_status(status)
+{
+
+}
+
+controller_status_args::~controller_status_args()
+{
+
+}
+
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::events::controller_status_args)
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::platform::events::controller_status_args, object, icontroller_status_args);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::events::controller_status_args, object, icontroller_status_args, imsg_event_args);
+
+const message& controller_status_args::msg()const
+{
+	return m_msg;
+}
+
+void controller_status_args::handled(bool value)
+{
+	m_msg.result(value ? 0 : -1);
+}
+
+bool controller_status_args::handled()const
+{
+	return m_msg.result() != -1;
+}
+
+uint controller_status_args::controller_id()const
+{
+	return m_controller->device_id;
+}
+
+input::icontroller_t controller_status_args::controller()const
+{
+	return m_controller.get();
+}
+
+input::controller_status_t controller_status_args::status()const
+{
+	return m_status;
+}
+
 

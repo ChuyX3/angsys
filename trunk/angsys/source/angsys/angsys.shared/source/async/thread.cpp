@@ -61,18 +61,20 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::thread, object, ithread, 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void worker_thread::entry_point(worker_thread* thread)
+int worker_thread::entry_point(worker_thread* thread)
 {
 	//worker_thread_t	thread = thread_;
 	thread_manager::instance()->regist_thread(thread);
-	thread->dispatch();
+	int code = thread->dispatch();
 	thread_manager::instance()->unregist_thread(thread);
+	return code;
 }
 
 thread_local bool m_auto_release = false;
 
 worker_thread::worker_thread()
-	: m_is_main_thread(false)
+	: m_exit_code(0)
+	, m_is_main_thread(false)
 	//, m_auto_release(false)
 	, m_state(async_action_status::initializing)
 	, m_thread(NULL)
@@ -94,7 +96,7 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::worker_thread, thread);
 
 void worker_thread::clear()
 {
-	join();
+	exit();
 #ifdef WINDOWS_PLATFORM
 	if (m_thread)
 		CloseHandle(m_thread);
@@ -110,7 +112,7 @@ bool worker_thread::auto_release()
 	else if(has_thread_access() && m_state == async_action_status::completed)
 		return object::auto_release();
 	m_auto_release = true;
-	join();
+	exit();
 	return false;
 }
 
@@ -129,16 +131,14 @@ bool worker_thread::start()
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, flags);
 	pthread_create(&this->_thread, &attr, [](pointer args)->pointer {
-		auto result = (pointer)core_thread::core_thread_start_routine(args);
-		core_thread_manager::instance()->unregist_thread((core_thread*)args);
-		return result;
+		return return (pointer)worker_thread::entry_point((worker_thread*)args);
 	}, this);
 	pthread_attr_destroy(&attr);
 	if (this->_thread == 0)
 		throw_exception(except_code::invalid_memory);
 #elif defined WINDOWS_PLATFORM
 	m_thread = ::CreateThread(NULL, 0
-		, [](pointer args)->dword { worker_thread::entry_point((worker_thread*)args); return 0; }
+		, [](pointer args)->dword { return (dword)worker_thread::entry_point((worker_thread*)args); }
 	, this, CREATE_SUSPENDED, &m_id);
 
 	//SetThreadPriority(thread, (int)flags);
@@ -172,7 +172,7 @@ bool worker_thread::attach()
 	return true;
 }
 
-void worker_thread::dispatch()
+int worker_thread::dispatch()
 {
 	auto manager = thread_manager::instance();
 	thread_task_t task;
@@ -185,8 +185,12 @@ void worker_thread::dispatch()
 	do
 	{
 		manager->main_mutex().lock();
-		while ((m_tasks.is_empty() || m_tasks->is_empty()) && !(m_state & async_action_status::finished))
-			manager->main_cond().wait(manager->main_mutex());
+		while (m_tasks->is_empty() && !(m_state & async_action_status::finished)) {
+			if(m_main_loop.is_empty())
+				manager->main_cond().wait(manager->main_mutex());
+			else
+				m_main_loop();
+		}
 
 		if (m_state & async_action_status::finished)//cancel
 		{
@@ -227,8 +231,11 @@ void worker_thread::dispatch()
 		}
 	} while (true);
 
+	int error = m_exit_code;
+
 	if (m_auto_release) 
 		object::auto_release();
+	return error;
 }
 
 thread_task_t worker_thread::post_task(thread_task_t task)
@@ -276,6 +283,15 @@ iasync<void> worker_thread::run_async(core::delegates::function<void(iasync<void
 //	}).get();
 //}
 
+bool worker_thread::attach_loop(function<void(void)> func)
+{
+	scope_locker<mutex_t> lock = thread_manager::instance()->main_mutex();
+	m_main_loop = move(func);
+	if (!has_thread_access())
+		thread_manager::instance()->main_cond().signal();
+	return true;
+}
+
 bool worker_thread::is_main_thread()const
 {
 	return m_is_main_thread;
@@ -295,7 +311,12 @@ dword worker_thread::thread_id()const
 #endif
 }
 
-void worker_thread::join()const
+async_action_status_t worker_thread::status()const
+{
+	return m_state;
+}
+
+void worker_thread::exit(int code)const
 {
 	if (((async_action_status::finished | async_action_status::attached) & m_state))
 		return;
@@ -304,8 +325,24 @@ void worker_thread::join()const
 	mutex_t& mutex = thread_manager::instance()->main_mutex();
 	scope_locker<mutex_t> lock = mutex;
 	m_state = async_action_status::canceled;
+	m_exit_code = code;
 	if (!has_thread_access()) {
 		cond.signal();
+		cond.waitfor(mutex, [this]() {
+			return m_state != async_action_status::completed;
+		});
+	}
+}
+
+void worker_thread::wait()const
+{
+	if (((async_action_status::finished | async_action_status::attached) & m_state))
+		return;
+
+	cond_t& cond = thread_manager::instance()->main_cond();
+	mutex_t& mutex = thread_manager::instance()->main_mutex();
+	scope_locker<mutex_t> lock = mutex;
+	if (!has_thread_access()) {
 		cond.waitfor(mutex, [this]() {
 			return m_state != async_action_status::completed;
 		});

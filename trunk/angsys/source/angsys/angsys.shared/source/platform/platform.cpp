@@ -35,3 +35,55 @@ ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::icore_context, ang::interface)
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::icore_view, ang::interface);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::icore_app, ang::interface);
 
+static icore_app* s_current_app = null;
+static input::icontroller_manager_t s_controller_manager = null;
+
+icore_app_t icore_app::current_app()
+{
+	return s_current_app;
+}
+
+input::icontroller_manager_t input::icontroller_manager::get_instance()
+{
+	return s_controller_manager.get();
+}
+
+#if defined WINDOWS_PLATFORM && defined ANGSYS_DYNAMIC_LIBRARY
+__declspec(dllexport) void ang_platform_core_app_set_instance(icore_app* instance)
+{
+	s_current_app = instance;
+}
+
+__declspec(dllexport) void ang_platform_core_app_reset_instance()
+{
+	s_current_app = null;
+}
+__declspec(dllexport) void ang_platform_input_controller_manager_set_instance(input::icontroller_manager* instance)
+{
+	s_controller_manager = instance;
+}
+
+__declspec(dllexport) void ang_platform_input_controller_manager_reset_instance()
+{
+	s_controller_manager = null;
+}
+#else
+void ang_platform_core_app_set_instance(icore_app* instance)
+{
+	s_current_app = instance;
+}
+
+void ang_platform_core_app_reset_instance()
+{
+	s_current_app = null;
+}
+void ang_platform_input_controller_manager_set_instance(input::icontroller_manager* instance)
+{
+	s_controller_manager = instance;
+}
+
+void ang_platform_input_controller_manager_reset_instance()
+{
+	s_controller_manager = null;
+}
+#endif
