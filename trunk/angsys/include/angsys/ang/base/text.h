@@ -102,6 +102,11 @@ namespace ang //constants
 		template <typename T> struct is_char_type<const T&> : is_char_type<T> {};
 
 		template<encoding ENCODING> struct char_type_by_encoding;
+		template<> struct char_type_by_encoding<encoding::auto_detect> {
+			typedef void char_t;
+			typedef void* str_t;
+			typedef const void* cstr_t;
+		};
 		template<> struct char_type_by_encoding<encoding::ascii> {
 			typedef char char_t;
 			typedef char* str_t;
@@ -146,6 +151,9 @@ namespace ang //constants
 		};
 
 		template<typename T> struct encoding_by_char_type;
+		template<> struct encoding_by_char_type<void> : char_type_by_encoding<encoding::auto_detect> {
+			static constexpr encoding value = encoding::auto_detect;
+		};
 		template<> struct encoding_by_char_type<char> : char_type_by_encoding<encoding::ascii> {
 			static constexpr encoding value = encoding::ascii;
 		};
@@ -193,8 +201,13 @@ namespace ang //constants
 		template<typename T> struct char_type_by_type<T const*> : char_type_by_type<T> { };
 	}
 
+	//typedef struct raw_str raw_str_t, str_t;
+	//typedef struct raw_cstr raw_cstr_t, cstr_t;
 	template<typename T, text::encoding ENCODING_ = text::encoding_by_char_type<T>::value> struct str_view;
 	template<typename T, text::encoding ENCODING_ = text::encoding_by_char_type<T>::value> using cstr_view = str_view<const T, ENCODING_>;
+
+	typedef str_view<void, text::encoding::auto_detect> raw_str, raw_str_t, str_t;
+	typedef str_view<const void, text::encoding::auto_detect> raw_cstr, raw_cstr_t, cstr_t;
 
 	namespace text
 	{
@@ -519,19 +532,162 @@ namespace ang //constants
 	}
 
 
+	template<> struct LINK str_view<void, text::encoding::auto_detect> {
+		str_view();
+		str_view(void* v, wsize s, text::encoding e);
+		str_view(raw_str const& str);
+		template<typename T, text::encoding E> inline str_view(str_view<T, E> str)
+			: str_view(str.str(), str.size() * sizeof(typename text::char_type_by_encoding<E>::char_t), E) {
+		}
+
+		void* ptr()const;
+		wsize size()const;
+		wsize count()const;
+		wsize char_size()const;
+		text::encoding encoding()const;
+
+		template<text::encoding E> inline operator str_view<typename text::char_type_by_encoding<E>::char_t, E>() {
+			return E == m_encoding ? str_view<typename text::char_type_by_encoding<E>::char_t, E>(
+				(typename text::char_type_by_encoding<E>::str_t)m_value,
+				m_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
+				: str_view<typename text::char_type_by_encoding<E>::char_t, E>();
+		}
+		template<text::encoding E> inline operator cstr_view<typename text::char_type_by_encoding<E>::char_t, E>()const {
+			return E == m_encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_t, E>(
+				(typename text::char_type_by_encoding<E>::cstr_t)m_value,
+				m_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
+				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
+		}
+		template<text::encoding E> inline str_view<typename text::char_type_by_encoding<E>::char_t, E> str() {
+			return E == m_encoding ? str_view<typename text::char_type_by_encoding<E>::char_t, E>(
+				(typename text::char_type_by_encoding<E>::str_t)m_value,
+				m_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
+				: str_view<typename text::char_type_by_encoding<E>::char_t, E>();
+		}
+		template<text::encoding E> inline cstr_view<typename text::char_type_by_encoding<E>::char_t, E> cstr()const {
+			return E == m_encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_t, E>(
+				(typename text::char_type_by_encoding<E>::cstr_t)m_value,
+				m_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
+				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
+		}
+
+		friend LINK bool operator == (raw_str_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator == (raw_str_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator != (raw_str_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator != (raw_str_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator >= (raw_str_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator >= (raw_str_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator <= (raw_str_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator <= (raw_str_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator > (raw_str_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator > (raw_str_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator < (raw_str_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator < (raw_str_t const& str1, raw_cstr_t const& str2);
+
+		template<typename T, text::encoding E> friend inline bool operator == (raw_str_t const& str1, str_view<T, E> const& str2) { return operator == (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator == (str_view<T, E> const& str1, raw_str_t const& str2) { return operator == (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator != (raw_str_t const& str1, str_view<T, E> const& str2) { return operator != (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator != (str_view<T, E> const& str1, raw_str_t const& str2) { return operator != (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator >= (raw_str_t const& str1, str_view<T, E> const& str2) { return operator >= (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator >= (str_view<T, E> const& str1, raw_str_t const& str2) { return operator >= (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator <= (raw_str_t const& str1, str_view<T, E> const& str2) { return operator <= (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator <= (str_view<T, E> const& str1, raw_str_t const& str2) { return operator <= (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator > (raw_str_t const& str1, str_view<T, E> const& str2) { return operator > (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator > (str_view<T, E> const& str1, raw_str_t const& str2) { return operator > (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator < (raw_str_t const& str1, str_view<T, E> const& str2) { return operator < (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator < (str_view<T, E> const& str1, raw_str_t const& str2) { return operator < (raw_cstr(str1), str2); }
+
+	private:
+		void* m_value;
+		wsize m_size;
+		text::encoding m_encoding;
+	};
+
+	template<> struct LINK str_view<const void, text::encoding::auto_detect> {
+		str_view();
+		str_view(void const* v, wsize s, text::encoding e);
+		str_view(raw_cstr const& str);
+		str_view(raw_str const& str);
+		template<typename T, text::encoding E> inline str_view(str_view<T, E> str)
+			: str_view(str.cstr(), str.size() * sizeof(typename text::char_type_by_encoding<E>::char_t), E) {
+		}
+		template<typename T, text::encoding E> inline str_view(cstr_view<T, E> str)
+			: str_view(str.cstr(), str.size() * sizeof(typename text::char_type_by_encoding<E>::char_t), E) {
+		}
+		template<typename T, wsize N> inline str_view(const T(&str)[N])
+			: str_view(str, (N - 1) * sizeof(T), text::encoding_by_char_type<T>::value) {
+		}
+
+		void const* ptr()const;
+		wsize size()const;
+		wsize count()const;
+		wsize char_size()const;
+		text::encoding encoding()const;
+
+		template<text::encoding E> inline operator cstr_view<typename text::char_type_by_encoding<E>::char_t, E>()const {
+			return E == m_encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_t, E>(
+				(typename text::char_type_by_encoding<E>::cstr_t)m_value,
+				m_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
+				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
+		}
+
+		template<text::encoding E> inline cstr_view<typename text::char_type_by_encoding<E>::char_t, E> cstr()const {
+			return E == m_encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_t, E>(
+				(typename text::char_type_by_encoding<E>::cstr_t)m_value,
+				m_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
+				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
+		}
+
+		friend LINK bool operator == (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator == (raw_cstr_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator != (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator != (raw_cstr_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator >= (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator >= (raw_cstr_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator <= (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator <= (raw_cstr_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator > (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator > (raw_cstr_t const& str1, raw_str_t const& str2);
+		friend LINK bool operator < (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		friend LINK bool operator < (raw_cstr_t const& str1, raw_str_t const& str2);
+
+		template<typename T, text::encoding E> friend inline bool operator == (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator == (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator == (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator == (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator != (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator != (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator != (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator != (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator >= (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator >= (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator >= (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator >= (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator <= (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator <= (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator <= (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator <= (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator > (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator > (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator > (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator > (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator < (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator < (str1, raw_cstr(str2)); }
+		template<typename T, text::encoding E> friend inline bool operator < (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator < (raw_cstr(str1), str2); }
+
+	private:
+		void const* m_value;
+		wsize m_size;
+		text::encoding m_encoding;
+	};
+
 	inline str_view<const char> operator "" _s(const char* str, wsize sz) { return str_view<const char>(str, sz); }
 	inline str_view<const mchar> operator "" _sm(const char* str, wsize sz) { return str_view<const mchar>((mchar const*)str, sz); }
 	inline str_view<const wchar_t> operator "" _s(const wchar_t* str, wsize sz) { return str_view<const wchar_t>(str, sz); }
 	inline str_view<const char16_t> operator "" _s(const char16_t* str, wsize sz) { return str_view<const char16_t>(str, sz); }
 	inline str_view<const char32_t> operator "" _s(const char32_t* str, wsize sz) { return str_view<const char32_t>(str, sz); }
 
-	typedef str_view<char> str_t;
+	inline raw_cstr_t operator "" _r(const char* str, wsize sz) { return str_view<const char>(str, sz); }
+	inline raw_cstr_t operator "" _r(const wchar_t* str, wsize sz) { return str_view<const wchar_t>(str, sz); }
+	inline raw_cstr_t operator "" _r(const char16_t* str, wsize sz) { return str_view<const char16_t>(str, sz); }
+	inline raw_cstr_t operator "" _r(const char32_t* str, wsize sz) { return str_view<const char32_t>(str, sz); }
+
+	typedef str_view<char> astr_t;
 	typedef str_view<mchar> mstr_t;
 	typedef str_view<wchar> wstr_t;
 	typedef str_view<char16_t> str16_t;
 	typedef str_view<char32_t> str32_t;
 
-	typedef str_view<const char> cstr_t;
+	typedef str_view<const char> castr_t;
 	typedef str_view<const mchar> cmstr_t;
 	typedef str_view<const wchar> cwstr_t;
 	typedef str_view<const char16_t> cstr16_t;
@@ -653,7 +809,7 @@ namespace ang //constants
 			};
 		public:
 			text_format();//default format-> bad format
-			text_format(cstr_t format);
+			text_format(castr_t format);
 			text_format(qword format);
 			text_format(const text_format&);
 			text_format(const text_format_flags&);
@@ -661,7 +817,7 @@ namespace ang //constants
 
 		public:
 			target format_target()const;
-			void format(cstr_t format);
+			void format(castr_t format);
 			//string format()const;
 			qword format_flags()const;
 			text_format& operator = (const text_format&);
@@ -694,11 +850,11 @@ namespace ang //constants
 		struct default_text_format<const T&> : default_text_format<T> { };
 
 		template<> struct default_text_format<bool> {
-			static text_format format() { text_format _format = cstr_t("{b:}"); return _format; }
+			static text_format format() { text_format _format = castr_t("{b:}"); return _format; }
 		};
 
 		template<> struct default_text_format<char> {
-			static text_format format() { text_format _format = cstr_t("{c:}"); return _format; }
+			static text_format format() { text_format _format = castr_t("{c:}"); return _format; }
 		};
 
 		template<> struct default_text_format<mchar> :public default_text_format<char> {};
@@ -707,7 +863,7 @@ namespace ang //constants
 		template<> struct default_text_format<char32_t> :public default_text_format<char> {};
 
 		template<> struct default_text_format<int> {
-			static text_format format() { text_format _format = cstr_t("{s:}"); return _format; }
+			static text_format format() { text_format _format = castr_t("{s:}"); return _format; }
 		};
 
 		template<> struct default_text_format<short> :public default_text_format<int> {};
@@ -715,7 +871,7 @@ namespace ang //constants
 		template<> struct default_text_format<long64> :public default_text_format<int> {};
 
 		template<> struct default_text_format<uint> {
-			static text_format format() { text_format _format = cstr_t("{u:}"); return _format; }
+			static text_format format() { text_format _format = castr_t("{u:}"); return _format; }
 		};
 
 		template<> struct default_text_format<ushort> :public default_text_format<uint> {};
@@ -723,7 +879,7 @@ namespace ang //constants
 		template<> struct default_text_format<ulong64> :public default_text_format<uint> {};
 
 		template<> struct default_text_format<float> {
-			static text_format format() { text_format _format = cstr_t("{f:N.4}"); return _format; }
+			static text_format format() { text_format _format = castr_t("{f:N.4}"); return _format; }
 		};
 
 		template<> struct default_text_format<double> :public default_text_format<float> {};

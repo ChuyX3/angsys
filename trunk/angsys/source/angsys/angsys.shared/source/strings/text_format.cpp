@@ -10,7 +10,7 @@ text_format::text_format()
 	flags.value = 0;
 }
 
-text_format::text_format(cstr_t format)
+text_format::text_format(castr_t format)
 {
 	flags.value = format_parser<encoding::ascii>::parse(format);
 }
@@ -40,7 +40,7 @@ text_format::target text_format::format_target()const
 	return flags.target;
 }
 
-void text_format::format(cstr_t format)
+void text_format::format(castr_t format)
 {
 	flags.value = format_parser<encoding::ascii>::parse(format);
 }

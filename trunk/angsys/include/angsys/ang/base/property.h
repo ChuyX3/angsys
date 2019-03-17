@@ -35,7 +35,7 @@ namespace ang //constants
 		using type = typename remove_reference<typename remove_constant<T>::type>::type;
 		using ret_type = type;
 		using ptr_type = typename __to_pointer_helper<type>::ptr_type;
-		using arg_type = type && ;
+		using arg_type = type&&;
 		using property_class = base_property<type>;
 		using getter_type = ret_type(*)(property_class const*);
 		using setter_type = void(*)(property_class*, arg_type);
@@ -45,9 +45,10 @@ namespace ang //constants
 	struct property : property_helper<T>::property_class {
 		using self = property<T, getter, setter>;
 
-		inline typename property_helper<T>::ret_type operator = (typename property_helper<T>::arg_type value) {
+		template<typename U>
+		inline typename property_helper<T>::ret_type operator = (U&& value) {
 			static_assert(!is_const<T>::value, "can't asign value to a read only property");
-			setter(this, forward<typename property_helper<T>::arg_type>(value));
+			setter(this, forward<typename property_helper<T>::type>(value));
 			return getter(this);
 		}
 		inline operator typename property_helper<T>::ret_type()const {

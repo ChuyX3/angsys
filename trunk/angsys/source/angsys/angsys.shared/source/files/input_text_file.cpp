@@ -20,7 +20,7 @@ input_text_file::input_text_file()
 {
 }
 
-input_text_file::input_text_file(path_view_t path)
+input_text_file::input_text_file(cstr_t path)
 	: base()
 {
 	open(path);
@@ -35,7 +35,7 @@ ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::files::input_text_file)
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::files::input_text_file, file, streams::itext_input_stream);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::files::input_text_file, file, streams::itext_input_stream);
 
-bool input_text_file::open(path_view_t path)
+bool input_text_file::open(cstr_t path)
 {
 	if (is_valid())
 		return false;
@@ -99,7 +99,7 @@ bool input_text_file::read(function<bool(streams::itext_input_stream_t)> func)
 	return func(this);
 }
 
-uint input_text_file::seek(text::raw_cstr_t format)
+wsize input_text_file::seek(cstr_t format)
 {
 	if (m_hfile.is_empty())
 		throw_exception(except_code::invalid_access);
@@ -201,7 +201,7 @@ uint input_text_file::seek(text::raw_cstr_t format)
 
 #define FUNCX_TEXT_READ(A0) \
 if (type.type_id() == ang::type_of<A0>().type_id()) { \
-	*(A0*)ptr = (A0)parser->to_value<A0>(text::raw_cstr(buffer.data(), readed, e), i); \
+	*(A0*)ptr = (A0)parser->to_value<A0>(cstr_t(buffer.data(), readed, e), i); \
 	m_hfile->cursor(current + i * cs, stream_reference::begin); \
 	return i * cs; \
 }
@@ -240,7 +240,7 @@ wsize input_text_file::read(pointer ptr, const rtti_t& type)
 	return 0;
 }
 
-uint input_text_file::read_format(text::raw_cstr_t format, var_args_t& args)
+wsize input_text_file::read_format(cstr_t format, var_args_t& args)
 {
 	if (m_hfile.is_empty())
 		throw_exception(except_code::invalid_access);
@@ -354,13 +354,13 @@ uint input_text_file::read_format(text::raw_cstr_t format, var_args_t& args)
 				switch (tff.value)
 				{
 				case text::text_format::target::signed_:
-					val = (int) ip->to_signed(text::raw_cstr(buffer.get(), size2, ie->format()), buffer_idx, true, tff.base);
+					val = (int) ip->to_signed(cstr_t(buffer.get(), size2, ie->format()), buffer_idx, true, tff.base);
 					break;
 				case text::text_format::target::unsigned_:
-					val = (uint)ip->to_unsigned(text::raw_cstr(buffer.get(), size2, ie->format()), buffer_idx, true, tff.base);
+					val = (uint)ip->to_unsigned(cstr_t(buffer.get(), size2, ie->format()), buffer_idx, true, tff.base);
 					break;
 				case text::text_format::target::float_:
-					val = (float)ip->to_floating(text::raw_cstr(buffer.get(), size2, ie->format()), buffer_idx, true, tff.exponent);
+					val = (float)ip->to_floating(cstr_t(buffer.get(), size2, ie->format()), buffer_idx, true, tff.exponent);
 					break;
 				case 0: //no format readed
 					temp = buffer_idx;
@@ -415,7 +415,7 @@ wsize input_text_file::read(text::istring_t str, wsize sz, wsize* written)
 	{
 		readed = (wsize)(m_hfile->read(99 * cs, buff.data()) - cur);
 		encoder->set_eos(buff.data(), readed / cs);
-		str->concat(text::raw_str(buff.data(), min(readed, sz * cs), encoder->format()));
+		str->concat(str_t(buff.data(), min(readed, sz * cs), encoder->format()));
 		sz -= min(readed / cs, sz);
 		total += min(readed, sz * cs);
 	}
@@ -440,7 +440,7 @@ wsize input_text_file::read(text::unknown_str_t buff, wsize sz, text::encoding_t
 	while (!m_hfile->is_eof() && out_size > 0)
 	{
 		readed = (wsize)(m_hfile->read(200, _buffer.data()) - cur);
-		auto str = encoder->convert(text::raw_str(ptr, sz, text::encoding::auto_detect), text::raw_cstr(_buffer.data(), readed, format()), true);
+		auto str = encoder->convert(str_t(ptr, sz, text::encoding::auto_detect), cstr_t(_buffer.data(), readed, format()), true);
 		ptr = &((byte*)str.ptr())[str.size()];
 		out_size -= str.size() / cs;
 		total += str.size();
@@ -475,12 +475,12 @@ wsize input_text_file::read_line(text::istring_t str, array_view<const char32_t>
 			beg = temp;
 		}
 
-		end = encoder->find_any(text::raw_cstr(buff.data(), readed, text::encoding::auto_detect), beg, token);
+		end = encoder->find_any(cstr_t(buff.data(), readed, text::encoding::auto_detect), beg, token);
 		if (end != invalid_index)
 			endl = true;
 		else
 			end = readed / cs;
-		str->concat(text::raw_str(buff.data() + (beg * cs), (end - beg) * cs, e));
+		str->concat(str_t(buff.data() + (beg * cs), (end - beg) * cs, e));
 
 		if (endl) //removing all endline tokens
 		{
@@ -527,14 +527,14 @@ wsize input_text_file::read_line(text::unknown_str_t buff, wsize sz, text::encod
 			beg = temp;
 		}
 
-		end = my_encoder->find_any(text::raw_cstr(_buffer.data(), readed, text::encoding::auto_detect), beg, token);
+		end = my_encoder->find_any(cstr_t(_buffer.data(), readed, text::encoding::auto_detect), beg, token);
 
 		if (end != invalid_index)
 			endl = true;
 		else
 			end = readed / mycs;
 
-		auto str = encoder->convert(text::raw_str(ptr, out_size * cs, e), text::raw_cstr(_buffer.data() + (beg * mycs), (end - beg) * mycs, format()), true);
+		auto str = encoder->convert(str_t(ptr, out_size * cs, e), cstr_t(_buffer.data() + (beg * mycs), (end - beg) * mycs, format()), true);
 
 		ptr = &((byte*)str.ptr())[str.size()];
 		out_size -= str.size() / cs;

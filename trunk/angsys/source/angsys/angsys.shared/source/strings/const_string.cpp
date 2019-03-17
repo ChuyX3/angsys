@@ -8,7 +8,7 @@ typedef struct const_str_data
 {
 	wsize size;
 	wsize buffer[1];
-	operator text::raw_str() { return text::raw_str(buffer, size, text::encoding::auto_detect); }
+	operator str_t() { return str_t(buffer, size, text::encoding::auto_detect); }
 }*const_str_data_ptr;
 
 pointer basic_const_string_buffer_base::operator new(wsize sz, text::encoding_t e, raw_cstr_t str)

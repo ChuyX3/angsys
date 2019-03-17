@@ -387,7 +387,7 @@ xml_const_backward_iterator_t xml_collection::rend()const
 	return xml_iterator_t(const_cast<xml_collection*>(this), null);
 }
 
-xml_iterator_t xml_collection::find(xml_cstr_t value, bool invert)const
+xml_iterator_t xml_collection::find(cstr_t value, bool invert)const
 {
 	xml_node_t node = null;
 	if (invert)
@@ -395,7 +395,7 @@ xml_iterator_t xml_collection::find(xml_cstr_t value, bool invert)const
 		for (node = xml_last();
 			(node != null);
 			node = node->xml_prev_sibling()) {
-			if ((xml_cstr_t)node->xml_name() == value)
+			if ((cstr_t)node->xml_name() == value)
 				break;
 		}
 	}
@@ -404,14 +404,14 @@ xml_iterator_t xml_collection::find(xml_cstr_t value, bool invert)const
 		for (node = xml_first();
 			(node != null);
 			node = node->xml_next_sibling()) {
-			if ((xml_cstr_t)node->xml_name() == value)
+			if ((cstr_t)node->xml_name() == value)
 				break;
 		}
 	}
 	return xml_iterator_t(const_cast<xml_collection*>(this), node);
 }
 
-xml_iterator_t xml_collection::find(xml_cstr_t value, xml_iterator_t nextTo, bool invert)const
+xml_iterator_t xml_collection::find(cstr_t value, xml_iterator_t nextTo, bool invert)const
 {
 	xml_node_t node = null;
 
@@ -423,7 +423,7 @@ xml_iterator_t xml_collection::find(xml_cstr_t value, xml_iterator_t nextTo, boo
 			node = xml_last();
 		for (; (node != null);
 			node = node->xml_prev_sibling()) {
-			if ((xml_cstr_t)node->xml_name() == value)
+			if ((cstr_t)node->xml_name() == value)
 				break;
 		}
 	}
@@ -433,7 +433,7 @@ xml_iterator_t xml_collection::find(xml_cstr_t value, xml_iterator_t nextTo, boo
 			node = xml_first();
 		for (; (node != null);
 			node = node->xml_next_sibling()) {
-			if ((xml_cstr_t)node->xml_name() == value)
+			if ((cstr_t)node->xml_name() == value)
 				break;
 		}
 	}

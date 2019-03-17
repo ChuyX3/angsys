@@ -103,7 +103,7 @@ inline ang::collections::array_buffer<T, allocator>::~array_buffer()
 template<typename T, template <typename> class allocator>
 inline ang::rtti_t const& ang::collections::array_buffer<T, allocator>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::collections::array<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::array<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<iarray<T>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<ang::collections::array_buffer<T, allocator>>(), alignof(ang::collections::array_buffer<T, allocator>), parents, &default_query_interface);
 	return info;

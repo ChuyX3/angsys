@@ -32,7 +32,7 @@ using namespace ang::dom::xml;
 #include "ang/inline/object_wrapper_specialization.inl"
 #undef MY_TYPE
 
-dom::xml::xml_node_t object_wrapper<xml_node>::operator[] (dom::xml::xml_cstr_t key)const
+dom::xml::xml_node_t object_wrapper<xml_node>::operator[] (cstr_t key)const
 {
 	if (is_empty())
 		return null;
@@ -135,7 +135,7 @@ streams::itext_output_stream_t& xml_node::xml_print(streams::itext_output_stream
 							stream << L"  "_s;
 					}
 				}
-				stream << L"</"_s << (xml_cstr_t)m_name << L">"_s;
+				stream << L"</"_s << (cstr_t)m_name << L">"_s;
 			}
 			else
 			{
@@ -163,23 +163,32 @@ streams::itext_output_stream_t& xml_node::xml_print(streams::itext_output_stream
 		if (xml_has_name() && xml_has_value())
 		{
 			stream << (wstring)m_name;
-			ixml_text_t val = m_content.get()->xml_as<ixml_text>();
+			string val = m_content.get()->xml_as<string_buffer>();
 			
 			if (val->find("\""_s, 0) != invalid_index)
 			{
 				stream << L"='"_s;
-				stream << (xml_cstr_t)val;
+				stream << (cstr_t)val;
 				//val->xml_print(stream, xml_format::none, 0);
 				stream << L"'"_s;
 			}
 			else
 			{
 				stream << L"=\""_s;
-				stream << (xml_cstr_t)val;
+				stream << (cstr_t)val;
 				//val->xml_print(stream, xml_format::none, 0);
 				stream << L"\""_s;
 			}
 		}
+		break;
+	case xml_type::cdata:
+		stream << "<![CDATA["_s;
+		if (xml_has_value())
+		{
+			string val = m_content->xml_as<string_buffer>(); //no fix entity
+			stream << val->cstr();
+		}
+		stream << "]]>"_s;
 		break;
 	}
 	return stream;
@@ -267,7 +276,7 @@ xml_text_t xml_node::xml_namespace()const
 	return m_namespace.get();
 }
 
-xml_node_t xml_node::xml_namespace(xml_cstr_t key)const
+xml_node_t xml_node::xml_namespace(cstr_t key)const
 {
 	try {
 		return m_ns_map[key].lock();
@@ -290,7 +299,7 @@ xml_attributes_t xml_node::xml_attributes()const
 	return m_attributes.get();
 }
 
-bool xml_node::push_data(xml_cstr_t value)
+bool xml_node::push_data(cstr_t value)
 {
 	if (m_type != xml_type::element)
 		return false;
@@ -300,7 +309,7 @@ bool xml_node::push_data(xml_cstr_t value)
 	return push_child(child);
 }
 
-bool xml_node::push_name(xml_cstr_t value)
+bool xml_node::push_name(cstr_t value)
 {
 	if (m_type != xml_type::attribute
 		&& m_type != xml_type::name_space
@@ -314,7 +323,7 @@ bool xml_node::push_name(xml_cstr_t value)
 	return true;
 }
 
-bool xml_node::push_value(xml_cstr_t value)
+bool xml_node::push_value(cstr_t value)
 {
 	xml_document_t doc = xml_parent_doc();
 	if (xml_is_type_of(xml_type::attribute) || xml_is_type_of(xml_type::comment))
@@ -348,7 +357,7 @@ bool xml_node::push_value(xml_cstr_t value)
 	return false;
 }
 
-bool xml_node::push_name(ixml_text_t value)
+bool xml_node::push_name(string value)
 {
 	if (m_type != xml_type::attribute
 		&& m_type != xml_type::name_space
@@ -362,7 +371,7 @@ bool xml_node::push_name(ixml_text_t value)
 	return true;
 }
 
-bool xml_node::push_value(ixml_text_t value)
+bool xml_node::push_value(string value)
 {
 	xml_document_t doc = xml_parent_doc();
 	if (xml_is_type_of(xml_type::attribute) || xml_is_type_of(xml_type::comment))
@@ -396,7 +405,7 @@ bool xml_node::push_value(ixml_text_t value)
 	return false;
 }
 
-bool xml_node::push_data(ixml_text_t value)
+bool xml_node::push_data(string value)
 {
 	if (m_type != xml_type::element)
 		return false;

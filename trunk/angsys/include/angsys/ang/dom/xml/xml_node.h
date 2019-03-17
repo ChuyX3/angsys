@@ -64,8 +64,8 @@ namespace ang
 				xml_const_backward_iterator_t rend()const override;
 
 			public: //icollection overrides
-				xml_iterator_t find(xml_cstr_t, bool invert = false)const override;
-				xml_iterator_t find(xml_cstr_t, xml_iterator_t next_to, bool invert = false)const override;
+				xml_iterator_t find(cstr_t, bool invert = false)const override;
+				xml_iterator_t find(cstr_t, xml_iterator_t next_to, bool invert = false)const override;
 
 			public:
 				virtual bool push(xml_node_t node, bool last = true);
@@ -101,7 +101,7 @@ namespace ang
 				xml_text_t m_namespace;
 				ixml_object_t m_content;
 				xml_attributes_t m_attributes; //attributes and namespaces 
-				collections::hash_map<ixml_text_view_t, weak_ptr<xml_node>> m_ns_map;
+				collections::hash_map<string, weak_ptr<xml_node>> m_ns_map;
 				//object_wrapper<xml_collection> m_children;
 
 			protected:
@@ -138,21 +138,21 @@ namespace ang
 				virtual xml_text_t xml_name()const override;
 				virtual xml_text_t xml_value()const override;
 				virtual xml_text_t xml_namespace()const override;
-				virtual xml_node_t xml_namespace(xml_cstr_t)const override;
+				virtual xml_node_t xml_namespace(cstr_t)const override;
 				virtual ixml_collection_t xml_children()const override;
 				virtual xml_attributes_t xml_attributes()const override;
 
 			protected:
-				bool push_name(xml_cstr_t);
-				bool push_data(xml_cstr_t);
-				bool push_value(xml_cstr_t);
-				bool push_namespace(xml_cstr_t);
+				bool push_name(cstr_t);
+				bool push_data(cstr_t);
+				bool push_value(cstr_t);
+				bool push_namespace(cstr_t);
 				
 
-				bool push_name(ixml_text_t);
-				bool push_data(ixml_text_t);
-				bool push_value(ixml_text_t);
-				bool push_namespace(ixml_text_t);
+				bool push_name(string);
+				bool push_data(string);
+				bool push_value(string);
+				bool push_namespace(string);
 				bool push_namespace(xml_namespace_t);
 				xml_iterator_t push_attribute(xml_node_t att);
 				xml_iterator_t push_attribute(xml_node_t att, xml_iterator_t next);

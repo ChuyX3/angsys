@@ -58,7 +58,7 @@ namespace ang
 				};
 
 				nullable<bool> m_stand_alone;
-				ixml_text_t m_version;
+				string m_version;
 				xml_encoding_t m_encoding;
 				text::istring_factory_t m_factory;
 				wsize m_count;
@@ -67,7 +67,7 @@ namespace ang
 				xml_node* m_last;
 				xml_document_iterator m_current;
 
-				string m_last_parsing_error;
+				astring m_last_parsing_error;
 
 			public:
 				xml_document(xml_encoding_t = xml_encoding::utf8);
@@ -85,7 +85,7 @@ namespace ang
 
 				virtual xml_type_t xml_type()const override;
 				virtual bool xml_is_type_of(xml_type_t)const override;
-				virtual streams::itext_output_stream_t& xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flag, ushort level = 0)const override;
+				virtual streams::itext_output_stream_t& xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flag = xml_format::wrap_text_space + xml_format::fix_entity, ushort level = 0)const override;
 
 				virtual wsize counter()const override;
 				virtual xml::xml_node_t at(xml_base_iterator_t const&) override;
@@ -106,7 +106,7 @@ namespace ang
 				virtual xml_const_backward_iterator_t rbegin()const override;
 				virtual xml_const_backward_iterator_t rend()const override;
 
-				virtual ixml_text_view_t xml_version()const override;
+				virtual string xml_version()const override;
 				virtual xml_encoding_t xml_encoding()const override;
 				virtual bool xml_stand_alone()const override;
 
@@ -114,14 +114,14 @@ namespace ang
 				virtual xml_node_t xml_root_element()const override;
 				virtual xml_document_t xml_clone()const override;
 
-				virtual xml_iterator_t find(xml_cstr_t, bool invert = false)const override;
-				virtual xml_iterator_t find(xml_cstr_t, xml_iterator_t next_to, bool invert = false)const override;
+				virtual xml_iterator_t find(cstr_t, bool invert = false)const override;
+				virtual xml_iterator_t find(cstr_t, xml_iterator_t next_to, bool invert = false)const override;
 
 				virtual xml_iterator_t xml_current()const override;
 				virtual xml_node_t xml_current_element()const override;
 
-				virtual ixml_text_t create_cdata(xml_cstr_t)const;
-				virtual ixml_text_t create_pcdata(xml_cstr_t)const;
+				virtual string create_cdata(cstr_t)const;
+				virtual string create_pcdata(cstr_t)const;
 
 				virtual bool move_to(xml_iterator_t current) override;
 				virtual bool move_to_child(xml_iterator_t child) override;
@@ -131,34 +131,35 @@ namespace ang
 				virtual bool move_forward() override;
 				virtual bool move_backward() override;
 
-				virtual void push_header(xml_cstr_t version = "1.0"_s, nullable<bool> standalone = null) override;
-				virtual bool begin_element(xml_cstr_t name) override;
+				virtual void push_header(cstr_t version = "1.0"_s, nullable<bool> standalone = null) override;
+				virtual bool begin_element(cstr_t name) override;
 				virtual bool end_element() override;
-				virtual bool push_element(xml_cstr_t name, xml_cstr_t value) override;
-				virtual bool push_element(xml_cstr_t element) override;
-				virtual bool push_data(xml_cstr_t value) override;
-				virtual bool push_value(xml_cstr_t value) override;
-				virtual bool push_attribute(xml_cstr_t name, xml_cstr_t value) override;
-				virtual bool push_namespace(xml_cstr_t name, xml_cstr_t value) override;
-				virtual bool push_comment(xml_cstr_t value) override;
+				virtual bool push_element(cstr_t name, cstr_t value) override;
+				virtual bool push_element(cstr_t element) override;
+				virtual bool push_data(cstr_t value) override;
+				virtual bool push_value(cstr_t value) override;
+				virtual bool push_attribute(cstr_t name, cstr_t value) override;
+				virtual bool push_namespace(cstr_t name, cstr_t value) override;
+				virtual bool push_comment(cstr_t value) override;
 
 				virtual void load(core::files::input_text_file_t) override;
 				virtual void save(core::files::output_text_file_t)const override;
+				//virtual void parse(cstr_t data)override;
 				virtual void parse(ibuffer_view_t data)override;
-				virtual void parse(ixml_text_view_t data)override;
+				virtual void parse(text::istring_view_t data)override;
 				using ixml_document::parse;
 
 			private:
-				bool begin_element(ixml_text_t name);
-				bool push_element(ixml_text_t name, ixml_text_t value);
-				bool push_element(ixml_text_t element);
-				bool push_data(ixml_text_t value);
-				bool push_value(ixml_text_t value);
-				bool push_attribute(ixml_text_t name, ixml_text_t value);
-				bool push_comment(ixml_text_t value);
+				bool begin_element(string name);
+				bool push_element(string name, string value);
+				bool push_element(string element);
+				bool push_data(string value);
+				bool push_value(string value);
+				bool push_attribute(string name, string value);
+				bool push_comment(string value);
 
 			protected:
-				static bool decode_header(text::istring_view_t data, windex& idx, ixml_text_t& version, xml_encoding_t& encoding, nullable<bool>& standalone);
+				static bool decode_header(text::istring_view_t data, windex& idx, string& version, xml_encoding_t& encoding, nullable<bool>& standalone);
 				static bool decode_dtd(xml_document_t doc, text::istring_view_t data, windex& idx);
 				static bool decode_elements(xml_document_t doc, text::istring_view_t data, windex& idx);
 

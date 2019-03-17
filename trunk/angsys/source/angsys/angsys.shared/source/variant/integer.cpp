@@ -21,7 +21,7 @@ namespace ang
 	static char hexu[18] = { "0123456789ABCDEFX" };
 }
 
-value<int> variable<int>::parse(text::raw_cstr_t str, windex i, int base) {
+value<int> variable<int>::parse(cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
 	return parser->to_signed(str, i, true, base);
 }
@@ -173,7 +173,7 @@ wstring variable<int>::to_string(value<int> val,text::text_format_t f)
 		else if (format.sign)
 			out[c--] = '+';
 	}
-	return cstr_t(&out[c + 1u], max_char - c);
+	return castr_t(&out[c + 1u], max_char - c);
 }
 
 variable<int>::variable()
@@ -343,7 +343,7 @@ variant variable<int>::clone()const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-value<long> variable<long>::parse(text::raw_cstr_t str, windex i, int base) {
+value<long> variable<long>::parse(cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
 	return parser->to_signed(str, i, true, base);
 }
@@ -495,7 +495,7 @@ wstring variable<long>::to_string(value<long> val, text::text_format_t f)
 		else if (format.sign)
 			out[c--] = '+';
 	}
-	return cstr_t(&out[c + 1u], max_char - c);
+	return castr_t(&out[c + 1u], max_char - c);
 }
 
 variable<long>::variable()
@@ -667,7 +667,7 @@ variant variable<long>::clone()const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-value<long64> variable<long64>::parse(text::raw_cstr_t str, windex i, int base) {
+value<long64> variable<long64>::parse(cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
 	return parser->to_signed(str, i, true, base);
 }
@@ -819,7 +819,7 @@ wstring variable<long64>::to_string(value<long64> val, text::text_format_t f)
 		else if (format.sign)
 			out[c--] = '+';
 	}
-	return cstr_t(&out[c + 1u], max_char - c);
+	return castr_t(&out[c + 1u], max_char - c);
 }
 
 variable<long64>::variable()

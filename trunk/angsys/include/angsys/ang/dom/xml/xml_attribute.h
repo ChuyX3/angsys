@@ -10,7 +10,7 @@ namespace ang
 			{
 			public:
 				static xml_attribute_t create_new(xml_document_t, const xml_attribute*);
-				static xml_attribute_t create_new(xml_document_t, ixml_text_t, ixml_text_t);
+				static xml_attribute_t create_new(xml_document_t, string, string);
 
 			protected:
 				xml_attribute(xml_document_t);
@@ -46,7 +46,7 @@ namespace ang
 			{
 			public:
 				static xml_namespace_t create_new(xml_document_t, const xml_namespace*);
-				static xml_namespace_t create_new(xml_document_t, ixml_text_t, ixml_text_t);
+				static xml_namespace_t create_new(xml_document_t, string, string);
 
 			protected:
 				xml_namespace(xml_document_t);

@@ -35,12 +35,12 @@ xml_cdata_t xml_cdata::create_new(xml_document_t doc, const xml_cdata* data)
 	if (data)
 	{
 		if (!data->m_content.is_empty() && data->m_content->xml_is_type_of(xml_type::text))
-			node->push_value(doc->create_pcdata((xml_cstr_t)data->m_content->xml_as<xml_text>()));
+			node->push_value(doc->create_pcdata((cstr_t)data->m_content->xml_as<xml_text>()));
 	}
 	return node;
 }
 
-xml_cdata_t xml_cdata::create_new(xml_document_t doc, ixml_text_t text)
+xml_cdata_t xml_cdata::create_new(xml_document_t doc, string text)
 {
 	xml_cdata_t node = NEW xml_cdata(doc);
 	node->push_value(text);
@@ -50,6 +50,7 @@ xml_cdata_t xml_cdata::create_new(xml_document_t doc, ixml_text_t text)
 xml_cdata::xml_cdata(xml_document_t doc)
 	: base(doc, xml_type::cdata)
 {
+	m_name = new xml_text(doc.get(), doc->create_pcdata("CDATA"_s));
 }
 
 xml_cdata::~xml_cdata()
@@ -64,6 +65,11 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(xml_cdata, xml_node);
 xml_node_t xml_cdata::xml_clone(xml_document_t doc)const
 {
 	return create_new(xml_parent_doc(), this);
+}
+
+bool xml_cdata::xml_has_name()const
+{
+	return !m_name.is_empty();
 }
 
 bool xml_cdata::xml_has_value()const

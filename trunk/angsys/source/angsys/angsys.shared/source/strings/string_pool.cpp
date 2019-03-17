@@ -5,12 +5,12 @@
 using namespace ang;
 using namespace ang::text;
 
-typedef collections::internal_hash_map<cstr_t, const_string>* pool_handle;
+typedef collections::internal_hash_map<castr_t, const_string>* pool_handle;
 
 string_pool::string_pool()
 {
-	pool = ang_alloc_unmanaged_memory(sizeof(collections::internal_hash_map<cstr_t, const_string>));
-	pool = new(pool)collections::internal_hash_map<cstr_t, const_string>();
+	pool = ang_alloc_unmanaged_memory(sizeof(collections::internal_hash_map<castr_t, const_string>));
+	pool = new(pool)collections::internal_hash_map<castr_t, const_string>();
 }
 
 string_pool::~string_pool()
@@ -19,7 +19,7 @@ string_pool::~string_pool()
 	ang_free_unmanaged_memory(pool);
 }
 
-cstr_t string_pool::save_string(cstr_t str)
+castr_t string_pool::save_string(castr_t str)
 {
 	const_string value;
 	if (!pool_handle(pool)->find(str, &value)) {
@@ -29,7 +29,7 @@ cstr_t string_pool::save_string(cstr_t str)
 	return value->cstr();
 }
 
-cstr_t string_pool::save_string(string const& str)
+castr_t string_pool::save_string(astring const& str)
 {
 	const_string value;
 	if (!pool_handle(pool)->find(str, &value)) {
@@ -39,7 +39,7 @@ cstr_t string_pool::save_string(string const& str)
 	return value->cstr();
 }
 
-cstr_t string_pool::save_string(const_string str)
+castr_t string_pool::save_string(const_string str)
 {
 	const_string value;
 	if (!pool_handle(pool)->find(str->cstr(), &value)) {
@@ -49,7 +49,7 @@ cstr_t string_pool::save_string(const_string str)
 	return value->cstr();
 }
 
-cstr_t string_pool::save_string(const_string_buffer* str)
+castr_t string_pool::save_string(const_string_buffer* str)
 {
 	const_string value;
 	if (!pool_handle(pool)->find(str->cstr(), &value)) {
@@ -59,7 +59,7 @@ cstr_t string_pool::save_string(const_string_buffer* str)
 	return value->cstr();
 }
 
-const_string string_pool::find_string(cstr_t str)
+const_string string_pool::find_string(castr_t str)
 {
 	const_string value;
 	if (pool_handle(pool)->find(str, &value))

@@ -73,11 +73,26 @@ namespace ang //constants
 		struct tuple<T> {
 			static constexpr wsize field_count = 1;
 
+			tuple(T arg)
+				: m_first(ang::forward<T>(arg))
+			{
+			}
+
+			tuple(tuple<T>&& arg)
+				: m_first(ang::move(arg.m_first))
+			{
+			}
+
+			tuple(tuple<T> const& arg)
+				: m_first(arg.m_first)
+			{
+			}
+
 			T& first() { return m_first; }
 			T const& first()const { return m_first; }
 
-			tuple<void> & rest() { return rest_; }
-			tuple<void> const& rest()const { return rest_; }
+			tuple<void> & rest() { return m_rest; }
+			tuple<void> const& rest()const { return m_rest; }
 
 			template<wsize N> auto get()const { return __tuple_get_set_impl<N, T>::get(*this); }
 			template<wsize N> void set(typename __tuple_get_set_impl<N, T>::arg_type value)const {
@@ -86,18 +101,36 @@ namespace ang //constants
 
 		private:
 			T m_first;
-			static tuple<void> rest_;
+			static tuple<void> m_rest;
 		};
 
 		template<typename T, typename... Ts>
 		struct tuple {
 			static constexpr wsize field_count = tuple<Ts...>::field_count + 1;
 
+			tuple(T arg, Ts...args)
+				: m_first(ang::forward<T>(arg))
+				, m_rest(ang::forward<Ts>(args)...)
+			{
+			}
+
+			tuple(tuple<T, Ts...>&& arg)
+				: m_first(ang::move(arg.m_first))
+				, m_rest(ang::move(arg.m_rest))
+			{
+			}
+
+			tuple(tuple<T> const& arg)
+				: m_first(arg.m_first)
+				, m_rest(arg.m_rest)
+			{
+			}
+
 			T& first() { return m_first; }
 			T const& first()const { return m_first; }
 
-			tuple<Ts...>& rest() { return rest_; }
-			tuple<Ts...> const& rest()const { return rest_; }
+			tuple<Ts...>& rest() { return m_rest; }
+			tuple<Ts...> const& rest()const { return m_rest; }
 
 			template<wsize N> auto get()const { return __tuple_get_set_impl<N, T, Ts...>::get(*this); }
 			template<wsize N> void set(typename __tuple_get_set_impl<N, T, Ts...>::arg_type value) {
@@ -106,7 +139,7 @@ namespace ang //constants
 
 		private:
 			T m_first;
-			tuple<Ts...> rest_;
+			tuple<Ts...> m_rest;
 		};
 
 	}

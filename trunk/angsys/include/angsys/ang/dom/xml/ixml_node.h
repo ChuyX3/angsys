@@ -27,7 +27,7 @@ namespace ang
 				visible vcall xml_text_t xml_name()const pure;
 				visible vcall xml_text_t xml_value()const pure;
 				visible vcall xml_text_t xml_namespace()const pure;
-				visible vcall xml_node_t xml_namespace(xml_cstr_t)const pure;
+				visible vcall xml_node_t xml_namespace(cstr_t)const pure;
 				visible vcall ixml_collection_t xml_children()const pure;
 				visible vcall xml_attributes_t xml_attributes()const pure;
 
@@ -38,13 +38,17 @@ namespace ang
 				//allow xml_document;
 			ang_end_interface();
 
+			ang_begin_interface(LINK ixml_serializable)
+				visible vcall bool load(xml_node_t)pure;
+				visible vcall bool save(xml_document_t)const pure;
+			ang_end_interface();
 		}
 	}
 
 	
 	ANG_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_node)
 		operator dom::xml::xml_text_t()const;
-		dom::xml::xml_node_t operator[](dom::xml::xml_cstr_t)const;
+		dom::xml::xml_node_t operator[](cstr_t)const;
 		template<typename T, text::encoding E> dom::xml::xml_node_t operator[](str_view<T, E> str)const;
 	ANG_END_INTF_WRAPPER();
 

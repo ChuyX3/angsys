@@ -296,9 +296,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\strings\istring.h">
       <Filter>header\angsys\strings</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\strings\raw_str.h">
-      <Filter>header\angsys\strings</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\strings\string.h">
       <Filter>header\angsys\strings</Filter>
     </ClInclude>
@@ -458,6 +455,9 @@
       <Filter>source\files</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\string_input_stream.cpp">
+      <Filter>source\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\string_output_stream.cpp">
       <Filter>source\streams</Filter>
     </ClCompile>
   </ItemGroup>

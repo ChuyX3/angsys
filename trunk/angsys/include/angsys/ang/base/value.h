@@ -213,10 +213,47 @@ namespace ang //constants
 	};
 
 
+	namespace text
+	{
+		struct LINK encoding_t : public ang::value<encoding>
+		{
+			static encoding_t parse(cstr_t);
+			static rtti_t const& class_info();
+			encoding_t() : value(default_value<type>::value) {}
+			encoding_t(type const& v) : value(v) {}
+			encoding_t(encoding_t const& v) : value(v) {}
+			encoding_t(type && v) : value(ang::forward<type>(v)) { }
+			encoding_t(encoding_t && v) : value(ang::forward<value>(v)) { }
+			cstr_t to_string()const;
+			encoding_t& operator = (type const& v) { get() = v; return*this; }
+			encoding_t& operator = (encoding_t const& v) { get() = v.get(); return*this; }
+			encoding_t& operator = (type && v) { get() = ang::move(v); v = default_value<type>::value; return*this; }
+			encoding_t& operator = (encoding_t && v) { get() = ang::move(v.get()); v.set(default_value<type>::value); return*this; }
+			friend inline bool operator == (encoding_t const& a1, encoding_t const& a2) { return a1.get() == a2.get(); }
+			friend inline bool operator != (encoding_t const& a1, encoding_t const& a2) { return a1.get() != a2.get(); }
+			friend inline bool operator >= (encoding_t const& a1, encoding_t const& a2) { return a1.get() >= a2.get(); }
+			friend inline bool operator <= (encoding_t const& a1, encoding_t const& a2) { return a1.get() <= a2.get(); }
+			friend inline bool operator > (encoding_t const& a1, encoding_t const& a2) { return a1.get() > a2.get(); }
+			friend inline bool operator < (encoding_t const& a1, encoding_t const& a2) { return a1.get() < a2.get(); }
+			friend inline bool operator == (encoding_t const& a1, encoding a2) { return a1.get() == a2; }
+			friend inline bool operator == (encoding a1, encoding_t const& a2) { return a1 == a2.get(); }
+			friend inline bool operator != (encoding_t const& a1, encoding a2) { return a1.get() != a2; }
+			friend inline bool operator != (encoding a1, encoding_t const& a2) { return a1 != a2.get(); }
+			friend inline bool operator >= (encoding_t const& a1, encoding a2) { return a1.get() >= a2; }
+			friend inline bool operator >= (encoding a1, encoding_t const& a2) { return a1 >= a2.get(); }
+			friend inline bool operator <= (encoding_t const& a1, encoding a2) { return a1.get() <= a2; }
+			friend inline bool operator <= (encoding a1, encoding_t const& a2) { return a1 <= a2.get(); }
+			friend inline bool operator > (encoding_t const& a1, encoding a2) { return a1.get() > a2; }
+			friend inline bool operator > (encoding a1, encoding_t const& a2) { return a1 > a2.get(); }
+			friend inline bool operator < (encoding_t const& a1, encoding a2) { return a1.get() < a2; }
+			friend inline bool operator < (encoding a1, encoding_t const& a2) { return a1 < a2.get(); }
+		};
+	}
+
 #define safe_enum(_LINK, _name, _type)  enum class _name : _type; \
 	struct _LINK _name##_t : public ang::value<_name> { \
 		static rtti_t const& class_info(); \
-		static _name##_t parse(text::raw_cstr_t);\
+		static _name##_t parse(cstr_t);\
 		_name##_t() : value(default_value<type>::value) {} \
 		_name##_t(type const& v) : value(v) {} \
 		_name##_t(_name##_t const& v) : value(v) {} \
@@ -256,7 +293,7 @@ namespace ang //constants
 		_name##_t(_name##_t const& v) : value(v) {} \
 		_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
 		_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
-		ang::wstring to_string()const; \
+		ang::string to_string()const; \
 		template<_name VALUE> bool is_active()const { return ((base)VALUE & m_value) == (base)VALUE; } 	\
 		_name##_t& operator = (type const& v){ get() = v; return*this; } \
 		_name##_t& operator = (_name##_t const& v) { get() = v.get(); return*this; } \
@@ -322,7 +359,7 @@ namespace ang //constants
 #define safe_enum_flags(_LINK, _name, _flag_name, _type) enum class _name : _type; \
 	struct _LINK _name##_t : public ang::value<_name>{ \
 		static rtti_t const& class_info(); \
-		static _name##_t parse(text::raw_cstr_t);\
+		static _name##_t parse(cstr_t);\
 		_name##_t() : value(default_value<type>::value) {} \
 		_name##_t(type const& v) : value(v) {} \
 		_name##_t(_name##_t const& v) : value(v) {} \
@@ -360,7 +397,7 @@ namespace ang //constants
 		_flag_name##_t(_flag_name##_t const& v) : value(v) {} \
 		_flag_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
 		_flag_name##_t(_flag_name##_t && v) : value(ang::forward<value>(v)) { } \
-		ang::wstring to_string()const; \
+		ang::string to_string()const; \
 		template<_name VALUE> bool is_active()const { return ((base)VALUE & m_value) == (base)VALUE; } 	\
 		_flag_name##_t& operator = (type const& v){ get() = v; return*this; } \
 		_flag_name##_t& operator = (_flag_name##_t const& v) { get() = v.get(); return*this; } \

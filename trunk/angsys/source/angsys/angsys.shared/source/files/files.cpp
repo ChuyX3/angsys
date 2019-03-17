@@ -17,8 +17,8 @@ using namespace ang::core::files;
 
 safe_flags_implement(ang::core::files, open_flags);
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::files::ifile, interface);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::files::ifile_system, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::files::ifile, intf);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::files::ifile_system, intf);
 
 safe_enum_rrti2(ang::core::files, file_system_priority);
 
@@ -28,20 +28,20 @@ safe_enum_rrti2(ang::core::files, file_system_priority);
 //#undef MY_TYPE
 //#undef MY_ALLOCATOR
 
-static collections::pair<file_system_priority, cstr_t> s_file_system_priority_to_string_map[] =
+static collections::pair<file_system_priority, castr_t> s_file_system_priority_to_string_map[] =
 {
 	{file_system_priority::lowest, "lowest"_s},
 	{file_system_priority::highest, "highest"_s}
 };
 
-static collections::pair<cstr_t, file_system_priority> s_file_system_priority_parsing_map[] =
+static collections::pair<castr_t, file_system_priority> s_file_system_priority_parsing_map[] =
 {
 	{"highest"_s, file_system_priority::highest},
 	{"lowest"_s, file_system_priority::lowest}
 };
 
 
-file_system_priority_t file_system_priority_t::parse(text::raw_cstr_t str)
+file_system_priority_t file_system_priority_t::parse(ang::cstr_t str)
 {
 	auto idx = algorithms::binary_search(str, collections::to_array(s_file_system_priority_parsing_map));
 	if (idx >= algorithms::array_size(s_file_system_priority_parsing_map))
@@ -158,7 +158,7 @@ ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::files::file, object);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::files::file, object);
 
 
-bool file::create(path_view_t path, open_flags_t flags)
+bool file::create(cstr_t path, open_flags_t flags)
 {
 	auto fs = ifile_system::fs_instance();
 	if (fs == null)

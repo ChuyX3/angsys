@@ -11,8 +11,8 @@ namespace ang
 			{
 			public:;
 				static xml_element_t create_new(xml_document_t, const xml_element*);
-				static xml_element_t create_new(xml_document_t, ixml_text_t);
-				static xml_element_t create_new(xml_document_t, ixml_text_t, ixml_text_t);
+				static xml_element_t create_new(xml_document_t, string);
+				static xml_element_t create_new(xml_document_t, string, string);
 
 			protected:
 				xml_element(xml_document_t);

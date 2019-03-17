@@ -42,7 +42,7 @@
     </Expand>
   </Type>
 
-  <Type Name="ang::text::raw_str">
+  <Type Name="ang::raw_str">
     <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 1">{m_value, s}</DisplayString>
     <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 2">{m_value, su}</DisplayString>
     <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 3">{m_value, s8}</DisplayString>
@@ -61,7 +61,7 @@
     </Expand>
   </Type>
 
-  <Type Name="ang::text::raw_cstr">
+  <Type Name="ang::raw_cstr">
     <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 1">{m_value, s}</DisplayString>
     <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 2">{m_value, su}</DisplayString>
     <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 3">{m_value, s8}</DisplayString>

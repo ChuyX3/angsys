@@ -108,27 +108,6 @@ namespace ang //type utils
 	template<typename T> struct is_lvalue_reference<T&> : true_type { };
 
 	template<typename T> typename remove_reference<T>::type& declval();
-
-	template<typename T, bool IS_POINTER = is_pointer<T>::value> struct __to_pointer_helper;
-
-	template<typename T> 
-	struct __to_pointer_helper<T, true> {
-		using arg_type = T;
-		using ptr_type = T;
-		static constexpr T value(arg_type ptr) { return ptr; }
-	};
-
-	template<typename T>
-	struct __to_pointer_helper<T, false> {
-		using arg_type = T&;
-		using ptr_type = T*;
-		static T* value(arg_type val) { return addressof(forward<T>(val)); }
-	};
-
-	template<typename T>
-	auto to_pointer(typename __to_pointer_helper<T>::arg_type val)->decltype(__to_pointer_helper<T>::value(forward<T>(val))) {
-		return __to_pointer_helper<T>::value(forward<T>(val));
-	};
 }
 
 namespace ang //move operations
@@ -214,7 +193,6 @@ namespace ang //comparision
 	}
 
 	template<typename T1, typename T2> inline auto align_up(T1 ALIGMENT, T2 VALUE) -> decltype(VALUE + ALIGMENT) {
-		NN_ASSERT(ALIGMENT != 0, "Error: align_to<0>(...)");
 		return (VALUE % ALIGMENT) && VALUE ? VALUE + ALIGMENT - (VALUE % ALIGMENT) : VALUE;
 	}
 
@@ -229,7 +207,6 @@ namespace ang //comparision
 	}
 
 	template<typename T1, typename T2> inline auto align_down(T1 ALIGMENT, T2 VALUE) -> decltype(VALUE + ALIGMENT) {
-		NN_ASSERT(ALIGMENT != 0, "Error: align_to<0>(...)");
 		return (VALUE % ALIGMENT) && VALUE ? VALUE - (VALUE % ALIGMENT) : VALUE;
 	}
 
@@ -483,6 +460,27 @@ namespace ang //operations
 	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::nor_operation, T1, T2, void_t<decltype(~(declval<T1>() | declval<T2>()))>> : true_type { };
 	template<typename T1, typename T2> struct has_boolean_operation<boolean_operation_type::xnor_operation, T1, T2, void_t<decltype(~(declval<T1>() ^ declval<T2>()))>> : true_type { };
 
+	template<typename T, bool IS_POINTER = is_pointer<T>::value> struct __to_pointer_helper;
+
+	template<typename T>
+	struct __to_pointer_helper<T, true> {
+		using arg_type = T;
+		using ptr_type = T;
+		static constexpr T value(arg_type ptr) { return ptr; }
+	};
+
+	template<typename T>
+	struct __to_pointer_helper<T, false> {
+		using arg_type = T & ;
+		using ptr_type = T * ;
+		static T* value(arg_type val) { return addressof(ang::forward<T>(val)); }
+	};
+
+	template<typename T>
+	auto to_pointer(typename __to_pointer_helper<T>::arg_type val)->decltype(__to_pointer_helper<T>::value(ang::forward<T>(val))) {
+		return __to_pointer_helper<T>::value(ang::forward<T>(val));
+	};
+
 }
 
 namespace ang
@@ -537,7 +535,7 @@ namespace ang
 
 	template<typename T, bool IS_FUNCTION = is_function<T>::value>
 	struct __adressof {
-		static T* value(T& val) { 
+		static T* value(T& val) {
 			return (reinterpret_cast<T*>(&const_cast<char&>(reinterpret_cast<const volatile char&>(val))));
 		}
 	};
@@ -550,7 +548,7 @@ namespace ang
 	};
 
 	template<typename T>
-	inline T *addressof(T& val) noexcept {	
+	inline T *addressof(T& val) noexcept {
 		return __adressof<T>::value(val);
 	}
 
@@ -579,7 +577,7 @@ namespace ang
 	template<typename T, typename U, typename V>
 	T* field_to_parent(U T::*member, V* field) {
 		static_assert(are_convertible_types<U, V>::value, "can convert type V to U");
-		return (T*)(wsize(field)-offset_of(member));
+		return (T*)(wsize(field) - offset_of(member));
 	}
 
 
@@ -590,7 +588,13 @@ namespace ang
 		template<typename...Arsg>auto_self(Arsg&&... args)
 			: U(forward<Arsg>(args)...) { }
 	};
-template<typename T> struct auto_self<T> { protected: using self = T; };
+
+	template<typename T> struct auto_self<T> {
+	protected: using self = T;
+	public: //dummy operators
+		inline bool operator ==(const T&)const { return false; }
+		inline bool operator !=(const T&)const { return false; }
+	};
 }
 
 #endif//__ANG_BASE_UTILS_H__

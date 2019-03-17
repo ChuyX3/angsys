@@ -48,13 +48,13 @@ xml_element_t xml_element::create_new(xml_document_t doc, const xml_element* ele
 	return node;
 }
 
-xml_element_t xml_element::create_new(xml_document_t doc, ixml_text_t name) {
+xml_element_t xml_element::create_new(xml_document_t doc, string name) {
 	xml_element_t node = NEW xml_element(doc);
 	node->push_name(name);
 	return node;
 }
 
-xml_element_t xml_element::create_new(xml_document_t doc, ixml_text_t name, ixml_text_t value) {
+xml_element_t xml_element::create_new(xml_document_t doc, string name, string value) {
 	xml_element_t node = NEW xml_element(doc);
 	node->push_name(name);
 	node->push_value(value);

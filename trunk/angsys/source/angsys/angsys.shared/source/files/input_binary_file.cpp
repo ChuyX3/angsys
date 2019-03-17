@@ -20,7 +20,7 @@ input_binary_file::input_binary_file()
 {
 }
 
-input_binary_file::input_binary_file(path_view_t path)
+input_binary_file::input_binary_file(cstr_t path)
 	: base()
 {
 	open(path);
@@ -35,7 +35,7 @@ ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::files::input_binary_file)
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::files::input_binary_file, file, streams::ibinary_input_stream);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::files::input_binary_file, file, streams::ibinary_input_stream);
 
-bool input_binary_file::open(path_view_t path)
+bool input_binary_file::open(cstr_t path)
 {
 	if (is_valid())
 		return false;

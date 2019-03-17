@@ -389,7 +389,7 @@ wsize algorithms::hash_table_get_next_size(wsize size) {
 }
 
 
-long64 algorithms::hash_index_maker<text::raw_str_t>::make(text::raw_str_t const& key_, ulong64 TS)
+long64 algorithms::hash_index_maker<str_t>::make(str_t const& key_, ulong64 TS)
 {
 	ulong64 h = 75025;
 	
@@ -405,7 +405,7 @@ long64 algorithms::hash_index_maker<text::raw_str_t>::make(text::raw_str_t const
 	return ang_uint64_t(h % TS);
 }
 
-long64 algorithms::hash_index_maker<text::raw_cstr_t>::make(text::raw_cstr_t const& key_, ulong64 TS)
+long64 algorithms::hash_index_maker<cstr_t>::make(cstr_t const& key_, ulong64 TS)
 {
 	ulong64 h = 75025;
 

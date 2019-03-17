@@ -82,7 +82,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\streams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\strings\const_string.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\strings\istring.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\strings\raw_str.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\strings\string.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\variable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ang_memory.h" />
@@ -119,6 +118,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\runtime.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\streams.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\string_input_stream.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\string_output_stream.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\const_string.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\encoder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\strings\parser.cpp" />

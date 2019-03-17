@@ -63,12 +63,24 @@ bool string_input_stream::is_eos()const
 	return m_string.is_empty() ? true : m_string->length() == m_cursor;
 }
 
-bool string_input_stream::cursor(stream_index_t size, stream_reference_t ref)
+bool string_input_stream::cursor(stream_index_t offset, stream_reference_t ref)
 {
-	return 0;
+	switch (ref)
+	{
+	case stream_reference::begin:
+		m_cursor = (wsize) min(max(offset, 0), size());
+		break;
+	case stream_reference::current:
+		m_cursor = (wsize)min(max(m_cursor + offset, 0), size());
+		break;
+	case stream_reference::end:
+		m_cursor = (wsize)min(max(size() + offset, 0), size());
+		break;
+	}
+	return true;
 }
 
-uint string_input_stream::seek(text::raw_cstr_t format)
+wsize string_input_stream::seek(cstr_t format)
 {
 	wsize c = m_cursor;
 	m_parser->seek(m_string, m_cursor, format);
@@ -85,14 +97,14 @@ uint string_input_stream::seek(text::raw_cstr_t format)
 #define TEXT_READ_SWITCH(...) { ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TEXT_READ, ELSE_SEPARATOR,##__VA_ARGS__)) }
 
 
-uint string_input_stream::read(pointer ptr, ang::rtti_t const& type)
+wsize string_input_stream::read(pointer ptr, ang::rtti_t const& type)
 {
 	if (m_string.is_empty())
 		return 0;
 	wsize cs = text::encoder<text::encoding::auto_detect>::char_size_by_encoding(format());
 	wsize i = 0;
-	text::raw_cstr_t data = m_string;
-	data = text::raw_cstr((byte*)data.ptr() + (m_cursor * cs), data.size() - (m_cursor * cs), data.encoding());
+	cstr_t data = m_string;
+	data = cstr_t((byte*)data.ptr() + (m_cursor * cs), data.size() - (m_cursor * cs), data.encoding());
 
 	TEXT_READ_SWITCH(
 		char,
@@ -114,7 +126,7 @@ uint string_input_stream::read(pointer ptr, ang::rtti_t const& type)
 	return 0;
 }
 
-uint string_input_stream::read_format(text::raw_cstr_t format, var_args_t& args)
+wsize string_input_stream::read_format(cstr_t format, var_args_t& args)
 {
 	//TODO:
 	return 0;
@@ -127,10 +139,10 @@ wsize string_input_stream::read(text::istring_t out, wsize sz, wsize*written)
 	
 	text::encoding_t e = format();
 	wsize cs = text::encoder<text::encoding::auto_detect>::char_size_by_encoding(e);
-	text::raw_cstr_t cstr = m_string;
+	cstr_t cstr = m_string;
 	wsize size = min(sz * cs, cstr.size() - m_cursor * cs);
 	
-	out->copy(text::raw_cstr((byte*)cstr.ptr() + (m_cursor * cs), size, e));
+	out->copy(cstr_t((byte*)cstr.ptr() + (m_cursor * cs), size, e));
 	m_cursor += size / cs;
 	if (written)*written = size;
 	return size;

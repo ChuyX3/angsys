@@ -304,7 +304,7 @@ void xml_document::clear()
 
 streams::itext_output_stream_t& xml_document::xml_print(streams::itext_output_stream_t& stream, const xml_format_t& flags, ushort level)const
 {
-	stream << L"<?xml "_s << L"version=\""_s << (xml_cstr_t)m_version << L"\""_s;
+	stream << L"<?xml "_s << L"version=\""_s << (cstr_t)m_version << L"\""_s;
 	stream << L" encoding="_s << L"\""_s << (m_factory.is_empty() ? "utf-8"_s : m_factory->encoding().to_string()) << L"\""_s;
 	if (!m_stand_alone.is_empty())
 		stream << L" standalone=\""_s << m_stand_alone->to_string() << "\""_s;
@@ -463,50 +463,50 @@ xml_const_backward_iterator_t xml_document::rend()const
 }
 
 /////////////////////////////////////////////////////////////////////////
-ixml_text_t xml_document::create_cdata(xml_cstr_t cstr)const
+string xml_document::create_cdata(cstr_t cstr)const
 {
 	return m_factory->create_string(cstr);
 }
 
-ixml_text_t xml_document::create_pcdata(xml_cstr_t cstr)const
+string xml_document::create_pcdata(cstr_t cstr)const
 {
 	//TODO: validate characters
 	return m_factory->create_string(cstr);
 }
 
-bool xml_document::begin_element(xml_cstr_t name)
+bool xml_document::begin_element(cstr_t name)
 {
 	return begin_element(m_factory->create_string(name));
 }
 
-bool xml_document::push_element(xml_cstr_t name, xml_cstr_t value)
+bool xml_document::push_element(cstr_t name, cstr_t value)
 {
 	return push_element(m_factory->create_string(name), m_factory->create_string(value));
 }
 
-bool xml_document::push_element(xml_cstr_t name)
+bool xml_document::push_element(cstr_t name)
 {
 	return push_element(m_factory->create_string(name));
 }
 
-bool xml_document::push_data(xml_cstr_t value)
+bool xml_document::push_data(cstr_t value)
 {
 	return push_data(m_factory->create_string(value));
 }
 
-bool xml_document::push_value(xml_cstr_t value)
+bool xml_document::push_value(cstr_t value)
 {
 	return push_value(m_factory->create_string(value));
 }
 
-bool xml_document::push_attribute(xml_cstr_t name, xml_cstr_t value)
+bool xml_document::push_attribute(cstr_t name, cstr_t value)
 {
 	return push_attribute(m_factory->create_string(name), m_factory->create_string(value));
 }
 
-bool xml_document::push_namespace(xml_cstr_t name, xml_cstr_t value)
+bool xml_document::push_namespace(cstr_t name, cstr_t value)
 {
-	ixml_text_t ns = m_factory->create_string("xmlns"_s);
+	string ns = m_factory->create_string("xmlns"_s);
 	if (name.size() != 0)
 	{
 		ns->concat(":"_s);
@@ -515,14 +515,14 @@ bool xml_document::push_namespace(xml_cstr_t name, xml_cstr_t value)
 	return push_attribute(ns, m_factory->create_string(value));
 }
 
-bool xml_document::push_comment(xml_cstr_t value)
+bool xml_document::push_comment(cstr_t value)
 {
 	return push_comment(m_factory->create_string(value));
 }
 
 
 
-ixml_text_view_t xml_document::xml_version()const
+string xml_document::xml_version()const
 {
 	return m_version.get();
 }
@@ -547,13 +547,13 @@ xml_document_t xml_document::xml_clone()const
 	return NEW xml_document(this);
 }
 
-xml_iterator_t xml_document::find(xml_cstr_t name, bool invert)const
+xml_iterator_t xml_document::find(cstr_t name, bool invert)const
 {
 	if (invert)
 	{
 		for (xml_const_backward_iterator_t it = rbegin(); it != rend(); it++)
 		{
-			if((xml_cstr_t)it->xml_name() == name)
+			if((cstr_t)it->xml_name() == name)
 				return it;
 		}
 	}
@@ -561,14 +561,14 @@ xml_iterator_t xml_document::find(xml_cstr_t name, bool invert)const
 	{
 		for (xml_const_forward_iterator_t it = begin(); it != end(); it++)
 		{
-			if ((xml_cstr_t)it->xml_name() == name)
+			if ((cstr_t)it->xml_name() == name)
 				return it;
 		}
 	}
 	return xml_iterator_t(const_cast<xml_document*>(this), null);
 }
 
-xml_iterator_t xml_document::find(xml_cstr_t name, xml_iterator_t nextTo, bool invert)const
+xml_iterator_t xml_document::find(cstr_t name, xml_iterator_t nextTo, bool invert)const
 {
 	if (!nextTo.is_valid() || nextTo.parent() != this)
 		nextTo = (invert) ? xml_iterator_t(rbegin()) : xml_iterator_t(begin());
@@ -577,7 +577,7 @@ xml_iterator_t xml_document::find(xml_cstr_t name, xml_iterator_t nextTo, bool i
 	{
 		for (xml_const_backward_iterator_t it = nextTo; it != rend(); it--)
 		{
-			if ((xml_cstr_t)it->xml_name() == name)
+			if ((cstr_t)it->xml_name() == name)
 				return it;
 		}
 	}
@@ -585,7 +585,7 @@ xml_iterator_t xml_document::find(xml_cstr_t name, xml_iterator_t nextTo, bool i
 	{
 		for (xml_const_forward_iterator_t it = nextTo; it != end(); it++)
 		{
-			if ((xml_cstr_t)it->xml_name() == name)
+			if ((cstr_t)it->xml_name() == name)
 				return it;
 		}
 	}
@@ -728,13 +728,13 @@ bool xml_document::move_backward()
 	return m_current.backward();
 }
 
-void xml_document::push_header(xml_cstr_t version, nullable<bool> standalone)
+void xml_document::push_header(cstr_t version, nullable<bool> standalone)
 {
 	m_version = m_factory->create_string(version);
 	m_stand_alone = standalone;
 }
 
-bool xml_document::begin_element(ixml_text_t name)
+bool xml_document::begin_element(string name)
 {
 	if (xml_last() == null)
 	{
@@ -777,7 +777,7 @@ bool xml_document::end_element()
 	return true;
 }
 
-bool xml_document::push_element(ixml_text_t name)
+bool xml_document::push_element(string name)
 {
 	if (xml_last() == null)
 	{
@@ -811,7 +811,7 @@ bool xml_document::push_element(ixml_text_t name)
 	return true;
 }
 
-bool xml_document::push_element(ixml_text_t name, ixml_text_t value)
+bool xml_document::push_element(string name, string value)
 {
 	if (xml_last() == null)
 	{
@@ -845,7 +845,7 @@ bool xml_document::push_element(ixml_text_t name, ixml_text_t value)
 	return true;
 }
 
-bool xml_document::push_comment(ixml_text_t value)
+bool xml_document::push_comment(string value)
 {
 	if (xml_last() == null)
 	{
@@ -873,7 +873,7 @@ bool xml_document::push_comment(ixml_text_t value)
 }
 
 
-bool xml_document::push_data(ixml_text_t value)
+bool xml_document::push_data(string value)
 {
 	if (m_current.xml_current().get() == null)
 		return false;
@@ -884,7 +884,7 @@ bool xml_document::push_data(ixml_text_t value)
 	return true;
 }
 
-bool xml_document::push_value(ixml_text_t value)
+bool xml_document::push_value(string value)
 {
 	if (m_current.xml_current().get() == null)
 		return false;
@@ -895,7 +895,7 @@ bool xml_document::push_value(ixml_text_t value)
 	return true;
 }
 
-bool xml_document::push_attribute(ixml_text_t name, ixml_text_t value)
+bool xml_document::push_attribute(string name, string value)
 {
 	if (m_current.xml_current() == null)
 		return false;
@@ -996,11 +996,10 @@ void xml_document::save(core::files::output_text_file_t file)const
 
 }
 
-
-void xml_document::parse(ixml_text_view_t view)
+void xml_document::parse(text::istring_view_t view)
 {
 	windex idx = 0;
-	ixml_text_t version = null;
+	string version = null;
 	nullable<bool> standalone = null;
 	xml_encoding_t encoding;
 
@@ -1020,23 +1019,23 @@ void xml_document::parse(ixml_text_view_t view)
 	if (!decode_elements(this, view, idx))
 	{
 		clear();
-		string error = "";
+		astring error = "";
 		error->format("exception: ang::xml::xml_document: {0}"_s, m_last_parsing_error);
-		throw(exception_t((dword)xml_exception_code::parsing_error, ang::move(error)));
+		throw(exception_t((dword)xml_exception_code::parsing_error, error.get()));
 	}
 }
 
 void xml_document::parse(ibuffer_view_t data)
 {
 	windex idx = 0;
-	ixml_text_t version = null;
+	string version = null;
 	nullable<bool> standalone = null;
 	xml_encoding_t encoding;
 
 	encoding = xml_detect_encoding(data->buffer_ptr(), xml_encoding::auto_detect, idx);
 	m_encoding = encoding;
 	m_factory = text::istring_factory::get_factory(encoding);
-	ixml_text_view_t view = m_factory->create_wrapper(data);
+	text::istring_view_t view = m_factory->create_wrapper(data);
 
 	if (decode_header(view, idx, version, encoding, standalone))
 	{
@@ -1052,16 +1051,16 @@ void xml_document::parse(ibuffer_view_t data)
 	if (!decode_elements(this, view, idx))
 	{
 		clear();
-		string error = "";
+		astring error = "";
 		error->format("exception: ang::xml::xml_document: {0}"_s, m_last_parsing_error);
-		throw(exception_t((dword)xml_exception_code::parsing_error, ang::move(error)));
+		throw(exception_t((dword)xml_exception_code::parsing_error, error.get()));
 	}
 }
 
-bool xml_document::decode_header(text::istring_view_t code, windex& idx, ixml_text_t& version, xml_encoding_t& encoding, nullable<bool>& standalone)
+bool xml_document::decode_header(text::istring_view_t code, windex& idx, string& version, xml_encoding_t& encoding, nullable<bool>& standalone)
 {
-	ixml_text_t value = null;
-	ixml_text_t header = null;
+	string value = null;
+	string header = null;
 
 	windex beg;
 	windex end;
@@ -1114,8 +1113,8 @@ bool xml_document::decode_elements(xml_document_t doc, text::istring_view_t code
 
 	windex end;
 	uint c = 0;
-	ixml_text_t name = null;// = { 0 };
-	ixml_text_t value = null;
+	string name = null;// = { 0 };
+	string value = null;
 
 	beg = code->find("<"_s, beg);
 	while (beg != invalid_index)
@@ -1171,7 +1170,7 @@ bool xml_document::decode_elements(xml_document_t doc, text::istring_view_t code
 			//get element name
 			bool same = true;
 			char32 nC = 0;
-			ixml_text_view_t temp = current->xml_name();
+			string temp = current->xml_name();
 			wsize length = current->xml_name()->length();
 			c = 0;
 			while (same)
@@ -1319,7 +1318,7 @@ bool xml_document::decode_elements(xml_document_t doc, text::istring_view_t code
 					//get element name
 					bool same = true;
 					char32_t _c = 0;
-					ixml_text_t temp = current->xml_name();
+					string temp = current->xml_name();
 					wsize length = current->xml_name()->length();
 					c = 0;
 					while (same)

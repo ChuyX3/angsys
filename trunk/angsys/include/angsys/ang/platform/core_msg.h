@@ -74,7 +74,7 @@ namespace ang
 
 			ang_begin_interface(LINK idraw_event_args, imsg_event_args)
 				visible vcall icore_view_t core_view()const pure;
-				visible vcall icore_context_t core_context()const pure;
+				visible vcall graphics::icore_context_t core_context()const pure;
 				visible vcall graphics::size<float> const& canvas_size()const pure;
 			ang_end_interface();
 

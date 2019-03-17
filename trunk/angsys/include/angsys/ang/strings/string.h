@@ -124,11 +124,11 @@ namespace ang
 			virtual~string_pool();
 
 		public:
-			cstr_t save_string(cstr_t);
-			cstr_t save_string(string const&);
-			cstr_t save_string(const_string);
-			cstr_t save_string(const_string_buffer*);
-			const_string find_string(cstr_t);
+			castr_t save_string(castr_t);
+			castr_t save_string(astring const&);
+			castr_t save_string(const_string);
+			castr_t save_string(const_string_buffer*);
+			const_string find_string(castr_t);
 		};
 
 	}

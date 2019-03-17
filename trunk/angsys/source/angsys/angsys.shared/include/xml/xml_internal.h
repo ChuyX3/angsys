@@ -19,8 +19,8 @@ namespace ang
 			typedef	struct xml_entity_values
 			{
 				xml_entity_t key;
-				cstr_t	code;
-				cstr_t	value;
+				castr_t	code;
+				castr_t	value;
 			}xml_entity_values_t;
 			extern xml_entity_values_t xml_entity_values[5];
 

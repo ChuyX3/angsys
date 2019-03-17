@@ -18,7 +18,7 @@
 
 using namespace ang;
 
-static collections::pair<except_code, cstr_t> def_except[] = {
+static collections::pair<except_code, castr_t> def_except[] = {
 	{ except_code::unknown, "exception: unkown exception"_s },
 	{ except_code::unsupported, "exception: the current platform do not support this feature..."_s },
 	{ except_code::invalid_memory, "exception: there has been an invalid memory accessing"_s },
@@ -47,7 +47,7 @@ exception::exception()throw()
 	, code((dword)except_code::unknown)
 	, message()
 {
-	message = except_code_t((except_code)code).to_string();
+	message = (cstr_t)except_code_t((except_code)code).to_string();
 }
 
 exception::exception(except_code_t type)throw()
@@ -55,7 +55,7 @@ exception::exception(except_code_t type)throw()
 	, code((dword)type.get())
 	, message(null)
 {
-	message = type.to_string();
+	message = (cstr_t)type.to_string();
 }
 
 exception::exception(dword errorCode, string msg)throw()
@@ -69,7 +69,7 @@ exception::exception(dword errorCode, string msg)throw()
 	}
 	else
 	{
-		message = except_code_t((except_code)code).to_string();
+		message = (cstr_t)except_code_t((except_code)code).to_string();
 	}
 }
 
@@ -85,8 +85,8 @@ exception::exception(string msg)throw()
 	else
 	{
 		code = (dword)except_code::unknown;
-		message = "unknown"_s;
-		message = except_code_t((except_code)code).to_string();
+		message = (cstr_t)"unknown"_s;
+		message = (cstr_t)except_code_t((except_code)code).to_string();
 	}
 }
 

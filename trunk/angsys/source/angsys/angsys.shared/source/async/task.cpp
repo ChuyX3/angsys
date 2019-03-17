@@ -22,29 +22,29 @@ ANG_EXTERN ulong64 get_performance_time_us(void);
 ////////////////////////////////////////////////////////////////////////////////////////
 
 
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<void>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<char>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<mchar>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<wchar>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<char16>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<char32>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<short>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<ushort>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<int>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<uint>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<long>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<ulong>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<long64>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<ulong64>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<float>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<double>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<object>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<variant>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<string>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<mstring>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<wstring>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<string16>, interface);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<string32>, interface);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<void>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<char>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<mchar>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<wchar>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<char16>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<char32>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<short>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<ushort>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<int>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<uint>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<long>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<ulong>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<long64>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<ulong64>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<float>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<double>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<object>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<variant>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<astring>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<mstring>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<wstring>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<string16>, intf);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<string32>, intf);
 
 
 template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<void>, iaction<void>);
@@ -65,7 +65,7 @@ template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<float>, ia
 template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<double>, iaction<double>);
 template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<object>, iaction<object>);
 template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<variant>, iaction<variant>);
-template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<string>, iaction<string>);
+template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<astring>, iaction<astring>);
 template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<mstring>, iaction<mstring>);
 template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<wstring>, iaction<wstring>);
 template<> ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<string16>, iaction<string16>);

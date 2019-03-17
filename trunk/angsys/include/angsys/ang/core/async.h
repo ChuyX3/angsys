@@ -246,7 +246,7 @@ namespace ang
 			template<> LINK rtti_t const& iaction<float>::class_info();
 			template<> LINK rtti_t const& iaction<double>::class_info();
 			template<> LINK rtti_t const& iaction<object>::class_info();
-			template<> LINK rtti_t const& iaction<string>::class_info();
+			template<> LINK rtti_t const& iaction<astring>::class_info();
 			template<> LINK rtti_t const& iaction<mstring>::class_info();
 			template<> LINK rtti_t const& iaction<wstring>::class_info();
 			template<> LINK rtti_t const& iaction<string16>::class_info();
@@ -270,7 +270,7 @@ namespace ang
 			template<> LINK rtti_t const& itask<float>::class_info();
 			template<> LINK rtti_t const& itask<double>::class_info();
 			template<> LINK rtti_t const& itask<object>::class_info();
-			template<> LINK rtti_t const& itask<string>::class_info();
+			template<> LINK rtti_t const& itask<astring>::class_info();
 			template<> LINK rtti_t const& itask<mstring>::class_info();
 			template<> LINK rtti_t const& itask<wstring>::class_info();
 			template<> LINK rtti_t const& itask<string16>::class_info();

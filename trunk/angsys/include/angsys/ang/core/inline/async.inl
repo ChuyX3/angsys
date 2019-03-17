@@ -5,15 +5,15 @@
 
 template<typename T> 
 inline ang::runtime::rtti_t const& ang::core::async::iaction<T>::class_info() {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::core::async::iaction<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
-	static rtti_t const* parents[] = { &runtime::type_of<interface>() };
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::core::async::iaction<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static rtti_t const* parents[] = { &runtime::type_of<intf>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<wsize>(), align_of<wsize>(), parents, &default_query_interface);
 	return info;
 }
 
 template<typename T>
 inline ang::runtime::rtti_t const& ang::core::async::itask<T>::class_info() {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::core::async::itask<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::core::async::itask<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<iaction<T>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<wsize>(), align_of<wsize>(), parents, &default_query_interface);
 	return info;
@@ -120,7 +120,7 @@ inline ang::core::async::task_handler<T>::~task_handler()
 
 template<typename T>
 inline ang::runtime::rtti_t const& ang::core::async::task_handler<T>::class_info() {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::core::async::task_handler<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::core::async::task_handler<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<object>(), &runtime::type_of<itask<T>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<task_handler<T>>(), align_of<task_handler<T>>(), parents, &default_query_interface);
 	return info;

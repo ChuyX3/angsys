@@ -14,7 +14,7 @@ namespace ang
 			ANG_DECLARE_INTERFACE();
 
 			virtual encoding_t encoding()const override;
-			virtual istring_t create_string(raw_cstr_t = raw_cstr_t())const override;
+			virtual istring_t create_string(ang::cstr_t = ang::cstr_t())const override;
 			virtual istring_t create_wrapper(ibuffer_t)const override; //ibuffer must be reallocable otherwise it fail
 			virtual istring_view_t create_wrapper(ibuffer_view_t)const override;
 
@@ -38,22 +38,22 @@ namespace ang
 			virtual wsize length()const override;
 			virtual unknown_str_t data()const override;
 			virtual rtti_t const& char_type()const override;
-			virtual raw_str_t str(int = 0)override;
-			virtual raw_cstr_t cstr(int = 0)const override;
-			virtual int compare(raw_cstr_t)const override;
-			virtual windex compare_until(raw_cstr_t)const override;
-			virtual windex find(raw_cstr_t, windex start = 0, windex end = -1)const override;
-			virtual windex find_reverse(raw_cstr_t, windex start = -1, windex end = 0)const override;
+			virtual ang::str_t str(int = 0)override;
+			virtual ang::cstr_t cstr(int = 0)const override;
+			virtual int compare(ang::cstr_t)const override;
+			virtual windex compare_until(ang::cstr_t)const override;
+			virtual windex find(ang::cstr_t, windex start = 0, windex end = -1)const override;
+			virtual windex find_reverse(ang::cstr_t, windex start = -1, windex end = 0)const override;
 			virtual istring_t sub_string(istring_t, windex start, windex end)const override;
-			virtual collections::ienum_ptr<istring_t> split(raw_cstr_t)const override;
+			virtual collections::ienum_ptr<istring_t> split(ang::cstr_t)const override;
 
 			virtual void clear()override;
-			virtual void copy(raw_cstr_t)override;
-			virtual void concat(raw_cstr_t)override;
-			virtual void insert(windex, raw_cstr_t)override;
-			virtual void format(raw_cstr_t, var_args_t)override;
-			virtual void concat_format(raw_cstr_t, var_args_t)override;
-			virtual void insert_format(windex, raw_cstr_t, var_args_t)override;
+			virtual void copy(ang::cstr_t)override;
+			virtual void concat(ang::cstr_t)override;
+			virtual void insert(windex, ang::cstr_t)override;
+			virtual void format(ang::cstr_t, var_args_t)override;
+			virtual void concat_format(ang::cstr_t, var_args_t)override;
+			virtual void insert_format(windex, ang::cstr_t, var_args_t)override;
 
 		private:
 			virtual~string_wrapper();
@@ -82,15 +82,15 @@ namespace ang
 			virtual wsize length()const override;
 			virtual unknown_str_t data()const override;
 			virtual rtti_t const& char_type()const override;
-			virtual raw_str_t str(int = 0)override;
-			virtual raw_cstr_t cstr(int = 0)const override;
+			virtual ang::str_t str(int = 0)override;
+			virtual ang::cstr_t cstr(int = 0)const override;
 			virtual char32_t at(windex i, wsize* = null)const override;
-			virtual int compare(raw_cstr_t)const override;
-			virtual windex compare_until(raw_cstr_t)const override;
-			virtual windex find(raw_cstr_t, windex start = 0, windex end = -1)const override;
-			virtual windex find_reverse(raw_cstr_t, windex start = -1, windex end = 0)const override;
+			virtual int compare(ang::cstr_t)const override;
+			virtual windex compare_until(ang::cstr_t)const override;
+			virtual windex find(ang::cstr_t, windex start = 0, windex end = -1)const override;
+			virtual windex find_reverse(ang::cstr_t, windex start = -1, windex end = 0)const override;
 			virtual istring_t sub_string(istring_ptr_t, windex start, windex end)const override;
-			virtual collections::ienum_ptr<istring_t> split(raw_cstr_t)const override;
+			virtual collections::ienum_ptr<istring_t> split(ang::cstr_t)const override;
 		private:
 			virtual~string_view();
 		};
@@ -113,7 +113,7 @@ namespace ang
 		}
 
 		template<encoding E>
-		istring_t string_factory<E>::create_string(raw_cstr_t cstr)const {
+		istring_t string_factory<E>::create_string(ang::cstr_t cstr)const {
 			return new basic_string_buffer<E>(cstr);
 		}
 
@@ -161,7 +161,7 @@ namespace ang
 		template<encoding E>
 		ang::rtti_t const& string_view<E>::class_info()
 		{
-			static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::text::string_view<"_s) += encoding_t(E).to_string()) += ">"_s);
+			static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::text::string_view<"_s) += (castr_t)encoding_t(E).to_string()) += ">"_s);
 			static rtti_t const* parents[] = {&runtime::type_of<object>(),  &runtime::type_of<istring_view>() };
 			static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<string_view<E>>(), align_of<string_view<E>>(), parents, &default_query_interface);
 			return info;
@@ -219,13 +219,13 @@ namespace ang
 		}
 
 		template<encoding E>
-		raw_str_t string_view<E>::str(int)
+		ang::str_t string_view<E>::str(int)
 		{
 			return str_view<char_t, E>((str_t)data(), length());
 		}
 
 		template<encoding E>
-		raw_cstr_t string_view<E>::cstr(int)const
+		ang::cstr_t string_view<E>::cstr(int)const
 		{
 			return str_view<char_t const, E>((cstr_t)data(), length());
 		}
@@ -240,87 +240,87 @@ namespace ang
 		}
 
 		template<encoding E>
-		int string_view<E>::compare(raw_cstr_t cstr)const
+		int string_view<E>::compare(ang::cstr_t cstr)const
 		{
 			cstr_t ptr = (cstr_t)data();
-			switch (cstr.encoding().get())
+			switch (cstr.encoding())
 			{
-			case encoding::ascii: return encoder<E>::compare(ptr, cstr.to_cstr<encoding::ascii>());
-			case encoding::unicode:return encoder<E>::compare(ptr, cstr.to_cstr<encoding::unicode>());
-			case encoding::utf8: return encoder<E>::compare(ptr, cstr.to_cstr<encoding::utf8>());
-			case encoding::utf16: return encoder<E>::compare(ptr, cstr.to_cstr<encoding::utf16>());
-			case encoding::utf16_se: return encoder<E>::compare(ptr, cstr.to_cstr<encoding::utf16_se>());
-			case encoding::utf16_le: return encoder<E>::compare(ptr, cstr.to_cstr<encoding::utf16_le>());
-			case encoding::utf16_be: return encoder<E>::compare(ptr, cstr.to_cstr<encoding::utf16_be>());
-			case encoding::utf32: return encoder<E>::compare(ptr, cstr.to_cstr<encoding::utf32>());
-			case encoding::utf32_se: return encoder<E>::compare(ptr, cstr.to_cstr<encoding::utf32_se>());
-			case encoding::utf32_le: return encoder<E>::compare(ptr, cstr.to_cstr<encoding::utf32_le>());
-			case encoding::utf32_be: return encoder<E>::compare(ptr, cstr.to_cstr<encoding::utf32_be>());
+			case encoding::ascii: return encoder<E>::compare(ptr, cstr.cstr<encoding::ascii>());
+			case encoding::unicode:return encoder<E>::compare(ptr, cstr.cstr<encoding::unicode>());
+			case encoding::utf8: return encoder<E>::compare(ptr, cstr.cstr<encoding::utf8>());
+			case encoding::utf16: return encoder<E>::compare(ptr, cstr.cstr<encoding::utf16>());
+			case encoding::utf16_se: return encoder<E>::compare(ptr, cstr.cstr<encoding::utf16_se>());
+			case encoding::utf16_le: return encoder<E>::compare(ptr, cstr.cstr<encoding::utf16_le>());
+			case encoding::utf16_be: return encoder<E>::compare(ptr, cstr.cstr<encoding::utf16_be>());
+			case encoding::utf32: return encoder<E>::compare(ptr, cstr.cstr<encoding::utf32>());
+			case encoding::utf32_se: return encoder<E>::compare(ptr, cstr.cstr<encoding::utf32_se>());
+			case encoding::utf32_le: return encoder<E>::compare(ptr, cstr.cstr<encoding::utf32_le>());
+			case encoding::utf32_be: return encoder<E>::compare(ptr, cstr.cstr<encoding::utf32_be>());
 			default: return -10;
 			}
 		}
 
 		template<encoding E>
-		windex string_view<E>::compare_until(raw_cstr_t cstr)const
+		windex string_view<E>::compare_until(ang::cstr_t cstr)const
 		{
 			cstr_t ptr = (cstr_t)data();
-			switch (cstr.encoding().get())
+			switch (cstr.encoding())
 			{
-			case encoding::ascii: return encoder<E>::compare_until(ptr, cstr.to_cstr<encoding::ascii>());
-			case encoding::unicode:return encoder<E>::compare_until(ptr, cstr.to_cstr<encoding::unicode>());
-			case encoding::utf8: return encoder<E>::compare_until(ptr, cstr.to_cstr<encoding::utf8>());
-			case encoding::utf16: return encoder<E>::compare_until(ptr, cstr.to_cstr<encoding::utf16>());
-			case encoding::utf16_se: return encoder<E>::compare_until(ptr, cstr.to_cstr<encoding::utf16_se>());
-			case encoding::utf16_le: return encoder<E>::compare_until(ptr, cstr.to_cstr<encoding::utf16_le>());
-			case encoding::utf16_be: return encoder<E>::compare_until(ptr, cstr.to_cstr<encoding::utf16_be>());
-			case encoding::utf32: return encoder<E>::compare_until(ptr, cstr.to_cstr<encoding::utf32>());
-			case encoding::utf32_se: return encoder<E>::compare_until(ptr, cstr.to_cstr<encoding::utf32_se>());
-			case encoding::utf32_le: return encoder<E>::compare_until(ptr, cstr.to_cstr<encoding::utf32_le>());
-			case encoding::utf32_be: return encoder<E>::compare_until(ptr, cstr.to_cstr<encoding::utf32_be>());
+			case encoding::ascii: return encoder<E>::compare_until(ptr, cstr.cstr<encoding::ascii>());
+			case encoding::unicode:return encoder<E>::compare_until(ptr, cstr.cstr<encoding::unicode>());
+			case encoding::utf8: return encoder<E>::compare_until(ptr, cstr.cstr<encoding::utf8>());
+			case encoding::utf16: return encoder<E>::compare_until(ptr, cstr.cstr<encoding::utf16>());
+			case encoding::utf16_se: return encoder<E>::compare_until(ptr, cstr.cstr<encoding::utf16_se>());
+			case encoding::utf16_le: return encoder<E>::compare_until(ptr, cstr.cstr<encoding::utf16_le>());
+			case encoding::utf16_be: return encoder<E>::compare_until(ptr, cstr.cstr<encoding::utf16_be>());
+			case encoding::utf32: return encoder<E>::compare_until(ptr, cstr.cstr<encoding::utf32>());
+			case encoding::utf32_se: return encoder<E>::compare_until(ptr, cstr.cstr<encoding::utf32_se>());
+			case encoding::utf32_le: return encoder<E>::compare_until(ptr, cstr.cstr<encoding::utf32_le>());
+			case encoding::utf32_be: return encoder<E>::compare_until(ptr, cstr.cstr<encoding::utf32_be>());
 			default: return 0;
 			}
 		}
 
 		template<encoding E>
-		windex string_view<E>::find(raw_cstr_t cstr, windex start, windex end)const
+		windex string_view<E>::find(ang::cstr_t cstr, windex start, windex end)const
 		{
 			cstr_t ptr = (cstr_t)data();
 			end = min(end, length());
-			switch (cstr.encoding().get())
+			switch (cstr.encoding())
 			{
-			case encoding::ascii: return encoder<E>::find(ptr, end, cstr.to_cstr<encoding::ascii>(), cstr.size() / size_of<char>(), start);
-			case encoding::unicode:return encoder<E>::find(ptr, end, cstr.to_cstr<encoding::unicode>(), cstr.size() / size_of<wchar>(), start);
-			case encoding::utf8: return encoder<E>::find(ptr, end, cstr.to_cstr<encoding::utf8>(), cstr.size() / size_of<mchar>(), start);
-			case encoding::utf16: return encoder<E>::find(ptr, end, cstr.to_cstr<encoding::utf16>(), cstr.size() / size_of<char16>(), start);
-			case encoding::utf16_se: return encoder<E>::find(ptr, end, cstr.to_cstr<encoding::utf16_se>(), cstr.size() / size_of<char16>(), start);
-			case encoding::utf16_le: return encoder<E>::find(ptr, end, cstr.to_cstr<encoding::utf16_le>(), cstr.size() / size_of<char16>(), start);
-			case encoding::utf16_be: return encoder<E>::find(ptr, end, cstr.to_cstr<encoding::utf16_be>(), cstr.size() / size_of<char16>(), start);
-			case encoding::utf32: return encoder<E>::find(ptr, end, cstr.to_cstr<encoding::utf32>(), cstr.size() / size_of<char32>(), start);
-			case encoding::utf32_se: return encoder<E>::find(ptr, end, cstr.to_cstr<encoding::utf32_se>(), cstr.size() / size_of<char32>(), start);
-			case encoding::utf32_le: return encoder<E>::find(ptr, end, cstr.to_cstr<encoding::utf32_le>(), cstr.size() / size_of<char32>(), start);
-			case encoding::utf32_be: return encoder<E>::find(ptr, end, cstr.to_cstr<encoding::utf32_be>(), cstr.size() / size_of<char32>(), start);
+			case encoding::ascii: return encoder<E>::find(ptr, end, cstr.cstr<encoding::ascii>(), cstr.size() / size_of<char>(), start);
+			case encoding::unicode:return encoder<E>::find(ptr, end, cstr.cstr<encoding::unicode>(), cstr.size() / size_of<wchar>(), start);
+			case encoding::utf8: return encoder<E>::find(ptr, end, cstr.cstr<encoding::utf8>(), cstr.size() / size_of<mchar>(), start);
+			case encoding::utf16: return encoder<E>::find(ptr, end, cstr.cstr<encoding::utf16>(), cstr.size() / size_of<char16>(), start);
+			case encoding::utf16_se: return encoder<E>::find(ptr, end, cstr.cstr<encoding::utf16_se>(), cstr.size() / size_of<char16>(), start);
+			case encoding::utf16_le: return encoder<E>::find(ptr, end, cstr.cstr<encoding::utf16_le>(), cstr.size() / size_of<char16>(), start);
+			case encoding::utf16_be: return encoder<E>::find(ptr, end, cstr.cstr<encoding::utf16_be>(), cstr.size() / size_of<char16>(), start);
+			case encoding::utf32: return encoder<E>::find(ptr, end, cstr.cstr<encoding::utf32>(), cstr.size() / size_of<char32>(), start);
+			case encoding::utf32_se: return encoder<E>::find(ptr, end, cstr.cstr<encoding::utf32_se>(), cstr.size() / size_of<char32>(), start);
+			case encoding::utf32_le: return encoder<E>::find(ptr, end, cstr.cstr<encoding::utf32_le>(), cstr.size() / size_of<char32>(), start);
+			case encoding::utf32_be: return encoder<E>::find(ptr, end, cstr.cstr<encoding::utf32_be>(), cstr.size() / size_of<char32>(), start);
 			default: return 0;
 			}
 		}
 
 		template<encoding E>
-		windex string_view<E>::find_reverse(raw_cstr_t cstr, windex start, windex end)const
+		windex string_view<E>::find_reverse(ang::cstr_t cstr, windex start, windex end)const
 		{
 			cstr_t ptr = (cstr_t)data();
 			end = min(end, length());
-			switch (cstr.encoding().get())
+			switch (cstr.encoding())
 			{
-			case encoding::ascii: return encoder<E>::find_reverse(ptr, end, cstr.to_cstr<encoding::ascii>(), cstr.size() / size_of<char>(), start);
-			case encoding::unicode:return encoder<E>::find_reverse(ptr, end, cstr.to_cstr<encoding::unicode>(), cstr.size() / size_of<wchar>(), start);
-			case encoding::utf8: return encoder<E>::find_reverse(ptr, end, cstr.to_cstr<encoding::utf8>(), cstr.size() / size_of<mchar>(), start);
-			case encoding::utf16: return encoder<E>::find_reverse(ptr, end, cstr.to_cstr<encoding::utf16>(), cstr.size() / size_of<char16>(), start);
-			case encoding::utf16_se: return encoder<E>::find_reverse(ptr, end, cstr.to_cstr<encoding::utf16_se>(), cstr.size() / size_of<char16>(), start);
-			case encoding::utf16_le: return encoder<E>::find_reverse(ptr, end, cstr.to_cstr<encoding::utf16_le>(), cstr.size() / size_of<char16>(), start);
-			case encoding::utf16_be: return encoder<E>::find_reverse(ptr, end, cstr.to_cstr<encoding::utf16_be>(), cstr.size() / size_of<char16>(), start);
-			case encoding::utf32: return encoder<E>::find_reverse(ptr, end, cstr.to_cstr<encoding::utf32>(), cstr.size() / size_of<char32>(), start);
-			case encoding::utf32_se: return encoder<E>::find_reverse(ptr, end, cstr.to_cstr<encoding::utf32_se>(), cstr.size() / size_of<char32>(), start);
-			case encoding::utf32_le: return encoder<E>::find_reverse(ptr, end, cstr.to_cstr<encoding::utf32_le>(), cstr.size() / size_of<char32>(), start);
-			case encoding::utf32_be: return encoder<E>::find_reverse(ptr, end, cstr.to_cstr<encoding::utf32_be>(), cstr.size() / size_of<char32>(), start);
+			case encoding::ascii: return encoder<E>::find_reverse(ptr, end, cstr.cstr<encoding::ascii>(), cstr.size() / size_of<char>(), start);
+			case encoding::unicode:return encoder<E>::find_reverse(ptr, end, cstr.cstr<encoding::unicode>(), cstr.size() / size_of<wchar>(), start);
+			case encoding::utf8: return encoder<E>::find_reverse(ptr, end, cstr.cstr<encoding::utf8>(), cstr.size() / size_of<mchar>(), start);
+			case encoding::utf16: return encoder<E>::find_reverse(ptr, end, cstr.cstr<encoding::utf16>(), cstr.size() / size_of<char16>(), start);
+			case encoding::utf16_se: return encoder<E>::find_reverse(ptr, end, cstr.cstr<encoding::utf16_se>(), cstr.size() / size_of<char16>(), start);
+			case encoding::utf16_le: return encoder<E>::find_reverse(ptr, end, cstr.cstr<encoding::utf16_le>(), cstr.size() / size_of<char16>(), start);
+			case encoding::utf16_be: return encoder<E>::find_reverse(ptr, end, cstr.cstr<encoding::utf16_be>(), cstr.size() / size_of<char16>(), start);
+			case encoding::utf32: return encoder<E>::find_reverse(ptr, end, cstr.cstr<encoding::utf32>(), cstr.size() / size_of<char32>(), start);
+			case encoding::utf32_se: return encoder<E>::find_reverse(ptr, end, cstr.cstr<encoding::utf32_se>(), cstr.size() / size_of<char32>(), start);
+			case encoding::utf32_le: return encoder<E>::find_reverse(ptr, end, cstr.cstr<encoding::utf32_le>(), cstr.size() / size_of<char32>(), start);
+			case encoding::utf32_be: return encoder<E>::find_reverse(ptr, end, cstr.cstr<encoding::utf32_be>(), cstr.size() / size_of<char32>(), start);
 			default: return 0;
 			}
 		}
@@ -340,13 +340,13 @@ namespace ang
 		}
 		
 		template<encoding E>
-		collections::ienum_ptr<istring_t> string_view<E>::split(raw_cstr_t val)const
+		collections::ienum_ptr<istring_t> string_view<E>::split(ang::cstr_t val)const
 		{
 			collections::vector<istring_t> list;
 
 			windex beg = 0, end = 0;
 			istring_t _word;
-			raw_cstr_t data = cstr();
+			ang::cstr_t data = cstr();
 			wsize l = length(), c = val.count();
 			end = find(val);
 			if (end == invalid_index)

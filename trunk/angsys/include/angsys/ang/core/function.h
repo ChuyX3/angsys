@@ -227,17 +227,17 @@ namespace ang
 
 		/*template<typename O>
 		object_wrapper(O* obj, T(O::*f)(Ts...)) : object_wrapper() {
-			set(new core::delegates::member_function<O, is_base_of<interface, O>::value, T, Ts...>(obj, f));
+			set(new core::delegates::member_function<O, is_base_of<intf, O>::value, T, Ts...>(obj, f));
 		}*/
 
 		template<typename O, typename D>
 		object_wrapper(D* obj, T(O::*f)(Ts...)) : object_wrapper() {
-			set(new core::delegates::member_function<O, is_base_of<interface, O>::value, T, Ts...>(obj, f));
+			set(new core::delegates::member_function<O, is_base_of<intf, O>::value, T, Ts...>(obj, f));
 		}
 
 		template<typename O>
 		object_wrapper(O* obj, T(*f)(O*, Ts...)) : object_wrapper() {
-			set(new core::delegates::pseudo_member_function<O, is_base_of<interface, O>::value, T, Ts...>(obj, f));
+			set(new core::delegates::pseudo_member_function<O, is_base_of<intf, O>::value, T, Ts...>(obj, f));
 		}
 
 	public:
@@ -262,12 +262,12 @@ namespace ang
 
 		template<typename O>
 		void set(O* obj, T(O::*f)(Ts...)) {
-			set((type*)new core::delegates::member_function<O, is_base_of<interface, O>::value, T, Ts...>(obj, f));
+			set((type*)new core::delegates::member_function<O, is_base_of<intf, O>::value, T, Ts...>(obj, f));
 		}
 
 		template<typename O>
 		void set(O* obj, T(*f)(O*, Ts...)) {
-			set((type*)new core::delegates::pseudo_member_function<O, is_base_of<interface, O>::value, T, Ts...>(obj, f));
+			set((type*)new core::delegates::pseudo_member_function<O, is_base_of<intf, O>::value, T, Ts...>(obj, f));
 		}
 
 	public:

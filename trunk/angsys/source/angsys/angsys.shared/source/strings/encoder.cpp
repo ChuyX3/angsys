@@ -5,7 +5,7 @@
 using namespace ang;
 using namespace ang::text;
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::iencoder, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::iencoder, intf);
 
 
 TO_STRING_TEMPLATE_IMPLEMENT(ang::text::encoding, ascii);
@@ -122,7 +122,7 @@ template<> ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::encoder_interface<enc
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static collections::pair<ang::text::encoding, cstr_t> s_encoding_to_string[] = 
+static collections::pair<ang::text::encoding, castr_t> s_encoding_to_string[] = 
 {
 	{ ang::text::encoding::binary, "binary"_s },
 	{ ang::text::encoding::ascii, "ascii"_s },
@@ -138,7 +138,7 @@ static collections::pair<ang::text::encoding, cstr_t> s_encoding_to_string[] =
 	{ ang::text::encoding::utf32_be, "utf-32-be"_s },
 };
 
-static collections::pair<cstr_t, ang::text::encoding> s_encoding_parse[] =
+static collections::pair<castr_t, ang::text::encoding> s_encoding_parse[] =
 {
 	{ "ascii"_s, ang::text::encoding::ascii },
 	{ "binary"_s, ang::text::encoding::binary },

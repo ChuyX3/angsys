@@ -39,15 +39,15 @@ xml_attribute_t xml_attribute::create_new(xml_document_t doc, const xml_attribut
 	if (att)
 	{
 		if (!att->m_name.is_empty())
-			node->push_name(doc->create_pcdata((xml_cstr_t)att->m_name));
+			node->push_name(doc->create_pcdata((cstr_t)att->m_name));
 
 		if (!att->m_content.is_empty() && att->m_content->xml_is_type_of(xml_type::text))
-			node->push_value(doc->create_pcdata((xml_cstr_t)att->m_content->xml_as<xml_text>()));
+			node->push_value(doc->create_pcdata((cstr_t)att->m_content->xml_as<xml_text>()));
 	}
 	return node;
 }
 
-xml_attribute_t xml_attribute::create_new(xml_document_t doc, ixml_text_t name, ixml_text_t value) {
+xml_attribute_t xml_attribute::create_new(xml_document_t doc, string name, string value) {
 	xml_attribute_t node = NEW xml_attribute(doc);
 	node->push_name(name);
 	node->push_value(value);
@@ -76,7 +76,7 @@ bool xml_attribute::xml_has_name()const
 
 bool xml_attribute::xml_has_value()const
 {
-	return m_content.is_empty() && m_content->xml_is_type_of(xml_type::text);
+	return !m_content.is_empty() && m_content->xml_is_type_of(xml_type::text);
 }
 
 xml_node_t xml_attribute::xml_clone(xml_document_t doc)const
@@ -92,15 +92,15 @@ xml_namespace_t xml_namespace::create_new(xml_document_t doc, const xml_namespac
 	if (att)
 	{
 		if (!att->m_name.is_empty())
-			node->push_name(doc->create_pcdata((xml_cstr_t)att->m_name));
+			node->push_name(doc->create_pcdata((cstr_t)att->m_name));
 
 		if (!att->m_content.is_empty() && att->m_content->xml_is_type_of(xml_type::text))
-			node->push_value(doc->create_pcdata((xml_cstr_t)att->m_content->xml_as<xml_text>()));
+			node->push_value(doc->create_pcdata((cstr_t)att->m_content->xml_as<xml_text>()));
 	}
 	return node;
 }
 
-xml_namespace_t xml_namespace::create_new(xml_document_t doc, ixml_text_t name, ixml_text_t value) {
+xml_namespace_t xml_namespace::create_new(xml_document_t doc, string name, string value) {
 	xml_namespace_t node = NEW xml_namespace(doc);
 	node->push_name(name);
 	node->push_value(value);
@@ -247,7 +247,7 @@ xml_attributes::operator ixml_collection * (void) { return m_ptr; }
 
 xml_attributes::operator ixml_collection const* (void)const { return m_ptr; }
 
-xml_text_t xml_attributes::operator[](xml_cstr_t value)const
+xml_text_t xml_attributes::operator[](cstr_t value)const
 {
 	xml_iterator_t it;
 	if (m_ptr)

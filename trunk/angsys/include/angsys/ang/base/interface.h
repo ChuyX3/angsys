@@ -23,6 +23,7 @@
 #define allow	friend
 
 #define ang_object(_NAME) class _NAME; typedef ang::object_wrapper<_NAME> _NAME##_t; typedef ang::object_wrapper_ptr<_NAME> _NAME##_ptr_t;
+#define ang_value(_NAME) struct _NAME; typedef ang::object_wrapper<_NAME> _NAME##_t; typedef ang::object_wrapper_ptr<_NAME> _NAME##_ptr_t;
 #define ang_interface(_NAME) struct _NAME; typedef ang::intf_wrapper<_NAME> _NAME##_t; typedef ang::intf_wrapper_ptr<_NAME> _NAME##_ptr_t;
 
 #define ANG_DECLARE_CLASS_INFO() scall ang::rtti_t const& class_info();
@@ -39,7 +40,7 @@
 	ANG_OVERRIDE_QUERY_INTERFACE()
 
 
-#define DECLARE_BASE_1(A0) A0 : ang::interface
+#define DECLARE_BASE_1(A0) A0 : ang::intf
 #define DECLARE_BASE_2(A0, A1) A0 : A1
 #define DECLARE_BASE_3(A0, A1, A2) A0 : A1, A2
 #define DECLARE_BASE_4(A0, A1, A2, A3) A0 : A1, A2, A3
@@ -158,10 +159,10 @@ namespace ang //constants
 	template<typename T> class object_wrapper;
 	template<typename T> class object_wrapper_ptr;
 
-	ang_interface(interface);
-	typedef interface_t intfptr;
+	ang_interface(intf);
+	typedef intf_t intfptr;
 
-	struct _DECLSPEC_NOVTABLE LINK interface {
+	struct _DECLSPEC_NOVTABLE LINK intf {
 		visible scall bool default_query_interface(rtti_t const&, unknown_t, rtti_t const&, unknown_ptr_t);
 		visible scall rtti_t const& class_info();
 		visible vcall rtti_t const& runtime_info()const pure;
@@ -172,8 +173,8 @@ namespace ang //constants
 	template<typename T> struct has_class_info_function<T, void_t<decltype(T::class_info())>> : true_type {};
 
 	template<typename T> struct is_interface : integer_constant<bool,
-		is_same_type<T, interface>::value ||
-		is_inherited_from<T, interface>::value> {};
+		is_same_type<T, intf>::value ||
+		is_inherited_from<T, intf>::value> {};
 
 	
 

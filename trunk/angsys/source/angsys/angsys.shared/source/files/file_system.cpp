@@ -36,7 +36,7 @@ file_system::file_system()
 	, m_highest_priority(null)
 	, m_lowest_priority(null)
 {
-	m_paths = new collections::vector_buffer<path_t>();
+	m_paths = new collections::vector_buffer<string>();
 	m_highest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();
 	m_lowest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();
 }
@@ -69,16 +69,16 @@ bool file_system::register_file_system(ifile_system* fs, file_system_priority_t 
 	return false;
 }
 
-array_view<path_t> file_system::paths(file_system_priority_t p)const
+array_view<string> file_system::paths(file_system_priority_t p)const
 {
 	return m_paths;
 }
 
-void file_system::push_path(path_view_t path, file_system_priority_t p)
+void file_system::push_path(cstr_t path, file_system_priority_t p)
 {
-	auto it = m_paths->find([&](path_t const& p)
+	auto it = m_paths->find([&](string const& p)
 	{ 
-		return path == (path_view_t)p;
+		return path == (cstr_t)p;
 	});
 
 	if (it.is_valid())
@@ -94,19 +94,21 @@ void file_system::push_path(path_view_t path, file_system_priority_t p)
 	}
 }
 
-bool file_system::open_file(path_view_t path, open_flags_t flags, ifile_ptr_t out)
+bool file_system::open_file(cstr_t path_, open_flags_t flags, ifile_ptr_t out)
 {
+	wstring path = path_; //must be wide string
 	if (out.is_empty())
 		return false;
 
 	for(auto fs : m_highest_priority)
 	{
-		if (fs->open_file(path, flags, out))
+		
+		if (fs->open_file((cstr_t)path, flags, out))
 			return true;
 	}
 
 	system_file_t file = new core_file();
-	file->create(path, flags);
+	file->create((cstr_t)path, flags);
 	if (file->is_created())
 	{
 		*out = file;
@@ -114,10 +116,10 @@ bool file_system::open_file(path_view_t path, open_flags_t flags, ifile_ptr_t ou
 	}
 	else
 	{
-		for (wstring p : m_paths)
+		for (string p : m_paths)
 		{
-			path_t _path = (p + "/"_s) += path;
-			file->create(_path, flags);
+			wstring _path = (wstring((cstr_t)p) + "/"_s) += path;
+			file->create((cstr_t)_path, flags);
 			if (file->is_created())
 			{
 				*out = static_cast<ifile*>(file);
@@ -128,14 +130,14 @@ bool file_system::open_file(path_view_t path, open_flags_t flags, ifile_ptr_t ou
 
 	for (auto fs : m_lowest_priority)
 	{
-		if (fs->open_file(path, flags, out))
+		if (fs->open_file((cstr_t)path, flags, out))
 			return true;
 	}
 	
 	return false;
 }
 
-bool file_system::open(path_view_t path, input_text_file_ptr_t out)
+bool file_system::open(cstr_t path, input_text_file_ptr_t out)
 {
 	ifile_t _hfile;
 	if (out.is_empty()) 
@@ -147,7 +149,7 @@ bool file_system::open(path_view_t path, input_text_file_ptr_t out)
 	return true;
 }
 
-bool file_system::open(path_view_t path, output_text_file_ptr_t out)
+bool file_system::open(cstr_t path, output_text_file_ptr_t out)
 {
 	ifile_t _hfile;
 	if (out.is_empty())
@@ -159,7 +161,7 @@ bool file_system::open(path_view_t path, output_text_file_ptr_t out)
 	return true;
 }
 
-bool file_system::open(path_view_t path, input_binary_file_ptr_t out)
+bool file_system::open(cstr_t path, input_binary_file_ptr_t out)
 {
 	ifile_t _hfile;
 	if (!open_file(path, open_flags::access_in + open_flags::format_binary + open_flags::open_exist, &_hfile))
@@ -169,7 +171,7 @@ bool file_system::open(path_view_t path, input_binary_file_ptr_t out)
 	return true;
 }
 
-bool file_system::open(path_view_t path, output_binary_file_ptr_t out)
+bool file_system::open(cstr_t path, output_binary_file_ptr_t out)
 {
 	ifile_t _hfile;
 	if (!open_file(path, open_flags::access_out + open_flags::format_binary + open_flags::open_alway, &_hfile))
@@ -245,16 +247,16 @@ bool file_system::open(path_view_t path, output_binary_file_ptr_t out)
 //	return static_cast<collections::ienum<path> const*>(m_paths.get());
 //}
 //
-//bool folder_file_system::register_paths(path_view_t path)
+//bool folder_file_system::register_paths(cstr_t path)
 //{
-//	auto it = m_paths->find([&](path_t const& p) { return path == (path_view_t)p; });
+//	auto it = m_paths->find([&](string const& p) { return path == (cstr_t)p; });
 //	if (it.is_valid())
 //		return false;
 //	m_paths += path;
 //	return true;
 //}
 //
-//bool folder_file_system::open_file(path_view_t path, open_flags_t flags, ifile_ptr_t out)
+//bool folder_file_system::open_file(cstr_t path, open_flags_t flags, ifile_ptr_t out)
 //{
 //	if (out.is_empty())
 //		return false;
@@ -284,7 +286,7 @@ bool file_system::open(path_view_t path, output_binary_file_ptr_t out)
 //	return false;
 //}
 //
-//bool folder_file_system::open(path_view_t path, input_text_file_t& out)
+//bool folder_file_system::open(cstr_t path, input_text_file_t& out)
 //{
 //	ifile_t _hfile;
 //	if (!open_file(path, open_flags::access_in + open_flags::format_text + open_flags::open_exist, &_hfile))
@@ -294,7 +296,7 @@ bool file_system::open(path_view_t path, output_binary_file_ptr_t out)
 //	return true;
 //}
 //
-//bool folder_file_system::open(path_view_t path, output_text_file_t& out)
+//bool folder_file_system::open(cstr_t path, output_text_file_t& out)
 //{
 //	ifile_t _hfile;
 //	if (!open_file(path, open_flags::access_out + open_flags::format_text + open_flags::open_alway, &_hfile))
@@ -304,7 +306,7 @@ bool file_system::open(path_view_t path, output_binary_file_ptr_t out)
 //	return true;
 //}
 //
-//bool folder_file_system::open(path_view_t path, input_binary_file_t& out)
+//bool folder_file_system::open(cstr_t path, input_binary_file_t& out)
 //{
 //	ifile_t _hfile;
 //	if (!open_file(path, open_flags::access_in + open_flags::format_binary + open_flags::open_exist, &_hfile))
@@ -314,7 +316,7 @@ bool file_system::open(path_view_t path, output_binary_file_ptr_t out)
 //	return true;
 //}
 //
-//bool folder_file_system::open(path_view_t path, output_binary_file_t& out)
+//bool folder_file_system::open(cstr_t path, output_binary_file_t& out)
 //{
 //	ifile_t _hfile;
 //	if (!open_file(path, open_flags::access_out + open_flags::format_binary + open_flags::open_alway, &_hfile))

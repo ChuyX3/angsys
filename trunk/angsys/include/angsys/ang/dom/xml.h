@@ -47,6 +47,7 @@ namespace ang
 			ang_interface(ixml_node);
 			ang_interface(ixml_document);
 			ang_interface(ixml_collection);
+			ang_interface(ixml_serializable);
 
 			ang_object(xml_document);
 			ang_object(xml_collection);
@@ -71,17 +72,6 @@ namespace ang
 
 			typedef text::encoding xml_encoding;
 			typedef text::encoding_t xml_encoding_t;
-
-			typedef text::raw_str_t xml_str, xml_str_t;
-			typedef text::raw_cstr_t xml_cstr, xml_cstr_t;
-
-			typedef text::istring ixml_text;
-			typedef text::istring_t ixml_text_t;
-			typedef text::istring_ptr_t ixml_text_ptr_t;
-
-			typedef text::istring_view ixml_text_view;
-			typedef text::istring_view_t ixml_text_view_t;
-			typedef text::istring_view_ptr_t ixml_text_view_ptr_t;
 
 			safe_enum(LINK, xml_type, byte)
 			{
@@ -121,7 +111,7 @@ namespace ang
 	}
 
 	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_text)
-		operator dom::xml::xml_cstr()const;
+		operator cstr_t()const;
 	ANG_END_OBJECT_WRAPPER();
 }
 
@@ -135,10 +125,10 @@ namespace ang
 {
 
 	template<> struct is_inherited_from<dom::xml::xml_node, object> : true_type {};
-	template<> struct is_inherited_from<dom::xml::xml_node, interface> : true_type {};
+	template<> struct is_inherited_from<dom::xml::xml_node, intf> : true_type {};
 
 	template<> struct is_inherited_from<dom::xml::xml_document, object> : true_type {};
-	template<> struct is_inherited_from<dom::xml::xml_document, interface> : true_type {};
+	template<> struct is_inherited_from<dom::xml::xml_document, intf> : true_type {};
 
 	
 
@@ -151,11 +141,11 @@ namespace ang
 		dom::xml::xml_const_forward_iterator_t begin()const;
 		dom::xml::xml_const_forward_iterator_t end()const;
 		operator dom::xml::xml_text_t()const;
-		dom::xml::xml_node_t operator[](text::raw_str_t)const;
+		dom::xml::xml_node_t operator[](str_t)const;
 	ANG_END_OBJECT_WRAPPER();
 
 	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_node)
-		dom::xml::xml_node_t operator[] (dom::xml::xml_cstr_t)const;
+		dom::xml::xml_node_t operator[] (cstr_t)const;
 	ANG_END_OBJECT_WRAPPER();
 
 	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_cdata)
@@ -212,13 +202,11 @@ namespace ang
 			struct xml_text_as_helper<T, void_t<decltype(&T::parse)>> : true_type
 			{
 				static inline T parse(xml_text const* cstr) {
-					return T::parse(cstr ? cstr->cstr() : xml_cstr());
+					return T::parse(cstr ? cstr->cstr() : cstr_t());
 				}
 			};
-			
-		// genre::enum_type
 
-			template<> ixml_text_t  LINK ixml_object::xml_as<ixml_text>()const;
+			template<> string  LINK ixml_object::xml_as<string_buffer>()const;
 			template<> xml_text_t  LINK ixml_object::xml_as<xml_text>()const;
 			template<> ixml_node_t  LINK ixml_object::xml_as<ixml_node>()const;
 			template<> xml_node_t  LINK ixml_object::xml_as<xml_node>()const;
@@ -230,8 +218,8 @@ namespace ang
 			template<> ixml_document_t  LINK ixml_object::xml_as<ixml_document>()const;
 			template<> xml_document_t  LINK ixml_object::xml_as<xml_document>()const;
 
-			template<> LINK xml_cstr_t xml_text::xml_as<xml_cstr_t>()const;
-			template<> LINK string xml_text::xml_as<string>()const;
+			template<> LINK cstr_t xml_text::xml_as<cstr_t>()const;
+			template<> LINK astring xml_text::xml_as<astring>()const;
 			template<> LINK wstring xml_text::xml_as<wstring>()const;
 			template<> LINK mstring xml_text::xml_as<mstring>()const;
 
@@ -250,7 +238,7 @@ namespace ang
 	}
 }
 
-inline ang::object_wrapper<ang::dom::xml::xml_text>::operator ang::dom::xml::xml_cstr()const { return is_empty() ? dom::xml::xml_cstr() : get()->cstr(); }
+inline ang::object_wrapper<ang::dom::xml::xml_text>::operator ang::cstr_t()const { return is_empty() ? cstr_t() : get()->cstr(); }
 inline ang::object_wrapper<ang::dom::xml::xml_attribute>::operator ang::dom::xml::xml_node_t()const { return get(); }
 inline ang::object_wrapper<ang::dom::xml::xml_namespace>::operator ang::dom::xml::xml_node_t()const { return get(); }
 inline ang::object_wrapper<ang::dom::xml::xml_cdata>::operator ang::dom::xml::xml_node_t()const { return get(); }

@@ -12,9 +12,6 @@ namespace ang
 		//ang_interface(itext_buffer);
 		ang_interface(iencoder);
 		ang_interface(iparser);
-
-		ang_interface(istring);
-		ang_interface(istring_view);
 		ang_interface(istring_factory);
 
 		ang_begin_interface(LINK istring_view)
@@ -112,22 +109,29 @@ namespace ang
 	ANG_INTF_WRAPPER_DECLARATION(LINK, text::iencoder);
 	ANG_INTF_WRAPPER_DECLARATION(LINK, text::iparser);
 	ANG_INTF_WRAPPER_DECLARATION(LINK, text::istring_factory);
-	
-	ANG_BEGIN_INTF_WRAPPER(LINK, text::istring)
-		intf_wrapper(text::raw_cstr_t cstr);
-		operator text::raw_cstr_t ()const;
-		char32_t operator [](windex)const;
-		inline bool operator == (text::istring_t cstr)const { return (text::raw_cstr)*this == (text::raw_cstr)cstr; }
-		inline bool operator != (text::istring_t cstr)const { return (text::raw_cstr)*this != (text::raw_cstr)cstr; }
-		inline bool operator >= (text::istring_t cstr)const { return (text::raw_cstr)*this >= (text::raw_cstr)cstr; }
-		inline bool operator <= (text::istring_t cstr)const { return (text::raw_cstr)*this <= (text::raw_cstr)cstr; }
-		inline bool operator > (text::istring_t cstr)const { return (text::raw_cstr)*this > (text::raw_cstr)cstr; }
-		inline bool operator < (text::istring_t cstr)const { return (text::raw_cstr)*this > (text::raw_cstr)cstr; }
-	ANG_END_INTF_WRAPPER();
 
 	ANG_BEGIN_INTF_WRAPPER(LINK, text::istring_view)
-		operator text::raw_cstr_t()const;
+		operator cstr_t()const;
 		char32_t operator [](windex)const;
+		inline bool operator == (text::istring_view_t cstr)const { return (cstr_t)*this == (cstr_t)cstr; }
+		inline bool operator != (text::istring_view_t cstr)const { return (cstr_t)*this != (cstr_t)cstr; }
+		inline bool operator >= (text::istring_view_t cstr)const { return (cstr_t)*this >= (cstr_t)cstr; }
+		inline bool operator <= (text::istring_view_t cstr)const { return (cstr_t)*this <= (cstr_t)cstr; }
+		inline bool operator > (text::istring_view_t cstr)const { return (cstr_t)*this > (cstr_t)cstr; }
+		inline bool operator < (text::istring_view_t cstr)const { return (cstr_t)*this > (cstr_t)cstr; }
+	ANG_END_INTF_WRAPPER();
+
+	ANG_BEGIN_INTF_WRAPPER(LINK, text::istring)
+		intf_wrapper(cstr_t cstr);
+		operator cstr_t ()const;
+		operator text::istring_view_t()const;
+		char32_t operator [](windex)const;
+		inline bool operator == (text::istring_t cstr)const { return (cstr_t)*this == (cstr_t)cstr; }
+		inline bool operator != (text::istring_t cstr)const { return (cstr_t)*this != (cstr_t)cstr; }
+		inline bool operator >= (text::istring_t cstr)const { return (cstr_t)*this >= (cstr_t)cstr; }
+		inline bool operator <= (text::istring_t cstr)const { return (cstr_t)*this <= (cstr_t)cstr; }
+		inline bool operator > (text::istring_t cstr)const { return (cstr_t)*this > (cstr_t)cstr; }
+		inline bool operator < (text::istring_t cstr)const { return (cstr_t)*this > (cstr_t)cstr; }
 	ANG_END_INTF_WRAPPER();
 
 	using text::istring_t;

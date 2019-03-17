@@ -75,8 +75,8 @@ namespace ang
 
 	namespace text
 	{
-		typedef struct raw_str raw_str_t;
-		typedef struct raw_cstr raw_cstr_t;
+		ang_interface(istring);
+		ang_interface(istring_view);
 
 		template<encoding ENCODING> class basic_const_string_buffer;
 		template<encoding ENCODING> using basic_const_string = object_wrapper<basic_const_string_buffer<ENCODING>>;
@@ -89,13 +89,17 @@ namespace ang
 
 		template<encoding ENCODING, template<typename> class allocator = memory::buffer_allocator> class basic_string_buffer;
 		template<encoding ENCODING, template<typename> class allocator = memory::buffer_allocator> using basic_string = object_wrapper<basic_string_buffer<ENCODING, allocator>>;
-		typedef basic_string_buffer<encoding::ascii> ascii_string_buffer, string_buffer;
+		typedef istring string_buffer;
+		typedef basic_string_buffer<encoding::ascii> ascii_string_buffer, astring_buffer;
 		typedef basic_string_buffer<encoding::unicode> unicode_string_buffer, wstring_buffer;
 		typedef basic_string_buffer<encoding::utf8> utf8_string_buffer, mstring_buffer;
 		typedef basic_string_buffer<encoding::utf16> utf16_string_buffer, string_buffer16;
 		typedef basic_string_buffer<encoding::utf32> utf32_string_buffer, string_buffer32;
 
-		typedef object_wrapper<ascii_string_buffer> ascii_string, string;
+		typedef istring_t	string;
+		typedef istring_ptr_t	string_ptr_t;
+		//typedef istring_view_t	string_view;
+		typedef object_wrapper<ascii_string_buffer> ascii_string, astring;
 		typedef object_wrapper<unicode_string_buffer> unicode_string, wstring;
 		typedef object_wrapper<utf8_string_buffer> utf8_string, mstring;
 		typedef object_wrapper<utf16_string_buffer> utf16_string, string16;
@@ -140,16 +144,20 @@ namespace ang
 	}
 
 	using text::string;
+	using text::astring;
 	using text::wstring;
 	using text::mstring;
 	using text::string16;
 	using text::string32;
 
 	using text::string_buffer;
+	using text::astring_buffer;
 	using text::wstring_buffer;
 	using text::mstring_buffer;
 	using text::string_buffer16;
 	using text::string_buffer32;
+
+	using text::string_ptr_t;
 
 	using collections::array;
 	using collections::vector;
@@ -169,7 +177,6 @@ namespace ang
 	ang_object(exception);
 }
 
-#include <ang/strings/raw_str.h>
 #include <ang/smart_ptr.h>
 #include <ang/object.h>
 #include <ang/base/property.h>

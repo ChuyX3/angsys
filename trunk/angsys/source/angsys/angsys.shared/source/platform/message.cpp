@@ -49,7 +49,7 @@ void message::result(dword res)const { m_result = res; }
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::imsg_event_args, ang::interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::imsg_event_args, ang::intf);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::icreated_event_args, imsg_event_args);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::ivisibility_change_event_args, imsg_event_args);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::idisplay_info_event_args, imsg_event_args);

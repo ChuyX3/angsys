@@ -65,9 +65,9 @@ namespace ang
 	template<typename T>
 	inline rtti_t const& variable<T>::class_info()
 	{
-		static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::variable<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+		static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::variable<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 		static rtti_t const* parents[] = { &runtime::type_of<object>(), &runtime::type_of<ivariant>() };
-		static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<variable<T>>(), alignof(variable<T>), parents, &default_query_interface);
+		static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<variable<T>>(), alignof(variable<T>), parents, &intf::default_query_interface);
 		return info;
 	}
 

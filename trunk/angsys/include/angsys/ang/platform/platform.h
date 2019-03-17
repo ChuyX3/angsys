@@ -9,8 +9,7 @@
 #define __ANG_PLATFORM_H__
 
 #include <angsys.h>
-//#include <ang/graphics.h>
-//#include <ang/core/time.h>
+#include <ang/core/files.h>
 #include <ang/core/async.h>
 
 #ifdef  LINK
@@ -35,6 +34,7 @@ namespace ang
 {
 	namespace graphics
 	{
+		ang_interface(icore_context);
 		template<typename T> struct point;
 		template<typename T> struct size;
 		template<typename T> struct rect;
@@ -54,6 +54,31 @@ namespace ang
 			point& operator -= (const point&);
 			point& operator *= (T);
 			point& operator /= (T);
+			template<typename U> inline operator point<U>()const {
+				return point<U>((U)x, (U)y);
+			}
+		};
+
+		template<typename T> struct point3d : auto_self<point3d<T>>
+		{
+			T x;
+			T y;
+			T z;
+
+		public:
+			point3d();
+			point3d(point3d const&);
+			point3d(T x, T y, T z);
+
+			point3d& operator = (const point3d&);
+			point3d& operator += (const point3d&);
+			point3d& operator -= (const point3d&);
+			point3d& operator *= (T);
+			point3d& operator /= (T);
+
+			template<typename U> inline operator point3d<U>()const {
+				return point3d<U>((U)x, (U)y, (U)z);
+			}
 		};
 
 		template<typename T> struct size : auto_self<size<T>>
@@ -71,6 +96,31 @@ namespace ang
 			size& operator -= (const size&);
 			size& operator *= (T);
 			size& operator /= (T);
+
+			template<typename U> inline operator size<U>()const {
+				return size<U>((U)width, (U)height);
+			}
+		};
+
+		template<typename T> struct size3d : auto_self<size3d<T>>
+		{
+			T width;
+			T height;
+			T depth;
+		public:
+			size3d();
+			size3d(size3d const&);
+			size3d(T w, T h, T d);
+
+			size3d& operator = (const size3d&);
+			size3d& operator += (const size3d&);
+			size3d& operator -= (const size3d&);
+			size3d& operator *= (T);
+			size3d& operator /= (T);
+
+			template<typename U> inline operator size3d<U>()const {
+				return size3d<U>((U)width, (U)height, (U)depth);
+			}
 		};
 
 		template<typename T> struct rect :auto_self<rect<T>>
@@ -126,17 +176,95 @@ namespace ang
 			rect<T>& operator /= (T);
 		};
 
+		template<typename T> struct box :auto_self<box<T>>
+		{
+		private:
+			static T get_width_property(base_property<T>const*);
+			static void set_width_property(base_property<T>*, T&&);
+			static T get_height_property(base_property<T>const*);
+			static void set_height_property(base_property<T>*, T&&);
+			static T get_depth_property(base_property<T>const*);
+			static void set_depth_property(base_property<T>*, T&&);
+			static point3d<T> get_left_top_front_property(base_property<point3d<T>>const*);
+			static point3d<T> get_left_top_back_property(base_property<point3d<T>>const*);
+			static point3d<T> get_right_top_front_property(base_property<point3d<T>>const*);
+			static point3d<T> get_right_top_back_property(base_property<point3d<T>>const*);
+			static point3d<T> get_left_bottom_front_property(base_property<point3d<T>>const*);
+			static point3d<T> get_left_bottom_back_property(base_property<point3d<T>>const*);
+			static point3d<T> get_right_bottom_front_property(base_property<point3d<T>>const*);
+			static point3d<T> get_right_bottom_back_property(base_property<point3d<T>>const*);
+
+		public:
+			T left;
+			T top;
+			T front;
+			T right;
+			T bottom;
+			T back;
+
+		public:
+			box();
+			box(box const&);
+			box(T l, T t, T f, T r, T b, T bk);
+			box(point3d<T> ltf, point3d<T> rbb);
+			box(point3d<T> ltf, size3d<T> sz);
+
+			property<T, get_width_property, set_width_property> width;
+			property<T, get_height_property, set_height_property> height;
+			property<T, get_depth_property, set_depth_property> depth;
+
+			property<const point3d<T>, get_left_top_front_property> left_top_front;
+			property<const point3d<T>, get_left_top_back_property> left_top_back;
+			property<const point3d<T>, get_right_top_front_property> right_top_front;
+			property<const point3d<T>, get_right_top_back_property> right_top_back;
+			property<const point3d<T>, get_left_bottom_front_property> left_bottom_front;
+			property<const point3d<T>, get_left_bottom_back_property> left_bottom_back;
+			property<const point3d<T>, get_right_bottom_front_property> right_bottom_front;
+			property<const point3d<T>, get_right_bottom_back_property> right_bottom_back;
+
+			void move_to(point3d<T>);
+			void move_to(T x, T y, T z);
+
+			void resize(size3d<T>);
+			void resize(T cx, T cy, T cz);
+
+			void deflate(T l, T t, T f, T r, T b, T bk);
+			void inflate(T l, T t, T f, T r, T b, T bk);
+
+			box<T>& operator = (const box<T>&);
+			box<T>& operator += (const box<T>&);
+			box<T>& operator -= (const box<T>&);
+			box<T>& operator += (const point3d<T>&);
+			box<T>& operator -= (const point3d<T>&);
+			box<T>& operator += (const size3d<T>&);
+			box<T>& operator -= (const size3d<T>&);
+			box<T>& operator *= (T);
+			box<T>& operator /= (T);
+		};
+
 		template<typename T> point<T> operator + (const point<T>&, const point<T>&);
 		template<typename T> point<T> operator - (const point<T>&, const point<T>&);
 		template<typename T> point<T> operator * (const point<T>&, T);
 		template<typename T> point<T> operator * (T, const point<T>&);
 		template<typename T> point<T> operator / (const point<T>&, T);
 
+		template<typename T> point3d<T> operator + (const point3d<T>&, const point3d<T>&);
+		template<typename T> point3d<T> operator - (const point3d<T>&, const point3d<T>&);
+		template<typename T> point3d<T> operator * (const point3d<T>&, T);
+		template<typename T> point3d<T> operator * (T, const point3d<T>&);
+		template<typename T> point3d<T> operator / (const point3d<T>&, T);
+
 		template<typename T> size<T> operator + (const size<T>&, const size<T>&);
 		template<typename T> size<T> operator - (const size<T>&, const size<T>&);
 		template<typename T> size<T> operator * (const size<T>&, T);
 		template<typename T> size<T> operator * (T, const size<T>&);
 		template<typename T> size<T> operator / (const size<T>&, T);
+
+		template<typename T> size3d<T> operator + (const size3d<T>&, const size3d<T>&);
+		template<typename T> size3d<T> operator - (const size3d<T>&, const size3d<T>&);
+		template<typename T> size3d<T> operator * (const size3d<T>&, T);
+		template<typename T> size3d<T> operator * (T, const size3d<T>&);
+		template<typename T> size3d<T> operator / (const size3d<T>&, T);
 
 		template<typename T> rect<T> operator + (const point<T>&, const size<T>&);
 		template<typename T> rect<T> operator + (const size<T>&, const point<T>&);
@@ -152,6 +280,21 @@ namespace ang
 		template<typename T> rect<T> operator * (const rect<T>&, T);
 		template<typename T> rect<T> operator * (T, const rect<T>&);
 		template<typename T> rect<T> operator / (const rect<T>&, T);
+
+		template<typename T> box<T> operator + (const point3d<T>&, const size3d<T>&);
+		template<typename T> box<T> operator + (const size3d<T>&, const point3d<T>&);
+
+		template<typename T> box<T> operator + (const box<T>&, const box<T>&);
+		template<typename T> box<T> operator - (const box<T>&, const box<T>&);
+		template<typename T> box<T> operator + (const box<T>&, const point3d<T>&);
+		template<typename T> box<T> operator - (const box<T>&, const point3d<T>&);
+		template<typename T> box<T> operator + (const point3d<T>&, const box<T>&);
+		template<typename T> box<T> operator + (const box<T>&, const size3d<T>&);
+		template<typename T> box<T> operator - (const box<T>&, const size3d<T>&);
+		template<typename T> box<T> operator + (const size3d<T>&, const box<T>&);
+		template<typename T> box<T> operator * (const box<T>&, T);
+		template<typename T> box<T> operator * (T, const box<T>&);
+		template<typename T> box<T> operator / (const box<T>&, T);
 
 //#ifndef ANDROID_PLATFORM
 
@@ -255,6 +398,7 @@ namespace ang
 			DirectX11,
 			Vulkan,//todo
 			DirectX12,//todo
+			DirectX11_VRX,//Virtual Reality Extension
 			DirectX = DirectX11,			
 		};
 
@@ -266,6 +410,12 @@ namespace ang
 			squere,
 			poligon
 		};
+
+		ang_begin_interface(LINK icore_context)
+			visible vcall  pointer core_context_handle()const pure;
+			visible vcall  bool bind_graphic_native_surface(pointer)pure;
+		ang_end_interface();
+
 
 		struct LINK color
 		{
@@ -432,7 +582,7 @@ namespace ang
 		public:
 			typedef colors::enum_t enum_t;
 
-			static color_t parse(text::raw_cstr_t);
+			static color_t parse(cstr_t);
 
 		public:
 			color();
@@ -445,7 +595,7 @@ namespace ang
 			virtual~color();
 
 		public: //Override
-			wstring to_string()const;
+			string to_string()const;
 
 		public: //Operators
 
@@ -476,7 +626,6 @@ namespace ang
 	{
 		ang_interface(icore_app);
 		ang_interface(icore_view);
-		ang_interface(icore_context);
 		ang_interface(imessage_listener);
 		//ang_interface(icore_msg_dispatcher);
 
@@ -552,6 +701,7 @@ namespace ang
 				display_change = 0x007E,
 				key_down = 0x0100,
 				key_up = 0x0101,
+				put_char = 0x0102,
 				pointer_moved = 0X0245,
 				pointer_pressed = 0X0246,
 				pointer_released = 0X0247,
@@ -639,18 +789,9 @@ namespace ang
 			visible vcall events::event_token_t listen_to(events::event_t) pure;
 		ang_end_interface();
 
-		//ANG_BEGIN_INTERFACE_WITH_BASE(LINK, icore_msg_dispatcher, public imessage_reciever)
-		//	visible vcall bool dispatch_msg() pure;
-		//ang_end_interface();
-
-		ang_begin_interface(LINK icore_context)
-			visible vcall  pointer core_context_handle()const pure;
-			visible vcall  bool bind_graphic_native_surface(pointer)pure;
-		ang_end_interface();
-
 		ang_begin_interface(LINK icore_view)
 			visible vcall pointer core_view_handle()const pure;
-			visible vcall icore_context_t core_context()const pure;
+			visible vcall graphics::icore_context_t core_context()const pure;
 			visible vcall graphics::size<float> core_view_size()const pure;
 			visible vcall graphics::size<float> core_view_scale_factor()const pure;
 			visible vcall imessage_listener_t dispatcher()const pure;

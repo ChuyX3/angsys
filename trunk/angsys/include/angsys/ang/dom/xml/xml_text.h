@@ -11,7 +11,7 @@ namespace ang
 		{
 
 			class LINK xml_text
-				: public smart<xml_text, ixml_object, ixml_text>
+				: public smart<xml_text, ixml_object, text::istring>
 			{
 			public:
 				friend xml_document;
@@ -21,11 +21,11 @@ namespace ang
 				mutable weak_ptr<xml_document> m_doc;
 
 			protected:
-				ixml_text_t m_value;
+				string m_value;
 			
 			public:
 				xml_text(xml_document*);
-				xml_text(xml_document*, ixml_text_t);
+				xml_text(xml_document*, string);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
@@ -42,26 +42,26 @@ namespace ang
 				virtual wsize length()const override;
 				virtual pointer data()const override;
 				virtual rtti_t const& char_type()const override;
-				virtual xml_str_t str(int = 0)override;
-				virtual xml_cstr_t cstr(int = 0)const override;
+				virtual str_t str(int = 0)override;
+				virtual cstr_t cstr(int = 0)const override;
 				virtual char32_t at(windex, wsize* = null)const override;
-				virtual int compare(xml_cstr_t)const override;
-				virtual windex compare_until(xml_cstr_t)const override;
-				virtual windex find(xml_cstr_t, windex start = 0, windex end = -1)const override;
-				virtual windex find_reverse(xml_cstr_t, windex start = -1, windex end = 0)const override;
-				virtual ixml_text_t sub_string(ixml_text_ptr_t, windex start, windex end)const override;
-				virtual collections::ienum_ptr<ixml_text_t> split(xml_cstr_t)const override;
+				virtual int compare(cstr_t)const override;
+				virtual windex compare_until(cstr_t)const override;
+				virtual windex find(cstr_t, windex start = 0, windex end = -1)const override;
+				virtual windex find_reverse(cstr_t, windex start = -1, windex end = 0)const override;
+				virtual string sub_string(string_ptr_t, windex start, windex end)const override;
+				virtual collections::ienum_ptr<string> split(cstr_t)const override;
 
-				virtual void copy(xml_cstr_t)override;
-				virtual void move(ixml_text_t);
-				void copy_cdata(xml_cstr_t);
-				void copy_pcdata(xml_cstr_t);
+				virtual void copy(cstr_t)override;
+				virtual void move(string);
+				void copy_cdata(cstr_t);
+				void copy_pcdata(cstr_t);
 			private: //ixml_text overrides
-				virtual void concat(xml_cstr_t)override;
-				virtual void insert(windex, xml_cstr_t)override;
-				virtual void format(xml_cstr_t, var_args_t)override;
-				virtual void concat_format(xml_cstr_t, var_args_t)override;
-				virtual void insert_format(windex, xml_cstr_t, var_args_t)override;
+				virtual void concat(cstr_t)override;
+				virtual void insert(windex, cstr_t)override;
+				virtual void format(cstr_t, var_args_t)override;
+				virtual void concat_format(cstr_t, var_args_t)override;
+				virtual void insert_format(windex, cstr_t, var_args_t)override;
 
 			private:
 				virtual~xml_text();

@@ -3,7 +3,7 @@
 #include "format_parser.h"
 using namespace ang;
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::ivariant, ang::interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::ivariant, ang::intf);
 
 #define MY_TYPE ang::ivariant
 #include <ang/inline/intf_wrapper_specialization.inl>

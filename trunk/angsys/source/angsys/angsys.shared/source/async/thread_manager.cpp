@@ -62,13 +62,16 @@ worker_thread_t thread_manager::main_thread()const
 
 worker_thread_t thread_manager::this_thread()const
 {
-	worker_thread* thread = null;
+	worker_thread_t thread = null;
 	_main_mutex.lock();
 	if (!_thread_map.find(this_thread_id(), &thread))
 	{
 		thread = const_cast<thread_manager*>(this)->attach_this_thread(null, false);
 		const_cast<thread_manager*>(this)->_thread_map.insert(this_thread_id(), thread);
 		const_cast<thread_manager*>(this)->_attached_threads += thread;
+	}
+	else {
+		thread->add_ref();
 	}
 	_main_mutex.unlock();
 	return thread;

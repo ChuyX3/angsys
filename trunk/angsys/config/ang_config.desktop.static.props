@@ -15,23 +15,47 @@
     <IntDir>$(SolutionDir)binaries\obj\desktop\$(Configuration)\x64\$(RootNamespace)\</IntDir>
     <TargetName>$(RootNamespace)</TargetName>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\libraries\include\angsys;$(ProjectDir)..\..\libraries\include\;$(ProjectDir)..\$(RootNamespace).Shared\header;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
-      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;</PreprocessorDefinitions>
-	</ClCompile>
-    <lib>
-      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\desktop\$(Configuration)\x86\</AdditionallibraryDirectories>
-    </lib>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\;$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;_DEVELOPPER</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
   </ItemDefinitionGroup>
-    <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Develop|Win32'">
     <ClCompile>
-      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\libraries\include\angsys;$(ProjectDir)..\..\libraries\include\;$(ProjectDir)..\$(RootNamespace).Shared\header;%(AdditionalincludeDirectories)</AdditionalincludeDirectories>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\;$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;_DEVELOPPER</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\;$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
       <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;</PreprocessorDefinitions>
-	</ClCompile>
-    <lib>
-      <AdditionallibraryDirectories>$(SolutionDir)binaries\lib\desktop\$(Configuration)\x64\</AdditionallibraryDirectories>
-    </lib>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\;$(ProjectDir)..\$(RootNamespace).Shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;_DEVELOPPER</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\;$(ProjectDir)..\$(RootNamespace).Shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;_DEVELOPPER</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\;$(ProjectDir)..\$(RootNamespace).Shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

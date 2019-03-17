@@ -25,15 +25,15 @@ safe_flags_implement(ang::platform::input, key_modifiers);
 safe_flags_implement(ang::platform::input, controller_buttons_state);
 
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::input::ikeyboard, ang::interface);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::input::icontroller, ang::interface);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::input::icontroller_manager, ang::interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::input::ikeyboard, ang::intf);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::input::icontroller, ang::intf);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::input::icontroller_manager, ang::intf);
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::imessage_listener, ang::interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::imessage_listener, ang::intf);
 //ANG_IMPLEMENT_BASIC_INTERFACE(ang::platform::icore_msg_dispatcher, imessage_reciever);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::icore_context, ang::interface);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::icore_view, ang::interface);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::icore_app, ang::interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::icore_context, ang::intf);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::icore_view, ang::intf);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::icore_app, ang::intf);
 
 static icore_app* s_current_app = null;
 static input::icontroller_manager_t s_controller_manager = null;

@@ -74,12 +74,12 @@ namespace ang
 			}
 		};
 
-		template<> struct LINK hash_index_maker<text::raw_str_t> {
-			static long64 make(text::raw_str_t const& key_, ulong64 TS);
+		template<> struct LINK hash_index_maker<str_t> {
+			static long64 make(str_t const& key_, ulong64 TS);
 		};
 
-		template<> struct LINK hash_index_maker<text::raw_cstr_t> {
-			static long64 make(text::raw_cstr_t const& key_, ulong64 TS);
+		template<> struct LINK hash_index_maker<cstr_t> {
+			static long64 make(cstr_t const& key_, ulong64 TS);
 		};
 	}
 
@@ -214,21 +214,21 @@ namespace ang
 		{
 		public:
 			typedef pair<text::basic_string<E,A>, T>							type, pair_type;
-			typedef T									value_type;
-			typedef text::basic_string<E,A>									key_type;
-			typedef hash_map_object<text::basic_string<E,A>, T, allocator, hash_index_maker>	self_type;
+			typedef T															value_type;
+			typedef text::basic_string<E,A>										key_type;
+			typedef hash_map_object<text::basic_string<E,A>, T, allocator, hash_index_maker> self_type;
 			typedef hash_index_maker<text::basic_string<E,A>>					index_maker;
 			typedef imap<text::basic_string<E,A>, T>							imap_type;
-			typedef ienum<type>							ienum_type;
-			typedef base_iterator<type>					base_iterator_t;
-			typedef iterator<type>						iterator_t;
-			typedef const_iterator<type>				const_iterator_t;
-			typedef forward_iterator<type>				forward_iterator_t;
-			typedef const_forward_iterator<type>		const_forward_iterator_t;
-			typedef backward_iterator<type>				backward_iterator_t;
-			typedef const_backward_iterator<type>		const_backward_iterator_t;
-			typedef double_linked_node<type>			node_t, *node_ptr_t;
-			typedef scope_array<node_ptr_t, allocator>	node_array_t;
+			typedef ienum<type>													ienum_type;
+			typedef base_iterator<type>											base_iterator_t;
+			typedef iterator<type>												iterator_t;
+			typedef const_iterator<type>										const_iterator_t;
+			typedef forward_iterator<type>										forward_iterator_t;
+			typedef const_forward_iterator<type>								const_forward_iterator_t;
+			typedef backward_iterator<type>										backward_iterator_t;
+			typedef const_backward_iterator<type>								const_backward_iterator_t;
+			typedef double_linked_node<type>									node_t, *node_ptr_t;
+			typedef scope_array<node_ptr_t, allocator>							node_array_t;
 
 
 		protected:
@@ -293,41 +293,17 @@ namespace ang
 		public: //imap overrides
 			inline bool copy(const ienum<type>*) override;
 			inline void extend(const ienum<type>*) override;
-			inline iterator<type> insert(text::raw_cstr_t, T) override;
+			inline iterator<type> insert(cstr_t, T) override;
 			inline iterator<type> insert(type) override;
-			inline iterator<type> update(text::raw_cstr_t, T) override;
+			inline iterator<type> update(cstr_t, T) override;
 			inline iterator<type> update(type) override;
-			inline bool remove(text::raw_cstr_t) override;
-			inline bool remove(text::raw_cstr_t, T&) override;
+			inline bool remove(cstr_t) override;
+			inline bool remove(cstr_t, T&) override;
 			inline bool remove(base_iterator<type> it) override;
 			inline bool remove(base_iterator<type> it, T&) override;
-			inline bool has_key(text::raw_cstr_t)const override;
-			inline iterator<type> find(text::raw_cstr_t) override;
-			inline const_iterator<type> find(text::raw_cstr_t)const override;
-
-			template<typename U, text::encoding E2> inline iterator<type> insert(str_view<U, E2> str, T value) { return insert((text::raw_cstr_t)str, forward<T>(value)); }
-			template<typename U, text::encoding E2> inline iterator<type> update(str_view<U, E2> str, T value) { return update((text::raw_cstr_t)str, forward<T>(value)); }
-			template<typename U, text::encoding E2> inline bool remove(str_view<U, E2> str) { return remove((text::raw_cstr_t)str); }
-			template<typename U, text::encoding E2> inline bool remove(str_view<U, E2> str, T& value) { return remove((text::raw_cstr_t)str, value); }
-			template<typename U, text::encoding E2> inline bool has_key(str_view<U, E2> str)const { return has_key((text::raw_cstr_t)str); }
-			template<typename U, text::encoding E2> inline iterator<type> find(str_view<U, E2> str) { return find((text::raw_cstr_t)str); }
-			template<typename U, text::encoding E2> inline const_iterator<type> find(str_view<U, E2> str)const { return find((text::raw_cstr_t)str); }
-
-			template<typename U, wsize N> inline iterator<type> insert(const U (&str)[N], T value) { return insert((text::raw_cstr_t)str, forward<T>(value)); }
-			template<typename U, wsize N> inline iterator<type> update(const U (&str)[N], T value) { return update((text::raw_cstr_t)str, forward<T>(value)); }
-			template<typename U, wsize N> inline bool remove(const U (&str)[N]) { return remove((text::raw_cstr_t)str); }
-			template<typename U, wsize N> inline bool remove(const U (&str)[N], T& value) { return remove((text::raw_cstr_t)str, value); }
-			template<typename U, wsize N> inline bool has_key(const U (&str)[N])const { return has_key((text::raw_cstr_t)str); }
-			template<typename U, wsize N> inline iterator<type> find(const U (&str)[N]) { return find((text::raw_cstr_t)str); }
-			template<typename U, wsize N> inline const_iterator<type> find(const U (&str)[N])const { return find((text::raw_cstr_t)str); }
-
-			template<text::encoding E2, template<typename>class A2> inline iterator<type> insert(text::basic_string<E2, A2>const& str, T value) { return insert((text::raw_cstr_t)str, forward<T>(value)); }
-			template<text::encoding E2, template<typename>class A2> inline iterator<type> update(text::basic_string<E2, A2>const& str, T value) { return update((text::raw_cstr_t)str, forward<T>(value)); }
-			template<text::encoding E2, template<typename>class A2> inline bool remove(text::basic_string<E2, A2>const& str) { return remove((text::raw_cstr_t)str); }
-			template<text::encoding E2, template<typename>class A2> inline bool remove(text::basic_string<E2, A2>const& str, T& value) { return remove((text::raw_cstr_t)str, value); }
-			template<text::encoding E2, template<typename>class A2> inline bool has_key(text::basic_string<E2, A2>const& str)const { return has_key((text::raw_cstr_t)str); }
-			template<text::encoding E2, template<typename>class A2> inline iterator<type> find(text::basic_string<E2, A2>const& str) { return find((text::raw_cstr_t)str); }
-			template<text::encoding E2, template<typename>class A2> inline const_iterator<type> find(text::basic_string<E2, A2>const& str)const { return find((text::raw_cstr_t)str); }
+			inline bool has_key(cstr_t)const override;
+			inline iterator<type> find(cstr_t) override;
+			inline const_iterator<type> find(cstr_t)const override;
 
 		public: //overrides
 			ANG_DECLARE_INTERFACE();
@@ -340,21 +316,21 @@ namespace ang
 				return node;
 			}
 			inline void increase_capacity();
-			inline wsize hash_index(text::raw_cstr_t const&)const;
-			inline node_ptr_t find_node(text::raw_cstr_t const&)const;
+			inline wsize hash_index(cstr_t const&)const;
+			inline node_ptr_t find_node(cstr_t const&)const;
 		};
 
 		template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-		class hash_map_object<text::istring_view_t, T, allocator, hash_index_maker> final
-			: public smart<hash_map_object<text::istring_view_t, T, allocator>, imap<text::istring_view_t, T>>
+		class hash_map_object<string, T, allocator, hash_index_maker> final
+			: public smart<hash_map_object<string, T, allocator>, imap<string, T>>
 		{
 		public:
-			typedef pair<text::istring_view_t, T>							type, pair_type;
+			typedef pair<string, T>						type, pair_type;
 			typedef T									value_type;
-			typedef text::istring_view_t									key_type;
-			typedef hash_map_object<text::istring_view_t, T, allocator, hash_index_maker>	self_type;
-			typedef hash_index_maker<text::raw_cstr_t>					index_maker;
-			typedef imap<text::istring_view_t, T>							imap_type;
+			typedef string								key_type;
+			typedef hash_map_object<string, T, allocator, hash_index_maker>	self_type;
+			typedef hash_index_maker<cstr_t>			index_maker;
+			typedef imap<string, T>						imap_type;
 			typedef ienum<type>							ienum_type;
 			typedef base_iterator<type>					base_iterator_t;
 			typedef iterator<type>						iterator_t;
@@ -387,15 +363,10 @@ namespace ang
 
 		public: //methods
 			inline bool is_empty()const;
-			//inline T* data()const;
-			//inline wsize size()const;
-			//inline void size(wsize);
-			//inline wsize capacity()const;
-			//inline void capacity(wsize size, bool save = false);
 
 			inline void clear();
 			inline void empty();
-			inline bool move(hash_map_object<text::istring_view_t, T, allocator, hash_index_maker>&);
+			inline bool move(hash_map_object<string, T, allocator, hash_index_maker>&);
 
 			template<typename U> inline void copy(array_view<U>const&);
 			template<typename U, template<typename> class allocator2> inline void copy(scope_array<U, allocator2>const&);
@@ -429,41 +400,17 @@ namespace ang
 		public: //imap overrides
 			inline bool copy(const ienum<type>*) override;
 			inline void extend(const ienum<type>*) override;
-			inline iterator<type> insert(text::raw_cstr_t, T) override;
+			inline iterator<type> insert(cstr_t, T) override;
 			inline iterator<type> insert(type) override;
-			inline iterator<type> update(text::raw_cstr_t, T) override;
+			inline iterator<type> update(cstr_t, T) override;
 			inline iterator<type> update(type) override;
-			inline bool remove(text::raw_cstr_t) override;
-			inline bool remove(text::raw_cstr_t, T&) override;
+			inline bool remove(cstr_t) override;
+			inline bool remove(cstr_t, T&) override;
 			inline bool remove(base_iterator<type> it) override;
 			inline bool remove(base_iterator<type> it, T&) override;
-			inline bool has_key(text::raw_cstr_t)const override;
-			inline iterator<type> find(text::raw_cstr_t) override;
-			inline const_iterator<type> find(text::raw_cstr_t)const override;
-
-			template<typename U, text::encoding E2> inline iterator<type> insert(str_view<U, E2> str, T value) { return insert((text::raw_cstr_t)str, forward<T>(value)); }
-			template<typename U, text::encoding E2> inline iterator<type> update(str_view<U, E2> str, T value) { return update((text::raw_cstr_t)str, forward<T>(value)); }
-			template<typename U, text::encoding E2> inline bool remove(str_view<U, E2> str) { return remove((text::raw_cstr_t)str); }
-			template<typename U, text::encoding E2> inline bool remove(str_view<U, E2> str, T& value) { return remove((text::raw_cstr_t)str, value); }
-			template<typename U, text::encoding E2> inline bool has_key(str_view<U, E2> str)const { return has_key((text::raw_cstr_t)str); }
-			template<typename U, text::encoding E2> inline iterator<type> find(str_view<U, E2> str) { return find((text::raw_cstr_t)str); }
-			template<typename U, text::encoding E2> inline const_iterator<type> find(str_view<U, E2> str)const { return find((text::raw_cstr_t)str); }
-
-			template<typename U, wsize N> inline iterator<type> insert(const U(&str)[N], T value) { return insert((text::raw_cstr_t)str, forward<T>(value)); }
-			template<typename U, wsize N> inline iterator<type> update(const U(&str)[N], T value) { return update((text::raw_cstr_t)str, forward<T>(value)); }
-			template<typename U, wsize N> inline bool remove(const U(&str)[N]) { return remove((text::raw_cstr_t)str); }
-			template<typename U, wsize N> inline bool remove(const U(&str)[N], T& value) { return remove((text::raw_cstr_t)str, value); }
-			template<typename U, wsize N> inline bool has_key(const U(&str)[N])const { return has_key((text::raw_cstr_t)str); }
-			template<typename U, wsize N> inline iterator<type> find(const U(&str)[N]) { return find((text::raw_cstr_t)str); }
-			template<typename U, wsize N> inline const_iterator<type> find(const U(&str)[N])const { return find((text::raw_cstr_t)str); }
-
-			template<text::encoding E2, template<typename>class A2> inline iterator<type> insert(text::basic_string<E2, A2>const& str, T value) { return insert((text::raw_cstr_t)str, forward<T>(value)); }
-			template<text::encoding E2, template<typename>class A2> inline iterator<type> update(text::basic_string<E2, A2>const& str, T value) { return update((text::raw_cstr_t)str, forward<T>(value)); }
-			template<text::encoding E2, template<typename>class A2> inline bool remove(text::basic_string<E2, A2>const& str) { return remove((text::raw_cstr_t)str); }
-			template<text::encoding E2, template<typename>class A2> inline bool remove(text::basic_string<E2, A2>const& str, T& value) { return remove((text::raw_cstr_t)str, value); }
-			template<text::encoding E2, template<typename>class A2> inline bool has_key(text::basic_string<E2, A2>const& str)const { return has_key((text::raw_cstr_t)str); }
-			template<text::encoding E2, template<typename>class A2> inline iterator<type> find(text::basic_string<E2, A2>const& str) { return find((text::raw_cstr_t)str); }
-			template<text::encoding E2, template<typename>class A2> inline const_iterator<type> find(text::basic_string<E2, A2>const& str)const { return find((text::raw_cstr_t)str); }
+			inline bool has_key(cstr_t)const override;
+			inline iterator<type> find(cstr_t) override;
+			inline const_iterator<type> find(cstr_t)const override;
 
 		public: //overrides
 			ANG_DECLARE_INTERFACE();
@@ -476,8 +423,8 @@ namespace ang
 				return node;
 			}
 			inline void increase_capacity();
-			inline wsize hash_index(text::raw_cstr_t const&)const;
-			inline node_ptr_t find_node(text::raw_cstr_t const&)const;
+			inline wsize hash_index(cstr_t const&)const;
+			inline node_ptr_t find_node(cstr_t const&)const;
 		};
 
 	}//collections
@@ -602,37 +549,8 @@ namespace ang
 		explicit operator type * (void);
 		explicit operator type const* (void)const;
 
-		data_type& operator [] (text::raw_cstr_t const&);
-		data_type operator [] (text::raw_cstr_t const&)const;
-
-		template<text::encoding E2, template<typename>class A2>
-		data_type& operator [] (text::basic_string<E, A> const& key) {
-			return operator[]((text::raw_cstr_t)key);
-		}
-		template<text::encoding E2, template<typename>class A2>
-		data_type operator [] (text::basic_string<E, A> const&  key)const {
-			return operator[]((text::raw_cstr_t)key);
-		}
-
-		template<typename K, text::encoding E2>
-		data_type& operator [] (str_view<K,E2> const& key) {
-			return operator[]((text::raw_cstr_t)key);
-		}
-
-		template<typename K, text::encoding E2>
-		data_type operator [] (str_view<K, E2> const&  key)const {
-			return operator[]((text::raw_cstr_t)key);
-		}
-
-		template<typename K, wsize N>
-		data_type& operator [] (const K(&key)[N]) {
-			return operator[]((text::raw_cstr_t)key);
-		}
-
-		template<typename K, wsize N>
-		data_type operator [] (const K(&key)[N])const {
-			return operator[]((text::raw_cstr_t)key);
-		}
+		data_type& operator [] (cstr_t const&);
+		data_type operator [] (cstr_t const&)const;
 	};
 
 
@@ -641,13 +559,13 @@ namespace ang
 	/*  -> specialization of object_wrapper<hash_map_object> -> has_map */
 	/********************************************************************/
 	template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-	class object_wrapper<collections::hash_map_object<text::istring_view_t, T, allocator, hash_index_maker>>
+	class object_wrapper<collections::hash_map_object<string, T, allocator, hash_index_maker>>
 	{
 	public:
-		typedef collections::hash_map_object<text::istring_view_t, T, allocator, hash_index_maker> type;
-		typedef typename collections::hash_map_object<text::istring_view_t, T, allocator, hash_index_maker>::type pair_type;
-		typedef typename collections::hash_map_object<text::istring_view_t, T, allocator, hash_index_maker>::value_type data_type;
-		typedef typename collections::hash_map_object<text::istring_view_t, T, allocator, hash_index_maker>::key_type key_type;
+		typedef collections::hash_map_object<string, T, allocator, hash_index_maker> type;
+		typedef typename collections::hash_map_object<string, T, allocator, hash_index_maker>::type pair_type;
+		typedef typename collections::hash_map_object<string, T, allocator, hash_index_maker>::value_type data_type;
+		typedef typename collections::hash_map_object<string, T, allocator, hash_index_maker>::key_type key_type;
 
 	private:
 		type* m_ptr;
@@ -693,37 +611,8 @@ namespace ang
 		explicit operator type * (void);
 		explicit operator type const* (void)const;
 
-		data_type& operator [] (text::raw_cstr_t const&);
-		data_type operator [] (text::raw_cstr_t const&)const;
-
-		template<text::encoding E2, template<typename>class A2>
-		data_type& operator [] (text::istring_view_t const& key) {
-			return operator[]((text::raw_cstr_t)key);
-		}
-		template<text::encoding E2, template<typename>class A2>
-		data_type operator [] (text::istring_view_t const&  key)const {
-			return operator[]((text::raw_cstr_t)key);
-		}
-
-		template<typename K, text::encoding E2>
-		data_type& operator [] (str_view<K, E2> const& key) {
-			return operator[]((text::raw_cstr_t)key);
-		}
-
-		template<typename K, text::encoding E2>
-		data_type operator [] (str_view<K, E2> const&  key)const {
-			return operator[]((text::raw_cstr_t)key);
-		}
-
-		template<typename K, wsize N>
-		data_type& operator [] (const K(&key)[N]) {
-			return operator[]((text::raw_cstr_t)key);
-		}
-
-		template<typename K, wsize N>
-		data_type operator [] (const K(&key)[N])const {
-			return operator[]((text::raw_cstr_t)key);
-		}
+		data_type& operator [] (cstr_t const&);
+		data_type operator [] (cstr_t const&)const;
 	};
 
 }//ang

@@ -88,7 +88,7 @@ inline ang::collections::vector_buffer<T, allocator>::~vector_buffer()
 template<typename T, template <typename> class allocator>
 inline ang::rtti_t const& ang::collections::vector_buffer<T, allocator>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::collections::vector<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::vector<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<ilist<T>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::vector_buffer<T, allocator>), alignof(ang::collections::vector_buffer<T, allocator>), parents, &default_query_interface);
 	return info;

@@ -75,7 +75,7 @@ ang::collections::hash_map_object<K, T, allocator, hash_index_maker>::~hash_map_
 template<typename K, typename T, template<typename> class allocator, template<typename>class hash_index_maker>
 inline const ang::rtti_t& ang::collections::hash_map_object<K, T, allocator, hash_index_maker>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((((string("ang::collections::hash_map_object<"_s) += rtti::type_of<K>().type_name()) += ","_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((((astring("ang::collections::hash_map_object<"_s) += rtti::type_of<K>().type_name()) += ","_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<imap_type>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(hash_map_object<K, T, allocator, hash_index_maker>), alignof(hash_map_object<K, T, allocator, hash_index_maker>), parents, &default_query_interface);
 	return info;
@@ -583,12 +583,12 @@ inline ang::collections::iterator<ang::collections::pair<K, T>> ang::collections
 		}
 		m_table[idx] = node;
 		m_count++;
-		iterator_t(const_cast<hash_map_object*>(this), m_table[idx], idx);
+		return iterator_t(const_cast<hash_map_object*>(this), m_table[idx], idx);
 	}
 	else
 	{
 		node->data.value = ang::move(value);
-		iterator_t(const_cast<hash_map_object*>(this), node, idx);
+		return iterator_t(const_cast<hash_map_object*>(this), node, idx);
 	}
 }
 
@@ -611,12 +611,12 @@ inline ang::collections::iterator<ang::collections::pair<K, T>> ang::collections
 		}
 		m_table[idx] = node;
 		m_count++;
-		iterator_t(const_cast<hash_map_object*>(this), m_table[idx], idx);
+		return iterator_t(const_cast<hash_map_object*>(this), m_table[idx], idx);
 	}
 	else
 	{
 		node->data.value = ang::move(pair.value);
-		iterator_t(const_cast<hash_map_object*>(this), node, idx);
+		return iterator_t(const_cast<hash_map_object*>(this), node, idx);
 	}
 }
 
@@ -819,7 +819,7 @@ ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, ha
 template<ang::text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename>class hash_index_maker>
 inline const ang::rtti_t& ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((((string("ang::collections::hash_map_object<"_s) += rtti::type_of<ang::text::basic_string<E, A>>().type_name()) += ","_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((((astring("ang::collections::hash_map_object<"_s) += rtti::type_of<ang::text::basic_string<E, A>>().type_name()) += ","_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<imap_type>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>), alignof(hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>), parents, &default_query_interface);
 	return info;
@@ -949,16 +949,16 @@ void ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocato
 }
 
 template<ang::text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::double_linked_node<ang::collections::pair<ang::text::basic_string<E,A>, T>>* ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::find_node(ang::text::raw_cstr_t const& key)const
+inline ang::collections::double_linked_node<ang::collections::pair<ang::text::basic_string<E,A>, T>>* ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::find_node(ang::cstr_t const& key)const
 {
 	if (m_table.size() == 0)
 		return null;
 
-	wsize idx = hash_index_maker<text::raw_cstr_t>::make(key, m_table.size());
+	wsize idx = hash_index_maker<cstr_t>::make(key, m_table.size());
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::text::raw_cstr_t, ang::text::raw_cstr_t, logic_operation_type::same>::operate(key, (text::raw_cstr_t)temp->data.key))
+		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(key, (cstr_t)temp->data.key))
 			return temp;
 		temp = temp->next;
 	}
@@ -1269,14 +1269,14 @@ inline void ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, a
 }
 
 template<ang::text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string<E, A>, T>> ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::insert(ang::text::raw_cstr_t key, T value)
+inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string<E, A>, T>> ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::insert(ang::cstr_t key, T value)
 {
 	if (m_count > (m_table.size() * 0.75))
 		increase_capacity();
 
 	if (find_node(key) != null)
 		return end();
-	wsize idx = hash_index_maker<text::raw_cstr_t>::make(key, m_table.size());
+	wsize idx = hash_index_maker<cstr_t>::make(key, m_table.size());
 	node_ptr_t entry = allocate_node<ang::text::basic_string<E,A>, T>(ang::forward<ang::text::basic_string<E, A>>(ang::text::basic_string<E, A>(key)), ang::forward<T>(value));
 
 	if (m_table[idx])
@@ -1295,7 +1295,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string
 	if (m_count > (m_table.size() * 0.75))
 		increase_capacity();
 
-	if (find_node((text::raw_cstr_t)pair.key) != null)
+	if (find_node((cstr_t)pair.key) != null)
 		return end();
 	wsize idx = index_maker::make(pair.key, m_table.size());
 	node_ptr_t entry = allocate_node<ang::text::basic_string<E,A>, T>(ang::forward<ang::text::basic_string<E, A>>(pair.key), ang::forward<T>(pair.value));
@@ -1310,12 +1310,12 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string
 }
 
 template<ang::text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string<E, A>, T>> ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::update(ang::text::raw_cstr_t key, T value)
+inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string<E, A>, T>> ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::update(ang::cstr_t key, T value)
 {
 	if (m_count > (m_table.size() * 0.75))
 		increase_capacity();
 
-	wsize idx = hash_index_maker<text::raw_cstr_t>::make(key, m_table.size());
+	wsize idx = hash_index_maker<cstr_t>::make(key, m_table.size());
 	node_ptr_t node = find_node(key);
 	if (node == null)
 	{
@@ -1343,7 +1343,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string
 		increase_capacity();
 
 	wsize idx = index_maker::make(pair.key, m_table.size());
-	node_ptr_t node = find_node((text::raw_cstr_t)pair.key);
+	node_ptr_t node = find_node((cstr_t)pair.key);
 	if (node == null)
 	{
 		node = allocate_node<ang::text::basic_string<E,A>, T>(ang::forward<ang::text::basic_string<E, A>>(pair.key), ang::forward<T>(pair.value));
@@ -1364,12 +1364,12 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string
 }
 
 template<ang::text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::remove(ang::text::raw_cstr_t key)
+inline bool ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::remove(ang::cstr_t key)
 {
 	if (m_table.is_empty())
 		return false;
 
-	wsize idx = hash_index_maker<text::raw_cstr_t>::make(key, m_table.size());
+	wsize idx = hash_index_maker<cstr_t>::make(key, m_table.size());
 	node_ptr_t temp = m_table[idx];
 
 	while (temp != nullptr)
@@ -1399,17 +1399,17 @@ inline bool ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, a
 }
 
 template<ang::text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::remove(ang::text::raw_cstr_t key, T& value)
+inline bool ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::remove(ang::cstr_t key, T& value)
 {
 	if (m_table.is_empty())
 		return false;
 
-	wsize idx = hash_index_maker<text::raw_cstr_t>::make(key, m_table.size());
+	wsize idx = hash_index_maker<cstr_t>::make(key, m_table.size());
 	node_ptr_t temp = m_table[idx];
 
 	while (temp != nullptr)
 	{
-		if (logic_operation<ang::text::raw_cstr_t, ang::text::raw_cstr_t, logic_operation_type::same>::operate((text::raw_cstr_t)temp->data.key, key))
+		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate((cstr_t)temp->data.key, key))
 		{
 			if (temp->prev)
 			{
@@ -1450,22 +1450,22 @@ inline bool ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, a
 
 
 template<ang::text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::has_key(ang::text::raw_cstr_t key)const
+inline bool ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::has_key(ang::cstr_t key)const
 {
 	return find_node(key) != null;
 }
 
 template<ang::text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string<E,A>, T>> ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::find(ang::text::raw_cstr_t key)
+inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string<E,A>, T>> ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::find(ang::cstr_t key)
 {
 	if (m_table.is_empty())
 		return iterator_t(const_cast<hash_map_object*>(this));
 
-	wsize idx = hash_index_maker<text::raw_cstr_t>::make(key, m_table.size());
+	wsize idx = hash_index_maker<cstr_t>::make(key, m_table.size());
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::text::raw_cstr_t, ang::text::raw_cstr_t, logic_operation_type::same>::operate(key, (text::raw_cstr_t)temp->data.key))
+		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(key, (cstr_t)temp->data.key))
 			return iterator_t(const_cast<hash_map_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -1474,16 +1474,16 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string
 
 
 template<ang::text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::const_iterator<ang::collections::pair<ang::text::basic_string<E,A>, T>> ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::find(ang::text::raw_cstr_t key)const
+inline ang::collections::const_iterator<ang::collections::pair<ang::text::basic_string<E,A>, T>> ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>::find(ang::cstr_t key)const
 {
 	if (m_table.is_empty())
 		return iterator_t(const_cast<hash_map_object*>(this));
 
-	wsize idx = hash_index_maker<text::raw_cstr_t>::make(key, m_table.size());
+	wsize idx = hash_index_maker<cstr_t>::make(key, m_table.size());
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::text::raw_cstr_t, ang::text::raw_cstr_t, logic_operation_type::same>::operate(key, (text::raw_cstr_t)temp->data.key))
+		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(key, (cstr_t)temp->data.key))
 			return iterator_t(const_cast<hash_map_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -1496,7 +1496,7 @@ inline ang::collections::const_iterator<ang::collections::pair<ang::text::basic_
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::hash_map_object()
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::hash_map_object()
 	: m_count(0)
 	, m_table()
 {
@@ -1508,7 +1508,7 @@ ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::hash_map_object(ang::initializer_list<ang::collections::pair<ang::text::istring_view_t, T>> list)
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::hash_map_object(ang::initializer_list<ang::collections::pair<ang::string, T>> list)
 	: hash_map_object()
 {
 	for (auto it = list.begin(); it < list.end(); ++it)
@@ -1516,13 +1516,13 @@ ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::hash_map_object(const ang::nullptr_t&)
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::hash_map_object(const ang::nullptr_t&)
 	: hash_map_object()
 {
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::hash_map_object(hash_map_object&& other)
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::hash_map_object(hash_map_object&& other)
 	: hash_map_object()
 {
 	m_count = other.m_count;
@@ -1533,50 +1533,50 @@ ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::hash_map_object(const hash_map_object& other)
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::hash_map_object(const hash_map_object& other)
 	: hash_map_object()
 {
 	extend(&other);
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::hash_map_object(const hash_map_object* other)
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::hash_map_object(const hash_map_object* other)
 	: hash_map_object()
 {
 	extend(other);
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::hash_map_object(ang::collections::ienum<ang::collections::pair<ang::text::istring_view_t, T>> const* other)
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::hash_map_object(ang::collections::ienum<ang::collections::pair<ang::string, T>> const* other)
 	: hash_map_object()
 {
 	extend(other);
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::~hash_map_object()
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::~hash_map_object()
 {
 	clear();
 }
 
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline const ang::rtti_t& ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::class_info()
+inline const ang::rtti_t& ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::collections::hash_map_object<ang::text::istring_view_t,"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::hash_map_object<ang::string,"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<imap_type>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>), alignof(hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>), parents, &default_query_interface);
+	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(hash_map_object<ang::string, T, allocator, hash_index_maker>), alignof(hash_map_object<ang::string, T, allocator, hash_index_maker>), parents, &default_query_interface);
 	return info;
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline const ang::rtti_t& ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::runtime_info()const
+inline const ang::rtti_t& ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::runtime_info()const
 {
 	return class_info();
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::query_interface(const ang::rtti_t& id, ang::unknown_ptr_t out)
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::query_interface(const ang::rtti_t& id, ang::unknown_ptr_t out)
 {
 	if (id.type_id() == class_info().type_id())
 	{
@@ -1602,12 +1602,12 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::is_empty()const {
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::is_empty()const {
 	return m_count == 0;
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline void ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::clear() {
+inline void ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::clear() {
 	if (!m_table.is_empty())
 	{
 		for (wsize i = 0; i < m_table.size() && m_count > 0; ++i)
@@ -1629,7 +1629,7 @@ inline void ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline void ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::empty() {
+inline void ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::empty() {
 	if (!m_table.is_empty())
 	{
 		for (wsize i = 0; i < m_table.size() && m_count > 0; ++i)
@@ -1651,7 +1651,7 @@ inline void ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::move(hash_map_object& other)
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::move(hash_map_object& other)
 {
 	if (this == &other)
 		return false;
@@ -1665,7 +1665,7 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-void ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::increase_capacity()
+void ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::increase_capacity()
 {
 	auto new_size = algorithms::hash_table_get_next_size(m_table.size());
 	node_array_t new_data;
@@ -1693,7 +1693,7 @@ void ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, 
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::double_linked_node<ang::collections::pair<ang::text::istring_view_t, T>>* ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::find_node(ang::text::raw_cstr_t const& key)const
+inline ang::collections::double_linked_node<ang::collections::pair<ang::string, T>>* ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::find_node(ang::cstr_t const& key)const
 {
 	if (m_table.size() == 0)
 		return null;
@@ -1702,7 +1702,7 @@ inline ang::collections::double_linked_node<ang::collections::pair<ang::text::is
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::text::raw_cstr_t, ang::text::raw_cstr_t, logic_operation_type::same>::operate(key, temp->data.key))
+		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(key, temp->data.key))
 			return temp;
 		temp = temp->next;
 	}
@@ -1710,7 +1710,7 @@ inline ang::collections::double_linked_node<ang::collections::pair<ang::text::is
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::pair<ang::text::istring_view_t, T>& ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::at(const ang::collections::base_iterator<ang::collections::pair<ang::text::istring_view_t, T>>& it)
+inline ang::collections::pair<ang::string, T>& ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::at(const ang::collections::base_iterator<ang::collections::pair<ang::string, T>>& it)
 {
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty())
@@ -1724,7 +1724,7 @@ inline ang::collections::pair<ang::text::istring_view_t, T>& ang::collections::h
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::forward_iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::begin()
+inline ang::collections::forward_iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::begin()
 {
 	for (auto i = 0U; i < m_table.size(); ++i)
 	{
@@ -1735,13 +1735,13 @@ inline ang::collections::forward_iterator<ang::collections::pair<ang::text::istr
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::forward_iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::end()
+inline ang::collections::forward_iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::end()
 {
 	return iterator_t(const_cast<hash_map_object*>(this), null, 0);
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::const_forward_iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::begin()const
+inline ang::collections::const_forward_iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::begin()const
 {
 	for (auto i = 0U; i < m_table.size(); ++i)
 	{
@@ -1752,7 +1752,7 @@ inline ang::collections::const_forward_iterator<ang::collections::pair<ang::text
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::forward_iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::last()
+inline ang::collections::forward_iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::last()
 {
 	for (int i = (int)m_table.size() - 1; i >= 0; --i)
 	{
@@ -1768,7 +1768,7 @@ inline ang::collections::forward_iterator<ang::collections::pair<ang::text::istr
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::const_forward_iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::last()const
+inline ang::collections::const_forward_iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::last()const
 {
 	for (int i = (int)m_table.size() - 1; i >= 0; --i)
 	{
@@ -1784,35 +1784,13 @@ inline ang::collections::const_forward_iterator<ang::collections::pair<ang::text
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::const_forward_iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::end()const
+inline ang::collections::const_forward_iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::end()const
 {
 	return iterator_t(const_cast<hash_map_object*>(this), null, 0);
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::backward_iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::rbegin()
-{
-	for (int i = (int)m_table.size() - 1; i >= 0; --i)
-	{
-		if (m_table[i] != null)
-		{
-			node_ptr_t node = m_table[i];
-			while (node->next != null)
-				node = node->next;
-			return iterator_t(const_cast<hash_map_object*>(this), node, i);
-		}
-	}
-	return iterator_t(const_cast<hash_map_object*>(this), null, 0);
-}
-
-template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::backward_iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::rend()
-{
-	return iterator_t(const_cast<hash_map_object*>(this), null, 0);
-}
-
-template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::const_backward_iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::rbegin()const
+inline ang::collections::backward_iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::rbegin()
 {
 	for (int i = (int)m_table.size() - 1; i >= 0; --i)
 	{
@@ -1828,14 +1806,36 @@ inline ang::collections::const_backward_iterator<ang::collections::pair<ang::tex
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::const_backward_iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::rend()const
+inline ang::collections::backward_iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::rend()
+{
+	return iterator_t(const_cast<hash_map_object*>(this), null, 0);
+}
+
+template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
+inline ang::collections::const_backward_iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::rbegin()const
+{
+	for (int i = (int)m_table.size() - 1; i >= 0; --i)
+	{
+		if (m_table[i] != null)
+		{
+			node_ptr_t node = m_table[i];
+			while (node->next != null)
+				node = node->next;
+			return iterator_t(const_cast<hash_map_object*>(this), node, i);
+		}
+	}
+	return iterator_t(const_cast<hash_map_object*>(this), null, 0);
+}
+
+template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
+inline ang::collections::const_backward_iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::rend()const
 {
 	return iterator_t(const_cast<hash_map_object*>(this), null, 0);
 }
 
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::increase(ang::collections::base_iterator<ang::collections::pair<ang::text::istring_view_t, T>>& it)const
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::increase(ang::collections::base_iterator<ang::collections::pair<ang::string, T>>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -1863,7 +1863,7 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::increase(ang::collections::base_iterator<ang::collections::pair<ang::text::istring_view_t, T>>& it, int offset)const
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::increase(ang::collections::base_iterator<ang::collections::pair<ang::string, T>>& it, int offset)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -1905,7 +1905,7 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::decrease(ang::collections::base_iterator<ang::collections::pair<ang::text::istring_view_t, T>>& it)const
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::decrease(ang::collections::base_iterator<ang::collections::pair<ang::string, T>>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -1942,7 +1942,7 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::decrease(ang::collections::base_iterator<ang::collections::pair<ang::text::istring_view_t, T>>& it, int offset)const
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::decrease(ang::collections::base_iterator<ang::collections::pair<ang::string, T>>& it, int offset)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() == null)
@@ -1986,13 +1986,13 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline wsize ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::counter()const
+inline wsize ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::counter()const
 {
 	return m_count;
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::copy(ang::collections::ienum<ang::collections::pair<ang::text::istring_view_t, T>>const* items) {
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::copy(ang::collections::ienum<ang::collections::pair<ang::string, T>>const* items) {
 
 	if (items == null)
 		return false;
@@ -2003,7 +2003,7 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline void ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::extend(ang::collections::ienum<ang::collections::pair<ang::text::istring_view_t, T>>const* items) {
+inline void ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::extend(ang::collections::ienum<ang::collections::pair<ang::string, T>>const* items) {
 
 	if (items == null)
 		return;
@@ -2013,7 +2013,7 @@ inline void ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::insert(ang::text::raw_cstr_t key, T value)
+inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::insert(ang::cstr_t key, T value)
 {
 	if (m_count > (m_table.size() * 0.75))
 		increase_capacity();
@@ -2021,7 +2021,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 	if (find_node(key) != null)
 		return end();
 	wsize idx = (windex)index_maker::make(key, m_table.size());
-	node_ptr_t entry = allocate_node<ang::text::istring_view_t, T>(ang::forward<ang::text::istring_view_t>(wstring(key).get()), ang::forward<T>(value));
+	node_ptr_t entry = allocate_node<ang::string, T>(ang::forward<ang::string>(wstring(key).get()), ang::forward<T>(value));
 
 	if (m_table[idx])
 	{
@@ -2034,15 +2034,15 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::insert(ang::collections::pair<ang::text::istring_view_t, T> pair)
+inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::insert(ang::collections::pair<ang::string, T> pair)
 {
 	if (m_count > (m_table.size() * 0.75))
 		increase_capacity();
 
-	if (find_node((text::raw_cstr_t)pair.key) != null)
+	if (find_node((cstr_t)pair.key) != null)
 		return end();
 	wsize idx = (windex)index_maker::make(pair.key, m_table.size());
-	node_ptr_t entry = allocate_node<ang::text::istring_view_t, T>(ang::forward<ang::text::istring_view_t>(wstring((text::raw_cstr_t)pair.key).get()), ang::forward<T>(pair.value));
+	node_ptr_t entry = allocate_node<ang::string, T>(ang::forward<ang::string>(wstring((cstr_t)pair.key).get()), ang::forward<T>(pair.value));
 	if (m_table[idx])
 	{
 		entry->next = m_table[idx];
@@ -2054,7 +2054,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::update(ang::text::raw_cstr_t key, T value)
+inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::update(ang::cstr_t key, T value)
 {
 	if (m_count > (m_table.size() * 0.75))
 		increase_capacity();
@@ -2063,7 +2063,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 	node_ptr_t node = find_node(key);
 	if (node == null)
 	{
-		node = allocate_node<ang::text::istring_view_t, T>(ang::forward<ang::text::istring_view_t>(wstring(key).get()), ang::forward<T>(value));
+		node = allocate_node<ang::string, T>(ang::forward<ang::string>(wstring(key).get()), ang::forward<T>(value));
 		if (m_table[idx])
 		{
 			node->next = m_table[idx];
@@ -2081,16 +2081,16 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::update(ang::collections::pair<ang::text::istring_view_t, T> pair)
+inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::update(ang::collections::pair<ang::string, T> pair)
 {
 	if (m_count > (m_table.size() * 0.75))
 		increase_capacity();
 
 	wsize idx = (windex)index_maker::make(pair.key, m_table.size());
-	node_ptr_t node = find_node((text::raw_cstr_t)pair.key);
+	node_ptr_t node = find_node((cstr_t)pair.key);
 	if (node == null)
 	{
-		node = allocate_node<ang::text::istring_view_t, T>(ang::forward<ang::text::istring_view_t>(wstring((text::raw_cstr_t)pair.key).get()), ang::forward<T>(pair.value));
+		node = allocate_node<ang::string, T>(ang::forward<ang::string>(wstring((cstr_t)pair.key).get()), ang::forward<T>(pair.value));
 		if (m_table[idx])
 		{
 			node->next = m_table[idx];
@@ -2108,7 +2108,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::remove(ang::text::raw_cstr_t key)
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::remove(ang::cstr_t key)
 {
 	if (m_table.is_empty())
 		return false;
@@ -2118,7 +2118,7 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 
 	while (temp != nullptr)
 	{
-		if (logic_operation<ang::text::raw_cstr_t, ang::text::raw_cstr_t, logic_operation_type::same>::operate(temp->data.key, key))
+		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(temp->data.key, key))
 		{
 			if (temp->prev)
 			{
@@ -2143,7 +2143,7 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::remove(ang::text::raw_cstr_t key, T& value)
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::remove(ang::cstr_t key, T& value)
 {
 	if (m_table.is_empty())
 		return false;
@@ -2153,7 +2153,7 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 
 	while (temp != nullptr)
 	{
-		if (logic_operation<ang::text::raw_cstr_t, ang::text::raw_cstr_t, logic_operation_type::same>::operate(temp->data.key, key))
+		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(temp->data.key, key))
 		{
 			if (temp->prev)
 			{
@@ -2180,13 +2180,13 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::remove(ang::collections::base_iterator<ang::collections::pair<ang::text::istring_view_t, T>>)
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::remove(ang::collections::base_iterator<ang::collections::pair<ang::string, T>>)
 {
 	return false;
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::remove(ang::collections::base_iterator<ang::collections::pair<ang::text::istring_view_t, T>>, T& value)
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::remove(ang::collections::base_iterator<ang::collections::pair<ang::string, T>>, T& value)
 {
 
 	return false;
@@ -2194,13 +2194,13 @@ inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allo
 
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline bool ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::has_key(ang::text::raw_cstr_t key)const
+inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::has_key(ang::cstr_t key)const
 {
 	return find_node(key) != null;
 }
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::find(ang::text::raw_cstr_t key)
+inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::find(ang::cstr_t key)
 {
 	if (m_table.is_empty())
 		return iterator_t(const_cast<hash_map_object*>(this));
@@ -2209,7 +2209,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::text::raw_cstr_t, ang::text::raw_cstr_t, logic_operation_type::same>::operate(key, temp->data.key))
+		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(key, temp->data.key))
 			return iterator_t(const_cast<hash_map_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -2218,7 +2218,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::istring_view
 
 
 template<typename T, template<typename> class allocator, template<typename>class hash_index_maker>
-inline ang::collections::const_iterator<ang::collections::pair<ang::text::istring_view_t, T>> ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>::find(ang::text::raw_cstr_t key)const
+inline ang::collections::const_iterator<ang::collections::pair<ang::string, T>> ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>::find(ang::cstr_t key)const
 {
 	if (m_table.is_empty())
 		return iterator_t(const_cast<hash_map_object*>(this));
@@ -2227,7 +2227,7 @@ inline ang::collections::const_iterator<ang::collections::pair<ang::text::istrin
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::text::raw_cstr_t, ang::text::raw_cstr_t, logic_operation_type::same>::operate(key, temp->data.key))
+		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(key, temp->data.key))
 			return iterator_t(const_cast<hash_map_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -2698,7 +2698,7 @@ ang::object_wrapper<ang::collections::hash_map_object<ang::text::basic_string<E,
 }
 
 template<ang::text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-typename ang::object_wrapper<ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>>::data_type& ang::object_wrapper<ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>>::operator [] (ang::text::raw_cstr_t const& key)
+typename ang::object_wrapper<ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>>::data_type& ang::object_wrapper<ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>>::operator [] (ang::cstr_t const& key)
 {
 	if (is_empty()) set(new collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>());
 	auto it = m_ptr->find(key);
@@ -2709,7 +2709,7 @@ typename ang::object_wrapper<ang::collections::hash_map_object<ang::text::basic_
 }
 
 template<ang::text::encoding E, template<typename>class A, typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-typename ang::object_wrapper<ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>>::data_type ang::object_wrapper<ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>>::operator [] (ang::text::raw_cstr_t const& key)const
+typename ang::object_wrapper<ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>>::data_type ang::object_wrapper<ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, allocator, hash_index_maker>>::operator [] (ang::cstr_t const& key)const
 {
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = m_ptr->find(key);
@@ -2720,24 +2720,24 @@ typename ang::object_wrapper<ang::collections::hash_map_object<ang::text::basic_
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::object_wrapper()
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::object_wrapper()
 	: m_ptr(null)
 {
-	set(new ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>());
+	set(new ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>());
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::object_wrapper(type* ptr)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::object_wrapper(type* ptr)
 	: m_ptr(null)
 {
-	set(ptr ? ptr : new ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>());
+	set(ptr ? ptr : new ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>());
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::object_wrapper(ang::initializer_list<pair_type> items)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::object_wrapper(ang::initializer_list<pair_type> items)
 	: m_ptr(null)
 {
-	set(new ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>());
+	set(new ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>());
 	for (pair_type item : items)
 	{
 		get()->insert(item);
@@ -2745,20 +2745,20 @@ ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t,
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::object_wrapper(const collections::ienum<pair_type>* store)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::object_wrapper(const collections::ienum<pair_type>* store)
 	: m_ptr(null)
 {
-	set(new ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>());
+	set(new ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>());
 	m_ptr->copy(store);
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::object_wrapper(object_wrapper && ptr)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::object_wrapper(object_wrapper && ptr)
 	: m_ptr(null)
 {
 	if (ptr.is_empty())
 	{
-		set(new ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>());
+		set(new ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>());
 	}
 	else
 	{
@@ -2770,28 +2770,28 @@ ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t,
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::object_wrapper(object_wrapper const& ptr)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::object_wrapper(object_wrapper const& ptr)
 	: m_ptr(null)
 {
-	set(new ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>());
+	set(new ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>());
 	m_ptr->copy(ptr.get());
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::object_wrapper(ang::nullptr_t const&)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::object_wrapper(ang::nullptr_t const&)
 	: m_ptr(null)
 {
 
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::~object_wrapper()
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::~object_wrapper()
 {
 	reset();
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-void ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::reset()
+void ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::reset()
 {
 	if (m_ptr != null)
 		m_ptr->release();
@@ -2799,25 +2799,25 @@ void ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_vi
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-void ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::reset_unsafe()
+void ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::reset_unsafe()
 {
 	m_ptr = null;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-bool ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::is_empty()const
+bool ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::is_empty()const
 {
 	return m_ptr == null;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>* ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::get(void)const
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>* ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::get(void)const
 {
 	return m_ptr;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-void ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::set(type* ptr)
+void ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::set(type* ptr)
 {
 	auto temp = m_ptr;
 	if (ptr == m_ptr) return;
@@ -2827,43 +2827,43 @@ void ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_vi
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>** ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::addres_of(void)
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>** ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::addres_of(void)
 {
 	return &m_ptr;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>** ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::addres_for_init(void)
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>** ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::addres_for_init(void)
 {
 	reset();
 	return &m_ptr;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator = (type* ptr)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator = (type* ptr)
 {
 	set(ptr);
 	return*this;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator = (const ang::nullptr_t&)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator = (const ang::nullptr_t&)
 {
 	reset();
 	return*this;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator = (collections::ienum<pair_type> const* items)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator = (collections::ienum<pair_type> const* items)
 {
 	if (is_empty())
-		set(new ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>());
+		set(new ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>());
 	m_ptr->copy(items);
 	return*this;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator = (object_wrapper && ptr)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator = (object_wrapper && ptr)
 {
 	if (this == &other)
 		return *this;
@@ -2874,73 +2874,73 @@ ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t,
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator = (object_wrapper const& ptr)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator = (object_wrapper const& ptr)
 {
 	set(ptr.get());
 	return*this;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator += (pair_type item)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator += (pair_type item)
 {
 	if (is_empty())
-		set(new ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>());
+		set(new ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>());
 	m_ptr->push(item);
 	return*this;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator += (collections::ienum<pair_type> const* items)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator += (collections::ienum<pair_type> const* items)
 {
 	if (is_empty())
-		set(new ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>());
+		set(new ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>());
 	m_ptr->extend(item);
 	return*this;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator += (object_wrapper const& ptr)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator += (object_wrapper const& ptr)
 {
 	if (is_empty())
-		set(new ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>());
+		set(new ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>());
 	m_ptr->extend(ptr.get());
 	return*this;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper_ptr<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>> ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator & (void)
+ang::object_wrapper_ptr<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>> ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator & (void)
 {
 	return this;
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker> * ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator -> (void)
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker> * ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator -> (void)
 {
 	return get();
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker> const* ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator -> (void)const
+ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker> const* ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator -> (void)const
 {
 	return get();
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker> * (void)
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker> * (void)
 {
 	return get();
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker> const* (void)const
+ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker> const* (void)const
 {
 	return get();
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-typename ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::data_type& ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator [] (ang::text::raw_cstr_t const& key)
+typename ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::data_type& ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator [] (ang::cstr_t const& key)
 {
-	if (is_empty()) set(new collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>());
+	if (is_empty()) set(new collections::hash_map_object<ang::string, T, allocator, hash_index_maker>());
 	auto it = m_ptr->find(key);
 	if (!it.is_valid()) {
 		it = m_ptr->insert(key, T());
@@ -2949,7 +2949,7 @@ typename ang::object_wrapper<ang::collections::hash_map_object<ang::text::istrin
 }
 
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
-typename ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::data_type ang::object_wrapper<ang::collections::hash_map_object<ang::text::istring_view_t, T, allocator, hash_index_maker>>::operator [] (ang::text::raw_cstr_t const& key)const
+typename ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::data_type ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator [] (ang::cstr_t const& key)const
 {
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));
 	auto it = m_ptr->find(key);

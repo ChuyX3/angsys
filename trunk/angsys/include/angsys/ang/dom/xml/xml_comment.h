@@ -14,7 +14,7 @@ namespace ang
 			{
 			public:
 				static xml_comment_t create_new(xml_document_t, const xml_comment*);
-				static xml_comment_t create_new(xml_document_t, ixml_text_t);
+				static xml_comment_t create_new(xml_document_t, string);
 
 			protected:
 				xml_comment(xml_document_t);

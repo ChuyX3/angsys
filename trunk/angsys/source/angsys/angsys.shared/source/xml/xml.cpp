@@ -18,20 +18,21 @@ using namespace ang;
 using namespace ang::dom;
 using namespace ang::dom::xml;
 
-extern int ang_exceptions_regist_code(uint error_code, cstr_t error_message);
+extern int ang_exceptions_regist_code(uint error_code, castr_t error_message);
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_object, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_object, intf);
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_node, ixml_object);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_items, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_items, intf);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_collection, ixml_object, ixml_items);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_document, ixml_object, ixml_items);
 
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::dom::xml::ixml_serializable, intf);
 
 
 //safe_enum_rrti2(ang::dom::xml, xml_type);
 
-static collections::pair<ang::dom::xml::xml_type, cstr_t> s_xml_type_to_string_map[] = 
+static collections::pair<ang::dom::xml::xml_type, castr_t> s_xml_type_to_string_map[] = 
 {
 	{ ang::dom::xml::xml_type::abstract, "abstract"_s },
 	{ ang::dom::xml::xml_type::text, "text"_s },
@@ -49,7 +50,7 @@ static collections::pair<ang::dom::xml::xml_type, cstr_t> s_xml_type_to_string_m
 	{ ang::dom::xml::xml_type::document, "document"_s },
 };
 
-static collections::pair<cstr_t, ang::dom::xml::xml_type> s_xml_type_parsing_map[] =
+static collections::pair<castr_t, ang::dom::xml::xml_type> s_xml_type_parsing_map[] =
 {
 	{ "abstract"_s, ang::dom::xml::xml_type::abstract },
 	{ "attribute"_s, ang::dom::xml::xml_type::attribute },
@@ -67,7 +68,7 @@ static collections::pair<cstr_t, ang::dom::xml::xml_type> s_xml_type_parsing_map
 	{ "tree"_s, ang::dom::xml::xml_type::tree },
 };
 
-template<> ixml_text_t ixml_object::xml_as<ixml_text>()const
+template<> string ixml_object::xml_as<string_buffer>()const
 {
 	return xml_is_type_of(xml_type::text) ? static_cast<xml_text*>(const_cast<ixml_object*>(this)) : null;
 }
@@ -123,7 +124,7 @@ template<> xml_document_t ixml_object::xml_as<xml_document>()const
 }
 
 
-xml_type_t xml_type_t::parse(xml_cstr_t text)
+xml_type_t xml_type_t::parse(cstr_t text)
 {
 	auto idx = algorithms::binary_search(text, collections::to_array(s_xml_type_parsing_map));
 	if (idx >= algorithms::array_size(s_xml_type_parsing_map))

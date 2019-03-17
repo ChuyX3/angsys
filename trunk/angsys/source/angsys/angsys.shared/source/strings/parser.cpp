@@ -7,7 +7,7 @@
 using namespace ang;
 using namespace ang::text;
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::iparser, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::text::iparser, intf);
 
 #define MY_TYPE ang::text::iparser
 #include "ang/inline/intf_wrapper_specialization.inl"

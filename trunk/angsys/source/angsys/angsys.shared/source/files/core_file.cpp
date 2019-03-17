@@ -133,8 +133,8 @@ wsize mapped_file_buffer::mem_copy(wsize size, pointer data, text::encoding_t en
 		if (encoding == text::encoding::binary)
 			return 0; 
 
-		text::raw_str_t dest(m_buffer_ptr, m_buffer_size, this->encoding());
-		text::raw_str_t src(data, size, encoding);
+		str_t dest(m_buffer_ptr, m_buffer_size, this->encoding());
+		str_t src(data, size, encoding);
 		windex written = 0;
 
 		text::iencoder_t encoder = text::iencoder::get_encoder(dest.encoding());
@@ -349,11 +349,12 @@ ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::files::core_file);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::files::core_file, object, ifile);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::files::core_file, object, ifile);
 
-bool core_file::create(path_view_t path, open_flags_t flags)
+bool core_file::create(cstr_t path_, open_flags_t flags)
 {
 	m_flags = open_flags::null;
 
 #ifdef WINDOWS_PLATFORM
+	cwstr_t path = path_;
 
 	DWORD dwDesiredAccess, dwCreationDisposition, dwShareMode = FILE_SHARE_READ;
 
@@ -420,7 +421,7 @@ bool core_file::create(path_view_t path, open_flags_t flags)
 	}
 #endif
 
-	m_path = path;
+	m_path = path_;
 	wsize size = (wsize)get_file_size(m_hfile);
 
 	if (bool(flags & open_flags::format_text)) //text file
@@ -614,7 +615,7 @@ streams::stream_mode_t core_file::mode()const
 		: streams::stream_mode::unknow;
 }
 
-path_t core_file::path()const
+string core_file::path()const
 {
 	return m_path;
 }

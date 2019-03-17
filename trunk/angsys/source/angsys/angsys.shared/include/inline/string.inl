@@ -142,12 +142,12 @@ raw_cstr_t basic_string_buffer<MY_ENCODING>::cstr(int)const {
 
 str_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING> basic_string_buffer<MY_ENCODING>::str()
 { 
-	return this ? str(0).to_str<ENCODING>() : str_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING>();
+	return this ? str(0).str<ENCODING>() : str_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING>();
 }
 
 cstr_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING> basic_string_buffer<MY_ENCODING>::cstr()const
 {
-	return this ? cstr(0).to_cstr<ENCODING>() : cstr_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING>();
+	return this ? cstr(0).cstr<ENCODING>() : cstr_view<typename text::char_type_by_encoding<MY_ENCODING>::char_t, MY_ENCODING>();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -194,7 +194,7 @@ void ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::reset_unsafe()
 
 bool ang::object_wrapper<basic_string_buffer<MY_ENCODING>>::is_empty()const
 {
-	return m_ptr == null;
+	return m_ptr == null || m_ptr->is_empty();
 }
 
 

@@ -75,8 +75,8 @@ namespace ang
 			ang_begin_interface(LINK ixml_collection, ixml_object, collections::ienum<xml_node>)
 				visible vcall xml_node_t xml_parent()const pure;
 				visible vcall xml_document_t xml_parent_doc()const pure;
-				visible vcall xml_iterator_t find(text::raw_cstr_t, bool invert = false)const pure;
-				visible vcall xml_iterator_t find(text::raw_cstr_t, xml_iterator_t next_to, bool invert = false)const pure;
+				visible vcall xml_iterator_t find(cstr_t, bool invert = false)const pure;
+				visible vcall xml_iterator_t find(cstr_t, xml_iterator_t next_to, bool invert = false)const pure;
 			ang_end_interface();
 		
 		
@@ -136,7 +136,7 @@ namespace ang
 				operator xml::ixml_collection * (void);
 				operator xml::ixml_collection const* (void)const;
 
-				xml_text_t operator[](xml_cstr_t)const;
+				xml_text_t operator[](cstr_t)const;
 			};
 		
 		}
@@ -152,7 +152,7 @@ namespace ang
 		inline dom::xml::xml_backward_iterator_t rend() { return is_empty() ? dom::xml::xml_backward_iterator_t() : get()->rend(); }
 		inline dom::xml::xml_const_backward_iterator_t rbegin()const { return is_empty() ? dom::xml::xml_const_backward_iterator_t() : ((type const*)get())->rbegin(); }
 		inline dom::xml::xml_const_backward_iterator_t rend()const { return is_empty() ? dom::xml::xml_const_backward_iterator_t() : ((type const*)get())->rend(); }
-		inline dom::xml::xml_node_t operator[](text::raw_str_t cstr)const;
+		inline dom::xml::xml_node_t operator[](cstr_t cstr)const;
 	ANG_END_INTF_WRAPPER();
 
 }

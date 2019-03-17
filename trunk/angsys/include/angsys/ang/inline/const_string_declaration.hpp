@@ -15,15 +15,20 @@ namespace ang
 			typedef typename char_type_by_encoding<ENCODING>::cstr_t unsafe_cstr_t;
 			typedef str_view<char_t const, MY_ENCODING> cstr_t;
 
-		public:
-			template<typename T, wsize N> pointer operator new(wsize sz, const T(&ar)[N]) { return basic_const_string_buffer_base::operator new(sz, ENCODING, str_view<const T>(ar)); }
-			template<typename T, text::encoding E> pointer operator new(wsize sz, str_view<T, E> const& str) { return basic_const_string_buffer_base::operator new(sz, ENCODING, (raw_cstr)str); }
+			pointer operator new(wsize sz, raw_cstr_t cstr) {
+				return basic_const_string_buffer_base::operator new(sz, MY_ENCODING, cstr);
+			}
 #ifdef WINDOWS_PLATFORM
-			template<typename T, text::encoding E> void operator delete(pointer ptr, raw_cstr_t str) { return basic_const_string_buffer_base::operator delete(ptr, ENCODING, (raw_cstr)str); }
+			void operator delete(pointer ptr, raw_cstr_t cstr) {
+				basic_const_string_buffer_base::operator delete(ptr, MY_ENCODING, cstr);
+			}
 #elif defined ANDROID_PLATFORM
-			inline void operator delete(pointer ptr) { basic_const_string_buffer_base::operator delete(ptr); }
-#endif
+			void operator delete(pointer ptr) {
+				basic_const_string_buffer_base::operator delete(ptr, MY_ENCODING, raw_cstr_t());
+			}
+#endif // WINDOWS_PLATFORM
 
+		public:
 			basic_const_string_buffer();
 
 			ANG_DECLARE_INTERFACE();
@@ -35,7 +40,7 @@ namespace ang
 			virtual raw_str_t str(int);
 			virtual raw_cstr_t cstr(int)const;
 
-			inline cstr_t cstr()const { return cstr(0).to_cstr<MY_ENCODING>(); }
+			inline cstr_t cstr()const { return cstr(0).cstr<MY_ENCODING>(); }
 
 		private:
 			virtual~basic_const_string_buffer();

@@ -22,7 +22,7 @@ namespace ang
 
 		intf_wrapper()
 			: m_ptr(null) { 
-			static_assert(is_interface<type>::value && !is_object<type>::value, "ERROR: T is not a interface type...");
+			static_assert(is_interface<type>::value && !is_object<type>::value, "ERROR: T is not a intf type...");
 		}
 
 		intf_wrapper(type* ptr)
@@ -207,18 +207,18 @@ namespace ang
 	};
 
 	/******************************************************************/
-	/* template class ang::intf_wrapper<interface> :                  */
-	/*  -> specialization of intf_wrapper<interface> -> intfptr       */
+	/* template class ang::intf_wrapper<intf> :                  */
+	/*  -> specialization of intf_wrapper<intf> -> intfptr       */
 	/******************************************************************/
 	template<> 
-	class LINK intf_wrapper<interface> 
+	class LINK intf_wrapper<intf>
 	{
 	public:
-		typedef interface type;
-		typedef interface* type_ptr;
-		typedef interface& type_ref;
-		typedef interface const* ctype_ptr;
-		typedef interface const& ctype_ref;
+		typedef intf type;
+		typedef intf* type_ptr;
+		typedef intf& type_ref;
+		typedef intf const* ctype_ptr;
+		typedef intf const& ctype_ref;
 
 	public:
 		intf_wrapper();
@@ -261,7 +261,7 @@ namespace ang
 		operator type const* (void)const;
 
 	private:
-		interface* m_ptr;
+		intf* m_ptr;
 
 	};
 
@@ -272,7 +272,7 @@ namespace ang
 	class LINK safe_pointer
 	{
 	public:
-		typedef interface type;
+		typedef intf type;
 
 	private:
 		pointer _info;
@@ -282,16 +282,16 @@ namespace ang
 		safe_pointer();
 		safe_pointer(safe_pointer&&);
 		safe_pointer(safe_pointer const&);
-		safe_pointer(interface*);
+		safe_pointer(intf*);
 		safe_pointer(std::nullptr_t const&);
 		template< typename T>
-		safe_pointer(intf_wrapper<T> obj) : safe_pointer((interface*)obj.get()) {}
+		safe_pointer(intf_wrapper<T> obj) : safe_pointer((intf*)obj.get()) {}
 		template< typename T>
-		safe_pointer(object_wrapper<T> obj) : safe_pointer((interface*)obj.get()) {}
+		safe_pointer(object_wrapper<T> obj) : safe_pointer((intf*)obj.get()) {}
 		~safe_pointer();
 
 	private:
-		void set(interface*);
+		void set(intf*);
 		void reset();
 		void reset_unsafe();
 
@@ -301,21 +301,21 @@ namespace ang
 		typename smart_ptr_type<T>::smart_ptr_t lock();
 
 		safe_pointer& operator = (intfptr);
-		safe_pointer& operator = (interface*);
+		safe_pointer& operator = (intf*);
 		safe_pointer& operator = (safe_pointer&&);
 		safe_pointer& operator = (safe_pointer const&);
 		template< typename T>
-		safe_pointer& operator = (intf_wrapper<T> obj) { return operator = ((interface*)obj.get()); }
+		safe_pointer& operator = (intf_wrapper<T> obj) { return operator = ((intf*)obj.get()); }
 		template< typename T>
-		safe_pointer& operator = (object_wrapper<T> obj) { return operator = ((interface*)obj.get()); }
+		safe_pointer& operator = (object_wrapper<T> obj) { return operator = ((intf*)obj.get()); }
 
 		safe_pointer& operator = (std::nullptr_t const&);
 	};
 
-	template<> LINK intfptr safe_pointer::lock<interface>();
+	template<> LINK intfptr safe_pointer::lock<intf>();
 
 	template< typename T> inline typename smart_ptr_type<T>::smart_ptr_t safe_pointer::lock() {
-		return is_valid() ? interface_cast<typename smart_ptr_type<T>::type>(lock<interface>().get()) : nullptr;
+		return is_valid() ? interface_cast<typename smart_ptr_type<T>::type>(lock<intf>().get()) : nullptr;
 	}
 
 	template<typename T>

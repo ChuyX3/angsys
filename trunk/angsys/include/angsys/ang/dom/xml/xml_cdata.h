@@ -16,7 +16,7 @@ namespace ang
 			public:
 				static xml_cdata_t create_new(const xml_cdata&);
 				static xml_cdata_t create_new(xml_document_t, const xml_cdata*);
-				static xml_cdata_t create_new(xml_document_t, ixml_text_t);
+				static xml_cdata_t create_new(xml_document_t, string);
 
 			public:
 				xml_cdata(xml_document_t);
@@ -25,6 +25,7 @@ namespace ang
 				ANG_DECLARE_INTERFACE();
 
 				xml_node_t xml_clone(xml_document_t)const override;
+				bool xml_has_name()const override;
 				bool xml_has_value()const override;
 
 			private:

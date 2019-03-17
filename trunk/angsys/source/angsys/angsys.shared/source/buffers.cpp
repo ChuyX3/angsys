@@ -3,7 +3,7 @@
 
 using namespace ang;
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::ibuffer_view, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::ibuffer_view, intf);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::ibuffer, ibuffer_view);
 
 #define MY_TYPE ang::ibuffer_view

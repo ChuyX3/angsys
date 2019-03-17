@@ -135,12 +135,12 @@ namespace ang
 
 				template<typename A, typename T>
 				inline void set(T* obj, void(T::*f)(objptr, intf_wrapper<A>)) {
-					m_function = new platform::events::member_event_function<T, is_base_of<interface, T>::value, A>(obj, f);
+					m_function = new platform::events::member_event_function<T, is_base_of<intf, T>::value, A>(obj, f);
 				}
 
 				template<typename A, typename T>
 				inline void set(typename smart_ptr_type<T>::smart_ptr_t obj, void(T::*f)(objptr, intf_wrapper<A>)) {
-					m_function = new platform::events::member_event_function<T, is_base_of<interface, T>::value, A>(obj, f);
+					m_function = new platform::events::member_event_function<T, is_base_of<intf, T>::value, A>(obj, f);
 				}
 
 			public: // Overrides

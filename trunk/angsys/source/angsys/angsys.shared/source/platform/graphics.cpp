@@ -344,7 +344,7 @@ rect<float>& rect<float>::operator /= (float k)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static collections::pair<graphics::colors, cstr_t> s_color_to_string_map[] =
+static collections::pair<graphics::colors, castr_t> s_color_to_string_map[] =
 {
 	{ graphics::colors::null, "null"_s },
 	{ graphics::colors::transparent, "transparent"_s },
@@ -489,7 +489,7 @@ static collections::pair<graphics::colors, cstr_t> s_color_to_string_map[] =
 	{ graphics::colors::white, "white"_s },
 };
 
-static collections::pair<cstr_t, graphics::colors> s_color_parsing_map[] =
+static collections::pair<castr_t, graphics::colors> s_color_parsing_map[] =
 {
 	{ "alice_blue"_s, graphics::colors::alice_blue },
 	{ "antique_white"_s, graphics::colors::antique_white },
@@ -678,7 +678,7 @@ graphics::color::color(byte r, byte g, byte b, byte a)
 
 graphics::color::~color() {}
 
-color_t  graphics::color::parse(text::raw_cstr_t cstr)
+color_t  graphics::color::parse(ang::cstr_t cstr)
 {
 	wsize i = 0;
 	if (text::iencoder::get_encoder(cstr.encoding())->to_char32(cstr.ptr(),i) == U'#')
@@ -695,14 +695,14 @@ color_t  graphics::color::parse(text::raw_cstr_t cstr)
 	}
 }
 
-wstring graphics::color::to_string()const
+string graphics::color::to_string()const
 {
-	wsize idx = algorithms::binary_search<dword, collections::pair<graphics::colors, cstr_t>>(code, s_color_to_string_map);
+	wsize idx = algorithms::binary_search<dword, collections::pair<graphics::colors, castr_t>>(code, s_color_to_string_map);
 	if (idx > algorithms::array_size(s_color_to_string_map))
 	{
-		wstring out = ""_s;
+		astring out = ""_s;
 		out->format(L"#{0i:N08,X,F0}"_s, code);
-		return move(out);
+		return out.get();
 	}
 	else
 	{

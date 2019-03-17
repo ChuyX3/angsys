@@ -41,16 +41,6 @@ namespace ang
 			ang_object(input_binary_file);
 			ang_object(output_binary_file);
 
-#ifdef WINDOWS_PLATFORM
-			typedef wstring path_t;
-			typedef cwstr_t path_view_t;
-			inline str_view<const wchar> operator "" _path(const wchar* str, wsize sz) { return str_view<const wchar>(str, sz); }
-#else
-			typedef string path_t;
-			typedef cstr_t path_view_t;
-			inline str_view<const char> operator "" _path(const char* str, wsize sz) { return str_view<const char>(str, sz); }
-#endif // PLATFORM_WINDOWS
-
 			using streams::stream_mode;
 			using streams::stream_mode_t;
 
@@ -95,7 +85,7 @@ namespace ang
 
 			ang_begin_interface(LINK ifile)
 				visible vcall stream_mode_t mode()const pure;
-				visible vcall path_t path()const pure;
+				visible vcall string path()const pure;
 				visible vcall text::encoding_t format()const pure;
 				visible vcall file_size_t size()const pure;
 				visible vcall bool size(file_size_t) pure;//write mode only
@@ -114,14 +104,14 @@ namespace ang
 
 			ang_begin_interface(LINK ifile_system)
 				visible scall ifile_system_t fs_instance();
-				visible vcall array_view<path_t> paths(file_system_priority_t)const pure;
-				visible vcall void push_path(path_view_t, file_system_priority_t) pure;
-				visible vcall bool open_file(path_view_t, open_flags_t, ifile_ptr_t)pure;
+				visible vcall array_view<string> paths(file_system_priority_t)const pure;
+				visible vcall void push_path(cstr_t, file_system_priority_t) pure;
+				visible vcall bool open_file(cstr_t, open_flags_t, ifile_ptr_t)pure;
 				
-				visible vcall bool open(path_view_t, input_text_file_ptr_t)pure;
-				visible vcall bool open(path_view_t, output_text_file_ptr_t)pure;
-				visible vcall bool open(path_view_t, input_binary_file_ptr_t)pure;
-				visible vcall bool open(path_view_t, output_binary_file_ptr_t)pure;
+				visible vcall bool open(cstr_t, input_text_file_ptr_t)pure;
+				visible vcall bool open(cstr_t, output_text_file_ptr_t)pure;
+				visible vcall bool open(cstr_t, input_binary_file_ptr_t)pure;
+				visible vcall bool open(cstr_t, output_binary_file_ptr_t)pure;
 			ang_end_interface();
 
 		}
@@ -143,7 +133,7 @@ namespace ang
 
 				file();
 				virtual~file();
-				bool create(path_view_t path, open_flags_t flags);
+				bool create(cstr_t path, open_flags_t flags);
 				ibuffer_t map(wsize, file_offset_t);
 				bool unmap(ibuffer_t, wsize);
 
@@ -162,11 +152,11 @@ namespace ang
 			{
 			public:
 				input_text_file();
-				input_text_file(path_view_t path);
+				input_text_file(cstr_t path);
 
 				ANG_DECLARE_INTERFACE();
 
-				bool open(path_view_t path);
+				bool open(cstr_t path);
 				
 				stream_mode_t mode()const override;
 				text::encoding_t format()const override;
@@ -175,9 +165,9 @@ namespace ang
 				bool is_eos()const override;
 				bool cursor(file_offset_t size, stream_reference_t ref)override;
 
-				uint seek(text::raw_cstr_t format)override;
-				uint read(pointer, ang::rtti_t const&);
-				uint read_format(text::raw_cstr_t format, var_args_t&)override;
+				wsize seek(cstr_t format)override;
+				wsize read(pointer, ang::rtti_t const&);
+				wsize read_format(cstr_t format, var_args_t&)override;
 				wsize read(text::istring_t, wsize, wsize*written = null)override;
 				wsize read(text::unknown_str_t, wsize, text::encoding_t, wsize*written = null)override;
 				wsize read_line(text::istring_t, array_view<const char32_t> = U"\n\r", wsize* written = null)override;
@@ -212,10 +202,8 @@ namespace ang
 					return readed;
 				}
 
-				template<typename C, text::encoding E> uint read_format(str_view<C, E> format, var_args_t& va) {
-					return read_format(text::raw_cstr(format), ang::forward<var_args_t&>(va));
-				}
-				template<typename C, text::encoding E, typename...Ts> uint read_format(str_view<C, E> format, Ts&...args) {
+		
+				template<typename...Ts> uint read_format(cstr_t format, Ts&...args) {
 					var_args_t va = new var_args();
 					return streams::read_format_helper<input_text_file_t, C, E, Ts...>::read_format(this, format, va, args...);
 				}
@@ -231,11 +219,11 @@ namespace ang
 			{
 			public:
 				output_text_file();
-				output_text_file(path_view_t path, text::encoding_t = text::encoding::ascii);
+				output_text_file(cstr_t path, text::encoding_t = text::encoding::ascii);
 
 				ANG_DECLARE_INTERFACE();
 
-				bool open(path_view_t path, text::encoding_t = text::encoding::ascii);
+				bool open(cstr_t path, text::encoding_t = text::encoding::ascii);
 				stream_mode_t mode()const override;
 				text::encoding_t format()const override;
 				file_offset_t cursor()const override;
@@ -243,9 +231,9 @@ namespace ang
 				bool cursor(file_offset_t size, stream_reference_t ref)override;
 
 				bool command(streams::special_command_t) override;
-				wsize write(text::raw_cstr_t)override;
-				wsize write_line(text::raw_cstr_t)override;
-				wsize write_format(text::raw_cstr_t, var_args_t)override;
+				wsize write(cstr_t)override;
+				wsize write_line(cstr_t)override;
+				wsize write_format(cstr_t, var_args_t)override;
 				template<typename T> wsize write(T const& val) {
 					streams::write_text_helper<output_text_file_t, T>::write_text(this, val);
 				}
@@ -261,11 +249,11 @@ namespace ang
 			{
 			public:
 				input_binary_file();
-				input_binary_file(path_view_t path);
+				input_binary_file(cstr_t path);
 
 				ANG_DECLARE_INTERFACE();
 
-				bool open(path_view_t path);
+				bool open(cstr_t path);
 
 				stream_mode_t mode()const override;
 				text::encoding_t format()const override;
@@ -292,11 +280,11 @@ namespace ang
 			{
 			public:
 				output_binary_file();
-				output_binary_file(path_view_t path, text::encoding_t = text::encoding::ascii);
+				output_binary_file(cstr_t path, text::encoding_t = text::encoding::ascii);
 
 				ANG_DECLARE_INTERFACE();
 
-				bool open(path_view_t path, text::encoding_t = text::encoding::ascii);
+				bool open(cstr_t path, text::encoding_t = text::encoding::ascii);
 				stream_mode_t mode()const override;
 				text::encoding_t format()const override;
 				file_offset_t cursor()const override;

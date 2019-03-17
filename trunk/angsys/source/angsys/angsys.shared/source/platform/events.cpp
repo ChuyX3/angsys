@@ -8,7 +8,7 @@ using namespace ang::platform;
 using namespace ang::platform::events;
 
 safe_enum_rrti2(ang::platform::events, core_msg);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::ievent, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::platform::events::ievent, intf);
 
 ievent_function::~ievent_function()
 {

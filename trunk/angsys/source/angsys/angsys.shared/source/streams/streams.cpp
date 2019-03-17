@@ -4,9 +4,9 @@
 using namespace ang;
 using namespace ang::streams;
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::streams::istream, interface);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::streams::iinput_stream, interface);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::streams::ioutput_stream, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::streams::istream, intf);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::streams::iinput_stream, intf);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::streams::ioutput_stream, intf);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::streams::itext_input_stream, iinput_stream);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::streams::itext_output_stream, ioutput_stream);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::streams::ibinary_input_stream, iinput_stream);

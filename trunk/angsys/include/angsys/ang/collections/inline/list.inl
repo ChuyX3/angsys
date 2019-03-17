@@ -101,7 +101,7 @@ inline ang::collections::list_object<T, A>::~list_object()
 template<typename T, template <typename> class A>
 inline ang::rtti_t const& ang::collections::list_object<T, A>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((string("ang::collections::list<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::list<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<ilist<T>>() };
 	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<ang::collections::list_object<T, A>>(), align_of<ang::collections::list_object<T, A>>(), parents, &default_query_interface);
 	return info;

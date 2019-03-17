@@ -18,29 +18,29 @@ using namespace ang;
 
 safe_enum_rrti2(ang, comparision_result);
 
-bool interface::default_query_interface(rtti_t const& src_id, unknown_t src, rtti_t const& out_id, unknown_ptr_t out)
+bool intf::default_query_interface(rtti_t const& src_id, unknown_t src, rtti_t const& out_id, unknown_ptr_t out)
 {
 #ifdef _DEBUG
-	assert(src_id.is_type_of(interface::class_info()));
+	assert(src_id.is_type_of(intf::class_info()));
 #endif
-	return src ? reinterpret_cast<interface*>(src)->query_interface(out_id, out) : false;
+	return src ? reinterpret_cast<intf*>(src)->query_interface(out_id, out) : false;
 }
 
-rtti_t const& interface::class_info() {
-	static const char name[] = "ang::interface";
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(interface), alignof(wsize), null, &default_query_interface);
+rtti_t const& intf::class_info() {
+	static const char name[] = "ang::intf";
+	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(intf), alignof(wsize), null, &default_query_interface);
 	return info;
-	align_of<interface>();
+	align_of<intf>();
 }
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::iobject, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::iobject, intf);
 
 typedef struct smart_ptr_info
 {
 	dword _mem_ref_counter; //4bytes
 	dword _obj_ref_counter; //4bytes
 	memory::iraw_allocator* allocator;
-	interface* _object; //4-8bytes
+	intf* _object; //4-8bytes
 }smart_ptr_info_t, *smart_ptr_info_ptr_t;
 
 #define GET_SMART_PTR_INFO(m_ptr) smart_ptr_info_ptr_t(wsize(m_ptr) - align_up<16, sizeof(smart_ptr_info_t)>())
@@ -57,7 +57,7 @@ safe_pointer::safe_pointer()
 
 safe_pointer::safe_pointer(safe_pointer&& other)
 	: _info(other._info)
-	, _offset(0)
+	, _offset(other._offset)
 {
 	other._info = nullptr;
 }
@@ -66,7 +66,7 @@ safe_pointer::safe_pointer(safe_pointer const& other)
 	: _info(nullptr)
 	, _offset(0)
 {
-	set(const_cast<safe_pointer&>(other).lock<object>());
+	set(const_cast<safe_pointer&>(other).lock<intf>());
 }
 
 
@@ -76,7 +76,7 @@ safe_pointer::safe_pointer(std::nullptr_t const&)
 {
 }
 
-safe_pointer::safe_pointer(interface* obj)
+safe_pointer::safe_pointer(intf* obj)
 	: _info(nullptr)
 	, _offset(0)
 {
@@ -102,7 +102,7 @@ void safe_pointer::reset()
 	_offset = 0;
 }
 
-void safe_pointer::set(interface* _obj)
+void safe_pointer::set(intf* _obj)
 {
 	iobject* obj = interface_cast<iobject>(_obj);
 
@@ -131,12 +131,12 @@ bool safe_pointer::is_valid()const
 }
 
 template<>
-intfptr safe_pointer::lock<interface>()
+intfptr safe_pointer::lock<intf>()
 {
-	return is_valid() ? (interface*)(wsize(smart_ptr_info_ptr_t(_info)->_object) + _offset) : nullptr;
+	return is_valid() ? (intf*)(wsize(smart_ptr_info_ptr_t(_info)->_object) + _offset) : nullptr;
 }
 
-safe_pointer& safe_pointer::operator = (interface* obj)
+safe_pointer& safe_pointer::operator = (intf* obj)
 {
 	set(obj);
 	return *this;
@@ -163,7 +163,7 @@ safe_pointer& safe_pointer::operator = (safe_pointer&& other)
 
 safe_pointer& safe_pointer::operator = (safe_pointer const& ptr)
 {
-	intfptr obj = const_cast<safe_pointer&>(ptr).lock<interface>();
+	intfptr obj = const_cast<safe_pointer&>(ptr).lock<intf>();
 	set(obj.get());
 	return *this;
 }
@@ -183,7 +183,7 @@ object* ang_alloc_object_memory(ang_size_t sz, ang_memory_hint_t hint)
 	ptr->_obj_ref_counter = 0;
 	ptr->_mem_ref_counter = 0;
 	ptr->allocator = allocator;
-	ptr->_object = (interface*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
+	ptr->_object = (intf*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
 	return static_cast<object*>(ptr->_object);
 }
 
@@ -195,7 +195,7 @@ object* ang_alloc_object_memory(ang_size_t sz, const char* file, int line, ang_m
 	ptr->_obj_ref_counter = 0;
 	ptr->_mem_ref_counter = 0;
 	ptr->allocator = allocator;
-	ptr->_object = (interface*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
+	ptr->_object = (intf*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
 	return (object*)ptr->_object;
 }
 #endif
@@ -251,7 +251,7 @@ pointer object::operator new(wsize sz, const word, const char* file, int line)
 	ptr->_obj_ref_counter = 0;
 	ptr->_mem_ref_counter = 0;
 	ptr->allocator = allocator;
-	ptr->_object = (interface*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
+	ptr->_object = (intf*)(wsize(ptr) + align_up<16, sizeof(smart_ptr_info_t)>());
 	return ptr->_object;
 }
 #endif
@@ -281,7 +281,7 @@ object::~object()
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::object, ang::iobject);
 ANG_IMPLEMENT_INTERFACE_RUNTIME_INFO(object);
-ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(object, iobject, interface);
+ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(object, iobject, intf);
 
 dword object::add_ref()
 {
@@ -491,48 +491,48 @@ object_wrapper<object>::operator object const* (void)const
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
-intf_wrapper<interface>::intf_wrapper() : m_ptr(null) {
+intf_wrapper<intf>::intf_wrapper() : m_ptr(null) {
 }
 
-intf_wrapper<interface>::intf_wrapper(ang::nullptr_t const&) : m_ptr(null) {
+intf_wrapper<intf>::intf_wrapper(ang::nullptr_t const&) : m_ptr(null) {
 }
 
-intf_wrapper<interface>::intf_wrapper(interface* ptr) : m_ptr(null) {
+intf_wrapper<intf>::intf_wrapper(intf* ptr) : m_ptr(null) {
 	set(ptr);
 }
 
-intf_wrapper<interface>::intf_wrapper(intf_wrapper && other) : m_ptr(null) {
-	interface * temp = other.m_ptr;
+intf_wrapper<intf>::intf_wrapper(intf_wrapper && other) : m_ptr(null) {
+	intf * temp = other.m_ptr;
 	other.m_ptr = null;
 	m_ptr = temp;
 }
 
-intf_wrapper<interface>::intf_wrapper(intf_wrapper const& other) : m_ptr(null) {
+intf_wrapper<intf>::intf_wrapper(intf_wrapper const& other) : m_ptr(null) {
 	set(other.m_ptr);
 }
 
-intf_wrapper<interface>::~intf_wrapper() {
+intf_wrapper<intf>::~intf_wrapper() {
 	reset();
 }
 
-void intf_wrapper<interface>::reset()
+void intf_wrapper<intf>::reset()
 {
 	iobject * _obj = interface_cast<iobject>(m_ptr);
 	if (_obj)_obj->release();
 	m_ptr = null;
 }
 
-bool intf_wrapper<interface>::is_empty()const
+bool intf_wrapper<intf>::is_empty()const
 {
 	return m_ptr == null;
 }
 
-interface* intf_wrapper<interface>::get(void)const
+intf* intf_wrapper<intf>::get(void)const
 {
 	return m_ptr;
 }
 
-void intf_wrapper<interface>::set(interface* ptr)
+void intf_wrapper<intf>::set(intf* ptr)
 {
 	if (ptr == m_ptr) return;
 	iobject * _old = interface_cast<iobject>(m_ptr);
@@ -542,19 +542,19 @@ void intf_wrapper<interface>::set(interface* ptr)
 	if (_old)_old->release();
 }
 
-intf_wrapper<interface>& intf_wrapper<interface>::operator = (interface* ptr)
+intf_wrapper<intf>& intf_wrapper<intf>::operator = (intf* ptr)
 {
 	set(ptr);
 	return*this;
 }
 
-intf_wrapper<interface>& intf_wrapper<interface>::operator = (ang::nullptr_t const&)
+intf_wrapper<intf>& intf_wrapper<intf>::operator = (ang::nullptr_t const&)
 {
 	reset();
 	return*this;
 }
 
-intf_wrapper<interface>& intf_wrapper<interface>::operator = (intf_wrapper<interface> && other)
+intf_wrapper<intf>& intf_wrapper<intf>::operator = (intf_wrapper<intf> && other)
 {
 	if (this == &other)
 		return *this;
@@ -564,38 +564,38 @@ intf_wrapper<interface>& intf_wrapper<interface>::operator = (intf_wrapper<inter
 	return*this;
 }
 
-intf_wrapper<interface>& intf_wrapper<interface>::operator = (intf_wrapper<interface> const& other)
+intf_wrapper<intf>& intf_wrapper<intf>::operator = (intf_wrapper<intf> const& other)
 {
 	set(other.m_ptr);
 	return*this;
 }
 
-interface ** intf_wrapper<interface>::addres_of(void)
+intf ** intf_wrapper<intf>::addres_of(void)
 {
 	return &m_ptr;
 }
 
-intf_wrapper_ptr<interface> intf_wrapper<interface>::operator & (void)
+intf_wrapper_ptr<intf> intf_wrapper<intf>::operator & (void)
 {
 	return this;
 }
 
-interface* intf_wrapper<interface>::operator -> (void)
+intf* intf_wrapper<intf>::operator -> (void)
 {
 	return get();
 }
 
-interface const* intf_wrapper<interface>::operator -> (void)const
+intf const* intf_wrapper<intf>::operator -> (void)const
 {
 	return get();
 }
 
-intf_wrapper<interface>::operator interface* (void)
+intf_wrapper<intf>::operator intf* (void)
 {
 	return get();
 }
 
-intf_wrapper<interface>::operator interface const* (void)const
+intf_wrapper<intf>::operator intf const* (void)const
 {
 	return get();
 }

@@ -78,7 +78,7 @@ namespace ang
 		using type = text::basic_string<MY_ENCODING, MY_ALLOCATOR>;
 		using ret_type = text::basic_string<MY_ENCODING, MY_ALLOCATOR>;
 		using ptr_type = text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>*;
-		using arg_type = text::raw_cstr_t;
+		using arg_type = cstr_t;
 		using property_class = base_property<type>;
 		using getter_type = ret_type(*)(property_class const*);
 		using setter_type = void(*)(property_class*, arg_type);
@@ -89,7 +89,7 @@ namespace ang
 		using type = text::basic_string<MY_ENCODING, MY_ALLOCATOR>;
 		using ret_type = text::basic_string<MY_ENCODING, MY_ALLOCATOR>;
 		using ptr_type = text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>*;
-		using arg_type = text::raw_cstr_t;
+		using arg_type = cstr_t;
 		using property_class = base_property<type>;
 		using getter_type = ret_type(*)(property_class const*);
 		using setter_type = void(*)(property_class*, arg_type);
@@ -104,15 +104,15 @@ namespace ang
 			return str;
 		}
 		object_wrapper(text::istring_t str) : m_ptr(null) {
-			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>((text::raw_cstr)str));
+			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>((ang::cstr_t)str));
 		}
 		object_wrapper(text::istring_view_t str) : m_ptr(null) {
-			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>((text::raw_cstr)str));
+			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>((ang::cstr_t)str));
 		}
 		object_wrapper(text::basic_const_string_buffer<MY_ENCODING>* str) : m_ptr(null) {
 			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 		}
-		object_wrapper(text::raw_cstr_t const& str) : m_ptr(null) {
+		object_wrapper(ang::cstr_t const& str) : m_ptr(null) {
 			set(new text::basic_string_buffer<MY_ENCODING, MY_ALLOCATOR>(str));
 		}
 		template<typename T, text::encoding E> 
@@ -175,8 +175,8 @@ namespace ang
 
 		operator str_view<typename text::char_type_by_encoding<ENCODING>::char_t, ENCODING>(void) { return get()->str(); }
 		operator cstr_view<typename text::char_type_by_encoding<ENCODING>::char_t, ENCODING>(void)const { return get()->cstr(); }
-		explicit operator text::raw_str_t (void)const { return get()->str(); }
-		explicit operator text::raw_cstr_t (void)const { return get()->cstr(); }
+		operator ang::str_t (void)const { return get()->str(); }
+		operator ang::cstr_t (void)const { return get()->cstr(); }
 		template<typename I>typename text::char_type_by_encoding<ENCODING>::char_t& operator [](I idx) { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return get()->str()[idx]; }
 		template<typename I>typename text::char_type_by_encoding<ENCODING>::char_t const& operator [](I idx)const { static_assert(is_integer_value<I>::value, "no integer value is no accepted"); return get()->cstr()[idx]; }
 		template<text::encoding E> 

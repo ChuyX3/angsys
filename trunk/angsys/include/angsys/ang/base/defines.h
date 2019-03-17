@@ -116,7 +116,7 @@
 
 #define ANG_UTILS_TO_STRING_(...) #__VA_ARGS__
 #define ANG_UTILS_TO_STRING(...) ANG_UTILS_TO_STRING_(__VA_ARGS__)
-#define ANG_UTILS_TO_STRING_OBJ_(...) ang::cstr_t(#__VA_ARGS__)
+#define ANG_UTILS_TO_STRING_OBJ_(...) ang::castr_t(#__VA_ARGS__)
 #define ANG_UTILS_TO_STRING_OBJ(...) ANG_UTILS_TO_STRING_OBJ_(__VA_ARGS__)
 
 

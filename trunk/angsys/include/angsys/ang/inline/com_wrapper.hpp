@@ -56,6 +56,9 @@ namespace ang
 			reset();
 		}
 
+		template<typename U> auto as(com_wrapper_ptr<U> ptr);
+		template<typename U> auto as(U** ptr);
+
 	public: //properties
 
 		void reset() {
@@ -204,6 +207,16 @@ namespace ang
 	template<typename T>
 	inline com_wrapper_ptr<T> com_wrapper<T>::operator & (void) {
 		return this;
+	}
+
+	template<typename T> template<typename U> 
+	inline auto com_wrapper<T>::as(com_wrapper_ptr<U> ptr) {
+		return m_ptr->QueryInterface((U**)ptr);
+	}
+
+	template<typename T> template<typename U> 
+	inline auto com_wrapper<T>::as(U** ptr) {
+		return m_ptr->QueryInterface(ptr);
 	}
 }
 

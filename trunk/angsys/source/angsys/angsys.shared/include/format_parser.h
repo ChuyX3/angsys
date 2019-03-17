@@ -886,26 +886,26 @@ namespace ang
 		template<encoding E>
 		inline long64 parser_interface<E>::to_signed(raw_cstr_t cstr, windex& i, bool increment, int base)const {
 			windex j = i;
-			return str_to_signed<char_t const, E>(cstr.to_cstr<E>(), increment ? i : j, base);
+			return str_to_signed<char_t const, E>(cstr.cstr<E>(), increment ? i : j, base);
 		}
 
 		template<encoding E>
 		inline ulong64 parser_interface<E>::to_unsigned(raw_cstr_t cstr, windex& i, bool increment, int base)const {
 			windex j = i;
-			return str_to_unsigned<char_t const, E>(cstr.to_cstr<E>(), increment ? i : j, base);
+			return str_to_unsigned<char_t const, E>(cstr.cstr<E>(), increment ? i : j, base);
 		}
 
 		template<encoding E>
 		inline double parser_interface<E>::to_floating(raw_cstr_t cstr, windex& i, bool increment, bool ex)const {
 			windex j = i;
-			return str_to_floating<char_t const, E>(cstr.to_cstr<E>(), increment ? i : j, ex);
+			return str_to_floating<char_t const, E>(cstr.cstr<E>(), increment ? i : j, ex);
 		}
 
 		template<encoding E>
 		inline bool parser_interface<E>::format(raw_cstr_t cstr, args_t args, encoding_t e, istring_ptr_t out)const {
 			if (out.is_empty())
 				return false;
-			auto format = cstr.to_cstr<E>();
+			auto format = cstr.cstr<E>();
 			istring_t str = istring_factory::get_factory(e)->create_string();
 			*out = str;
 			str->clear();
@@ -932,7 +932,7 @@ namespace ang
 		inline bool parser_interface<E>::format(raw_cstr_t cstr, var_args_t args, encoding_t e, istring_ptr_t out) const {
 			if (out.is_empty())
 				return false;
-			auto format = cstr.to_cstr<E>();
+			auto format = cstr.cstr<E>();
 			istring_t str = istring_factory::get_factory(e)->create_string();
 			*out = str;
 			str->clear();
@@ -958,14 +958,14 @@ namespace ang
 		template<encoding E>
 		inline text_format_t parser_interface<E>::parse(raw_cstr_t format)const {
 			text_format_flags f;
-			f.value = format_parser<E>::parse(format.to_cstr<E>());
+			f.value = format_parser<E>::parse(format.cstr<E>());
 			return f;
 		}
 
 		template<encoding E>
 		inline text_format_t parser_interface<E>::parse(raw_cstr_t format, wsize& beg, int& arg)const {
 			text_format_flags f;
-			f.value = format_parser<E>::parse(format.to_cstr<E>(), beg, arg);
+			f.value = format_parser<E>::parse(format.cstr<E>(), beg, arg);
 			return f;
 		}
 	}

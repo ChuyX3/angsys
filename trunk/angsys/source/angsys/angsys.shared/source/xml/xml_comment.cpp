@@ -34,12 +34,12 @@ xml_comment_t xml_comment::create_new(xml_document_t doc, const xml_comment* com
 	if (comment)
 	{
 		if (!comment->m_content.is_empty() && comment->m_content->xml_is_type_of(xml_type::text))
-			node->push_value(doc->create_pcdata((xml_cstr_t)comment->m_content.get()->xml_as<xml_text>()));
+			node->push_value(doc->create_pcdata((cstr_t)comment->m_content.get()->xml_as<xml_text>()));
 	}
 	return node;
 }
 
-xml_comment_t xml_comment::create_new(xml_document_t doc, ixml_text_t value) {
+xml_comment_t xml_comment::create_new(xml_document_t doc, string value) {
 	xml_comment_t node = NEW xml_comment(doc);
 	node->push_value(value);
 	return node;
