@@ -9,10 +9,8 @@ namespace ang
 		namespace d3d11
 		{
 			class d3d11_texture;
-			class d3d11_texture_loader;
 		
 			typedef object_wrapper<d3d11_texture> d3d11_texture_t;
-			typedef object_wrapper<d3d11_texture_loader> d3d11_texture_loader_t;
 
 			struct tex_file_info_t
 			{
@@ -37,15 +35,18 @@ namespace ang
 			inline textures::tex_type_t traslate_type_dx2(D3D11_RESOURCE_DIMENSION type);
 
 			class d3d11_texture
-				: public object
-				, public textures::itexture
+				: public smart<
+				d3d11_texture, 
+				textures::itexture, 
+				resources::iresource>
 			{
 			private:
-				string m_texture_name;
+				string m_resource_sid;
 				DXGI_FORMAT m_tex_format;
+				buffers::buffer_usage_t m_usage;
+				buffers::buffer_bind_flag_t m_bind_flags;
 				textures::tex_type_t m_tex_type;
-				graphics::size<float> m_tex_dimentions;
-				float m_tex_dimentions_depth;
+				size3d<uint> m_tex_dimentions;
 				com_wrapper<ID3D11Resource> m_d3d_raw_resource;
 				com_wrapper<ID3D11ShaderResourceView> m_d3d_shader_view;
 
@@ -54,23 +55,37 @@ namespace ang
 
 				ANG_DECLARE_INTERFACE();
 
-
-				void abc()
-				{
-					//has_runtime_type_info<d3d11_texture>::value
-				}
 			public: //overrides
-				text::istring_view_t resource_name()const override;
+				void clear()override;
+
+				resources::iresource_t resource()const override;
 				textures::tex_type_t tex_type()const override;
 				textures::tex_format_t tex_format()const override;
-				graphics::size<float> tex_dimentions()const override;
+				size3d<uint> tex_dimentions()const override;
+				buffers::buffer_type_t buffer_type()const override;
+				buffers::buffer_usage_t buffer_usage()const override;
+				buffers::buffer_bind_flag_t buffer_bind_flag()const override;
+				ibuffer_t map(idriver_t, bool writeMode) override;
+				bool unmap(idriver_t, ibuffer_t) override;
+
+				resources::resource_type_t resource_type()const override;
+				string resource_sid()const override;
+				effects::ieffect_t to_effect() override;
+				effects::ishaders_t to_shaders() override;
+				textures::itexture_t to_texture() override;
+				iframe_buffer_t to_frame_buffer() override;
+				buffers::iindex_buffer_t to_index_buffer() override;
+				buffers::ivertex_buffer_t to_vertex_buffer() override;
 
 			public: //internal
-				bool load(d3d11_texture_loader_t, dom::xml::xml_node_t);
+				bool create(d3d11_driver_t driver, textures::tex_type_t type, textures::tex_format_t color_format, buffers::buffer_usage_t usage, buffers::buffer_bind_flag_t flags, size3d<uint> dimentions, string sid = null);
+				bool load(d3d11_driver_t, string filename, textures::tex_type_t type, string sid = null);
+				//bool load(d3d11_driver_t, array<string> files, textures::tex_type_t type);
 				bool use_texture(d3d11_driver_t, index idx)const;
+				bool attach(com_wrapper<ID3D11Resource> resource, d3d11_driver_t driver = null, string sid = null);
+				bool attach(com_wrapper<ID3D11ShaderResourceView> _view, string sid = null);
 
-				bool attach(com_wrapper<ID3D11ShaderResourceView> _view);
-
+				inline ID3D11Resource* D3D11Resource()const { return m_d3d_raw_resource.get(); }
 				inline ID3D11Texture1D* D3D11Texture1D()const { return static_cast<ID3D11Texture1D*>(m_d3d_raw_resource.get()); }
 				inline ID3D11Texture2D* D3D11Texture2D()const { return static_cast<ID3D11Texture2D*>(m_d3d_raw_resource.get()); }
 				inline ID3D11Texture3D* D3D11Texture3D()const { return static_cast<ID3D11Texture3D*>(m_d3d_raw_resource.get()); }
@@ -82,9 +97,7 @@ namespace ang
 			};
 
 
-			class d3d11_texture_loader
-				: public object
-				, public textures::itexture_loader
+			struct d3d11_texture_loader
 			{
 			public:
 				static ibuffer_t load_dds(core::files::input_binary_file_t, tex_file_info_t& header);
@@ -94,46 +107,6 @@ namespace ang
 				static bool load_texture(d3d11_driver_t, core::files::input_binary_file_t, tex_file_info_t& info, ID3D11Resource**, ID3D11ShaderResourceView**, bool isCube = false);
 				static bool load_texture(d3d11_driver_t, collections::vector<core::files::input_binary_file_t> const&, tex_file_info_t& info, ID3D11Resource**, ID3D11ShaderResourceView**, bool isCube = false);
 
-			private:
-				core::async::mutex_ptr_t m_mutex;
-				d3d11_driver_t m_driver;
-				core::files::ifile_system_t m_fs;
-				core::async::thread_t m_work_thead;
-				collections::hash_map<string, wstring> m_source_map;
-				collections::hash_map<string, dom::xml::xml_node_t> m_texture_info_map;
-				collections::hash_map<string, weak_ptr<d3d11_texture>> m_textures;
-
-			public:
-				d3d11_texture_loader(d3d11_driver_t parent);
-
-				ANG_DECLARE_INTERFACE();
-
-			public: //overrides
-				bool load_sources(dom::xml::xml_node_t) override;
-				void set_file_system(core::files::ifile_system_t) override;
-				bool load_library(dom::xml::xml_node_t) override;
-				core::async::iasync<textures::itexture_loader_t> load_library_async(dom::xml::xml_node_t) override;
-				textures::itexture_t load_texture(text::raw_cstr_t) override;
-				textures::itexture_t load_texture(dom::xml::xml_node_t) override;
-				core::async::iasync<textures::itexture_t> load_texture_async(text::raw_cstr_t) override;
-				core::async::iasync<textures::itexture_t> load_texture_async(dom::xml::xml_node_t) override;
-				textures::itexture_t find_texture(text::raw_cstr_t)const override;
-
-			public: //internal
-				inline core::files::ifile_system* get_file_system()const {
-					return m_fs.is_empty() ? core::files::ifile_system::fs_instance() : m_fs.get();
-				}
-				inline d3d11_driver* driver()const { return m_driver.get(); }
-				inline wstring find_file(text::raw_cstr_t sid)const {
-					core::async::scope_locker<core::async::mutex_ptr_t> lock = m_mutex;
-					if (m_source_map.is_empty())
-						return "";
-					auto it = m_source_map->find(sid);
-					return it.is_valid() ? it->value : wstring();
-				}
-
-			private:
-				virtual~d3d11_texture_loader();
 			};
 		}
 	}

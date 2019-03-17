@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "d3d11/driver.h"
+#include "d3d11/d3d11_driver.h"
 
 #if defined _DEBUG
 #define new new(__FILE__, __LINE__)
@@ -11,83 +11,128 @@ using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
 
+namespace ang
+{
+	namespace graphics
+	{
+		namespace d3d11
+		{
+			inline bool sdk_layers_available()
+			{
+				HRESULT hr = D3D11CreateDevice(
+					nullptr,
+					D3D_DRIVER_TYPE_NULL,       // There is no need to create a real hardware device.
+					0,
+					D3D11_CREATE_DEVICE_DEBUG,  // Check for the SDK layers.
+					nullptr,                    // Any feature level will do.
+					0,
+					D3D11_SDK_VERSION,          // Always set this to D3D11_SDK_VERSION for Windows Store apps.
+					nullptr,                    // No need to keep the D3D device reference.
+					nullptr,                    // No need to know the feature level.
+					nullptr                     // No need to keep the D3D device context reference.
+				);
+				return SUCCEEDED(hr);
+			}
+		}
+	}	
+}
 
-//#define MY_TYPE ang::graphics::d3d11::d3d11_driver
-//#include <ang/inline/object_wrapper_specialization.inl>
-//#undef MY_TYPE
-
-d3d11_driver::d3d11_driver(long64 adapter_id)
+d3d11_driver::d3d11_driver()
 {
 	m_mutex = make_shared<core::async::mutex>();
 	m_cull_mode = graphics::cull_mode::back;
 	m_front_face = graphics::front_face::def;
 	m_blend_mode = graphics::blend_mode::disable;
-	init_driver(adapter_id);
+	m_async_worker = core::async::thread::create_thread();
 }
 
 d3d11_driver::~d3d11_driver()
 {
-
+	m_async_worker->exit();
 }
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_driver);
-ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_driver, object, idriver);
-ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_driver, object, idriver);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_driver, object, idriver, ifactory);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_driver, object, idriver, ifactory);
 
 void d3d11_driver::clear()
 {
 	close_driver();
 }
 
-inline bool sdk_layers_available()
+void d3d11_driver::set_file_system(core::files::ifile_system_t fs)
 {
-	HRESULT hr = D3D11CreateDevice(
-		nullptr,
-		D3D_DRIVER_TYPE_NULL,       // There is no need to create a real hardware device.
-		0,
-		D3D11_CREATE_DEVICE_DEBUG,  // Check for the SDK layers.
-		nullptr,                    // Any feature level will do.
-		0,
-		D3D11_SDK_VERSION,          // Always set this to D3D11_SDK_VERSION for Windows Store apps.
-		nullptr,                    // No need to keep the D3D device reference.
-		nullptr,                    // No need to know the feature level.
-		nullptr                     // No need to keep the D3D device context reference.
-	);
-	return SUCCEEDED(hr);
+	m_mutex->lock();
+	m_fs = fs;
+	m_mutex->unlock();
 }
 
-bool d3d11_driver::init_driver(long64 adapter_id)
+bool d3d11_driver::init_driver(platform::icore_view_t, long64 adapter_id)
 {
 	HRESULT hr = S_OK;
-
 	// This flag adds support for surfaces with a different color channel ordering
 	// than the API default. It is required for compatibility with Direct2D.
 	uint createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+	UINT createFlags = 0;
 #ifdef _DEBUG
-	if (sdk_layers_available())
+	if (sdk_layers_available)
+	{
+		createFlags |= DXGI_CREATE_FACTORY_DEBUG;
 		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	}
 #endif
+
+	LUID id = reinterpret_cast<LUID&>(adapter_id);
+	if ((id.HighPart != 0) || (id.LowPart != 0))
+	{	
+		com_wrapper<IDXGIFactory1> dxgiFactory;
+		hr = CreateDXGIFactory2(createFlags, IID_PPV_ARGS((IDXGIFactory1**)&dxgiFactory));
+	
+		if (FAILED(hr))
+			return false;
+
+		com_wrapper<IDXGIFactory4> dxgiFactory4;
+		hr = dxgiFactory.as(&dxgiFactory4);
+		dxgiFactory4->EnumAdapterByLuid(id, IID_PPV_ARGS((IDXGIAdapter3**)&m_dxgi_adapter));
+	}
+	else
+	{
+		m_dxgi_adapter.reset();
+	}
+
 
 	D3D_FEATURE_LEVEL featureLevels[] =
 	{
+		D3D_FEATURE_LEVEL_12_1,
+		D3D_FEATURE_LEVEL_12_0,
 		D3D_FEATURE_LEVEL_11_1,
 		D3D_FEATURE_LEVEL_11_0,
 		D3D_FEATURE_LEVEL_10_1,
-		D3D_FEATURE_LEVEL_10_0,
-		D3D_FEATURE_LEVEL_9_3,
-		D3D_FEATURE_LEVEL_9_2,
-		D3D_FEATURE_LEVEL_9_1
+		D3D_FEATURE_LEVEL_10_0
 	};
 	uint numFeatureLevels = ARRAYSIZE(featureLevels);
 
 	ID3D11Device * device;
 	ID3D11DeviceContext * context;
 
-	hr = D3D11CreateDevice(null, D3D_DRIVER_TYPE_HARDWARE, null, createDeviceFlags, featureLevels, numFeatureLevels,
-		D3D11_SDK_VERSION, &device, &m_feature_level, &context);
+	if (m_dxgi_adapter != null)
+	{
+		hr = D3D11CreateDevice(m_dxgi_adapter.get(), D3D_DRIVER_TYPE_UNKNOWN, null, createDeviceFlags, featureLevels, numFeatureLevels,
+			D3D11_SDK_VERSION, &device, &m_feature_level, &context);
+	}
+	else
+	{
+		hr = D3D11CreateDevice(m_dxgi_adapter.get(), D3D_DRIVER_TYPE_HARDWARE, null, createDeviceFlags, featureLevels, numFeatureLevels,
+			D3D11_SDK_VERSION, &device, &m_feature_level, &context);
+	}
 
 	if (FAILED(hr)) {
-		return false;
+		hr = D3D11CreateDevice(null, D3D_DRIVER_TYPE_WARP, null, createDeviceFlags, featureLevels, numFeatureLevels,
+			D3D11_SDK_VERSION, &device, &m_feature_level, &context);
+
+		if (FAILED(hr)) {
+			return false;
+		}
 	}
 
 	device->QueryInterface((ID3D11Device2**)&m_d3d_device);
@@ -109,6 +154,8 @@ bool d3d11_driver::init_driver(long64 adapter_id)
 		hr = dxgiDevice->GetAdapter(&adapter);
 		if (SUCCEEDED(hr))
 		{
+			m_dxgi_adapter.reset();
+			adapter->QueryInterface((IDXGIAdapter3**)&m_dxgi_adapter);
 			hr = adapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(m_dxgi_factory.addres_of()));
 			adapter->Release();
 		}
@@ -204,7 +251,7 @@ void d3d11_driver::close_driver()
 {
 	m_d3d_blend_state = null;
 	m_current_frame_buffer = null;
-	m_current_shaders = null;
+	m_current_technique = null;
 
 	//m_d2d_context = null;
 	//m_d2d_device = null;
@@ -226,17 +273,12 @@ isurface_t d3d11_driver::create_surface(platform::icore_view_t view)const
 	return surface.get();
 }
 
-effects::ieffect_library_t d3d11_driver::create_effect_library()const
-{
-	return new d3d11_effect_library(const_cast<d3d11_driver*>(this));
+ifactory_t d3d11_driver::get_factory()const
+{ 
+	return const_cast<d3d11_driver*>(this);
 }
 
-textures::itexture_loader_t d3d11_driver::create_texture_loader()const
-{
-	return new d3d11_texture_loader(const_cast<d3d11_driver*>(this));
-}
-
-buffers::ivertex_buffer_t d3d11_driver::create_vertex_buffer(buffers::buffer_usage_t usage, array_view<reflect::attribute_desc> vertex_desc, wsize vertex_count, array_view<byte> init_data)const
+buffers::ivertex_buffer_t d3d11_driver::create_vertex_buffer(buffers::buffer_usage_t usage, vector<reflect::attribute_desc> vertex_desc, wsize vertex_count, array<byte> init_data, string sid)const
 {
 	d3d11_vertex_buffer_t buffer = new d3d11_vertex_buffer();
 	if (!buffer->create(
@@ -244,13 +286,14 @@ buffers::ivertex_buffer_t d3d11_driver::create_vertex_buffer(buffers::buffer_usa
 		usage,
 		vertex_desc,
 		vertex_count,
-		init_data
+		init_data,
+		sid
 		))
 		return null;
 	return buffer.get();
 }
 
-buffers::iindex_buffer_t d3d11_driver::create_index_buffer(buffers::buffer_usage_t usage, reflect::var_type_t index_type, wsize index_count, array_view<byte> init_data)const
+buffers::iindex_buffer_t d3d11_driver::create_index_buffer(buffers::buffer_usage_t usage, reflect::var_type_t index_type, wsize index_count, array<byte> init_data, string sid)const
 {
 	d3d11_index_buffer_t buffer = new d3d11_index_buffer();
 	if (!buffer->create(
@@ -258,28 +301,259 @@ buffers::iindex_buffer_t d3d11_driver::create_index_buffer(buffers::buffer_usage
 		usage,
 		index_type,
 		index_count,
-		init_data
+		init_data,
+		sid
 	))
 		return null;
 	return buffer.get();
 }
 
-iframe_buffer_t d3d11_driver::create_frame_buffer(array_view<textures::tex_format_t> color_format, textures::tex_format_t depth_stencil_format, graphics::size<float> dimentions)const
+textures::itexture_t d3d11_driver::create_texture(textures::tex_type_t type, textures::tex_format_t color_format, buffers::buffer_usage_t usage, buffers::buffer_bind_flag_t flags, graphics::size3d<uint> dimentions, string sid)const
+{
+	d3d11_texture_t text = new d3d11_texture();
+	if (!text->create(
+		const_cast<d3d11_driver*>(this),
+		type,
+		color_format,
+		usage,
+		flags,
+		dimentions,
+		sid
+	))
+		return null;
+	return text.get();
+}
+
+textures::itexture_t d3d11_driver::create_texture(unknown_t tex_handle, string sid)const
+{
+	if (tex_handle == null)
+		return null;
+
+	com_wrapper<ID3D11Resource> resource;
+	IUnknown* unk = reinterpret_cast<IUnknown*>(tex_handle);
+
+	unk->QueryInterface(resource.addres_for_init());
+	d3d11_texture_t text = new d3d11_texture();
+	if (!text->attach(resource, const_cast<d3d11_driver*>(this),sid))
+		return null;
+	return text.get();
+}
+
+textures::itexture_t d3d11_driver::load_texture(text::string file, textures::tex_type_t type, string sid)const
+{
+	d3d11_texture_t tex = new d3d11_texture();
+	if (!tex->load(const_cast<d3d11_driver*>(this), file, type, sid))
+		return null;
+	return tex.get();
+}
+
+textures::itexture_t d3d11_driver::load_texture(array_view<text::string> files, textures::tex_type_t type, string sid)const
+{
+	return null;
+}
+
+iframe_buffer_t d3d11_driver::create_frame_buffer(array_view<textures::tex_format_t> color_format, textures::tex_format_t depth_stencil_format, graphics::size<uint> dimentions, string sid)const
 { 
 	d3d11_frame_buffer_t buffer = new d3d11_frame_buffer(const_cast<d3d11_driver*>(this));
 	if (!buffer->create(
 		color_format, 
 		depth_stencil_format,
-		dimentions
+		dimentions,
+		sid
 	))
 		return null;
 	return buffer.get();
+}
+
+iframe_buffer_t d3d11_driver::create_frame_buffer(array_view<textures::itexture_t> color_tex, textures::itexture_t depth_stencil, string sid)const
+{
+	d3d11_frame_buffer_t buffer = new d3d11_frame_buffer(const_cast<d3d11_driver*>(this));
+	vector<d3d11_texture_t> textures;
+	for (textures::itexture_t tex : color_tex)
+		textures += interface_cast<d3d11_texture>(color_tex.get());
+	if (!buffer->create(
+		(array_view<d3d11_texture_t>)textures,
+		interface_cast<d3d11_texture>(depth_stencil.get()),
+		sid
+	))
+		return null;
+	return buffer.get();
+}
+
+effects::ishaders_t d3d11_driver::compile_shaders(wstring vertex_shader, wstring pixel_shader, string sid, string_ptr_t log)const
+{
+	d3d11_shaders_t shaders = new d3d11_shaders();
+	if(!shaders->load(
+		const_cast<d3d11_driver*>(this),
+		vertex_shader.get(),
+		pixel_shader.get(),
+		sid,
+		log))
+	{
+		return null;
+	}
+	return shaders.get();
+}
+
+effects::ishaders_t d3d11_driver::compile_shaders(effects::shader_info_t const& vertex_shader, effects::shader_info_t const& pixel_shader, string sid, string_ptr_t log)const
+{
+	d3d11_shaders_t shaders = new d3d11_shaders();
+	if (!shaders->load(
+		const_cast<d3d11_driver*>(this),
+		vertex_shader,
+		pixel_shader,
+		sid,
+		log))
+	{
+		return null;
+	}
+	return shaders.get();
+}
+
+core::async::iasync<buffers::ivertex_buffer_t> d3d11_driver::create_vertex_buffer_async(
+	buffers::buffer_usage_t usage,
+	vector<reflect::attribute_desc> vertex_desc,
+	wsize vertex_count,
+	array<byte> init_data,
+	string sid)const
+{
+	return create_task<buffers::ivertex_buffer_t>([=](core::async::iasync<buffers::ivertex_buffer_t>, d3d11_driver_t driver)->buffers::ivertex_buffer_t
+	{
+		return driver->create_vertex_buffer(usage, vertex_desc, vertex_count, init_data, sid);
+	});
+}
+
+core::async::iasync<buffers::iindex_buffer_t> d3d11_driver::create_index_buffer_async(
+	buffers::buffer_usage_t usage,
+	reflect::var_type_t index_type, 
+	wsize index_count,
+	array<byte> init_data, 
+	string sid)const
+{
+	return create_task<buffers::iindex_buffer_t>([=](core::async::iasync<buffers::iindex_buffer_t>, d3d11_driver_t driver)->buffers::iindex_buffer_t
+	{
+		return driver->create_index_buffer(usage, index_type, index_count, init_data, sid);
+	});
+}
+
+core::async::iasync<textures::itexture_t> d3d11_driver::create_texture_async(
+	textures::tex_type_t type, 
+	textures::tex_format_t color_format,
+	buffers::buffer_usage_t usage, 
+	buffers::buffer_bind_flag_t flags, 
+	size3d<uint> dimentions, 
+	string sid)const
+{
+	return create_task<textures::itexture_t>([=](core::async::iasync<textures::itexture_t>, d3d11_driver_t driver)->textures::itexture_t
+	{
+		return driver->create_texture(type, color_format, usage, flags, dimentions, sid);
+	});
+}
+
+core::async::iasync<textures::itexture_t> d3d11_driver::create_texture_async(
+	unknown_t tex_handle, 
+	string sid)const
+{
+	return create_task<textures::itexture_t>([=](core::async::iasync<textures::itexture_t>, d3d11_driver_t driver)->textures::itexture_t
+	{
+		return driver->create_texture(tex_handle, sid);
+	});
+}
+
+core::async::iasync<textures::itexture_t> d3d11_driver::load_texture_async(
+	text::string file, 
+	textures::tex_type_t type,
+	string sid)const
+{
+	return create_task<textures::itexture_t>([=](core::async::iasync<textures::itexture_t>, d3d11_driver_t driver)->textures::itexture_t
+	{
+		return driver->load_texture(file, type, sid);
+	});
+}
+
+core::async::iasync<textures::itexture_t> d3d11_driver::load_texture_async(
+	array_view<text::string> files_,
+	textures::tex_type_t type,
+	string sid)const
+{
+	array<string> files = files_;
+	return create_task<textures::itexture_t>([=](core::async::iasync<textures::itexture_t>, d3d11_driver_t driver)->textures::itexture_t
+	{
+		return driver->load_texture(files, type, sid);
+	});
+}
+
+core::async::iasync<iframe_buffer_t> d3d11_driver::create_frame_buffer_async(
+	array_view<textures::tex_format_t> color_format_,
+	textures::tex_format_t depth_stencil_format,
+	size<uint> dimentions,
+	string sid)const
+{
+	array<textures::tex_format_t> color_format = color_format_;
+	return create_task<iframe_buffer_t>([=](core::async::iasync<iframe_buffer_t>, d3d11_driver_t driver)->iframe_buffer_t
+	{
+		return driver->create_frame_buffer(color_format, depth_stencil_format, dimentions, sid);
+	});
+}
+
+core::async::iasync<iframe_buffer_t> d3d11_driver::create_frame_buffer_async(
+	array_view<textures::itexture_t> color_tex_,
+	textures::itexture_t depth_stencil_format,
+	string sid)const
+{
+	array<textures::itexture_t> color_tex = color_tex_;
+	return create_task<iframe_buffer_t>([=](core::async::iasync<iframe_buffer_t>, d3d11_driver_t driver)->iframe_buffer_t
+	{
+		return driver->create_frame_buffer(color_tex, depth_stencil_format, sid);
+	});
+}
+
+core::async::iasync<effects::ishaders_t> d3d11_driver::compile_shaders_async(
+	wstring vertex_shader,
+	wstring pixel_shader,
+	string sid)const
+{
+	return create_task<effects::ishaders_t>([=](core::async::iasync<effects::ishaders_t>, d3d11_driver_t driver)->effects::ishaders_t
+	{
+		return driver->compile_shaders(vertex_shader, pixel_shader, sid);
+	});
+}
+
+core::async::iasync<effects::ishaders_t> d3d11_driver::compile_shaders_async(
+	effects::shader_info_t const& vertex_shader,
+	effects::shader_info_t const& pixel_shader,
+	string sid)const
+{
+	return create_task<effects::ishaders_t>([=](core::async::iasync<effects::ishaders_t>, d3d11_driver_t driver)->effects::ishaders_t
+	{
+		return driver->compile_shaders(vertex_shader, pixel_shader, sid);
+	});
+}
+
+
+void d3d11_driver::viewport(box<float> _vp)
+{
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = m_mutex;
+	D3D11_VIEWPORT vp;
+	vp.Width = _vp.width;
+	vp.Height = _vp.height;
+	vp.MinDepth = _vp.front;
+	vp.MaxDepth = _vp.back;
+	vp.TopLeftX = _vp.left;
+	vp.TopLeftY = _vp.top;
+	D3D11Context()->RSSetViewports(1, &vp);
+}
+
+box<float> d3d11_driver::viewport()const
+{
+	return m_viewport;
 }
 
 void d3d11_driver::cull_mode(cull_mode_t value)
 {
 	if (m_cull_mode != value)
 	{
+		core::async::scope_locker<core::async::mutex_ptr_t> lock = m_mutex;
 		m_cull_mode = value;
 		D3D11_RASTERIZER_DESC rs;
 		ZeroMemory(&rs, sizeof(rs));
@@ -288,7 +562,7 @@ void d3d11_driver::cull_mode(cull_mode_t value)
 		rs.FrontCounterClockwise = m_front_face == front_face::counter_clockwise;
 		ID3D11RasterizerState* rasterizerState;
 		D3D11Device()->CreateRasterizerState(&rs, &rasterizerState);
-		D3D11Context()->RSSetState(rasterizerState);
+		D3D11Context()->RSSetState(rasterizerState);		
 		rasterizerState->Release();
 	}
 }
@@ -302,6 +576,7 @@ void d3d11_driver::front_face(front_face_t value)
 {
 	if (m_front_face != value)
 	{
+		core::async::scope_locker<core::async::mutex_ptr_t> lock = m_mutex;
 		m_front_face = value;
 		D3D11_RASTERIZER_DESC rs;
 		ZeroMemory(&rs, sizeof(rs));
@@ -322,11 +597,12 @@ front_face_t d3d11_driver::front_face()const
 
 void d3d11_driver::blend_mode(blend_mode_t value)
 {
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = m_mutex;
 	m_blend_mode = value;
 	if (value == blend_mode::enable)	
-		m_d3d_context->OMSetBlendState(m_d3d_blend_state, NULL, -1);
+		D3D11Context()->OMSetBlendState(m_d3d_blend_state, NULL, -1);
 	else
-		m_d3d_context->OMSetBlendState(NULL, NULL, -1);
+		D3D11Context()->OMSetBlendState(NULL, NULL, -1);
 }
 
 blend_mode_t d3d11_driver::blend_mode()const
@@ -349,7 +625,7 @@ void d3d11_driver::clear(color_t color)
 		{
 			for (index i = 0, c = m_current_frame_buffer->color_buffer_count(); i < c; ++i)
 				D3D11Context()->ClearRenderTargetView(m_current_frame_buffer->D3DRenderTargetView(i), _color);
-			if (m_current_frame_buffer->has_depth_stencil_buffer())
+			if (m_current_frame_buffer->D3DDepthStencilView() != null)
 				D3D11Context()->ClearDepthStencilView(m_current_frame_buffer->D3DDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 		}
 	});
@@ -362,7 +638,7 @@ void d3d11_driver::clear(maths::float4 const& color)
 		{
 			for (index i = 0, c = m_current_frame_buffer->color_buffer_count(); i < c; ++i)
 				D3D11Context()->ClearRenderTargetView(m_current_frame_buffer->D3DRenderTargetView(i), (float*)&color);
-			if (m_current_frame_buffer->has_depth_stencil_buffer())
+			if (m_current_frame_buffer->D3DDepthStencilView() != null)
 				D3D11Context()->ClearDepthStencilView(m_current_frame_buffer->D3DDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 		}
 	});
@@ -400,35 +676,29 @@ void d3d11_driver::bind_frame_buffer(iframe_buffer_t ifb)
 {
 	d3d11_frame_buffer_t fb = interface_cast<d3d11_frame_buffer>(ifb.get());
 
-	if (fb.get() == m_current_frame_buffer.get())
-		return;
-
+	//if (fb.get() == m_current_frame_buffer.get())
+	//	return;
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = m_mutex;
 	m_current_frame_buffer = fb;
-
 	if (m_current_frame_buffer.get() == null)
 	{
-		core::async::scope_locker<core::async::mutex_ptr_t>::lock(m_mutex, [&]() {
-			D3D11Context()->OMSetRenderTargets(0, NULL, NULL);
-		});
+		D3D11Context()->OMSetRenderTargets(0, NULL, NULL);	
 	}
 	else
 	{
-		core::async::scope_locker<core::async::mutex_ptr_t>::lock(m_mutex, [&]() {
-			auto render_targets = m_current_frame_buffer->D3DRenderTargetView(0);
-			D3D11Context()->OMSetDepthStencilState(m_current_frame_buffer->D3DDepthStencilState(), 1);
-			D3D11Context()->OMSetRenderTargets(1, &render_targets, m_current_frame_buffer->D3DDepthStencilView());
+		auto render_targets = m_current_frame_buffer->D3DRenderTargetView(0);
+		D3D11Context()->OMSetDepthStencilState(m_current_frame_buffer->D3DDepthStencilState(), 1);
+		D3D11Context()->OMSetRenderTargets(1, &render_targets, m_current_frame_buffer->D3DDepthStencilView());
 
-			auto size = m_current_frame_buffer->dimentions();
-			// Setup the viewport
-			D3D11_VIEWPORT vp;
-			vp.Width = size.width;
-			vp.Height = size.height;
-			vp.MinDepth = 0.0f;
-			vp.MaxDepth = 1.0f;
-			vp.TopLeftX = 0;
-			vp.TopLeftY = 0;
-			D3D11Context()->RSSetViewports(1, &vp);
-		});	
+		/*auto size = m_current_frame_buffer->dimentions();
+		box<float> vp;
+		vp.left = 0;
+		vp.top = 0;
+		vp.front = 0;
+		vp.back = 1.0f;
+		vp.width = (float)size.width;
+		vp.height = (float)size.height;
+		viewport(vp);*/
 	}
 }
 
@@ -436,26 +706,22 @@ void d3d11_driver::bind_shaders(effects::ishaders_t sh)
 {
 	d3d11_shaders_t shaders = interface_cast<d3d11_shaders>(sh.get());
 
-	if (shaders.get() == m_current_shaders.get())
+	core::async::scope_locker<core::async::mutex_ptr_t> lock = m_mutex;
+	if (shaders.get() == m_current_technique.get())
 		return;
-	m_current_shaders = shaders;
-	if (m_current_shaders.get() == null)
+	m_current_technique = shaders;
+	if (m_current_technique.get() == null)
 	{
-		core::async::scope_locker<core::async::mutex_ptr_t>::lock(m_mutex, [&]() {
 			D3D11Context()->IASetInputLayout(NULL);
 			D3D11Context()->VSSetShader(NULL, NULL, 0);
 			D3D11Context()->PSSetShader(NULL, NULL, 0);
 			D3D11Context()->VSSetConstantBuffers(0, 0, NULL);
 			D3D11Context()->PSSetConstantBuffers(0, 0, NULL);
 			D3D11Context()->PSSetSamplers(0, 0, NULL);
-		});
-
 	}
 	else
 	{
-		core::async::scope_locker<core::async::mutex_ptr_t>::lock(m_mutex, [&]() {
-			shaders->use_shaders(this);
-		});
+		shaders->use_shaders(this);
 	}
 }
 

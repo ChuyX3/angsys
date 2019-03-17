@@ -13,12 +13,12 @@ namespace ang
 		{
 			typedef collections::vector<varying_desc> uniform_fields_t;
 
-			struct LINK varying_desc 
+			struct LINK varying_desc : auto_self<varying_desc>
 			{
 			private:
 				var_type_t m_var_type;
 				var_class_t m_var_class;
-				string m_var_name;
+				astring m_var_name;
 				uint m_array_count;
 				uint m_aligment;
 				uint m_position;
@@ -28,12 +28,12 @@ namespace ang
 				varying_desc(
 					var_type_t _type = var_type::none,
 					var_class_t _class = var_class::none,
-					string name = null,
+					astring name = null,
 					uint _array = 1U,
 					uint aligment = 4U
 				);
 
-				varying_desc(string name, uniform_fields_t vars, uint _array = 1U, uint aligment = 4U);
+				varying_desc(astring name, uniform_fields_t vars, uint _array = 1U, uint aligment = 4U);
 
 				varying_desc(varying_desc&& value);
 				varying_desc(const varying_desc& value);
@@ -44,7 +44,7 @@ namespace ang
 
 				var_type_t var_type()const;
 				var_class_t var_class()const;
-				string const& var_name()const;
+				astring const& var_name()const;
 				uint array_count()const;
 				uint aligment()const;
 				uint position()const;
@@ -53,11 +53,11 @@ namespace ang
 
 				void var_type(var_type_t);
 				void var_class(var_class_t);
-				void var_name(string);
+				void var_name(astring);
 				void array_count(uint);
 				void aligment(uint);
 				void position(uint);
-				void fields(uniform_fields_t);
+				void fields(uniform_fields_t, bool calc_pos = true);
 
 				wsize get_size_in_bytes()const;
 				wsize get_size_in_bytes(uint aligment)const;
@@ -70,12 +70,12 @@ namespace ang
 				bool operator != (const varying_desc& other)const;
 			};
 
-			struct LINK attribute_desc
+			struct LINK attribute_desc : auto_self<attribute_desc>
 			{
 			private:
 				var_type_t m_var_type;
 				var_class_t m_var_class;
-				string m_var_name;
+				astring m_var_name;
 				var_semantic_t m_semantic;
 				index m_semantic_index;
 				uint m_position;
@@ -88,7 +88,7 @@ namespace ang
 				attribute_desc(
 					var_type_t _type = var_type::none,
 					var_class_t _class = var_class::none,
-					string name = null,
+					astring name = null,
 					var_semantic_t semantic = var_semantic::none,
 					index idx = 0U,
 					uint pos = 0U
@@ -102,14 +102,14 @@ namespace ang
 
 				var_type_t var_type()const;
 				var_class_t var_class()const;
-				string const& var_name()const;
+				astring const& var_name()const;
 				var_semantic_t semantic()const;
 				uint semantic_index()const;
 				uint position()const;
 
 				void var_type(var_type_t);
 				void var_class(var_class_t);
-				void var_name(string);
+				void var_name(astring);
 				void semantic(var_semantic_t);
 				void semantic_index(index);
 				void position(uint);
@@ -123,7 +123,8 @@ namespace ang
 				bool operator != (const attribute_desc& other)const;
 			};
 
-			typedef class LINK varying
+
+			typedef class LINK varying : auto_self<varying>
 			{
 			private:
 				array_view<byte> _raw_data;
@@ -148,15 +149,15 @@ namespace ang
 				array_view<byte> raw_data()const;
 				varying_desc const& descriptor()const;
 				varying field(index idx);
-				varying field(text::raw_cstr_t idx);
-				index find_field(text::raw_cstr_t)const;
+				varying field(cstr_t idx);
+				index find_field(cstr_t)const;
 
 				varying& operator = (varying &&);
 				varying& operator = (varying const&);
 				collections::vector<varying> fragment();
 
 				varying operator [](index);
-				varying operator [](text::raw_cstr_t);
+				varying operator [](cstr_t);
 
 				template<typename T> inline auto cast() -> decltype(varying_cast<T>::cast(this)) {
 					return varying_cast<T>::cast(this);
@@ -175,9 +176,9 @@ namespace ang
 				bool operator != (const varying& other)const;
 			}varying_t;
 
-			template<typename T> varying_desc type_desc(text::raw_cstr_t);
+			template<typename T> varying_desc type_desc(cstr_t);
 
-			inline wsize get_memory_size_aligned(wsize size, wsize aligment)
+			/*inline wsize get_memory_size_aligned(wsize size, wsize aligment)
 			{
 				wsize res = (size % aligment);
 				if (res == 0u) return size;
@@ -188,7 +189,7 @@ namespace ang
 				wsize res = (size % aligment);
 				if (res == 0u) return size;
 				return size - res;
-			}
+			}*/
 
 		}
 	}
@@ -220,7 +221,7 @@ template<> struct _LINK ang::graphics::reflect::varying::varying_cast<_TYPE> { \
 	static _RETURNTYPE force_cast(ang::graphics::reflect::varying*); \
 	static bool is_type_of(ang::graphics::reflect::varying*); \
 }; \
-template<> _LINK ang::graphics::reflect::varying_desc ang::graphics::reflect::type_desc<_TYPE>(text::raw_cstr_t);
+template<> _LINK ang::graphics::reflect::varying_desc ang::graphics::reflect::type_desc<_TYPE>(ang::cstr_t);
 
 
 ANG_GRAPHICS_REFLECT_DECLARE_TEMPLATE_VARIABLE_CAST(LINK, ang::graphics::reflect::varying, ang::graphics::reflect::varying);

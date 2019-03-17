@@ -6,7 +6,7 @@ using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::buffers;
 
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::buffers::igpu_buffer, interface);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::buffers::igpu_buffer, intf);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::buffers::iindex_buffer, igpu_buffer);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::buffers::ivertex_buffer, igpu_buffer);
 

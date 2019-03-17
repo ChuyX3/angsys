@@ -24,7 +24,7 @@ safe_enum_rrti2(ang::graphics::reflect, var_semantic);
 //#undef MY_TYPE
 //#undef MY_ALLOCATOR
 
-static collections::pair<graphics::reflect::var_type, cstr_t> s_to_string_var_type_map[] =
+static collections::pair<graphics::reflect::var_type, castr_t> s_to_string_var_type_map[] =
 {
 	{ var_type::none, "none" },
 	{ var_type::s8, "s8," },
@@ -42,7 +42,7 @@ static collections::pair<graphics::reflect::var_type, cstr_t> s_to_string_var_ty
 	{ var_type::block, "structure" }
 };
 
-static collections::pair<cstr_t, graphics::reflect::var_type> s_parse_var_type_map[] =
+static collections::pair<castr_t, graphics::reflect::var_type> s_parse_var_type_map[] =
 {
 	{ "block", var_type::block },
 	{ "buffer", var_type::buffer },
@@ -60,7 +60,7 @@ static collections::pair<cstr_t, graphics::reflect::var_type> s_parse_var_type_m
 	{ "u8", var_type::u8 }
 };
 
-var_type_t graphics::reflect::var_type_t::parse(text::raw_cstr_t cstr)
+var_type_t graphics::reflect::var_type_t::parse(cstr_t cstr)
 {
 	wsize idx = algorithms::binary_search(cstr, collections::to_array(s_parse_var_type_map));
 	if (idx > algorithms::array_size(s_parse_var_type_map))
@@ -80,7 +80,7 @@ cstr_t graphics::reflect::var_type_t::to_string()const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static collections::pair<graphics::reflect::var_class, cstr_t> s_to_string_var_class_map[] =
+static collections::pair<graphics::reflect::var_class, castr_t> s_to_string_var_class_map[] =
 {
 	{ var_class::none, "none" },
 	{ var_class::scalar, "scalar" },
@@ -103,7 +103,7 @@ static collections::pair<cstr_t, graphics::reflect::var_class> s_parse_var_class
 	{ "vec4", var_class::vec4 }
 };
 
-var_class_t graphics::reflect::var_class_t::parse(text::raw_cstr_t cstr)
+var_class_t graphics::reflect::var_class_t::parse(cstr_t cstr)
 {
 	wsize idx = algorithms::binary_search(cstr, collections::to_array(s_parse_var_class_map));
 	if (idx > algorithms::array_size(s_parse_var_class_map))
@@ -137,7 +137,7 @@ static collections::pair<graphics::reflect::var_semantic, cstr_t> s_to_string_va
 	{ var_semantic::fog, "FOG" }
 };
 
-static collections::pair<cstr_t, graphics::reflect::var_semantic> s_parse_var_semantic_map[] =
+static collections::pair<castr_t, graphics::reflect::var_semantic> s_parse_var_semantic_map[] =
 {
 	{ "BINORMAL" , var_semantic::binormal },
 	{ "COLOR" , var_semantic::color },
@@ -149,7 +149,7 @@ static collections::pair<cstr_t, graphics::reflect::var_semantic> s_parse_var_se
 	{ "UNKNOWN" , var_semantic::none }
 };
 
-var_semantic_t graphics::reflect::var_semantic_t::parse(text::raw_cstr_t cstr)
+var_semantic_t graphics::reflect::var_semantic_t::parse(cstr_t cstr)
 {
 	wsize idx = algorithms::binary_search(cstr, collections::to_array(s_parse_var_semantic_map));
 	if (idx > algorithms::array_size(s_parse_var_semantic_map))
@@ -170,7 +170,7 @@ cstr_t graphics::reflect::var_semantic_t::to_string()const
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 varying_desc::varying_desc(var_type_t _type, var_class_t _class
-	, string name, uint _array, uint aligment)
+	, astring name, uint _array, uint aligment)
 {
 	m_var_type = _type;
 	m_var_class = _class;
@@ -180,7 +180,7 @@ varying_desc::varying_desc(var_type_t _type, var_class_t _class
 	m_array_count = max(_array, 1U);
 }
 
-varying_desc::varying_desc(string name, collections::vector<varying_desc> vars, uint _array, uint aligment)
+varying_desc::varying_desc(astring name, collections::vector<varying_desc> vars, uint _array, uint aligment)
 {
 	m_var_name = name.get();
 	m_aligment = aligment;
@@ -228,9 +228,9 @@ bool varying_desc::load(dom::xml::xml_node_t input, uint aligment)
 		for(dom::xml::xml_node_t att : atts)
 		{
 			//xml::xml_attribute_t att = node->xml_as<xml::xml_attribute>();
-			auto name = att->xml_name()->xml_as<text::raw_cstr>();
+			auto name = att->xml_name()->xml_as<cstr_t>();
 			if (name == "name"_s)
-				m_var_name = (text::raw_cstr)att->xml_value();
+				m_var_name = (cstr_t)att->xml_value();
 			else if (name == "array"_s)
 				m_array_count = att->xml_value()->xml_as<uint>();
 			else if (name == "aligment"_s)
@@ -252,7 +252,7 @@ bool varying_desc::load(dom::xml::xml_node_t input, uint aligment)
 		{
 			varying_desc desc;
 			auto name = field->xml_name();
-			if (((text::raw_cstr)name == L"var"_s || (text::raw_cstr)name == L"block"_s) && desc.load(field, m_aligment))
+			if (((cstr_t)name == L"var"_s || (cstr_t)name == L"block"_s) && desc.load(field, m_aligment))
 			{
 				size = desc.get_size_in_bytes();
 				temp = total % m_aligment;
@@ -260,7 +260,7 @@ bool varying_desc::load(dom::xml::xml_node_t input, uint aligment)
 				if (res < m_aligment)
 				{
 					if (res > size)
-						total += get_memory_size_aligned(temp, size) - temp;
+						total += align_up(size, temp) - temp;
 					else if (res < size)
 						total += res;
 				}
@@ -275,9 +275,9 @@ bool varying_desc::load(dom::xml::xml_node_t input, uint aligment)
 	{
 		for(dom::xml::xml_node_t att : atts)
 		{
-			auto name = att->xml_name()->xml_as<text::raw_cstr>();
+			auto name = att->xml_name()->xml_as<cstr_t>();
 			if (name == "name"_s)
-				m_var_name = (text::raw_cstr)att->xml_value();
+				m_var_name = (cstr_t)att->xml_value();
 			else if (name == "type"_s)
 				m_var_type = att->xml_value()->xml_as<var_type_t>();
 			else if (name == "class"_s)
@@ -306,7 +306,7 @@ var_type_t varying_desc::var_type()const { return m_var_type; }
 
 var_class_t varying_desc::var_class()const { return m_var_class; }
 
-string const& varying_desc::var_name()const { return m_var_name; }
+astring const& varying_desc::var_name()const { return m_var_name; }
 
 uint varying_desc::array_count()const { return m_array_count; }
 
@@ -334,7 +334,7 @@ void varying_desc::var_class(var_class_t value)
 	m_var_class = value;
 }
 
-void varying_desc::var_name(string value)
+void varying_desc::var_name(astring value)
 {
 	m_var_name = value;
 }
@@ -356,13 +356,14 @@ void varying_desc::position(uint value)
 	m_position = value;
 }
 
-void varying_desc::fields(uniform_fields_t value)
+void varying_desc::fields(uniform_fields_t value, bool calc_pos)
 {
 	if (value.is_empty()) return;
 	m_var_type = var_type::block;
 	m_var_class = var_class::scalar;
 	m_fields = ang::move(value);
-	calculate_positions(true);
+	if(calc_pos)
+		calculate_positions(true);
 }
 
 wsize varying_desc::calculate_positions(bool recursive)
@@ -389,14 +390,14 @@ wsize varying_desc::calculate_positions(bool recursive)
 			if (res < m_aligment)
 			{
 				if (res > size)
-					total += get_memory_size_aligned(temp, size) - temp;
+					total += align_up(size, temp) - temp;
 				else if(res < size)
 					total += res;
 			}
 			desc.m_position = total;
 			total += size;
 		}
-		return (m_array_count == 1) ? total : get_memory_size_aligned(total, m_aligment)*m_array_count;
+		return (m_array_count == 1) ? total : align_up(m_aligment, total)*m_array_count;
 	}
 	else
 	{
@@ -416,14 +417,14 @@ wsize varying_desc::calculate_positions(bool recursive)
 			if (res < m_aligment)
 			{
 				if (res > size)
-					total += get_memory_size_aligned(temp, size) - temp;
+					total += align_up(size, temp) - temp;
 				else if (res < size)
 					total += res;
 			}
 			desc.m_position = total;
 			total += size;
 		}
-		return (m_array_count == 1) ? total : get_memory_size_aligned(total, m_aligment)*m_array_count;
+		return (m_array_count == 1) ? total : align_up(m_aligment, total)*m_array_count;
 	}
 }
 
@@ -435,16 +436,16 @@ wsize varying_desc::get_size_in_bytes()const
 	{
 	case var_type::s8:
 	case var_type::u8:
-		return (uint)m_var_class.get()* m_array_count;
+		return (uint)m_var_class.get() * m_array_count;
 	case var_type::s16:
 	case var_type::u16:
-		return 2U * (uint)m_var_class.get()* m_array_count;
+		return 2U * (uint)m_var_class.get() * m_array_count;
 	case var_type::s32:
 	case var_type::u32:
 	case var_type::f32:
-		return 4U * (uint)m_var_class.get()* m_array_count;
+		return 4U * (uint)m_var_class.get() * m_array_count;
 	case var_type::buffer:
-		return get_memory_size_aligned(m_array_count, m_aligment);
+		return align_up(m_aligment, m_array_count);
 	case var_type::block: {
 		wsize total = 0;
 		wsize size = 0;
@@ -462,13 +463,13 @@ wsize varying_desc::get_size_in_bytes()const
 			if (res < m_aligment)
 			{
 				if (res > size)
-					total += get_memory_size_aligned(temp, size) - temp;
+					total += align_up(size, temp) - temp;
 				else if (res < size)
 					total += res;
 			}
 			total += size;
 		}
-		return (m_array_count == 1) ? total : get_memory_size_aligned(total, m_aligment)*m_array_count;
+		return (m_array_count == 1) ? total : align_up(m_aligment, total)*m_array_count;
 	}
 	default:return 0u;
 	}
@@ -491,7 +492,7 @@ wsize varying_desc::get_size_in_bytes(uint aligment)const
 	case var_type::f32:
 		return 4U * (uint)m_var_class.get()* m_array_count;
 	case var_type::buffer:
-		return get_memory_size_aligned(m_array_count, aligment);
+		return align_up(aligment, m_array_count);
 	case var_type::block: {
 		wsize total = 0;
 		wsize size = 0;
@@ -505,13 +506,13 @@ wsize varying_desc::get_size_in_bytes(uint aligment)const
 			if (res < aligment)
 			{
 				if (res > size)
-					total += get_memory_size_aligned(temp, size) - temp;
+					total += align_up(size, temp) - temp;
 				else if(res < size)
 					total += res;
 			}
 			total += size;	
 		}
-		return (m_array_count == 1) ? total : get_memory_size_aligned(total, aligment)*m_array_count;
+		return (m_array_count == 1) ? total : align_up(aligment, total) * m_array_count;
 	}
 	default:return 0u;
 	}
@@ -578,14 +579,14 @@ wsize attribute_desc::calculate_positions(array_view<attribute_desc>& attributes
 		if (res < aligment)
 		{
 			if (res > size)
-				total += get_memory_size_aligned(temp, size) - temp;
+				total += align_up(size, temp) - temp;
 			else if (res < size)
 				total += res;
 		}
 		desc.position(total);
 		total += size;
 	}
-	return get_memory_size_aligned(total, aligment);
+	return align_up(aligment, total);
 }
 
 wsize attribute_desc::get_size_in_bytes(array_view<attribute_desc> attributes, wsize aligment, uint from, uint to)
@@ -608,13 +609,13 @@ wsize attribute_desc::get_size_in_bytes(array_view<attribute_desc> attributes, w
 		if (res < aligment)
 		{
 			if (res > size)
-				total += get_memory_size_aligned(temp, size) - temp;
+				total += align_up(size, temp) - temp;
 			else if (res < size)
 				total += res;
 		}		
 		total += size;
 	};
-	return get_memory_size_aligned(total, aligment);
+	return align_up(aligment, total);
 }
 
 bool attribute_desc::load(dom::xml::xml_node_t inputs, collections::vector<attribute_desc>& out)
@@ -633,7 +634,7 @@ bool attribute_desc::load(dom::xml::xml_node_t inputs, collections::vector<attri
 }
 
 attribute_desc::attribute_desc(var_type_t _type, var_class_t _class,
-	string name, var_semantic_t sem, index idx, uint pos)
+	astring name, var_semantic_t sem, index idx, uint pos)
 {
 	m_var_type = _type;
 	m_var_class = _class;
@@ -657,7 +658,7 @@ bool attribute_desc::load(dom::xml::xml_node_t input)
 	if (input.is_empty() || !input->xml_has_attributes())
 		return false;
 	auto att = input->xml_attributes();
-	m_var_name = (text::raw_cstr)att["name"_s];
+	m_var_name = (cstr_t)att["name"_s];
 	m_var_type = att["type"_s]->xml_as<var_type_t>();
 	m_var_class = att["class"_s]->xml_as<var_class_t>();
 	m_semantic = att["semantic"_s]->xml_as<var_semantic_t>();
@@ -672,14 +673,14 @@ bool attribute_desc::save(dom::xml::xml_document_t)const
 
 var_type_t attribute_desc::var_type()const { return m_var_type.get(); }
 var_class_t attribute_desc::var_class()const { return m_var_class.get(); }
-string const& attribute_desc::var_name()const { return m_var_name; }
+astring const& attribute_desc::var_name()const { return m_var_name; }
 var_semantic_t attribute_desc::semantic()const { return m_semantic.get(); }
 index attribute_desc::semantic_index()const { return m_semantic_index; }
 uint attribute_desc::position()const { return m_position; }
 
 void attribute_desc::var_type(var_type_t value) { m_var_type = value; }
 void attribute_desc::var_class(var_class_t value){ m_var_class = value; }
-void attribute_desc::var_name(string value){ m_var_name = value; }
+void attribute_desc::var_name(astring value){ m_var_name = value; }
 void attribute_desc::semantic(var_semantic_t value) { m_semantic = value; }
 void attribute_desc::semantic_index(index value) { m_semantic_index = value; }
 void attribute_desc::position(uint value) { m_position = value; }

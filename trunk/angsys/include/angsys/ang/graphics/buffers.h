@@ -38,6 +38,7 @@ namespace ang
 			};
 
 			ang_begin_interface(LINK igpu_buffer)
+				visible vcall resources::iresource_t resource()const pure;
 				visible vcall buffer_type_t buffer_type()const pure;
 				visible vcall buffer_usage_t buffer_usage()const pure;
 				visible vcall buffer_bind_flag_t buffer_bind_flag()const pure;

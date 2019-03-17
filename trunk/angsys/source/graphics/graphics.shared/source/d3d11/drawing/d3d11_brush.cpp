@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "d3d11/drawing/draw_context.hpp"
+#include "d3d11/drawing/d3d11_drawer.h"
 
 
 #if defined _DEBUG
@@ -9,10 +9,11 @@
 #if DIRECTX_SUPPORT
 
 using namespace ang;
+using namespace ang::dom;
 using namespace ang::graphics;
 using namespace ang::graphics::d3d11;
 
-static xml::ixml_node_t create_tecnique_template(cwstr_t name, cwstr_t vertex_shader, cwstr_t pixel_shader)
+static xml::xml_node_t create_tecnique_template(cwstr_t name, cwstr_t vertex_shader, cwstr_t pixel_shader)
 {
 	xml::xml_document_t document = new xml::xml_document();
 	document->begin_element("technique"_s);
@@ -97,7 +98,7 @@ static xml::ixml_node_t create_tecnique_template(cwstr_t name, cwstr_t vertex_sh
 	return document->xml_root_element();
 }
 
-static xml::ixml_node_t create_tecnique_texturing_template(cwstr_t name, textures::tex_wrap_mode_t wrap, cwstr_t vertex_shader, cwstr_t pixel_shader)
+static xml::xml_node_t create_tecnique_texturing_template(cwstr_t name, textures::tex_wrap_mode_t wrap, cwstr_t vertex_shader, cwstr_t pixel_shader)
 {
 	xml::xml_document_t document = new xml::xml_document();
 	document->begin_element("technique"_s);
@@ -201,43 +202,9 @@ d3d11_brush::~d3d11_brush()
 
 }
 
-ANG_IMPLEMENT_CLASSNAME(ang::graphics::d3d11::d3d11_brush);
-ANG_IMPLEMENT_OBJECTNAME(ang::graphics::d3d11::d3d11_brush);
-
-bool d3d11_brush::is_inherited_of(type_name_t name)
-{
-	return name == type_of<d3d11_brush>()
-		|| object::is_inherited_of(name)
-		|| drawing::ibrush::is_inherited_of(name);
-}
-
-bool d3d11_brush::is_kind_of(type_name_t name)const
-{
-	return name == type_of<d3d11_brush>()
-		|| object::is_kind_of(name)
-		|| drawing::ibrush::is_kind_of(name);
-}
-
-bool d3d11_brush::query_object(type_name_t name, unknown_ptr_t out)
-{
-	if (out == null)
-		return false;
-	if (name == type_of<d3d11_brush>())
-	{
-		*out = static_cast<d3d11_brush*>(this);
-		return true;
-	}
-	else if (object::query_object(name, out))
-	{
-		return true;
-	}
-	else if (drawing::ibrush::query_object(name, out))
-	{
-		return true;
-	}
-	return false;
-}
-
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_brush);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_brush, object, drawing::ibrush);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_brush, object, drawing::ibrush);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -269,29 +236,32 @@ d3d11_solid_brush::~d3d11_solid_brush()
 {
 }
 
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::d3d11::d3d11_solid_brush, d3d11_brush);
 
-bool d3d11_solid_brush::create(d3d11_draw_context_t context, color_t color, color_t additive)
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_solid_brush);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_solid_brush, d3d11_brush);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_solid_brush, d3d11_brush);
+
+bool d3d11_solid_brush::create(d3d11_drawer_t context, color_t color, color_t additive)
 {
-	_diffuse_color = color;
-	_additive_color = additive;
-	_technique = context->effect_library()->find_shaders("solid_color_fx"_s);
-	if (_technique.is_empty())	
-		_technique = context->effect_library()->load_shaders(create_tecnique_template(L"solid_color_fx"_s, _solid_color_vertex_shader, _solid_color_pixel_shader));
-	return !_technique.is_empty();
+	m_diffuse_color = color;
+	m_additive_color = additive;
+	m_technique = context->effect_library()->find_technique("solid_color_fx"_s);
+	if (m_technique.is_empty())	
+		m_technique = context->effect_library()->load_technique(create_tecnique_template(L"solid_color_fx"_s, _solid_color_vertex_shader, _solid_color_pixel_shader));
+	return !m_technique.is_empty();
 }
 
 void d3d11_solid_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t model)
 {
-	driver->bind_shaders(_technique);
-	auto world = _technique->map_vs_uniform(driver.get(), 0);
+	driver->bind_technique(m_technique);
+	auto world = m_technique->map_vs_uniform(driver.get(), 0);
 	world[0].cast<maths::float4x4>() = maths::matrix::transpose(tranform);
-	_technique->unmap_vs_uniform(driver.get(), world);
+	m_technique->unmap_vs_uniform(driver.get(), world);
 
-	auto colors = _technique->map_ps_uniform(driver.get(), 0);
+	auto colors = m_technique->map_ps_uniform(driver.get(), 0);
 	colors[0].cast<maths::float4>() = color_to_vector(graphics::colors::black, 0);
-	colors[1].cast<maths::float4>() = color_to_vector(_diffuse_color);
-	_technique->unmap_ps_uniform(driver.get(), colors);
+	colors[1].cast<maths::float4>() = color_to_vector(m_diffuse_color);
+	m_technique->unmap_ps_uniform(driver.get(), colors);
 
 	driver->bind_index_buffer(model->indices);
 	driver->bind_vertex_buffer(model->vertices);
@@ -374,47 +344,49 @@ d3d11_linear_gradient_brush::~d3d11_linear_gradient_brush()
 {
 }
 
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::d3d11::d3d11_linear_gradient_brush, d3d11_brush);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_linear_gradient_brush);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_linear_gradient_brush, d3d11_brush);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_linear_gradient_brush, d3d11_brush);
 
-bool d3d11_linear_gradient_brush::create(d3d11_draw_context_t context, drawing::gradient_info gradients, color_t diffuse, color_t additive)
+bool d3d11_linear_gradient_brush::create(d3d11_drawer_t context, drawing::gradient_info gradients, color_t diffuse, color_t additive)
 {
-	_diffuse_color = diffuse;
-	_additive_color = additive;
-	_start_point = gradients.start_point;
-	_end_point = gradients.end_point;
-	_gradients = new collections::array_buffer<drawing::gradient_info::stop_color_info_t>(collections::to_array(gradients.stop_colors.data(), gradients.stop_colors.size()));
-	_technique = context->effect_library()->find_shaders("linear_gradient_fx"_s);
-	if (_technique.is_empty())
-		_technique = context->effect_library()->load_shaders(create_tecnique_template(L"linear_gradient_fx"_s, _linear_gradient_vertex_shader, _linear_gradient_pixel_shader));
-	return !_technique.is_empty();
+	m_diffuse_color = diffuse;
+	m_additive_color = additive;
+	m_start_point = gradients.start_point;
+	m_end_point = gradients.end_point;
+	m_gradients = new collections::array_buffer<drawing::gradient_info::stop_color_info_t>(collections::to_array(gradients.stop_colors.data(), gradients.stop_colors.size()));
+	m_technique = context->effect_library()->find_technique("linear_gradient_fx"_s);
+	if (m_technique.is_empty())
+		m_technique = context->effect_library()->load_technique(create_tecnique_template(L"linear_gradient_fx"_s, _linear_gradient_vertex_shader, _linear_gradient_pixel_shader));
+	return !m_technique.is_empty();
 }
 
 void d3d11_linear_gradient_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t model)
 {
-	driver->bind_shaders(_technique);
-	auto world = _technique->map_vs_uniform(driver.get(), 0);
+	driver->bind_technique(m_technique);
+	auto world = m_technique->map_vs_uniform(driver.get(), 0);
 	world[0].cast<maths::float4x4>() = maths::matrix::transpose(tranform);
-	_technique->unmap_vs_uniform(driver.get(), world);
+	m_technique->unmap_vs_uniform(driver.get(), world);
 
-	auto colors = _technique->map_ps_uniform(driver.get(), 0);
-	colors[0].cast<maths::float4>() = color_to_vector(_additive_color);
-	colors[1].cast<maths::float4>() = color_to_vector(_diffuse_color);
-	_technique->unmap_ps_uniform(driver.get(), colors);
+	auto colors = m_technique->map_ps_uniform(driver.get(), 0);
+	colors[0].cast<maths::float4>() = color_to_vector(m_additive_color);
+	colors[1].cast<maths::float4>() = color_to_vector(m_diffuse_color);
+	m_technique->unmap_ps_uniform(driver.get(), colors);
 
-	auto gradient_info = _technique->map_ps_uniform(driver.get(), 1);
-	auto pos = maths::float4{ _start_point.x,_start_point.y,0,1 } *tranform;
+	auto gradient_info = m_technique->map_ps_uniform(driver.get(), 1);
+	auto pos = maths::float4{ m_start_point.x,m_start_point.y,0,1 } *tranform;
 	gradient_info[0].cast<maths::float2>() = { pos.get<0>(), pos.get<1>() };
-	pos = maths::float4{ _end_point.x,_end_point.y,0,1 } *tranform;
+	pos = maths::float4{ m_end_point.x,m_end_point.y,0,1 } *tranform;
 	gradient_info[1].cast<maths::float2>() = { pos.get<0>(), pos.get<1>() };
 
-	gradient_info[2].cast<int>() = _gradients->counter();
-	auto gradients = gradient_info[3].cast<array_view<graphics::reflect::variable>>();
-	for (index i = 0; i <_gradients->counter(); ++i)
+	gradient_info[2].cast<int>() = m_gradients->counter();
+	auto gradients = gradient_info[3].cast<array_view<graphics::reflect::varying>>();
+	for (index i = 0; i <m_gradients->counter(); ++i)
 	{
-		drawing::gradient_info::stop_color_info_t& gradient = _gradients[i];
+		drawing::gradient_info::stop_color_info_t& gradient = m_gradients[i];
 		gradients[i].cast<maths::float4>() = color_to_vector(gradient.stop_color, gradient.stop_factor);
 	}
-	_technique->unmap_ps_uniform(driver.get(), gradient_info);
+	m_technique->unmap_ps_uniform(driver.get(), gradient_info);
 
 	driver->bind_index_buffer(model->indices);
 	driver->bind_vertex_buffer(model->vertices);
@@ -464,37 +436,39 @@ d3d11_texturing_brush::~d3d11_texturing_brush()
 {
 }
 
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::d3d11::d3d11_texturing_brush, d3d11_brush);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_texturing_brush);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_texturing_brush, d3d11_brush);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_texturing_brush, d3d11_brush);
 
-bool d3d11_texturing_brush::create(d3d11_draw_context_t context, drawing::texturing_info_t info, color_t diffuse, color_t additive)
+bool d3d11_texturing_brush::create(d3d11_drawer_t context, drawing::texturing_info_t info, color_t diffuse, color_t additive)
 {
-	_diffuse_color = diffuse;
-	_additive_color = additive;
-	_texture = info.texture;
-	_tilling = info.tiling_factor;
-	_stretch = info.stretch_mode;
-	_technique = context->effect_library()->find_shaders("texturing_fx"_s);
-	if (_technique.is_empty())
-		_technique = context->effect_library()->load_shaders(create_tecnique_texturing_template(L"texturing_fx"_s, info.wrap_mode, _texturing_vertex_shader, _texturing_pixel_shader));
-	return !_technique.is_empty();
+	m_diffuse_color = diffuse;
+	m_additive_color = additive;
+	m_texture = info.texture;
+	m_tilling = info.tiling_factor;
+	m_stretch = info.stretch_mode;
+	m_technique = context->effect_library()->find_technique("texturing_fx"_s);
+	if (m_technique.is_empty())
+		m_technique = context->effect_library()->load_technique(create_tecnique_texturing_template(L"texturing_fx"_s, info.wrap_mode, _texturing_vertex_shader, _texturing_pixel_shader));
+	return !m_technique.is_empty();
 }
 
 void d3d11_texturing_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t model)
 {
-	driver->bind_shaders(_technique);
-	driver->bind_texture(_texture, 0);
-	auto world = _technique->map_vs_uniform(driver.get(), 0);
+	driver->bind_technique(m_technique);
+	driver->bind_texture(m_texture, 0);
+	auto world = m_technique->map_vs_uniform(driver.get(), 0);
 	world[0].cast<maths::float4x4>() = maths::matrix::transpose(tranform);
-	_technique->unmap_vs_uniform(driver.get(), world);
+	m_technique->unmap_vs_uniform(driver.get(), world);
 
-	auto colors = _technique->map_ps_uniform(driver.get(), 0);
-	colors[0].cast<maths::float4>() = color_to_vector(_additive_color);
-	colors[1].cast<maths::float4>() = color_to_vector(_diffuse_color);
-	_technique->unmap_ps_uniform(driver.get(), colors);
+	auto colors = m_technique->map_ps_uniform(driver.get(), 0);
+	colors[0].cast<maths::float4>() = color_to_vector(m_additive_color);
+	colors[1].cast<maths::float4>() = color_to_vector(m_diffuse_color);
+	m_technique->unmap_ps_uniform(driver.get(), colors);
 
 	driver->bind_index_buffer(model->indices);
 	driver->bind_vertex_buffer(model->vertices);
-	driver->bind_texture(_texture, 0);
+	driver->bind_texture(m_texture, 0);
 	driver->draw_indexed(model->indices->counter(), graphics::primitive::triangle);
 	driver->bind_texture(null, 0);
 }
@@ -579,50 +553,52 @@ d3d11_linear_gradient_texturing_brush::~d3d11_linear_gradient_texturing_brush()
 {
 }
 
-ANG_IMPLEMENT_BASIC_INTERFACE(ang::graphics::d3d11::d3d11_linear_gradient_texturing_brush, d3d11_brush);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_linear_gradient_texturing_brush);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_linear_gradient_texturing_brush, d3d11_brush);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_linear_gradient_texturing_brush, d3d11_brush);
 
-bool d3d11_linear_gradient_texturing_brush::create(d3d11_draw_context_t context, drawing::gradient_info gradients, drawing::texturing_info_t texture, color_t diffuse, color_t additive)
+bool d3d11_linear_gradient_texturing_brush::create(d3d11_drawer_t context, drawing::gradient_info gradients, drawing::texturing_info_t texture, color_t diffuse, color_t additive)
 {
-	_diffuse_color = diffuse;
-	_additive_color = additive;
-	_start_point = gradients.start_point;
-	_end_point = gradients.end_point;
-	_texture = texture.texture;
-	_tilling = texture.tiling_factor;
-	_stretch = texture.stretch_mode;
-	_gradients = new collections::array_buffer<drawing::gradient_info::stop_color_info_t>(collections::to_array(gradients.stop_colors.data(), gradients.stop_colors.size()));
-	_technique = context->effect_library()->find_shaders("linear_gradient_texturing_fx"_s);
-	if (_technique.is_empty())
-		_technique = context->effect_library()->load_shaders(create_tecnique_texturing_template(L"linear_gradient_fx"_s, texture.wrap_mode, _linear_gradient_texturing_vertex_shader, _linear_gradient_texturing_pixel_shader));
-	return !_technique.is_empty();
+	m_diffuse_color = diffuse;
+	m_additive_color = additive;
+	m_start_point = gradients.start_point;
+	m_end_point = gradients.end_point;
+	m_texture = texture.texture;
+	m_tilling = texture.tiling_factor;
+	m_stretch = texture.stretch_mode;
+	m_gradients = new collections::array_buffer<drawing::gradient_info::stop_color_info_t>(collections::to_array(gradients.stop_colors.data(), gradients.stop_colors.size()));
+	m_technique = context->effect_library()->find_technique("linear_gradient_texturing_fx"_s);
+	if (m_technique.is_empty())
+		m_technique = context->effect_library()->load_technique(create_tecnique_texturing_template(L"linear_gradient_fx"_s, texture.wrap_mode, _linear_gradient_texturing_vertex_shader, _linear_gradient_texturing_pixel_shader));
+	return !m_technique.is_empty();
 }
 
 void d3d11_linear_gradient_texturing_brush::draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t model)
 {
-	driver->bind_shaders(_technique);
-	auto world = _technique->map_vs_uniform(driver.get(), 0);
+	driver->bind_technique(m_technique);
+	auto world = m_technique->map_vs_uniform(driver.get(), 0);
 	world[0].cast<maths::float4x4>() = maths::matrix::transpose(tranform);
-	_technique->unmap_vs_uniform(driver.get(), world);
+	m_technique->unmap_vs_uniform(driver.get(), world);
 
-	auto colors = _technique->map_ps_uniform(driver.get(), 0);
-	colors[0].cast<maths::float4>() = color_to_vector(_additive_color);
-	colors[1].cast<maths::float4>() = color_to_vector(_diffuse_color);
-	_technique->unmap_ps_uniform(driver.get(), colors);
+	auto colors = m_technique->map_ps_uniform(driver.get(), 0);
+	colors[0].cast<maths::float4>() = color_to_vector(m_additive_color);
+	colors[1].cast<maths::float4>() = color_to_vector(m_diffuse_color);
+	m_technique->unmap_ps_uniform(driver.get(), colors);
 
-	auto gradient_info = _technique->map_ps_uniform(driver.get(), 1);
-	auto pos = maths::float4{ _start_point.x,_start_point.y,0,1 } *tranform;
+	auto gradient_info = m_technique->map_ps_uniform(driver.get(), 1);
+	auto pos = maths::float4{ m_start_point.x,m_start_point.y,0,1 } *tranform;
 	gradient_info[0].cast<maths::float2>() = { pos.get<0>(), pos.get<1>() };
-	pos = maths::float4{ _end_point.x,_end_point.y,0,1 } *tranform;
+	pos = maths::float4{ m_end_point.x,m_end_point.y,0,1 } *tranform;
 	gradient_info[1].cast<maths::float2>() = { pos.get<0>(), pos.get<1>() };
 
-	gradient_info[2].cast<int>() = _gradients->counter();
-	auto gradients = gradient_info[3].cast<array_view<graphics::reflect::variable>>();
-	for (index i = 0; i <_gradients->counter(); ++i)
+	gradient_info[2].cast<int>() = m_gradients->counter();
+	auto gradients = gradient_info[3].cast<array_view<graphics::reflect::varying>>();
+	for (index i = 0; i <m_gradients->counter(); ++i)
 	{
-		drawing::gradient_info::stop_color_info_t& gradient = _gradients[i];
+		drawing::gradient_info::stop_color_info_t& gradient = m_gradients[i];
 		gradients[i].cast<maths::float4>() = color_to_vector(gradient.stop_color, gradient.stop_factor);
 	}
-	_technique->unmap_ps_uniform(driver.get(), gradient_info);
+	m_technique->unmap_ps_uniform(driver.get(), gradient_info);
 
 	driver->bind_index_buffer(model->indices);
 	driver->bind_vertex_buffer(model->vertices);

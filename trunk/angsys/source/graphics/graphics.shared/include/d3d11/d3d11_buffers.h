@@ -15,9 +15,10 @@ namespace ang
 			typedef object_wrapper<d3d11_vertex_buffer> d3d11_vertex_buffer_t;
 
 			class d3d11_index_buffer
-				: public smart<d3d11_index_buffer, buffers::iindex_buffer>
+				: public smart<d3d11_index_buffer, buffers::iindex_buffer, resources::iresource>
 			{
 			private:
+				string m_resource_sid;
 				wsize m_index_count;
 				buffers::buffer_usage_t m_usage;
 				reflect::var_type_t m_index_type;
@@ -29,6 +30,7 @@ namespace ang
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
 
+				resources::iresource_t resource()const override;
 				buffers::buffer_type_t buffer_type()const override;
 				buffers::buffer_usage_t buffer_usage()const override;
 				buffers::buffer_bind_flag_t buffer_bind_flag()const override;
@@ -38,13 +40,23 @@ namespace ang
 				wsize counter()const override;
 				wsize size_in_bytes()const override;
 
+				resources::resource_type_t resource_type()const override;
+				string resource_sid()const override;
+				effects::ieffect_t to_effect() override;
+				effects::ishaders_t to_shaders() override;
+				textures::itexture_t to_texture() override;
+				iframe_buffer_t to_frame_buffer() override;
+				buffers::iindex_buffer_t to_index_buffer() override;
+				buffers::ivertex_buffer_t to_vertex_buffer() override;
+
 			public: //internal
 				bool create(
 					d3d11_driver_t driver, 
 					buffers::buffer_usage_t usage, 
 					reflect::var_type_t type, 
 					wsize count, 
-					array_view<byte> init_data);
+					array_view<byte> init_data,
+					string sid = null);
 				bool close();
 				void use_buffer(d3d11_driver_t);
 				inline ID3D11Buffer* D3D11Buffer()const { return m_index_buffer.get(); }
@@ -54,9 +66,10 @@ namespace ang
 			};
 
 			class d3d11_vertex_buffer
-				: public smart<d3d11_vertex_buffer, buffers::ivertex_buffer>
+				: public smart<d3d11_vertex_buffer, buffers::ivertex_buffer, resources::iresource>
 			{
 			private:
+				string m_resource_sid;
 				uint m_vertex_count;
 				uint m_stride;
 				buffers::buffer_usage_t m_usage;
@@ -69,6 +82,7 @@ namespace ang
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
 
+				resources::iresource_t resource()const override;
 				buffers::buffer_type_t buffer_type()const override;
 				buffers::buffer_usage_t buffer_usage()const override;
 				buffers::buffer_bind_flag_t buffer_bind_flag()const override;
@@ -78,13 +92,23 @@ namespace ang
 				wsize block_counter()const override;
 				wsize size_in_bytes()const override;
 
+				resources::resource_type_t resource_type()const override;
+				string resource_sid()const override;
+				effects::ieffect_t to_effect() override;
+				effects::ishaders_t to_shaders() override;
+				textures::itexture_t to_texture() override;
+				iframe_buffer_t to_frame_buffer() override;
+				buffers::iindex_buffer_t to_index_buffer() override;
+				buffers::ivertex_buffer_t to_vertex_buffer() override;
+
 			public: //internal
 				bool create(
 					d3d11_driver_t driver,
 					buffers::buffer_usage_t usage,
 					array_view<reflect::attribute_desc> vertex_desc,
 					wsize vertex_count,
-					array_view<byte> init_data);
+					array_view<byte> init_data, 
+					string sid = null);
 				bool close();
 				void use_buffer(d3d11_driver_t);
 				inline ID3D11Buffer* D3D11Buffer()const { return m_vertex_buffer.get(); }

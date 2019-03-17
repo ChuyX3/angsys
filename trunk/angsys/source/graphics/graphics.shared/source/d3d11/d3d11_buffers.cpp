@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "d3d11/driver.h"
+#include "d3d11/d3d11_driver.h"
 
 #if defined _DEBUG
 #define new new(__FILE__, __LINE__)
@@ -24,8 +24,26 @@ d3d11_index_buffer::~d3d11_index_buffer()
 }
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_index_buffer);
-ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_index_buffer, object, buffers::iindex_buffer);
-ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_index_buffer, object, buffers::iindex_buffer, buffers::igpu_buffer);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_index_buffer, object, buffers::iindex_buffer, resources::iresource);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_index_buffer, object, buffers::iindex_buffer, buffers::igpu_buffer, resources::iresource);
+
+resources::iresource_t d3d11_index_buffer::resource()const { return const_cast<d3d11_index_buffer*>(this); }
+
+resources::resource_type_t d3d11_index_buffer::resource_type()const { return resources::resource_type::index_buffer; }
+
+string d3d11_index_buffer::resource_sid()const { return (cstr_t)m_resource_sid; }
+
+effects::ieffect_t d3d11_index_buffer::to_effect() { return null; }
+
+effects::ishaders_t d3d11_index_buffer::to_shaders() { return null; }
+
+textures::itexture_t d3d11_index_buffer::to_texture() { return null; }
+
+iframe_buffer_t d3d11_index_buffer::to_frame_buffer() { return null; }
+
+buffers::iindex_buffer_t d3d11_index_buffer::to_index_buffer() { return const_cast<d3d11_index_buffer*>(this); }
+
+buffers::ivertex_buffer_t d3d11_index_buffer::to_vertex_buffer() { return null; }
 
 buffers::buffer_type_t d3d11_index_buffer::buffer_type()const { return buffers::buffer_type::index_buffer; }
 
@@ -53,7 +71,7 @@ wsize d3d11_index_buffer::size_in_bytes()const
 	return desc.get_size_in_bytes();;
 }
 
-bool d3d11_index_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t usage, reflect::var_type_t type, wsize count, array_view<byte> init_data)
+bool d3d11_index_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t usage, reflect::var_type_t type, wsize count, array_view<byte> init_data, string sid)
 {
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
@@ -105,6 +123,8 @@ bool d3d11_index_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t u
 
 	if (FAILED(driver->D3D11Device()->CreateBuffer(&bd, pInitData, &m_index_buffer)))
 		return !close();
+
+	m_resource_sid = sid;
 	return true;
 }
 
@@ -158,8 +178,26 @@ d3d11_vertex_buffer::~d3d11_vertex_buffer()
 }
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_vertex_buffer);
-ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_vertex_buffer, object, buffers::ivertex_buffer);
-ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_vertex_buffer, object, buffers::ivertex_buffer, buffers::igpu_buffer);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_vertex_buffer, object, buffers::ivertex_buffer, resources::iresource);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_vertex_buffer, object, buffers::ivertex_buffer, buffers::igpu_buffer, resources::iresource);
+
+resources::iresource_t d3d11_vertex_buffer::resource()const { return const_cast<d3d11_vertex_buffer*>(this); }
+
+resources::resource_type_t d3d11_vertex_buffer::resource_type()const { return resources::resource_type::vertex_buffer; }
+
+string d3d11_vertex_buffer::resource_sid()const { return (cstr_t)m_resource_sid; }
+
+effects::ieffect_t d3d11_vertex_buffer::to_effect() { return null; }
+
+effects::ishaders_t d3d11_vertex_buffer::to_shaders() { return null; }
+
+textures::itexture_t d3d11_vertex_buffer::to_texture() { return null; }
+
+iframe_buffer_t d3d11_vertex_buffer::to_frame_buffer() { return null; }
+
+buffers::iindex_buffer_t d3d11_vertex_buffer::to_index_buffer() { return null; }
+
+buffers::ivertex_buffer_t d3d11_vertex_buffer::to_vertex_buffer() { return const_cast<d3d11_vertex_buffer*>(this); }
 
 buffers::buffer_type_t d3d11_vertex_buffer::buffer_type()const { return buffers::buffer_type::index_buffer; }
 
@@ -188,7 +226,7 @@ wsize d3d11_vertex_buffer::block_counter()const { return m_vertex_count; }
 
 wsize d3d11_vertex_buffer::size_in_bytes()const { return m_stride *m_vertex_count; }
 
-bool d3d11_vertex_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t usage, array_view<reflect::attribute_desc> vertex_desc, wsize count, array_view<byte> init_data)
+bool d3d11_vertex_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t usage, array_view<reflect::attribute_desc> vertex_desc, wsize count, array_view<byte> init_data, string sid)
 {
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
@@ -240,6 +278,7 @@ bool d3d11_vertex_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t 
 
 	if (FAILED(driver->D3D11Device()->CreateBuffer(&bd, pInitData, &m_vertex_buffer)))
 		return !close();
+	m_resource_sid = sid;
 	return true;
 }
 

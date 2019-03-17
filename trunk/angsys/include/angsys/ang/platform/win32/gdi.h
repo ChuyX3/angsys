@@ -11,7 +11,7 @@ namespace ang
 		ang_object(paint_dc);
 
 		class LINK device_context
-			: public smart<device_context, platform::icore_context>
+			: public smart<device_context, graphics::icore_context>
 		{
 		protected:
 			pointer handle;

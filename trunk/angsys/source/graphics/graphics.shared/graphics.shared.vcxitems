@@ -16,26 +16,36 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\buffers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\drawing.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\effects.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\shaders.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\graphics.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\reflect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\scenes.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\textures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\compile_config.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\buffers.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\drawing\draw_context.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\driver.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\shaders.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\textures.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\d3d11_buffers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\drawing\d3d11_drawer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\d3d11_driver.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\d3d11_shaders.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\d3d11\d3d11_textures.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\buffers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_buffers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_driver.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_holographic_camera.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_holographic_driver.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_frame_buffer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_shaders.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_holographic_frame.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_surface.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_shaders.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_texture_loader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\d3d11_brush.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\d3d11_drawer.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\graphics.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\reflect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\textures.cpp" />

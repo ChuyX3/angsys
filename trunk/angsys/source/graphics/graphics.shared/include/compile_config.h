@@ -9,9 +9,9 @@
 #include <ws2tcpip.h>
 #include <windows.h>
 #if defined _WINDLL || defined _USRDLL
-#ifndef ANGRAPH_EXPORTS
-#define ANGRAPH_EXPORTS
-#endif//ANGRAPH_EXPORTS
+#ifndef GRAPHICS_EXPORTS
+#define GRAPHICS_EXPORTS
+#endif//GRAPHICS_EXPORTS
 #define ANGSYS_DYNAMIC_LIBRARY
 #else
 #define ANGSYS_STATIC_LIBRARY
@@ -57,25 +57,34 @@
 #define DIRECTX11_SUPPORT	(1)
 #define DIRECTX12_SUPPORT	(1)
 #define VULKAN_SUPPORT		(0)
+#ifdef __cplusplus_winrt
+#define DIRECTX11_VRX_SUPPORT (1)
+#else
+#define DIRECTX11_VRX_SUPPORT (0)
+#endif
 #else//elif WINDOWS_PLATFORM == WINDOWS_STORE_PLATFORM
 #define OPENGL_SUPPORT		(0)
 #define OPENGLES_SUPPORT	(0)
 #define DIRECTX_SUPPORT		DIRECTX11_SUPPORT
 #define DIRECTX11_SUPPORT	(1)
 #define DIRECTX12_SUPPORT	(1)
+#define DIRECTX11_VRX_SUPPORT (1)
 #endif
 #elif defined ANDROID_PLATFORM
 #define OPENGL_SUPPORT		(0)
 #define OPENGLES_SUPPORT	(1)
 #define DIRECTX_SUPPORT		(0)
+#define DIRECTX11_VRX_SUPPORT (0)
 #elif defined LINUX_PLATFORM
 #define OPENGL_SUPPORT		(1)
 #define OPENGLES_SUPPORT	(0)
 #define DIRECTX_SUPPORT		(0)
+#define DIRECTX11_VRX_SUPPORT (0)
 #else
 #define OPENGL_SUPPORT		(0)
 #define OPENGLES_SUPPORT	(0)
 #define DIRECTX_SUPPORT		(0)
+#define DIRECTX11_VRX_SUPPORT (0)
 #endif
 
 #if defined WINDOWS_PLATFORM

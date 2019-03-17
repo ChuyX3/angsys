@@ -71,7 +71,7 @@ varying varying::field(index idx)
 	return ang::move(var);
 }
 
-varying varying::field(text::raw_cstr_t name)
+varying varying::field(cstr_t name)
 {
 	auto idx = find_field(name);
 	if (invalid_index == idx)
@@ -83,7 +83,7 @@ varying varying::field(text::raw_cstr_t name)
 	return ang::move(var);
 }
 
-index varying::find_field(text::raw_cstr_t name)const
+index varying::find_field(cstr_t name)const
 {
 	if (_descriptor.var_type() != var_type::block)
 		return (index)invalid_index;
@@ -92,7 +92,7 @@ index varying::find_field(text::raw_cstr_t name)const
 		return (index)invalid_index;
 	index i = 0;
 	for (auto it = fields->begin(); it.is_valid(); ++it, ++i) {
-		cstr_t _name = it->var_name();
+		castr_t _name = it->var_name();
 		if (_name == name)
 			return i;
 	}
@@ -114,7 +114,7 @@ varying varying::operator [](index idx)
 		return field(idx);
 }
 
-varying varying::operator [](text::raw_cstr_t name)
+varying varying::operator [](cstr_t name)
 {
 	return field(name);
 }
@@ -197,7 +197,7 @@ bool ang::graphics::reflect::varying::varying_cast<_TYPE>::is_type_of(ang::graph
 		&& var->_descriptor.aligment() >= _ALIGNMENT  \
 		&& (var->_descriptor.var_class().get() == _VAR_CLASS && var->_descriptor.var_type().get() == _VAR_TYPE); \
  } \
-template<> varying_desc reflect::type_desc<_TYPE>(text::raw_cstr_t name) { \
+template<> varying_desc reflect::type_desc<_TYPE>(cstr_t name) { \
 	return varying_desc(_VAR_TYPE, _VAR_CLASS, name, 1U, _ALIGNMENT); \
 }
 

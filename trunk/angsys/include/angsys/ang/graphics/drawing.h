@@ -10,7 +10,7 @@
 #if defined WINDOWS_PLATFORM
 #if defined ANGSYS_DYNAMIC_LIBRARY
 
-#ifdef ANGRAPH_EXPORTS
+#ifdef GRAPHICS_EXPORTS
 #define LINK __declspec(dllexport)
 #else
 #define LINK __declspec(dllimport)
@@ -80,12 +80,12 @@ namespace ang
 		
 
 			ang_interface(ibrush);
-			ang_interface(idraw_context);
+			ang_interface(idrawer);
 
 			ang_begin_interface(LINK ibrush)
 			ang_end_interface();
 
-			ang_begin_interface(LINK idraw_context)
+			ang_begin_interface(LINK idrawer)
 				visible vcall ibrush_t create_solid_brush(
 					color_t /*diffuse*/, 
 					color_t /*additive*/ = colors::null
@@ -109,7 +109,7 @@ namespace ang
 				visible vcall void draw_rect(ibrush_t brush, rect<float> rect)pure;
 			ang_end_interface();
 
-			LINK idraw_context_t create_drawing_context(idriver_t, core::files::ifile_system_t = null);
+			LINK idrawer_t create_drawing_context(idriver_t, core::files::ifile_system_t = null);
 		}
 	}
 }

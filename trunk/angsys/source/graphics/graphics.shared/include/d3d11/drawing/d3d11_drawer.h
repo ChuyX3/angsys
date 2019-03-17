@@ -1,6 +1,6 @@
 #pragma once
 
-#include "d3d11/driver.h"
+#include "d3d11/d3d11_driver.h"
 #include <ang/graphics/drawing.h>
 
 #if DIRECTX_SUPPORT
@@ -11,29 +11,14 @@ namespace ang
 	{
 		namespace d3d11
 		{
-			class d3d11_draw_context;
-			typedef object_wrapper<d3d11_draw_context> d3d11_draw_context_t;
-
-			class d3d11_solid_brush;
-			class d3d11_texturing_brush;
-			class d3d11_linear_gradient_brush;
-			class d3d11_linear_gradient_texturing_brush;
-
-			typedef object_wrapper<d3d11_solid_brush> d3d11_solid_brush_t;
-			typedef object_wrapper<d3d11_texturing_brush> d3d11_texturing_brush_t;
-			typedef object_wrapper<d3d11_linear_gradient_brush> d3d11_linear_gradient_brush_t;
-			typedef object_wrapper<d3d11_linear_gradient_texturing_brush> d3d11_linear_gradient_texturing_brush_t;
-
-			typedef struct _model
-			{
-				buffers::iindex_buffer_t indices;
-				buffers::ivertex_buffer_t vertices;
-			}model_t, *model_ptr_t;
-
+			ang_object(d3d11_drawer);
+			ang_object(d3d11_solid_brush);
+			ang_object(d3d11_texturing_brush);
+			ang_object(d3d11_linear_gradient_brush);
+			ang_object(d3d11_linear_gradient_texturing_brush);
 
 			class d3d11_brush
-				: public object
-				, public drawing::ibrush
+				: public smart<d3d11_brush, drawing::ibrush>
 			{
 			protected:
 				d3d11_brush();
@@ -45,12 +30,12 @@ namespace ang
 			};
 
 			class d3d11_solid_brush
-				: public d3d11_brush
+				: public smart<d3d11_solid_brush, d3d11_brush>
 			{
 			private:
-				color_t _diffuse_color;
-				color_t _additive_color;
-				effects::ishaders_t _technique;
+				color_t m_diffuse_color;
+				color_t m_additive_color;
+				ishaders_t m_technique;
 
 			public:
 				d3d11_solid_brush();
@@ -60,22 +45,22 @@ namespace ang
 
 				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t) override;
 
-				bool create(d3d11_draw_context_t context, color_t diffuse, color_t additive);
+				bool create(d3d11_drawer_t context, color_t diffuse, color_t additive);
 
 			private:
 				virtual~d3d11_solid_brush();
 			};
 
 			class d3d11_linear_gradient_brush
-				: public d3d11_brush
+				: public smart<d3d11_linear_gradient_brush, d3d11_brush>
 			{
 			private:
-				color_t _diffuse_color;
-				color_t _additive_color;
-				point<float> _start_point;
-				point<float> _end_point;
-				array<drawing::gradient_info::stop_color_info_t> _gradients;
-				effects::ishaders_t _technique;
+				color_t m_diffuse_color;
+				color_t m_additive_color;
+				point<float> m_start_point;
+				point<float> m_end_point;
+				array<drawing::gradient_info::stop_color_info_t> m_gradients;
+				ishaders_t m_technique;
 
 			public:
 				d3d11_linear_gradient_brush();
@@ -85,22 +70,22 @@ namespace ang
 
 				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t) override;
 
-				bool create(d3d11_draw_context_t context, drawing::gradient_info_t gradients, color_t diffuse, color_t additive);
+				bool create(d3d11_drawer_t context, drawing::gradient_info_t gradients, color_t diffuse, color_t additive);
 
 			private:
 				virtual~d3d11_linear_gradient_brush();
 			};
 
 			class d3d11_texturing_brush
-				: public d3d11_brush
+				: public smart<d3d11_texturing_brush, d3d11_brush>
 			{
 			private:
-				color_t _diffuse_color;
-				color_t _additive_color;
-				size<float> _tilling;
-				textures::tex_stretch_mode_t _stretch;
-				textures::itexture_t _texture;
-				effects::ishaders_t _technique;
+				color_t m_diffuse_color;
+				color_t m_additive_color;
+				size<float> m_tilling;
+				textures::tex_stretch_mode_t m_stretch;
+				textures::itexture_t m_texture;
+				ishaders_t m_technique;
 
 			public:
 				d3d11_texturing_brush();
@@ -110,25 +95,25 @@ namespace ang
 
 				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t) override;
 
-				bool create(d3d11_draw_context_t context, drawing::texturing_info_t info, color_t diffuse, color_t additive);
+				bool create(d3d11_drawer_t context, drawing::texturing_info_t info, color_t diffuse, color_t additive);
 
 			private:
 				virtual~d3d11_texturing_brush();
 			};
 
 			class d3d11_linear_gradient_texturing_brush
-				: public d3d11_brush
+				: public smart<d3d11_linear_gradient_texturing_brush, d3d11_brush>
 			{
 			private:
-				color_t _diffuse_color;
-				color_t _additive_color;
-				size<float> _tilling;
-				point<float> _start_point;
-				point<float> _end_point;
-				textures::tex_stretch_mode_t _stretch;
-				array<drawing::gradient_info::stop_color_info_t> _gradients;
-				textures::itexture_t _texture;
-				effects::ishaders_t _technique;
+				color_t m_diffuse_color;
+				color_t m_additive_color;
+				size<float> m_tilling;
+				point<float> m_start_point;
+				point<float> m_end_point;
+				textures::tex_stretch_mode_t m_stretch;
+				array<drawing::gradient_info::stop_color_info_t> m_gradients;
+				textures::itexture_t m_texture;
+				ishaders_t m_technique;
 
 			public:
 				d3d11_linear_gradient_texturing_brush();
@@ -137,27 +122,26 @@ namespace ang
 				ANG_DECLARE_INTERFACE();
 
 				void draw(d3d11_driver_t driver, maths::matrix4 const& tranform, model_ptr_t) override;
-				bool create(d3d11_draw_context_t context, drawing::gradient_info_t gradients_info, drawing::texturing_info_t texture_info, color_t diffuse, color_t additive);
+				bool create(d3d11_drawer_t context, drawing::gradient_info_t gradients_info, drawing::texturing_info_t texture_info, color_t diffuse, color_t additive);
 
 			private:
 				virtual~d3d11_linear_gradient_texturing_brush();
 			};
 
-			class d3d11_draw_context
-				: public object
-				, public drawing::idraw_context
+			class d3d11_drawer
+				: public smart<d3d11_drawer, drawing::idrawer>
 			{
 			private:
-				size<float> _dimentions;
-				model_t _square;
-				model_t _circle;
+				size<uint> m_dimentions;
+				model_t m_square;
+				model_t m_circle;
 
-				bool _is_drawing;
-				d3d11_driver_t _driver;
-				effects::ieffect_library_t _effect_library;
+				bool m_is_drawing;
+				d3d11_driver_t m_driver;
+				effects::ieffect_library_t m_effect_library;
 
 			public:
-				d3d11_draw_context(d3d11_driver_t, core::files::ifile_system_t = null);
+				d3d11_drawer(d3d11_driver_t, core::files::ifile_system_t = null);
 
 			public: /*overrides*/
 				ANG_DECLARE_INTERFACE();
@@ -179,13 +163,13 @@ namespace ang
 				bool close();
 
 			public: //properties
-				bool is_drawing()const { return _is_drawing; }
-				d3d11_driver_t driver()const { return _driver; }
-				effects::ieffect_library_t effect_library()const { return _effect_library; }
-				//property<const textures::itexture_loader_t, d3d11_draw_context> texture_loader;
+				bool is_drawing()const { return m_is_drawing; }
+				d3d11_driver_t driver()const { return m_driver; }
+				effects::ieffect_library_t effect_library()const { return m_effect_library; }
+				//property<const textures::itexture_loader_t, d3d11_drawer> texture_loader;
 
 			private:
-				virtual~d3d11_draw_context();
+				virtual~d3d11_drawer();
 			};
 
 			inline maths::float4 color_to_vector(graphics::color_t color)
@@ -205,8 +189,6 @@ namespace ang
 					alpha,
 				};
 			}
-
-
 		}
 	}
 }

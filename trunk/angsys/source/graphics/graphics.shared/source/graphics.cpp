@@ -2,22 +2,23 @@
 #include <ang/graphics/graphics.h>
 
 #if DIRECTX11_SUPPORT
-#include "d3d11/driver.h"
-#include "d3d11/drawing/draw_context.h"
+#include "d3d11/d3d11_driver.h"
+//#include "d3d11/drawing/d3d11_drawer.h"
 #endif
 
 #if defined _DEBUG
 #define new new(__FILE__, __LINE__)
 #endif
 
-
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::idriver, interface)
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::isurface, interface)
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::iframe_buffer, interface)
-
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ishaders, interface)
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ieffect, interface)
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ieffect_library, interface)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::idriver, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::icamera, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::isurface, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::iframe_buffer, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::ifactory, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::resources::iresource, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ishaders, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ipass, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ieffect, intf)
 
 #define MY_TYPE ang::graphics::idriver
 #include "ang/inline/intf_wrapper_specialization.inl"
@@ -32,14 +33,6 @@ ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ieffect_library, inte
 #undef MY_TYPE
 
 #define MY_TYPE ang::graphics::effects::ishaders
-#include "ang/inline/intf_wrapper_specialization.inl"
-#undef MY_TYPE
-
-#define MY_TYPE ang::graphics::effects::ieffect
-#include "ang/inline/intf_wrapper_specialization.inl"
-#undef MY_TYPE
-
-#define MY_TYPE ang::graphics::effects::ieffect_library
 #include "ang/inline/intf_wrapper_specialization.inl"
 #undef MY_TYPE
 
@@ -59,11 +52,26 @@ idriver_t ang::graphics::create_graphic_driver(graph_driver_type_t type, long64 
 #if DIRECTX11_SUPPORT
 	case graph_driver_type::DirectX11:
 	{
-		driver = new d3d11::d3d11_driver(adapter_id);
+		d3d11::d3d11_driver_t d3d_driver = new d3d11::d3d11_driver();
+		if (!d3d_driver->init_driver(view, adapter_id))
+			return null;
+		driver = d3d_driver.get();
 		if (!view.is_empty() && (isurface**)surface != null)
 			*surface = driver->create_surface(view);
 		return driver;
 	}
+#if DIRECTX11_VRX_SUPPORT
+	case graph_driver_type::DirectX11_VRX:
+	{
+		d3d11::d3d11_driver_t d3d_driver = new d3d11::holographic_driver();
+		if (!d3d_driver->init_driver(view, adapter_id))
+			return null;
+		driver = d3d_driver.get();
+		if (!view.is_empty() && (isurface**)surface != null)
+			*surface = driver->create_surface(view);
+		return driver;
+	}
+#endif
 #endif//DIRECTX_SUPPORT
 
 #if VULKAN_SUPPORT
