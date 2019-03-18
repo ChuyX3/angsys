@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  
+  <Type Name="ang::graphics::scenes::scene_object">
+    <DisplayString>scene object</DisplayString>
+    <Expand>
+      <Item Name="[position]" ExcludeView="simple">m_position</Item>
+      <Item Name="[rotation]" ExcludeView="simple">m_rotation</Item>
+      <Item Name="[scale]" ExcludeView="simple">m_scale</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::graphics::scenes::camera">
+    <DisplayString>camera</DisplayString>
+    <Expand>
+      <Item Name="[position]" ExcludeView="simple">m_position</Item>
+      <Item Name="[rotation]" ExcludeView="simple">m_rotation</Item>
+      <Item Name="[scale]" ExcludeView="simple">m_scale</Item>
+      <Item Name="[projection]" ExcludeView="simple">m_proj_info</Item>
+      <Item Name="[movement_speed]" ExcludeView="simple">m_movement_speed</Item>
+      <Item Name="[rotation_speed]" ExcludeView="simple">m_rotation_speed</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::graphics::scenes::model">
+    <DisplayString>model</DisplayString>
+    <Expand>
+      <Item Name="[position]" ExcludeView="simple">m_position</Item>
+      <Item Name="[rotation]" ExcludeView="simple">m_rotation</Item>
+      <Item Name="[scale]" ExcludeView="simple">m_scale</Item>
+   
+    </Expand>
+  </Type>
+</AutoVisualizer>

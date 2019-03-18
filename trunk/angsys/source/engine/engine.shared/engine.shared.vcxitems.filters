@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="header">
+      <UniqueIdentifier>{39344d1a-4419-4f06-a259-5e3209497ebf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{32bf2f2c-3db8-4b3d-8553-c4d749f18979}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\scenes">
+      <UniqueIdentifier>{0a3ca6b3-eb14-46fe-b0b7-5481079b5547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\scenes">
+      <UniqueIdentifier>{366e12ed-f446-4b50-a5a7-b013f212ba9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\effects">
+      <UniqueIdentifier>{31313c11-5646-4c1f-9e0a-ac16629cb58f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\resources">
+      <UniqueIdentifier>{3835ce7f-e252-4398-9141-d532215bcdd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\resources">
+      <UniqueIdentifier>{d4d56c04-6b48-41e3-a573-c957a7c33343}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\engine.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\scenes\model_loader.h">
+      <Filter>header\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\scenes\scenes.h">
+      <Filter>header\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\resources.h">
+      <Filter>header\resources</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\camera.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\indexed_model.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\model.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\ordered_model.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\scenes.cpp">
+      <Filter>source\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\engine.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\resources.cpp">
+      <Filter>source\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\library.cpp">
+      <Filter>source\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\resource_manager.cpp">
+      <Filter>source\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\effects.cpp">
+      <Filter>source\resources</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
