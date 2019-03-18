@@ -35,6 +35,9 @@
     <ClCompile Include="source\core_window.cpp">
       <Filter>source files</Filter>
     </ClCompile>
+    <ClCompile Include="source\events_args.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -43,6 +46,9 @@
       <Filter>header files\ang\platform\windows</Filter>
     </ClInclude>
     <ClInclude Include="include\dispatcher.h">
+      <Filter>header files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\event_args.h">
       <Filter>header files\include</Filter>
     </ClInclude>
   </ItemGroup>

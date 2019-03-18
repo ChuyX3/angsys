@@ -129,10 +129,10 @@ wnd_create_args_ex::wnd_create_args_ex(const wnd_create_args_ex&args)
 
 }
 
-wnd_create_args_ex::wnd_create_args_ex(string className, string wndName, graphics::rect<float> area, wnd_style_ex_t wndExStyle, wnd_style_t wndStyle, pointer wndParent, ulong64 id, var_args_t userArgs)
+wnd_create_args_ex::wnd_create_args_ex(wstring className, wstring wndName, graphics::rect<float> area, wnd_style_ex_t wndExStyle, wnd_style_t wndStyle, pointer wndParent, ulong64 id, var_args_t userArgs)
 	: base(
-		forward<string>(className),
-		forward<string>(wndName), 
+		forward<wstring>(className),
+		forward<wstring>(wndName), 
 		forward<graphics::rect<float>>(area),
 		forward<wnd_style_t>(wndStyle),
 		forward<pointer>(wndParent),
@@ -143,10 +143,10 @@ wnd_create_args_ex::wnd_create_args_ex(string className, string wndName, graphic
 
 }
 
-wnd_create_args_ex::wnd_create_args_ex(string className, string wndName, graphics::rect<float> area, wnd_style_ex_t wndExStyle, wnd_style_t wndStyle, wndptr wndParent, ulong64 id, var_args_t userArgs)
+wnd_create_args_ex::wnd_create_args_ex(wstring className, wstring wndName, graphics::rect<float> area, wnd_style_ex_t wndExStyle, wnd_style_t wndStyle, wndptr wndParent, ulong64 id, var_args_t userArgs)
 	: base(
-		forward<string>(className),
-		forward<string>(wndName),
+		forward<wstring>(className),
+		forward<wstring>(wndName),
 		forward<graphics::rect<float>>(area),
 		forward<wnd_style_t>(wndStyle),
 		forward<pointer>(wndParent),
@@ -205,7 +205,7 @@ window_t window::handle_to_window(pointer hWnd)
 wstring window::regist_wnd_class(class_regist_args_t args)
 {
 	if (args.is_empty())
-		return (cstr_t)null;
+		return (castr_t)null;
 	WNDCLASSEXW wcex;
 
 	if (GetClassInfoExW(GetModuleHandle(NULL), (cwstr_t)args->name, &wcex))
@@ -277,24 +277,6 @@ window::window()
 window::~window()
 {
 	//m_created_event.empty();
-	m_initialize_event.empty();
-	m_destroyed_event.empty();
-	m_draw_event.empty();
-	m_update_event.empty();
-	m_orientation_event.empty();
-	m_activate_event.empty();
-	m_size_event.empty();
-	m_char_event.empty();
-	m_key_pressed_event.empty();
-	m_key_released_event.empty();
-	m_pointer_moved_event.empty();
-	m_pointer_pressed_event.empty();
-	m_pointer_released_event.empty();
-	m_mouse_moved_event.empty();
-	m_mouse_lbutton_pressed_event.empty();
-	m_mouse_lbutton_released_event.empty();
-	m_mouse_rbutton_pressed_event.empty();
-	m_mouse_rbutton_released_event.empty();
 }
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::windows::window);
@@ -339,7 +321,7 @@ pointer window::core_view_handle()const
 	return null;
 }
 
-icore_context_t window::core_context()const
+graphics::icore_context_t window::core_context()const
 {
 	return new graphics::device_context(const_cast<window*>(this));
 }
@@ -423,7 +405,43 @@ bool window::create(wnd_create_args_t args)
 //	return object::release();
 //}
 
-bool window::close()
+void window::clear()
+{
+	if (handle != null && IsWindow(handle->m_hwnd))
+	{
+		send_msg(events::message(events::core_msg::destroyed));
+	}
+
+	if (handle != null)
+	{
+		hwnd_t h = handle;
+		detach();
+		SetWindowLongPtrW(h->m_hwnd, GWLP_USERDATA, NULL);
+		h->m_wnd = nullptr;
+		delete h;
+	}
+
+	m_initialize_event.empty();
+	m_destroyed_event.empty();
+	m_draw_event.empty();
+	m_update_event.empty();
+	m_orientation_event.empty();
+	m_activate_event.empty();
+	m_size_event.empty();
+	m_char_event.empty();
+	m_key_pressed_event.empty();
+	m_key_released_event.empty();
+	m_pointer_moved_event.empty();
+	m_pointer_pressed_event.empty();
+	m_pointer_released_event.empty();
+	m_mouse_moved_event.empty();
+	m_mouse_lbutton_pressed_event.empty();
+	m_mouse_lbutton_released_event.empty();
+	m_mouse_rbutton_pressed_event.empty();
+	m_mouse_rbutton_released_event.empty();
+}
+
+bool window::destroy()
 {
 	if (handle != null)
 	{
@@ -433,6 +451,26 @@ bool window::close()
 		h->m_wnd = nullptr;
 		delete h;
 	}
+
+	m_initialize_event.empty();
+	m_destroyed_event.empty();
+	m_draw_event.empty();
+	m_update_event.empty();
+	m_orientation_event.empty();
+	m_activate_event.empty();
+	m_size_event.empty();
+	m_char_event.empty();
+	m_key_pressed_event.empty();
+	m_key_released_event.empty();
+	m_pointer_moved_event.empty();
+	m_pointer_pressed_event.empty();
+	m_pointer_released_event.empty();
+	m_mouse_moved_event.empty();
+	m_mouse_lbutton_pressed_event.empty();
+	m_mouse_lbutton_released_event.empty();
+	m_mouse_rbutton_pressed_event.empty();
+	m_mouse_rbutton_released_event.empty();
+
 	return true;
 }
 
@@ -793,7 +831,7 @@ dword window::on_destroyed(events::message& m)
 	}
 	def_window_proc(m);
 
-	close();
+	destroy();
 	return m.result();
 }
 

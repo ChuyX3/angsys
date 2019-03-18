@@ -11,14 +11,23 @@
 #endif
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::idriver, intf)
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::icamera, intf)
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::isurface, intf)
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::iframe_buffer, intf)
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::ifactory, intf)
+
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::icamera, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::imodel, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::imodel_element, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::iscene_object, dom::xml::ixml_serializable)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::iscene, dom::xml::ixml_serializable)
+
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::resources::iresource, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::resources::ilibrary, dom::xml::ixml_serializable);
+
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ishaders, intf)
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ipass, intf)
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ieffect, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ieffect_library, resources::ilibrary);
 
 #define MY_TYPE ang::graphics::idriver
 #include "ang/inline/intf_wrapper_specialization.inl"

@@ -109,6 +109,7 @@ namespace ang
 
 				resources::resource_type_t resource_type()const override;
 				string resource_sid()const override;
+				void resource_sid(cstr_t) override;
 				effects::ieffect_t to_effect() override;
 				effects::ishaders_t to_shaders() override;
 				textures::itexture_t to_texture() override;
@@ -194,9 +195,10 @@ namespace ang
 				isurface_t create_surface(platform::icore_view_t)const override;
 				ifactory_t get_factory()const override;
 
+				idriver_t driver()const override { return const_cast<d3d11_driver*>(this); }
 				void set_file_system(core::files::ifile_system_t)override;
-				buffers::ivertex_buffer_t create_vertex_buffer(buffers::buffer_usage_t usage, vector<reflect::attribute_desc> vertex_desc, wsize vertex_count, array<byte> init_data, string sid = null)const override;
-				buffers::iindex_buffer_t create_index_buffer(buffers::buffer_usage_t usage, reflect::var_type_t index_type, wsize index_count, array<byte> init_data, string sid = null)const override;
+				buffers::ivertex_buffer_t create_vertex_buffer(buffers::buffer_usage_t usage, vector<reflect::attribute_desc> vertex_desc, wsize vertex_count, ibuffer_t init_data, string sid = null)const override;
+				buffers::iindex_buffer_t create_index_buffer(buffers::buffer_usage_t usage, reflect::var_type_t index_type, wsize index_count, ibuffer_t init_data, string sid = null)const override;
 				textures::itexture_t create_texture(textures::tex_type_t type, textures::tex_format_t color_format, buffers::buffer_usage_t usage, buffers::buffer_bind_flag_t flags, size3d<uint> dimentions, string sid = null)const override;
 				textures::itexture_t create_texture(unknown_t tex_handle, string sid = null)const override;
 				textures::itexture_t load_texture(text::string file, textures::tex_type_t, string sid = null)const override;
@@ -206,8 +208,8 @@ namespace ang
 				effects::ishaders_t compile_shaders(wstring vertex_shader, wstring pixel_shader, string sid = null, string_ptr_t log = null)const override;
 				effects::ishaders_t compile_shaders(effects::shader_info_t const& vertex_shader, effects::shader_info_t const& pixel_shader, string sid = null, string_ptr_t log = null)const override;
 
-				core::async::iasync<buffers::ivertex_buffer_t> create_vertex_buffer_async(buffers::buffer_usage_t usage, vector<reflect::attribute_desc> vertex_desc, wsize vertex_count, array<byte> init_data, string sid = null)const override;
-				core::async::iasync<buffers::iindex_buffer_t> create_index_buffer_async(buffers::buffer_usage_t usage, reflect::var_type_t index_type, wsize index_count, array<byte> init_data, string sid = null)const override;
+				core::async::iasync<buffers::ivertex_buffer_t> create_vertex_buffer_async(buffers::buffer_usage_t usage, vector<reflect::attribute_desc> vertex_desc, wsize vertex_count, ibuffer_t init_data, string sid = null)const override;
+				core::async::iasync<buffers::iindex_buffer_t> create_index_buffer_async(buffers::buffer_usage_t usage, reflect::var_type_t index_type, wsize index_count, ibuffer_t init_data, string sid = null)const override;
 				core::async::iasync<textures::itexture_t> create_texture_async(textures::tex_type_t type, textures::tex_format_t color_format, buffers::buffer_usage_t usage, buffers::buffer_bind_flag_t flags, size3d<uint> dimentions, string sid = null)const override;
 				core::async::iasync<textures::itexture_t> create_texture_async(unknown_t tex_handle, string sid = null)const override;
 				core::async::iasync<textures::itexture_t> load_texture_async(text::string file, textures::tex_type_t, string sid = null)const override;
@@ -241,6 +243,7 @@ namespace ang
 				void draw(uint count, primitive_t) override;
 				void draw_indexed(uint count, primitive_t) override;
 				core::async::mutex_ptr_t driver_guard()const override;
+				core::async::idispatcher_t dispatcher()const override;
 
 				virtual bool init_driver(platform::icore_view_t wnd, long64 adapter_id);
 
@@ -255,7 +258,7 @@ namespace ang
 						return func.get()->invoke(async, auto_save);
 					});
 				}
-				inline core::files::ifile_system* get_file_system()const { return m_fs.is_empty() ? core::files::ifile_system::fs_instance().get() : m_fs.get(); }
+				inline core::files::ifile_system* get_file_system()const { return m_fs.is_empty() ? core::files::ifile_system::instance().get() : m_fs.get(); }
 				inline ID3D11Device2* D3D11Device()const { return m_d3d_device.get(); }
 				inline ID3D11DeviceContext2* D3D11Context()const { return m_d3d_context.get(); }
 				//	inline safe_thread_wrapper<ID3D11DeviceContext2> D3D11Context()const { return{ d3d_context.get(), main_mutex }; }

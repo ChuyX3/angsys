@@ -42,6 +42,7 @@ namespace ang
 
 				resources::resource_type_t resource_type()const override;
 				string resource_sid()const override;
+				void resource_sid(cstr_t) override;
 				effects::ieffect_t to_effect() override;
 				effects::ishaders_t to_shaders() override;
 				textures::itexture_t to_texture() override;
@@ -94,6 +95,7 @@ namespace ang
 
 				resources::resource_type_t resource_type()const override;
 				string resource_sid()const override;
+				void resource_sid(cstr_t) override;
 				effects::ieffect_t to_effect() override;
 				effects::ishaders_t to_shaders() override;
 				textures::itexture_t to_texture() override;

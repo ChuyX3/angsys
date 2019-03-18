@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <ang/platform/uwp/windows.h>
 #include "dispatcher.h"
+#include "event_args.h"
 
 
 using namespace ang;
@@ -47,8 +48,8 @@ namespace ang
 
 core_app::core_app()
 	: m_is_running(false)
-	, m_initialize_event(this, [](events::core_msg_t code) { return code == events::core_msg::start_app; })
-	, m_finalize_event(this, [](events::core_msg_t code) { return code == events::core_msg::exit_app; })
+	, m_start_event(this, [](events::core_msg_t code) { return code == events::core_msg::start_app; })
+	, m_exit_event(this, [](events::core_msg_t code) { return code == events::core_msg::exit_app; })
 	, m_dispatcher(null)
 {
 
@@ -73,7 +74,7 @@ dword core_app::run()
 
 void core_app::clear()
 {
-	terminate();
+	//destroy();
 }
 
 imessage_listener_t core_app::dispatcher()const
@@ -96,12 +97,12 @@ input::ikeyboard_t core_app::core_app::keyboard()
 	return null;
 }
 
-bool core_app::is_current_thread()const 
+bool core_app::is_main_thread()const 
 {
 	return m_ui_thread.is_empty() ? false : m_ui_thread->has_thread_access();
 }
 
-core::async::thread_t core_app::main_worker_thread()const
+core::async::thread_t core_app::main_thread()const
 {
 	return m_ui_thread;
 }
@@ -168,14 +169,17 @@ void core_app::running()
 	while (main_wnd->is_created)
 	{
 		dispatch_msgs();
-		main_wnd->update();
+		main_wnd->dispatcher()->send_msg(events::message(events::core_msg::update));
 	}
-	main_wnd->terminate();
+	main_wnd->dispatcher()->send_msg(events::message(events::core_msg::destroyed));
+	destroy();
 }
 
-bool core_app::terminate()
+bool core_app::destroy()
 {
 	send_msg(events::message(events::core_msg::exit_app));
+	m_start_event.empty();
+	m_exit_event.empty();
 	return true;
 }
 
@@ -202,10 +206,10 @@ dword core_app::send_msg(events::message m)
 	switch (m.msg())
 	{
 		case events::core_msg::start_app:
-			m.result(on_initialize(m));
+			m.result(on_start(m));
 			break;
 		case events::core_msg::exit_app:
-			m.result(on_finalize(m));
+			m.result(on_exit(m));
 			break;
 		case events::core_msg::activate:
 			m.result(on_activated(m));
@@ -235,12 +239,13 @@ events::event_token_t core_app::listen_to(events::event_t e)
 	return events::event_token_t();
 }
 
-ang_platform_implement_event_handler(core_app, initialize_event);
-ang_platform_implement_event_handler(core_app, finalize_event);
+ang_platform_implement_event_handler(core_app, start_event);
+ang_platform_implement_event_handler(core_app, exit_event);
 
-dword core_app::on_initialize(events::message& m)
+dword core_app::on_start(events::message& m)
 {
-	m_initialize_event(nullptr);
+	events::iapp_status_event_args_t args = new events::app_status_event_args(m, this);
+	m_start_event(args.get());
 	return 0;
 }
 
@@ -249,9 +254,10 @@ dword core_app::on_activated(events::message& m)
 	return main_wnd->dispatcher()->send_msg(m);
 }
 
-dword core_app::on_finalize(events::message& m)
+dword core_app::on_exit(events::message& m)
 {
-	m_finalize_event(null);
+	events::iapp_status_event_args_t args = new events::app_status_event_args(m, this);
+	m_exit_event(args.get());
 	return 0;
 }
 
@@ -282,7 +288,7 @@ void WinRTApp::Initialize(CoreApplicationView^ applicationView)
 
 void WinRTApp::SetWindow(CoreWindow^ window)
 {
-	core_app::instance()->main_wnd->initialize(reinterpret_cast<pointer>(window));
+	core_app::instance()->main_wnd->dispatcher()->send_msg(events::message(events::core_msg::created, 0, (long64)reinterpret_cast<pointer>(window)));
 }
 
 void WinRTApp::Load(Platform::String^ entryPoint)

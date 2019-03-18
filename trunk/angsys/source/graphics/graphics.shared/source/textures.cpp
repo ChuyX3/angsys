@@ -9,6 +9,7 @@ using namespace ang::graphics::textures;
 
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::textures::itexture, buffers::igpu_buffer);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::textures::itexture_loader, resources::ilibrary);
 
 safe_enum_rrti2(ang::graphics::textures, tex_type);
 safe_enum_rrti2(ang::graphics::textures, tex_format);

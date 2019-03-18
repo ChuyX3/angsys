@@ -1,9 +1,8 @@
 #ifndef __EVENT_ARGS_H__
 #define __EVENT_ARGS_H__
 
-#include <ang/platform/win32/windows.h>
-#include <ang/platform/win32/controller.h>
-//#include <Queue.h>
+#include <ang/platform/uwp/windows.h>
+
 
 namespace ang
 {
@@ -37,10 +36,10 @@ namespace ang
 			{
 			private:
 				message m_msg;
-				windows::app_t m_app;
+				windows::appptr m_app;
 
 			public:
-				app_status_event_args(message, windows::app_t app);
+				app_status_event_args(message, windows::appptr app);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
@@ -61,11 +60,11 @@ namespace ang
 			private:
 				message m_msg;
 				windows::wndptr m_view;
-				windows::app_t m_app;
+				windows::appptr m_app;
 				var_args_t m_args;
 
 			public:
-				created_event_args(message, windows::wndptr, windows::app_t, var_args_t);
+				created_event_args(message, windows::wndptr, windows::appptr, var_args_t);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
@@ -156,11 +155,11 @@ namespace ang
 			private:
 				message m_msg;
 				windows::wndptr m_view;
-				graphics::device_context_t m_dc;
+				graphics::icore_context_t m_dc;
 				graphics::size<float> m_size;
 
 			public:
-				draw_event_args(message, windows::wndptr, graphics::device_context_t, graphics::size<float>);
+				draw_event_args(message, windows::wndptr, graphics::icore_context_t, graphics::size<float>);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
@@ -252,11 +251,11 @@ namespace ang
 			{
 			private:
 				message m_msg;
-				input::controller_t m_controller;
+				input::icontroller_t m_controller;
 				input::controller_status_t m_status;
 
 			public:
-				controller_status_args(message, input::controller_t, input::controller_status_t);
+				controller_status_args(message, input::icontroller_t, input::controller_status_t);
 
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
@@ -270,7 +269,6 @@ namespace ang
 			private:
 				virtual~controller_status_args();
 			};
-
 
 			class controller_digital_input_args
 				: public smart<controller_digital_input_args, icontroller_digital_input_args>

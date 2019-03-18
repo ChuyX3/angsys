@@ -36,7 +36,7 @@ safe_enum_rrti2(ang::platform::windows, showing_flag);
 safe_enum_rrti2(ang::platform::windows, class_style);
 safe_flags_implement(ang::platform::windows, class_style);
 
-static collections::pair<cstr_t, class_style> _parse_class_style_map[] =
+static collections::pair<castr_t, class_style> _parse_class_style_map[] =
 {
 	{ "byte_align_client"_s , class_style::byte_align_client },
 	{ "byte_align_window"_s , class_style::byte_align_window },
@@ -53,7 +53,7 @@ static collections::pair<cstr_t, class_style> _parse_class_style_map[] =
 	{ "vredraw"_s , class_style::vredraw }
 };
 
-static collections::pair<class_style, cstr_t> to_string_class_style_map[] =
+static collections::pair<class_style, castr_t> to_string_class_style_map[] =
 {
 	{ class_style::none , "none"_s },
 	{ class_style::vredraw , "vredraw"_s },
@@ -70,9 +70,9 @@ static collections::pair<class_style, cstr_t> to_string_class_style_map[] =
 	{ class_style::drop_shaow , "drop_shaow" }
 };
 
-wstring class_style_t::to_string()const
+string class_style_t::to_string()const
 {
-	wstring out = "";
+	astring out = "";
 	class_style_t val = get();
 	bool first = true;
 	for (int i = algorithms::array_size(to_string_class_style_map) - 1; i >= 0; --i)
@@ -107,7 +107,7 @@ wstring class_style_t::to_string()const
 safe_enum_rrti2(ang::platform::windows, wnd_style);
 safe_flags_implement(ang::platform::windows, wnd_style);
 
-static collections::pair<cstr_t, wnd_style> _parse_wnd_style_map[] =
+static collections::pair<castr_t, wnd_style> _parse_wnd_style_map[] =
 {
 	{ "border"_s , wnd_style::border },
 	{ "caption"_s , wnd_style::caption },
@@ -133,7 +133,7 @@ static collections::pair<cstr_t, wnd_style> _parse_wnd_style_map[] =
 	{ "vscroll"_s , wnd_style::vscroll },
 };
 
-static collections::pair<wnd_style, cstr_t> to_string_wnd_style_map[] =
+static collections::pair<wnd_style, castr_t> to_string_wnd_style_map[] =
 {
 	{ wnd_style::popup , "popup"_s },
 	{ wnd_style::none , "none"_s },
@@ -156,9 +156,9 @@ static collections::pair<wnd_style, cstr_t> to_string_wnd_style_map[] =
 	{ wnd_style::child , "child"_s },
 };
 
-wstring wnd_style_t::to_string()const
+string wnd_style_t::to_string()const
 {
-	wstring out = "";
+	astring out = "";
 	wnd_style_t val = get();
 	bool first = true;
 	for (int i = algorithms::array_size(to_string_wnd_style_map) - 1; i >= 0; --i)
@@ -193,7 +193,7 @@ wstring wnd_style_t::to_string()const
 safe_enum_rrti2(ang::platform::windows, wnd_style_ex);
 safe_flags_implement(ang::platform::windows, wnd_style_ex);
 
-static collections::pair<cstr_t, wnd_style_ex> _parse_wnd_style_ex_map[] =
+static collections::pair<castr_t, wnd_style_ex> _parse_wnd_style_ex_map[] =
 {
 	{ "accept_files"_s , wnd_style_ex::accept_files },
 	{ "app_window"_s , wnd_style_ex::app_window },
@@ -219,7 +219,7 @@ static collections::pair<cstr_t, wnd_style_ex> _parse_wnd_style_ex_map[] =
 	{ "window_edge"_s , wnd_style_ex::window_edge }
 };
 
-static collections::pair<wnd_style_ex, cstr_t> to_string_wnd_style_ex_map[] =
+static collections::pair<wnd_style_ex, castr_t> to_string_wnd_style_ex_map[] =
 {
 	{ wnd_style_ex::none , "none"_s },
 	{ wnd_style_ex::dlg_modal_frame , "dlg_modal_frame"_s },
@@ -243,9 +243,9 @@ static collections::pair<wnd_style_ex, cstr_t> to_string_wnd_style_ex_map[] =
 };
 
 
-wstring wnd_style_ex_t::to_string()const
+string wnd_style_ex_t::to_string()const
 {
-	wstring out = "";
+	astring out = "";
 	wnd_style_ex_t val = get();
 	bool first = true;
 	for (int i = algorithms::array_size(to_string_wnd_style_ex_map) - 1; i >= 0; --i)

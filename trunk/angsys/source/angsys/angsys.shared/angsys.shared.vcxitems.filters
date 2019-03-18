@@ -537,8 +537,8 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\str_view.inl">
       <Filter>header\angsys\base\inline</Filter>
     </None>
-    <None Include="D:\Jesus Rocha\Documents\github\angsys\trunk\angsys\source\angsys\angsys.shared\..\..\..\include\angsys\ang\collections\inline\list_specialization.inl">
-      <Filter>header\angsys\collections\inline</Filter>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\list_specialization.inl">
+      <Filter>header</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\buffers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\drawing.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\resources.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\shaders.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\graphics.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\graphics\reflect.h" />

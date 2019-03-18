@@ -272,6 +272,12 @@ namespace ang
 			}
 		};
 
+		template<typename S, typename T, wsize N> struct read_text_helper<S, const T(&)[N]> {
+			static uint read(S stream, const T(&cstr)[N]) {
+				return stream->seek(cstr);
+			}
+		};
+
 		template<typename S> struct read_text_helper<S, str_t> {
 			static uint read(S stream, str_t const&  cstr) {
 				return stream->seek(cstr);

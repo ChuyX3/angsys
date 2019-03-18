@@ -28,7 +28,7 @@ namespace ang
 				core::async::thread_t core_thread = null;
 				function<void(void)> update_propc;
 				dispatcher_t dispatcher;
-				collections::hash_map<string, var> properties;
+				collections::hash_map<astring, var> properties;
 			};
 			thread_local extern ui_thread* s_current_ui_thread;
 		}

@@ -264,7 +264,7 @@ namespace ang
 
 			public:
 				wnd_create_args_ex(const wnd_create_args_ex&);
-				wnd_create_args_ex(string className, string wndName
+				wnd_create_args_ex(wstring className, wstring wndName
 					, graphics::rect<float> area = graphics::rect<float>(100, 100, 900, 700)
 					, wnd_style_ex_t wndStyleEx = wnd_style_ex::none
 					, wnd_style_t wndStyle = wnd_style::overlapped_window
@@ -272,7 +272,7 @@ namespace ang
 					, ulong64 id = 0
 					, var_args_t userArgs = null);
 
-				wnd_create_args_ex(string className, string wndName
+				wnd_create_args_ex(wstring className, wstring wndName
 					, graphics::rect<float> area
 					, wnd_style_ex_t wndStyleEx
 					, wnd_style_t wndStyle
@@ -376,9 +376,10 @@ namespace ang
 
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
+				virtual void clear()override;
 
 				virtual pointer core_view_handle()const override;
-				virtual icore_context_t core_context()const override;
+				virtual graphics::icore_context_t core_context()const override;
 				virtual graphics::size<float> core_view_size()const override;
 				virtual graphics::size<float> core_view_scale_factor()const override;
 				virtual imessage_listener_t dispatcher()const override;
@@ -386,7 +387,7 @@ namespace ang
 				virtual bool create(wnd_create_args_t);
 
 			protected:
-				virtual bool close();
+				virtual bool destroy();
 
 				virtual void attach(pointer);
 				virtual void detach();
@@ -439,7 +440,7 @@ namespace ang
 
 			public: //Methods
 				virtual dword run();
-				virtual dword run(array<string> args);
+				virtual dword run(array<astring> args);
 				virtual core::async::iasync<dword> run_async();
 
 			protected:
@@ -467,17 +468,17 @@ namespace ang
 				core::async::mutex_ptr_t main_mutex()const;
 				core::async::cond_ptr_t main_cond()const;
 				core::async::thread_t main_worker_thread()const;
-				array<string> command_line_args()const;
+				array<astring> command_line_args()const;
 
-				var settings(cstr_t)const;
-				void settings(cstr_t, var);
+				var settings(castr_t)const;
+				void settings(castr_t, var);
 
 			public: //Events
 				ang_platform_event(events::iapp_status_event_args, initialize_event);
 				ang_platform_event(events::iapp_status_event_args, finalize_event);
 
 			public: //Custom Implementation
-				virtual bool init_app(array<string> cmdl);
+				virtual bool init_app(array<astring> cmdl);
 				virtual void update_app();
 				virtual bool exit_app();
 			};
@@ -525,7 +526,7 @@ namespace ang
 				property<window, get_main_wnd_property, set_main_wnd_property> main_wnd;
 				
 			public: //Custom Implementation
-				virtual bool init_app(array<string> cmdl) override;
+				virtual bool init_app(array<astring> cmdl) override;
 				virtual void update_app() override;
 				virtual bool exit_app() override;
 
@@ -604,7 +605,7 @@ namespace ang
 					static bool remove_text_changed_event_handler(base_event*, listen_token<void(objptr, wstring)>);
 
 					static wstring get_text_property(base_property<wstring>const*);
-					static void set_text_property(base_property<wstring>*, ang::text::raw_cstr_t);
+					static void set_text_property(base_property<wstring>*, ang::cstr_t);
 
 				public:
 					text_box();

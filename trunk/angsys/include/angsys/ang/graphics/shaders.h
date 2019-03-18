@@ -36,8 +36,20 @@ namespace ang
 			ang_end_interface();
 
 			ang_begin_interface(LINK ieffect)
-				//visible vcall void draw(iframe_buffer_t)pure;
-				//visible vcall ipass_t pass(index)const pure;
+				visible vcall resources::iresource_t resource()const pure
+				//visible vcall void draw(iframe_buffer_t)pure
+				visible vcall wsize pass_count()const pure
+				visible vcall ipass_t pass(windex)const pure
+				visible vcall iframe_buffer_t frame_buffer(cstr_t)const pure
+			ang_end_interface();
+
+			ang_begin_interface(LINK ieffect_library, resources::ilibrary)
+				visible vcall ieffect_t load_effect(dom::xml::xml_node_t) pure;
+				visible vcall core::async::iasync<ieffect_t> load_effect_async(dom::xml::xml_node_t) pure;
+				visible vcall ishaders_t load_technique(dom::xml::xml_node_t) pure;
+				visible vcall core::async::iasync<ishaders_t> load_technique_async(dom::xml::xml_node_t) pure;
+				visible vcall ieffect_t find_effect(cstr_t)const pure;
+				visible vcall ishaders_t find_technique(cstr_t)const pure;
 			ang_end_interface();
 		}
 	}

@@ -83,7 +83,7 @@ input::ikeyboard_t app::keyboard()
 	return null;
 }
 
-bool app::init_app(array<string> cmdl)
+bool app::init_app(array<astring> cmdl)
 {
 	ui_thread::init_app(move(cmdl));
 

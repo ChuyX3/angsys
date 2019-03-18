@@ -115,15 +115,15 @@ core::async::thread_t ui_thread::main_worker_thread()const {
 	return m_thread->core_thread;
 }
 
-array<string> ui_thread::command_line_args()const {
-	return m_thread->properties["cmd_args"].as<array<string>>();
+array<astring> ui_thread::command_line_args()const {
+	return m_thread->properties["cmd_args"].as<array<astring>>();
 }
 
-var ui_thread::settings(cstr_t key)const {
+var ui_thread::settings(castr_t key)const {
 	return m_thread->properties[key];
 }
 
-void ui_thread::settings(cstr_t key, var obj) {
+void ui_thread::settings(castr_t key, var obj) {
 	m_thread->properties[key] = obj;
 }
 
@@ -155,7 +155,7 @@ dword ui_thread::run()
 	return res;
 }
 
-dword ui_thread::run(array<string> args)
+dword ui_thread::run(array<astring> args)
 {
 	ui_thread_t auto_save = this;
 	if (!is_current_thread())
@@ -207,7 +207,7 @@ int ui_thread::on_run()
 	return msg.wParam;
 }
 
-bool ui_thread::init_app(array<string> cmd)
+bool ui_thread::init_app(array<astring> cmd)
 {
 	m_thread->dispatcher->worker_thread(m_thread->core_thread);
 	platform::events::message m = platform::events::message((events::core_msg)events::win_msg::start_app, 0, 0);

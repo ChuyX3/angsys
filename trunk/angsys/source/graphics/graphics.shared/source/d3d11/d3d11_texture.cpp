@@ -42,6 +42,8 @@ resources::resource_type_t d3d11_texture::resource_type()const { return resource
 
 string d3d11_texture::resource_sid()const { return (cstr_t)m_resource_sid; }
 
+void d3d11_texture::resource_sid(cstr_t sid) { m_resource_sid = sid; }
+
 effects::ieffect_t d3d11_texture::to_effect() { return null; }
 
 effects::ishaders_t d3d11_texture::to_shaders() { return null; }

@@ -33,6 +33,8 @@ resources::resource_type_t d3d11_index_buffer::resource_type()const { return res
 
 string d3d11_index_buffer::resource_sid()const { return (cstr_t)m_resource_sid; }
 
+void d3d11_index_buffer::resource_sid(cstr_t sid) { m_resource_sid = sid; }
+
 effects::ieffect_t d3d11_index_buffer::to_effect() { return null; }
 
 effects::ishaders_t d3d11_index_buffer::to_shaders() { return null; }
@@ -186,6 +188,8 @@ resources::iresource_t d3d11_vertex_buffer::resource()const { return const_cast<
 resources::resource_type_t d3d11_vertex_buffer::resource_type()const { return resources::resource_type::vertex_buffer; }
 
 string d3d11_vertex_buffer::resource_sid()const { return (cstr_t)m_resource_sid; }
+
+void d3d11_vertex_buffer::resource_sid(cstr_t sid) { m_resource_sid = sid; }
 
 effects::ieffect_t d3d11_vertex_buffer::to_effect() { return null; }
 

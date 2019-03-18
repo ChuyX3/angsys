@@ -1,14 +1,12 @@
 #include "pch.h"
 #include <ang/core/timer.h>
-#include "ang/platform/win32/windows.h"
+#include "ang/platform/uwp/windows.h"
 #include "event_args.h"
 
 using namespace ang;
 using namespace ang::platform;
 using namespace ang::platform::events;
 using namespace ang::platform::windows;
-
-safe_enum_rrti2(ang::platform::events, win_msg);
 
 
 msg_event_args::msg_event_args(message msg)
@@ -253,7 +251,7 @@ bool activate_event_args::handled()const
 
 ////////////////////////////////////////////////////////////////////
 
-draw_event_args::draw_event_args(message msg, wndptr wnd, graphics::device_context_t dc, graphics::size<float> size)
+draw_event_args::draw_event_args(message msg, wndptr wnd, graphics::icore_context_t dc, graphics::size<float> size)
 	: m_msg(msg)
 	, m_view(ang::move(wnd))
 	, m_dc(ang::move(dc))
@@ -437,7 +435,7 @@ bool text_change_event_args::handled()const
 
 //////////////////////////////////////////////////////////////////////////
 
-controller_status_args::controller_status_args(message msg, input::controller_t controller, input::controller_status_t status)
+controller_status_args::controller_status_args(message msg, input::icontroller_t controller, input::controller_status_t status)
 	: m_msg(msg)
 	, m_controller(controller)
 	, m_status(status)
@@ -471,7 +469,7 @@ bool controller_status_args::handled()const
 
 uint controller_status_args::controller_id()const
 {
-	return m_controller->device_id;
+	return m_controller->get_controller_id();
 }
 
 input::icontroller_t controller_status_args::controller()const

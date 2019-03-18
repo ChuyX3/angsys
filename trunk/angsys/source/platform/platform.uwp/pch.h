@@ -14,6 +14,7 @@
 
 #pragma comment(lib, "angsys.lib")
 
+
 //ANG_DECLARE_MEMORYMANAGER()
 
 extern "C" void __declspec(dllimport) ang_debug_output_info(const char* format, ...);

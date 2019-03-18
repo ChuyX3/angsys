@@ -38,6 +38,7 @@ void d3d11_frame_buffer::clear()
 resources::iresource_t d3d11_frame_buffer::resource()const { return const_cast<d3d11_frame_buffer*>(this); }
 resources::resource_type_t d3d11_frame_buffer::resource_type()const { return resources::resource_type::frame_buffer; }
 string d3d11_frame_buffer::resource_sid()const { return (cstr_t)m_resource_sid; }
+void d3d11_frame_buffer::resource_sid(cstr_t sid) { m_resource_sid = sid; }
 effects::ieffect_t d3d11_frame_buffer::to_effect() { return null; }
 effects::ishaders_t d3d11_frame_buffer::to_shaders() { return null; }
 textures::itexture_t d3d11_frame_buffer::to_texture() { return null; }

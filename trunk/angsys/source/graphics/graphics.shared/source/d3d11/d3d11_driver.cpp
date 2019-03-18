@@ -278,8 +278,10 @@ ifactory_t d3d11_driver::get_factory()const
 	return const_cast<d3d11_driver*>(this);
 }
 
-buffers::ivertex_buffer_t d3d11_driver::create_vertex_buffer(buffers::buffer_usage_t usage, vector<reflect::attribute_desc> vertex_desc, wsize vertex_count, array<byte> init_data, string sid)const
+buffers::ivertex_buffer_t d3d11_driver::create_vertex_buffer(buffers::buffer_usage_t usage, vector<reflect::attribute_desc> vertex_desc, wsize vertex_count, ibuffer_t buff, string sid)const
 {
+	array_view<byte> init_data = buff.is_empty() ? to_array((byte*)null, 0) : to_array((byte*)buff->buffer_ptr(), buff->buffer_size());
+
 	d3d11_vertex_buffer_t buffer = new d3d11_vertex_buffer();
 	if (!buffer->create(
 		const_cast<d3d11_driver*>(this),
@@ -293,8 +295,9 @@ buffers::ivertex_buffer_t d3d11_driver::create_vertex_buffer(buffers::buffer_usa
 	return buffer.get();
 }
 
-buffers::iindex_buffer_t d3d11_driver::create_index_buffer(buffers::buffer_usage_t usage, reflect::var_type_t index_type, wsize index_count, array<byte> init_data, string sid)const
+buffers::iindex_buffer_t d3d11_driver::create_index_buffer(buffers::buffer_usage_t usage, reflect::var_type_t index_type, wsize index_count, ibuffer_t buff, string sid)const
 {
+	array_view<byte> init_data = buff.is_empty() ? to_array((byte*)null, 0) : to_array((byte*)buff->buffer_ptr(), buff->buffer_size());
 	d3d11_index_buffer_t buffer = new d3d11_index_buffer();
 	if (!buffer->create(
 		const_cast<d3d11_driver*>(this),
@@ -414,7 +417,7 @@ core::async::iasync<buffers::ivertex_buffer_t> d3d11_driver::create_vertex_buffe
 	buffers::buffer_usage_t usage,
 	vector<reflect::attribute_desc> vertex_desc,
 	wsize vertex_count,
-	array<byte> init_data,
+	ibuffer_t init_data,
 	string sid)const
 {
 	return create_task<buffers::ivertex_buffer_t>([=](core::async::iasync<buffers::ivertex_buffer_t>, d3d11_driver_t driver)->buffers::ivertex_buffer_t
@@ -427,7 +430,7 @@ core::async::iasync<buffers::iindex_buffer_t> d3d11_driver::create_index_buffer_
 	buffers::buffer_usage_t usage,
 	reflect::var_type_t index_type, 
 	wsize index_count,
-	array<byte> init_data, 
+	ibuffer_t init_data,
 	string sid)const
 {
 	return create_task<buffers::iindex_buffer_t>([=](core::async::iasync<buffers::iindex_buffer_t>, d3d11_driver_t driver)->buffers::iindex_buffer_t
@@ -775,6 +778,11 @@ void d3d11_driver::bind_vertex_buffer(buffers::ivertex_buffer_t buff)
 			buffer->use_buffer(this);
 		});
 	}
+}
+
+core::async::idispatcher_t d3d11_driver::dispatcher()const
+{
+	return m_async_worker.get();
 }
 
 core::async::mutex_ptr_t d3d11_driver::driver_guard()const

@@ -41,10 +41,11 @@ namespace ang
 
 		template<typename T> struct point : auto_self<point<T>>
 		{
+			static point<T> parse(cstr_t);
+
 			T x;
 			T y;
 
-		public:
 			point();
 			point(point const&);
 			point(T x, T y);
@@ -61,11 +62,12 @@ namespace ang
 
 		template<typename T> struct point3d : auto_self<point3d<T>>
 		{
+			static point3d<T> parse(cstr_t);
+
 			T x;
 			T y;
 			T z;
 
-		public:
 			point3d();
 			point3d(point3d const&);
 			point3d(T x, T y, T z);
@@ -83,10 +85,11 @@ namespace ang
 
 		template<typename T> struct size : auto_self<size<T>>
 		{
+			static size<T> parse(cstr_t);
+
 			T width;
 			T height;
 
-		public:
 			size();
 			size(size const&);
 			size(T w, T h);
@@ -104,10 +107,12 @@ namespace ang
 
 		template<typename T> struct size3d : auto_self<size3d<T>>
 		{
+			static size3d<T> parse(cstr_t);
+
 			T width;
 			T height;
 			T depth;
-		public:
+	
 			size3d();
 			size3d(size3d const&);
 			size3d(T w, T h, T d);
@@ -125,6 +130,8 @@ namespace ang
 
 		template<typename T> struct rect :auto_self<rect<T>>
 		{
+			static rect<T> parse(cstr_t);
+
 		private:
 			static T get_width_property(base_property<T>const*);
 			static void set_width_property(base_property<T>*,T&&);
@@ -178,6 +185,8 @@ namespace ang
 
 		template<typename T> struct box :auto_self<box<T>>
 		{
+			static box<T> parse(cstr_t);
+
 		private:
 			static T get_width_property(base_property<T>const*);
 			static void set_width_property(base_property<T>*, T&&);
@@ -300,10 +309,12 @@ namespace ang
 
 		template<> struct LINK point<float>
 		{
+
+			static point<float> parse(cstr_t);
+
 			float x;
 			float y;
 
-		public:
 			point();
 			point(point<float> const&);
 			point(float x, float y);
@@ -317,10 +328,11 @@ namespace ang
 
 		template<> struct LINK size<float>
 		{
+			static size<float> parse(cstr_t);
+
 			float width;
 			float height;
 
-		public:
 			size();
 			size(size<float> const&);
 			size(float w, float h);
@@ -334,6 +346,8 @@ namespace ang
 
 		template<> struct LINK rect<float>
 		{
+			static rect<float> parse(cstr_t);
+
 		private:
 			static float get_width_property(base_property<float>const*);
 			static void set_width_property(base_property<float>*, float&&);

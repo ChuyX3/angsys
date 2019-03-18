@@ -73,6 +73,7 @@ namespace ang
 
 				resources::resource_type_t resource_type()const override;
 				string resource_sid()const override;
+				void resource_sid(cstr_t) override;
 				effects::ieffect_t to_effect() override;
 				effects::ishaders_t to_shaders() override;
 				textures::itexture_t to_texture() override;
@@ -89,7 +90,6 @@ namespace ang
 				//bool load_ps_samplers(d3d11_driver_t, dom::xml::xml_node_t);
 
 			public: //internal
-				inline void resource_sid(astring name) { m_resource_sid = ang::move(name); }
 				inline ID3D11PixelShader* D3D11PixelShader()const { return m_d3d_pixel_shader.get(); }
 				inline ID3D11VertexShader* D3D11VertexShader()const { return m_d3d_vertex_shader.get(); }
 				inline ID3D11InputLayout* D3D11VSInputLayout()const { return m_d3d_input_layout.get(); }

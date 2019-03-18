@@ -137,7 +137,7 @@ wstring text_box::get_text_property(base_property<wstring>const* prop)
 	return cwstr_t(buffer, -1);
 }
 
-void text_box::set_text_property(base_property<wstring>* prop, ang::text::raw_cstr_t value)
+void text_box::set_text_property(base_property<wstring>* prop, ang::cstr_t value)
 {
 	wstring str = value;
 	HWND wnd = (HWND)field_to_parent(&text_box::text, prop)->core_view_handle();
@@ -178,7 +178,7 @@ bool text_box::create(wnd_create_args_t args)
 
 	attach(h);
 	SetWindowLongPtrW((HWND)h->m_hwnd, GWLP_USERDATA, (LONG_PTR)h);
-	SetClassLongPtrW((HWND)h->m_hwnd, GCL_WNDPROC, (LONG_PTR)&window_procedure);
+	SetClassLongPtrW((HWND)h->m_hwnd, GCLP_WNDPROC, (LONG_PTR)&window_procedure);
 
 	send_msg(events::message((events::core_msg)events::win_msg::initial_update));
 

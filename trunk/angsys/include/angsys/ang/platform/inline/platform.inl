@@ -3,6 +3,21 @@
 #elif !defined __ANG_PLATFORM_GRAPHICS_INL__
 #define __ANG_PLATFORM_GRAPHICS_INL__
 
+template<typename T>
+inline ang::graphics::point<T> ang::graphics::point<T>::parse(ang::cstr_t cstr)
+{
+	if (cstr.ptr() == null)
+		return{ 0,0 };
+	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
+	windex i = 0;
+	T temp[2];
+	parser->seek(cstr, i, " [ "_s);
+	temp[0] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[1] = parser->to_value<T>(cstr, i);
+	//parser->seek(cstr, i, " ] "_s);
+	return{ temp[0], temp[1] };
+}
 
 template<typename T> 
 inline ang::graphics::point<T>::point()
@@ -66,6 +81,24 @@ inline ang::graphics::point<T>& ang::graphics::point<T>::operator /= (T k)
 }
 
 
+
+template<typename T>
+inline ang::graphics::point3d<T> ang::graphics::point3d<T>::parse(ang::cstr_t cstr)
+{
+	if (cstr.ptr() == null)
+		return{ 0,0,0 };
+	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
+	windex i = 0;
+	T temp[3];
+	parser->seek(cstr, i, " [ "_s);
+	temp[0] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[1] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[2] = parser->to_value<T>(cstr, i);
+	//parser->seek(cstr, i, " ] "_s);
+	return{ temp[0], temp[1] ,temp[2] };
+}
 
 template<typename T>
 inline ang::graphics::point3d<T>::point3d()
@@ -137,6 +170,21 @@ inline ang::graphics::point3d<T>& ang::graphics::point3d<T>::operator /= (T k)
 }
 
 
+template<typename T>
+inline ang::graphics::size<T> ang::graphics::size<T>::parse(ang::cstr_t cstr)
+{
+	if (cstr.ptr() == null)
+		return{ 0,0 };
+	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
+	windex i = 0;
+	T temp[2];
+	parser->seek(cstr, i, " [ "_s);
+	temp[0] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[1] = parser->to_value<T>(cstr, i);
+	return{ temp[0], temp[1] };
+}
+
 template<typename T> 
 inline ang::graphics::size<T>::size()
 	: width(0)
@@ -201,6 +249,24 @@ inline ang::graphics::size<T>& ang::graphics::size<T>::operator /= (T k)
 	return *this;
 }
 
+
+
+template<typename T>
+inline ang::graphics::size3d<T> ang::graphics::size3d<T>::parse(ang::cstr_t cstr)
+{
+	if (cstr.ptr() == null)
+		return{ 0,0,0 };
+	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
+	windex i = 0;
+	T temp[3];
+	parser->seek(cstr, i, " [ "_s);
+	temp[0] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[1] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[2] = parser->to_value<T>(cstr, i);
+	return{ temp[0], temp[1], temp[2] };
+}
 
 template<typename T>
 inline ang::graphics::size3d<T>::size3d()
@@ -275,6 +341,25 @@ inline ang::graphics::size3d<T>& ang::graphics::size3d<T>::operator /= (T k)
 }
 
 
+
+template<typename T>
+inline ang::graphics::rect<T> ang::graphics::rect<T>::parse(ang::cstr_t cstr)
+{
+	if (cstr.ptr() == null)
+		return{ 0,0,0,0 };
+	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
+	windex i = 0;
+	T temp[4];
+	parser->seek(cstr, i, " [ "_s);
+	temp[0] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[1] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[2] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[3] = parser->to_value<T>(cstr, i);
+	return{ temp[0], temp[1], temp[2], temp[3] };
+}
 
 template<typename T>
 inline ang::graphics::rect<T>::rect()
@@ -505,6 +590,28 @@ inline ang::graphics::rect<T>& ang::graphics::rect<T>::operator /= (T k)
 
 
 
+template<typename T>
+inline ang::graphics::box<T> ang::graphics::box<T>::parse(ang::cstr_t cstr)
+{
+	if (cstr.ptr() == null)
+		return{ 0,0,0,0,0,0 };
+	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
+	windex i = 0;
+	T temp[6];
+	parser->seek(cstr, i, " [ "_s);
+	temp[0] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[1] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[2] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[3] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[4] = parser->to_value<T>(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[5] = parser->to_value<T>(cstr, i);
+	return{ temp[0], temp[1], temp[2], temp[3], temp[4], temp[5] };
+}
 
 template<typename T>
 inline ang::graphics::box<T>::box()

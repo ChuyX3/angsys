@@ -11,11 +11,12 @@
 #include "compile_config.h"
 #include <windowsx.h>
 #include <angsys.h>
-#include <ang/graphics/graphics.h>
+//#include <ang/graphics/graphics.h>
 
 #pragma comment(lib, "angsys.lib")
-#pragma comment(lib, "graphics.lib")
+//#pragma comment(lib, "graphics.lib")
 #pragma comment(lib, "Xinput.lib")
+#pragma comment(lib, "DXGI.lib")
 
 //ANG_DECLARE_MEMORYMANAGER()
 

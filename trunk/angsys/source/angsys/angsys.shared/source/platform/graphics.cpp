@@ -10,12 +10,25 @@
 
 #include "pch.h"
 #include <ang/platform/platform.h>
-//#include "ang_inlines.h"
 
 using namespace ang;
 using namespace ang::graphics;
 
 #ifndef ANDROID_PLATFORM
+
+ang::graphics::point<float> ang::graphics::point<float>::parse(ang::cstr_t cstr)
+{
+	if (cstr.ptr() == null)
+		return{ 0,0 };
+	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
+	windex i = 0;
+	float temp[2];
+	parser->seek(cstr, i, " [ "_s);
+	temp[0] = parser->to_floating(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[1] = parser->to_floating(cstr, i);
+	return{ temp[0], temp[1] };
+}
 
 ang::graphics::point<float>::point()
 	: x(0)
@@ -71,6 +84,21 @@ point<float>& ang::graphics::point<float>::operator /= (float k)
 }
 
 ////////////////////////////////////////////////////////////////////////////
+
+
+ang::graphics::size<float> ang::graphics::size<float>::parse(ang::cstr_t cstr)
+{
+	if (cstr.ptr() == null)
+		return{ 0,0 };
+	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
+	windex i = 0;
+	float temp[2];
+	parser->seek(cstr, i, " [ "_s);
+	temp[0] = parser->to_floating(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[1] = parser->to_floating(cstr, i);
+	return{ temp[0], temp[1] };
+}
 
 size<float>::size()
 	: width(0)
@@ -129,6 +157,25 @@ size<float>& size<float>::operator /= (float k)
 }
 
 ////////////////////////////////////////////////////////////////////
+
+ang::graphics::rect<float> ang::graphics::rect<float>::parse(ang::cstr_t cstr)
+{
+	if (cstr.ptr() == null)
+		return{ 0,0,0,0 };
+	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
+	windex i = 0;
+	float temp[4];
+	parser->seek(cstr, i, " [ "_s);
+	temp[0] = parser->to_floating(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[1] = parser->to_floating(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[2] = parser->to_floating(cstr, i);
+	parser->seek(cstr, i, " , "_s);
+	temp[3] = parser->to_floating(cstr, i);
+	return{ temp[0], temp[1], temp[2], temp[3] };
+}
+
 
 rect<float>::rect()
 	: left(0)

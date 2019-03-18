@@ -14,6 +14,14 @@ namespace ang
 				visible vcall tex_format_t tex_format()const pure;
 				visible vcall size3d<uint> tex_dimentions()const pure;
 			ang_end_interface();
+
+			ang_begin_interface(LINK itexture_loader, resources::ilibrary)
+				visible vcall itexture_t load_texture(cstr_t sid) pure;
+				visible vcall itexture_t load_texture(dom::xml::xml_node_t) pure;
+				visible vcall core::async::iasync<itexture_t> load_texture_async(cstr_t sid) pure;
+				visible vcall core::async::iasync<itexture_t> load_texture_async(dom::xml::xml_node_t) pure;
+				visible vcall itexture_t find_texture(cstr_t)const pure;
+			ang_end_interface();
 		}
 
 	}
