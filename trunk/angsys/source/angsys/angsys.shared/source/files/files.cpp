@@ -15,13 +15,16 @@
 using namespace ang;
 using namespace ang::core::files;
 
-safe_flags_implement(ang::core::files, open_flags);
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::files::ifile, intf);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::files::ifile_system, intf);
 
-safe_enum_rrti2(ang::core::files, file_system_priority);
+safe_enum_rrti2(ang::core::files, open_flags);
 safe_enum_rrti2(ang::core::files, path_access_type);
+safe_enum_rrti2(ang::core::files, file_system_priority);
+
+safe_flags_implement(ang::core::files, open_flags);
+safe_flags_implement(ang::core::files, path_access_type);
 
 //#define  MY_TYPE ang::collections::pair<ang::core::files::path, ang::core::files::pack_file_info>
 //#define MY_ALLOCATOR ang::memory::default_allocator

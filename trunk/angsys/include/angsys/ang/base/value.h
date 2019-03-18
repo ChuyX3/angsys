@@ -294,6 +294,7 @@ namespace ang //constants
 		_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
 		_name##_t(_name##_t && v) : value(ang::forward<value>(v)) { } \
 		ang::string to_string()const; \
+		bool is_active(_name##_t v)const { return ((base)v.get() & m_value) == (base)v.get(); } 	\
 		template<_name VALUE> bool is_active()const { return ((base)VALUE & m_value) == (base)VALUE; } 	\
 		_name##_t& operator = (type const& v){ get() = v; return*this; } \
 		_name##_t& operator = (_name##_t const& v) { get() = v.get(); return*this; } \
@@ -398,6 +399,7 @@ namespace ang //constants
 		_flag_name##_t(type && v) : value(ang::forward<type>(v)) {	} \
 		_flag_name##_t(_flag_name##_t && v) : value(ang::forward<value>(v)) { } \
 		ang::string to_string()const; \
+		bool is_active(_flag_name##_t v)const { return ((base)v.get() & m_value) == (base)v.get(); } 	\
 		template<_name VALUE> bool is_active()const { return ((base)VALUE & m_value) == (base)VALUE; } 	\
 		_flag_name##_t& operator = (type const& v){ get() = v; return*this; } \
 		_flag_name##_t& operator = (_flag_name##_t const& v) { get() = v.get(); return*this; } \

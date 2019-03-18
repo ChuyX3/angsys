@@ -432,7 +432,8 @@ namespace ang
 
 				collections::ienum_ptr<string> paths(core::files::path_access_type_t)const override;
 				void push_path(cstr_t, core::files::path_access_type_t, cstr_t macro = null) override;
-				cstr_t find_path(cstr_t macro)const override;
+				collections::ienum_ptr<string> find_paths(cstr_t macro)const override;
+				core::files::path_access_type_t path_access_type(cstr_t)const override;
 				bool open_file(cstr_t, core::files::open_flags_t, core::files::ifile_ptr_t, cstr_t macro = null)override;
 				bool open(cstr_t, core::files::input_text_file_ptr_t, cstr_t macro = null)override;
 				bool open(cstr_t, core::files::output_text_file_ptr_t, cstr_t macro = null)override;

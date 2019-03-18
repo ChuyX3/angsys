@@ -70,44 +70,34 @@ bool file_system::register_file_system(ifile_system* fs, file_system_priority_t 
 
 collections::ienum_ptr<string> file_system::paths(path_access_type_t access)const
 {
-	return m_paths->find_all<string>([&](collections::tuple<path_access_type_t, string> const& tuple, string& out)
+	collections::list<string> paths;
+	for (collections::pair<string, path_access_type_t> const & pair  : m_paths)
 	{
-		if (tuple.get<0>() == access) {
-			out = (cstr_t)tuple.get<1>(); //makes a copy to prevent external modifications
-			return true;
-		}
-		return false;
-	});
-
+		if (pair.value == access)
+			paths += (cstr_t)pair.key; //makes a copy to prevent external modifications
+	}
+	return paths.get();
 }
 
 void file_system::push_path(cstr_t path, path_access_type_t access, cstr_t macro)
 {
-
-	auto it = m_paths->find([&](collections::tuple<path_access_type_t, string> const& tuple)
-	{ 
-		return (path == tuple.get<1>());
-	});
-
-	if (it.is_valid()) {
-		if (it->get<0>() != access)
-		{
-			it->set<0>(access);
-		}
-		if (macro.ptr() != null)
-			m_macros[macro] = path;
-		return;
+	m_paths[path] = access;
+	if (macro != null)
+	{
+		m_macros[macro] += path;
 	}
-
-	if (macro.ptr() != null)
-		m_macros[macro] = path;
-	m_paths += collections::tuple<path_access_type_t, string>(access, path);
 }
 
-cstr_t file_system::find_path(cstr_t macro)const
+collections::ienum_ptr<string> file_system::find_paths(cstr_t macro)const
 {
-	try { return m_macros[macro]; }
+	try { return m_macros[macro].get(); }
 	catch (...) { return null; }
+}
+
+path_access_type_t file_system::path_access_type(cstr_t path)const
+{
+	try { return m_paths[path]; }
+	catch (...) { return path_access_type::none; }
 }
 
 bool file_system::open_file(cstr_t path_, open_flags_t flags, ifile_ptr_t out, cstr_t macro)
@@ -126,16 +116,64 @@ bool file_system::open_file(cstr_t path_, open_flags_t flags, ifile_ptr_t out, c
 
 	if (macro != null) // if not null tries create file here only
 	{
-		cstr_t macro_path;
-		if ((macro_path = find_path(macro)) != null)
+		collections::ienum_ptr<string> macro_paths;
+		if ((macro_paths = find_paths(macro)) == null)
+			return false;
+
+		if (flags.is_active<open_flags::access_inout>())
 		{
-			path << macro_path << "\\"_s << path_;
 			system_file_t file = new core_file();
-			file->create((cstr_t)path, flags);
-			if (file->is_created())
+
+
+			for (string& macro_path : macro_paths)
 			{
-				*out = file;
-				return true;
+				if (path_access_type(macro_path).is_active<path_access_type::all>())
+				{
+					path->copy(macro_path);
+					path << "/"_s << path_;
+					file->create((cstr_t)path, flags);
+					if (file->is_created())
+					{
+						*out = file;
+						return true;
+					}
+				}
+			}
+		}
+		else if (flags.is_active<open_flags::access_out>())
+		{
+			system_file_t file = new core_file();
+			for (string& macro_path : macro_paths)
+			{
+				if (path_access_type(macro_path).is_active<path_access_type::write>())
+				{
+					path->copy(macro_path);
+					path << "/"_s << path_;
+					file->create((cstr_t)path, flags);
+					if (file->is_created())
+					{
+						*out = file;
+						return true;
+					}
+				}
+			}
+		}
+		else if (flags.is_active<open_flags::access_in>())
+		{
+			system_file_t file = new core_file();
+			for (string& macro_path : macro_paths)
+			{
+				if (path_access_type(macro_path).is_active<path_access_type::read>())
+				{
+					path->copy(macro_path);
+					path << "/"_s << path_;
+					file->create((cstr_t)path, flags);
+					if (file->is_created())
+					{
+						*out = file;
+						return true;
+					}
+				}
 			}
 		}
 		return false;
@@ -151,11 +189,11 @@ bool file_system::open_file(cstr_t path_, open_flags_t flags, ifile_ptr_t out, c
 	}
 	else if (flags.is_active<open_flags::access_inout>())
 	{
-		for (auto const& tuple : m_paths)
+		for (auto const& pair : m_paths)
 		{
-			if (tuple.get<0>() == path_access_type::all)
+			if (pair.value.is_active<path_access_type::all>())
 			{
-				path->copy(tuple.get<1>());
+				path->copy(pair.key);
 				path << "/"_s <<  path_;
 				file->create((cstr_t)path, flags);
 				if (file->is_created())
@@ -168,11 +206,11 @@ bool file_system::open_file(cstr_t path_, open_flags_t flags, ifile_ptr_t out, c
 	}
 	else if (flags.is_active<open_flags::access_out>())
 	{
-		for (auto const& tuple : m_paths)
+		for (auto const& pair : m_paths)
 		{
-			if (tuple.get<0>() == path_access_type::write)
+			if (pair.value.is_active<path_access_type::write>())
 			{
-				path->copy(tuple.get<1>());
+				path->copy(pair.key);
 				path << "/"_s << path_;
 				file->create((cstr_t)path, flags);
 				if (file->is_created())
@@ -185,11 +223,11 @@ bool file_system::open_file(cstr_t path_, open_flags_t flags, ifile_ptr_t out, c
 	}
 	else if (flags.is_active<open_flags::access_in>())
 	{
-		for (auto const& tuple : m_paths)
+		for (auto const& pair : m_paths)
 		{
-			if (tuple.get<0>() == path_access_type::read)
+			if (pair.value.is_active<path_access_type::read>())
 			{
-				path->copy(tuple.get<1>());
+				path->copy(pair.key);
 				path << "/"_s << path_;
 				file->create((cstr_t)path, flags);
 				if (file->is_created())

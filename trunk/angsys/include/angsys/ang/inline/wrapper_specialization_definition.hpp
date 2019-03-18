@@ -100,31 +100,31 @@
 	protected: \
 		type* m_ptr; \
 	public: \
-		intf_wrapper(); \
-		intf_wrapper(type*); \
-		intf_wrapper(ang::nullptr_t const&); \
-		intf_wrapper(intf_wrapper &&); \
-		intf_wrapper(intf_wrapper const&); \
-		~intf_wrapper(); \
+		inline intf_wrapper(); \
+		inline intf_wrapper(type*); \
+		inline intf_wrapper(ang::nullptr_t const&); \
+		inline intf_wrapper(intf_wrapper &&); \
+		inline intf_wrapper(intf_wrapper const&); \
+		inline ~intf_wrapper(); \
 	public: \
-		void reset(); \
-		void reset_unsafe(); \
-		bool is_empty()const; \
-		type* get(void)const; \
-		void set(type*); \
-		type ** addres_of(void); \
-		type** addres_for_init(void); \
+		inline void reset(); \
+		inline void reset_unsafe(); \
+		inline bool is_empty()const; \
+		inline type* get(void)const; \
+		inline void set(type*); \
+		inline type ** addres_of(void); \
+		inline type** addres_for_init(void); \
 	public: \
-		intf_wrapper& operator = (type*); \
-		intf_wrapper& operator = (ang::nullptr_t const&); \
-		intf_wrapper& operator = (intf_wrapper &&); \
-		intf_wrapper& operator = (intf_wrapper const&); \
-		intf_wrapper_ptr<type> operator & (void); \
-		operator ang::intfptr()const; \
-		type* operator -> (void); \
-		type const* operator -> (void)const; \
-		operator type* (void); \
-		operator type const* (void)const;
+		inline intf_wrapper& operator = (type*); \
+		inline intf_wrapper& operator = (ang::nullptr_t const&); \
+		inline intf_wrapper& operator = (intf_wrapper &&); \
+		inline intf_wrapper& operator = (intf_wrapper const&); \
+		inline inline intf_wrapper_ptr<type> operator & (void); \
+		inline operator ang::intfptr()const; \
+		inline type* operator -> (void); \
+		inline type const* operator -> (void)const; \
+		inline operator type* (void) { return get();} \
+		inline operator type const* (void)const { return get();}
 
 #define ANG_END_INTF_WRAPPER() }
 #endif //__ANGSYS_HPP__

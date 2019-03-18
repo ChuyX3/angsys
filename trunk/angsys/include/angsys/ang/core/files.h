@@ -57,11 +57,12 @@ namespace ang
 				highest
 			};
 
-			safe_enum(LINK, path_access_type, uint)
+			safe_flags(LINK, path_access_type, uint)
 			{
-				all,
+				none,
 				read,
-				write
+				write,
+				all,
 			};
 
 			safe_flags(LINK, open_flags, uint)
@@ -111,9 +112,10 @@ namespace ang
 
 			ang_begin_interface(LINK ifile_system)
 				visible scall ifile_system_t instance();
-				visible vcall collections::ienum_ptr<string> paths(path_access_type_t access)const pure
-				visible vcall void push_path(cstr_t path, path_access_type_t access, cstr_t macro = null) pure
-				visible vcall cstr_t find_path(cstr_t macro)const pure
+				visible vcall collections::ienum_ptr<string> paths(path_access_type_t access = path_access_type::read)const pure
+				visible vcall void push_path(cstr_t path, path_access_type_t access = path_access_type::read, cstr_t macro = null) pure
+				visible vcall collections::ienum_ptr<string> find_paths(cstr_t macro)const pure 
+				visible vcall path_access_type_t path_access_type(cstr_t path)const pure
 				visible vcall bool open_file(cstr_t path, open_flags_t flags, ifile_ptr_t out, cstr_t macro = null)pure
 				
 				visible vcall bool open(cstr_t path, input_text_file_ptr_t out, cstr_t macro = null)pure

@@ -40,9 +40,14 @@ void resource_manager::push_path(cstr_t path, core::files::path_access_type_t ac
 	return core::files::ifile_system::instance()->push_path(path, access, macro);
 }
 
-cstr_t resource_manager::find_path(cstr_t macro)const
+collections::ienum_ptr<string> resource_manager::find_paths(cstr_t macro)const
 {
-	return core::files::ifile_system::instance()->find_path(macro);
+	return core::files::ifile_system::instance()->find_paths(macro);
+}
+
+core::files::path_access_type_t resource_manager::path_access_type(cstr_t path)const
+{
+	return core::files::ifile_system::instance()->path_access_type(path);
 }
 
 bool resource_manager::open_file(cstr_t path, core::files::open_flags_t flags, core::files::ifile_ptr_t file, cstr_t macro)

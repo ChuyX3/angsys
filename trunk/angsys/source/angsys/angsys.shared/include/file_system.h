@@ -137,8 +137,8 @@ namespace ang
 
 			private:
 				friend  singleton<file_system_t>;
-				vector<collections::tuple<path_access_type_t, string>> m_paths;
-				collections::hash_map<string, string> m_macros;
+				collections::hash_map<string, path_access_type_t> m_paths;
+				collections::hash_map<string, vector<string>> m_macros;
 
 				collections::vector<intf_wrapper<ifile_system>> m_highest_priority;
 				collections::vector<intf_wrapper<ifile_system>> m_lowest_priority;
@@ -154,7 +154,8 @@ namespace ang
 				bool register_file_system(ifile_system*, file_system_priority_t);
 				virtual collections::ienum_ptr<string> paths(path_access_type_t)const override;
 				virtual void push_path(cstr_t, path_access_type_t, cstr_t macro = null)override;
-				virtual cstr_t find_path(cstr_t)const override;
+				virtual collections::ienum_ptr<string> find_paths(cstr_t)const override;
+				virtual path_access_type_t path_access_type(cstr_t path)const override;
 				virtual bool open_file(cstr_t, open_flags_t, ifile_ptr_t, cstr_t macro = null)override;
 
 				virtual bool open(cstr_t, input_text_file_ptr_t, cstr_t macro = null)override;
@@ -182,7 +183,7 @@ namespace ang
 			public:
 				virtual collections::ienum_ptr<string> paths(path_access_type_t)const override;
 				virtual void push_path(cstr_t, path_access_type_t, cstr_t macro = null)override;
-				virtual cstr_t find_path(cstr_t)const override;
+				virtual collections::ienum_ptr<string> find_paths(cstr_t)const override;
 				virtual bool open_file(cstr_t, open_flags_t, ifile_ptr_t, cstr_t macro = null)override;
 
 				virtual bool open(cstr_t, input_text_file_ptr_t, cstr_t macro = null)override;
