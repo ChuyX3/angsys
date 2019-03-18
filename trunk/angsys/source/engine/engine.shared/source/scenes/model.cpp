@@ -56,7 +56,7 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 	if (!source.is_empty())
 	{
 		wstring filename = source->xml_value();
-		auto _filename = scene->find_file((text::raw_cstr_t)filename);
+		auto _filename = scene->find_file((cstr_t)filename);
 		core::files::input_text_file_t txt_file;
 		core::files::input_binary_file_t bin_file;
 		if (_filename.is_empty())
@@ -71,7 +71,7 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 		}
 
 
-		auto type = source->xml_attributes()["type"_s]->xml_as<text::raw_cstr_t>();
+		auto type = source->xml_attributes()["type"_s]->xml_as<cstr_t>();
 
 		if (type == "indexed"_s)
 		{
@@ -95,6 +95,7 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 						textures::itexture_loader_t texloader = scene->texture_loader();
 						effects::ieffect_library_t fxlibrary = scene->effect_library();
 						idriver* driver = scene->driver();
+						ifactory* factory = driver->get_factory();
 
 						collections::vector<indexed_model::model_element> data;
 						try
@@ -114,19 +115,19 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 								continue;
 						
 							auto stride = reflect::attribute_desc::get_size_in_bytes(element_data.vertex_desc);
-							element.vertex_buffer = driver->create_vertex_buffer(
+							element.vertex_buffer = factory->create_vertex_buffer(
 								graphics::buffers::buffer_usage::dynamic,
 								element_data.vertex_desc,
 								element_data.vertex_data->buffer_size() / stride,
-								collections::to_array((byte*)element_data.vertex_data->buffer_ptr(), element_data.vertex_data->buffer_size()));
+								element_data.vertex_data);
 
-							element.index_buffer = driver->create_index_buffer(
+							element.index_buffer = factory->create_index_buffer(
 								graphics::buffers::buffer_usage::dynamic,
 								element_data.index_type,
 								element_data.index_data->buffer_size() / reflect::varying_desc(element_data.index_type, reflect::var_class::scalar).get_size_in_bytes(),
-								collections::to_array((byte*)element_data.index_data->buffer_ptr(), element_data.index_data->buffer_size()));
+								element_data.index_data);
 
-							element.technique = fxlibrary->find_technique((text::raw_cstr)element_data.technique_name);
+							element.technique = fxlibrary->find_technique((cstr_t)element_data.technique_name);
 
 							driver->execute_on_thread_safe([&]()
 							{
@@ -136,7 +137,7 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 							windex idx = model_elements->counter() - 1;
 							for(string& texture : element_data.textures)
 							{
-								texloader->load_texture_async((text::raw_cstr)texture)->then<void>(
+								texloader->load_texture_async((cstr_t)texture)->then<void>(
 									[=](core::async::iasync<textures::itexture_t> task)
 								{
 									try {
@@ -159,7 +160,7 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 			}
 			catch (exception_t e)
 			{
-				printf("%s\n", cstr_t(e->what()).cstr());
+				printf("%s\n", cstr_t(e->what()).cstr<text::encoding::ascii>().cstr());
 			}
 		}//reading indexed model
 		
@@ -179,6 +180,7 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 			textures::itexture_loader_t texloader = scene->texture_loader();
 			effects::ieffect_library_t fxlibrary = scene->effect_library();
 			idriver* driver = scene->driver();
+			ifactory* factory = driver->get_factory();
 
 			collections::vector<ordered_model::model_element> data;
 			try
@@ -205,11 +207,11 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 					if (element_data.vertices.is_empty() || element_data.vertices->counter() == 0)
 						continue;
 
-					element.vertex_buffer = driver->create_vertex_buffer(
+					element.vertex_buffer = factory->create_vertex_buffer(
 						graphics::buffers::buffer_usage::dynamic,
 						collections::to_array(desc),
 						element_data.vertices->counter(),
-						collections::to_array((byte*)element_data.vertices->data(), element_data.vertices->counter() * sizeof(ordered_model::vertex)));
+						element_data.vertices.get());
 
 					element.technique = fxlibrary->find_technique("character_lighting_fx"_s);
 
@@ -219,7 +221,7 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 					});
 
 					index idx = model_elements->counter() - 1;
-					texloader->load_texture_async((text::raw_cstr)element_data.material)->then<bool>(
+					texloader->load_texture_async((cstr_t)element_data.material)->then<bool>(
 						[=](core::async::iasync<graphics::textures::itexture_t> result)
 					{
 						driver->execute_on_thread_safe([&]()
@@ -256,6 +258,7 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 			textures::itexture_loader_t texloader = scene->texture_loader();
 			effects::ieffect_library_t fxlibrary = scene->effect_library();
 			idriver* driver = scene->driver();
+			ifactory* factory = driver->get_factory();
 
 			collections::vector<ordered_model::model_element> data;
 			try
@@ -283,11 +286,11 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 				if (element_data.vertices.is_empty() || element_data.vertices->counter() == 0)
 					continue;
 
-				element.vertex_buffer = driver->create_vertex_buffer(
+				element.vertex_buffer = factory->create_vertex_buffer(
 					graphics::buffers::buffer_usage::dynamic,
 					collections::to_array(desc),
 					element_data.vertices->counter(),
-					collections::to_array((byte*)element_data.vertices->data(), element_data.vertices->counter() * sizeof(ordered_model::vertex)));
+					element_data.vertices.get());
 
 				element.technique = fxlibrary->find_technique("character_lighting_fx"_s);
 
@@ -297,7 +300,7 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 				});
 
 				index idx = model_elements->counter() - 1;
-				texloader->load_texture_async((text::raw_cstr)element_data.material)->then<bool>(
+				texloader->load_texture_async((cstr_t)element_data.material)->then<bool>(
 					[=](core::async::iasync<graphics::textures::itexture_t> result)
 				{
 					driver->execute_on_thread_safe([&]()
@@ -333,6 +336,7 @@ bool model::load(idriver_t driver, effects::ieffect_library_t fxlibrary, texture
 	loader->load_async(file)->then<bool>(
 		[this, loader, driver, fxlibrary, _texloader, file](core::async::iasync<collections::vector<ordered_model::model_element>> task)->bool
 	{
+		ifactory* factory = driver->get_factory();
 		textures::itexture_loader_t texloader = _texloader.get();
 		collections::vector<ordered_model::model_element> data;
 		try
@@ -357,11 +361,11 @@ bool model::load(idriver_t driver, effects::ieffect_library_t fxlibrary, texture
 			if (element_data.vertices.is_empty() || element_data.vertices->counter() == 0)
 				continue;
 
-			element.vertex_buffer = driver->create_vertex_buffer(
+			element.vertex_buffer = factory->create_vertex_buffer(
 				graphics::buffers::buffer_usage::dynamic,
 				collections::to_array(desc),
 				element_data.vertices->counter(),
-				collections::to_array((byte*)element_data.vertices->data(), element_data.vertices->counter() * sizeof(ordered_model::vertex)));
+				element_data.vertices.get());
 
 			element.technique = fxlibrary->find_technique("character_lighting_fx"_s);
 
@@ -371,7 +375,7 @@ bool model::load(idriver_t driver, effects::ieffect_library_t fxlibrary, texture
 			});
 			
 			index idx = model_elements->counter() - 1;
-			texloader->load_texture_async((text::raw_cstr)element_data.material)->then<bool>(
+			texloader->load_texture_async((cstr_t)element_data.material)->then<bool>(
 				[=](core::async::iasync<graphics::textures::itexture_t> result)
 			{		
 				driver->execute_on_thread_safe([&]()
@@ -463,7 +467,7 @@ void model::draw(scene_t scene) {
 
 				}
 
-				driver->bind_technique(shaders);
+				driver->bind_shaders(shaders);
 			}
 
 			index i = 0;
@@ -486,7 +490,7 @@ void model::draw(scene_t scene) {
 				driver->bind_texture(null, i);
 		}
 		driver->bind_vertex_buffer(null);
-		driver->bind_technique(null);
+		driver->bind_shaders(null);
 	});
 }
 

@@ -76,11 +76,11 @@ stream_mode_t input_binary_file::mode()const
 
 bool input_binary_file::map(function<bool(ibuffer_view_t)> func, wsize sz, file_offset_t offset)
 {
-	ibuffer_t buff = file::map(min(size(), sz), min(size(), offset));
+	ibuffer_t buff = file::map(min((wsize)size(), sz), min(size(), offset));
 	if (buff.is_empty())
 		return false;
 	func(buff.get());
-	unmap(buff, min(size(), sz));
+	unmap(buff, min((wsize)size(), sz));
 	return true;
 }
 

@@ -30,63 +30,68 @@ void resource_manager::clear()
 	m_tex_loader = null;
 }
 
-array_view<string> resource_manager::paths(core::files::file_system_priority_t priority)const
+collections::ienum_ptr<string> resource_manager::paths(core::files::path_access_type_t access)const
 {
-	return core::files::ifile_system::fs_instance()->paths(priority);
+	return core::files::ifile_system::instance()->paths(access);
 }
 
-void resource_manager::push_path(cstr_t path, core::files::file_system_priority_t priority)
+void resource_manager::push_path(cstr_t path, core::files::path_access_type_t access, cstr_t macro)
 {
-	return core::files::ifile_system::fs_instance()->push_path(path, priority);
+	return core::files::ifile_system::instance()->push_path(path, access, macro);
 }
 
-bool resource_manager::open_file(cstr_t path, core::files::open_flags_t flags, core::files::ifile_ptr_t file)
+cstr_t resource_manager::find_path(cstr_t macro)const
+{
+	return core::files::ifile_system::instance()->find_path(macro);
+}
+
+bool resource_manager::open_file(cstr_t path, core::files::open_flags_t flags, core::files::ifile_ptr_t file, cstr_t macro)
 {
 	try {
-		return core::files::ifile_system::fs_instance()->open_file((cstr_t)m_file_map[path], flags, file);
+		return core::files::ifile_system::instance()->open_file((cstr_t)m_file_map[path], flags, file, macro);
 	}
 	catch (...) {
-		return core::files::ifile_system::fs_instance()->open_file(path, flags, file);
+		return core::files::ifile_system::instance()->open_file(path, flags, file, macro);
 	}
 }
 
-bool resource_manager::open(cstr_t path, core::files::input_text_file_ptr_t file)
+bool resource_manager::open(cstr_t path, core::files::input_text_file_ptr_t file, cstr_t macro)
 {
 	try {
-		return core::files::ifile_system::fs_instance()->open((cstr_t)m_file_map[path], file);
+		return core::files::ifile_system::instance()->open((cstr_t)m_file_map[path], file, macro);
 	}
 	catch (...) {
-		return core::files::ifile_system::fs_instance()->open(path, file);
+		return core::files::ifile_system::instance()->open(path, file, macro);
 	}
 }
 
-bool resource_manager::open(cstr_t path, core::files::output_text_file_ptr_t file)
+bool resource_manager::open(cstr_t path, core::files::output_text_file_ptr_t file, cstr_t macro)
 {
 	try {
-		return core::files::ifile_system::fs_instance()->open((cstr_t)m_file_map[path], file);
+		return core::files::ifile_system::instance()->open((cstr_t)m_file_map[path], file, macro);
 	}
 	catch (...) {
-		return core::files::ifile_system::fs_instance()->open(path, file);
+		return core::files::ifile_system::instance()->open(path, file, macro);
 	}
 }
 
-bool resource_manager::open(cstr_t path, core::files::input_binary_file_ptr_t file)
+bool resource_manager::open(cstr_t path, core::files::input_binary_file_ptr_t file, cstr_t macro)
 {
 	try {
-		return core::files::ifile_system::fs_instance()->open((cstr_t)m_file_map[path], file);
+		return core::files::ifile_system::instance()->open((cstr_t)m_file_map[path], file, macro);
 	}
 	catch (...) {
-		return core::files::ifile_system::fs_instance()->open(path, file);
+		return core::files::ifile_system::instance()->open(path, file, macro);
 	}
 }
 
-bool resource_manager::open(cstr_t path, core::files::output_binary_file_ptr_t file)
+bool resource_manager::open(cstr_t path, core::files::output_binary_file_ptr_t file, cstr_t macro)
 {
 	try {
-		return core::files::ifile_system::fs_instance()->open((cstr_t)m_file_map[path], file);
+		return core::files::ifile_system::instance()->open((cstr_t)m_file_map[path], file, macro);
 	}
 	catch (...) {
-		return core::files::ifile_system::fs_instance()->open(path, file);
+		return core::files::ifile_system::instance()->open(path, file, macro);
 	}
 }
 

@@ -41,6 +41,8 @@ namespace ang
 			ang_begin_interface(LINK ixml_serializable)
 				visible vcall bool load(xml_node_t)pure
 				visible vcall bool save(xml_document_t)const pure
+				visible vcall core::async::iasync<bool> load_async(dom::xml::xml_node_t)pure
+				visible vcall core::async::iasync<bool> save_async(dom::xml::xml_document_t)const pure
 			ang_end_interface();
 		}
 	}

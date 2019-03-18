@@ -755,7 +755,7 @@ namespace ang
 	}
 	template<typename T, text::encoding E, typename cstr_t>
 	bool operator == (const cstr_t& value1, const str_view<T, E>& value2) {
-		return str_view_compare_helper<cstr_t, str_view<T1, E1>>::compare(value1, value2) == 0;
+		return str_view_compare_helper<cstr_t, str_view<T, E>>::compare(value1, value2) == 0;
 	}
 
 

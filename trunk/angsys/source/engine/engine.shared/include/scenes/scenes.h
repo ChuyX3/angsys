@@ -10,17 +10,10 @@ namespace ang
 	{
 		namespace scenes
 		{
-			class scene_object;
-			typedef object_wrapper<scene_object> scene_object_t;
-
-			class scene;
-			typedef object_wrapper<scene> scene_t;
-
-			class camera;
-			typedef object_wrapper<camera> camera_t;
-
-			class model;
-			typedef object_wrapper<model> model_t;
+			ang_object(scene_object);
+			ang_object(scene);
+			ang_object(camera);
+			ang_object(model);
 
 		}
 	}
@@ -115,6 +108,7 @@ namespace ang
 				void close()override;
 
 				box<float> viewport()const override;
+				void viewport(box<float>) override;
 				maths::float4x4 view_projection_matrix()const override;
 				maths::matrix4 world_matrix()const override;
 
@@ -169,7 +163,7 @@ namespace ang
 				textures::itexture_loader_t m_texture_loader;
 				camera_t m_camera;
 				vector<scene_object_t> m_objects;
-				collections::hash_map<string, wstring> m_source_map;
+				collections::hash_map<string, string> m_source_map;
 				mutable core::async::mutex_t m_mutex;
 				size<float> m_clip_size;
 
@@ -210,12 +204,12 @@ namespace ang
 				inline textures::itexture_loader* texture_loader()const { return m_texture_loader.get(); }
 				inline camera* camera()const { return m_camera.get(); }
 				inline size<float>const& clip_size()const { return m_clip_size; }
-				inline wstring find_file(text::raw_cstr_t sid)const {
+				inline string find_file(cstr_t sid)const {
 					core::async::scope_locker<core::async::mutex> lock = m_mutex;
 					if (m_source_map.is_empty())
-						return L""_s;
+						return L""_r;
 					auto it = m_source_map->find(sid);
-					return it.is_valid() ? it->value : L""_s;
+					return it.is_valid() ? it->value : L""_r;
 				}
 
 				template<typename T> core::async::iasync<T> run_async(core::delegates::function<T(core::async::iasync<T>)> func) {

@@ -212,8 +212,8 @@ namespace ang
 
 		collections::forward_iterator<MY_TYPE> begin() { return m_ptr ? m_ptr->begin() : collections::iterator<MY_TYPE>(); }
 		collections::forward_iterator<MY_TYPE> end() { return m_ptr ? m_ptr->end() : collections::iterator<MY_TYPE>(); }
-		collections::forward_iterator<const MY_TYPE> begin()const { return m_ptr ? m_ptr->begin() : collections::iterator<const MY_TYPE>(); }
-		collections::forward_iterator<const MY_TYPE> end()const { return m_ptr ? m_ptr->end() : collections::iterator<const MY_TYPE>(); }
+		collections::forward_iterator<const MY_TYPE> begin()const { return m_ptr ? m_ptr->begin() : collections::iterator<MY_TYPE>(); }
+		collections::forward_iterator<const MY_TYPE> end()const { return m_ptr ? m_ptr->end() : collections::iterator<MY_TYPE>(); }
 
 	public:
 		object_wrapper& operator = (type*);

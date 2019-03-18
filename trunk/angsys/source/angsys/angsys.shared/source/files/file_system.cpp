@@ -11,11 +11,6 @@
 #include <ang/core/files.h>
 #include "file_system.h"
 
-#if defined WINDOWS_PLATFORM
-#include <shlobj_core.h>
-#endif
-
-
 
 //#if defined _DEBUG
 //#define new new(__FILE__, __LINE__)
@@ -43,15 +38,6 @@ file_system::file_system()
 {
 	m_highest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();
 	m_lowest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();
-
-#if defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
-	PWSTR path;
-	if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &path)))
-	{
-		push_path(cwstr_t(path), path_access_type::all, "$(Documents)");
-		CoTaskMemFree(path);
-	}	
-#endif
 }
 
 file_system::~file_system()

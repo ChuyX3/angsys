@@ -74,25 +74,28 @@ void framework::init_holographics()
 
 void framework::load_scene()
 {
-	m_effect_library = m_driver->create_effect_library();
-	m_texture_loader = m_driver->create_texture_loader();
+	auto rm = resources::resource_manager::instance();
+
+	/*m_effect_library = m_driver->create_effect_library();
+	m_texture_loader = m_driver->create_texture_loader();*/
 
 	core::files::input_text_file_t file = new core::files::input_text_file();
 	file->open(L"res/fx_library.xml"_s);
 	dom::xml::xml_document_t doc = dom::xml::xml_document::from_file(file);
 	file->clear();
-	m_effect_library->load_library(doc->xml_root_element());
+	m_fx_library = interface_cast<effects::ieffect_library>(rm->load_library(doc->xml_root_element()).get());
 
 	file->open(L"res/texture_apex.xml"_s);
 	doc = dom::xml::xml_document::from_file(file);
 	file->clear();
-	m_texture_loader->load_library(doc->xml_root_element());
+
+	m_tex_loader = interface_cast<textures::itexture_loader>(rm->load_library(doc->xml_root_element()).get());
 
 	file->open(L"res/scenes/scenes.xml"_s);
 	doc = dom::xml::xml_document::from_file(file);
 	file->clear();
 
-	m_scene->load(m_driver, m_effect_library, m_texture_loader, doc->xml_root_element());
+	m_scene->load(m_driver, m_fx_library, m_tex_loader, doc->xml_root_element());
 
 	m_driver->blend_mode(blend_mode::enable);
 }
@@ -114,11 +117,7 @@ void framework::draw()
 	m_driver->execute_on_thread_safe([&] 
 	{
 		m_surface->update();
-		for (iframe_buffer_t frame : m_surface->frame_buffers())
-		{
-			m_scene->draw(m_driver, frame);
-		}
-	
+		m_scene->draw(m_driver, m_surface->frame_buffer());
 		m_surface->swap_buffers(false);
 	});
 }
@@ -126,11 +125,12 @@ void framework::draw()
 void framework::close_graphics()
 {
 	m_scene->clear();
-	m_effect_library = null;
-	m_texture_loader = null;
+	m_fx_library = null;
+	m_tex_loader = null;
 	m_scene = null;
 	m_surface = null;
 	m_driver = null;
+	resources::resource_manager::release_instance();
 }
 
 void framework::on_create_event(objptr sender, platform::events::icreated_event_args_t args)

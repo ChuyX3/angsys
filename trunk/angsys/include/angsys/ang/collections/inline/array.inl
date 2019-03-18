@@ -103,9 +103,9 @@ inline ang::collections::array_buffer<T, allocator>::~array_buffer()
 template<typename T, template <typename> class allocator>
 inline ang::rtti_t const& ang::collections::array_buffer<T, allocator>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::array<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
-	static rtti_t const* parents[] = { &runtime::type_of<iarray<T>>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<ang::collections::array_buffer<T, allocator>>(), alignof(ang::collections::array_buffer<T, allocator>), parents, &default_query_interface);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::array<"_s) += ang::type_of<T>().type_name()) += ">"_s);
+	static ang::rtti_t const* parents[] = { &runtime::type_of<iarray<T>>() };
+	static ang::rtti_t const& info = rtti::regist(name, genre::class_type, size_of<ang::collections::array_buffer<T, allocator>>(), alignof(ang::collections::array_buffer<T, allocator>), parents, &intf::default_query_interface);
 	return info;
 }
 
@@ -128,12 +128,12 @@ inline bool ang::collections::array_buffer<T, allocator>::query_interface(ang::r
 	{
 		return true;
 	}
-	else if (id.type_id() == type_of<iarray<T>>().type_id()) {
+	else if (id.type_id() == ang::type_of<iarray<T>>().type_id()) {
 		if (out == null) return false;
 		*out = static_cast<iarray<T>*>(this);
 		return true;
 	}
-	else if (id.type_id() == type_of<ienum<T>>().type_id()) {
+	else if (id.type_id() == ang::type_of<ienum<T>>().type_id()) {
 		if (out == null) return false;
 		*out = static_cast<ienum<T>*>(this);
 		return true;
@@ -162,7 +162,7 @@ inline bool ang::collections::array_buffer<T, allocator>::is_empty()const
 template<typename T, template <typename> class allocator>
 inline ang::rtti_t const& ang::collections::array_buffer<T, allocator>::value_type()const
 {
-	return type_of<array_view<T>>();
+	return ang::type_of<array_view<T>>();
 }
 
 template<typename T, template <typename> class allocator>

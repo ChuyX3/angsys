@@ -95,6 +95,7 @@ bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::query_interface(ang::rtti
 		*out = static_cast<ienum<MY_TYPE>*>(this);
 		return true;
 	}
+	return false;
 }
 
 ang::comparision_result_t ang::collections::list_object<MY_TYPE, MY_ALLOC>::compare(const ang::object* obj)const
@@ -328,6 +329,7 @@ ang::collections::iterator<MY_TYPE> ang::collections::list_object<MY_TYPE, MY_AL
 		if (func(node->data))
 			return iterator_t(const_cast<list_object*>(this), pointer(node));
 	}
+	return end();
 }
 
 ang::collections::iterator<MY_TYPE> ang::collections::list_object<MY_TYPE, MY_ALLOC>::find(core::delegates::function<bool(MY_TYPE const&)> func, base_iterator_t next_to, bool invert)const
@@ -354,6 +356,7 @@ ang::collections::iterator<MY_TYPE> ang::collections::list_object<MY_TYPE, MY_AL
 				return iterator_t(const_cast<list_object*>(this), pointer(node));
 		}
 	}
+	return end();
 }
 
 ang::collections::ienum_ptr<MY_TYPE> ang::collections::list_object<MY_TYPE, MY_ALLOC>::find_all(core::delegates::function<bool(MY_TYPE const&)> func)const
@@ -562,6 +565,7 @@ bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop_at(windex idx)
 		m_alloc.deallocate(node);
 	}
 	m_count--;
+	return true;
 }
 
 bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop_at(base_iterator_t it)
@@ -615,6 +619,7 @@ bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop_at(windex idx, MY_TYP
 		m_alloc.deallocate(node);
 	}
 	m_count--;
+	return true;
 }
 
 bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop_at(base_iterator_t it, MY_TYPE& value)

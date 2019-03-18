@@ -18,7 +18,7 @@ resource::~resource()
 
 ANG_IMPLEMENT_INTERFACE_RUNTIME_INFO(ang::graphics::resources::resource);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::resources::resource, object, dom::xml::ixml_serializable, iresource);
-ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(ang::graphics::resources::resource, object, dom::xml::ixml_serializable, iresource);
+//ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(ang::graphics::resources::resource, object, dom::xml::ixml_serializable, iresource);
 
 bool resource::query_interface(rtti_t const& type, unknown_ptr_t out)
 {

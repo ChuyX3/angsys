@@ -88,9 +88,9 @@ inline ang::collections::vector_buffer<T, A>::~vector_buffer()
 template<typename T, template <typename> class A>
 inline ang::rtti_t const& ang::collections::vector_buffer<T, A>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::vector<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
-	static rtti_t const* parents[] = { &runtime::type_of<ilist<T>>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::vector_buffer<T, A>), alignof(ang::collections::vector_buffer<T, A>), parents, &default_query_interface);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::vector<"_s) += ang::type_of<T>().type_name()) += ">"_s);
+	static ang::rtti_t const* parents[] = { &runtime::type_of<ilist<T>>() };
+	static ang::rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::vector_buffer<T, A>), alignof(ang::collections::vector_buffer<T, A>), parents, &intf::default_query_interface);
 	return info;
 }
 
@@ -113,17 +113,17 @@ inline bool ang::collections::vector_buffer<T, A>::query_interface(ang::rtti_t c
 	{
 		return true;
 	}
-	else if (id.type_id() == type_of<ilist<T>>().type_id()) {
+	else if (id.type_id() == ang::type_of<ilist<T>>().type_id()) {
 		if (out == null) return false;
 		*out = static_cast<ilist<T>*>(this);
 		return true;
 	}
-	else if (id.type_id() == type_of<iarray<T>>().type_id()) {
+	else if (id.type_id() == ang::type_of<iarray<T>>().type_id()) {
 		if (out == null) return false;
 		*out = static_cast<iarray<T>*>(this);
 		return true;
 	}
-	else if (id.type_id() == type_of<ienum<T>>().type_id()) {
+	else if (id.type_id() == ang::type_of<ienum<T>>().type_id()) {
 		if (out == null) return false;
 		*out = static_cast<ienum<T>*>(this);
 		return true;
@@ -230,7 +230,7 @@ inline void ang::collections::vector_buffer<T, A>::extend(ang::stack_array<U, SI
 template<typename T, template <typename> class A>
 inline ang::rtti_t const& ang::collections::vector_buffer<T, A>::value_type()const
 {
-	return type_of<array_view<T>>();
+	return ang::type_of<array_view<T>>();
 }
 
 template<typename T, template <typename> class A>
@@ -1162,7 +1162,7 @@ inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>& ang::o
 template<template <typename> class A>
 inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator = (const std::nullptr_t&)
 {
-	clear();
+	reset();
 	return*this;
 }
 

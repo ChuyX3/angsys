@@ -43,7 +43,8 @@ namespace ang
 			//iframe_buffer_t m_render_target;
 			core::time::step_timer m_timer;
 
-			resources::resource_manager_t m_rm;
+			effects::ieffect_library_t m_fx_library;
+			textures::itexture_loader_t m_tex_loader;
 
 			scenes::scene_t m_scene;
 

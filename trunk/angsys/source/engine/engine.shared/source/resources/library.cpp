@@ -201,7 +201,7 @@ iresource_t library::find_resource(cstr_t sid)const
 {
 	core::async::scope_locker<core::async::mutex_t> lock = m_mutex;
 	try {
-		return m_resource_map[sid].lock();
+		return m_resource_map[sid].lock().get();
 	}
 	catch (...)
 	{

@@ -5,6 +5,8 @@
 #include <ang/platform/win32/windows.h>
 #include "wnd_handle.h"
 
+#include <shlobj_core.h>
+
 #include "dispatcher.h"
 #include "event_args.h"
 
@@ -59,6 +61,14 @@ ui_thread::ui_thread()
 		bind(this, &ui_thread::listen_to),
 		bind(this, &ui_thread::send_msg),
 		bind(this, &ui_thread::post_task));
+
+	PWSTR path;
+	if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &path)))
+	{
+		core::files::ifile_system::instance()->push_path(cwstr_t(path), core::files::path_access_type::all, "$(Documents)");
+		CoTaskMemFree(path);
+	}
+
 }
 
 ui_thread::~ui_thread()

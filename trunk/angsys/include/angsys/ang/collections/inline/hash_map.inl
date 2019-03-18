@@ -1598,6 +1598,7 @@ inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_in
 		*out = static_cast<ienum_type*>(this);
 		return true;
 	}
+	return false;
 }
 
 
@@ -2885,7 +2886,7 @@ ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator,
 {
 	if (is_empty())
 		set(new ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>());
-	m_ptr->push(item);
+	m_ptr->insert(item);
 	return*this;
 }
 

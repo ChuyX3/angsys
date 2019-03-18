@@ -369,7 +369,7 @@ namespace ang
 				weak_ptr<ilibrary> m_parent;
 				mutable core::async::mutex_t m_mutex;
 				core::async::idispatcher_t m_async_worker;
-				collections::hash_map<string, weak_ptr<iresource_t>> m_resource_map;
+				collections::hash_map<string, weak_ptr<iresource>> m_resource_map;
 				effects::effect_library_t m_fx_library;
 				textures::texture_loader_t m_tex_loader;
 
@@ -420,6 +420,9 @@ namespace ang
 				collections::hash_map<string, string> m_file_map;
 
 			public:
+				using singleton<resource_manager_t>::instance;
+
+			public:
 				resource_manager();
 
 				ANG_DECLARE_INTERFACE();
@@ -427,14 +430,14 @@ namespace ang
 			public: //overrides
 				void clear()override;
 
-				array_view<string> paths(core::files::file_system_priority_t)const override;
-				void push_path(cstr_t, core::files::file_system_priority_t) override;
-				bool open_file(cstr_t, core::files::open_flags_t, core::files::ifile_ptr_t)override;
-
-				bool open(cstr_t, core::files::input_text_file_ptr_t)override;
-				bool open(cstr_t, core::files::output_text_file_ptr_t)override;
-				bool open(cstr_t, core::files::input_binary_file_ptr_t)override;
-				bool open(cstr_t, core::files::output_binary_file_ptr_t)override;
+				collections::ienum_ptr<string> paths(core::files::path_access_type_t)const override;
+				void push_path(cstr_t, core::files::path_access_type_t, cstr_t macro = null) override;
+				cstr_t find_path(cstr_t macro)const override;
+				bool open_file(cstr_t, core::files::open_flags_t, core::files::ifile_ptr_t, cstr_t macro = null)override;
+				bool open(cstr_t, core::files::input_text_file_ptr_t, cstr_t macro = null)override;
+				bool open(cstr_t, core::files::output_text_file_ptr_t, cstr_t macro = null)override;
+				bool open(cstr_t, core::files::input_binary_file_ptr_t, cstr_t macro = null)override;
+				bool open(cstr_t, core::files::output_binary_file_ptr_t, cstr_t macro = null)override;
 
 				ifactory_t factory()const override;
 				string find_source(cstr_t)const override;	

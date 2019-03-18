@@ -20,7 +20,7 @@ namespace ang
 		template<typename K, typename T>
 		struct __type_info_builder_genre_class_helper<collections::pair<K, T>, false> : true_type {
 			static rtti_t const& type_of() {
-				static const cstr_view<char> name = text::string_pool::instance()->save_string((((astring("ang::collections::pair<"_s) += rtti::type_of<K>().type_name()) += ","_s) += rtti::type_of<T>().type_name()) += ">"_s);
+				static const cstr_view<char> name = text::string_pool::instance()->save_string((((astring("ang::collections::pair<"_s) += ang::type_of<K>().type_name()) += ","_s) += ang::type_of<T>().type_name()) += ">"_s);
 				static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<collections::pair<K, T>>(), align_of<collections::pair<K, T>>());
 				return info;
 			}
@@ -32,45 +32,45 @@ namespace ang
 template<typename T>
 inline ang::rtti_t const& ang::collections::ienum<T>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::ienum<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
-	static rtti_t const* parents[] = { &runtime::type_of<intf>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::ienum<T>), alignof(wsize), parents, &default_query_interface);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::ienum<"_s) += ang::type_of<T>().type_name()) += ">"_s);
+	static ang::rtti_t const* parents[] = { &runtime::type_of<intf>() };
+	static ang::rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::ienum<T>), alignof(wsize), parents, &default_query_interface);
 	return info;
 }
 
 template<typename T>
 inline ang::rtti_t const& ang::collections::iarray<T>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::iarray<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
-	static rtti_t const* parents[] = { &runtime::type_of<collections::ienum<T>>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::iarray<T>), alignof(wsize), parents, &default_query_interface);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::iarray<"_s) += ang::type_of<T>().type_name()) += ">"_s);
+	static ang::rtti_t const* parents[] = { &runtime::type_of<collections::ienum<T>>() };
+	static ang::rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::iarray<T>), alignof(wsize), parents, &intf::default_query_interface);
 	return info;
 }
 
 template<typename T>
 inline ang::rtti_t const& ang::collections::ilist<T>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::ilist<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
-	static rtti_t const* parents[] = { &runtime::type_of<collections::iarray<T>>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::ilist<T>), alignof(wsize), parents, &default_query_interface);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::ilist<"_s) += ang::type_of<T>().type_name()) += ">"_s);
+	static ang::rtti_t const* parents[] = { &runtime::type_of<collections::iarray<T>>() };
+	static ang::rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::ilist<T>), alignof(wsize), parents, &intf::default_query_interface);
 	return info;
 }
 
 template<typename T>
 inline ang::rtti_t const& ang::collections::isequence<T>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::isequence<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
-	static rtti_t const* parents[] = { &runtime::type_of<collections::ienum<T>>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::isequence<T>), alignof(wsize), parents, &default_query_interface);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::isequence<"_s) += ang::type_of<T>().type_name()) += ">"_s);
+	static ang::rtti_t const* parents[] = { &runtime::type_of<collections::ienum<T>>() };
+	static ang::rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::isequence<T>), alignof(wsize), parents, &intf::default_query_interface);
 	return info;
 }
 
 template<typename K, typename T>
 inline ang::rtti_t const& ang::collections::imap<K, T>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((((astring("ang::collections::imap<"_s) += rtti::type_of<K>().type_name()) += ","_s)+= rtti::type_of<T>().type_name()) += ">"_s);
-	static rtti_t const* parents[] = { &runtime::type_of<collections::ienum<pair<K,T>>>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::imap<K, T>), alignof(wsize), parents, &default_query_interface);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((((astring("ang::collections::imap<"_s) += ang::type_of<K>().type_name()) += ","_s)+= ang::type_of<T>().type_name()) += ">"_s);
+	static ang::rtti_t const* parents[] = { &runtime::type_of<collections::ienum<pair<K,T>>>() };
+	static ang::rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::imap<K, T>), alignof(wsize), parents, &intf::default_query_interface);
 	return info;
 }
 
@@ -78,9 +78,9 @@ inline ang::rtti_t const& ang::collections::imap<K, T>::class_info()
 template<ang::text::encoding E, template<typename>class A, typename T>
 inline ang::rtti_t const& ang::collections::imap<ang::text::basic_string<E,A>, T>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((((astring("ang::collections::imap<"_s) += rtti::type_of<ang::text::basic_string<E, A>>().type_name()) += ","_s) += rtti::type_of<T>().type_name()) += ">"_s);
-	static rtti_t const* parents[] = { &runtime::type_of<collections::ienum<pair<text::basic_string<E,A>,T>>>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::imap<text::basic_string<E, A>, T>), alignof(wsize), parents, &default_query_interface);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((((astring("ang::collections::imap<"_s) += ang::type_of<ang::text::basic_string<E, A>>().type_name()) += ","_s) += ang::type_of<T>().type_name()) += ">"_s);
+	static ang::rtti_t const* parents[] = { &runtime::type_of<collections::ienum<pair<text::basic_string<E,A>,T>>>() };
+	static ang::rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::imap<text::basic_string<E, A>, T>), alignof(wsize), parents, &intf::default_query_interface);
 	return info;
 }
 
@@ -88,9 +88,9 @@ inline ang::rtti_t const& ang::collections::imap<ang::text::basic_string<E,A>, T
 template<typename T>
 inline ang::rtti_t const& ang::collections::imap<ang::string, T>::class_info()
 {
-	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::imap<ang::string,"_s) += rtti::type_of<T>().type_name()) += ">"_s);
-	static rtti_t const* parents[] = { &runtime::type_of<collections::ienum<pair<string,T>>>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::imap<string, T>), alignof(wsize), parents, &default_query_interface);
+	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::imap<ang::string,"_s) += ang::type_of<T>().type_name()) += ">"_s);
+	static ang::rtti_t const* parents[] = { &runtime::type_of<collections::ienum<pair<string,T>>>() };
+	static ang::rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::imap<string, T>), alignof(wsize), parents, &intf::default_query_interface);
 	return info;
 }
 
@@ -658,7 +658,7 @@ ang::intf_wrapper<ang::collections::ienum<T>>::~intf_wrapper() {
 template<typename T> inline
 void ang::intf_wrapper<ang::collections::ienum<T>>::reset()
 {
-	iobject * _obj = interface_cast<iobject>(m_ptr);
+	iobject * _obj = ang::interface_cast<iobject>(m_ptr);
 	if (_obj)_obj->release();
 	m_ptr = null;
 }
@@ -685,8 +685,8 @@ template<typename T> inline
 void ang::intf_wrapper<ang::collections::ienum<T>>::set(ang::collections::ienum<T>* ptr)
 {
 	if (ptr == m_ptr) return;
-	iobject * _old = interface_cast<iobject>(m_ptr);
-	iobject * _new = interface_cast<iobject>(ptr);
+	iobject * _old = ang::interface_cast<iobject>(m_ptr);
+	iobject * _new = ang::interface_cast<iobject>(ptr);
 	m_ptr = ptr;
 	if (_new)_new->add_ref();
 	if (_old)_old->release();
@@ -811,7 +811,7 @@ ang::intf_wrapper<ang::collections::iarray<T>>::~intf_wrapper() {
 template<typename T> inline
 void ang::intf_wrapper<ang::collections::iarray<T>>::reset()
 {
-	iobject * _obj = interface_cast<iobject>(m_ptr);
+	iobject * _obj = ang::interface_cast<iobject>(m_ptr);
 	if (_obj)_obj->release();
 	m_ptr = null;
 }
@@ -838,8 +838,8 @@ template<typename T> inline
 void ang::intf_wrapper<ang::collections::iarray<T>>::set(ang::collections::iarray<T>* ptr)
 {
 	if (ptr == m_ptr) return;
-	iobject * _old = interface_cast<iobject>(m_ptr);
-	iobject * _new = interface_cast<iobject>(ptr);
+	iobject * _old = ang::interface_cast<iobject>(m_ptr);
+	iobject * _new = ang::interface_cast<iobject>(ptr);
 	m_ptr = ptr;
 	if (_new)_new->add_ref();
 	if (_old)_old->release();
@@ -964,7 +964,7 @@ ang::intf_wrapper<ang::collections::ilist<T>>::~intf_wrapper() {
 template<typename T> inline
 void ang::intf_wrapper<ang::collections::ilist<T>>::reset()
 {
-	iobject * _obj = interface_cast<iobject>(m_ptr);
+	iobject * _obj = ang::interface_cast<iobject>(m_ptr);
 	if (_obj)_obj->release();
 	m_ptr = null;
 }
@@ -991,8 +991,8 @@ template<typename T> inline
 void ang::intf_wrapper<ang::collections::ilist<T>>::set(ang::collections::ilist<T>* ptr)
 {
 	if (ptr == m_ptr) return;
-	iobject * _old = interface_cast<iobject>(m_ptr);
-	iobject * _new = interface_cast<iobject>(ptr);
+	iobject * _old = ang::interface_cast<iobject>(m_ptr);
+	iobject * _new = ang::interface_cast<iobject>(ptr);
 	m_ptr = ptr;
 	if (_new)_new->add_ref();
 	if (_old)_old->release();
