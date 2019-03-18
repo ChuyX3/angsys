@@ -16,6 +16,7 @@
 
 #ifdef  _MSC_VER 
 
+#define ANG_EXPAND_ARGS(...) ANG_EXPAND(__VA_ARGS__)
 #define ANG_EXPAND(x) x
 #define ANG_CATAB(A, B) ANG_CATAB_(A, B)
 #define ANG_CATAB_(A, B) A##B
@@ -114,7 +115,7 @@
 #define _DECLSPEC_NOVTABLE 
 #endif // WINDOWS_PLATFORM
 
-#define ANG_UTILS_TO_STRING_(...) #__VA_ARGS__
+#define ANG_UTILS_TO_STRING_(x) #x
 #define ANG_UTILS_TO_STRING(...) ANG_UTILS_TO_STRING_(__VA_ARGS__)
 #define ANG_UTILS_TO_STRING_OBJ_(...) ang::castr_t(#__VA_ARGS__)
 #define ANG_UTILS_TO_STRING_OBJ(...) ANG_UTILS_TO_STRING_OBJ_(__VA_ARGS__)

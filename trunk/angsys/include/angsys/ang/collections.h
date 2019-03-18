@@ -29,24 +29,24 @@ namespace ang
 		/******************************************************************/
 		template<typename T>
 		ang_begin_interface_inline(ienum)
-			visible vcall wsize counter()const pure;
-			visible vcall T& at(base_iterator<T> const&) pure;
-			visible vcall bool increase(base_iterator<T>&)const pure;
-			visible vcall bool increase(base_iterator<T>&, int offset)const pure;
-			visible vcall bool decrease(base_iterator<T>&)const pure;
-			visible vcall bool decrease(base_iterator<T>&, int offset)const pure;
+			visible vcall wsize counter()const pure
+			visible vcall T& at(base_iterator<T> const&) pure
+			visible vcall bool increase(base_iterator<T>&)const pure
+			visible vcall bool increase(base_iterator<T>&, int offset)const pure
+			visible vcall bool decrease(base_iterator<T>&)const pure
+			visible vcall bool decrease(base_iterator<T>&, int offset)const pure
 
-			visible vcall forward_iterator<T> begin() pure;
-			visible vcall forward_iterator<T> end() pure;
-			visible vcall const_forward_iterator<T> begin()const pure;
-			visible vcall const_forward_iterator<T> end()const pure;
-			visible vcall forward_iterator<T> last() pure;
-			visible vcall const_forward_iterator<T> last()const pure;
+			visible vcall forward_iterator<T> begin() pure
+			visible vcall forward_iterator<T> end() pure
+			visible vcall const_forward_iterator<T> begin()const pure
+			visible vcall const_forward_iterator<T> end()const pure
+			visible vcall forward_iterator<T> last() pure
+			visible vcall const_forward_iterator<T> last()const pure
 
-			visible vcall backward_iterator<T> rbegin() pure;
-			visible vcall backward_iterator<T> rend() pure;
-			visible vcall const_backward_iterator<T> rbegin()const pure;
-			visible vcall const_backward_iterator<T> rend()const pure;
+			visible vcall backward_iterator<T> rbegin() pure
+			visible vcall backward_iterator<T> rend() pure
+			visible vcall const_backward_iterator<T> rbegin()const pure
+			visible vcall const_backward_iterator<T> rend()const pure
 		ang_end_interface();
 
 
@@ -58,12 +58,12 @@ namespace ang
 		template<typename T>
 		ang_begin_interface_inline(iarray, ienum<T>)
 			using ienum<T>::at;
-			visible vcall iterator<T> at(windex) pure;
-			visible vcall const_iterator<T> at(windex)const pure;
-			visible vcall void copy(const ienum<T>*) pure;
-			visible vcall iterator<T> find(core::delegates::function<bool(T const&)>, bool invert = false)const pure;
-			visible vcall iterator<T> find(core::delegates::function<bool(T const&)>, base_iterator<T> next_to, bool invert = false)const pure;
-			visible vcall ienum_ptr<T> find_all(core::delegates::function<bool(T const&)>)const pure;
+			visible vcall iterator<T> at(windex) pure
+			visible vcall const_iterator<T> at(windex)const pure
+			visible vcall void copy(const ienum<T>*) pure
+			visible vcall iterator<T> find(core::delegates::function<bool(T const&)>, bool invert = false)const pure
+			visible vcall iterator<T> find(core::delegates::function<bool(T const&)>, base_iterator<T> next_to, bool invert = false)const pure
+			visible vcall ienum_ptr<T> find_all(core::delegates::function<bool(T const&)>)const pure
 		ang_end_interface();
 
 		/******************************************************************/
@@ -73,16 +73,16 @@ namespace ang
 		/******************************************************************/
 		template<typename T>
 		ang_begin_interface_inline(ilist, iarray<T>)
-			visible vcall void extend(const ienum<T>*) pure;
-			visible vcall void push(T const&, bool last = true) pure;
-			visible vcall bool insert(windex idx, T const&) pure;
-			visible vcall bool insert(base_iterator<T> it, T const&) pure;
-			visible vcall bool pop(bool last = true) pure;
-			visible vcall bool pop(T&, bool last = true) pure;
-			visible vcall bool pop_at(windex idx) pure;
-			visible vcall bool pop_at(base_iterator<T> it) pure;
-			visible vcall bool pop_at(windex idx, T&) pure;
-			visible vcall bool pop_at(base_iterator<T> it, T&) pure;
+			visible vcall void extend(const ienum<T>*) pure
+			visible vcall void push(T const&, bool last = true) pure
+			visible vcall bool insert(windex idx, T const&) pure
+			visible vcall bool insert(base_iterator<T> it, T const&) pure
+			visible vcall bool pop(bool last = true) pure
+			visible vcall bool pop(T&, bool last = true) pure
+			visible vcall bool pop_at(windex idx) pure
+			visible vcall bool pop_at(base_iterator<T> it) pure
+			visible vcall bool pop_at(windex idx, T&) pure
+			visible vcall bool pop_at(base_iterator<T> it, T&) pure
 		ang_end_interface();
 
 		/******************************************************************/
@@ -92,10 +92,10 @@ namespace ang
 		/******************************************************************/
 		template<typename T>
 		ang_begin_interface_inline(isequence, ienum<T>)
-			visible vcall void extend(const ienum<T>*) pure;
-			visible vcall void push(T const&) pure;
-			visible vcall bool pop() pure;
-			visible vcall bool pop(T&) pure;
+			visible vcall void extend(const ienum<T>*) pure
+			visible vcall void push(T const&) pure
+			visible vcall bool pop() pure
+			visible vcall bool pop(T&) pure
 		ang_end_interface();
 
 
@@ -106,15 +106,15 @@ namespace ang
 		/******************************************************************/
 		template<typename T>
 		ang_begin_interface_inline(iset, ienum<T>)
-			visible vcall bool copy(const ienum<T>*) pure;
-			visible vcall void extend(const ienum<T>*) pure;
-			visible vcall bool insert(T) pure;
-			visible vcall bool remove(T&) pure;
-			visible vcall bool remove(base_iterator<T> it) pure;
-			visible vcall bool remove(base_iterator<T> it, T&) pure;
-			visible vcall bool has_value(const T&)const pure;
-			visible vcall iterator<T> find(const T&) pure;
-			visible vcall const_iterator<T> find(const T&)const pure;
+			visible vcall bool copy(const ienum<T>*) pure
+			visible vcall void extend(const ienum<T>*) pure
+			visible vcall bool insert(T) pure
+			visible vcall bool remove(T&) pure
+			visible vcall bool remove(base_iterator<T> it) pure
+			visible vcall bool remove(base_iterator<T> it, T&) pure
+			visible vcall bool has_value(const T&)const pure
+			visible vcall iterator<T> find(const T&) pure
+			visible vcall const_iterator<T> find(const T&)const pure
 		ang_end_interface();
 
 		/******************************************************************/
@@ -124,19 +124,19 @@ namespace ang
 		/******************************************************************/
 		template<typename K, typename T>
 		ang_begin_interface_inline(imap, ienum<pair<K COMA T>>)
-			visible vcall bool copy(const ienum<pair<K, T>>*) pure;
-			visible vcall void extend(const ienum<pair<K, T>>*) pure;
-			visible vcall iterator<pair<K, T>> insert(K, T) pure;
-			visible vcall iterator<pair<K, T>> insert(pair<K, T>) pure;
-			visible vcall iterator<pair<K, T>> update(K, T) pure;
-			visible vcall iterator<pair<K, T>> update(pair<K, T>) pure;
-			visible vcall bool remove(K const&) pure;
-			visible vcall bool remove(K const&, T&) pure;
-			visible vcall bool remove(base_iterator<pair<K, T>> it) pure;
-			visible vcall bool remove(base_iterator<pair<K, T>> it, T&) pure;
-			visible vcall bool has_key(const K&)const pure;
-			visible vcall iterator<pair<K, T>> find(const K&) pure;
-			visible vcall const_iterator<pair<K, T>> find(const K&)const pure;
+			visible vcall bool copy(const ienum<pair<K, T>>*) pure
+			visible vcall void extend(const ienum<pair<K, T>>*) pure
+			visible vcall iterator<pair<K, T>> insert(K, T) pure
+			visible vcall iterator<pair<K, T>> insert(pair<K, T>) pure
+			visible vcall iterator<pair<K, T>> update(K, T) pure
+			visible vcall iterator<pair<K, T>> update(pair<K, T>) pure
+			visible vcall bool remove(K const&) pure
+			visible vcall bool remove(K const&, T&) pure
+			visible vcall bool remove(base_iterator<pair<K, T>> it) pure
+			visible vcall bool remove(base_iterator<pair<K, T>> it, T&) pure
+			visible vcall bool has_key(const K&)const pure
+			visible vcall iterator<pair<K, T>> find(const K&) pure
+			visible vcall const_iterator<pair<K, T>> find(const K&)const pure
 		ang_end_interface();
 	
 		template<text::encoding E, template<typename>class A, typename T>
@@ -145,19 +145,19 @@ namespace ang
 			inline ANG_DECLARE_CLASS_INFO();
 			inline ANG_DECLARE_RUNTIME_INFO();
 			inline ANG_DECLARE_QUERY_INTERFACE();
-			visible vcall bool copy(const ienum<pair<text::basic_string<E, A>, T>>*) pure;
-			visible vcall void extend(const ienum<pair<text::basic_string<E, A>, T>>*) pure;
-			visible vcall iterator<pair<text::basic_string<E, A>, T>> insert(cstr_t, T) pure;
-			visible vcall iterator<pair<text::basic_string<E, A>, T>> insert(pair<text::basic_string<E, A>, T>) pure;
-			visible vcall iterator<pair<text::basic_string<E, A>, T>> update(cstr_t, T) pure;
-			visible vcall iterator<pair<text::basic_string<E, A>, T>> update(pair<text::basic_string<E, A>, T>) pure;
-			visible vcall bool remove(cstr_t) pure;
-			visible vcall bool remove(cstr_t, T&) pure;
-			visible vcall bool remove(base_iterator<pair<text::basic_string<E, A>, T>> it) pure;
-			visible vcall bool remove(base_iterator<pair<text::basic_string<E, A>, T>> it, T&) pure;
-			visible vcall bool has_key(cstr_t)const pure;
-			visible vcall iterator<pair<text::basic_string<E, A>, T>> find(cstr_t) pure;
-			visible vcall const_iterator<pair<text::basic_string<E, A>, T>> find(cstr_t)const pure;
+			visible vcall bool copy(const ienum<pair<text::basic_string<E, A>, T>>*) pure
+			visible vcall void extend(const ienum<pair<text::basic_string<E, A>, T>>*) pure
+			visible vcall iterator<pair<text::basic_string<E, A>, T>> insert(cstr_t, T) pure
+			visible vcall iterator<pair<text::basic_string<E, A>, T>> insert(pair<text::basic_string<E, A>, T>) pure
+			visible vcall iterator<pair<text::basic_string<E, A>, T>> update(cstr_t, T) pure
+			visible vcall iterator<pair<text::basic_string<E, A>, T>> update(pair<text::basic_string<E, A>, T>) pure
+			visible vcall bool remove(cstr_t) pure
+			visible vcall bool remove(cstr_t, T&) pure
+			visible vcall bool remove(base_iterator<pair<text::basic_string<E, A>, T>> it) pure
+			visible vcall bool remove(base_iterator<pair<text::basic_string<E, A>, T>> it, T&) pure
+			visible vcall bool has_key(cstr_t)const pure
+			visible vcall iterator<pair<text::basic_string<E, A>, T>> find(cstr_t) pure
+			visible vcall const_iterator<pair<text::basic_string<E, A>, T>> find(cstr_t)const pure
 		};
 
 		template<typename T>
@@ -166,19 +166,19 @@ namespace ang
 			inline ANG_DECLARE_CLASS_INFO();
 			inline ANG_DECLARE_RUNTIME_INFO();
 			inline ANG_DECLARE_QUERY_INTERFACE();
-			visible vcall bool copy(const ienum<pair<string, T>>*) pure;
-			visible vcall void extend(const ienum<pair<string, T>>*) pure;
-			visible vcall iterator<pair<string, T>> insert(cstr_t, T) pure;
-			visible vcall iterator<pair<string, T>> insert(pair<string, T>) pure;
-			visible vcall iterator<pair<string, T>> update(cstr_t, T) pure;
-			visible vcall iterator<pair<string, T>> update(pair<string, T>) pure;
-			visible vcall bool remove(cstr_t) pure;
-			visible vcall bool remove(cstr_t, T&) pure;
-			visible vcall bool remove(base_iterator<pair<string, T>> it) pure;
-			visible vcall bool remove(base_iterator<pair<string, T>> it, T&) pure;
-			visible vcall bool has_key(cstr_t)const pure;
-			visible vcall iterator<pair<string, T>> find(cstr_t) pure;
-			visible vcall const_iterator<pair<string, T>> find(cstr_t)const pure;
+			visible vcall bool copy(const ienum<pair<string, T>>*) pure
+			visible vcall void extend(const ienum<pair<string, T>>*) pure
+			visible vcall iterator<pair<string, T>> insert(cstr_t, T) pure
+			visible vcall iterator<pair<string, T>> insert(pair<string, T>) pure
+			visible vcall iterator<pair<string, T>> update(cstr_t, T) pure
+			visible vcall iterator<pair<string, T>> update(pair<string, T>) pure
+			visible vcall bool remove(cstr_t) pure
+			visible vcall bool remove(cstr_t, T&) pure
+			visible vcall bool remove(base_iterator<pair<string, T>> it) pure
+			visible vcall bool remove(base_iterator<pair<string, T>> it, T&) pure
+			visible vcall bool has_key(cstr_t)const pure
+			visible vcall iterator<pair<string, T>> find(cstr_t) pure
+			visible vcall const_iterator<pair<string, T>> find(cstr_t)const pure
 		};
 
 		template<typename T>

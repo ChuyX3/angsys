@@ -173,49 +173,49 @@ namespace ang
 			}analog_input_state_t;
 
 			ang_begin_interface(LINK ikeyboard)
-				visible vcall bool show_touch_keyboard()pure;
-				visible vcall bool show_touch_keyboard(text::istring_t, const text_selection_t&)pure;
-				visible vcall bool hide_touch_keyboard()pure;
+				visible vcall bool show_touch_keyboard()pure
+				visible vcall bool show_touch_keyboard(text::istring_t, const text_selection_t&)pure
+				visible vcall bool hide_touch_keyboard()pure
 
-				visible vcall bool visibility()const pure;
-				visible vcall text::istring_t text()const pure;
-				visible vcall void text(text::istring_t)pure;
-				visible vcall wsize text_lenght()const pure;
-				visible vcall bool selection(const text_selection_t&)pure;
-				visible vcall text_selection_t selection()const pure;
-				visible vcall bool is_multiline()const pure;
-				visible vcall void is_multiline(bool)pure;
-				visible vcall void type(keyboard_type_t)pure;
-				visible vcall keyboard_type_t type()const pure;
-				visible vcall text::istring_t restriction()const pure;
-				visible vcall void restriction(text::istring_t)pure;
-				visible vcall events::event_token_t add_text_change_event(events::event_t)pure;
-				visible vcall bool remove_text_change_event(events::event_token_t)pure;
+				visible vcall bool visibility()const pure
+				visible vcall text::istring_t text()const pure
+				visible vcall void text(text::istring_t)pure
+				visible vcall wsize text_lenght()const pure
+				visible vcall bool selection(const text_selection_t&)pure
+				visible vcall text_selection_t selection()const pure
+				visible vcall bool is_multiline()const pure
+				visible vcall void is_multiline(bool)pure
+				visible vcall void type(keyboard_type_t)pure
+				visible vcall keyboard_type_t type()const pure
+				visible vcall text::istring_t restriction()const pure
+				visible vcall void restriction(text::istring_t)pure
+				visible vcall events::event_token_t add_text_change_event(events::event_t)pure
+				visible vcall bool remove_text_change_event(events::event_token_t)pure
 			ang_end_interface();
 	
 			////////////////////////////////////////////////////
 				
 
 			ang_begin_interface(LINK icontroller)
-				visible vcall uint get_controller_id()const pure;
-				visible vcall controller_buttons_state_t get_state()const pure;
-				visible vcall thumb_stick_value_t get_left_thumb_stick()const pure;
-				visible vcall thumb_stick_value_t get_right_thumb_stick()const pure;
-				visible vcall analog_input_value_t get_triggers()const pure; //'y' = left, 'x' = right
-				visible vcall events::event_token_t add_digital_input_event(events::event_t)pure;
-				visible vcall bool remove_digital_input_event(events::event_token_t)pure;
-				visible vcall events::event_token_t add_analog_input_event(events::event_t)pure;
-				visible vcall bool remove_analog_input_event(events::event_token_t)pure;
+				visible vcall uint get_controller_id()const pure
+				visible vcall controller_buttons_state_t get_state()const pure
+				visible vcall thumb_stick_value_t get_left_thumb_stick()const pure
+				visible vcall thumb_stick_value_t get_right_thumb_stick()const pure
+				visible vcall analog_input_value_t get_triggers()const pure //'y' = left, 'x' = right
+				visible vcall events::event_token_t add_digital_input_event(events::event_t)pure
+				visible vcall bool remove_digital_input_event(events::event_token_t)pure
+				visible vcall events::event_token_t add_analog_input_event(events::event_t)pure
+				visible vcall bool remove_analog_input_event(events::event_token_t)pure
 			ang_end_interface();
 
 
 			ang_begin_interface(LINK icontroller_manager)
 				visible scall icontroller_manager_t get_instance();
-				visible vcall icontroller_t get_controller(uint)const pure;
-				visible vcall events::event_token_t add_controller_connected_event(events::event_t)pure;
-				visible vcall bool remove_controller_connected_event(events::event_token_t)pure;
-				visible vcall events::event_token_t add_controller_disconnected_event(events::event_t)pure;
-				visible vcall bool remove_controller_disconnected_event(events::event_token_t)pure;
+				visible vcall icontroller_t get_controller(uint)const pure
+				visible vcall events::event_token_t add_controller_connected_event(events::event_t)pure
+				visible vcall bool remove_controller_connected_event(events::event_token_t)pure
+				visible vcall events::event_token_t add_controller_disconnected_event(events::event_t)pure
+				visible vcall bool remove_controller_disconnected_event(events::event_token_t)pure
 			ang_end_interface();
 
 		}//input

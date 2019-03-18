@@ -19,8 +19,8 @@ namespace ang
 			struct LINK ievent_function
 			{
 				visible vcall~ievent_function();
-				visible vcall void invoke(objptr, imsg_event_args_t)const pure;
-				visible vcall ievent_function* clone()const pure;
+				visible vcall void invoke(objptr, imsg_event_args_t)const pure
+				visible vcall ievent_function* clone()const pure
 
 				pointer operator new(wsize);
 				void operator delete(pointer);
@@ -114,8 +114,8 @@ namespace ang
 		{
 			template<>
 			ang_begin_interface(LINK ifunction<void(object* COMA platform::events::imsg_event_args*)>)
-				visible vcall void invoke(objptr, platform::events::imsg_event_args_t)const pure;
-				visible vcall ifunction* clone()const pure;
+				visible vcall void invoke(objptr, platform::events::imsg_event_args_t)const pure
+				visible vcall ifunction* clone()const pure
 			ang_end_interface();
 
 			template<> class LINK function_object <void(object*, platform::events::imsg_event_args*)>

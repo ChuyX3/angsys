@@ -120,6 +120,7 @@ namespace ang
 			inline iterator_t find(core::delegates::function<bool(T const&)>, bool invert = false)const override;
 			inline iterator_t find(core::delegates::function<bool(T const&)>, base_iterator_t next_to, bool invert = false)const override;
 			inline collections::ienum_ptr<T> find_all(core::delegates::function<bool(T const&)>)const override;
+			template<typename U> inline collections::ienum_ptr<U> find_all(core::delegates::function<bool(T const&, U& out)>)const;
 
 		public: //ilist overrides
 			inline void extend(const ienum<T>*) override;

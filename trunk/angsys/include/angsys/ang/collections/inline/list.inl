@@ -5,8 +5,7 @@
 
 template<typename T, template<typename> class A>
 inline ang::collections::list_object<T, A>::list_object()
-	: m_alloc()
-	, m_count(0)
+	: m_count(0)
 	, m_head(null)
 	, m_tail(null)
 {
@@ -976,6 +975,308 @@ inline T const& ang::object_wrapper<ang::collections::list_object<T, A>>::operat
 template<typename T, template <typename> class A> template<typename I>
 inline T & ang::object_wrapper<ang::collections::list_object<T, A>>::operator[](I const& idx)
 {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+
+template<typename I>
+inline char& ang::collections::list<char, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline char const& ang::collections::list<char, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline byte& ang::collections::list<byte, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline byte const& ang::collections::list<byte, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline short& ang::collections::list<short, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline short const& ang::collections::list<short, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline ushort& ang::collections::list<ushort, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline ushort const& ang::collections::list<ushort, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline int& ang::collections::list<int, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline int const& ang::collections::list<int, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline uint& ang::collections::list<uint, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline uint const& ang::collections::list<uint, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline long& ang::collections::list<long, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline long const& ang::collections::list<long, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline ulong& ang::collections::list<ulong, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline ulong const& ang::collections::list<ulong, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+
+template<typename I>
+inline long64& ang::collections::list<long64, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline long64 const& ang::collections::list<long64, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline ulong64& ang::collections::list<ulong64, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline ulong64 const& ang::collections::list<ulong64, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline float& ang::collections::list<float, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline float const& ang::collections::list<float, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline double& ang::collections::list<double, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline double const& ang::collections::list<double, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline ang::intfptr& ang::collections::list<ang::intfptr, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline ang::intfptr const& ang::collections::list<ang::intfptr, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline ang::objptr& ang::collections::list<ang::objptr, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline ang::objptr const& ang::collections::list<ang::objptr, ang::memory::default_allocator>::operator[](I const& idx)const {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= (I)m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline ang::string& ang::collections::list<ang::string, ang::memory::default_allocator>::operator[](I const& idx) {
+	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty()) throw(exception_t(except_code::invalid_memory));
+	if ((idx >= m_ptr->count()) || (idx < 0)) throw(exception_t(except_code::array_overflow));
+#endif
+	return *m_ptr->at(idx);
+}
+
+template<typename I>
+inline ang::string const& ang::collections::list<ang::string, ang::memory::default_allocator>::operator[](I const& idx)const {
 	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty()) throw(exception_t(except_code::invalid_memory));

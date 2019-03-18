@@ -87,6 +87,9 @@
     <Filter Include="header\angsys\strings">
       <UniqueIdentifier>{0e8a851c-300b-41d9-9371-0a5cac81fd7f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\collections">
+      <UniqueIdentifier>{00353827-f9b4-445f-9d27-1af4626d97f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h">
@@ -186,9 +189,6 @@
       <Filter>header\angsys</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\angsys.h">
-      <Filter>header\angsys</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections.h">
       <Filter>header\angsys</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\hash_map.h">
@@ -326,6 +326,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\list.h">
       <Filter>header\angsys\collections</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\str_view.hpp">
+      <Filter>header\angsys\base\inline</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\list_specialization.hpp">
+      <Filter>header\angsys\collections\inline</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections.h">
+      <Filter>header\angsys\collections</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
@@ -460,6 +469,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\string_output_stream.cpp">
       <Filter>source\streams</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\collections\collections.cpp">
+      <Filter>source\collections</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl">
@@ -520,6 +532,12 @@
       <Filter>header\include\xml\inline</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\list.inl">
+      <Filter>header\angsys\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\inline\str_view.inl">
+      <Filter>header\angsys\base\inline</Filter>
+    </None>
+    <None Include="D:\Jesus Rocha\Documents\github\angsys\trunk\angsys\source\angsys\angsys.shared\..\..\..\include\angsys\ang\collections\inline\list_specialization.inl">
       <Filter>header\angsys\collections\inline</Filter>
     </None>
   </ItemGroup>

@@ -10,14 +10,14 @@ namespace ang
 		{
 			template<typename T, typename... Ts>
 			ang_begin_interface_inline(ifunction<T(Ts...)>)
-				visible vcall T invoke(Ts...)const pure;
-				visible vcall ifunction* clone()const pure;
+				visible vcall T invoke(Ts...)const pure
+				visible vcall ifunction* clone()const pure
 			ang_end_interface();
 
 			template<typename... Ts>
 			ang_begin_interface_inline(ifunction<void(Ts...)>)
-				visible vcall void invoke(Ts...)const pure;
-				visible vcall ifunction* clone()const pure;
+				visible vcall void invoke(Ts...)const pure
+				visible vcall ifunction* clone()const pure
 			ang_end_interface();
 
 			template<typename T, typename... Ts>

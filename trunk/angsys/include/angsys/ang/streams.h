@@ -83,47 +83,47 @@ namespace ang
 
 
 		ang_begin_interface(LINK iinput_stream)
-			visible vcall text::encoding_t format()const pure;
-			visible vcall stream_index_t cursor()const pure;
-			visible vcall stream_size_t size()const pure;
-			visible vcall bool is_eos()const pure;
-			visible vcall bool cursor(stream_index_t size, stream_reference_t ref)pure;
+			visible vcall text::encoding_t format()const pure
+			visible vcall stream_index_t cursor()const pure
+			visible vcall stream_size_t size()const pure
+			visible vcall bool is_eos()const pure
+			visible vcall bool cursor(stream_index_t size, stream_reference_t ref)pure
 		ang_end_interface();
 
 		ang_begin_interface(LINK ioutput_stream)
-			visible vcall text::encoding_t format()const pure;
-			visible vcall stream_index_t cursor()const pure;
-			visible vcall stream_size_t size()const pure;
-			visible vcall bool cursor(stream_index_t size, stream_reference_t ref)pure;
+			visible vcall text::encoding_t format()const pure
+			visible vcall stream_index_t cursor()const pure
+			visible vcall stream_size_t size()const pure
+			visible vcall bool cursor(stream_index_t size, stream_reference_t ref)pure
 		ang_end_interface();
 	
 		ang_begin_interface(LINK istream)
-			visible vcall text::encoding_t format()const pure;
-			visible vcall stream_index_t position()const pure;
-			visible vcall stream_size_t size()const pure;
-			visible vcall bool is_eos()const pure;
-			visible vcall bool cursor(stream_index_t size, stream_reference_t ref)pure;
+			visible vcall text::encoding_t format()const pure
+			visible vcall stream_index_t position()const pure
+			visible vcall stream_size_t size()const pure
+			visible vcall bool is_eos()const pure
+			visible vcall bool cursor(stream_index_t size, stream_reference_t ref)pure
 		ang_end_interface();
 
 		
 		ang_begin_interface(LINK itext_input_stream, iinput_stream)
-			visible vcall wsize seek(cstr_t format)pure;
-			visible vcall wsize read(pointer, ang::rtti_t const&)pure;
-			visible vcall wsize read_format(cstr_t format, var_args_t&)pure;
-			visible vcall wsize read(text::istring_t, wsize, wsize*written = null)pure;
-			visible vcall wsize read(text::unknown_str_t, wsize sz, text::encoding_t, wsize*written = null)pure;
-			visible vcall wsize read_line(text::istring_t, array_view<const char32_t> = U"\n\r", wsize*written = null)pure;
-			visible vcall wsize read_line(text::unknown_str_t, wsize, text::encoding_t, array_view<const char32_t> = U"\n\r", wsize*written = null)pure;
+			visible vcall wsize seek(cstr_t format)pure
+			visible vcall wsize read(pointer, ang::rtti_t const&)pure
+			visible vcall wsize read_format(cstr_t format, var_args_t&)pure
+			visible vcall wsize read(text::istring_t, wsize, wsize*written = null)pure
+			visible vcall wsize read(text::unknown_str_t, wsize sz, text::encoding_t, wsize*written = null)pure
+			visible vcall wsize read_line(text::istring_t, array_view<const char32_t> = U"\n\r", wsize*written = null)pure
+			visible vcall wsize read_line(text::unknown_str_t, wsize, text::encoding_t, array_view<const char32_t> = U"\n\r", wsize*written = null)pure
 			template<typename T> wsize read(T&&);
 			template<typename...Ts> wsize read_format(raw_cstr_t format, Ts&...);
 		ang_end_interface();
 
 
 		ang_begin_interface(LINK itext_output_stream, ioutput_stream)
-			visible vcall bool command(special_command_t) pure;
-			visible vcall wsize write(cstr_t)pure;
-			visible vcall wsize write_line(cstr_t)pure;
-			visible vcall wsize write_format(cstr_t, var_args_t)pure;
+			visible vcall bool command(special_command_t) pure
+			visible vcall wsize write(cstr_t)pure
+			visible vcall wsize write_line(cstr_t)pure
+			visible vcall wsize write_format(cstr_t, var_args_t)pure
 			template<typename T> wsize write(T const&);
 			template<typename...Ts> wsize write_format(raw_cstr_t format, Ts... args) {
 				return write_format(format, var_args_t{ ang::forward<Ts>(args)... });
@@ -132,26 +132,26 @@ namespace ang
 
 
 		ang_begin_interface(LINK ibinary_input_stream, iinput_stream)
-			visible vcall wsize read(pointer, wsize)pure;
-			visible vcall wsize read(ibuffer_t)pure;
-			visible vcall wsize read(pointer, const rtti_t&)pure;
+			visible vcall wsize read(pointer, wsize)pure
+			visible vcall wsize read(ibuffer_t)pure
+			visible vcall wsize read(pointer, const rtti_t&)pure
 			template<typename T> inline wsize read(T& value);
 		ang_end_interface();
 
 
 		ang_begin_interface(LINK ibinary_output_stream, ioutput_stream)
-			visible vcall wsize write(pointer, wsize)pure;
-			visible vcall wsize write(ibuffer_view_t)pure;
+			visible vcall wsize write(pointer, wsize)pure
+			visible vcall wsize write(ibuffer_view_t)pure
 			template<typename T> inline wsize write(T const& value);
 		ang_end_interface();
 
 
 		ang_begin_interface(LINK ibinary_stream, istream)
-			visible vcall wsize write(pointer, wsize)pure;
-			visible vcall wsize write(ibuffer_view_t)pure;
-			visible vcall wsize read(pointer, wsize)pure;
-			visible vcall wsize read(ibuffer_t)pure;
-			visible vcall wsize read(pointer, const rtti_t&)pure;
+			visible vcall wsize write(pointer, wsize)pure
+			visible vcall wsize write(ibuffer_view_t)pure
+			visible vcall wsize read(pointer, wsize)pure
+			visible vcall wsize read(ibuffer_t)pure
+			visible vcall wsize read(pointer, const rtti_t&)pure
 		ang_end_interface();
 
 	}

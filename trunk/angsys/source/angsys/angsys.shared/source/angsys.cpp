@@ -90,7 +90,7 @@ namespace ang
 
 			thread_manager = new(malloc(sizeof(core::async::thread_manager))) core::async::thread_manager();
 
-			core::files::file_system::instance();
+			//core::files::file_system::instance();
 		}
 		~ang_main_instance()
 		{

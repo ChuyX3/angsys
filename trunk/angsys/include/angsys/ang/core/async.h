@@ -77,11 +77,11 @@ namespace ang
 			/******************************************************************/
 			template<typename T>
 			ang_begin_interface_inline(iaction)
-				visible vcall bool wait(async_action_status_t)const pure;
-				visible vcall bool wait(async_action_status_t, dword)const pure;
-				visible vcall async_action_status_t status()const pure;
-				visible vcall bool cancel()pure;
-				visible vcall T result()const pure;
+				visible vcall bool wait(async_action_status_t)const pure
+				visible vcall bool wait(async_action_status_t, dword)const pure
+				visible vcall async_action_status_t status()const pure
+				visible vcall bool cancel()pure
+				visible vcall T result()const pure
 			ang_end_interface();
 
 
@@ -92,24 +92,24 @@ namespace ang
 			/******************************************************************/
 			template<typename T>
 			ang_begin_interface_inline(itask, iaction<T>)
-				visible vcall iasync<void> then(delegates::function<void(iasync<T>)>)pure;
+				visible vcall iasync<void> then(delegates::function<void(iasync<T>)>)pure
 				template<typename U> iasync<U> then(delegates::function<U(iasync<T>)>);
 			ang_end_interface();
 			
 			ang_begin_interface(LINK idispatcher)
-				visible vcall bool has_thread_access()const pure;	
-				visible vcall iasync<void> run_async(function<void(iasync<void>)>)pure;
-				//visible vcall iasync<void> run_async(function<void(iasync<void>, var_args_t)>, var_args_t)pure;
+				visible vcall bool has_thread_access()const pure	
+				visible vcall iasync<void> run_async(function<void(iasync<void>)>)pure
+				//visible vcall iasync<void> run_async(function<void(iasync<void>, var_args_t)>, var_args_t)pure
 				template<typename T> iasync<T> run_async(delegates::function<T(iasync<T>)>);
 			ang_end_interface();
 
 			ang_begin_interface(LINK ithread, idispatcher)
-				visible vcall bool attach_loop(function<void(void)>)pure;
-				visible vcall bool is_main_thread()const pure;
-				visible vcall dword thread_id()const pure;
-				visible vcall async_action_status_t status()const pure;
-				visible vcall void exit(int code = 0)const pure;
-				visible vcall void wait()const pure;
+				visible vcall bool attach_loop(function<void(void)>)pure
+				visible vcall bool is_main_thread()const pure
+				visible vcall dword thread_id()const pure
+				visible vcall async_action_status_t status()const pure
+				visible vcall void exit(int code = 0)const pure
+				visible vcall void wait()const pure
 			ang_end_interface();
 
 		}

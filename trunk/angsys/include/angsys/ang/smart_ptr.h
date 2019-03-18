@@ -74,8 +74,8 @@ namespace ang
 	/*  -> implements basic methods for smart pointer management      */
 	/******************************************************************/
 	ang_begin_interface(LINK iobject)
-		visible vcall dword add_ref() pure;
-		visible vcall dword release() pure;
+		visible vcall dword add_ref() pure
+		visible vcall dword release() pure
 	ang_end_interface();
 }
 

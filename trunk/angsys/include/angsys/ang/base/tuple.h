@@ -99,6 +99,26 @@ namespace ang //constants
 				__tuple_get_set_impl<N, T>::set(*this, ang::forward<__tuple_get_set_impl<N, T>::arg_type>(value));
 			}
 
+			tuple& operator = (tuple<T>&& arg)
+			{
+				m_first = ang::forward<T>(arg.m_first);
+				return *this;
+			}
+
+			tuple& operator = (tuple<T> const& arg)
+			{
+				m_first = ang::forward<T>(arg.m_first);
+				return *this;
+			}
+
+			inline bool operator == (tuple<T> const& arg)const {
+				return logic_operation<T, T, logic_operation_type::same>::operate(m_first, arg.m_first);
+			}
+
+			inline bool operator != (tuple<T> const& arg)const {
+				return logic_operation<T, T, logic_operation_type::diferent>::operate(m_first, arg.m_first);
+			}
+
 		private:
 			T m_first;
 			static tuple<void> m_rest;
@@ -120,7 +140,7 @@ namespace ang //constants
 			{
 			}
 
-			tuple(tuple<T> const& arg)
+			tuple(tuple<T, Ts...> const& arg)
 				: m_first(arg.m_first)
 				, m_rest(arg.m_rest)
 			{
@@ -135,6 +155,30 @@ namespace ang //constants
 			template<wsize N> auto get()const { return __tuple_get_set_impl<N, T, Ts...>::get(*this); }
 			template<wsize N> void set(typename __tuple_get_set_impl<N, T, Ts...>::arg_type value) {
 				__tuple_get_set_impl<N, T, Ts...>::set(*this, ang::forward<typename __tuple_get_set_impl<N, T, Ts...>::arg_type>(value));
+			}
+
+			tuple& operator = (tuple<T, Ts...>&& arg)
+			{
+				m_first = ang::forward<T>(arg.m_first);
+				m_rest = ang::forward<tuple<Ts...>>(arg.m_rest);
+				return *this;
+			}
+
+			tuple& operator = (tuple<T, Ts...> const& arg)
+			{
+				m_first = ang::forward<T>(arg.m_first);
+				m_rest = ang::forward<tuple<Ts...>>(arg.m_rest);
+				return *this;
+			}
+
+			inline bool operator == (tuple<T, Ts...> const& arg)const {
+				return logic_operation<T, T, logic_operation_type::same>::operate(m_first, arg.m_first)
+					&& logic_operation<tuple<Ts...>, tuple<Ts...>, logic_operation_type::same>::operate(m_rest, arg.m_rest);
+			}
+
+			inline bool operator != (tuple<T, Ts...> const& arg)const {
+				return logic_operation<T, T, logic_operation_type::diferent>::operate(m_first, arg.m_first)
+					|| logic_operation<tuple<Ts...>, tuple<Ts...>, logic_operation_type::diferent>::operate(m_rest, arg.m_rest);
 			}
 
 		private:

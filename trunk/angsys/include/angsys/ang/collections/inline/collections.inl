@@ -1072,4 +1072,5 @@ ang::intf_wrapper<ang::collections::ilist<T>>::operator ang::collections::ilist<
 	return get();
 }
 
+
 #endif//__ANG_COLLECTIONS_INL__

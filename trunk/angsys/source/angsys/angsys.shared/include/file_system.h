@@ -2,6 +2,7 @@
 #define __ANG_FILE_SYSTEM_H__
 
 #include <ang/core/files.h>
+#include <ang/collections/hash_map.h>
 
 namespace ang
 {
@@ -129,9 +130,15 @@ namespace ang
 			class file_system
 				: public smart<file_system, ifile_system, singleton<file_system_t>>
 			{
+			public:
+				static file_system_t instance() {
+					return singleton<file_system_t>::instance();
+				}
+
 			private:
 				friend  singleton<file_system_t>;
-				collections::vector<string> m_paths;
+				vector<collections::tuple<path_access_type_t, string>> m_paths;
+				collections::hash_map<string, string> m_macros;
 
 				collections::vector<intf_wrapper<ifile_system>> m_highest_priority;
 				collections::vector<intf_wrapper<ifile_system>> m_lowest_priority;
@@ -145,14 +152,15 @@ namespace ang
 
 			public:
 				bool register_file_system(ifile_system*, file_system_priority_t);
-				virtual array_view<string> paths(file_system_priority_t)const override;
-				virtual void push_path(cstr_t, file_system_priority_t)override;
-				virtual bool open_file(cstr_t, open_flags_t, ifile_ptr_t)override;
+				virtual collections::ienum_ptr<string> paths(path_access_type_t)const override;
+				virtual void push_path(cstr_t, path_access_type_t, cstr_t macro = null)override;
+				virtual cstr_t find_path(cstr_t)const override;
+				virtual bool open_file(cstr_t, open_flags_t, ifile_ptr_t, cstr_t macro = null)override;
 
-				virtual bool open(cstr_t, input_text_file_ptr_t)override;
-				virtual bool open(cstr_t, output_text_file_ptr_t)override;
-				virtual bool open(cstr_t, input_binary_file_ptr_t)override;
-				virtual bool open(cstr_t, output_binary_file_ptr_t)override;
+				virtual bool open(cstr_t, input_text_file_ptr_t, cstr_t macro = null)override;
+				virtual bool open(cstr_t, output_text_file_ptr_t, cstr_t macro = null)override;
+				virtual bool open(cstr_t, input_binary_file_ptr_t, cstr_t macro = null)override;
+				virtual bool open(cstr_t, output_binary_file_ptr_t, cstr_t macro = null)override;
 			};
 
 
@@ -161,7 +169,8 @@ namespace ang
 			{
 			private:
 				string m_root_path;
-				collections::vector<string> m_paths;
+				vector<collections::tuple<path_access_type_t, string>> m_paths;
+				collections::hash_map<string, string> m_macros;
 
 			public:
 				folder_file_system(string);
@@ -171,14 +180,15 @@ namespace ang
 				ANG_DECLARE_INTERFACE();
 
 			public:
-				virtual array_view<string> paths(file_system_priority_t)const override;
-				virtual void push_path(cstr_t, file_system_priority_t)override;
-				virtual bool open_file(cstr_t, open_flags_t, ifile_ptr_t)override;
+				virtual collections::ienum_ptr<string> paths(path_access_type_t)const override;
+				virtual void push_path(cstr_t, path_access_type_t, cstr_t macro = null)override;
+				virtual cstr_t find_path(cstr_t)const override;
+				virtual bool open_file(cstr_t, open_flags_t, ifile_ptr_t, cstr_t macro = null)override;
 
-				virtual bool open(cstr_t, input_text_file_ptr_t)override;
-				virtual bool open(cstr_t, output_text_file_ptr_t)override;
-				virtual bool open(cstr_t, input_binary_file_ptr_t)override;
-				virtual bool open(cstr_t, output_binary_file_ptr_t)override;
+				virtual bool open(cstr_t, input_text_file_ptr_t, cstr_t macro = null)override;
+				virtual bool open(cstr_t, output_text_file_ptr_t, cstr_t macro = null)override;
+				virtual bool open(cstr_t, input_binary_file_ptr_t, cstr_t macro = null)override;
+				virtual bool open(cstr_t, output_binary_file_ptr_t, cstr_t macro = null)override;
 			};
 
 		}

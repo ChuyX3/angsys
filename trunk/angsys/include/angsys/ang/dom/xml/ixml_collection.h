@@ -9,24 +9,24 @@ namespace ang
 	{
 		template<>
 		ang_begin_interface(LINK ienum<dom::xml::xml_node>)
-			visible vcall wsize counter()const pure;
-			visible vcall dom::xml::xml_node_t at(base_iterator<dom::xml::xml_node> const&) pure;
-			visible vcall bool increase(base_iterator<dom::xml::xml_node>&)const pure;
-			visible vcall bool increase(base_iterator<dom::xml::xml_node>&, int offset)const pure;
-			visible vcall bool decrease(base_iterator<dom::xml::xml_node>&)const pure;
-			visible vcall bool decrease(base_iterator<dom::xml::xml_node>&, int offset)const pure;
+			visible vcall wsize counter()const pure
+			visible vcall dom::xml::xml_node_t at(base_iterator<dom::xml::xml_node> const&) pure
+			visible vcall bool increase(base_iterator<dom::xml::xml_node>&)const pure
+			visible vcall bool increase(base_iterator<dom::xml::xml_node>&, int offset)const pure
+			visible vcall bool decrease(base_iterator<dom::xml::xml_node>&)const pure
+			visible vcall bool decrease(base_iterator<dom::xml::xml_node>&, int offset)const pure
 
-			visible vcall forward_iterator<dom::xml::xml_node> begin() pure;
-			visible vcall forward_iterator<dom::xml::xml_node> end() pure;
-			visible vcall const_forward_iterator<dom::xml::xml_node> begin()const pure;
-			visible vcall const_forward_iterator<dom::xml::xml_node> end()const pure;
-			visible vcall forward_iterator<dom::xml::xml_node> last() pure;
-			visible vcall const_forward_iterator<dom::xml::xml_node> last()const pure;
+			visible vcall forward_iterator<dom::xml::xml_node> begin() pure
+			visible vcall forward_iterator<dom::xml::xml_node> end() pure
+			visible vcall const_forward_iterator<dom::xml::xml_node> begin()const pure
+			visible vcall const_forward_iterator<dom::xml::xml_node> end()const pure
+			visible vcall forward_iterator<dom::xml::xml_node> last() pure
+			visible vcall const_forward_iterator<dom::xml::xml_node> last()const pure
 
-			visible vcall backward_iterator<dom::xml::xml_node> rbegin() pure;
-			visible vcall backward_iterator<dom::xml::xml_node> rend() pure;
-			visible vcall const_backward_iterator<dom::xml::xml_node> rbegin()const pure;
-			visible vcall const_backward_iterator<dom::xml::xml_node> rend()const pure;
+			visible vcall backward_iterator<dom::xml::xml_node> rbegin() pure
+			visible vcall backward_iterator<dom::xml::xml_node> rend() pure
+			visible vcall const_backward_iterator<dom::xml::xml_node> rbegin()const pure
+			visible vcall const_backward_iterator<dom::xml::xml_node> rend()const pure
 		ang_end_interface();
 
 
@@ -73,10 +73,10 @@ namespace ang
 		namespace xml
 		{
 			ang_begin_interface(LINK ixml_collection, ixml_object, collections::ienum<xml_node>)
-				visible vcall xml_node_t xml_parent()const pure;
-				visible vcall xml_document_t xml_parent_doc()const pure;
-				visible vcall xml_iterator_t find(cstr_t, bool invert = false)const pure;
-				visible vcall xml_iterator_t find(cstr_t, xml_iterator_t next_to, bool invert = false)const pure;
+				visible vcall xml_node_t xml_parent()const pure
+				visible vcall xml_document_t xml_parent_doc()const pure
+				visible vcall xml_iterator_t find(cstr_t, bool invert = false)const pure
+				visible vcall xml_iterator_t find(cstr_t, xml_iterator_t next_to, bool invert = false)const pure
 			ang_end_interface();
 		
 		

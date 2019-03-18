@@ -14,7 +14,7 @@
 #elif !defined __ANG_BASE_INTERFACE_H__
 #define __ANG_BASE_INTERFACE_H__
 
-#define pure = 0
+#define pure = 0;
 #define vcall virtual
 #define scall static
 #define visible public:
@@ -27,8 +27,8 @@
 #define ang_interface(_NAME) struct _NAME; typedef ang::intf_wrapper<_NAME> _NAME##_t; typedef ang::intf_wrapper_ptr<_NAME> _NAME##_ptr_t;
 
 #define ANG_DECLARE_CLASS_INFO() scall ang::rtti_t const& class_info();
-#define ANG_DECLARE_RUNTIME_INFO() vcall ang::rtti_t const& runtime_info()const pure;
-#define ANG_DECLARE_QUERY_INTERFACE() vcall bool query_interface(ang::rtti_t const&, ang::unknown_ptr_t) pure;
+#define ANG_DECLARE_RUNTIME_INFO() vcall ang::rtti_t const& runtime_info()const pure
+#define ANG_DECLARE_QUERY_INTERFACE() vcall bool query_interface(ang::rtti_t const&, ang::unknown_ptr_t) pure
 
 #define ANG_OVERRIDE_CLASS_INFO() scall ang::rtti_t const& class_info();
 #define ANG_OVERRIDE_RUNTIME_INFO() vcall ang::rtti_t const& runtime_info()const override;
@@ -165,8 +165,8 @@ namespace ang //constants
 	struct _DECLSPEC_NOVTABLE LINK intf {
 		visible scall bool default_query_interface(rtti_t const&, unknown_t, rtti_t const&, unknown_ptr_t);
 		visible scall rtti_t const& class_info();
-		visible vcall rtti_t const& runtime_info()const pure;
-		visible vcall bool query_interface(rtti_t const&, unknown_ptr_t)pure;
+		visible vcall rtti_t const& runtime_info()const pure
+		visible vcall bool query_interface(rtti_t const&, unknown_ptr_t)pure
 	};
 
 	template<typename T, typename = void> struct has_class_info_function : false_type {};

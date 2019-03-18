@@ -412,8 +412,8 @@ namespace ang
 		};
 
 		ang_begin_interface(LINK icore_context)
-			visible vcall  pointer core_context_handle()const pure;
-			visible vcall  bool bind_graphic_native_surface(pointer)pure;
+			visible vcall  pointer core_context_handle()const pure
+			visible vcall  bool bind_graphic_native_surface(pointer)pure
 		ang_end_interface();
 
 
@@ -784,24 +784,24 @@ namespace ang
 	{
 		
 		ang_begin_interface(LINK imessage_listener, core::async::idispatcher)
-			visible vcall dword send_msg(events::message) pure;
-			visible vcall core::async::iasync<dword> post_msg(events::message) pure;
-			visible vcall events::event_token_t listen_to(events::event_t) pure;
+			visible vcall dword send_msg(events::message) pure
+			visible vcall core::async::iasync<dword> post_msg(events::message) pure
+			visible vcall events::event_token_t listen_to(events::event_t) pure
 		ang_end_interface();
 
 		ang_begin_interface(LINK icore_view)
-			visible vcall pointer core_view_handle()const pure;
-			visible vcall graphics::icore_context_t core_context()const pure;
-			visible vcall graphics::size<float> core_view_size()const pure;
-			visible vcall graphics::size<float> core_view_scale_factor()const pure;
-			visible vcall imessage_listener_t dispatcher()const pure;
+			visible vcall pointer core_view_handle()const pure
+			visible vcall graphics::icore_context_t core_context()const pure
+			visible vcall graphics::size<float> core_view_size()const pure
+			visible vcall graphics::size<float> core_view_scale_factor()const pure
+			visible vcall imessage_listener_t dispatcher()const pure
 		ang_end_interface();
 
 		ang_begin_interface(LINK icore_app)
 			visible scall icore_app_t current_app();
-			visible vcall pointer core_app_handle()const pure;
-			visible vcall icore_view_t main_core_view() pure;
-			visible vcall input::ikeyboard_t keyboard()pure;
+			visible vcall pointer core_app_handle()const pure
+			visible vcall icore_view_t main_core_view() pure
+			visible vcall input::ikeyboard_t keyboard()pure
 		ang_end_interface();
 	}
 }

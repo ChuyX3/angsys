@@ -7,16 +7,16 @@
 //////////////// vector_buffer<T, allocator> class implementation //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::vector_buffer<T, allocator>::vector_buffer()
+template<typename T, template<typename> class A>
+inline ang::collections::vector_buffer<T, A>::vector_buffer()
 	: m_size(0)
 	, m_capacity(0)
 	, m_data(null)
 {
 }
 
-template<typename T, template<typename> class allocator>  template<typename U>
-inline ang::collections::vector_buffer<T, allocator>::vector_buffer(ang::initializer_list<U> list)
+template<typename T, template<typename> class A>  template<typename U>
+inline ang::collections::vector_buffer<T, A>::vector_buffer(ang::initializer_list<U> list)
 	: vector_buffer()
 {
 	capacity((wsize)list.size());
@@ -25,15 +25,15 @@ inline ang::collections::vector_buffer<T, allocator>::vector_buffer(ang::initial
 }
 
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::vector_buffer<T, allocator>::vector_buffer(const ang::nullptr_t&)
+template<typename T, template<typename> class A>
+inline ang::collections::vector_buffer<T, A>::vector_buffer(const ang::nullptr_t&)
 	: vector_buffer()
 {
 
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::vector_buffer<T, allocator>::vector_buffer(ang::collections::vector_buffer<T, allocator>&& ar)
+template<typename T, template<typename> class A>
+inline ang::collections::vector_buffer<T, A>::vector_buffer(ang::collections::vector_buffer<T, A>&& ar)
 	: vector_buffer()
 {
 	m_size = ar.m_size;
@@ -44,69 +44,69 @@ inline ang::collections::vector_buffer<T, allocator>::vector_buffer(ang::collect
 	ar.m_data = null;
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::vector_buffer<T, allocator>::vector_buffer(const ang::collections::vector_buffer<T, allocator>& ar)
+template<typename T, template<typename> class A>
+inline ang::collections::vector_buffer<T, A>::vector_buffer(const ang::collections::vector_buffer<T, A>& ar)
 	: vector_buffer()
 {
 	copy(to_array(ar.data(), ar.size()));
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::vector_buffer<T, allocator>::vector_buffer(const ang::collections::vector_buffer<T, allocator>* ar)
+template<typename T, template<typename> class A>
+inline ang::collections::vector_buffer<T, A>::vector_buffer(const ang::collections::vector_buffer<T, A>* ar)
 	: vector_buffer()
 {
 	if (ar)copy(to_array(ar->data(), ar->size()));
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::vector_buffer<T, allocator>::vector_buffer(const ang::collections::ienum<T>* store)
+template<typename T, template<typename> class A>
+inline ang::collections::vector_buffer<T, A>::vector_buffer(const ang::collections::ienum<T>* store)
 	: vector_buffer()
 {
 	copy(store);
 }
 
 
-template<typename T, template <typename> class allocator> template<typename U>
-inline ang::collections::vector_buffer<T, allocator>::vector_buffer(ang::array_view<U> const& ar)
+template<typename T, template <typename> class A> template<typename U>
+inline ang::collections::vector_buffer<T, A>::vector_buffer(ang::array_view<U> const& ar)
 	: vector_buffer()
 {
 	copy(ar);
 }
 
-template<typename T, template <typename> class allocator> template<typename U, template<typename> class allocator2>
-inline ang::collections::vector_buffer<T, allocator>::vector_buffer(ang::scope_array<U, allocator2> const& ar)
+template<typename T, template <typename> class A> template<typename U, template<typename> class A2>
+inline ang::collections::vector_buffer<T, A>::vector_buffer(ang::scope_array<U, A2> const& ar)
 	: vector_buffer()
 {
 	copy(ar);
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::vector_buffer<T, allocator>::~vector_buffer()
+template<typename T, template<typename> class A>
+inline ang::collections::vector_buffer<T, A>::~vector_buffer()
 {
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::rtti_t const& ang::collections::vector_buffer<T, allocator>::class_info()
+template<typename T, template <typename> class A>
+inline ang::rtti_t const& ang::collections::vector_buffer<T, A>::class_info()
 {
 	static const cstr_view<char> name = text::string_pool::instance()->save_string((astring("ang::collections::vector<"_s) += rtti::type_of<T>().type_name()) += ">"_s);
 	static rtti_t const* parents[] = { &runtime::type_of<ilist<T>>() };
-	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::vector_buffer<T, allocator>), alignof(ang::collections::vector_buffer<T, allocator>), parents, &default_query_interface);
+	static rtti_t const& info = rtti::regist(name, genre::class_type, sizeof(ang::collections::vector_buffer<T, A>), alignof(ang::collections::vector_buffer<T, A>), parents, &default_query_interface);
 	return info;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::rtti_t const& ang::collections::vector_buffer<T, allocator>::runtime_info()const
+template<typename T, template <typename> class A>
+inline ang::rtti_t const& ang::collections::vector_buffer<T, A>::runtime_info()const
 {
 	return class_info();
 }
 
-template<typename T, template <typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::query_interface(ang::rtti_t const& id, ang::unknown_ptr_t out)
+template<typename T, template <typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::query_interface(ang::rtti_t const& id, ang::unknown_ptr_t out)
 {
 	if (id.type_id() == class_info().type_id())
 	{
 		if (out == null) return false;
-		*out = static_cast<vector_buffer<T, allocator>*>(this);
+		*out = static_cast<vector_buffer<T, A>*>(this);
 		return true;
 	}
 	else if (object::query_interface(id, out))
@@ -132,26 +132,26 @@ inline bool ang::collections::vector_buffer<T, allocator>::query_interface(ang::
 }
 
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::is_empty()const
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::is_empty()const
 {
 	return size() == 0;
 }
 
-template<typename T, template<typename> class allocator>
-inline T* ang::collections::vector_buffer<T, allocator>::data()const
+template<typename T, template<typename> class A>
+inline T* ang::collections::vector_buffer<T, A>::data()const
 {
 	return m_data;
 }
 
-template<typename T, template<typename> class allocator>
-inline wsize ang::collections::vector_buffer<T, allocator>::size()const
+template<typename T, template<typename> class A>
+inline wsize ang::collections::vector_buffer<T, A>::size()const
 {
 	return m_size;
 }
 
-template<typename T, template<typename> class allocator>
-inline void ang::collections::vector_buffer<T, allocator>::size(wsize size, bool save)
+template<typename T, template<typename> class A>
+inline void ang::collections::vector_buffer<T, A>::size(wsize size, bool save)
 {
 	if (m_size != size)
 	{
@@ -163,20 +163,20 @@ inline void ang::collections::vector_buffer<T, allocator>::size(wsize size, bool
 	}
 }
 
-template<typename T, template<typename> class allocator>
-inline wsize ang::collections::vector_buffer<T, allocator>::capacity()const
+template<typename T, template<typename> class A>
+inline wsize ang::collections::vector_buffer<T, A>::capacity()const
 {
 	return m_capacity;
 }
 
-template<typename T, template<typename> class allocator>
-inline void ang::collections::vector_buffer<T, allocator>::capacity(wsize size, bool save)
+template<typename T, template<typename> class A>
+inline void ang::collections::vector_buffer<T, A>::capacity(wsize size, bool save)
 {
 	realloc(size, save);
 }
 
-template<typename T, template<typename> class allocator> template<typename U>
-inline void ang::collections::vector_buffer<T, allocator>::copy(ang::array_view<U> const& ar)
+template<typename T, template<typename> class A> template<typename U>
+inline void ang::collections::vector_buffer<T, A>::copy(ang::array_view<U> const& ar)
 {
 	capacity(ar.size());
 	wsize l = ar.size();
@@ -184,8 +184,8 @@ inline void ang::collections::vector_buffer<T, allocator>::copy(ang::array_view<
 		push(ar[i]);
 }
 
-template<typename T, template<typename> class allocator>  template<typename U, template<typename> class allocator2>
-inline void ang::collections::vector_buffer<T, allocator>::copy(ang::scope_array<U, allocator2> const& ar)
+template<typename T, template<typename> class A>  template<typename U, template<typename> class A2>
+inline void ang::collections::vector_buffer<T, A>::copy(ang::scope_array<U, A2> const& ar)
 {
 	capacity(ar.size());
 	wsize l = ar.size();
@@ -193,16 +193,16 @@ inline void ang::collections::vector_buffer<T, allocator>::copy(ang::scope_array
 		push(ar[i]);
 }
 
-template<typename T, template<typename> class allocator>  template<typename U, wsize SIZE>
-inline void ang::collections::vector_buffer<T, allocator>::copy(ang::stack_array<U, SIZE> const& ar)
+template<typename T, template<typename> class A>  template<typename U, wsize SIZE>
+inline void ang::collections::vector_buffer<T, A>::copy(ang::stack_array<U, SIZE> const& ar)
 {
 	capacity(SIZE);
 	for (wsize i = 0U; i < SIZE; i++)
 		push(ar[i]);
 }
 
-template<typename T, template<typename> class allocator> template<typename U>
-inline void ang::collections::vector_buffer<T, allocator>::extend(ang::array_view<U> const& ar)
+template<typename T, template<typename> class A> template<typename U>
+inline void ang::collections::vector_buffer<T, A>::extend(ang::array_view<U> const& ar)
 {
 	capacity(size() + ar.size(), true);
 	wsize l = ar.size();
@@ -210,8 +210,8 @@ inline void ang::collections::vector_buffer<T, allocator>::extend(ang::array_vie
 		push(ar[i]);
 }
 
-template<typename T, template<typename> class allocator>  template<typename U, template<typename> class allocator2>
-inline void ang::collections::vector_buffer<T, allocator>::extend(ang::scope_array<U, allocator2> const& ar)
+template<typename T, template<typename> class A>  template<typename U, template<typename> class A2>
+inline void ang::collections::vector_buffer<T, A>::extend(ang::scope_array<U, A2> const& ar)
 {
 	capacity(size() + ar.size(), true);
 	wsize l = ar.size();
@@ -219,22 +219,22 @@ inline void ang::collections::vector_buffer<T, allocator>::extend(ang::scope_arr
 		push(ar[i]);
 }
 
-template<typename T, template<typename> class allocator>  template<typename U, wsize SIZE>
-inline void ang::collections::vector_buffer<T, allocator>::extend(ang::stack_array<U, SIZE> const& ar)
+template<typename T, template<typename> class A>  template<typename U, wsize SIZE>
+inline void ang::collections::vector_buffer<T, A>::extend(ang::stack_array<U, SIZE> const& ar)
 {
 	capacity(size() + SIZE, true);
 	for (wsize i = 0U; i < SIZE; i++)
 		push(ar[i]);
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::rtti_t const& ang::collections::vector_buffer<T, allocator>::value_type()const
+template<typename T, template <typename> class A>
+inline ang::rtti_t const& ang::collections::vector_buffer<T, A>::value_type()const
 {
 	return type_of<array_view<T>>();
 }
 
-template<typename T, template <typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::set_value(ang::rtti_t const& id, ang::unknown_t value)
+template<typename T, template <typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::set_value(ang::rtti_t const& id, ang::unknown_t value)
 {
 	if (id.is_type_of<array_view<T>>())
 	{
@@ -245,8 +245,8 @@ inline bool ang::collections::vector_buffer<T, allocator>::set_value(ang::rtti_t
 	return false;
 }
 
-template<typename T, template <typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::get_value(ang::rtti_t const& id, ang::unknown_t value)const
+template<typename T, template <typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::get_value(ang::rtti_t const& id, ang::unknown_t value)const
 {
 	if (id.is_type_of<array_view<T>>())
 	{
@@ -256,82 +256,82 @@ inline bool ang::collections::vector_buffer<T, allocator>::get_value(ang::rtti_t
 	return false;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::variant ang::collections::vector_buffer<T, allocator>::clone()const
+template<typename T, template <typename> class A>
+inline ang::variant ang::collections::vector_buffer<T, A>::clone()const
 {
-	return (ivariant*) new ang::collections::vector_buffer<T, allocator>(*this);
+	return (ivariant*) new ang::collections::vector_buffer<T, A>(*this);
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::wstring ang::collections::vector_buffer<T, allocator>::to_string()const
-{
-	return class_info().type_name();
-}
-
-template<typename T, template <typename> class allocator>
-inline ang::wstring ang::collections::vector_buffer<T, allocator>::to_string(ang::text::text_format_t)const
+template<typename T, template <typename> class A>
+inline ang::wstring ang::collections::vector_buffer<T, A>::to_string()const
 {
 	return class_info().type_name();
 }
 
+template<typename T, template <typename> class A>
+inline ang::wstring ang::collections::vector_buffer<T, A>::to_string(ang::text::text_format_t)const
+{
+	return class_info().type_name();
+}
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::is_readonly()const
+
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::is_readonly()const
 {
 	return false;
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::text::encoding_t ang::collections::vector_buffer<T, allocator>::encoding()const
+template<typename T, template<typename> class A>
+inline ang::text::encoding_t ang::collections::vector_buffer<T, A>::encoding()const
 {
 	return text::encoding::binary;
 }
 
-template<typename T, template<typename> class allocator>
-inline const_pointer ang::collections::vector_buffer<T, allocator>::buffer_ptr()const
+template<typename T, template<typename> class A>
+inline const_pointer ang::collections::vector_buffer<T, A>::buffer_ptr()const
 {
 	return (pointer)m_data;
 }
 
-template<typename T, template<typename> class allocator>
-inline pointer ang::collections::vector_buffer<T, allocator>::buffer_ptr()
+template<typename T, template<typename> class A>
+inline pointer ang::collections::vector_buffer<T, A>::buffer_ptr()
 {
 	return (pointer)m_data;
 }
 
-template<typename T, template<typename> class allocator>
-inline wsize ang::collections::vector_buffer<T, allocator>::buffer_size()const
+template<typename T, template<typename> class A>
+inline wsize ang::collections::vector_buffer<T, A>::buffer_size()const
 {
 	return m_capacity * sizeof(T);
 }
 
-template<typename T, template<typename> class allocator>
-inline wsize ang::collections::vector_buffer<T, allocator>::mem_copy(wsize _s, pointer _p, text::encoding_t)
+template<typename T, template<typename> class A>
+inline wsize ang::collections::vector_buffer<T, A>::mem_copy(wsize _s, pointer _p, text::encoding_t)
 {
 	throw(exception_t(except_code::unsupported));
 	return 0;
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::ibuffer_view_t ang::collections::vector_buffer<T, allocator>::map_buffer(windex start, wsize size)
+template<typename T, template<typename> class A>
+inline ang::ibuffer_view_t ang::collections::vector_buffer<T, A>::map_buffer(windex start, wsize size)
 {
 	return null;
 }
 
-template<typename T, template<typename> class allocator>
-bool ang::collections::vector_buffer<T, allocator>::unmap_buffer(ang::ibuffer_view_t&, wsize used)
+template<typename T, template<typename> class A>
+bool ang::collections::vector_buffer<T, A>::unmap_buffer(ang::ibuffer_view_t&, wsize used)
 {
 	return false;
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::can_realloc_buffer()const { return true; };
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::can_realloc_buffer()const { return true; };
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::realloc_buffer(wsize size) { return realloc(size, true); };
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::realloc_buffer(wsize size) { return realloc(size, true); };
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::move(ang::collections::vector_buffer<T, allocator>& ar)
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::move(ang::collections::vector_buffer<T, A>& ar)
 {
 	if (&ar == this)
 		return false;
@@ -345,8 +345,8 @@ inline bool ang::collections::vector_buffer<T, allocator>::move(ang::collections
 	return true;
 }
 
-template<typename T, template<typename> class allocator>
-inline void ang::collections::vector_buffer<T, allocator>::copy(const ang::collections::ienum<T>* _items)
+template<typename T, template<typename> class A>
+inline void ang::collections::vector_buffer<T, A>::copy(const ang::collections::ienum<T>* _items)
 {
 	if (!_items)
 		return;
@@ -356,14 +356,14 @@ inline void ang::collections::vector_buffer<T, allocator>::copy(const ang::colle
 }
 
 
-template<typename T, template<typename> class allocator>
-inline wsize ang::collections::vector_buffer<T, allocator>::counter()const
+template<typename T, template<typename> class A>
+inline wsize ang::collections::vector_buffer<T, A>::counter()const
 {
 	return m_size;
 }
 
-template<typename T, template<typename> class allocator>
-inline T& ang::collections::vector_buffer<T, allocator>::at(ang::collections::base_iterator<T> const& it)
+template<typename T, template<typename> class A>
+inline T& ang::collections::vector_buffer<T, A>::at(ang::collections::base_iterator<T> const& it)
 {
 #ifdef DEBUG_SAFE_CODE
 	if (is_empty())
@@ -376,24 +376,24 @@ inline T& ang::collections::vector_buffer<T, allocator>::at(ang::collections::ba
 	return m_data[it.offset()];
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::iterator<T> ang::collections::vector_buffer<T, allocator>::at(windex idx)
+template<typename T, template<typename> class A>
+inline ang::collections::iterator<T> ang::collections::vector_buffer<T, A>::at(windex idx)
 {
 	if (idx >= m_size)
 		return  iterator_t(const_cast<self_t*>(this), null, 0);
 	return iterator_t(const_cast<self_t*>(this), (pointer)m_data, idx);
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::iterator<const T> ang::collections::vector_buffer<T, allocator>::at(windex idx)const
+template<typename T, template<typename> class A>
+inline ang::collections::iterator<const T> ang::collections::vector_buffer<T, A>::at(windex idx)const
 {
 	if (idx >= m_size)
 		return  const_iterator_t(const_cast<self_t*>(this), null, 0);
 	return const_iterator_t(const_cast<self_t*>(this), (pointer)m_data, idx);
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::collections::iterator<T> ang::collections::vector_buffer<T, allocator>::find(ang::core::delegates::function<bool(T const&)> cond, bool invert)const
+template<typename T, template <typename> class A>
+inline ang::collections::iterator<T> ang::collections::vector_buffer<T, A>::find(ang::core::delegates::function<bool(T const&)> cond, bool invert)const
 {
 	if (!is_empty())
 	{
@@ -411,8 +411,8 @@ inline ang::collections::iterator<T> ang::collections::vector_buffer<T, allocato
 	return at((wsize)invalid_index);
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::collections::iterator<T> ang::collections::vector_buffer<T, allocator>::find(ang::core::delegates::function<bool(T const&)> cond, ang::collections::base_iterator<T> next_to, bool invert)const
+template<typename T, template <typename> class A>
+inline ang::collections::iterator<T> ang::collections::vector_buffer<T, A>::find(ang::core::delegates::function<bool(T const&)> cond, ang::collections::base_iterator<T> next_to, bool invert)const
 {
 	if (!is_empty() && next_to.parent() == this)
 	{
@@ -430,10 +430,10 @@ inline ang::collections::iterator<T> ang::collections::vector_buffer<T, allocato
 	return at((wsize)invalid_index);
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::collections::ienum_ptr<T> ang::collections::vector_buffer<T, allocator>::find_all(ang::core::delegates::function<bool(T const&)> cond)const
+template<typename T, template <typename> class A>
+inline ang::collections::ienum_ptr<T> ang::collections::vector_buffer<T, A>::find_all(ang::core::delegates::function<bool(T const&)> cond)const
 {
-	vector<T, allocator> out = new vector_buffer<T, allocator>();
+	vector<T, A> out = new vector_buffer<T, A>();
 	if (!is_empty())
 	{
 		for (auto i = size(); i > 0; --i)
@@ -445,69 +445,85 @@ inline ang::collections::ienum_ptr<T> ang::collections::vector_buffer<T, allocat
 	return out->is_empty() ? null : out.get();
 }
 
+template<typename T, template <typename> class A> template<typename U>
+inline ang::collections::ienum_ptr<U> ang::collections::vector_buffer<T, A>::find_all(ang::core::delegates::function<bool(T const&, U& out)> cond)const
+{
+	vector<U, A> out = new vector_buffer<U, A>();
+	if (!is_empty())
+	{
+		for (auto i = size(); i > 0; --i)
+		{
+			U val = default_value<U>::value;
+			if (cond(m_data[i - 1], val))
+				out += ang::move(val);
+		}
+	}
+	return out->is_empty() ? null : out.get();
+}
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::forward_iterator<T> ang::collections::vector_buffer<T, allocator>::begin()
+
+template<typename T, template<typename> class A>
+inline ang::collections::forward_iterator<T> ang::collections::vector_buffer<T, A>::begin()
 {
 	return forward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data));
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::forward_iterator<T> ang::collections::vector_buffer<T, allocator>::end()
+template<typename T, template<typename> class A>
+inline ang::collections::forward_iterator<T> ang::collections::vector_buffer<T, A>::end()
 {
 	return forward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), m_size);
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::forward_iterator<const T> ang::collections::vector_buffer<T, allocator>::begin()const
+template<typename T, template<typename> class A>
+inline ang::collections::forward_iterator<const T> ang::collections::vector_buffer<T, A>::begin()const
 {
 	return const_forward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data));
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::forward_iterator<const T> ang::collections::vector_buffer<T, allocator>::end()const
+template<typename T, template<typename> class A>
+inline ang::collections::forward_iterator<const T> ang::collections::vector_buffer<T, A>::end()const
 {
 	return const_forward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), m_size);
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::forward_iterator<T> ang::collections::vector_buffer<T, allocator>::last()
+template<typename T, template<typename> class A>
+inline ang::collections::forward_iterator<T> ang::collections::vector_buffer<T, A>::last()
 {
 	return m_size ? forward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), m_size - 1) : end();
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::forward_iterator<const T> ang::collections::vector_buffer<T, allocator>::last()const
+template<typename T, template<typename> class A>
+inline ang::collections::forward_iterator<const T> ang::collections::vector_buffer<T, A>::last()const
 {
 	return m_size ? const_forward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), m_size - 1) : end();
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::backward_iterator<T> ang::collections::vector_buffer<T, allocator>::rbegin()
+template<typename T, template<typename> class A>
+inline ang::collections::backward_iterator<T> ang::collections::vector_buffer<T, A>::rbegin()
 {
 	return backward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), m_size - 1);
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::backward_iterator<T> ang::collections::vector_buffer<T, allocator>::rend()
+template<typename T, template<typename> class A>
+inline ang::collections::backward_iterator<T> ang::collections::vector_buffer<T, A>::rend()
 {
 	return backward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), (wsize)invalid_index);
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::backward_iterator<const T> ang::collections::vector_buffer<T, allocator>::rbegin()const
+template<typename T, template<typename> class A>
+inline ang::collections::backward_iterator<const T> ang::collections::vector_buffer<T, A>::rbegin()const
 {
 	return const_backward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), m_size - 1);
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::collections::backward_iterator<const T> ang::collections::vector_buffer<T, allocator>::rend()const
+template<typename T, template<typename> class A>
+inline ang::collections::backward_iterator<const T> ang::collections::vector_buffer<T, A>::rend()const
 {
 	return const_backward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), (wsize)invalid_index);
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::increase(ang::collections::base_iterator<T>& it)const
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::increase(ang::collections::base_iterator<T>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() != m_data)
@@ -520,8 +536,8 @@ inline bool ang::collections::vector_buffer<T, allocator>::increase(ang::collect
 	return true;
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::increase(ang::collections::base_iterator<T>& it, int val)const
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::increase(ang::collections::base_iterator<T>& it, int val)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() != m_data)
@@ -535,8 +551,8 @@ inline bool ang::collections::vector_buffer<T, allocator>::increase(ang::collect
 	return true;
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::decrease(ang::collections::base_iterator<T>& it)const
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::decrease(ang::collections::base_iterator<T>& it)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() != m_data)
@@ -550,8 +566,8 @@ inline bool ang::collections::vector_buffer<T, allocator>::decrease(ang::collect
 	return true;
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::decrease(ang::collections::base_iterator<T>& it, int val)const
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::decrease(ang::collections::base_iterator<T>& it, int val)const
 {
 #ifdef DEBUG_SAFE_CODE
 	if (it.parent() != this || it.current() != m_data)
@@ -565,8 +581,8 @@ inline bool ang::collections::vector_buffer<T, allocator>::decrease(ang::collect
 	return true;
 }
 
-template<typename T, template<typename> class allocator>
-inline ang::comparision_result_t ang::collections::vector_buffer<T, allocator>::compare(const ang::object* obj)const
+template<typename T, template<typename> class A>
+inline ang::comparision_result_t ang::collections::vector_buffer<T, A>::compare(const ang::object* obj)const
 {
 	windex i = 0;
 	intf_wrapper<ienum<T>> other = const_cast<object*>(obj)->as<ienum<T>>();
@@ -586,8 +602,8 @@ inline ang::comparision_result_t ang::collections::vector_buffer<T, allocator>::
 }
 
 
-template<typename T, template<typename> class allocator>
-inline void ang::collections::vector_buffer<T, allocator>::extend(const ang::collections::ienum<T>* items)
+template<typename T, template<typename> class A>
+inline void ang::collections::vector_buffer<T, A>::extend(const ang::collections::ienum<T>* items)
 {
 	if (!items) return;
 	capacity(counter() + items->counter());
@@ -595,8 +611,8 @@ inline void ang::collections::vector_buffer<T, allocator>::extend(const ang::col
 		push(value);
 }
 
-template<typename T, template<typename> class allocator>
-inline void ang::collections::vector_buffer<T, allocator>::push(T const& value, bool last)
+template<typename T, template<typename> class A>
+inline void ang::collections::vector_buffer<T, A>::push(T const& value, bool last)
 {
 	if ((capacity() - counter()) <= 1U) //TODO: optimization
 		capacity(capacity() + 1, true);
@@ -617,8 +633,8 @@ inline void ang::collections::vector_buffer<T, allocator>::push(T const& value, 
 	}
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::insert(windex idx, T const& value)
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::insert(windex idx, T const& value)
 {
 	if (idx == 0U)
 	{
@@ -644,16 +660,16 @@ inline bool ang::collections::vector_buffer<T, allocator>::insert(windex idx, T 
 	return true;
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::insert(ang::collections::base_iterator<T> it, T const& value)
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::insert(ang::collections::base_iterator<T> it, T const& value)
 {
 	if (it.parent() != this || it.current() != m_data)
 		return false;
 	return insert(it.offset(), value);
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::pop(bool last)
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::pop(bool last)
 {
 	if (m_size == 0)
 		return false;
@@ -663,8 +679,8 @@ inline bool ang::collections::vector_buffer<T, allocator>::pop(bool last)
 	return true;
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::pop(T& value, bool last)
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::pop(T& value, bool last)
 {
 	if (m_size == 0)
 		return false;
@@ -682,8 +698,8 @@ inline bool ang::collections::vector_buffer<T, allocator>::pop(T& value, bool la
 	return true;
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::pop_at(windex idx)
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::pop_at(windex idx)
 {
 	if (m_size == 0U)
 		return false;
@@ -695,16 +711,16 @@ inline bool ang::collections::vector_buffer<T, allocator>::pop_at(windex idx)
 	return true;
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::pop_at(ang::collections::base_iterator<T> it)
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::pop_at(ang::collections::base_iterator<T> it)
 {
 	if (it.parent() != this || it.current() != m_data)
 		return false;
 	return pop_at(it.offset());
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::pop_at(windex idx, T& value)
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::pop_at(windex idx, T& value)
 {
 	if (m_size == 0U)
 		return false;
@@ -717,16 +733,16 @@ inline bool ang::collections::vector_buffer<T, allocator>::pop_at(windex idx, T&
 	return true;
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::pop_at(ang::collections::base_iterator<T> it, T& value)
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::pop_at(ang::collections::base_iterator<T> it, T& value)
 {
 	if (it.parent() != this || it.current() != m_data)
 		return false;
 	return pop_at(it.offset(), value);
 }
 
-template<typename T, template<typename> class allocator>
-inline void ang::collections::vector_buffer<T, allocator>::clear()
+template<typename T, template<typename> class A>
+inline void ang::collections::vector_buffer<T, A>::clear()
 {
 	if (m_data != null)
 	{
@@ -739,8 +755,8 @@ inline void ang::collections::vector_buffer<T, allocator>::clear()
 	m_data = null;
 }
 
-template<typename T, template<typename> class allocator>
-inline void ang::collections::vector_buffer<T, allocator>::empty()
+template<typename T, template<typename> class A>
+inline void ang::collections::vector_buffer<T, A>::empty()
 {
 	if (m_data != null)
 	{
@@ -750,8 +766,8 @@ inline void ang::collections::vector_buffer<T, allocator>::empty()
 	}
 }
 
-template<typename T, template<typename> class allocator>
-inline bool ang::collections::vector_buffer<T, allocator>::realloc(wsize new_size, bool save)
+template<typename T, template<typename> class A>
+inline bool ang::collections::vector_buffer<T, A>::realloc(wsize new_size, bool save)
 {
 	new_size++;
 	if (capacity() >= new_size)
@@ -786,47 +802,47 @@ inline bool ang::collections::vector_buffer<T, allocator>::realloc(wsize new_siz
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::object_wrapper()
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>::object_wrapper()
 	: m_ptr(null)
 {
-	set(new ang::collections::vector_buffer<T, allocator>());
+	set(new ang::collections::vector_buffer<T, A>());
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::object_wrapper(ang::collections::vector_buffer<T, allocator>* ptr)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>::object_wrapper(ang::collections::vector_buffer<T, A>* ptr)
 	: m_ptr(null)
 {
-	set(ptr ? ptr : new ang::collections::vector_buffer<T, allocator>());
+	set(ptr ? ptr : new ang::collections::vector_buffer<T, A>());
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::object_wrapper(std::nullptr_t const&)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>::object_wrapper(std::nullptr_t const&)
 	: m_ptr(null)
 {
 }
 
-template<typename T, template <typename> class allocator> template<typename U>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::object_wrapper(std::initializer_list<U> list)
+template<typename T, template <typename> class A> template<typename U>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>::object_wrapper(std::initializer_list<U> list)
 	: m_ptr(null)
 {
-	set(new collections::vector_buffer<T, allocator>(ang::move(list)));
+	set(new collections::vector_buffer<T, A>(ang::move(list)));
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::object_wrapper(const ang::collections::ienum<data_type>* store)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>::object_wrapper(const ang::collections::ienum<data_type>* store)
 	: m_ptr(null)
 {
-	set(new collections::vector_buffer<T, allocator>(store));
+	set(new collections::vector_buffer<T, A>(store));
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<T, allocator>> && ptr)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<T, A>> && ptr)
 	: m_ptr(null)
 {
 	if (ptr.is_empty())
 	{
-		set(new ang::collections::vector_buffer<T, allocator>());
+		set(new ang::collections::vector_buffer<T, A>());
 	}
 	else
 	{
@@ -836,94 +852,94 @@ inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::objec
 	}
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<T, allocator>> const& ptr)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<T, A>> const& ptr)
 	: m_ptr(null)
 {
-	set(!ptr.is_empty() ? ptr.get() : new ang::collections::vector_buffer<T, allocator>());
+	set(!ptr.is_empty() ? ptr.get() : new ang::collections::vector_buffer<T, A>());
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::~object_wrapper()
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>::~object_wrapper()
 {
 	reset();
 }
 
-template<typename T, template <typename> class allocator>
-inline void ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::reset()
+template<typename T, template <typename> class A>
+inline void ang::object_wrapper<ang::collections::vector_buffer<T, A>>::reset()
 {
 	if (m_ptr) 
 		m_ptr->release();
 	m_ptr = null;
 }
 
-template<typename T, template <typename> class allocator>
-inline void ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::reset_unsafe()
+template<typename T, template <typename> class A>
+inline void ang::object_wrapper<ang::collections::vector_buffer<T, A>>::reset_unsafe()
 {
 	m_ptr = null;
 }
 
-template<typename T, template <typename> class allocator>
-inline bool ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::is_empty()const
+template<typename T, template <typename> class A>
+inline bool ang::object_wrapper<ang::collections::vector_buffer<T, A>>::is_empty()const
 {
 	return m_ptr == null;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::collections::vector_buffer<T, allocator>* ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::get(void)const
+template<typename T, template <typename> class A>
+inline ang::collections::vector_buffer<T, A>* ang::object_wrapper<ang::collections::vector_buffer<T, A>>::get(void)const
 {
 	return m_ptr;
 }
 
-template<typename T, template <typename> class allocator>
-inline void ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::set(ang::collections::vector_buffer<T, allocator>* ptr)
+template<typename T, template <typename> class A>
+inline void ang::object_wrapper<ang::collections::vector_buffer<T, A>>::set(ang::collections::vector_buffer<T, A>* ptr)
 {
-	ang::collections::vector_buffer<T, allocator> * temp = m_ptr;
+	ang::collections::vector_buffer<T, A> * temp = m_ptr;
 	if (ptr == m_ptr) return;
 	m_ptr = ptr;
 	if (m_ptr)m_ptr->add_ref();
 	if (temp)temp->release();
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::collections::vector_buffer<T, allocator>** ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::addres_of(void)
+template<typename T, template <typename> class A>
+inline ang::collections::vector_buffer<T, A>** ang::object_wrapper<ang::collections::vector_buffer<T, A>>::addres_of(void)
 {
 	return &m_ptr;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::collections::vector_buffer<T, allocator>** ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::addres_for_init(void)
+template<typename T, template <typename> class A>
+inline ang::collections::vector_buffer<T, A>** ang::object_wrapper<ang::collections::vector_buffer<T, A>>::addres_for_init(void)
 {
 	reset();
 	return &m_ptr;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator = (ang::collections::vector_buffer<T, allocator>* ptr)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>& ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator = (ang::collections::vector_buffer<T, A>* ptr)
 {
 	set(ptr);
 	return*this;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator = (const std::nullptr_t&)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>& ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator = (const std::nullptr_t&)
 {
 	reset();
 	return*this;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator = (ang::collections::ienum<data_type> const* items)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>& ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator = (ang::collections::ienum<data_type> const* items)
 {
 	if (m_ptr == null)
-		set(new collections::vector_buffer<T, allocator>(items));
+		set(new collections::vector_buffer<T, A>(items));
 	else
 		m_ptr->copy(items);
 	return *this;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator = (ang::object_wrapper<ang::collections::vector_buffer<T, allocator>> && other)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>& ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator = (ang::object_wrapper<ang::collections::vector_buffer<T, A>> && other)
 {
 	if (this == &other)
 		return *this;
@@ -933,72 +949,72 @@ inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>& ang::
 	return*this;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator = (ang::object_wrapper<ang::collections::vector_buffer<T, allocator>> const& other)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>& ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator = (ang::object_wrapper<ang::collections::vector_buffer<T, A>> const& other)
 {
 	set(other.m_ptr);
 	return*this;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator += (T item)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>& ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator += (T item)
 {
 	if (is_empty())
-		set(new collections::vector_buffer<T, allocator>());
+		set(new collections::vector_buffer<T, A>());
 	m_ptr->push(item);
 	return*this;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator += (collections::ienum<data_type> const* items)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>& ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator += (collections::ienum<data_type> const* items)
 {
 	if (is_empty())
-		set(new collections::vector_buffer<T, allocator>(items));
+		set(new collections::vector_buffer<T, A>(items));
 	else m_ptr->extend(items);
 	return*this;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator += (object_wrapper const& items)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>& ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator += (object_wrapper const& items)
 {
 	if (is_empty())
-		set(new collections::vector_buffer<T, allocator>(items.get()));
+		set(new collections::vector_buffer<T, A>(items.get()));
 	else m_ptr->extend((array_view<T>)items);
 	return*this;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper_ptr<ang::collections::vector_buffer<T, allocator>> ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator & (void)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper_ptr<ang::collections::vector_buffer<T, A>> ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator & (void)
 {
 	return this;
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::collections::vector_buffer<T, allocator> * ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator -> (void)
+template<typename T, template <typename> class A>
+inline ang::collections::vector_buffer<T, A> * ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator -> (void)
 {
 	return get();
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::collections::vector_buffer<T, allocator> const* ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator -> (void)const
+template<typename T, template <typename> class A>
+inline ang::collections::vector_buffer<T, A> const* ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator -> (void)const
 {
 	return get();
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator ang::collections::vector_buffer<T, allocator> * (void)
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator ang::collections::vector_buffer<T, A> * (void)
 {
 	return get();
 }
 
-template<typename T, template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator ang::collections::vector_buffer<T, allocator> const* (void)const
+template<typename T, template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator ang::collections::vector_buffer<T, A> const* (void)const
 {
 	return get();
 }
 
-template<typename T, template <typename> class allocator> template<typename I>
-inline T const& ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator[](I const& idx)const
+template<typename T, template <typename> class A> template<typename I>
+inline T const& ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator[](I const& idx)const
 {
 	static_assert(is_integer_value<I>::value, "no integer value is no accepted"); 
 #ifdef DEBUG_SAFE_CODE
@@ -1008,8 +1024,8 @@ inline T const& ang::object_wrapper<ang::collections::vector_buffer<T, allocator
 	return m_ptr->data()[idx];
 }
 
-template<typename T, template <typename> class allocator> template<typename I>
-inline T & ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::operator[](I const& idx)
+template<typename T, template <typename> class A> template<typename I>
+inline T & ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator[](I const& idx)
 {
 	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
 #ifdef DEBUG_SAFE_CODE
@@ -1024,47 +1040,47 @@ inline T & ang::object_wrapper<ang::collections::vector_buffer<T, allocator>>::o
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper()
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::object_wrapper()
 	: m_ptr(null)
 {
-	set(new ang::collections::vector_buffer<ang::var, allocator>());
+	set(new ang::collections::vector_buffer<ang::var, A>());
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(ang::collections::vector_buffer<ang::var, allocator>* ptr)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::object_wrapper(ang::collections::vector_buffer<ang::var, A>* ptr)
 	: m_ptr(null)
 {
-	set(ptr ? ptr : new ang::collections::vector_buffer<ang::var, allocator>());
+	set(ptr ? ptr : new ang::collections::vector_buffer<ang::var, A>());
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(std::nullptr_t const&)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::object_wrapper(std::nullptr_t const&)
 	: m_ptr(null)
 {
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(std::initializer_list<ang::var> list)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::object_wrapper(std::initializer_list<ang::var> list)
 	: m_ptr(null)
 {
-	set(new collections::vector_buffer<ang::var, allocator>(ang::move(list)));
+	set(new collections::vector_buffer<ang::var, A>(ang::move(list)));
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(const ang::collections::ienum<data_type>* store)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::object_wrapper(const ang::collections::ienum<data_type>* store)
 	: m_ptr(null)
 {
-	set(new collections::vector_buffer<ang::var, allocator>(store));
+	set(new collections::vector_buffer<ang::var, A>(store));
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>> && ptr)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>> && ptr)
 	: m_ptr(null)
 {
 	if (ptr.is_empty())
 	{
-		set(new ang::collections::vector_buffer<ang::var, allocator>());
+		set(new ang::collections::vector_buffer<ang::var, A>());
 	}
 	else
 	{
@@ -1074,94 +1090,94 @@ inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>
 	}
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>> const& ptr)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::object_wrapper(ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>> const& ptr)
 	: m_ptr(null)
 {
-	set(!ptr.is_empty() ? ptr.get() : new ang::collections::vector_buffer<ang::var, allocator>());
+	set(!ptr.is_empty() ? ptr.get() : new ang::collections::vector_buffer<ang::var, A>());
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::~object_wrapper()
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::~object_wrapper()
 {
 	reset();
 }
 
-template<template <typename> class allocator>
-inline void ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::reset()
+template<template <typename> class A>
+inline void ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::reset()
 {
 	if (m_ptr)
 		m_ptr->release();
 	m_ptr = null;
 }
 
-template<template <typename> class allocator>
-inline void ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::reset_unsafe()
+template<template <typename> class A>
+inline void ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::reset_unsafe()
 {
 	m_ptr = null;
 }
 
-template<template <typename> class allocator>
-inline bool ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::is_empty()const
+template<template <typename> class A>
+inline bool ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::is_empty()const
 {
 	return m_ptr == null;
 }
 
-template<template <typename> class allocator>
-inline ang::collections::vector_buffer<ang::var, allocator>* ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::get(void)const
+template<template <typename> class A>
+inline ang::collections::vector_buffer<ang::var, A>* ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::get(void)const
 {
 	return m_ptr;
 }
 
-template<template <typename> class allocator>
-inline void ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::set(ang::collections::vector_buffer<ang::var, allocator>* ptr)
+template<template <typename> class A>
+inline void ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::set(ang::collections::vector_buffer<ang::var, A>* ptr)
 {
-	ang::collections::vector_buffer<ang::var, allocator> * temp = m_ptr;
+	ang::collections::vector_buffer<ang::var, A> * temp = m_ptr;
 	if (ptr == m_ptr) return;
 	m_ptr = ptr;
 	if (m_ptr)m_ptr->add_ref();
 	if (temp)temp->release();
 }
 
-template<template <typename> class allocator>
-inline ang::collections::vector_buffer<ang::var, allocator>** ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::addres_of(void)
+template<template <typename> class A>
+inline ang::collections::vector_buffer<ang::var, A>** ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::addres_of(void)
 {
 	return &m_ptr;
 }
 
-template<template <typename> class allocator>
-inline ang::collections::vector_buffer<ang::var, allocator>** ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::addres_for_init(void)
+template<template <typename> class A>
+inline ang::collections::vector_buffer<ang::var, A>** ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::addres_for_init(void)
 {
 	reset();
 	return &m_ptr;
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator = (ang::collections::vector_buffer<ang::var, allocator>* ptr)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator = (ang::collections::vector_buffer<ang::var, A>* ptr)
 {
 	set(ptr);
 	return*this;
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator = (const std::nullptr_t&)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator = (const std::nullptr_t&)
 {
 	clear();
 	return*this;
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator = (ang::collections::ienum<data_type> const* items)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator = (ang::collections::ienum<data_type> const* items)
 {
 	if (m_ptr == null)
-		set(new collections::vector_buffer<ang::var, allocator>(items));
+		set(new collections::vector_buffer<ang::var, A>(items));
 	else
 		m_ptr->copy(items);
 	return *this;
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator = (ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>> && other)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator = (ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>> && other)
 {
 	if (this == &other)
 		return *this;
@@ -1171,72 +1187,72 @@ inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>
 	return*this;
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator = (ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>> const& other)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator = (ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>> const& other)
 {
 	set(other.m_ptr);
 	return*this;
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator += (ang::var item)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator += (ang::var item)
 {
 	if (is_empty())
-		set(new collections::vector_buffer<ang::var, allocator>());
+		set(new collections::vector_buffer<ang::var, A>());
 	m_ptr->push(item);
 	return*this;
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator += (collections::ienum<data_type> const* items)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator += (collections::ienum<data_type> const* items)
 {
 	if (is_empty())
-		set(new collections::vector_buffer<ang::var, allocator>(items));
+		set(new collections::vector_buffer<ang::var, A>(items));
 	else m_ptr->extend(items);
 	return*this;
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator += (object_wrapper const& items)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>& ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator += (object_wrapper const& items)
 {
 	if (is_empty())
-		set(new collections::vector_buffer<ang::var, allocator>(items.get()));
+		set(new collections::vector_buffer<ang::var, A>(items.get()));
 	else m_ptr->extend((array_view<ang::var>)items);
 	return*this;
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper_ptr<ang::collections::vector_buffer<ang::var, allocator>> ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator & (void)
+template<template <typename> class A>
+inline ang::object_wrapper_ptr<ang::collections::vector_buffer<ang::var, A>> ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator & (void)
 {
 	return this;
 }
 
-template<template <typename> class allocator>
-inline ang::collections::vector_buffer<ang::var, allocator> * ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator -> (void)
+template<template <typename> class A>
+inline ang::collections::vector_buffer<ang::var, A> * ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator -> (void)
 {
 	return get();
 }
 
-template<template <typename> class allocator>
-inline ang::collections::vector_buffer<ang::var, allocator> const* ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator -> (void)const
+template<template <typename> class A>
+inline ang::collections::vector_buffer<ang::var, A> const* ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator -> (void)const
 {
 	return get();
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator ang::collections::vector_buffer<ang::var, allocator> * (void)
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator ang::collections::vector_buffer<ang::var, A> * (void)
 {
 	return get();
 }
 
-template<template <typename> class allocator>
-inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator ang::collections::vector_buffer<ang::var, allocator> const* (void)const
+template<template <typename> class A>
+inline ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator ang::collections::vector_buffer<ang::var, A> const* (void)const
 {
 	return get();
 }
 
-template<template <typename> class allocator> template<typename I>
-inline ang::var const& ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator[](I const& idx)const
+template<template <typename> class A> template<typename I>
+inline ang::var const& ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator[](I const& idx)const
 {
 	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
 #ifdef DEBUG_SAFE_CODE
@@ -1246,8 +1262,8 @@ inline ang::var const& ang::object_wrapper<ang::collections::vector_buffer<ang::
 	return m_ptr->data()[idx];
 }
 
-template<template <typename> class allocator> template<typename I>
-inline ang::var & ang::object_wrapper<ang::collections::vector_buffer<ang::var, allocator>>::operator[](I const& idx)
+template<template <typename> class A> template<typename I>
+inline ang::var & ang::object_wrapper<ang::collections::vector_buffer<ang::var, A>>::operator[](I const& idx)
 {
 	static_assert(is_integer_value<I>::value, "no integer value is no accepted");
 #ifdef DEBUG_SAFE_CODE

@@ -53,19 +53,19 @@ namespace ang //constants
 		template<encoding E>
 		struct native_encoding : integer_constant<encoding, E> { };
 
-		template<> 
+		template<>
 		struct native_encoding<encoding::utf16>
 			: value_selector<encoding, encoding::utf16_le, encoding::utf16_be, LITTLE_ENDIAN_PLATFORM> {
 		};
 
-		template<> 
+		template<>
 		struct native_encoding<encoding::utf32>
 			: value_selector<encoding, encoding::utf32_le, encoding::utf32_be, LITTLE_ENDIAN_PLATFORM > {
 		};
 
 		template<>
 		struct native_encoding<encoding::unicode>
-			: value_selector<encoding, native_encoding<encoding::utf16>::value, native_encoding<encoding::utf32>::value, sizeof(wchar) == 2>{
+			: value_selector<encoding, native_encoding<encoding::utf16>::value, native_encoding<encoding::utf32>::value, sizeof(wchar) == 2> {
 		};
 
 		template<encoding E>
@@ -74,19 +74,19 @@ namespace ang //constants
 
 		template<>
 		struct native_inverse_encoding<encoding::utf16>
-			: value_selector<encoding, encoding::utf16_be, encoding::utf16_le, LITTLE_ENDIAN_PLATFORM > { 
+			: value_selector<encoding, encoding::utf16_be, encoding::utf16_le, LITTLE_ENDIAN_PLATFORM > {
 		};
 
 		template<>
 		struct native_inverse_encoding<encoding::utf32>
-			: value_selector<encoding, encoding::utf32_be, encoding::utf32_le, LITTLE_ENDIAN_PLATFORM >{ 
+			: value_selector<encoding, encoding::utf32_be, encoding::utf32_le, LITTLE_ENDIAN_PLATFORM > {
 		};
 
 		template<>
 		struct native_inverse_encoding<encoding::unicode>
 			: value_selector<encoding, native_inverse_encoding<encoding::utf16>::value, native_inverse_encoding<encoding::utf32>::value, sizeof(wchar) == 2> {
 		};
-		
+
 
 		template<typename T> struct is_char_type : false_type { };
 
@@ -255,14 +255,14 @@ namespace ang //constants
 			template<typename cstr2_t> static raw_str_t convert(raw_str_t str, wsize& i, cstr2_t cstr, wsize& j, bool eos = true, wsize max_out = -1, wsize max_in = -1);
 		};
 
-		typedef encoder<encoding::ascii>	ascii_t,	ascii;
-		typedef encoder<encoding::unicode>	unicode_t,	unicode;
-		typedef encoder<encoding::utf8>		utf8_t,		utf8;
-		typedef encoder<encoding::utf16>	utf16_t,	utf16;
+		typedef encoder<encoding::ascii>	ascii_t, ascii;
+		typedef encoder<encoding::unicode>	unicode_t, unicode;
+		typedef encoder<encoding::utf8>		utf8_t, utf8;
+		typedef encoder<encoding::utf16>	utf16_t, utf16;
 		typedef encoder<encoding::utf16_se> utf16_se_t, utf16_se;
 		typedef encoder<encoding::utf16_le> utf16_le_t, utf16_le;
 		typedef encoder<encoding::utf16_be> utf16_be_t, utf16_be;
-		typedef encoder<encoding::utf32>	utf32_t,	utf32;
+		typedef encoder<encoding::utf32>	utf32_t, utf32;
 		typedef encoder<encoding::utf32_se> utf32_se_t, utf32_se;
 		typedef encoder<encoding::utf32_le> utf32_le_t, utf32_le;
 		typedef encoder<encoding::utf32_be> utf32_be_t, utf32_be;
@@ -380,7 +380,7 @@ namespace ang //constants
 		char_t const& operator*()const {
 			return *cstr();
 		}
-		char_t** operator & () { 
+		char_t** operator & () {
 			return &m_view;
 		}
 		operator str_t () {
@@ -401,7 +401,7 @@ namespace ang //constants
 		}
 		sefl_t& operator ++ () {
 			set(str() + 1, size() - 1);
-			return this;
+			return *this;
 		}
 		sefl_t operator ++ (int) {
 			sefl_t ret = *this;
@@ -469,7 +469,7 @@ namespace ang //constants
 		char_t const& operator*()const {
 			return *cstr();
 		}
-		char_t const** operator & () { 
+		char_t const** operator & () {
 			return &m_view;
 		}
 		operator cstr_t () {
@@ -500,40 +500,65 @@ namespace ang //constants
 		wsize m_size;
 	};
 
+}
 
-	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
-	bool operator == (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
-		return text::encoder<E1>::template compare<T2 const*>(value1.cstr(), value2.cstr()) == 0; 
-	}
 
-	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
-	bool operator != (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
-		return text::encoder<E1>::template compare<T2 const*>(value1.cstr(), value2.cstr()) != 0;
-	}
+#define MY_LINKAGE LINK
+#define MY_CHAR_TYPE typename ang::text::char_type_by_encoding<MY_ENCODING>::char_t
 
-	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
-	bool operator >= (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
-		return text::encoder<E1>::template compare<T2 const*>(value1.cstr(), value2.cstr()) >= 0;
-	}
+#define MY_ENCODING ang::text::encoding::ascii
+#include <ang/base/inline/str_view.hpp>
+#undef MY_ENCODING
 
-	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
-	bool operator <= (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
-		return text::encoder<E1>::template compare<T2 const*>(value1.cstr(), value2.cstr()) <= 0;
-	}
+#define MY_ENCODING ang::text::encoding::unicode
+#include <ang/base/inline/str_view.hpp>
+#undef MY_ENCODING
 
-	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
-	bool operator > (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
-		return text::encoder<E1>::template compare<T2 const*>(value1.cstr(), value2.cstr()) > 0;
-	}
+#define MY_ENCODING ang::text::encoding::utf8
+#include <ang/base/inline/str_view.hpp>
+#undef MY_ENCODING
 
-	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
-	bool operator < (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
-		return text::encoder<E1>::template compare<T2 const*>(value1.cstr(), value2.cstr()) < 0;
-	}
+#define MY_ENCODING ang::text::encoding::utf16
+#include <ang/base/inline/str_view.hpp>
+#undef MY_ENCODING
 
+#define MY_ENCODING ang::text::encoding::utf16_se
+#include <ang/base/inline/str_view.hpp>
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf16_le
+#include <ang/base/inline/str_view.hpp>
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf16_be
+#include <ang/base/inline/str_view.hpp>
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf32
+#include <ang/base/inline/str_view.hpp>
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf32_se
+#include <ang/base/inline/str_view.hpp>
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf32_le
+#include <ang/base/inline/str_view.hpp>
+#undef MY_ENCODING
+
+#define MY_ENCODING ang::text::encoding::utf32_be
+#include <ang/base/inline/str_view.hpp>
+#undef MY_ENCODING
+
+#undef MY_CHAR_TYPE
+#undef MY_LINKAGE
+
+namespace ang
+{
 
 	template<> struct LINK str_view<void, text::encoding::auto_detect> {
 		str_view();
+		str_view(ang::nullptr_t const&);
 		str_view(void* v, wsize s, text::encoding e);
 		str_view(raw_str const& str);
 		template<typename T, text::encoding E> inline str_view(str_view<T, E> str)
@@ -571,7 +596,7 @@ namespace ang //constants
 				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
 		}
 
-		friend LINK bool operator == (raw_str_t const& str1, raw_str_t const& str2);
+		/*friend LINK bool operator == (raw_str_t const& str1, raw_str_t const& str2);
 		friend LINK bool operator == (raw_str_t const& str1, raw_cstr_t const& str2);
 		friend LINK bool operator != (raw_str_t const& str1, raw_str_t const& str2);
 		friend LINK bool operator != (raw_str_t const& str1, raw_cstr_t const& str2);
@@ -595,7 +620,7 @@ namespace ang //constants
 		template<typename T, text::encoding E> friend inline bool operator > (raw_str_t const& str1, str_view<T, E> const& str2) { return operator > (str1, raw_cstr(str2)); }
 		template<typename T, text::encoding E> friend inline bool operator > (str_view<T, E> const& str1, raw_str_t const& str2) { return operator > (raw_cstr(str1), str2); }
 		template<typename T, text::encoding E> friend inline bool operator < (raw_str_t const& str1, str_view<T, E> const& str2) { return operator < (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator < (str_view<T, E> const& str1, raw_str_t const& str2) { return operator < (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator < (str_view<T, E> const& str1, raw_str_t const& str2) { return operator < (raw_cstr(str1), str2); }*/
 
 	private:
 		void* m_value;
@@ -605,6 +630,7 @@ namespace ang //constants
 
 	template<> struct LINK str_view<const void, text::encoding::auto_detect> {
 		str_view();
+		str_view(ang::nullptr_t const&);
 		str_view(void const* v, wsize s, text::encoding e);
 		str_view(raw_cstr const& str);
 		str_view(raw_str const& str);
@@ -638,7 +664,7 @@ namespace ang //constants
 				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
 		}
 
-		friend LINK bool operator == (raw_cstr_t const& str1, raw_cstr_t const& str2);
+		/*friend LINK bool operator == (raw_cstr_t const& str1, raw_cstr_t const& str2);
 		friend LINK bool operator == (raw_cstr_t const& str1, raw_str_t const& str2);
 		friend LINK bool operator != (raw_cstr_t const& str1, raw_cstr_t const& str2);
 		friend LINK bool operator != (raw_cstr_t const& str1, raw_str_t const& str2);
@@ -651,6 +677,7 @@ namespace ang //constants
 		friend LINK bool operator < (raw_cstr_t const& str1, raw_cstr_t const& str2);
 		friend LINK bool operator < (raw_cstr_t const& str1, raw_str_t const& str2);
 
+
 		template<typename T, text::encoding E> friend inline bool operator == (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator == (str1, raw_cstr(str2)); }
 		template<typename T, text::encoding E> friend inline bool operator == (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator == (raw_cstr(str1), str2); }
 		template<typename T, text::encoding E> friend inline bool operator != (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator != (str1, raw_cstr(str2)); }
@@ -662,13 +689,141 @@ namespace ang //constants
 		template<typename T, text::encoding E> friend inline bool operator > (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator > (str1, raw_cstr(str2)); }
 		template<typename T, text::encoding E> friend inline bool operator > (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator > (raw_cstr(str1), str2); }
 		template<typename T, text::encoding E> friend inline bool operator < (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator < (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator < (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator < (raw_cstr(str1), str2); }
+		template<typename T, text::encoding E> friend inline bool operator < (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator < (raw_cstr(str1), str2); }*/
 
 	private:
 		void const* m_value;
 		wsize m_size;
 		text::encoding m_encoding;
 	};
+
+
+	template<typename cstr1_t, typename cstr2_t> struct str_view_compare_helper;
+
+	template<> struct LINK str_view_compare_helper<cstr_t, cstr_t>
+	{
+		static int compare(const cstr_t& value1, const cstr_t& value2);
+	};
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	struct str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>
+	{
+		static int compare(const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+			return str_view_compare_helper<ang::cstr_t, ang::cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<typename T, text::encoding E, typename cstr_t>
+	struct str_view_compare_helper<str_view<T, E>, cstr_t>
+	{
+		static int compare(const str_view<T, E>& value1, const cstr_t& value2) {
+			return str_view_compare_helper<ang::cstr_t, ang::cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<typename T, text::encoding E>
+	struct str_view_compare_helper<str_view<T, E>, nullptr_t>
+	{
+		static int compare(const str_view<T, E>& value1, const nullptr_t&) {
+			return cstr_t(value1).ptr() ? 1 : 0;
+		}
+	};
+
+	template<typename T, text::encoding E>
+	struct str_view_compare_helper<nullptr_t, str_view<T, E>>
+	{
+		static int compare(const nullptr_t&, const str_view<T, E>& value1) {
+			return cstr_t(value1).ptr() ? -1 : 0;
+		}
+	};
+
+	template<typename T, text::encoding E, typename cstr_t>
+	struct str_view_compare_helper<cstr_t, str_view<T, E>>
+	{
+		static int compare(const cstr_t& value1, const str_view<T, E>& value2) {
+			return str_view_compare_helper<ang::cstr_t, ang::cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	bool operator == (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+		return str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>::compare(value1, value2) == 0;
+	}
+	template<typename T, text::encoding E, typename cstr_t>
+	bool operator == (const str_view<T, E>& value1, const cstr_t& value2) {
+		return str_view_compare_helper<str_view<T, E>, cstr_t>::compare(value1, value2) == 0;
+	}
+	template<typename T, text::encoding E, typename cstr_t>
+	bool operator == (const cstr_t& value1, const str_view<T, E>& value2) {
+		return str_view_compare_helper<cstr_t, str_view<T1, E1>>::compare(value1, value2) == 0;
+	}
+
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	bool operator != (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+		return str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>::compare(value1, value2) != 0;
+	}
+	template<typename T, text::encoding E, typename cstr_t>
+	bool operator != (const str_view<T, E>& value1, const cstr_t& value2) {
+		return str_view_compare_helper<str_view<T, E>, cstr_t>::compare(value1, value2) != 0;
+	}
+	template<typename T, text::encoding E, typename cstr_t>
+	bool operator != (const cstr_t& value1, const str_view<T, E>& value2) {
+		return str_view_compare_helper<cstr_t, str_view<T, E>>::compare(value1, value2) != 0;
+	}
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	bool operator >= (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+		return str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>::compare(value1, value2) >= 0;
+	}
+	template<typename T, text::encoding E, typename cstr_t>
+	bool operator >= (const str_view<T, E>& value1, const cstr_t& value2) {
+		return str_view_compare_helper<str_view<T, E>, cstr_t>::compare(value1, value2) >= 0;
+	}
+	template<typename T, text::encoding E, typename cstr_t>
+	bool operator >= (const cstr_t& value1, const str_view<T, E>& value2) {
+		return str_view_compare_helper<cstr_t, str_view<T, E>>::compare(value1, value2) >= 0;
+	}
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	bool operator <= (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+		return str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>::compare(value1, value2) <= 0;
+	}
+	template<typename T, text::encoding E, typename cstr_t>
+	bool operator <= (const str_view<T, E>& value1, const cstr_t& value2) {
+		return str_view_compare_helper<str_view<T, E>, cstr_t>::compare(value1, value2) <= 0;
+	}
+	template<typename T, text::encoding E, typename cstr_t>
+	bool operator <= (const cstr_t& value1, const str_view<T, E>& value2) {
+		return str_view_compare_helper<cstr_t, str_view<T, E>>::compare(value1, value2) <= 0;
+	}
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	bool operator > (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+		return str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>::compare(value1, value2) > 0;
+	}
+	template<typename T, text::encoding E, typename cstr_t>
+	bool operator > (const str_view<T, E>& value1, const cstr_t& value2) {
+		return str_view_compare_helper<str_view<T, E>, cstr_t>::compare(value1, value2) > 0;
+	}
+	template<typename T, text::encoding E, typename cstr_t>
+	bool operator > (const cstr_t& value1, const str_view<T, E>& value2) {
+		return str_view_compare_helper<cstr_t, str_view<T, E>>::compare(value1, value2) > 0;
+	}
+
+	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
+	bool operator < (const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
+		return str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>::compare(value1, value2) < 0;
+	}
+	template<typename T, text::encoding E, typename cstr_t>
+	bool operator < (const str_view<T, E>& value1, const cstr_t& value2) {
+		return str_view_compare_helper<str_view<T, E>, cstr_t>::compare(value1, value2) < 0;
+	}
+	template<typename T, text::encoding E, typename cstr_t>
+	bool operator < (const cstr_t& value1, const str_view<T, E>& value2) {
+		return str_view_compare_helper<cstr_t, str_view<T, E>>::compare(value1, value2) < 0;
+	}
+
 
 	inline str_view<const char> operator "" _s(const char* str, wsize sz) { return str_view<const char>(str, sz); }
 	inline str_view<const mchar> operator "" _sm(const char* str, wsize sz) { return str_view<const mchar>((mchar const*)str, sz); }
@@ -692,7 +847,6 @@ namespace ang //constants
 	typedef str_view<const wchar> cwstr_t;
 	typedef str_view<const char16_t> cstr16_t;
 	typedef str_view<const char32_t> cstr32_t;
-
 
 	namespace text
 	{
@@ -747,7 +901,7 @@ namespace ang //constants
 				float_,
 			};
 
-			struct text_format_flags
+			struct LINK text_format_flags
 			{
 				union
 				{
@@ -787,26 +941,11 @@ namespace ang //constants
 						char thousand;
 					};
 				};
-				text_format_flags() {
-					value = 0;
-				}
-				text_format_flags(qword val) {
-					value = val;
-				}
-				text_format_flags(ang::text::text_format::target t) {
-					value = 0;
-					target = t;
-					switch (t)
-					{
-					case bool_:
-						case_ = 3;
-						break;
-					case float_:
-						pres = 4;
-						break;
-					}
-				}
+				text_format_flags();
+				text_format_flags(qword val);
+				text_format_flags(ang::text::text_format::target t);
 			};
+
 		public:
 			text_format();//default format-> bad format
 			text_format(castr_t format);

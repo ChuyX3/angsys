@@ -358,16 +358,16 @@ bool core_file::create(cstr_t path_, open_flags_t flags)
 
 	DWORD dwDesiredAccess, dwCreationDisposition, dwShareMode = FILE_SHARE_READ;
 
-	dwDesiredAccess = bool(flags & open_flags::access_out) ? GENERIC_READ | GENERIC_WRITE
-		: bool(flags & open_flags::access_in) ? GENERIC_READ : 0;
+	dwDesiredAccess = flags.is_active<open_flags::access_out>() ? GENERIC_READ | GENERIC_WRITE
+		: flags.is_active<open_flags::access_in>() ? GENERIC_READ : 0;
 
 	if (dwDesiredAccess == 0)
 		return false;
 
-	dwCreationDisposition = bool(flags & open_flags::open_exist) ? OPEN_EXISTING
-		: bool(flags & open_flags::create_alway) ? CREATE_ALWAYS
-		: bool(flags & open_flags::open_alway) ? OPEN_ALWAYS
-		: /*args->createMode == CreateMode::CreateNew ?*/ CREATE_NEW;
+	dwCreationDisposition = flags.is_active<open_flags::open_exist>() ? OPEN_EXISTING
+		: flags.is_active<open_flags::create_alway>() ? CREATE_ALWAYS
+		: flags.is_active<open_flags::open_alway>() ? OPEN_ALWAYS
+		: /*flags.is_active<open_flags::create_new>() ?*/ CREATE_NEW;
 
 #if WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
 	m_hfile = CreateFileW(
@@ -424,7 +424,7 @@ bool core_file::create(cstr_t path_, open_flags_t flags)
 	m_path = path_;
 	wsize size = (wsize)get_file_size(m_hfile);
 
-	if (bool(flags & open_flags::format_text)) //text file
+	if (bool(flags.is_active<open_flags::format_text>())) //text file
 	{
 		if (size > 0) 
 		{
@@ -483,7 +483,7 @@ bool core_file::create(cstr_t path_, open_flags_t flags)
 			}
 		}
 	}
-	else if (bool(flags & open_flags::format_packfile)) //text file
+	else if (flags.is_active<open_flags::format_packfile>()) //text file
 	{
 		m_flags += open_flags::format_packfile;
 	}
@@ -492,9 +492,9 @@ bool core_file::create(cstr_t path_, open_flags_t flags)
 		m_flags += open_flags::format_binary;
 	}
 
-	m_flags += ((flags & open_flags::access_inout) == open_flags::access_inout ? open_flags::access_inout
-		: (flags & open_flags::access_in) == open_flags::access_in ? open_flags::access_in
-		: open_flags::access_out);
+	m_flags += (flags.is_active<open_flags::access_inout>() ? open_flags::access_inout
+		: flags.is_active<open_flags::access_out>() ? open_flags::access_out
+		: open_flags::access_in);
 
 	return true;
 }

@@ -49,7 +49,7 @@ namespace ang
 
 
 		protected:
-			allocator_t m_alloc;
+			static allocator_t m_alloc;
 			wsize m_count;
 			node_ptr_t m_head;
 			node_ptr_t m_tail;
@@ -128,7 +128,8 @@ namespace ang
 		
 		};
 
-
+		template<typename T, template<typename> class A>
+		typename list_object<T, A>::allocator_t list_object<T, A>::m_alloc;
 	}
 
 	/******************************************************************/
@@ -215,6 +216,72 @@ namespace ang
 	};
 
 }
+
+#define MY_LINKAGE LINK
+#define MY_ALLOC ang::memory::default_allocator
+
+#define MY_TYPE char
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE byte
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE short
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE ushort
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE int
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE uint
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE long
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE ulong
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE long64
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE ulong64
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE float
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE double
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE ang::intfptr  
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE ang::objptr    
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#define MY_TYPE ang::string  
+#include <ang/collections/inline/list_specialization.hpp>
+#undef MY_TYPE
+
+#undef MY_ALLOC
+#undef MY_LINKAGE
 
 
 #endif//__ANG_COLLECTION_LIST_H__

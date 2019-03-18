@@ -54,7 +54,14 @@ namespace ang
 			safe_enum(LINK, file_system_priority, uint)
 			{
 				lowest,
-				highest,
+				highest
+			};
+
+			safe_enum(LINK, path_access_type, uint)
+			{
+				all,
+				read,
+				write
 			};
 
 			safe_flags(LINK, open_flags, uint)
@@ -84,34 +91,35 @@ namespace ang
 
 
 			ang_begin_interface(LINK ifile)
-				visible vcall stream_mode_t mode()const pure;
-				visible vcall string path()const pure;
-				visible vcall text::encoding_t format()const pure;
-				visible vcall file_size_t size()const pure;
-				visible vcall bool size(file_size_t) pure;//write mode only
-				visible vcall bool is_eof()const pure;
-				visible vcall file_offset_t cursor()const pure;
-				visible vcall bool cursor(file_offset_t size, stream_reference_t ref)pure;
-				visible vcall file_offset_t read(ibuffer_view_t)pure;
-				visible vcall file_offset_t read(wsize, pointer)pure;
-				visible vcall file_offset_t write(ibuffer_view_t)pure;
-				visible vcall file_offset_t write(wsize, pointer)pure;
+				visible vcall stream_mode_t mode()const pure
+				visible vcall string path()const pure
+				visible vcall text::encoding_t format()const pure
+				visible vcall file_size_t size()const pure
+				visible vcall bool size(file_size_t) pure//write mode only
+				visible vcall bool is_eof()const pure
+				visible vcall file_offset_t cursor()const pure
+				visible vcall bool cursor(file_offset_t size, stream_reference_t ref)pure
+				visible vcall file_offset_t read(ibuffer_view_t)pure
+				visible vcall file_offset_t read(wsize, pointer)pure
+				visible vcall file_offset_t write(ibuffer_view_t)pure
+				visible vcall file_offset_t write(wsize, pointer)pure
 
-				visible vcall ibuffer_t map(wsize size, file_offset_t offset)pure;
-				visible vcall bool unmap(ibuffer_t, wsize used)pure;
-				visible vcall bool set_mutex(core::async::mutex_ptr_t)pure;
+				visible vcall ibuffer_t map(wsize size, file_offset_t offset)pure
+				visible vcall bool unmap(ibuffer_t, wsize used)pure
+				visible vcall bool set_mutex(core::async::mutex_ptr_t)pure
 			ang_end_interface();
 
 			ang_begin_interface(LINK ifile_system)
-				visible scall ifile_system_t fs_instance();
-				visible vcall array_view<string> paths(file_system_priority_t)const pure;
-				visible vcall void push_path(cstr_t, file_system_priority_t) pure;
-				visible vcall bool open_file(cstr_t, open_flags_t, ifile_ptr_t)pure;
+				visible scall ifile_system_t instance();
+				visible vcall collections::ienum_ptr<string> paths(path_access_type_t access)const pure
+				visible vcall void push_path(cstr_t path, path_access_type_t access, cstr_t macro = null) pure
+				visible vcall cstr_t find_path(cstr_t macro)const pure
+				visible vcall bool open_file(cstr_t path, open_flags_t flags, ifile_ptr_t out, cstr_t macro = null)pure
 				
-				visible vcall bool open(cstr_t, input_text_file_ptr_t)pure;
-				visible vcall bool open(cstr_t, output_text_file_ptr_t)pure;
-				visible vcall bool open(cstr_t, input_binary_file_ptr_t)pure;
-				visible vcall bool open(cstr_t, output_binary_file_ptr_t)pure;
+				visible vcall bool open(cstr_t path, input_text_file_ptr_t out, cstr_t macro = null)pure
+				visible vcall bool open(cstr_t path, output_text_file_ptr_t out, cstr_t macro = null)pure
+				visible vcall bool open(cstr_t path, input_binary_file_ptr_t out, cstr_t macro = null)pure
+				visible vcall bool open(cstr_t path, output_binary_file_ptr_t out, cstr_t macro = null)pure
 			ang_end_interface();
 
 		}

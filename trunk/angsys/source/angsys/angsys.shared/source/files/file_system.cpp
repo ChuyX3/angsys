@@ -11,6 +11,11 @@
 #include <ang/core/files.h>
 #include "file_system.h"
 
+#if defined WINDOWS_PLATFORM
+#include <shlobj_core.h>
+#endif
+
+
 
 //#if defined _DEBUG
 //#define new new(__FILE__, __LINE__)
@@ -21,7 +26,7 @@ using namespace ang::core;
 using namespace ang::core::files;
 
 
-core::files::ifile_system_t core::files::ifile_system::fs_instance() {
+core::files::ifile_system_t core::files::ifile_system::instance() {
 	return ang::singleton<core::files::file_system_t>::instance().get();
 }
 
@@ -32,13 +37,21 @@ core::files::ifile_system_t core::files::ifile_system::fs_instance() {
 
 
 file_system::file_system()
-	: m_paths(null)
+	: m_paths()
 	, m_highest_priority(null)
 	, m_lowest_priority(null)
 {
-	m_paths = new collections::vector_buffer<string>();
 	m_highest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();
 	m_lowest_priority = new collections::vector_buffer<intf_wrapper<ifile_system>>();
+
+#if defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
+	PWSTR path;
+	if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &path)))
+	{
+		push_path(cwstr_t(path), path_access_type::all, "$(Documents)");
+		CoTaskMemFree(path);
+	}	
+#endif
 }
 
 file_system::~file_system()
@@ -69,112 +82,187 @@ bool file_system::register_file_system(ifile_system* fs, file_system_priority_t 
 	return false;
 }
 
-array_view<string> file_system::paths(file_system_priority_t p)const
+collections::ienum_ptr<string> file_system::paths(path_access_type_t access)const
 {
-	return m_paths;
-}
-
-void file_system::push_path(cstr_t path, file_system_priority_t p)
-{
-	auto it = m_paths->find([&](string const& p)
-	{ 
-		return path == (cstr_t)p;
+	return m_paths->find_all<string>([&](collections::tuple<path_access_type_t, string> const& tuple, string& out)
+	{
+		if (tuple.get<0>() == access) {
+			out = (cstr_t)tuple.get<1>(); //makes a copy to prevent external modifications
+			return true;
+		}
+		return false;
 	});
 
-	if (it.is_valid())
-		return;
-
-	if (p == file_system_priority::highest)
-	{
-		m_paths->push(path, false);
-	}
-	else if (p == file_system_priority::lowest)
-	{
-		m_paths->push(path, true);
-	}
 }
 
-bool file_system::open_file(cstr_t path_, open_flags_t flags, ifile_ptr_t out)
+void file_system::push_path(cstr_t path, path_access_type_t access, cstr_t macro)
 {
-	wstring path = path_; //must be wide string
+
+	auto it = m_paths->find([&](collections::tuple<path_access_type_t, string> const& tuple)
+	{ 
+		return (path == tuple.get<1>());
+	});
+
+	if (it.is_valid()) {
+		if (it->get<0>() != access)
+		{
+			it->set<0>(access);
+		}
+		if (macro.ptr() != null)
+			m_macros[macro] = path;
+		return;
+	}
+
+	if (macro.ptr() != null)
+		m_macros[macro] = path;
+	m_paths += collections::tuple<path_access_type_t, string>(access, path);
+}
+
+cstr_t file_system::find_path(cstr_t macro)const
+{
+	try { return m_macros[macro]; }
+	catch (...) { return null; }
+}
+
+bool file_system::open_file(cstr_t path_, open_flags_t flags, ifile_ptr_t out, cstr_t macro)
+{
 	if (out.is_empty())
 		return false;
 
 	for(auto fs : m_highest_priority)
 	{
 		
-		if (fs->open_file((cstr_t)path, flags, out))
+		if (fs->open_file((cstr_t)path_, flags, out, macro))
 			return true;
 	}
 
+	wstring path;
+
+	if (macro != null) // if not null tries create file here only
+	{
+		cstr_t macro_path;
+		if ((macro_path = find_path(macro)) != null)
+		{
+			path << macro_path << "\\"_s << path_;
+			system_file_t file = new core_file();
+			file->create((cstr_t)path, flags);
+			if (file->is_created())
+			{
+				*out = file;
+				return true;
+			}
+		}
+		return false;
+	}
+
 	system_file_t file = new core_file();
+	path = path_; //must be wide string
 	file->create((cstr_t)path, flags);
 	if (file->is_created())
 	{
 		*out = file;
 		return true;
 	}
-	else
+	else if (flags.is_active<open_flags::access_inout>())
 	{
-		for (string p : m_paths)
+		for (auto const& tuple : m_paths)
 		{
-			wstring _path = (wstring((cstr_t)p) + "/"_s) += path;
-			file->create((cstr_t)_path, flags);
-			if (file->is_created())
+			if (tuple.get<0>() == path_access_type::all)
 			{
-				*out = static_cast<ifile*>(file);
-				return true;
+				path->copy(tuple.get<1>());
+				path << "/"_s <<  path_;
+				file->create((cstr_t)path, flags);
+				if (file->is_created())
+				{
+					*out = static_cast<ifile*>(file);
+					return true;
+				}
+			}	
+		}
+	}
+	else if (flags.is_active<open_flags::access_out>())
+	{
+		for (auto const& tuple : m_paths)
+		{
+			if (tuple.get<0>() == path_access_type::write)
+			{
+				path->copy(tuple.get<1>());
+				path << "/"_s << path_;
+				file->create((cstr_t)path, flags);
+				if (file->is_created())
+				{
+					*out = static_cast<ifile*>(file);
+					return true;
+				}
 			}
 		}
 	}
+	else if (flags.is_active<open_flags::access_in>())
+	{
+		for (auto const& tuple : m_paths)
+		{
+			if (tuple.get<0>() == path_access_type::read)
+			{
+				path->copy(tuple.get<1>());
+				path << "/"_s << path_;
+				file->create((cstr_t)path, flags);
+				if (file->is_created())
+				{
+					*out = static_cast<ifile*>(file);
+					return true;
+				}
+			}
+		}
+	}
+	
 
 	for (auto fs : m_lowest_priority)
 	{
-		if (fs->open_file((cstr_t)path, flags, out))
+		if (fs->open_file((cstr_t)path_, flags, out))
 			return true;
 	}
 	
 	return false;
 }
 
-bool file_system::open(cstr_t path, input_text_file_ptr_t out)
+bool file_system::open(cstr_t path, input_text_file_ptr_t out, cstr_t macro)
 {
 	ifile_t _hfile;
 	if (out.is_empty()) 
 		return false;
-	if (!open_file(path, open_flags::access_in + open_flags::format_text + open_flags::open_exist, &_hfile))
+	if (!open_file(path, open_flags::access_in + open_flags::format_text + open_flags::open_exist, &_hfile, macro))
 		return false;
 	*out = new input_text_file();
 	(*out)->attach(_hfile);
 	return true;
 }
 
-bool file_system::open(cstr_t path, output_text_file_ptr_t out)
+bool file_system::open(cstr_t path, output_text_file_ptr_t out, cstr_t macro)
 {
 	ifile_t _hfile;
 	if (out.is_empty())
 		return false;
-	if (!open_file(path, open_flags::access_out + open_flags::format_text + open_flags::open_alway, &_hfile))
+	if (!open_file(path, open_flags::access_out + open_flags::format_text + open_flags::open_alway, &_hfile, macro))
 		return false;
 	//*out = new output_text_file();
 	//(*out)->attach(_hfile);
 	return true;
 }
 
-bool file_system::open(cstr_t path, input_binary_file_ptr_t out)
+bool file_system::open(cstr_t path, input_binary_file_ptr_t out, cstr_t macro)
 {
 	ifile_t _hfile;
-	if (!open_file(path, open_flags::access_in + open_flags::format_binary + open_flags::open_exist, &_hfile))
+	if (!open_file(path, open_flags::access_in + open_flags::format_binary + open_flags::open_exist, &_hfile, macro))
 		return false;
 	*out = new input_binary_file();
 	(*out)->attach(_hfile);
 	return true;
 }
 
-bool file_system::open(cstr_t path, output_binary_file_ptr_t out)
+bool file_system::open(cstr_t path, output_binary_file_ptr_t out, cstr_t macro)
 {
 	ifile_t _hfile;
-	if (!open_file(path, open_flags::access_out + open_flags::format_binary + open_flags::open_alway, &_hfile))
+	if (!open_file(path, open_flags::access_out + open_flags::format_binary + open_flags::open_alway, &_hfile, macro))
 		return false;
 //	*out = new output_binary_file();
 //	(*out)->attach(_hfile);

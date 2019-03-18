@@ -21,6 +21,7 @@ ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::files::ifile, intf);
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::files::ifile_system, intf);
 
 safe_enum_rrti2(ang::core::files, file_system_priority);
+safe_enum_rrti2(ang::core::files, path_access_type);
 
 //#define  MY_TYPE ang::collections::pair<ang::core::files::path, ang::core::files::pack_file_info>
 //#define MY_ALLOCATOR ang::memory::default_allocator
@@ -111,7 +112,6 @@ open_flags_t ang::core::files::get_format(text::encoding_t encoding)
 	switch (encoding.get())
 	{
 	case text::encoding::ascii: return get_encoding<text::encoding::ascii>();
-	case text::encoding::utf8: return get_encoding<text::encoding::utf8>();
 	case text::encoding::utf16_le: return get_encoding<text::encoding::utf16_le>();
 	case text::encoding::utf16_be: return get_encoding<text::encoding::utf16_be>();
 	case text::encoding::utf32_le: return get_encoding<text::encoding::utf32_le>();
@@ -119,6 +119,7 @@ open_flags_t ang::core::files::get_format(text::encoding_t encoding)
 	case text::encoding::unicode: return get_encoding<text::encoding::unicode>();
 	case text::encoding::utf16: return get_encoding<text::encoding::utf16>();
 	case text::encoding::utf32: return get_encoding<text::encoding::utf32>();
+	case text::encoding::utf8: return get_encoding<text::encoding::utf8>();
 	default:  return open_flags::format_utf8; //utf8 for default
 	}
 }
@@ -131,11 +132,11 @@ text::encoding_t ang::core::files::get_format(open_flags_t encoding)
 	switch ((encoding.get() & (open_flags)0X1F).get())
 	{
 	case open_flags::format_ascii: return text::encoding::ascii;
-	case open_flags::format_utf8: return text::encoding::utf8;
 	case open_flags::format_utf16_le: return text::encoding::utf16_le;
 	case open_flags::format_utf16_be: return text::encoding::utf16_be;
 	case open_flags::format_utf32_le: return text::encoding::utf32_le;
 	case open_flags::format_utf32_be: return text::encoding::utf32_be;
+	//case open_flags::format_utf8: return text::encoding::utf8;
 	default:  return text::encoding::utf8; //utf8 for default
 	}
 }
@@ -160,7 +161,7 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::files::file, object);
 
 bool file::create(cstr_t path, open_flags_t flags)
 {
-	auto fs = ifile_system::fs_instance();
+	auto fs = ifile_system::instance();
 	if (fs == null)
 		return false;
 	if (!fs->open_file(path , flags, &m_hfile))

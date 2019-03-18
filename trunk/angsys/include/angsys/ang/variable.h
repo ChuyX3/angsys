@@ -5,12 +5,12 @@
 namespace ang
 {
 	ang_begin_interface(LINK ivariant)
-		visible vcall rtti_t const& value_type()const pure;
-		visible vcall bool set_value(rtti_t const&, unknown_t)pure;
-		visible vcall bool get_value(rtti_t const&, unknown_t)const pure;
-		visible vcall variant clone()const pure;
-		visible vcall wstring to_string()const pure;
-		visible vcall wstring to_string(text::text_format_t)const pure;
+		visible vcall rtti_t const& value_type()const pure
+		visible vcall bool set_value(rtti_t const&, unknown_t)pure
+		visible vcall bool get_value(rtti_t const&, unknown_t)const pure
+		visible vcall variant clone()const pure
+		visible vcall wstring to_string()const pure
+		visible vcall wstring to_string(text::text_format_t)const pure
 		template<typename T> bool set_value(T const& val);
 		template<typename T> bool get_value(T& val)const;
 	ang_end_interface();
