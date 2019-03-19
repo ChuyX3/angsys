@@ -9,13 +9,15 @@ using namespace ang;
 
 int main(int argc, char*argv[])
 {
-	array<string> args(array_view<char*>(argc, argv));
+	array<astring> args(array_view<char*>(argc, argv));
 	engine::framework_t framework = new engine::framework();
 
 	return platform::windows::app::run_async([&](platform::windows::app_t app) 
 	{
-		core::files::ifile_system* fs = core::files::ifile_system::fs_instance();
-		fs->push_path(L"../../../third_party"_s, core::files::file_system_priority::highest);
+		core::files::ifile_system* fs = core::files::ifile_system::instance();
+		
+		fs->push_path(L"./res"_s, core::files::path_access_type::read, "$(data)");
+		fs->push_path(L"../../../third_party/res"_s, core::files::path_access_type::read, "$(data)");
 
 		app->main_wnd = new platform::windows::window();
 

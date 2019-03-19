@@ -144,7 +144,7 @@ core::async::iasync<dword> ui_thread::run_async()
 	ui_thread_t auto_save = this;
 	return m_thread->core_thread->run_async<dword>([=](core::async::iasync<dword>)->dword
 	{
-		return auto_save.get()->run();
+		return auto_save->run();
 	});
 }
 

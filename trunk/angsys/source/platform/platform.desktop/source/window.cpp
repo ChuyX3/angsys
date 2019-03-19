@@ -508,7 +508,7 @@ imessage_listener_t window::dispatcher()const
 
 events::event_token_t window::listen_to(event_t event)
 {
-	switch ((win_msg)(core_msg)event.get()->msg_type())
+	switch ((win_msg)(core_msg)event->msg_type())
 	{
 	//case win_msg::created:
 	//	return m_created_event += event;

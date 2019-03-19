@@ -174,7 +174,7 @@ core::async::iasync<bool> effect_library::load_async(dom::xml::xml_node_t node)
 	effect_library_t auto_save = this;
 	return dispatcher()->run_async<bool>([=](core::async::iasync<bool> task)->bool
 	{
-		return auto_save.get()->load(node);
+		return auto_save->load(node);
 	});
 }
 
@@ -183,7 +183,7 @@ core::async::iasync<bool> effect_library::save_async(dom::xml::xml_document_t do
 	effect_library_t auto_save = const_cast<effect_library*>(this);
 	return dispatcher()->run_async<bool>([=](core::async::iasync<bool> task)->bool
 	{
-		return auto_save.get()->save(doc);
+		return auto_save->save(doc);
 	});
 }
 
@@ -232,7 +232,7 @@ core::async::iasync<ilibrary_t> effect_library::load_library_async(dom::xml::xml
 	effect_library_t auto_save = const_cast<effect_library*>(this);
 	return dispatcher()->run_async<ilibrary_t>([=](core::async::iasync<ilibrary_t> task)->ilibrary_t
 	{
-		return auto_save.get()->load_library(node);
+		return auto_save->load_library(node);
 	});
 }
 
@@ -241,7 +241,7 @@ core::async::iasync<iresource_t> effect_library::load_resource_async(dom::xml::x
 	effect_library_t auto_save = const_cast<effect_library*>(this);
 	return dispatcher()->run_async<iresource_t>([=](core::async::iasync<iresource_t> task)->iresource_t
 	{
-		return auto_save.get()->load_resource(node);
+		return auto_save->load_resource(node);
 	});
 }
 
@@ -283,7 +283,7 @@ core::async::iasync<ieffect_t> effect_library::load_effect_async(dom::xml::xml_n
 	effect_library_t auto_save = const_cast<effect_library*>(this);
 	return dispatcher()->run_async<ieffect_t>([=](core::async::iasync<ieffect_t> task)->ieffect_t
 	{
-		return auto_save.get()->load_effect(node);
+		return auto_save->load_effect(node);
 	});
 }
 
@@ -305,7 +305,7 @@ core::async::iasync<itechnique_t> effect_library::load_technique_async(dom::xml:
 	effect_library_t auto_save = const_cast<effect_library*>(this);
 	return dispatcher()->run_async<itechnique_t>([=](core::async::iasync<itechnique_t> task)->itechnique_t
 	{
-		return auto_save.get()->load_technique(node);
+		return auto_save->load_technique(node);
 	});
 }
 

@@ -200,6 +200,32 @@ bool resource::save(dom::xml::xml_document_t node)const
 	return false;
 }
 
+core::async::iasync<bool> resource::load_async(dom::xml::xml_node_t node)
+{
+	auto lib = m_library.lock();
+	if (lib.is_empty())
+		return null;
+	resource_t auto_save = this;
+	return lib->factory()->driver()->dispatcher()->run_async<bool>(
+		[=](core::async::iasync<bool> task)
+	{
+		return auto_save->load(node);
+	});
+}
+
+core::async::iasync<bool> resource::save_async(dom::xml::xml_document_t doc)const
+{
+	auto lib = m_library.lock();
+	if (lib.is_empty())
+		return null;
+	resource_t auto_save = const_cast<resource*>(this);
+	return lib->factory()->driver()->dispatcher()->run_async<bool>(
+		[=](core::async::iasync<bool> task)
+	{
+		return auto_save->save(doc);
+	});
+}
+
 bool effects::technique::load(dom::xml::xml_node_t node)
 {
 	using namespace ang::dom;

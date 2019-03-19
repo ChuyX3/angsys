@@ -27,7 +27,7 @@ inline ang::core::async::iasync<T> ang::core::async::task::run_async(delegates::
 	object_wrapper<task_handler<T>> wrapper = new task_handler<T>();
 	wrapper->attach(run_async<void>([=](iasync<void>)
 	{
-		wrapper.get()->done(func.get()->invoke(wrapper.get()));
+		wrapper->done(func(wrapper.get()));
 	}));
 	return wrapper;
 }
@@ -44,7 +44,7 @@ namespace ang
 					task_handler_ptr<T> wrapper = new task_handler<T>();
 					wrapper->attach(task->run_async(function<void(iasync<void>)>([=](iasync<void>)
 					{
-						wrapper.get()->done(func.get()->invoke(wrapper.get()));
+						wrapper->done(func(wrapper.get()));
 					})));
 					return wrapper;
 				}
@@ -63,7 +63,7 @@ namespace ang
 				static iasync<U> then(Task* task, ang::core::delegates::function<U(ang::core::async::iasync<T>)> func) {
 					task_handler_ptr<U> wrapper = new task_handler<U>();
 					wrapper->attach(task->then([=](iasync<T> task) {
-						wrapper.get()->done(func.get()->invoke(ang::forward<iasync<T>>(task)));
+						wrapper->done(func(ang::forward<iasync<T>>(task)));
 					}));
 					return wrapper.get();
 				}
@@ -163,7 +163,7 @@ inline ang::core::async::iasync<void> ang::core::async::task_handler<T>::then(de
 	iasync<T> this_ = this;
 	return m_task->then([=](iasync<void>)
 	{
-		func.get()->invoke(this_.get());
+		func(this_.get());
 		//this_ = null;
 	});
 }

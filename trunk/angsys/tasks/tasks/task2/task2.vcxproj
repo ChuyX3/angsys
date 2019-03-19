@@ -95,7 +95,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)include\;$(SolutionDir)..\..\include\angsys\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)include\;$(SolutionDir)..\..\include\angsys\;$(SolutionDir)..\..\source\engine\engine.shared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -111,7 +111,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)include\;$(SolutionDir)..\..\include\angsys\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)include\;$(SolutionDir)..\..\include\angsys\;$(SolutionDir)..\..\source\engine\engine.shared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,7 +129,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)include\;$(SolutionDir)..\..\include\angsys\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)include\;$(SolutionDir)..\..\include\angsys\;$(SolutionDir)..\..\source\engine\engine.shared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,7 +149,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)include\;$(SolutionDir)..\..\include\angsys\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)include\;$(SolutionDir)..\..\include\angsys\;$(SolutionDir)..\..\source\engine\engine.shared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -159,9 +159,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\engine.h" />
-    <ClInclude Include="include\scenes\model_loader.h" />
-    <ClInclude Include="include\scenes\scenes.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -172,16 +169,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="source\engine.cpp" />
-    <ClCompile Include="source\scenes\camera.cpp" />
-    <ClCompile Include="source\scenes\indexed_model.cpp" />
-    <ClCompile Include="source\scenes\model.cpp" />
-    <ClCompile Include="source\scenes\ordered_model.cpp" />
-    <ClCompile Include="source\scenes\scenes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\source\angsys\angsys.desktop\angsys.desktop.vcxproj">
       <Project>{6e24f0d8-08fb-4df2-9e07-d208c4faace3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\source\engine\engine.desktop\engine.desktop.vcxproj">
+      <Project>{a41f7f9b-8b43-455a-ae8a-31cc11904b4d}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\source\graphics\graphics.desktop\graphics.desktop.vcxproj">
       <Project>{a120837b-d0ca-4716-ac65-fdd6877cbd25}</Project>
@@ -222,9 +216,6 @@
     <None Include="res\shaders\sky_box.hlsl">
       <FileType>Document</FileType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="engine.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

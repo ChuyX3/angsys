@@ -126,6 +126,21 @@ bool library::load_sources(dom::xml::xml_node_t sources)
 	return parent()->load_sources(sources);
 }
 
+core::async::iasync<bool> library::load_async(dom::xml::xml_node_t node)
+{
+	library_t auto_save = this;
+	return m_async_worker->run_async<bool>(
+		[=](core::async::iasync<bool> task)
+	{
+		return auto_save->load(node);
+	});
+}
+
+core::async::iasync<bool> library::save_async(dom::xml::xml_document_t doc)const
+{
+
+}
+
 ilibrary_t library::load_library(dom::xml::xml_node_t  node)
 {
 	cstr_t name = node->xml_name();
@@ -178,7 +193,7 @@ core::async::iasync<ilibrary_t> library::load_library_async(dom::xml::xml_node_t
 	return dispatcher()->run_async<ilibrary_t>(
 		[=](core::async::iasync<ilibrary_t> task)->ilibrary_t
 	{
-		return auto_save.get()->load_library(node);
+		return auto_save->load_library(node);
 	});
 }
 
@@ -188,7 +203,7 @@ core::async::iasync<iresource_t> library::load_resource_async(dom::xml::xml_node
 	return dispatcher()->run_async<iresource_t>(
 		[=](core::async::iasync<iresource_t> task)->iresource_t
 	{
-		return auto_save.get()->load_resource(node);
+		return auto_save->load_resource(node);
 	});
 }
 

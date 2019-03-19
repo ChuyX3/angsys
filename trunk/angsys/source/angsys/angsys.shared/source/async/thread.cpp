@@ -273,16 +273,6 @@ iasync<void> worker_thread::run_async(core::delegates::function<void(iasync<void
 	return post_task(action).get();
 }
 
-//iasync<void> worker_thread::run_async(core::delegates::function<void(iasync<void>, var_args_t)> action, var_args_t args)
-//{
-//	if ((async_action_status::finished | async_action_status::attached) & _state)
-//		return null;
-//	return post_task([=](iasync<void> async)
-//	{
-//		action.get()->invoke(async.get(), args.get());
-//	}).get();
-//}
-
 bool worker_thread::attach_loop(function<void(void)> func)
 {
 	scope_locker<mutex_t> lock = thread_manager::instance()->main_mutex();

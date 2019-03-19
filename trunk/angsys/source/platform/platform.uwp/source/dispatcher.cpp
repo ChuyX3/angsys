@@ -75,7 +75,7 @@ core::async::iasync<dword> dispatcher::post_msg(events::message msg)
 	core::async::task_handler_ptr<dword> handler = new core::async::task_handler<dword>();
 	handler->attach(run_async([this, handler,msg](core::async::iasync<void> task)
 	{
-		handler.get()->done(m_dispatch_message(msg));
+		handler->done(m_dispatch_message(msg));
 	}));
 	return handler.get();
 }

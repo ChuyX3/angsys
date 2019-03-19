@@ -1,23 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="source">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="include">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="res">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="include\scene">
-      <UniqueIdentifier>{d9dd545c-86ca-43cf-b529-c5c72a1f5e07}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\scene">
-      <UniqueIdentifier>{e62f3713-1b36-4a9c-9d15-82a5592fb816}</UniqueIdentifier>
     </Filter>
     <Filter Include="res\shaders">
       <UniqueIdentifier>{170f202f-04cb-4cb5-8e6b-b6d3adcce38c}</UniqueIdentifier>
@@ -32,36 +18,9 @@
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="source\scenes\camera.cpp">
-      <Filter>source\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scenes\indexed_model.cpp">
-      <Filter>source\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scenes\model.cpp">
-      <Filter>source\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scenes\ordered_model.cpp">
-      <Filter>source\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scenes\scenes.cpp">
-      <Filter>source\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\engine.cpp">
-      <Filter>source\scene</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="include\engine.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\scenes\model_loader.h">
-      <Filter>include\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="include\scenes\scenes.h">
-      <Filter>include\scene</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="res\fx_library.xml">
@@ -103,8 +62,5 @@
     <None Include="res\shaders\character.hlsl">
       <Filter>res\shaders</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="engine.natvis" />
   </ItemGroup>
 </Project>

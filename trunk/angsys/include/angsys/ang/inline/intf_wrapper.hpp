@@ -131,11 +131,7 @@ namespace ang
 
 		intf_wrapper_ptr<type> operator & (void);
 
-		type* operator -> (void) { 
-			return get();
-		}
-
-		type const* operator -> (void)const {
+		type* operator -> (void)const {
 			return get();
 		}
 

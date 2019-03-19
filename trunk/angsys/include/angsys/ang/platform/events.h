@@ -185,6 +185,7 @@ namespace ang
 		object_wrapper& operator = (object_wrapper const&);
 		object_wrapper& operator = (platform::events::base_event_handler*);
 		void operator () (objptr, platform::events::imsg_event_args_t)const;
+		type* operator ->()const { return m_ptr; }
 	};
 
 }
@@ -225,7 +226,6 @@ namespace ang
 			public:
 				void empty();
 				virtual int invoke(platform::events::imsg_event_args_t)const;				
-				virtual bool remove(platform::events::event_t);
 				int operator ()(platform::events::imsg_event_args_t)const;
 
 			public:

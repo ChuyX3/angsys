@@ -241,7 +241,7 @@ inline void ang::collections::array_buffer<T, allocator>::copy(ang::array_view<U
 	m_size = ar.size();
 
 	for (windex i = 0; i < m_size; ++i)
-		m_alloc.template construct<T, U const&>(&m_data[i], ar[i]);
+		m_alloc.template construct<T, U const&>((T*)&m_data[i], ar[i]);
 	//ar.set(null, 0);
 }
 

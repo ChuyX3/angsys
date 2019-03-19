@@ -6,19 +6,14 @@ using namespace ang;
 using namespace ang::engine;
 
 framework::framework()
-	: m_framerate(0)
-	, m_fram_count(0)
 {
-	m_scene = new scenes::scene();
-
-	resources::resource_t res;
-
-	res->as<textures::texture>();
-
+	//m_scene = new scenes::scene();
 }
 
 framework::~framework()
 {
+	resources::resource_manager::instance()->clear();
+	resources::resource_manager::release_instance();
 }
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::engine::framework);
@@ -37,16 +32,12 @@ void framework::init_graphics()
 	m_driver = graphics::create_graphic_driver(graph_driver_type::DirectX11, reinterpret_cast<long64&>(id));
 	m_surface = m_driver->create_surface(m_view);
 	m_surface->frame_buffer();
-
-	
-	
-
 #else
 	m_driver = graphics::create_graphic_driver(graph_driver_type::DirectX11);
+	m_factory = m_driver->get_factory();
 	m_surface = m_driver->create_surface(m_view);
-	m_surface->frame_buffer();
-#endif
 
+#endif
 
 	m_timer.fixed_time_step(true);
 	m_timer.frames_per_second(60);
@@ -95,21 +86,11 @@ void framework::load_scene()
 	doc = dom::xml::xml_document::from_file(file);
 	file->clear();
 
-	m_scene->load(m_driver, m_fx_library, m_tex_loader, doc->xml_root_element());
-
 	m_driver->blend_mode(blend_mode::enable);
 }
 
 void framework::update(core::time::step_timer const& timer)
 {
-	if (m_fram_count >= 120)
-	{
-		printf("%.8f\n", timer.framerate());
-		m_fram_count = 0;
-	}
-
-	m_fram_count++;
-	m_scene->update(timer);
 }
 
 void framework::draw()
@@ -117,17 +98,20 @@ void framework::draw()
 	m_driver->execute_on_thread_safe([&] 
 	{
 		m_surface->update();
-		m_scene->draw(m_driver, m_surface->frame_buffer());
+		m_driver->bind_frame_buffer(m_surface->frame_buffer());
+		m_driver->clear(colors::violet);
 		m_surface->swap_buffers(false);
 	});
 }
 
 void framework::close_graphics()
 {
-	m_scene->clear();
+	//m_scene->clear();
+	m_fx_library->clear();
 	m_fx_library = null;
+	m_tex_loader->clear();
 	m_tex_loader = null;
-	m_scene = null;
+	//m_scene = null;
 	m_surface = null;
 	m_driver = null;
 	resources::resource_manager::release_instance();

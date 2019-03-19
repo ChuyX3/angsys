@@ -367,7 +367,7 @@ core::async::iasync<void> core_window::post_task(core::async::iasync<void> async
 
 events::event_token_t core_window::listen_to(events::event_t e)
 {
-	switch (e.get()->msg_type())
+	switch (e->msg_type())
 	{
 	case events::core_msg::size:
 		return m_size_event += e;

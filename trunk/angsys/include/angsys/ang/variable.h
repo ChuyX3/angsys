@@ -103,8 +103,7 @@ namespace ang
 
 		intf_wrapper_ptr<type> operator & (void);
 		operator ang::intfptr()const;
-		type* operator -> (void);
-		type const* operator -> (void)const;
+		type* operator -> (void)const;
 		operator type* (void);
 		operator type const* (void)const;
 

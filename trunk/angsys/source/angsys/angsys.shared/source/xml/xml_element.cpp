@@ -37,11 +37,11 @@ xml_element_t xml_element::create_new(xml_document_t doc, const xml_element* ele
 			node->push_name(element->m_name);
 
 		if (!element->m_content.is_empty() && element->m_content->xml_is_type_of(xml_type::text))
-			node->push_value(element->m_content.get()->xml_as<xml_text>());
+			node->push_value(element->m_content->xml_as<xml_text>());
 		else if (!element->m_content.is_empty() && element->m_content->xml_is_type_of(xml_type::cdata))
-			node->push_data(element->m_content.get()->xml_as<xml_text>());
+			node->push_data(element->m_content->xml_as<xml_text>());
 		else if (!element->m_content.is_empty() && element->m_content->xml_is_type_of(xml_type::element_list))
-			node->push_children(element->m_content.get()->xml_as<ixml_collection>());
+			node->push_children(element->m_content->xml_as<ixml_collection>());
 		if (element->xml_has_attributes())
 			node->push_attributes(element->m_attributes.get());
 	}

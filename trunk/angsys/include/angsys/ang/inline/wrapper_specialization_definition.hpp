@@ -38,8 +38,7 @@
 		object_wrapper& operator = (ang::nullptr_t const&); \
 		object_wrapper_ptr<type> operator & (void); \
 		inline operator ang::objptr()const{ return (object*)get(); } \
-		type* operator -> (void); \
-		type const* operator -> (void)const; \
+		type* operator -> (void)const; \
 		operator type* (void); \
 		operator type const* (void)const;
 
@@ -81,8 +80,7 @@
 		intf_wrapper& operator = (intf_wrapper const&); \
 		intf_wrapper_ptr<type> operator & (void); \
 		operator ang::intfptr()const; \
-		type* operator -> (void); \
-		type const* operator -> (void)const; \
+		type* operator -> (void)const; \
 		operator type* (void); \
 		operator type const* (void)const;
 
@@ -121,8 +119,7 @@
 		inline intf_wrapper& operator = (intf_wrapper const&); \
 		inline inline intf_wrapper_ptr<type> operator & (void); \
 		inline operator ang::intfptr()const; \
-		inline type* operator -> (void); \
-		inline type const* operator -> (void)const; \
+		inline type* operator -> (void)const; \
 		inline operator type* (void) { return get();} \
 		inline operator type const* (void)const { return get();}
 

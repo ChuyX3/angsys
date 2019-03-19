@@ -40,18 +40,12 @@ namespace ang
 			platform::icore_view_t m_view;
 			idriver_t m_driver;
 			isurface_t m_surface;
-			//iframe_buffer_t m_render_target;
+			ifactory_t m_factory;
+
 			core::time::step_timer m_timer;
 
 			effects::ieffect_library_t m_fx_library;
 			textures::itexture_loader_t m_tex_loader;
-
-			scenes::scene_t m_scene;
-
-			long m_framerate;
-			long m_fram_count;
-
-			//Windows::Graphics::Holographic::HolographicSpace^ m_holographicSpace;
 
 		public:
 			framework();

@@ -24,6 +24,7 @@ namespace ang
 
 			ang_begin_interface(LINK ilibrary, dom::xml::ixml_serializable)
 				visible vcall ifactory_t factory()const pure
+				visible vcall void clear()pure
 				visible vcall bool load_sources(dom::xml::xml_node_t) pure
 				visible vcall ilibrary_t load_library(dom::xml::xml_node_t) pure
 				visible vcall iresource_t load_resource(dom::xml::xml_node_t) pure

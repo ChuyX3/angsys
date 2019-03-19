@@ -126,12 +126,7 @@ ang::intf_wrapper<MY_TYPE>::operator ang::intfptr()const
 	return static_interface_cast(get());
 }
 
-MY_TYPE* ang::intf_wrapper<MY_TYPE>::operator -> (void)
-{
-	return get();
-}
-
-MY_TYPE const* ang::intf_wrapper<MY_TYPE>::operator -> (void)const
+MY_TYPE* ang::intf_wrapper<MY_TYPE>::operator -> (void)const
 {
 	return get();
 }

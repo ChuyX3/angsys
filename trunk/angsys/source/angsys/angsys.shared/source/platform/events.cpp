@@ -124,27 +124,6 @@ bool event_listener::pop(event_token_t token)
 	return m_functions->pop_at(token);
 }
 
-bool event_listener::remove(events::event_t func)
-{
-	//m_functions += ang::move(func);
-	//return m_functions.get()->size() - 1;
-	return false;
-}
-
-//event_listener& event_listener::operator = (listener&& other)
-//{
-//	m_functions = ang::move(other.m_functions);
-//	return *this;
-//}
-//
-//event_listener& event_listener::operator = (listener const& other)
-//{
-//	if (m_functions.is_empty())
-//		m_functions = new collections::vector_data<function>();
-//	m_functions->copy(other.m_functions.get());
-//	return *this;
-//}
-
 event_token_t event_listener::operator += (platform::events::event_t func)
 {
 	return push(func);
@@ -164,7 +143,7 @@ int event_listener::invoke(platform::events::imsg_event_args_t args)const
 		objptr caller = m_parent.lock<object>();
 		auto msg = args->msg().msg();
 		for(event_t e : m_functions) {
-			if (msg == e.get()->msg_type())
+			if (msg == e->msg_type())
 			{
 				c++;
 				e(caller, args);

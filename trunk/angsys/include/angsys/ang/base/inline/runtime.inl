@@ -357,7 +357,7 @@ namespace ang
 		struct __type_info_builder_genre_function_helper<T(*)(Ts...)> {
 			static rtti_t const& type_of() {
 				rtti_t const& info = rtti::regist(
-					text::string_pool::instance()->save_string(((string(rtti::type_of<T>().type_name()) += "(*)("_s) += runtime::args_list_type_name<Ts...>()) += ")"_s)
+					text::string_pool::instance()->save_string(((astring(rtti::type_of<T>().type_name()) += "(*)("_s) += runtime::args_list_type_name<Ts...>()) += ")"_s)
 					, genre::function_type, sizeof(wsize), alignof(wsize));
 				return info;
 			}

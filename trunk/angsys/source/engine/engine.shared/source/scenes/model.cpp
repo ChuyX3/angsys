@@ -89,7 +89,7 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 					scene->run_async<vector<indexed_model::model_element>>(
 						[this, loader, scene, node](core::async::iasync<vector<indexed_model::model_element>> task)
 					{ 
-						return loader.get()->load(node);
+						return loader->load(node);
 					})->then<bool>([this, loader, scene](core::async::iasync<vector<indexed_model::model_element>> task)
 					{
 						textures::itexture_loader_t texloader = scene->texture_loader();
@@ -166,14 +166,10 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 		
 		ordered_model_t loader = new ordered_model();
 
-		//if (bin_file.is_empty() || !bin_file->is_valid()) return false;
-
-		//loader->load_async(_bin_file)
-
 		scene->run_async<collections::vector<ordered_model::model_element>>(
 			[this, loader, scene, bin_file](core::async::iasync<collections::vector<ordered_model::model_element>> task)
 		{
-			return null;// loader.get()->load(bin_file);
+			return null;
 		})->then<bool>(
 			[this, loader, scene, txt_file](core::async::iasync<collections::vector<ordered_model::model_element>> task)
 		{
@@ -252,7 +248,7 @@ bool model::load(scene_t scene, dom::xml::xml_node_t node)
 			catch (exception_t const&) {
 			}
 
-			return loader.get()->load(txt_file);//trying load text model
+			return loader->load(txt_file);//trying load text model
 		})->then<bool>([this, loader, scene, txt_file](core::async::iasync<collections::vector<ordered_model::model_element>> task) 
 		{
 			textures::itexture_loader_t texloader = scene->texture_loader();

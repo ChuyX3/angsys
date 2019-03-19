@@ -163,7 +163,7 @@ streams::itext_output_stream_t& xml_node::xml_print(streams::itext_output_stream
 		if (xml_has_name() && xml_has_value())
 		{
 			stream << (wstring)m_name;
-			string val = m_content.get()->xml_as<string_buffer>();
+			string val = m_content->xml_as<string_buffer>();
 			
 			if (val->find("\""_s, 0) != invalid_index)
 			{
@@ -249,14 +249,14 @@ xml_node_t xml_node::xml_first_child()const
 {
 	if(m_content.is_empty() || !m_content->xml_is_type_of(xml_type::collection))
 		return null;
-	return *m_content.get()->xml_as<ixml_collection>()->begin();
+	return *m_content->xml_as<ixml_collection>()->begin();
 }
 
 xml_node_t xml_node::xml_last_child()const
 {
 	if (m_content.is_empty() || !m_content->xml_is_type_of(xml_type::collection))
 		return null;
-	return *m_content.get()->xml_as<ixml_collection>()->rbegin();
+	return *m_content->xml_as<ixml_collection>()->rbegin();
 }
 
 xml_text_t xml_node::xml_name()const
@@ -268,7 +268,7 @@ xml_text_t xml_node::xml_value()const
 {
 	if (m_content.is_empty())
 		return null;
-	return m_content.get()->xml_as<xml_text>();
+	return m_content->xml_as<xml_text>();
 }
 
 xml_text_t xml_node::xml_namespace()const
@@ -291,7 +291,7 @@ ixml_collection_t xml_node::xml_children()const
 {
 	if (m_content.is_empty())
 		return null;
-	return m_content.get()->xml_as<ixml_collection>();
+	return m_content->xml_as<ixml_collection>();
 }
 
 xml_attributes_t xml_node::xml_attributes()const

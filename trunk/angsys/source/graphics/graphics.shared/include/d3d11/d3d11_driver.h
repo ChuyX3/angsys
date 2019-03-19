@@ -255,7 +255,7 @@ namespace ang
 				core::async::iasync<T> create_task(function<T(core::async::iasync<T>, d3d11_driver_t)> func)const {
 					d3d11_driver_t auto_save = const_cast<d3d11_driver*>(this);
 					return m_async_worker->run_async<T>([auto_save, func](core::async::iasync<T> async) {
-						return func.get()->invoke(async, auto_save);
+						return func(async, auto_save);
 					});
 				}
 				inline core::files::ifile_system* get_file_system()const { return m_fs.is_empty() ? core::files::ifile_system::instance().get() : m_fs.get(); }
