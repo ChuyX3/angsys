@@ -117,6 +117,11 @@ ang::comparision_result_t ang::collections::list_object<MY_TYPE, MY_ALLOC>::comp
 	return comparision_result::diferent;
 }
 
+void ang::collections::list_object<MY_TYPE, MY_ALLOC>::dispose()
+{
+	clear();
+}
+
 void ang::collections::list_object<MY_TYPE, MY_ALLOC>::clear()
 {
 	while (pop());

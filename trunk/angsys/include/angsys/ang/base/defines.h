@@ -115,10 +115,38 @@
 #define _DECLSPEC_NOVTABLE 
 #endif // WINDOWS_PLATFORM
 
-#define ANG_UTILS_TO_STRING_(x) #x
+#define ANG_UTILS_TO_STRING_(...) #__VA_ARGS__
 #define ANG_UTILS_TO_STRING(...) ANG_UTILS_TO_STRING_(__VA_ARGS__)
 #define ANG_UTILS_TO_STRING_OBJ_(...) ang::castr_t(#__VA_ARGS__)
 #define ANG_UTILS_TO_STRING_OBJ(...) ANG_UTILS_TO_STRING_OBJ_(__VA_ARGS__)
+
+#ifdef __cplusplus
+#ifndef ANG_NO_RUNTIME_ERRORS
+#define ANG_RUNTIME_ERROR(_FLAG, _MSG) static_assert(_FLAG, _MSG)
+
+#define STATIC_WARNING1(_COND) \
+struct ANG_CATAB(warning,__LINE__) { \
+  ANG_DEPRECATE(void warning(ang::false_type const& ), __FILE__ "(" ANG_UTILS_TO_STRING(__LINE__) "): warning :"  ) {}; \
+  void warning(ang::true_type const& ) {}; \
+  ANG_CATAB(warning,__LINE__)() {warning(ang::integer_constant<bool,(_COND)>());} \
+}
+
+#define STATIC_WARNING2(_COND, _MSG) \
+struct ANG_CATAB(warning,__LINE__) { \
+  ANG_DEPRECATE(void warning(ang::false_type const& ), __FILE__ "(" ANG_UTILS_TO_STRING(__LINE__) "): warning :" _MSG ) {}; \
+  void warning(ang::true_type const& ) {}; \
+  ANG_CATAB(warning,__LINE__)() {warning(ang::integer_constant<bool,(_COND)>());} \
+}
+
+#define STATIC_WARNING_(_WARNING_, ...) ANG_EXPAND(_WARNING_(__VA_ARGS__))
+#define STATIC_WARNING(...) ANG_EXPAND(STATIC_WARNING_(ANG_CATAB(STATIC_WARNING, ANG_EXPAND(ANG_NUM_ARGS(__VA_ARGS__))), __VA_ARGS__))
+
+
+#else
+#define ANG_RUNTIME_ERROR(...)do{}while(0)
+#endif
+#endif
+
 
 
 #endif//__ANG_BASE_DEFINES_H__

@@ -46,6 +46,13 @@ namespace ang
 		typedef object_wrapper<T> smart_ptr_t; typedef typename smart_ptr_t::type type;
 	};
 
+	template<> struct smart_ptr_type<void, false, false> {
+		static constexpr ang::smart_type smart_type = ang::smart_type::none;
+		typedef objptr smart_ptr_t; typedef object type;
+	};
+
+	template<typename T> using nullable = typename smart_ptr_type<T>::smart_ptr_t;
+
 	template<typename T, bool IS_OBJECT = is_object<T>::value>
 	struct ___static_interface_cast_imp {
 		static intf* cast(T* ptr) {
@@ -76,6 +83,7 @@ namespace ang
 	ang_begin_interface(LINK iobject)
 		visible vcall dword add_ref() pure
 		visible vcall dword release() pure
+		intern vcall void dispose() pure
 	ang_end_interface();
 }
 

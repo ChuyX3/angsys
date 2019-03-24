@@ -33,57 +33,6 @@ namespace ang
 		{
 			LINK ulong64 get_performance_time_us();
 
-			//class step_timer
-			//{
-			//private:
-			//	ulong64 m_firtTime;
-			//	ulong64 m_last_time;
-			//	ulong64 m_curr_time;
-			//	ulong m_frame_rate;
-			//public:
-			//	step_timer()
-			//		: m_firtTime(0)
-			//		, m_last_time(0)
-			//		, m_curr_time(0)
-			//		, m_frame_rate(0)
-			//	{
-			//		m_firtTime = m_last_time = m_curr_time = get_performance_time_us();
-			//	}
-			//	~step_timer() {
-			//
-			//	}
-			//
-			//public: //Properties
-			//	ulong64 total()const {
-			//		return m_curr_time - m_firtTime;
-			//	}
-			//	ulong64 delta()const {
-			//		return m_curr_time - m_last_time;
-			//	}
-			//	ulong frame_rate()const {
-			//		return m_frame_rate;
-			//	}
-			//	void frame_rate(ulong value) {
-			//		m_frame_rate = value;
-			//	}
-			//
-			//public: //Methods
-			//	void update() {
-			//		m_last_time = m_curr_time;
-			//		m_curr_time = get_performance_time_us();
-			//	}
-			//	void reset() {
-			//		m_firtTime = m_last_time = m_curr_time = get_performance_time_us();
-			//	}
-			//
-			//	template<typename F>
-			//	inline auto tick(F f) {
-			//		if(m_frame_rate > )
-			//		update();
-			//		return f();
-			//	}
-			//};
-
 			class step_timer
 			{
 			public:
@@ -242,4 +191,4 @@ namespace ang
 #endif//LINK
 
 
-#endif//__ANG_CORE_ASYNC_H__
+#endif//__ANG_CORE_TIMER_H__

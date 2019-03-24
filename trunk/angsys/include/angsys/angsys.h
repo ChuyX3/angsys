@@ -52,7 +52,6 @@ namespace ang
 	template<typename T> class variable;
 	template<typename T> using variable_t = object_wrapper<variable<T>>;
 	template<typename T> using shared_ptr = variable_t<T>;
-	template<typename T> using nullable = variable_t<T>;
 	template<typename T, typename...Ts> shared_ptr<T> make_shared(Ts... args);
 
 	typedef variable<bool> boolean;

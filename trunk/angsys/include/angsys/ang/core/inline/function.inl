@@ -140,11 +140,11 @@ ang::object_wrapper<ang::core::delegates::function_object<T(Ts...)>>::object_wra
 template<typename T, typename... Ts>
 ang::object_wrapper<ang::core::delegates::function_object<T(Ts...)>>::~object_wrapper()
 {
-	clear();
+	reset();
 }
 
 template<typename T, typename... Ts>
-void ang::object_wrapper<ang::core::delegates::function_object<T(Ts...)>>::clear()
+void ang::object_wrapper<ang::core::delegates::function_object<T(Ts...)>>::reset()
 {
 	if (m_ptr)m_ptr->release();
 	m_ptr = null;
@@ -184,13 +184,19 @@ ang::core::delegates::function_object<T(Ts...)>** ang::object_wrapper<ang::core:
 	return &m_ptr;
 }
 
+template<typename T, typename... Ts>
+ang::object_wrapper<ang::core::delegates::function_object<T(Ts...)>>& ang::object_wrapper<ang::core::delegates::function_object<T(Ts...)>>::operator = (ang::core::delegates::function_object<T(Ts...)>* func)
+{
+	set(func);
+	return*this;
+}
 
 template<typename T, typename... Ts>
 ang::object_wrapper<ang::core::delegates::function_object<T(Ts...)>>& ang::object_wrapper<ang::core::delegates::function_object<T(Ts...)>>::operator = (ang::object_wrapper<ang::core::delegates::function_object<T(Ts...)>> && other)
 {
 	if (this == &other)
 		return *this;
-	clear();
+	reset();
 	m_ptr = other.m_ptr;
 	other.m_ptr = null;
 	return*this;
@@ -252,11 +258,11 @@ ang::object_wrapper<ang::core::delegates::function_object<void(Ts...)>>::object_
 template<typename... Ts>
 ang::object_wrapper<ang::core::delegates::function_object<void(Ts...)>>::~object_wrapper()
 {
-	clear();
+	reset();
 }
 
 template<typename... Ts>
-void ang::object_wrapper<ang::core::delegates::function_object<void(Ts...)>>::clear()
+void ang::object_wrapper<ang::core::delegates::function_object<void(Ts...)>>::reset()
 {
 	if (m_ptr)m_ptr->release();
 	m_ptr = null;
@@ -296,13 +302,19 @@ ang::core::delegates::function_object<void(Ts...)>** ang::object_wrapper<ang::co
 	return &m_ptr;
 }
 
+template<typename... Ts>
+ang::object_wrapper<ang::core::delegates::function_object<void(Ts...)>>& ang::object_wrapper<ang::core::delegates::function_object<void(Ts...)>>::operator = (ang::core::delegates::function_object<void(Ts...)>* func)
+{
+	set(func);
+	return*this;
+}
 
 template<typename... Ts>
 ang::object_wrapper<ang::core::delegates::function_object<void(Ts...)>>& ang::object_wrapper<ang::core::delegates::function_object<void(Ts...)>>::operator = (ang::object_wrapper<ang::core::delegates::function_object<void(Ts...)>> && other)
 {
 	if (this == &other)
 		return *this;
-	clear();
+	reset();
 	m_ptr = other.m_ptr;
 	other.m_ptr = null;
 	return*this;

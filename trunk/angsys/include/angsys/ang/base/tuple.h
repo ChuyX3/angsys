@@ -124,6 +124,9 @@ namespace ang //constants
 			static tuple<void> m_rest;
 		};
 
+		template<typename T> tuple<void> tuple<T>::m_rest;
+
+
 		template<typename T, typename... Ts>
 		struct tuple {
 			static constexpr wsize field_count = tuple<Ts...>::field_count + 1;
@@ -185,39 +188,75 @@ namespace ang //constants
 			T m_first;
 			tuple<Ts...> m_rest;
 		};
-
 	}
 
+	template<typename F, typename... Ts> struct unpack_args_helper;
+
+	template<typename F, typename T, typename... Ts>
+	struct unpack_args_helper<F, T, Ts...> {
+		template<typename...A>
+		static auto expand(F func, collections::tuple<T, Ts...>& pack, A... args) {
+			return unpack_args_helper<F, Ts...>::expand(func, pack.rest(), ang::forward<A>(args)..., ang::forward<T>(pack.first()));
+		}
+		static auto expand(F func, collections::tuple<T, Ts...>& pack) {
+			return unpack_args_helper<F, Ts...>::expand(func, pack.rest(), ang::forward<T>(pack.first()));
+		}
+	};
+
+	template<typename F>
+	struct unpack_args_helper<F> {
+		template<typename...A>
+		static auto expand(F func, collections::tuple<void>& pack, A... args) {
+			return func(ang::forward<A>(args)...);
+		}
+	};
+
+	template<typename... Ts>
+	auto pack_args(Ts... args) {
+		return ang::move(collections::tuple<Ts...>(ang::forward<Ts>(args)...));
+	}
+
+	template<typename F, typename... Ts>
+	auto unpack_args(F func, collections::tuple<Ts...> args) ->decltype(func(declval<Ts>()...)) {
+		return unpack_args_helper<F, Ts...>::expand(func, args);
+	}
+
+	template<typename F>
+	auto unpack_args(F func, collections::tuple<void>) ->decltype(func()) {
+		return func();
+	}
+
+
 	template<typename K, typename T, typename U>
-	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::same> {
+	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::same, false> {
 		static bool operate(const collections::pair<K, T>& pair, const U& value) { 
 			return logic_operation<K, U, logic_operation_type::same>::operate(pair.key, value);
 		}
 	};
 
 	template<typename K, typename T, typename U>
-	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::major> {
+	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::major, false> {
 		static bool operate(const collections::pair<K, T>& pair, const U& value) {
 			return logic_operation<K, U, logic_operation_type::major>::operate(pair.key, value);
 		}
 	};
 
 	template<typename K, typename T, typename U>
-	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::same_or_major> {
+	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::same_or_major, false> {
 		static bool operate(const collections::pair<K, T>& pair, const U& value) {
 			return logic_operation<K, U, logic_operation_type::major>::operate(pair.key, value);
 		}
 	};
 
 	template<typename K, typename T, typename U>
-	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::minor> {
+	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::minor, false> {
 		static bool operate(const collections::pair<K, T>& pair, const U& value) {
 			return logic_operation<K, U, logic_operation_type::minor>::operate(pair.key, value);
 		}
 	};
 
 	template<typename K, typename T, typename U>
-	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::same_or_minor> {
+	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::same_or_minor, false> {
 		static bool operate(const collections::pair<K, T>& pair, const U& value) {
 			return logic_operation<K, U, logic_operation_type::minor>::operate(pair.key, value);
 		}
@@ -225,35 +264,109 @@ namespace ang //constants
 
 
 	template<typename U, typename K, typename T>
-	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::same> {
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::same, false> {
 		static bool operate(const U& value, const collections::pair<K, T>& pair) {
 			return logic_operation<U, K, logic_operation_type::same>::operate(value, pair.key);
 		}
 	};
 
 	template<typename U, typename K, typename T>
-	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::major> {
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::major, false> {
 		static bool operate(const U& value, const collections::pair<K, T>& pair) {
 			return logic_operation<U, K, logic_operation_type::major>::operate(value, pair.key);
 		}
 	};
 
 	template<typename U, typename K, typename T>
-	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::same_or_major> {
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::same_or_major, false> {
 		static bool operate(const U& value, const collections::pair<K, T>& pair) {
 			return logic_operation<U, K, logic_operation_type::same_or_major>::operate(value, pair.key);
 		}
 	};
 
 	template<typename U, typename K, typename T>
-	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::minor> {
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::minor, false> {
 		static bool operate(const U& value, const collections::pair<K, T>& pair) {
 			return logic_operation<U, K, logic_operation_type::minor>::operate(value, pair.key);
 		}
 	};
 
 	template<typename U, typename K, typename T>
-	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::same_or_minor> {
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::same_or_minor, false> {
+		static bool operate(const U& value, const collections::pair<K, T>& pair) {
+			return logic_operation<U, K, logic_operation_type::same_or_minor>::operate(value, pair.key);
+		}
+	};
+
+
+
+
+	template<typename K, typename T, typename U>
+	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::same, true> {
+		static bool operate(const collections::pair<K, T>& pair, const U& value) {
+			return logic_operation<K, U, logic_operation_type::same>::operate(pair.key, value);
+		}
+	};
+
+	template<typename K, typename T, typename U>
+	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::major, true> {
+		static bool operate(const collections::pair<K, T>& pair, const U& value) {
+			return logic_operation<K, U, logic_operation_type::major>::operate(pair.key, value);
+		}
+	};
+
+	template<typename K, typename T, typename U>
+	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::same_or_major, true> {
+		static bool operate(const collections::pair<K, T>& pair, const U& value) {
+			return logic_operation<K, U, logic_operation_type::major>::operate(pair.key, value);
+		}
+	};
+
+	template<typename K, typename T, typename U>
+	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::minor, true> {
+		static bool operate(const collections::pair<K, T>& pair, const U& value) {
+			return logic_operation<K, U, logic_operation_type::minor>::operate(pair.key, value);
+		}
+	};
+
+	template<typename K, typename T, typename U>
+	struct logic_operation<collections::pair<K, T>, U, logic_operation_type::same_or_minor, true> {
+		static bool operate(const collections::pair<K, T>& pair, const U& value) {
+			return logic_operation<K, U, logic_operation_type::minor>::operate(pair.key, value);
+		}
+	};
+
+
+	template<typename U, typename K, typename T>
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::same, true> {
+		static bool operate(const U& value, const collections::pair<K, T>& pair) {
+			return logic_operation<U, K, logic_operation_type::same>::operate(value, pair.key);
+		}
+	};
+
+	template<typename U, typename K, typename T>
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::major, true> {
+		static bool operate(const U& value, const collections::pair<K, T>& pair) {
+			return logic_operation<U, K, logic_operation_type::major>::operate(value, pair.key);
+		}
+	};
+
+	template<typename U, typename K, typename T>
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::same_or_major, true> {
+		static bool operate(const U& value, const collections::pair<K, T>& pair) {
+			return logic_operation<U, K, logic_operation_type::same_or_major>::operate(value, pair.key);
+		}
+	};
+
+	template<typename U, typename K, typename T>
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::minor, true> {
+		static bool operate(const U& value, const collections::pair<K, T>& pair) {
+			return logic_operation<U, K, logic_operation_type::minor>::operate(value, pair.key);
+		}
+	};
+
+	template<typename U, typename K, typename T>
+	struct logic_operation<U, collections::pair<K, T>, logic_operation_type::same_or_minor, true> {
 		static bool operate(const U& value, const collections::pair<K, T>& pair) {
 			return logic_operation<U, K, logic_operation_type::same_or_minor>::operate(value, pair.key);
 		}

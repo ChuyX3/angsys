@@ -141,15 +141,15 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer_base, object
 
 /////////////////////////////////////////////////////////////////////////
 
-wstring basic_string_buffer_base::to_string()const
+string basic_string_buffer_base::to_string()const
 {
-	return cstr();
+	return const_cast<istring*>(static_cast<istring const*>(this));
 }
 
-wstring basic_string_buffer_base::to_string(text::text_format_t format)const
+string basic_string_buffer_base::to_string(text::text_format_t format)const
 {
 	//TODO:
-	return cstr(); 
+	return const_cast<istring*>(static_cast<istring const*>(this));
 }
 
 rtti_t const& basic_string_buffer_base::value_type()const
@@ -456,6 +456,11 @@ raw_cstr_t  basic_string_buffer_base::cstr(int)const {
 
 unknown_str_t basic_string_buffer_base::data()const {
 	return const_cast<basic_string_buffer_base*>(this)->str(0).ptr();
+}
+
+void basic_string_buffer_base::dispose()
+{
+	clear();
 }
 
 comparision_result_t basic_string_buffer_base::compare(object const* obj)const

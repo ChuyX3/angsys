@@ -52,6 +52,9 @@ namespace ang
 		private:
 			virtual ~vector_buffer();
 
+		protected: //overrides
+			inline void dispose()override;
+
 		public: //methods
 			inline bool is_empty()const;
 			inline T* data()const;
@@ -77,8 +80,8 @@ namespace ang
 			inline bool set_value(rtti_t const&, unknown_t)override;
 			inline bool get_value(rtti_t const&, unknown_t)const override;
 			inline variant clone()const override;
-			inline wstring to_string()const override;
-			inline wstring to_string(text::text_format_t)const override;
+			inline string to_string()const override;
+			inline string to_string(text::text_format_t)const override;
 
 		public: //ibuffer overrides
 			inline bool is_readonly()const override;

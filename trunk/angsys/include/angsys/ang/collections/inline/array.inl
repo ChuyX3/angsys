@@ -138,8 +138,14 @@ inline bool ang::collections::array_buffer<T, allocator>::query_interface(ang::r
 		*out = static_cast<ienum<T>*>(this);
 		return true;
 	}
+	return false;
 }
 
+template<typename T, template <typename> class allocator>
+inline void ang::collections::array_buffer<T, allocator>::dispose()
+{
+	clear();
+}
 
 template<typename T, template <typename> class allocator>
 inline void ang::collections::array_buffer<T, allocator>::clear()
@@ -195,13 +201,13 @@ inline ang::variant ang::collections::array_buffer<T, allocator>::clone()const
 }
 
 template<typename T, template <typename> class allocator>
-inline ang::wstring ang::collections::array_buffer<T, allocator>::to_string()const
+inline ang::string ang::collections::array_buffer<T, allocator>::to_string()const
 {
 	return class_info().type_name();
 }
 
 template<typename T, template <typename> class allocator>
-inline ang::wstring ang::collections::array_buffer<T, allocator>::to_string(ang::text::text_format_t)const
+inline ang::string ang::collections::array_buffer<T, allocator>::to_string(ang::text::text_format_t)const
 {
 	return class_info().type_name();
 }

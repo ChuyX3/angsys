@@ -80,11 +80,14 @@ namespace ang
 		private:
 			virtual ~list_object();
 
+		protected: //overrides
+			void dispose()override;
+
 		public: //overrides
 			ANG_DECLARE_INTERFACE();
 			comparision_result_t compare(const object*)const override;
 
-			void clear()override;
+			void clear();
 			bool is_empty()const;
 			bool move(list_object<MY_TYPE, MY_ALLOC>&);
 

@@ -17,7 +17,7 @@ namespace ang
 				visible vcall xml_node_t xml_data_type()const pure
 				visible vcall xml_node_t xml_root_element()const pure
 				visible vcall xml_document_t xml_clone()const pure
-
+				visible vcall void clear() pure
 				visible vcall xml_iterator_t find(cstr_t, bool invert = false)const pure
 				visible vcall xml_iterator_t find(cstr_t, xml_iterator_t next_to, bool invert = false)const pure
 

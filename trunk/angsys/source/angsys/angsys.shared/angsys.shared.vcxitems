@@ -44,6 +44,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\files.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\function.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\listener.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\sockets.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\timer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\json.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\dom\xml.h" />
@@ -93,6 +94,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\file_system.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\format_parser.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\runtime_manager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\socket_library.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\string_factory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\thread_manager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\xml\xml_internal.h" />
@@ -119,6 +121,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\platform\message.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\platform\platform.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\runtime.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\sockets\client.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\sockets\server.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\streams.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\string_input_stream.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\streams\string_output_stream.cpp" />

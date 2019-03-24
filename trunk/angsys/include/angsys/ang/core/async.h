@@ -104,7 +104,8 @@ namespace ang
 			ang_end_interface();
 
 			ang_begin_interface(LINK ithread, idispatcher)
-				visible vcall bool attach_loop(function<void(void)>)pure
+				visible vcall listen_token<void(void)> add_idle_event(function<void(void)>)pure
+				visible vcall bool remove_idle_event(listen_token<void(void)>)pure
 				visible vcall bool is_main_thread()const pure
 				visible vcall dword thread_id()const pure
 				visible vcall async_action_status_t status()const pure
@@ -114,6 +115,14 @@ namespace ang
 
 		}
 	}
+
+	ANG_BEGIN_INTF_WRAPPER_TEMPLATE(core::async::iaction, T)
+		inline operator nullable<T>()const;
+	ANG_END_INTF_WRAPPER();
+
+	ANG_BEGIN_INTF_WRAPPER_TEMPLATE(core::async::itask, T)
+		inline operator nullable<T>()const;
+	ANG_END_INTF_WRAPPER();
 }
 
 namespace ang
@@ -155,6 +164,10 @@ namespace ang
 			class LINK thread
 				: public smart<thread, ithread>
 			{
+			private:
+				static listen_token<void(void)> add_idle_event(base_event*, function<void(void)>);
+				static bool remove_idle_event(base_event*, listen_token<void(void)>);
+
 			public:
 				static void sleep(dword ms);
 				static thread_t main_thread();
@@ -164,6 +177,12 @@ namespace ang
 
 			public:
 				ANG_DECLARE_INTERFACE();
+
+				event<void(void), add_idle_event, remove_idle_event> idle_event;
+
+			protected:
+				using ithread::add_idle_event;
+				using ithread::remove_idle_event;
 
 			protected:
 				thread();
@@ -223,11 +242,6 @@ namespace ang
 			private:
 				virtual~task_handler();
 			};
-
-			
-
-
-
 
 			template<> LINK rtti_t const& iaction<void>::class_info();
 			template<> LINK rtti_t const& iaction<char>::class_info();

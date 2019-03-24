@@ -46,16 +46,17 @@ namespace ang
 		object& operator = (object const&) = delete;
 
 	public:
-		virtual void clear();
+		//virtual void clear();
 		virtual comparision_result_t compare(object const* obj)const;
-		virtual wstring to_string()const;
-		virtual wstring to_string(text::text_format_t)const;
+		virtual string to_string()const;
+		virtual string to_string(text::text_format_t)const;
 //		virtual wsize serialize(streams::itext_output_stream_t)const;
 //		virtual wsize serialize(streams::ibinary_output_stream_t)const;
 //		virtual wsize deserialize(streams::itext_input_stream_t);
 //		virtual wsize deserialize(streams::ibinary_input_stream_t);
 
 	protected:
+		virtual void dispose() override;
 		virtual bool auto_release();
 		virtual bool auto_release(ushort alignment);
 

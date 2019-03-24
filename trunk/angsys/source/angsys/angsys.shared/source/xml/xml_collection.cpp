@@ -14,8 +14,6 @@
 using namespace ang;
 using namespace ang::dom::xml;
 
-
-
 #define MY_TYPE ang::dom::xml::ixml_collection
 #include "ang/inline/intf_wrapper_specialization.inl"
 #undef MY_TYPE
@@ -23,6 +21,82 @@ using namespace ang::dom::xml;
 #define MY_TYPE ang::dom::xml::xml_collection
 #include "ang/inline/object_wrapper_specialization.inl"
 #undef MY_TYPE
+
+
+dom::xml::xml_forward_iterator_t ixml_collection_t::begin() {
+	return is_empty() ? dom::xml::xml_forward_iterator_t() : get()->begin();
+}
+
+dom::xml::xml_forward_iterator_t ixml_collection_t::end() {
+	return is_empty() ? dom::xml::xml_forward_iterator_t() : get()->end();
+}
+
+dom::xml::xml_const_forward_iterator_t ixml_collection_t::begin()const {
+	return is_empty() ? dom::xml::xml_const_forward_iterator_t() : ((type const*)get())->begin();
+}
+
+dom::xml::xml_const_forward_iterator_t ixml_collection_t::end()const {
+	return is_empty() ? dom::xml::xml_const_forward_iterator_t() : ((type const*)get())->end();
+}
+
+dom::xml::xml_backward_iterator_t ixml_collection_t::rbegin() {
+	return is_empty() ? dom::xml::xml_backward_iterator_t() : get()->rbegin();
+}
+
+dom::xml::xml_backward_iterator_t ixml_collection_t::rend() {
+	return is_empty() ? dom::xml::xml_backward_iterator_t() : get()->rend();
+}
+
+dom::xml::xml_const_backward_iterator_t ixml_collection_t::rbegin()const {
+	return is_empty() ? dom::xml::xml_const_backward_iterator_t() : ((type const*)get())->rbegin();
+}
+
+dom::xml::xml_const_backward_iterator_t ixml_collection_t::rend()const {
+	return is_empty() ? dom::xml::xml_const_backward_iterator_t() : ((type const*)get())->rend();
+}
+
+dom::xml::xml_node_t ixml_collection_t::operator[](cstr_t cstr)const {
+	try { return *get()->find(cstr); }
+	catch (...) { return null; }
+}
+
+
+dom::xml::xml_forward_iterator_t xml_collection_t::begin() {
+	return is_empty() ? dom::xml::xml_forward_iterator_t() : get()->begin();
+}
+
+dom::xml::xml_forward_iterator_t xml_collection_t::end() {
+	return is_empty() ? dom::xml::xml_forward_iterator_t() : get()->end();
+}
+
+dom::xml::xml_const_forward_iterator_t xml_collection_t::begin()const {
+	return is_empty() ? dom::xml::xml_const_forward_iterator_t() : ((type const*)get())->begin();
+}
+
+dom::xml::xml_const_forward_iterator_t xml_collection_t::end()const {
+	return is_empty() ? dom::xml::xml_const_forward_iterator_t() : ((type const*)get())->end();
+}
+
+dom::xml::xml_backward_iterator_t xml_collection_t::rbegin() {
+	return is_empty() ? dom::xml::xml_backward_iterator_t() : get()->rbegin();
+}
+
+dom::xml::xml_backward_iterator_t xml_collection_t::rend() {
+	return is_empty() ? dom::xml::xml_backward_iterator_t() : get()->rend();
+}
+
+dom::xml::xml_const_backward_iterator_t xml_collection_t::rbegin()const {
+	return is_empty() ? dom::xml::xml_const_backward_iterator_t() : ((type const*)get())->rbegin();
+}
+
+dom::xml::xml_const_backward_iterator_t xml_collection_t::rend()const {
+	return is_empty() ? dom::xml::xml_const_backward_iterator_t() : ((type const*)get())->rend();
+}
+
+dom::xml::xml_node_t xml_collection_t::operator[](cstr_t cstr)const {
+	try { return *get()->find(cstr); }
+	catch (...) { return null; }
+}
 
 /////////////////////////////////////////////////////////////////////////////////////
 

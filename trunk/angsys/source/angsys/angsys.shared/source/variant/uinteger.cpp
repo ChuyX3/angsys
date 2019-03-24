@@ -23,10 +23,10 @@ namespace ang
 
 value<uint> variable<uint>::parse(cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
-	return parser->to_unsigned(str, i, true, base);
+	return (uint)parser->to_unsigned(str, i, true, base);
 }
 
-wstring variable<uint>::to_string(value<uint> val, text::text_format_t f)
+string variable<uint>::to_string(value<uint> val, text::text_format_t f)
 {
 	const byte max_char = 120;
 	text::text_format_flags_t format;
@@ -216,12 +216,12 @@ comparision_result_t variable<uint>::compare(object const* obj)const
 		return ang::comparision_result::diferent;
 }
 
-wstring variable<uint>::to_string()const
+string variable<uint>::to_string()const
 {
 	return ang::move(to_string(*this, text::default_text_format<uint>::format()));
 }
 
-wstring variable<uint>::to_string(text::text_format_t f)const
+string variable<uint>::to_string(text::text_format_t f)const
 {
 	return ang::move(to_string(*this, f));
 }
@@ -343,10 +343,10 @@ variant variable<uint>::clone()const
 
 value<ulong> variable<ulong>::parse(cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
-	return parser->to_unsigned(str, i, true, base);
+	return (ulong)parser->to_unsigned(str, i, true, base);
 }
 
-wstring variable<ulong>::to_string(value<ulong> val, text::text_format_t f)
+string variable<ulong>::to_string(value<ulong> val, text::text_format_t f)
 {
 	const byte max_char = 120;
 	text::text_format_flags_t format;
@@ -534,12 +534,12 @@ comparision_result_t variable<ulong>::compare(object const* obj)const
 		return ang::comparision_result::diferent;
 }
 
-wstring variable<ulong>::to_string()const
+string variable<ulong>::to_string()const
 {
 	return ang::move(to_string(*this, text::default_text_format<ulong>::format()));
 }
 
-wstring variable<ulong>::to_string(text::text_format_t f)const
+string variable<ulong>::to_string(text::text_format_t f)const
 {
 	return ang::move(to_string(*this, f));
 }
@@ -665,7 +665,7 @@ value<ulong64> variable<ulong64>::parse(cstr_t str, windex i, int base) {
 	return parser->to_unsigned(str, i, true, base);
 }
 
-wstring variable<ulong64>::to_string(value<ulong64> val, text::text_format_t f)
+string variable<ulong64>::to_string(value<ulong64> val, text::text_format_t f)
 {
 	const byte max_char = 120;
 	text::text_format_flags_t format;
@@ -854,12 +854,12 @@ comparision_result_t variable<ulong64>::compare(object const* obj)const
 		return ang::comparision_result::diferent;
 }
 
-wstring variable<ulong64>::to_string()const
+string variable<ulong64>::to_string()const
 {
 	return ang::move(to_string(*this, text::default_text_format<ulong64>::format()));
 }
 
-wstring variable<ulong64>::to_string(text::text_format_t f)const
+string variable<ulong64>::to_string(text::text_format_t f)const
 {
 	return ang::move(to_string(*this, f));
 }

@@ -351,6 +351,9 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::files::core_file, object, ifile)
 
 bool core_file::create(cstr_t path_, open_flags_t flags)
 {
+	if (is_created())
+		dispose();
+
 	m_flags = open_flags::null;
 
 #ifdef WINDOWS_PLATFORM
@@ -586,7 +589,7 @@ bool core_file::is_created()const
 	return m_hfile != 0;
 }
 
-void core_file::clear()
+void core_file::dispose()
 {
 	core::async::scope_locker<core::async::mutex_ptr_t> lock = m_mutex;
 #ifdef WINAPI_FAMILY

@@ -57,6 +57,7 @@ namespace ang
 
 		protected: //utils
 			void copy_at(raw_str_t, windex at);
+			virtual void dispose()override;
 
 		public: //overides
 			ANG_DECLARE_INTERFACE();
@@ -91,8 +92,8 @@ namespace ang
 			virtual void insert_format(windex, raw_cstr_t, var_args_t)override;
 
 		public: //ivariant override
-			virtual wstring to_string()const override;
-			virtual wstring to_string(text::text_format_t)const override;
+			virtual string to_string()const override;
+			virtual string to_string(text::text_format_t)const override;
 
 		private: //ivariant override
 			virtual rtti_t const& value_type()const override;

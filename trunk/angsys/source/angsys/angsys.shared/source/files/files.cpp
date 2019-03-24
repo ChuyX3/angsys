@@ -175,7 +175,7 @@ bool file::create(cstr_t path, open_flags_t flags)
 
 bool file::attach(ifile* f)
 {
-	clear();
+	dispose();
 	m_hfile = f;
 	return true;
 }
@@ -234,7 +234,7 @@ bool file::set_mutex(core::async::mutex_ptr_t mutex)
 	return is_valid() ? m_hfile->set_mutex(mutex) : false;
 }
 
-void file::clear()
+void file::dispose()
 {
 	m_hfile = null;
 }

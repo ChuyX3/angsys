@@ -28,7 +28,7 @@ namespace ang
 				inline ~listener();
 
 			public:
-				inline void empty();
+				inline void clear();
 				inline bool is_empty()const;
 				inline listen_token<T(Ts...)> push(function<T(Ts...)> func);
 				inline bool pop(listen_token<T(Ts...)> token);
@@ -63,7 +63,7 @@ namespace ang
 				inline ~listener();
 
 			public:
-				inline void empty();
+				inline void clear();
 				inline bool is_empty()const;
 				inline listen_token<void(Ts...)> push(function<void(Ts...)> func);
 				inline bool pop(listen_token<void(Ts...)> token);
@@ -99,7 +99,7 @@ namespace ang
 				~listener();
 
 			public:
-				void empty();
+				void clear();
 				bool is_empty()const;
 				listen_token<dword(pointer)> push(function<dword(pointer)> func);
 				bool pop(listen_token<dword(pointer)> token);
@@ -134,7 +134,7 @@ namespace ang
 				~listener();
 
 			public:
-				void empty();
+				void clear();
 				bool is_empty()const;
 				listen_token<void(objptr, pointer)> push(function<void(objptr, pointer)> func);
 				bool pop(listen_token<void(objptr, pointer)> token);
@@ -168,7 +168,7 @@ namespace ang
 				~listener();
 
 			public:
-				void empty();
+				void clear();
 				bool is_empty()const;
 				listen_token<void(objptr, var_args_t)> push(function<void(objptr, var_args_t)> func);
 				bool pop(listen_token<void(objptr, var_args_t)> token);

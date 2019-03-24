@@ -149,7 +149,7 @@ namespace ang
 
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
-				void clear()override;
+				void dispose()override;
 				bool attach(ifile*);
 				bool is_valid()const;
 				virtual stream_mode_t mode()const = 0;

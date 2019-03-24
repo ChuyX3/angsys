@@ -209,8 +209,8 @@ xml_document_t xml_document::from_file(core::files::input_text_file_t file)
 	}
 	catch (exception_t const& e) {
 		e->what();
+		return null;
 	}
-	
 }
 
 xml_document::xml_document(xml_encoding_t e)
@@ -279,6 +279,11 @@ xml_type_t xml_document::xml_type()const
 bool xml_document::xml_is_type_of(xml_type_t type)const
 {
 	return xml_type::document == type;
+}
+
+void xml_document::dispose()
+{
+	clear();
 }
 
 void xml_document::clear()

@@ -146,6 +146,28 @@ namespace ang
 		ang_end_interface();
 
 
+		ang_begin_interface(LINK itext_stream, istream)
+			visible vcall wsize seek(cstr_t format)pure
+			visible vcall wsize read(pointer, ang::rtti_t const&)pure
+			visible vcall wsize read_format(cstr_t format, var_args_t&)pure
+			visible vcall wsize read(text::istring_t, wsize, wsize*written = null)pure
+			visible vcall wsize read(text::unknown_str_t, wsize sz, text::encoding_t, wsize*written = null)pure
+			visible vcall wsize read_line(text::istring_t, array_view<const char32_t> = U"\n\r", wsize*written = null)pure
+			visible vcall wsize read_line(text::unknown_str_t, wsize, text::encoding_t, array_view<const char32_t> = U"\n\r", wsize*written = null)pure
+
+			visible vcall bool command(special_command_t) pure
+			visible vcall wsize write(cstr_t)pure
+			visible vcall wsize write_line(cstr_t)pure
+			visible vcall wsize write_format(cstr_t, var_args_t)pure
+
+			template<typename T> wsize write(T const&);
+			template<typename...Ts> wsize write_format(raw_cstr_t format, Ts... args) {
+				return write_format(format, var_args_t{ ang::forward<Ts>(args)... });
+			}	
+			template<typename T> wsize read(T&&);
+			template<typename...Ts> wsize read_format(raw_cstr_t format, Ts&...);
+		ang_end_interface();
+
 		ang_begin_interface(LINK ibinary_stream, istream)
 			visible vcall wsize write(pointer, wsize)pure
 			visible vcall wsize write(ibuffer_view_t)pure
@@ -165,7 +187,7 @@ namespace ang
 			: public smart<string_input_stream, itext_input_stream>
 		{
 		private:
-			windex m_cursor;
+			stream_index_t m_cursor;
 			text::iparser_t m_parser;
 			text::istring_view_t m_string;
 
@@ -177,8 +199,8 @@ namespace ang
 			void attach(text::istring_view_t);
 			text::istring_view_t data()const;
 
-		public: //overrides
-			void clear()override;
+		public: //overrides	
+			virtual void dispose()override;
 			text::encoding_t format()const override;
 			stream_index_t cursor()const override;
 			stream_size_t size()const override;
@@ -202,7 +224,7 @@ namespace ang
 			: public smart<string_output_stream, itext_output_stream>
 		{
 		private:
-			windex m_cursor;
+			stream_index_t m_cursor;
 			text::iparser_t m_parser;
 			text::istring_t m_string;
 
@@ -213,9 +235,9 @@ namespace ang
 
 			void attach(text::istring_t);
 			text::istring_t data()const;
-
-		public: //overrides
-			void clear()override;
+	
+		public: //overrides	
+			virtual void dispose()override;
 			text::encoding_t format()const override;
 			stream_index_t cursor()const override;
 			stream_size_t size()const override;
@@ -240,8 +262,8 @@ namespace ang
 		template<typename S, typename T, typename...Ts>
 		struct read_format_helper<S,T,Ts...>
 		{
-			static uint read_format(S stream, raw_cstr_t format, var_args_t& va, T& a, Ts&... as) {
-				uint readed = 0;
+			static wsize read_format(S stream, raw_cstr_t format, var_args_t& va, T& a, Ts&... as) {
+				wsize readed = 0;
 				readed = read_format_helper<S, Ts...>::read_format(stream, format, va, ang::forward<Ts&>(as)...);
 				var obj;
 				va->pop(obj, true);
@@ -254,62 +276,62 @@ namespace ang
 		template<typename S>
 		struct read_format_helper<S>
 		{
-			static uint read_format(S stream, raw_cstr_t format, var_args_t& va) {
+			static wsize read_format(S stream, raw_cstr_t format, var_args_t& va) {
 				return stream->read_format(format, va);
 			}
 		};
 
 		template<typename S, typename T> struct read_text_helper {
-			static uint read(S,T const&) {
+			static wsize read(S,T const&) {
 				static_assert(ang::is_lvalue_reference<T>::value, "can't writte to rvalue reference");
 				return 0; 
 			}
 		};
 
 		template<typename S, typename T> struct read_text_helper<S, T&> {
-			static uint read(S stream, T& val) {
+			static wsize read(S stream, T& val) {
 				return stream->read(pointer(&val), ang::type_of<T>());
 			}
 		};
 
 		template<typename S, typename T, wsize N> struct read_text_helper<S, const T(&)[N]> {
-			static uint read(S stream, const T(&cstr)[N]) {
+			static wsize read(S stream, const T(&cstr)[N]) {
 				return stream->seek(cstr);
 			}
 		};
 
 		template<typename S> struct read_text_helper<S, str_t> {
-			static uint read(S stream, str_t const&  cstr) {
+			static wsize read(S stream, str_t const&  cstr) {
 				return stream->seek(cstr);
 			}
 		};
 
 		template<typename S> struct read_text_helper<S, str_t&> {
-			static uint read(S stream, str_t const& cstr) {
+			static wsize read(S stream, str_t const& cstr) {
 				return stream->seek(cstr);
 			}
 		};
 
 		template<typename S> struct read_text_helper<S, cstr_t> {
-			static uint read(S stream, cstr_t const& cstr) {
+			static wsize read(S stream, cstr_t const& cstr) {
 				return stream->seek(cstr);
 			}
 		};
 
 		template<typename S> struct read_text_helper<S, cstr_t&> {
-			static uint read(S stream, cstr_t const& cstr) {
+			static wsize read(S stream, cstr_t const& cstr) {
 				return stream->seek(cstr);
 			}
 		};
 
 		template<typename S, typename T, text::encoding E> struct read_text_helper<S, str_view<T,E>> {
-			static uint read(S stream, str_view<T, E> const& cstr) {
+			static wsize read(S stream, str_view<T, E> const& cstr) {
 				return stream->seek(cstr);
 			}
 		};
 
 		template<typename S, typename T, text::encoding E> struct read_text_helper<S, str_view<T, E>&> {
-			static uint read(S stream, str_view<T, E> const& cstr) {
+			static wsize read(S stream, str_view<T, E> const& cstr) {
 				return stream->seek(cstr);
 			}
 		};

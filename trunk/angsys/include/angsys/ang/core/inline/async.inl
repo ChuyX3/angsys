@@ -29,7 +29,7 @@ inline ang::core::async::iasync<T> ang::core::async::task::run_async(delegates::
 	{
 		wrapper->done(func(wrapper.get()));
 	}));
-	return wrapper;
+	return wrapper.get();
 }
 
 namespace ang
@@ -46,7 +46,7 @@ namespace ang
 					{
 						wrapper->done(func(wrapper.get()));
 					})));
-					return wrapper;
+					return wrapper.get();
 				}
 			};
 
@@ -154,6 +154,7 @@ inline bool ang::core::async::task_handler<T>::query_interface(ang::runtime::rtt
 		*out = static_cast<iaction<T>*>(this);
 		return true;
 	}
+	return false;
 }
 
 
@@ -213,6 +214,312 @@ inline void ang::core::async::task_handler<T>::attach(ang::core::async::iasync<v
 	m_task = async;
 }
 
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::iaction<T>>::intf_wrapper()
+	: m_ptr(null)
+{
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::iaction<T>>::intf_wrapper(ang::nullptr_t const&)
+	: m_ptr(null)
+{
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::iaction<T>>::intf_wrapper(ang::core::async::iaction<T>* ptr)
+	: m_ptr(null)
+{
+	set(ptr);
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::iaction<T>>::intf_wrapper(intf_wrapper && other)
+	: m_ptr(null)
+{
+	ang::core::async::iaction<T> * temp = other.m_ptr;
+	other.m_ptr = null;
+	m_ptr = temp;
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::iaction<T>>::intf_wrapper(intf_wrapper const& other)
+	: m_ptr(null)
+{
+	set(other.m_ptr);
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::iaction<T>>::~intf_wrapper() {
+	reset();
+}
+
+template<typename T> inline
+void ang::intf_wrapper<ang::core::async::iaction<T>>::reset()
+{
+	iobject * _obj = ang::interface_cast<iobject>(m_ptr);
+	if (_obj)_obj->release();
+	m_ptr = null;
+}
+
+template<typename T> inline
+void ang::intf_wrapper<ang::core::async::iaction<T>>::reset_unsafe()
+{
+	m_ptr = null;
+}
+
+template<typename T> inline
+bool ang::intf_wrapper<ang::core::async::iaction<T>>::is_empty()const
+{
+	return m_ptr == null;
+}
+
+template<typename T> inline
+ang::core::async::iaction<T>* ang::intf_wrapper<ang::core::async::iaction<T>>::get(void)const
+{
+	return m_ptr;
+}
+
+template<typename T> inline
+void ang::intf_wrapper<ang::core::async::iaction<T>>::set(ang::core::async::iaction<T>* ptr)
+{
+	if (ptr == m_ptr) return;
+	iobject * _old = ang::interface_cast<iobject>(m_ptr);
+	iobject * _new = ang::interface_cast<iobject>(ptr);
+	m_ptr = ptr;
+	if (_new)_new->add_ref();
+	if (_old)_old->release();
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::iaction<T>>& ang::intf_wrapper<ang::core::async::iaction<T>>::operator = (ang::core::async::iaction<T>* ptr)
+{
+	set(ptr);
+	return*this;
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::iaction<T>>& ang::intf_wrapper<ang::core::async::iaction<T>>::operator = (ang::nullptr_t const&)
+{
+	reset();
+	return*this;
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::iaction<T>>& ang::intf_wrapper<ang::core::async::iaction<T>>::operator = (ang::intf_wrapper<ang::core::async::iaction<T>> && other)
+{
+	if (this == &other)
+		return *this;
+	reset();
+	m_ptr = other.m_ptr;
+	other.m_ptr = null;
+	return*this;
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::iaction<T>>& ang::intf_wrapper<ang::core::async::iaction<T>>::operator = (ang::intf_wrapper<ang::core::async::iaction<T>> const& other)
+{
+	set(other.m_ptr);
+	return*this;
+}
+
+template<typename T> inline
+ang::core::async::iaction<T> ** ang::intf_wrapper<ang::core::async::iaction<T>>::addres_of(void)
+{
+	return &m_ptr;
+}
+
+template<typename T> inline
+ang::intf_wrapper_ptr<ang::core::async::iaction<T>> ang::intf_wrapper<ang::core::async::iaction<T>>::operator & (void)
+{
+	return this;
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::iaction<T>>::operator ang::intfptr()const
+{
+	return static_interface_cast(get());
+}
+
+template<typename T> inline
+ang::core::async::iaction<T>* ang::intf_wrapper<ang::core::async::iaction<T>>::operator -> (void)const
+{
+	return get();
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::iaction<T>>::operator ang::nullable<T>()const
+{
+	return is_empty() ? nullable<T>(null) : nullable<T>(get()->result());
+}
+
+template<> inline
+ang::intf_wrapper<ang::core::async::iaction<void>>::operator ang::nullable<void>()const
+{
+	if (is_empty())
+		return null;
+	else {
+		get()->result();
+		return new object(); //void object
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::itask<T>>::intf_wrapper()
+	: m_ptr(null)
+{
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::itask<T>>::intf_wrapper(ang::nullptr_t const&)
+	: m_ptr(null)
+{
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::itask<T>>::intf_wrapper(ang::core::async::itask<T>* ptr)
+	: m_ptr(null)
+{
+	set(ptr);
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::itask<T>>::intf_wrapper(intf_wrapper && other)
+	: m_ptr(null)
+{
+	ang::core::async::itask<T> * temp = other.m_ptr;
+	other.m_ptr = null;
+	m_ptr = temp;
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::itask<T>>::intf_wrapper(intf_wrapper const& other)
+	: m_ptr(null)
+{
+	set(other.m_ptr);
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::itask<T>>::~intf_wrapper() {
+	reset();
+}
+
+template<typename T> inline
+void ang::intf_wrapper<ang::core::async::itask<T>>::reset()
+{
+	iobject * _obj = ang::interface_cast<iobject>(m_ptr);
+	if (_obj)_obj->release();
+	m_ptr = null;
+}
+
+template<typename T> inline
+void ang::intf_wrapper<ang::core::async::itask<T>>::reset_unsafe()
+{
+	m_ptr = null;
+}
+
+template<typename T> inline
+bool ang::intf_wrapper<ang::core::async::itask<T>>::is_empty()const
+{
+	return m_ptr == null;
+}
+
+template<typename T> inline
+ang::core::async::itask<T>* ang::intf_wrapper<ang::core::async::itask<T>>::get(void)const
+{
+	return m_ptr;
+}
+
+template<typename T> inline
+void ang::intf_wrapper<ang::core::async::itask<T>>::set(ang::core::async::itask<T>* ptr)
+{
+	if (ptr == m_ptr) return;
+	iobject * _old = ang::interface_cast<iobject>(m_ptr);
+	iobject * _new = ang::interface_cast<iobject>(ptr);
+	m_ptr = ptr;
+	if (_new)_new->add_ref();
+	if (_old)_old->release();
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::itask<T>>& ang::intf_wrapper<ang::core::async::itask<T>>::operator = (ang::core::async::itask<T>* ptr)
+{
+	set(ptr);
+	return*this;
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::itask<T>>& ang::intf_wrapper<ang::core::async::itask<T>>::operator = (ang::nullptr_t const&)
+{
+	reset();
+	return*this;
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::itask<T>>& ang::intf_wrapper<ang::core::async::itask<T>>::operator = (ang::intf_wrapper<ang::core::async::itask<T>> && other)
+{
+	if (this == &other)
+		return *this;
+	reset();
+	m_ptr = other.m_ptr;
+	other.m_ptr = null;
+	return*this;
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::itask<T>>& ang::intf_wrapper<ang::core::async::itask<T>>::operator = (ang::intf_wrapper<ang::core::async::itask<T>> const& other)
+{
+	set(other.m_ptr);
+	return*this;
+}
+
+template<typename T> inline
+ang::core::async::itask<T> ** ang::intf_wrapper<ang::core::async::itask<T>>::addres_of(void)
+{
+	return &m_ptr;
+}
+
+template<typename T> inline
+ang::intf_wrapper_ptr<ang::core::async::itask<T>> ang::intf_wrapper<ang::core::async::itask<T>>::operator & (void)
+{
+	return this;
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::itask<T>>::operator ang::intfptr()const
+{
+	return static_interface_cast(get());
+}
+
+template<typename T> inline
+ang::core::async::itask<T>* ang::intf_wrapper<ang::core::async::itask<T>>::operator -> (void)const
+{
+	return get();
+}
+
+template<typename T> inline
+ang::intf_wrapper<ang::core::async::itask<T>>::operator ang::nullable<T>()const
+{
+	return is_empty() ? nullable<T>(null) : nullable<T>(get()->result());
+}
+
+template<> inline
+ang::intf_wrapper<ang::core::async::itask<void>>::operator ang::nullable<void>()const
+{
+	if (is_empty())
+		return null;
+	else {
+		get()->result();
+		return new object(); //void object
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 #endif//__ANG_CORE_ASYNC_INL__

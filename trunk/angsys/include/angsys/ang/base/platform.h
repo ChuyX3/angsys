@@ -19,13 +19,13 @@
 #define WINDOWS_DESKTOP_PLATFORM WINAPI_FAMILY_DESKTOP_APP
 #define WINDOWS_PHONE_PLATFORM WINAPI_FAMILY_PHONE_APP
 #define ANG_PLATFORM WINDOWS_PLATFORM
-#define ANG_DEPRECATE(_MSG) __declspec(deprecated(_MSG)) 
+#define ANG_DEPRECATE(_VAR, _MSG) __declspec(deprecated(_MSG)) _VAR
 
 #elif defined __ANDROID__
 
 #define ANDROID_PLATFORM
 #define ANG_PLATFORM ANDROID_PLATFORM
-#define ANG_DEPRECATE(_MSG) __attribute__((deprecated(_MSG)))
+#define ANG_DEPRECATE(_VAR, _MSG) _VAR __attribute__((deprecated(_MSG)))
 #elif defined __18CXX || defined __XC8
 
 #define MICRO8_PLATFORM
@@ -112,14 +112,6 @@
 #define __debugbreak() __android_log_assert("","angsys","debug break")
 
 #endif//ANDROID_PLATFORM
-
-#ifdef __cplusplus
-#ifndef ANG_NO_RUNTIME_ERRORS
-#define ANG_RUNTIME_ERROR(_FLAG, _MSG) static_assert(_FLAG, _MSG)
-#else
-#define ANG_RUNTIME_ERROR(...)do{}while(0)
-#endif
-#endif
 
 #ifdef __cplusplus
 

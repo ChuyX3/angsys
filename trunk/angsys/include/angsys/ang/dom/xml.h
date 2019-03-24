@@ -140,8 +140,12 @@ namespace ang
 		dom::xml::xml_forward_iterator_t end();
 		dom::xml::xml_const_forward_iterator_t begin()const;
 		dom::xml::xml_const_forward_iterator_t end()const;
-		operator dom::xml::xml_text_t()const;
-		dom::xml::xml_node_t operator[](str_t)const;
+
+		dom::xml::xml_backward_iterator_t rbegin();
+		dom::xml::xml_backward_iterator_t rend();
+		dom::xml::xml_const_backward_iterator_t rbegin()const;
+		dom::xml::xml_const_backward_iterator_t rend()const;
+		dom::xml::xml_node_t operator[](cstr_t cstr)const;
 	ANG_END_OBJECT_WRAPPER();
 
 	ANG_BEGIN_OBJECT_WRAPPER(LINK, dom::xml::xml_node)
@@ -244,7 +248,6 @@ inline ang::object_wrapper<ang::dom::xml::xml_namespace>::operator ang::dom::xml
 inline ang::object_wrapper<ang::dom::xml::xml_cdata>::operator ang::dom::xml::xml_node_t()const { return get(); }
 inline ang::object_wrapper<ang::dom::xml::xml_comment>::operator ang::dom::xml::xml_node_t()const { return get(); }
 inline ang::object_wrapper<ang::dom::xml::xml_element>::operator ang::dom::xml::xml_node_t()const { return get(); }
-
 
 inline ang::collections::iterator<ang::dom::xml::xml_node>::operator ang::dom::xml::xml_node*()const {
 	return reinterpret_cast<ang::dom::xml::xml_node*>(current());

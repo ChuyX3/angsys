@@ -97,8 +97,6 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::task, object, itask<void>
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-static ulong s_task_count = 0;
-
 thread_task::thread_task(worker_thread_t th)
 	: m_was_canceled(false)
 	, m_status(async_action_status::initializing)
@@ -106,22 +104,20 @@ thread_task::thread_task(worker_thread_t th)
 	, m_child_task(null)
 	, m_thread(th)
 {
-	s_task_count++;
 }
 
 thread_task::~thread_task()
 {
-	s_task_count--;
 }
 
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::thread_task, task);
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::thread_task);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::thread_task, task);
 
-void thread_task::clear()
+void thread_task::dispose()
 {
-	task::clear();
-	action.empty();
+	task::dispose();
+	action.clear();
 }
 
 void thread_task::run()
@@ -131,7 +127,7 @@ void thread_task::run()
 	if (m_status == async_action_status::canceled)
 	{
 		m_status = async_action_status::completed;
-		action.empty();
+		action.clear();
 		m_cond.signal();
 		m_mutex.unlock();
 		return;
@@ -178,7 +174,7 @@ void thread_task::run()
 		}
 	}
 	
-	action.empty();
+	action.clear();
 	m_cond.signal();
 	m_mutex.unlock();
 }
@@ -200,7 +196,7 @@ iasync<void> thread_task::then(core::delegates::function<void(iasync<void>)> fun
 		m_thread->post_task(m_child_task);
 		m_child_task = null;
 		m_thread = null; //unreference thread
-		action.empty();
+		action.clear();
 		m_status = async_action_status::completed;
 		m_cond.signal();
 	}
@@ -256,7 +252,7 @@ bool thread_task::cancel()
 
 	m_was_canceled = true;
 	m_status = async_action_status::canceled;
-	action.empty();
+	action.clear();
 	if (!m_thread->has_thread_access())
 		m_cond.signal();
 	m_thread = null;
@@ -284,7 +280,7 @@ void thread_task::result()const
 	if (!m_thread->has_thread_access())
 		m_cond.signal();
 	const_cast<thread_task*>(this)->m_thread = null;
-	const_cast<thread_task*>(this)->action.empty();
+	const_cast<thread_task*>(this)->action.clear();
 }
 
 

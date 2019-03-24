@@ -38,7 +38,7 @@ value<bool> variable<bool>::parse(cstr_t cstr)
 		return s_boolean_parsing_map[idx].value;
 }
 
-wstring variable<bool>::to_string(value<bool> val,text::text_format_t f_)
+string variable<bool>::to_string(value<bool> val,text::text_format_t f_)
 {
 	text::text_format_flags_t f;
 	f.value = f_.format_flags();
@@ -120,12 +120,12 @@ comparision_result_t variable<bool>::compare(object const* obj)const
 		return ang::comparision_result::diferent;
 }
 
-wstring variable<bool>::to_string()const
+string variable<bool>::to_string()const
 {
 	return get() ? "true"_s : "false"_s;
 }
 
-wstring variable<bool>::to_string(text::text_format_t f)const
+string variable<bool>::to_string(text::text_format_t f)const
 {
 	return ang::move(to_string(*this, f));
 }

@@ -156,7 +156,7 @@ inline void ang::collections::vector_buffer<T, A>::size(wsize size, bool save)
 	if (m_size != size)
 	{
 		realloc(size, save);
-		for (int i = size - m_size; i > 0 && i < int(size); ++i)
+		for (long64 i = size - m_size; i > 0 && i < long64(size); ++i)
 		{
 			m_alloc.template construct<T, T const&>((T*)&m_data[i], default_value<T>::value);
 		}
@@ -263,13 +263,13 @@ inline ang::variant ang::collections::vector_buffer<T, A>::clone()const
 }
 
 template<typename T, template <typename> class A>
-inline ang::wstring ang::collections::vector_buffer<T, A>::to_string()const
+inline ang::string ang::collections::vector_buffer<T, A>::to_string()const
 {
 	return class_info().type_name();
 }
 
 template<typename T, template <typename> class A>
-inline ang::wstring ang::collections::vector_buffer<T, A>::to_string(ang::text::text_format_t)const
+inline ang::string ang::collections::vector_buffer<T, A>::to_string(ang::text::text_format_t)const
 {
 	return class_info().type_name();
 }
@@ -739,6 +739,12 @@ inline bool ang::collections::vector_buffer<T, A>::pop_at(ang::collections::base
 	if (it.parent() != this || it.current() != m_data)
 		return false;
 	return pop_at(it.offset(), value);
+}
+
+template<typename T, template<typename> class A>
+inline void ang::collections::vector_buffer<T, A>::dispose()
+{
+	clear();
 }
 
 template<typename T, template<typename> class A>

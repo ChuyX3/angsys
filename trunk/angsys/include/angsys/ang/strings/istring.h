@@ -83,21 +83,21 @@ namespace ang
 		template<typename T, bool = ang::is_unsigned_value<T>::value, bool = ang::is_floating_value<T>::value>
 		struct parse_helper {
 			static T parse(iparser const* parser, raw_cstr_t cstr, windex& i) {
-				return parser->to_signed(cstr, i);
+				return (T)parser->to_signed(cstr, i);
 			}
 		};
 
 		template<typename T>
 		struct parse_helper<T, true, false> {
 			static T parse(iparser const* parser, raw_cstr_t cstr, windex& i) {
-				return parser->to_unsigned(cstr, i);
+				return (T)parser->to_unsigned(cstr, i);
 			}
 		};
 
 		template<typename T>
 		struct parse_helper<T, false, true> {
 			static T parse(iparser const* parser, raw_cstr_t cstr, windex& i) {
-				return parser->to_floating(cstr, i);
+				return (T)parser->to_floating(cstr, i);
 			}
 		};
 

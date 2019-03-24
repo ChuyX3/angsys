@@ -24,9 +24,9 @@ ang::graphics::point<float> ang::graphics::point<float>::parse(ang::cstr_t cstr)
 	windex i = 0;
 	float temp[2];
 	parser->seek(cstr, i, " [ "_s);
-	temp[0] = parser->to_floating(cstr, i);
+	temp[0] = (float)parser->to_floating(cstr, i);
 	parser->seek(cstr, i, " , "_s);
-	temp[1] = parser->to_floating(cstr, i);
+	temp[1] = (float)parser->to_floating(cstr, i);
 	return{ temp[0], temp[1] };
 }
 
@@ -94,9 +94,9 @@ ang::graphics::size<float> ang::graphics::size<float>::parse(ang::cstr_t cstr)
 	windex i = 0;
 	float temp[2];
 	parser->seek(cstr, i, " [ "_s);
-	temp[0] = parser->to_floating(cstr, i);
+	temp[0] = (float)parser->to_floating(cstr, i);
 	parser->seek(cstr, i, " , "_s);
-	temp[1] = parser->to_floating(cstr, i);
+	temp[1] = (float)parser->to_floating(cstr, i);
 	return{ temp[0], temp[1] };
 }
 
@@ -166,13 +166,13 @@ ang::graphics::rect<float> ang::graphics::rect<float>::parse(ang::cstr_t cstr)
 	windex i = 0;
 	float temp[4];
 	parser->seek(cstr, i, " [ "_s);
-	temp[0] = parser->to_floating(cstr, i);
+	temp[0] = (float)parser->to_floating(cstr, i);
 	parser->seek(cstr, i, " , "_s);
-	temp[1] = parser->to_floating(cstr, i);
+	temp[1] = (float)parser->to_floating(cstr, i);
 	parser->seek(cstr, i, " , "_s);
-	temp[2] = parser->to_floating(cstr, i);
+	temp[2] = (float)parser->to_floating(cstr, i);
 	parser->seek(cstr, i, " , "_s);
-	temp[3] = parser->to_floating(cstr, i);
+	temp[3] = (float)parser->to_floating(cstr, i);
 	return{ temp[0], temp[1], temp[2], temp[3] };
 }
 
@@ -730,7 +730,7 @@ color_t  graphics::color::parse(ang::cstr_t cstr)
 	wsize i = 0;
 	if (text::iencoder::get_encoder(cstr.encoding())->to_char32(cstr.ptr(),i) == U'#')
 	{
-		return text::iparser::get_parser(cstr.encoding())->to_signed(cstr, i, true, 16);
+		return (dword)text::iparser::get_parser(cstr.encoding())->to_signed(cstr, i, true, 16);
 	}
 	else
 	{

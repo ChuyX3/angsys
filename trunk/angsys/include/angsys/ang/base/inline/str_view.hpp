@@ -20,10 +20,9 @@ namespace ang //constants
 	{
 		static constexpr text::encoding ENCODING = MY_ENCODING;
 		typedef str_view<MY_CHAR_TYPE, ENCODING> sefl_t;
-		typedef typename text::char_type_by_encoding<ENCODING>::char_t char_t;
-		typedef typename text::char_type_by_encoding<ENCODING>::str_t str_t;
-		typedef typename text::char_type_by_encoding<ENCODING>::cstr_t cstr_t;
-
+		typedef MY_CHAR_TYPE char_t;
+		typedef MY_CHAR_TYPE* str_t;
+		typedef MY_CHAR_TYPE const* cstr_t;
 
 		str_view();
 		str_view(ang::nullptr_t const&);

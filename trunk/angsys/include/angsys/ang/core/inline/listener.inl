@@ -24,11 +24,11 @@ ang::core::delegates::listener<T(Ts...)>::listener(listener const& other)
 template<typename T, typename... Ts>
 ang::core::delegates::listener<T(Ts...)>::~listener()
 {
-	empty();
+	clear();
 }
 
 template<typename T, typename... Ts>
-void ang::core::delegates::listener<T(Ts...)>::empty()
+void ang::core::delegates::listener<T(Ts...)>::clear()
 {
 	functions.clear();
 }
@@ -128,11 +128,11 @@ ang::core::delegates::listener<void(Ts...)>::listener(listener const& other)
 template<typename... Ts>
 ang::core::delegates::listener<void(Ts...)>::~listener()
 {
-	empty();
+	clear();
 }
 
 template<typename... Ts>
-void ang::core::delegates::listener<void(Ts...)>::empty()
+void ang::core::delegates::listener<void(Ts...)>::clear()
 {
 	functions.reset();
 }

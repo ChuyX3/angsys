@@ -90,6 +90,9 @@
     <Filter Include="source\collections">
       <UniqueIdentifier>{00353827-f9b4-445f-9d27-1af4626d97f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\sockets">
+      <UniqueIdentifier>{c664730d-4d67-4a98-941f-fba090a0c325}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\base\platform.h">
@@ -335,6 +338,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections.h">
       <Filter>header\angsys\collections</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\core\sockets.h">
+      <Filter>header\angsys\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\socket_library.h">
+      <Filter>header\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
@@ -472,6 +481,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\collections\collections.cpp">
       <Filter>source\collections</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\sockets\server.cpp">
+      <Filter>source\sockets</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\sockets\client.cpp">
+      <Filter>source\sockets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)include\inline\const_string.inl">
@@ -538,7 +553,7 @@
       <Filter>header\angsys\base\inline</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\list_specialization.inl">
-      <Filter>header</Filter>
+      <Filter>header\angsys\collections\inline</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

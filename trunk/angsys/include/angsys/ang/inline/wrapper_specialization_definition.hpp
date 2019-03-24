@@ -117,7 +117,7 @@
 		inline intf_wrapper& operator = (ang::nullptr_t const&); \
 		inline intf_wrapper& operator = (intf_wrapper &&); \
 		inline intf_wrapper& operator = (intf_wrapper const&); \
-		inline inline intf_wrapper_ptr<type> operator & (void); \
+		inline intf_wrapper_ptr<type> operator & (void); \
 		inline operator ang::intfptr()const; \
 		inline type* operator -> (void)const; \
 		inline operator type* (void) { return get();} \

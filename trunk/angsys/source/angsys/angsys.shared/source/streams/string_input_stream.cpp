@@ -38,7 +38,7 @@ text::istring_view_t string_input_stream::data()const
 	return m_string;
 }
 
-void string_input_stream::clear()
+void string_input_stream::dispose()
 {
 	m_string = null;
 }
@@ -68,13 +68,13 @@ bool string_input_stream::cursor(stream_index_t offset, stream_reference_t ref)
 	switch (ref)
 	{
 	case stream_reference::begin:
-		m_cursor = (wsize) min(max(offset, 0), size());
+		m_cursor = min(max(offset, 0), size());
 		break;
 	case stream_reference::current:
-		m_cursor = (wsize)min(max(m_cursor + offset, 0), size());
+		m_cursor = min(max(m_cursor + offset, 0), size());
 		break;
 	case stream_reference::end:
-		m_cursor = (wsize)min(max(size() + offset, 0), size());
+		m_cursor = min(max(size() + offset, 0), size());
 		break;
 	}
 	return true;
@@ -83,7 +83,9 @@ bool string_input_stream::cursor(stream_index_t offset, stream_reference_t ref)
 wsize string_input_stream::seek(cstr_t format)
 {
 	wsize c = m_cursor;
-	m_parser->seek(m_string, m_cursor, format);
+	windex cursor = (windex)m_cursor;
+	m_parser->seek(m_string, cursor, format);
+	m_cursor = cursor;
 	return m_cursor - c;
 }
 
@@ -152,7 +154,7 @@ wsize string_input_stream::read(text::unknown_str_t out, wsize sz, text::encodin
 {
 	if (out == null || sz == 0)
 		return 0;
-
+	return 0;
 }
 
 wsize string_input_stream::read_line(text::istring_t, array_view<const char32_t>, wsize*written)

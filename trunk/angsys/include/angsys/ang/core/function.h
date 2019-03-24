@@ -68,7 +68,7 @@ namespace ang
 				}
 		
 			private:
-				inline void clear()override {
+				inline void dispose()override {
 					//_function = null;
 				}
 				inline virtual~static_function() {
@@ -98,7 +98,7 @@ namespace ang
 				}
 
 			private:
-				inline void clear()override {
+				inline void dispose()override {
 					_obj = null;
 					_function = null;
 				}
@@ -134,7 +134,7 @@ namespace ang
 				}
 
 			private:
-				inline void clear()override {
+				inline void dispose()override {
 					_obj = null;
 					_function = null;
 				}
@@ -163,7 +163,7 @@ namespace ang
 				}
 
 			private:
-				inline void clear()override {
+				inline void dispose()override {
 					_obj = null;
 					_function = null;
 				}
@@ -192,7 +192,7 @@ namespace ang
 				}
 
 			private:
-				inline void clear()override {
+				inline void dispose()override {
 					_obj = null;
 					_function = null;
 				}
@@ -241,7 +241,7 @@ namespace ang
 		}
 
 	public:
-		void clear();
+		void reset();
 		void reset_unsafe();
 		bool is_empty()const;
 		type* get(void)const;
@@ -275,7 +275,7 @@ namespace ang
 		object_wrapper& operator = (object_wrapper &&);
 		object_wrapper& operator = (object_wrapper const&);
 		object_wrapper& operator = (ang::nullptr_t const&) {
-			clear();
+			reset();
 			return*this;
 		}
 
@@ -328,7 +328,7 @@ namespace ang
 		}
 
 	public:
-		void clear();
+		void reset();
 		void reset_unsafe();
 		bool is_empty()const;
 		type* get(void)const;
@@ -342,10 +342,12 @@ namespace ang
 		}
 
 	public:
+		object_wrapper& operator = (type*);
 		object_wrapper& operator = (object_wrapper &&);
 		object_wrapper& operator = (object_wrapper const&);
+
 		object_wrapper& operator = (ang::nullptr_t const&) {
-			clear();
+			reset();
 			return*this;
 		}
 
@@ -384,6 +386,71 @@ namespace ang
 	inline function<T(Ts...)> bind(intf_wrapper<D> o, T(O::*f)(Ts...)) {
 		return function<T(Ts...)>(o.get(), f);
 	}
+
+
+	template<typename T> struct delegate_helper;
+
+	template<typename T, typename...Ts>
+	struct delegate_helper<T(Ts...)> {
+		using args_type = collections::tuple<Ts...>;
+		using ret_type = T;
+		using base_class = base_property<T(Ts...)>;
+		using function_type = T(*)(base_class const*, args_type&&);
+	};
+
+	template<typename T, typename...Ts>
+	struct delegate_helper<T(*)(Ts...)> {
+		using args_type = collections::tuple<Ts...>;
+		using ret_type = T;
+		using base_class = base_property<T(Ts...)>;
+		using function_type = T(*)(base_class const*, args_type&&);
+	};
+
+	template<typename T>
+	struct delegate_helper<T(void)> {
+		using args_type = collections::tuple<void>;
+		using ret_type = T;
+		using base_class = base_property<T(void)>;
+		using function_type = T(*)(base_class const*, args_type &&);
+	};
+
+	template<typename T>
+	struct delegate_helper<T(*)(void)> {
+		using args_type = collections::tuple<void>;
+		using ret_type = T;
+		using base_class = base_property<T(void)>;
+		using function_type = T(*)(base_class const*, args_type &&);
+	};
+
+	template<typename T, typename delegate_helper<T>::function_type callback> struct delegate;
+
+	template<typename T, typename...Ts, typename delegate_helper<T(Ts...)>::function_type callback>
+	struct delegate<T(Ts...), callback> : delegate_helper<T(Ts...)>::base_class {
+		auto operator()(Ts... args)const {
+			return callback(this, ang::forward<typename delegate_helper<T(Ts...)>::args_type>(pack_args(ang::forward<Ts>(args)...)));
+		}
+	};
+
+	template<typename T, typename...Ts, typename delegate_helper<T(*)(Ts...)>::function_type callback>
+	struct delegate<T(*)(Ts...), callback> : delegate_helper<T(Ts...)>::base_class {
+		auto operator()(Ts... args)const {
+			return callback(this, ang::forward<typename delegate_helper<T(Ts...)>::args_type>(pack_args(ang::forward<Ts>(args)...)));
+		}
+	};
+
+	template<typename T, typename delegate_helper<T(void)>::function_type callback>
+	struct delegate<T(void), callback> : delegate_helper<T(void)>::base_class {
+		auto operator()(void)const {
+			return callback(this, collections::tuple<void>());
+		}
+	};
+
+	template<typename T, typename delegate_helper<T(*)(void)>::function_type callback>
+	struct delegate<T(*)(void), callback> : delegate_helper<T(void)>::base_class {
+		auto operator()(void)const {
+			return callback(this, collections::tuple<void>());
+		}
+	};
 }
 
 #endif//__CORE_FUNCTION_H__

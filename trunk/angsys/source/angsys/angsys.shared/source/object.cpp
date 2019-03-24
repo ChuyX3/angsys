@@ -314,7 +314,7 @@ bool object::auto_release()
 	++info->_mem_ref_counter;
 #endif
 
-	this->clear();
+	this->dispose();
 	this->~object(); //call destructor;
 	info->_object = nullptr;
 #ifdef WINDOWS_PLATFORM
@@ -339,7 +339,7 @@ bool object::auto_release(word ALIGMENT)
 #else
 	++info->_mem_ref_counter;
 #endif
-	this->clear();
+	this->dispose();
 	this->~object(); //call destructor;
 	info->_object = nullptr;
 #ifdef WINDOWS_PLATFORM
@@ -354,7 +354,7 @@ bool object::auto_release(word ALIGMENT)
 	return true;
 }
 
-void object::clear()
+void object::dispose()
 {
 
 }
@@ -364,12 +364,12 @@ comparision_result_t object::compare(object const* obj)const
 	return (obj != null && runtime_info().type_id() == obj->runtime_info().type_id())? comparision_result::same : comparision_result::diferent;
 }
 
-wstring object::to_string()const
+string object::to_string()const
 {
 	return runtime_info().type_name();
 }
 
-wstring object::to_string(text::text_format_t)const
+string object::to_string(text::text_format_t)const
 {
 	return runtime_info().type_name();
 }

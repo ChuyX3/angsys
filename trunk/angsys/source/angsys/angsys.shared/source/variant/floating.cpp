@@ -20,10 +20,10 @@ namespace ang
 value<float> variable<float>::parse(cstr_t cstr, windex i, bool exp)
 {
 	text::iparser_t parser = text::iparser::get_parser(cstr.encoding());
-	return parser->to_floating(cstr, i, true, exp);
+	return (float)parser->to_floating(cstr, i, true, exp);
 }
 
-wstring variable<float>::to_string(value<float> val, text::text_format_t f)
+string variable<float>::to_string(value<float> val, text::text_format_t f)
 {
 
 	const byte max_char = 120;
@@ -218,12 +218,12 @@ comparision_result_t variable<float>::compare(object const* obj)const
 		return ang::comparision_result::diferent;
 }
 
-wstring variable<float>::to_string()const
+string variable<float>::to_string()const
 {
 	return ang::move(to_string(*this, text::default_text_format<float>::format()));
 }
 
-wstring variable<float>::to_string(text::text_format_t f)const
+string variable<float>::to_string(text::text_format_t f)const
 {
 	return ang::move(to_string(*this, f));
 }
@@ -350,7 +350,7 @@ value<double> variable<double>::parse(cstr_t cstr, windex i, bool exp)
 	return parser->to_floating(cstr, i, true, exp);
 }
 
-wstring variable<double>::to_string(value<double> val, text::text_format_t f)
+string variable<double>::to_string(value<double> val, text::text_format_t f)
 {
 
 	const byte max_char = 120;
@@ -544,12 +544,12 @@ comparision_result_t variable<double>::compare(object const* obj)const
 		return ang::comparision_result::diferent;
 }
 
-wstring variable<double>::to_string()const
+string variable<double>::to_string()const
 {
 	return ang::move(to_string(*this, text::default_text_format<double>::format()));
 }
 
-wstring variable<double>::to_string(text::text_format_t f)const
+string variable<double>::to_string(text::text_format_t f)const
 {
 	return ang::move(to_string(*this, f));
 }

@@ -20,6 +20,15 @@ thread_t thread::create_thread()
 	return th.get();
 }
 
+listen_token<void(void)> thread::add_idle_event(base_event* prop, function<void(void)> e)
+{
+	return field_to_parent(&thread::idle_event, prop)->add_idle_event(e);
+}
+
+bool thread::remove_idle_event(base_event* prop, listen_token<void(void)> token)
+{
+	return field_to_parent(&thread::idle_event, prop)->remove_idle_event(token);
+}
 
 void thread::sleep(dword ms)
 {
@@ -94,8 +103,10 @@ ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::worker_thread);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::worker_thread, thread);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::worker_thread, thread);
 
-void worker_thread::clear()
+void worker_thread::dispose()
 {
+	m_idle_event.clear();
+
 	exit();
 #ifdef WINDOWS_PLATFORM
 	if (m_thread)
@@ -118,9 +129,7 @@ bool worker_thread::auto_release()
 
 bool worker_thread::start()
 {
-	async::mutex_t& mutex = thread_manager::instance()->main_mutex();
-	async::cond_t& cond = thread_manager::instance()->main_cond();
-	scope_locker<async::mutex_t> lock = mutex;
+	scope_locker<async::mutex_t> lock = m_mutex;
 
 	if (m_thread)
 		return false;
@@ -146,7 +155,7 @@ bool worker_thread::start()
 		throw_exception(except_code::invalid_memory);
 	ResumeThread(m_thread);
 #endif	
-	cond.waitfor(mutex, [this]()->bool
+	m_cond.waitfor(m_mutex, [this]()->bool
 	{
 		return m_state < async_action_status::wait_for_start;
 	});
@@ -174,22 +183,21 @@ bool worker_thread::attach()
 
 int worker_thread::dispatch()
 {
-	auto manager = thread_manager::instance();
 	thread_task_t task;
 
-	manager->main_mutex().lock();
+	m_mutex.lock();
 	m_state = async_action_status::wait_for_start; //wait for start routine
-	manager->main_cond().signal();
-	manager->main_mutex().unlock();
+	m_cond.signal();
+	m_mutex.unlock();
 	sleep(1);
 	do
 	{
-		manager->main_mutex().lock();
+		m_mutex.lock();
 		while (m_tasks->is_empty() && !(m_state & async_action_status::finished)) {
-			if(m_main_loop.is_empty())
-				manager->main_cond().wait(manager->main_mutex());
+			if(m_idle_event.is_empty())
+				m_cond.wait(m_mutex);
 			else
-				m_main_loop();
+				m_idle_event();
 		}
 
 		if (m_state & async_action_status::finished)//cancel
@@ -197,37 +205,37 @@ int worker_thread::dispatch()
 			for (thread_task_t task : m_tasks)
 				task->cancel();
 			m_state = async_action_status::completed;
-			manager->main_cond().signal();
-			manager->main_mutex().unlock();
+			m_cond.signal();
+			m_mutex.unlock();
 			break;
 		}
 
 		m_tasks->pop(task, false);
 		m_state = async_action_status::running; //running worker thread
-		manager->main_cond().signal();
-		manager->main_mutex().unlock();
+		m_cond.signal();
+		m_mutex.unlock();
 
 		try {
 			task->run();
 		}
 		catch (...) {}
 		task = null;
-		manager->main_mutex().lock();
+		m_mutex.lock();
 		if (m_state & async_action_status::finished)//cancel
 		{
 			for (thread_task_t task : m_tasks)
 				task->cancel();
 			m_state = async_action_status::completed;
-			manager->main_cond().signal();
-			manager->main_mutex().unlock();
+			m_cond.signal();
+			m_mutex.unlock();
 			break;
 		}
 		else
 		{
 			m_state = async_action_status::wait_for_then;
-			manager->main_cond().signal();
-			manager->main_mutex().unlock();
-			Sleep(1);
+			m_cond.signal();
+			m_mutex.unlock();
+			sleep(1);
 		}
 	} while (true);
 
@@ -240,7 +248,7 @@ int worker_thread::dispatch()
 
 thread_task_t worker_thread::post_task(thread_task_t task)
 {
-	scope_locker<mutex_t> lock = thread_manager::instance()->main_mutex();
+	scope_locker<mutex_t> lock = m_mutex;
 	task->mutex().lock();
 	task->m_thread = this;
 	task->m_status = async_action_status::wait_for_start;
@@ -249,7 +257,7 @@ thread_task_t worker_thread::post_task(thread_task_t task)
 	m_tasks->push(task, true);
 
 	if (!has_thread_access())
-		thread_manager::instance()->main_cond().signal();
+		m_cond.signal();
 	return task.get();
 }
 
@@ -257,12 +265,12 @@ thread_task_t worker_thread::post_task(core::delegates::function<void(iasync<voi
 {
 	thread_task_t task = new thread_task(this);
 	task->action += action;
-	scope_locker<mutex_t> lock = thread_manager::instance()->main_mutex();
+	scope_locker<mutex_t> lock = m_mutex;
 	task->m_status = async_action_status::wait_for_start;
 	m_tasks->push(task, true);
 
 	if (!has_thread_access())
-		thread_manager::instance()->main_cond().signal();
+		m_cond.signal();
 	return task.get();
 }
 
@@ -273,13 +281,19 @@ iasync<void> worker_thread::run_async(core::delegates::function<void(iasync<void
 	return post_task(action).get();
 }
 
-bool worker_thread::attach_loop(function<void(void)> func)
+listen_token<void(void)> worker_thread::add_idle_event(function<void(void)> func)
 {
-	scope_locker<mutex_t> lock = thread_manager::instance()->main_mutex();
-	m_main_loop = move(func);
+	scope_locker<mutex_t> lock = m_mutex;
+	auto token = m_idle_event += move(func);
 	if (!has_thread_access())
-		thread_manager::instance()->main_cond().signal();
-	return true;
+		m_cond.signal();
+	return token;
+}
+
+bool worker_thread::remove_idle_event(listen_token<void(void)> token)
+{
+	scope_locker<mutex_t> lock = m_mutex;
+	return m_idle_event -= token;
 }
 
 bool worker_thread::is_main_thread()const
@@ -311,14 +325,12 @@ void worker_thread::exit(int code)const
 	if (((async_action_status::finished | async_action_status::attached) & m_state))
 		return;
 
-	cond_t& cond = thread_manager::instance()->main_cond();
-	mutex_t& mutex = thread_manager::instance()->main_mutex();
-	scope_locker<mutex_t> lock = mutex;
+	scope_locker<mutex_t> lock = m_mutex;
 	m_state = async_action_status::canceled;
 	m_exit_code = code;
 	if (!has_thread_access()) {
-		cond.signal();
-		cond.waitfor(mutex, [this]() {
+		m_cond.signal();
+		m_cond.waitfor(m_mutex, [this]() {
 			return m_state != async_action_status::completed;
 		});
 	}
@@ -329,11 +341,9 @@ void worker_thread::wait()const
 	if (((async_action_status::finished | async_action_status::attached) & m_state))
 		return;
 
-	cond_t& cond = thread_manager::instance()->main_cond();
-	mutex_t& mutex = thread_manager::instance()->main_mutex();
-	scope_locker<mutex_t> lock = mutex;
+	scope_locker<mutex_t> lock = m_mutex;
 	if (!has_thread_access()) {
-		cond.waitfor(mutex, [this]() {
+		m_cond.waitfor(m_mutex, [this]() {
 			return m_state != async_action_status::completed;
 		});
 	}

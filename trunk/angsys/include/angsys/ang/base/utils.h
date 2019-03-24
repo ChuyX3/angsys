@@ -28,21 +28,21 @@ namespace ang //constants
 		typedef integer_constant<T, VALUE> self_type;
 
 		static constexpr value_type value = VALUE;
-		constexpr operator value_type() const { return (value); }
-		constexpr value_type operator()() const { return (value); }
+		constexpr operator value_type() const { return (VALUE); }
+		constexpr value_type operator()() const { return (VALUE); }
 
-		template<typename U> friend bool operator == (self_type const&, U const& b) { return U(value) == b; }
-		template<typename U> friend bool operator == (U const& b, self_type const&) { return b == U(value); }
-		template<typename U> friend bool operator != (self_type const&, U const& b) { return U(value) != b; }
-		template<typename U> friend bool operator != (U const& b, self_type const&) { return b != U(value); }
-		template<typename U> friend bool operator >= (self_type const&, U const& b) { return U(value) >= b; }
-		template<typename U> friend bool operator >= (U const& b, self_type const&) { return b >= U(value);  }
-		template<typename U> friend bool operator <= (self_type const&, U const& b) { return U(value) <= b; }
-		template<typename U> friend bool operator <= (U const& b, self_type const&) { return b <= U(value); }
-		template<typename U> friend bool operator > (self_type const&, U const& b) { return U(value) > b; }
-		template<typename U> friend bool operator > (U const& b, self_type const&) { return b > U(value); }
-		template<typename U> friend bool operator < (self_type const&, U const& b) { return U(value) < b; }
-		template<typename U> friend bool operator < (U const& b, self_type const&) { return b < U(value); }
+		template<typename U> friend bool operator == (self_type const&, U const& b) { return U(VALUE) == b; }
+		template<typename U> friend bool operator == (U const& b, self_type const&) { return b == U(VALUE); }
+		template<typename U> friend bool operator != (self_type const&, U const& b) { return U(VALUE) != b; }
+		template<typename U> friend bool operator != (U const& b, self_type const&) { return b != U(VALUE); }
+		template<typename U> friend bool operator >= (self_type const&, U const& b) { return U(VALUE) >= b; }
+		template<typename U> friend bool operator >= (U const& b, self_type const&) { return b >= U(VALUE);  }
+		template<typename U> friend bool operator <= (self_type const&, U const& b) { return U(VALUE) <= b; }
+		template<typename U> friend bool operator <= (U const& b, self_type const&) { return b <= U(VALUE); }
+		template<typename U> friend bool operator > (self_type const&, U const& b) { return U(VALUE) > b; }
+		template<typename U> friend bool operator > (U const& b, self_type const&) { return b > U(VALUE); }
+		template<typename U> friend bool operator < (self_type const&, U const& b) { return U(VALUE) < b; }
+		template<typename U> friend bool operator < (U const& b, self_type const&) { return b < U(VALUE); }
 
 	};
 
@@ -56,11 +56,11 @@ namespace ang //constants
 	struct integer_constant<wsize, -1> {
 		typedef wsize value_type;
 		typedef integer_constant<wsize, -1> self_type;
-
-		static constexpr value_type value = -1;
-		constexpr operator pointer() const { return pointer(value); }
-		constexpr operator value_type() const { return (value); }
-		constexpr value_type operator()() const { return (value); }
+		static constexpr value_type VALUE = -1;
+		static constexpr value_type value = VALUE;
+		constexpr operator pointer() const { return pointer(VALUE); }
+		constexpr operator value_type() const { return (VALUE); }
+		constexpr value_type operator()() const { return (VALUE); }
 	};
 
 	typedef integer_constant<wsize, -1> invalid_handle_type;
@@ -358,6 +358,11 @@ namespace ang //testing
 	template<typename T> constexpr wsize size_of() { return size_of_impl<T>::value; }
 	template<typename T> constexpr wsize align_of() { return align_of_impl<T>::value; }
 
+	template<typename T> constexpr wsize size_of(T const&) { return size_of_impl<T>::value; }
+	template<typename T> constexpr wsize align_of(T const&) { return align_of_impl<T>::value; }
+
+	template<typename T, wsize N> constexpr wsize size_of(T(&)[N]) { return size_of_impl<T>::value * N; }
+	template<typename T, wsize N> constexpr wsize size_of(const T(&)[N]) { return size_of_impl<T>::value * N; }
 }
 
 namespace ang //operations
@@ -403,41 +408,62 @@ namespace ang //operations
 	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::major, T1, T2, void_t<decltype(declval<T1>() > declval<T2>())>> : true_type { };
 	
 
-	template<typename T1, typename T2, logic_operation_type TYPE>
+	template<typename T1, typename T2, logic_operation_type TYPE, bool VALUE = has_logic_operation<TYPE, T1, T2>::value>
 	struct logic_operation { static bool operate(const T1&, const T2&) { return false; }  };
 
-	template<typename T> struct logic_operation<T, T, logic_operation_type::negation> {
-		static_assert(has_logic_operation<logic_operation_type::negation, T, T>::value, "template parameter T has no logic operator");
+	template<typename T> struct logic_operation<T, T, logic_operation_type::negation, false> {
+		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T& value) { return false; }
+	};
+
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same, false> {
+		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T1& value1, const T2& value2) { return memcmp(&value1,&value2, min<size_of<T1>(), size_of<T2>()>()) == 0; }
+	};
+
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::diferent, false> {
+		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T1& value1, const T2& value2) { return memcmp(&value1, &value2, min<size_of<T1>(), size_of<T2>()>()) != 0; }
+	};
+
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_minor, false> {
+		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T1& value1, const T2& value2) { return memcmp(&value1, &value2, min<size_of<T1>(), size_of<T2>()>()) <= 0; }
+	};
+
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_major, false> {
+		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T1& value1, const T2& value2) { return memcmp(&value1, &value2, min<size_of<T1>(), size_of<T2>()>()) >= 0; }
+	};
+
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::minor, false> {
+		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T1& value1, const T2& value2) { return memcmp(&value1, &value2, min<size_of<T1>(), size_of<T2>()>()) < 0; }
+	};
+
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::major, false> {
+		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T1& value1, const T2& value2) { return memcmp(&value1, &value2, min<size_of<T1>(), size_of<T2>()>()) > 0; }
+	};
+
+	template<typename T> struct logic_operation<T, T, logic_operation_type::negation, true> {
 		static bool operate(const T& value) { return !value; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same> {
-		static_assert(has_logic_operation<logic_operation_type::same, T1, T2>::value, "template parameter T has no logic operator");
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same, true> {
 		static bool operate(const T1& value1, const T2& value2) { return value1 == value2; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::diferent> {
-		static_assert(has_logic_operation<logic_operation_type::diferent, T1, T2>::value, "template parameter T has no logic operator");
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::diferent, true> {
 		static bool operate(const T1& value1, const T2& value2) { return value1 != value2; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_minor> {
-		static_assert(has_logic_operation<logic_operation_type::same_or_minor, T1, T2>::value, "template parameter T has no logic operator");
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_minor, true> {
 		static bool operate(const T1& value1, const T2& value2) { return value1 <= value2; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_major> {
-		static_assert(has_logic_operation<logic_operation_type::same_or_major, T1, T2>::value, "template parameter T has no logic operator");
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_major, true> {
 		static bool operate(const T1& value1, const T2& value2) { return value1 >= value2; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::minor> {
-		static_assert(has_logic_operation<logic_operation_type::minor, T1, T2>::value, "template parameter T has no logic operator");
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::minor, true> {
 		static bool operate(const T1& value1, const T2& value2) { return value1 < value2; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::major> {
-		static_assert(has_logic_operation<logic_operation_type::major, T1, T2>::value, "template parameter T has no logic operator");
+	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::major, true> {
 		static bool operate(const T1& value1, const T2& value2) { return value1 > value2; }
 	};
 
@@ -591,9 +617,9 @@ namespace ang
 
 	template<typename T> struct auto_self<T> {
 	protected: using self = T;
-	public: //dummy operators
-		inline bool operator ==(const T&)const { return false; }
-		inline bool operator !=(const T&)const { return false; }
+	//public: //dummy operators
+	//	inline bool operator ==(const T&)const { return false; }
+	//	inline bool operator !=(const T&)const { return false; }
 	};
 }
 

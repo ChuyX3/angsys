@@ -165,6 +165,12 @@ inline ang::comparision_result_t ang::collections::list_object<T, A>::compare(co
 }
 
 template<typename T, template <typename> class A>
+inline void ang::collections::list_object<T, A>::dispose()
+{
+	clear();
+}
+
+template<typename T, template <typename> class A>
 inline void ang::collections::list_object<T, A>::clear()
 {
 	while (pop());

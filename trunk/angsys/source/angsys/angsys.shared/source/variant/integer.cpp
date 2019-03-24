@@ -23,10 +23,10 @@ namespace ang
 
 value<int> variable<int>::parse(cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
-	return parser->to_signed(str, i, true, base);
+	return (int)parser->to_signed(str, i, true, base);
 }
 
-wstring variable<int>::to_string(value<int> val,text::text_format_t f)
+string variable<int>::to_string(value<int> val,text::text_format_t f)
 {
 	const byte max_char = 120;
 	text::text_format_flags_t format;
@@ -219,12 +219,12 @@ comparision_result_t variable<int>::compare(object const* obj)const
 		return ang::comparision_result::diferent;
 }
 
-wstring variable<int>::to_string()const
+string variable<int>::to_string()const
 {
 	return ang::move(to_string(*this, text::default_text_format<int>::format()));
 }
 
-wstring variable<int>::to_string(text::text_format_t f)const
+string variable<int>::to_string(text::text_format_t f)const
 {
 	return ang::move(to_string(*this, f));
 }
@@ -345,10 +345,10 @@ variant variable<int>::clone()const
 
 value<long> variable<long>::parse(cstr_t str, windex i, int base) {
 	text::iparser_t parser = text::iparser::get_parser(str.encoding());
-	return parser->to_signed(str, i, true, base);
+	return (long)parser->to_signed(str, i, true, base);
 }
 
-wstring variable<long>::to_string(value<long> val, text::text_format_t f)
+string variable<long>::to_string(value<long> val, text::text_format_t f)
 {
 	const byte max_char = 120;
 	text::text_format_flags_t format;
@@ -541,12 +541,12 @@ comparision_result_t variable<long>::compare(object const* obj)const
 		return ang::comparision_result::diferent;
 }
 
-wstring variable<long>::to_string()const
+string variable<long>::to_string()const
 {
 	return ang::move(to_string(*this, text::default_text_format<long>::format()));
 }
 
-wstring variable<long>::to_string(text::text_format_t f)const
+string variable<long>::to_string(text::text_format_t f)const
 {
 	return ang::move(to_string(*this, f));
 }
@@ -672,7 +672,7 @@ value<long64> variable<long64>::parse(cstr_t str, windex i, int base) {
 	return parser->to_signed(str, i, true, base);
 }
 
-wstring variable<long64>::to_string(value<long64> val, text::text_format_t f)
+string variable<long64>::to_string(value<long64> val, text::text_format_t f)
 {
 	const byte max_char = 120;
 	text::text_format_flags_t format;
@@ -865,12 +865,12 @@ comparision_result_t variable<long64>::compare(object const* obj)const
 		return ang::comparision_result::diferent;
 }
 
-wstring variable<long64>::to_string()const
+string variable<long64>::to_string()const
 {
 	return ang::move(to_string(*this, text::default_text_format<long64>::format()));
 }
 
-wstring variable<long64>::to_string(text::text_format_t f)const
+string variable<long64>::to_string(text::text_format_t f)const
 {
 	return ang::move(to_string(*this, f));
 }

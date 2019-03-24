@@ -100,16 +100,17 @@ namespace ang
 			*out = (T*)&this->get();
 			return true;
 		}
+		return false;
 	}
 
 	template<typename T>
-	inline wstring variable<T>::to_string()const
+	inline string variable<T>::to_string()const
 	{
 		return class_info().type_name();
 	}
 
 	template<typename T>
-	inline wstring variable<T>::to_string(text::text_format_t)const
+	inline string variable<T>::to_string(text::text_format_t)const
 	{
 		return class_info().type_name();
 	}

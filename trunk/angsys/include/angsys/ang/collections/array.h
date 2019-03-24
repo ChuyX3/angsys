@@ -54,7 +54,7 @@ namespace ang
 			inline wsize size()const;
 			inline void size(wsize size);
 
-			inline void clear()override;
+			inline void clear();
 			inline bool move(array_buffer<T, A>&);
 			template<typename U> inline void copy(array_view<U>const&);
 			template<typename U, template<typename> class allocator2> inline void copy(scope_array<U, allocator2>const&);
@@ -66,8 +66,8 @@ namespace ang
 			inline bool set_value(rtti_t const&, unknown_t)override;
 			inline bool get_value(rtti_t const&, unknown_t)const override;
 			inline variant clone()const override;
-			inline wstring to_string()const override;
-			inline wstring to_string(text::text_format_t)const override;
+			inline string to_string()const override;
+			inline string to_string(text::text_format_t)const override;
 
 		public: //ibuffer overrides
 			inline bool is_readonly()const override;
@@ -113,6 +113,9 @@ namespace ang
 		public: //overrides
 			ANG_DECLARE_INTERFACE();
 			inline comparision_result_t compare(const object*)const override;
+
+		protected: //overrides
+			inline void dispose()override;
 
 		protected: //memory operations
 			inline bool realloc(wsize size);

@@ -89,6 +89,9 @@ namespace ang
 			private:
 				virtual~core_file();
 
+			protected: //overrides
+				void dispose()override;
+
 			public: //Overrides
 				ANG_DECLARE_INTERFACE();
 
@@ -96,7 +99,6 @@ namespace ang
 				file_handle_t handle()const;
 				file_handle_t map_handle(ulong64 min);
 				bool is_created()const;
-				void clear()override;
 
 			public: //overrides
 				virtual stream_mode_t mode()const override;

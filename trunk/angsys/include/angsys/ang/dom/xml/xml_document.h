@@ -77,10 +77,13 @@ namespace ang
 
 				virtual~xml_document();
 
+			protected: //overrides
+				virtual void dispose()override;
 			public:
 				ANG_DECLARE_INTERFACE();
 
 				bool is_empty()const;
+
 				virtual void clear()override;
 
 				virtual xml_type_t xml_type()const override;

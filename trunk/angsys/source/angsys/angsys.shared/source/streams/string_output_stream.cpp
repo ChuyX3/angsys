@@ -38,7 +38,7 @@ text::istring_t string_output_stream::data()const
 	return m_string;
 }
 
-void string_output_stream::clear()
+void string_output_stream::dispose()
 {
 	m_string = null;
 }
@@ -63,13 +63,13 @@ bool string_output_stream::cursor(stream_index_t offset, stream_reference_t ref)
 	switch (ref)
 	{
 	case stream_reference::begin:
-		m_cursor = (wsize)min(max(offset, 0), size());
+		m_cursor = min(max(offset, 0), size());
 		break;
 	case stream_reference::current:
-		m_cursor = (wsize)min(max(m_cursor + offset, 0), size());
+		m_cursor = min(max(m_cursor + offset, 0), size());
 		break;
 	case stream_reference::end:
-		m_cursor = (wsize)min(max(size() + offset, 0), size());
+		m_cursor = min(max(size() + offset, 0), size());
 		break;
 	}
 	return true;

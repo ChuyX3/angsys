@@ -9,8 +9,8 @@ namespace ang
 		visible vcall bool set_value(rtti_t const&, unknown_t)pure
 		visible vcall bool get_value(rtti_t const&, unknown_t)const pure
 		visible vcall variant clone()const pure
-		visible vcall wstring to_string()const pure
-		visible vcall wstring to_string(text::text_format_t)const pure
+		visible vcall string to_string()const pure
+		visible vcall string to_string(text::text_format_t)const pure
 		template<typename T> bool set_value(T const& val);
 		template<typename T> bool get_value(T& val)const;
 	ang_end_interface();
@@ -133,8 +133,8 @@ namespace ang
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
 
-		virtual wstring to_string()const override;
-		virtual wstring to_string(text::text_format_t)const override;
+		virtual string to_string()const override;
+		virtual string to_string(text::text_format_t)const override;
 		comparision_result_t compare(object const* obj)const override;
 
 		virtual rtti_t const& value_type()const override;
@@ -302,7 +302,7 @@ namespace ang
 	{
 	public:
 		static value<bool> parse(cstr_t);
-		static wstring to_string(value<bool>, text::text_format = text::default_text_format<bool>::format());
+		static string to_string(value<bool>, text::text_format = text::default_text_format<bool>::format());
 
 	public:
 		variable();
@@ -317,8 +317,8 @@ namespace ang
 
 		comparision_result_t compare(object const* obj)const override;
 
-		virtual wstring to_string()const override;
-		virtual wstring to_string(text::text_format_t)const override;
+		virtual string to_string()const override;
+		virtual string to_string(text::text_format_t)const override;
 	
 		virtual rtti_t const& value_type()const override;
 		virtual bool set_value(rtti_t const&, unknown_t) override;
@@ -341,7 +341,7 @@ namespace ang
 			return (int)str_to_signed(str, i, b);
 		}
 		static value<int> parse(cstr_t, windex i = 0, int b = 10);
-		static wstring to_string(value<int>, text::text_format = text::default_text_format<int>::format());
+		static string to_string(value<int>, text::text_format = text::default_text_format<int>::format());
 
 	public:
 		variable();
@@ -354,8 +354,8 @@ namespace ang
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
 
-		virtual wstring to_string()const override;
-		virtual wstring to_string(text::text_format_t)const override;
+		virtual string to_string()const override;
+		virtual string to_string(text::text_format_t)const override;
 		comparision_result_t compare(object const* obj)const override;
 
 		virtual rtti_t const& value_type()const override;
@@ -379,7 +379,7 @@ namespace ang
 			return (uint)str_to_unsigned(str, i, b);
 		}
 		static value<uint> parse(cstr_t, windex i = 0, int b = 10);
-		static wstring to_string(value<uint>, text::text_format = text::default_text_format<uint>::format());
+		static string to_string(value<uint>, text::text_format = text::default_text_format<uint>::format());
 
 	public:
 		variable();
@@ -392,8 +392,8 @@ namespace ang
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
 
-		virtual wstring to_string()const override;
-		virtual wstring to_string(text::text_format_t)const override;
+		virtual string to_string()const override;
+		virtual string to_string(text::text_format_t)const override;
 		comparision_result_t compare(object const* obj)const override;
 
 		virtual rtti_t const& value_type()const override;
@@ -417,7 +417,7 @@ namespace ang
 			return (long)str_to_signed(str, i, b);
 		}
 		static value<long> parse(cstr_t, windex i = 0, int b = 10);
-		static wstring to_string(value<long>, text::text_format = text::default_text_format<long>::format());
+		static string to_string(value<long>, text::text_format = text::default_text_format<long>::format());
 
 	public:
 		variable();
@@ -430,8 +430,8 @@ namespace ang
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
 
-		virtual wstring to_string()const override;
-		virtual wstring to_string(text::text_format_t)const override;
+		virtual string to_string()const override;
+		virtual string to_string(text::text_format_t)const override;
 		comparision_result_t compare(object const* obj)const override;
 
 		virtual rtti_t const& value_type()const override;
@@ -455,7 +455,7 @@ namespace ang
 			return (ulong)str_to_unsigned(str, i, b);
 		}
 		static value<ulong> parse(cstr_t, windex i = 0, int b = 10);
-		static wstring to_string(value<ulong>, text::text_format = text::default_text_format<ulong>::format());
+		static string to_string(value<ulong>, text::text_format = text::default_text_format<ulong>::format());
 
 	public:
 		variable();
@@ -468,8 +468,8 @@ namespace ang
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
 
-		virtual wstring to_string()const override;
-		virtual wstring to_string(text::text_format_t)const override;
+		virtual string to_string()const override;
+		virtual string to_string(text::text_format_t)const override;
 		comparision_result_t compare(object const* obj)const override;
 
 		virtual rtti_t const& value_type()const override;
@@ -493,7 +493,7 @@ namespace ang
 			return (long64)str_to_signed(str, i, b);
 		}
 		static value<long64> parse(cstr_t, windex i = 0, int b = 10);
-		static wstring to_string(value<long64>, text::text_format = text::default_text_format<long64>::format());
+		static string to_string(value<long64>, text::text_format = text::default_text_format<long64>::format());
 
 	public:
 		variable();
@@ -506,8 +506,8 @@ namespace ang
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
 
-		virtual wstring to_string()const override;
-		virtual wstring to_string(text::text_format_t)const override;
+		virtual string to_string()const override;
+		virtual string to_string(text::text_format_t)const override;
 		comparision_result_t compare(object const* obj)const override;
 
 		virtual rtti_t const& value_type()const override;
@@ -531,7 +531,7 @@ namespace ang
 			return (ulong64)str_to_unsigned(str, i, b);
 		}
 		static value<ulong64> parse(cstr_t, windex i = 0, int b = 10);
-		static wstring to_string(value<ulong64>, text::text_format = text::default_text_format<ulong64>::format());
+		static string to_string(value<ulong64>, text::text_format = text::default_text_format<ulong64>::format());
 
 	public:
 		variable();
@@ -544,8 +544,8 @@ namespace ang
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
 
-		virtual wstring to_string()const override;
-		virtual wstring to_string(text::text_format_t)const override;
+		virtual string to_string()const override;
+		virtual string to_string(text::text_format_t)const override;
 		comparision_result_t compare(object const* obj)const override;
 
 		virtual rtti_t const& value_type()const override;
@@ -569,7 +569,7 @@ namespace ang
 			return (float)str_to_floating(str, i, exp);
 		}
 		static value<float> parse(cstr_t, windex i = 0, bool exp = false);
-		static wstring to_string(value<float>, text::text_format = text::default_text_format<float>::format());
+		static string to_string(value<float>, text::text_format = text::default_text_format<float>::format());
 
 	public:
 		variable();
@@ -582,8 +582,8 @@ namespace ang
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
 
-		virtual wstring to_string()const override;
-		virtual wstring to_string(text::text_format_t)const override;
+		virtual string to_string()const override;
+		virtual string to_string(text::text_format_t)const override;
 		comparision_result_t compare(object const* obj)const override;
 
 		virtual rtti_t const& value_type()const override;
@@ -607,7 +607,7 @@ namespace ang
 			return str_to_floating(str, i, exp);
 		}
 		static value<double> parse(cstr_t, windex i = 0, bool exp = false);
-		static wstring to_string(value<double>, text::text_format = text::default_text_format<double>::format());
+		static string to_string(value<double>, text::text_format = text::default_text_format<double>::format());
 
 	public:
 		variable();
@@ -620,8 +620,8 @@ namespace ang
 	public: //overrides
 		ANG_DECLARE_INTERFACE();
 
-		virtual wstring to_string()const override;
-		virtual wstring to_string(text::text_format_t)const override;
+		virtual string to_string()const override;
+		virtual string to_string(text::text_format_t)const override;
 		comparision_result_t compare(object const* obj)const override;
 
 		virtual rtti_t const& value_type()const override;

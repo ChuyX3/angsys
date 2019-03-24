@@ -19,10 +19,12 @@ namespace ang
 			public:
 				thread_task(worker_thread_t);
 
+			protected: //overrides
+				virtual void dispose()override;
+
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
 
-				virtual void clear()override;
 				virtual iasync<void> then(core::delegates::function<void(iasync<void>)> func);
 				virtual bool wait(async_action_status_t state)const;
 				virtual bool wait(async_action_status_t state, dword ms)const;
@@ -46,7 +48,6 @@ namespace ang
 				thread_task_t m_child_task;
 				worker_thread_t m_thread;
 
-
 			private:
 				virtual~thread_task();
 			};
@@ -63,15 +64,19 @@ namespace ang
 			public:
 				worker_thread();
 
+
+			protected: //overrides
+				virtual void dispose()override;
+				virtual bool auto_release()override;
+
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
-				virtual bool auto_release()override;
-				virtual void clear()override;
-
+				
 				virtual iasync<void> run_async(core::delegates::function<void(iasync<void>)>)override;
 				//virtual iasync<void> run_async(core::delegates::function<void(iasync<void>, var_args_t)>, var_args_t)override;
 
-				virtual bool attach_loop(function<void(void)>)override;
+				virtual listen_token<void(void)> add_idle_event(function<void(void)>)override;
+				virtual bool remove_idle_event(listen_token<void(void)>)override;
 				virtual bool is_main_thread()const override;
 				virtual bool has_thread_access()const override;
 				virtual dword thread_id()const override;
@@ -89,9 +94,12 @@ namespace ang
 			protected:
 				mutable int m_exit_code;
 				bool m_is_main_thread;
-				function<void(void)> m_main_loop;
+				listener<void(void)> m_idle_event;
 				collections::list<thread_task_t> m_tasks;
 				mutable async_action_status_t m_state;
+				mutable cond_t m_cond;
+				mutable mutex_t m_mutex;
+
 
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 				pthread_t _thread;

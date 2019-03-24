@@ -113,14 +113,14 @@ namespace ang //constants
 
 		template<typename To, typename From, bool VALUE = is_same_type<To, From>::value || is_base_of<To, From>::value >
 		struct __dyn_cast_helper {
-			static To* cast(From* old) { return static_cast<To*>(old); }
-			static To const* cast(From const* old) { return static_cast<To const*>(old); }
+			static To* cast(From* old) { return old ? static_cast<To*>(old) : null; }
+			static To const* cast(From const* old) { return old ? static_cast<To const*>(old) : null; }
 		};
 
 		template<typename To, typename From>
 		struct __dyn_cast_helper<To, From, false> {
-			static To* cast(From* old) { return rtti::interface_cast<To>(old); }
-			static To const* cast(From const* old) { return rtti::interface_cast<To>(old); }
+			static To* cast(From* old) { return old ? rtti::interface_cast<To>(old) : null; }
+			static To const* cast(From const* old) { return old ? rtti::interface_cast<To>(old) : null; }
 		};
 
 		template<typename T> inline rtti_t const& type_of() { return rtti::type_of<T>(); }

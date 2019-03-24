@@ -281,7 +281,7 @@ xml_node_t xml_node::xml_namespace(cstr_t key)const
 	try {
 		return m_ns_map[key].lock();
 	}
-	catch (exception_t const& e) {
+	catch (exception_t const&) {
 		xml_node_t parent = m_parent.lock();
 		return parent.is_empty() ? null : parent->xml_namespace(key);
 	}
