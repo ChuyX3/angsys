@@ -55,8 +55,11 @@ namespace ang
 				resource(ilibrary*);
 				ANG_DECLARE_INTERFACE();
 
+			protected: //override
+				void dispose()override;
+
 			public: //override
-				void clear()override;
+				virtual void clear();
 				bool load(dom::xml::xml_node_t)override;
 				bool save(dom::xml::xml_document_t)const override;
 				core::async::iasync<bool> load_async(dom::xml::xml_node_t)override;

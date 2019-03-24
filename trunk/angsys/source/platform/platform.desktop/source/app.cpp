@@ -47,14 +47,20 @@ app::app()
 
 app::~app()
 {
-	ang_platform_input_controller_manager_reset_instance();
-	input::controller_manager::release_instance();
-	ang_platform_core_app_reset_instance();
+
 }
 
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::platform::windows::app, ui_thread, icore_app);
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::windows::app);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::windows::app, ui_thread, icore_app);
+
+void app::dispose()
+{
+	ang_platform_input_controller_manager_reset_instance();
+	input::controller_manager::release_instance();
+	ang_platform_core_app_reset_instance();
+	base::dispose();
+}
 
 bool app::close()
 {

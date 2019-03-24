@@ -276,7 +276,7 @@ window::window()
 
 window::~window()
 {
-	//m_created_event.empty();
+
 }
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::windows::window);
@@ -405,7 +405,7 @@ bool window::create(wnd_create_args_t args)
 //	return object::release();
 //}
 
-void window::clear()
+void window::dispose()
 {
 	if (handle != null && IsWindow(handle->m_hwnd))
 	{

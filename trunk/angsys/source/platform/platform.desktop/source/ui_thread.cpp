@@ -73,7 +73,7 @@ ui_thread::ui_thread()
 
 ui_thread::~ui_thread()
 {
-	
+
 }
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::platform::windows::ui_thread);
@@ -83,9 +83,10 @@ ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::platform::windows::ui_thread, object)
 ang_platform_implement_event_handler(ui_thread, initialize_event);
 ang_platform_implement_event_handler(ui_thread, finalize_event);
 
-void ui_thread::clear() {
+void ui_thread::dispose() {
 	close();
 	s_current_ui_thread = null;
+	base::dispose();
 }
 
 pointer ui_thread::handle()const

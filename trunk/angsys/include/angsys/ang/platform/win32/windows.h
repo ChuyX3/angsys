@@ -317,12 +317,12 @@ namespace ang
 				static graphics::size<float> get_wnd_size_property(base_property<graphics::size<float>> const* prop);
 				static hwnd_t get_handle_property(base_property<hwnd_t> const* prop);
 				static bool get_is_created_property(base_property<bool> const* prop);
+			
 			public:
 				window();
 				window(wnd_create_args_t);
 
-			protected:
-				virtual~window();
+				ANG_DECLARE_INTERFACE();
 
 			public: //Events
 				//ang_platform_event(events::icreated_event_args, created_event);
@@ -375,9 +375,10 @@ namespace ang
 				void update_wnd()const;
 
 			public: //Overrides
-				ANG_DECLARE_INTERFACE();
-				virtual void clear()override;
+				
+				virtual void dispose()override;
 
+			public: //Overrides
 				virtual pointer core_view_handle()const override;
 				virtual graphics::icore_context_t core_context()const override;
 				virtual graphics::size<float> core_view_size()const override;
@@ -420,6 +421,9 @@ namespace ang
 				dword on_task_command(events::message& m);
 
 				friend class dispatcher;
+
+			protected:
+				virtual~window();
 			};
 
 			class LINK ui_thread
@@ -436,7 +440,7 @@ namespace ang
 
 			protected:
 				ui_thread();
-				virtual~ui_thread();
+				ANG_DECLARE_INTERFACE();
 
 			public: //Methods
 				virtual dword run();
@@ -449,9 +453,10 @@ namespace ang
 				void destroy();
 				dword on_message_dispatcher(events::message);
 				
-			public: //Overrides
-				ANG_DECLARE_INTERFACE();
-				void clear()override;
+			protected: //overrides
+				void dispose()override;
+
+			public: //overrides			
 				pointer handle()const;
 				core::async::idispatcher_t dispatcher()const;
 
@@ -481,6 +486,9 @@ namespace ang
 				virtual bool init_app(array<astring> cmdl);
 				virtual void update_app();
 				virtual bool exit_app();
+
+			protected:
+				virtual ~ui_thread();
 			};
 
 			class LINK app
@@ -506,12 +514,14 @@ namespace ang
 
 			public:
 				app();
+				ANG_DECLARE_INTERFACE();
 
 			protected:
-				virtual~app();
+				virtual ~app();
+				virtual void dispose()override;
 
 			public: //Overrides
-				ANG_DECLARE_INTERFACE();
+				
 				//void set_main_wnd(wndptr mainWindow);
 
 				virtual pointer core_app_handle()const override;
