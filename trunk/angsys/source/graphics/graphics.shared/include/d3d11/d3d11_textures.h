@@ -55,9 +55,10 @@ namespace ang
 
 				ANG_DECLARE_INTERFACE();
 
-			public: //overrides
-				void clear()override;
+			protected: //override
+				void dispose()override;
 
+			public: //overrides
 				resources::iresource_t resource()const override;
 				textures::tex_type_t tex_type()const override;
 				textures::tex_format_t tex_format()const override;
@@ -85,6 +86,7 @@ namespace ang
 				bool use_texture(d3d11_driver_t, index idx)const;
 				bool attach(com_wrapper<ID3D11Resource> resource, d3d11_driver_t driver = null, string sid = null);
 				bool attach(com_wrapper<ID3D11ShaderResourceView> _view, string sid = null);
+				void clear();
 
 				inline ID3D11Resource* D3D11Resource()const { return m_d3d_raw_resource.get(); }
 				inline ID3D11Texture1D* D3D11Texture1D()const { return static_cast<ID3D11Texture1D*>(m_d3d_raw_resource.get()); }
@@ -92,9 +94,6 @@ namespace ang
 				inline ID3D11Texture3D* D3D11Texture3D()const { return static_cast<ID3D11Texture3D*>(m_d3d_raw_resource.get()); }
 				inline ID3D11ShaderResourceView* D3D11ShaderResourceView()const { return m_d3d_shader_view.get(); }
 				inline DXGI_FORMAT D3D11Format()const { return m_tex_format; }
-
-			private:
-				virtual~d3d11_texture();
 			};
 
 

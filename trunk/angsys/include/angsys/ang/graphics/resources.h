@@ -22,17 +22,21 @@ namespace ang
 			ang_end_interface();
 
 
-			ang_begin_interface(LINK ilibrary, dom::xml::ixml_serializable)
-				visible vcall ifactory_t factory()const pure
-				visible vcall void clear()pure
+			ang_begin_interface(LINK ilibrary)
+				visible vcall bool load(dom::xml::xml_node_t)pure
+				visible vcall bool save(dom::xml::xml_document_t)const pure
+				visible vcall core::async::iasync<bool> load_async(dom::xml::xml_node_t)pure
+				visible vcall core::async::iasync<bool> save_async(dom::xml::xml_document_t)const pure
 				visible vcall bool load_sources(dom::xml::xml_node_t) pure
 				visible vcall ilibrary_t load_library(dom::xml::xml_node_t) pure
 				visible vcall iresource_t load_resource(dom::xml::xml_node_t) pure
 				visible vcall core::async::iasync<ilibrary_t> load_library_async(dom::xml::xml_node_t) pure
 				visible vcall core::async::iasync<iresource_t> load_resource_async(dom::xml::xml_node_t) pure
+				visible vcall ifactory_t factory()const pure
 				visible vcall core::async::idispatcher_t dispatcher()const pure
 				visible vcall string find_source(cstr_t)const pure
 				visible vcall iresource_t find_resource(cstr_t)const pure
+				visible vcall void clear()pure
 			ang_end_interface();
 		}
 	}

@@ -21,16 +21,11 @@ d3d11_frame_buffer::d3d11_frame_buffer(d3d11_driver* driver)
 	
 }
 
-d3d11_frame_buffer::~d3d11_frame_buffer()
-{
-	
-}
-
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_frame_buffer);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_frame_buffer, object, iframe_buffer, resources::iresource);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_frame_buffer, object, iframe_buffer, resources::iresource);
 
-void d3d11_frame_buffer::clear()
+void d3d11_frame_buffer::dispose()
 {
 	close();
 }

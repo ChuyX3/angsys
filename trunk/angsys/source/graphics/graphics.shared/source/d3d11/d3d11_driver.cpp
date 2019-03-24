@@ -46,18 +46,15 @@ d3d11_driver::d3d11_driver()
 	m_async_worker = core::async::thread::create_thread();
 }
 
-d3d11_driver::~d3d11_driver()
-{
-	m_async_worker->exit();
-}
-
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_driver);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_driver, object, idriver, ifactory);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_driver, object, idriver, ifactory);
 
-void d3d11_driver::clear()
+void d3d11_driver::dispose()
 {
 	close_driver();
+	m_async_worker->exit();
+	m_async_worker = null;
 }
 
 void d3d11_driver::set_file_system(core::files::ifile_system_t fs)
@@ -75,7 +72,7 @@ bool d3d11_driver::init_driver(platform::icore_view_t, long64 adapter_id)
 	uint createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 	UINT createFlags = 0;
 #ifdef _DEBUG
-	if (sdk_layers_available)
+	if (sdk_layers_available())
 	{
 		createFlags |= DXGI_CREATE_FACTORY_DEBUG;
 		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;

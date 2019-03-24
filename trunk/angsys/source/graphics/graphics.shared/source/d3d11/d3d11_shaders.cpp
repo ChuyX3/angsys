@@ -221,6 +221,7 @@ bool d3d11::d3d_reflect_shader_variable(reflect::varying_desc_t& field, ID3D11Sh
 		break;
 	default:field.var_type(var_type::f32); break;
 	}
+	return true;
 }
 
 bool d3d11::d3d_reflect_shader_uniforms(reflect::uniform_fields_t uniforms, ID3D11ShaderReflection* vertexShaderReflection)
@@ -258,13 +259,15 @@ d3d11_shaders::d3d11_shaders()
 {
 }
 
-d3d11_shaders::~d3d11_shaders()
-{
-}
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_shaders);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_shaders, object, ishaders, resources::iresource);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_shaders, object, ishaders, resources::iresource);
+
+void d3d11_shaders::dispose()
+{
+	close();
+}
 
 resources::iresource_t d3d11_shaders::resource()const { return const_cast<d3d11_shaders*>(this); }
 
@@ -327,6 +330,25 @@ bool d3d11_shaders::load(d3d11_driver_t driver, shader_info_t const& vertex, sha
 	m_resource_sid = sid;
 	return true;
 }
+
+bool d3d11_shaders::close()
+{
+	m_resource_sid = null;
+	m_input_layout = null;
+	m_vs_uniforms = null;
+	m_ps_uniforms = null;
+	m_d3d_textures = null;
+
+	m_d3d_pixel_shader = null;
+	m_d3d_vertex_shader = null;
+	m_d3d_input_layout = null;
+
+	m_d3d_vs_const_buffers = null;
+	m_d3d_ps_const_buffers = null;
+	m_d3d_ps_samplers = null;
+	return true;
+}
+
 
 string d3d11_shaders::load_vertex_shader(d3d11_driver_t driver, string shader_info)
 {
@@ -458,6 +480,7 @@ string d3d11_shaders::load_vertex_shader(d3d11_driver_t driver, shader_info_t co
 				, NULL, macros.is_empty() ? NULL : macros->data(), NULL, (castr_t)entry
 				, "vs_4_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &compiled_code, &error
 			))) return false;
+			return true;
 		})) {
 			castr_t log = (const char*)error->GetBufferPointer();
 			return log;
@@ -639,6 +662,7 @@ string d3d11_shaders::load_pixel_shader(d3d11_driver_t driver, shader_info_t con
 				, NULL, macros.is_empty() ? NULL : macros->data(), NULL, (castr_t)entry
 				, "ps_4_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &compiled_code, &error
 			))) return false;
+			return true;
 		})) {
 			castr_t log = (const char*)error->GetBufferPointer();
 			return log;

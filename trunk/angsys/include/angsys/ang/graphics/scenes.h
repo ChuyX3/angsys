@@ -8,6 +8,22 @@ namespace ang
 	{
 		namespace scenes
 		{
+			safe_enum(, light_type, uint)
+			{
+				directional,
+				spot,
+			};
+
+			struct light_info
+			{
+				maths::float3 color;
+				maths::float3 pos_dir;
+				light_type_t type;
+
+				//bool operator == (const light_info& other)const { return false; } //dummy
+				//bool operator != (const light_info& other)const { return false; } //dummy
+			};
+
 			ang_begin_interface(LINK icamera)
 				/*Sets the Current Viewport*/
 				visible vcall void viewport(box<float>) pure
@@ -23,7 +39,7 @@ namespace ang
 				visible vcall buffers::ivertex_buffer_t vertex_buffer() const pure
 				visible vcall reflect::varying_t uniform(cstr_t) const pure
 				//visible vcall buffers::ivertex_buffer_t vertex_buffer() const pure
-				visible vcall array_view<textures::itexture_t> textures() const pure
+				visible vcall collections::ienum_ptr<textures::itexture_t> textures() const pure
 			ang_end_interface();
 
 			ang_begin_interface(LINK imodel)
@@ -31,17 +47,23 @@ namespace ang
 				visible vcall maths::float4x4 world_matrix()const pure
 			ang_end_interface();
 
-			ang_begin_interface(LINK iscene_object, dom::xml::ixml_serializable)
+			ang_begin_interface(LINK iscene_object)
+				visible vcall bool load(iscene_t, dom::xml::xml_node_t)pure
+				visible vcall bool save(iscene_t, dom::xml::xml_document_t)const pure
+				visible vcall core::async::iasync<bool> load_async(iscene_t, dom::xml::xml_node_t)pure
+				visible vcall core::async::iasync<bool> save_async(iscene_t, dom::xml::xml_document_t)const pure
 				visible vcall void draw(iscene_t)pure
 				visible vcall void update(core::time::step_timer_t)pure
+				visible vcall void clear(void)pure
 			ang_end_interface();
 
-			ang_begin_interface(LINK iscene, dom::xml::ixml_serializable)
-				visible vcall void draw(iframe_buffer_t)pure
+			ang_begin_interface(LINK iscene, resources::ilibrary)
+				visible vcall void draw(idriver_t, iframe_buffer_t, icamera_t = nullptr)pure
 				visible vcall void update(core::time::step_timer_t)pure
+				visible vcall effects::ieffect_library_t fx_libreary()const pure
+				visible vcall textures::itexture_loader_t tex_loader()const pure
 				visible vcall icamera_t active_camera()const pure
-				visible vcall idriver_t driver()const pure
-				visible vcall resources::ilibrary_t resources()const pure
+				//visible vcall idriver_t driver()const pure
 			ang_end_interface();
 		}
 	}

@@ -19,9 +19,9 @@ namespace ang
 				var_type_t m_var_type;
 				var_class_t m_var_class;
 				astring m_var_name;
-				uint m_array_count;
-				uint m_aligment;
-				uint m_position;
+				wsize m_array_count;
+				wsize m_aligment;
+				wsize m_position;
 				uniform_fields_t m_fields;
 
 			public:
@@ -29,38 +29,38 @@ namespace ang
 					var_type_t _type = var_type::none,
 					var_class_t _class = var_class::none,
 					astring name = null,
-					uint _array = 1U,
-					uint aligment = 4U
+					wsize _array = 1U,
+					wsize aligment = 4U
 				);
 
-				varying_desc(astring name, uniform_fields_t vars, uint _array = 1U, uint aligment = 4U);
+				varying_desc(astring name, uniform_fields_t vars, wsize _array = 1U, wsize aligment = 4U);
 
 				varying_desc(varying_desc&& value);
 				varying_desc(const varying_desc& value);
 				~varying_desc();
 
-				bool load(dom::xml::xml_node_t, uint aligment = -1);
+				bool load(dom::xml::xml_node_t, wsize aligment = -1);
 				bool save(dom::xml::xml_document_t)const;
 
 				var_type_t var_type()const;
 				var_class_t var_class()const;
 				astring const& var_name()const;
-				uint array_count()const;
-				uint aligment()const;
-				uint position()const;
+				wsize array_count()const;
+				wsize aligment()const;
+				wsize position()const;
 				//uniform_fields_t& fields();
 				uniform_fields_t const& fields()const;
 
 				void var_type(var_type_t);
 				void var_class(var_class_t);
 				void var_name(astring);
-				void array_count(uint);
-				void aligment(uint);
-				void position(uint);
+				void array_count(wsize);
+				void aligment(wsize);
+				void position(wsize);
 				void fields(uniform_fields_t, bool calc_pos = true);
 
 				wsize get_size_in_bytes()const;
-				wsize get_size_in_bytes(uint aligment)const;
+				wsize get_size_in_bytes(wsize aligment)const;
 
 				wsize calculate_positions(bool recursive = false);
 
@@ -77,12 +77,12 @@ namespace ang
 				var_class_t m_var_class;
 				astring m_var_name;
 				var_semantic_t m_semantic;
-				index m_semantic_index;
-				uint m_position;
+				windex m_semantic_index;
+				wsize m_position;
 
 			public:
 				static wsize calculate_positions(array_view<attribute_desc>&);
-				static wsize get_size_in_bytes(array_view<attribute_desc>, wsize aligment = 16, uint from = 0, uint to = -1);
+				static wsize get_size_in_bytes(array_view<attribute_desc>, wsize aligment = 16, wsize from = 0, wsize to = -1);
 				static bool load(dom::xml::xml_node_t, collections::vector<attribute_desc>&);
 
 				attribute_desc(
@@ -90,8 +90,8 @@ namespace ang
 					var_class_t _class = var_class::none,
 					astring name = null,
 					var_semantic_t semantic = var_semantic::none,
-					index idx = 0U,
-					uint pos = 0U
+					windex idx = 0U,
+					wsize pos = 0U
 				);
 
 				attribute_desc(const attribute_desc&);
@@ -104,15 +104,15 @@ namespace ang
 				var_class_t var_class()const;
 				astring const& var_name()const;
 				var_semantic_t semantic()const;
-				uint semantic_index()const;
-				uint position()const;
+				windex semantic_index()const;
+				wsize position()const;
 
 				void var_type(var_type_t);
 				void var_class(var_class_t);
 				void var_name(astring);
 				void semantic(var_semantic_t);
-				void semantic_index(index);
-				void position(uint);
+				void semantic_index(windex);
+				void position(wsize);
 
 				wsize get_size_in_bytes()const;
 
@@ -145,18 +145,18 @@ namespace ang
 				varying(varying const&);
 				varying(array_view<byte> bytes, varying_desc desc, wsize aligment = (wsize)invalid_index);
 
-				uint aligment()const;
+				wsize aligment()const;
 				array_view<byte> raw_data()const;
 				varying_desc const& descriptor()const;
-				varying field(index idx);
+				varying field(windex idx);
 				varying field(cstr_t idx);
-				index find_field(cstr_t)const;
+				windex find_field(cstr_t)const;
 
 				varying& operator = (varying &&);
 				varying& operator = (varying const&);
 				collections::vector<varying> fragment();
 
-				varying operator [](index);
+				varying operator [](windex);
 				varying operator [](cstr_t);
 
 				template<typename T> inline auto cast() -> decltype(varying_cast<T>::cast(this)) {

@@ -987,6 +987,7 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 
 		outData = new(dataSize - offset) ang::buffer();
 		stream->read(outData->buffer_ptr(), outData->buffer_size());
+		return true;
 	});
 
 	return outData;

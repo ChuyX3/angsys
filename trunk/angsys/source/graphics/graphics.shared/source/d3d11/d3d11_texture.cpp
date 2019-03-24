@@ -16,13 +16,14 @@ d3d11_texture::d3d11_texture()
 {
 }
 
-d3d11_texture::~d3d11_texture()
-{
-}
-
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_texture);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_texture, object, textures::itexture, resources::iresource);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_texture, object, textures::itexture, buffers::igpu_buffer, resources::iresource);
+
+void d3d11_texture::dispose()
+{
+	clear();
+}
 
 void d3d11_texture::clear()
 {

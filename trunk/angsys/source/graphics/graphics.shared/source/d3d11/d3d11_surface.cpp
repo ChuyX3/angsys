@@ -22,14 +22,14 @@ d3d11_surface::d3d11_surface(d3d11_driver* driver)
 	
 }
 
-d3d11_surface::~d3d11_surface()
-{
-	close();
-}
-
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_surface);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_surface, object, isurface);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_surface, object, isurface);
+
+void d3d11_surface::dispose()
+{
+	close();
+}
 
 bool d3d11_surface::create(platform::icore_view_t view)
 {
@@ -165,6 +165,8 @@ bool d3d11_surface::close()
 {
 	m_dxgi_swap_chain = null;
 	m_d3d_frame_buffer = null;
+	m_view = null;
+	m_parent_driver = null;
 	return true;
 }
 
@@ -172,8 +174,8 @@ void d3d11_surface::on_display_size_changed_event(objptr, platform::events::idis
 {
 	m_need_update = true;
 	auto const& display = args->display_info();
-	m_pending_size.width = max(display.display_resolution.width * display.display_scale_factor.width, 10.0f);
-	m_pending_size.height = max(display.display_resolution.height * display.display_scale_factor.height, 10.0f);
+	m_pending_size.width = (uint)max(display.display_resolution.width * display.display_scale_factor.width, 10.0f);
+	m_pending_size.height = (uint)max(display.display_resolution.height * display.display_scale_factor.height, 10.0f);
 }
 
 void d3d11_surface::update()

@@ -18,14 +18,14 @@ d3d11_index_buffer::d3d11_index_buffer()
 
 }
 
-d3d11_index_buffer::~d3d11_index_buffer()
-{
-	close();
-}
-
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_index_buffer);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_index_buffer, object, buffers::iindex_buffer, resources::iresource);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_index_buffer, object, buffers::iindex_buffer, buffers::igpu_buffer, resources::iresource);
+
+void d3d11_index_buffer::dispose()
+{
+	close();
+}
 
 resources::iresource_t d3d11_index_buffer::resource()const { return const_cast<d3d11_index_buffer*>(this); }
 
@@ -174,14 +174,14 @@ d3d11_vertex_buffer::d3d11_vertex_buffer()
 
 }
 
-d3d11_vertex_buffer::~d3d11_vertex_buffer()
-{
-	close();
-}
-
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::d3d11::d3d11_vertex_buffer);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::d3d11::d3d11_vertex_buffer, object, buffers::ivertex_buffer, resources::iresource);
 ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::d3d11::d3d11_vertex_buffer, object, buffers::ivertex_buffer, buffers::igpu_buffer, resources::iresource);
+
+void d3d11_vertex_buffer::dispose()
+{
+	close();
+}
 
 resources::iresource_t d3d11_vertex_buffer::resource()const { return const_cast<d3d11_vertex_buffer*>(this); }
 
@@ -237,7 +237,7 @@ bool d3d11_vertex_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t 
 
 	m_vertex_count = count;
 	m_usage = usage;// buffers::buffer_usage::dynamic;
-
+	m_vertex_desc = vertex_desc;
 	m_stride = reflect::attribute_desc::get_size_in_bytes(vertex_desc);
 
 	if (m_stride == 0)
@@ -288,7 +288,12 @@ bool d3d11_vertex_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t 
 
 bool d3d11_vertex_buffer::close()
 {
-	
+	m_resource_sid = null;
+	m_vertex_count = 0;
+	m_stride = 0;
+	m_usage = buffers::buffer_usage::def;
+	m_vertex_desc = null;
+	m_vertex_buffer = null;
 	return true;
 }
 

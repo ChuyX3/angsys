@@ -92,14 +92,17 @@ namespace ang
 				d3d11_frame_buffer(d3d11_driver*);
 
 				ANG_DECLARE_INTERFACE();
-				void clear()override;
+
 				bool create(d3d11_surface_t);
 				bool create(array_view<d3d11_texture_t> textures, d3d11_texture_t depth_stencil, string sid = null);
 				bool create(array_view<textures::tex_format_t> color_format, textures::tex_format_t depth_stencil_format, graphics::size<uint> dimentions, string sid = null);
 				bool update(d3d11_texture_t resource);
 				bool close();
 
-			public: //overrides
+			protected: //override
+				void dispose()override;
+
+			public: //overrides	
 				resources::iresource_t resource()const override;
 				graphics::size<uint> dimentions()const override;
 				uint color_buffer_count()const override;
@@ -116,9 +119,6 @@ namespace ang
 				iframe_buffer_t to_frame_buffer() override;
 				buffers::iindex_buffer_t to_index_buffer() override;
 				buffers::ivertex_buffer_t to_vertex_buffer() override;
-
-			private:
-				virtual~d3d11_frame_buffer();
 			};
 
 			class d3d11_surface final
@@ -145,6 +145,9 @@ namespace ang
 				bool update(platform::icore_view_t, graphics::size<uint> size);
 				bool close();
 
+			protected: //override
+				void dispose()override;
+
 			public: //overrides
 				void update() override;
 				void swap_buffers(bool syncronize) override;
@@ -156,8 +159,6 @@ namespace ang
 			private:
 				void on_display_size_changed_event(objptr, ang::platform::events::idisplay_info_event_args_t);
 
-			private:
-				virtual~d3d11_surface();
 			};
 
 			class d3d11_driver
@@ -187,10 +188,12 @@ namespace ang
 			public:
 				d3d11_driver();
 
+			protected: //override
+				void dispose()override;
+
 			public: //overrides
 				ANG_DECLARE_INTERFACE();
 
-				void clear()override;
 				graph_driver_type_t graph_driver_type()const override;
 				isurface_t create_surface(platform::icore_view_t)const override;
 				ifactory_t get_factory()const override;
@@ -264,9 +267,6 @@ namespace ang
 				//	inline safe_thread_wrapper<ID3D11DeviceContext2> D3D11Context()const { return{ d3d_context.get(), main_mutex }; }
 				inline IDXGIFactory2* DXGIFactory()const { return m_dxgi_factory.get(); }
 				inline d3d11_frame_buffer_t current_frame_buffer()const { return m_current_frame_buffer.get(); }
-
-			protected:
-				virtual~d3d11_driver();
 			};
 		}
 	}
@@ -314,8 +314,7 @@ namespace ang
 				maths::float4x4 view_projection_matrix()const override;
 
 				bool create(Windows::Graphics::Holographic::HolographicCamera^ camera);
-			private:
-				virtual~holographic_camera();
+	
 			};
 
 			class holographic_frame
@@ -347,8 +346,6 @@ namespace ang
 				void on_camera_added(Windows::Graphics::Holographic::HolographicSpace ^, Windows::Graphics::Holographic::HolographicSpaceCameraAddedEventArgs ^);
 				void on_camera_removed(Windows::Graphics::Holographic::HolographicSpace ^, Windows::Graphics::Holographic::HolographicSpaceCameraRemovedEventArgs ^);
 
-			private:
-				virtual~holographic_frame();
 			};
 
 			class holographic_driver
@@ -376,8 +373,6 @@ namespace ang
 					return m_holographic_space;
 				}
 
-			private:
-				virtual~holographic_driver();
 			};
 		}
 	}

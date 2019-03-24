@@ -51,13 +51,13 @@ varying::varying(array_view<byte> bytes, varying_desc desc, wsize aligment)
 //
 //}
 
-uint varying::aligment()const { return _descriptor.aligment(); }
+wsize varying::aligment()const { return _descriptor.aligment(); }
 
 array_view<byte> varying::raw_data()const { return _raw_data; }
 
 varying_desc const& varying::descriptor()const { return _descriptor; }
 
-varying varying::field(index idx) 
+varying varying::field(windex idx) 
 {
 	if (_descriptor.var_type() != var_type::block)
 		varying();
@@ -83,24 +83,24 @@ varying varying::field(cstr_t name)
 	return ang::move(var);
 }
 
-index varying::find_field(cstr_t name)const
+windex varying::find_field(cstr_t name)const
 {
 	if (_descriptor.var_type() != var_type::block)
-		return (index)invalid_index;
+		return (windex)invalid_index;
 	uniform_fields_t const& fields = _descriptor.fields();
 	if (fields.is_empty())
-		return (index)invalid_index;
-	index i = 0;
+		return (windex)invalid_index;
+	windex i = 0;
 	for (auto it = fields->begin(); it.is_valid(); ++it, ++i) {
 		castr_t _name = it->var_name();
 		if (_name == name)
 			return i;
 	}
 	
-	return (index)invalid_index;
+	return (windex)invalid_index;
 }
 
-varying varying::operator [](index idx)
+varying varying::operator [](windex idx)
 {
 	auto count = _descriptor.array_count();
 	if (count > 1 && idx < count)
@@ -139,7 +139,7 @@ collections::vector<varying> varying::varying_cast<array_view<varying>>::force_c
 	desc.array_count(1);
 
 	collections::vector<varying> vars;
-	for (index i = 0U; i < count; ++i)
+	for (windex i = 0U; i < count; ++i)
 		vars += varying( collections::to_array(&var->_raw_data.get()[i * size], size), desc);
 	return ang::move(vars);
 }
@@ -152,7 +152,7 @@ collections::vector<varying> varying::varying_cast<array_view<varying>>::cast(va
 	desc.array_count(1);
 
 	collections::vector<varying> out;
-	for (index i = 0U; i < count; ++i)
+	for (windex i = 0U; i < count; ++i)
 		out += varying(collections::to_array(&var->_raw_data.get()[i * size], size), desc);
 	return out;
 }

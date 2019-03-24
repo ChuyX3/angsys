@@ -52,13 +52,10 @@ namespace ang
 
 				ANG_DECLARE_INTERFACE();
 
-			public:
-				bool load(d3d11_driver_t, string, string, string, string_ptr_t log = null);
-				bool load(d3d11_driver_t, effects::shader_info_t const&, effects::shader_info_t const&, string, string_ptr_t log = null);
-				bool use_shaders(d3d11_driver_t);
+			protected: //override
+				void dispose()override;
 
-			public: //overrides
-				
+			public: //overrides		
 				resources::iresource_t resource()const override;
 				array_view<reflect::attribute_desc> input_layout()const override;
 				array_view<reflect::varying_desc> vs_uniforms_layouts()const override;
@@ -80,6 +77,13 @@ namespace ang
 				iframe_buffer_t to_frame_buffer() override;
 				buffers::iindex_buffer_t to_index_buffer() override;
 				buffers::ivertex_buffer_t to_vertex_buffer() override;
+
+			public:
+				bool load(d3d11_driver_t, string, string, string, string_ptr_t log = null);
+				bool load(d3d11_driver_t, effects::shader_info_t const&, effects::shader_info_t const&, string, string_ptr_t log = null);
+				bool use_shaders(d3d11_driver_t);
+				bool close();
+
 			private:
 				string load_vertex_shader(d3d11_driver_t, effects::shader_info_t const&);
 				string load_vertex_shader(d3d11_driver_t, string);
@@ -96,9 +100,6 @@ namespace ang
 				inline collections::vector<com_wrapper<ID3D11Buffer>> const& D3D11VSConstBuffer()const { return m_d3d_vs_const_buffers; }
 				inline collections::vector<com_wrapper<ID3D11Buffer>> const& D3D11PSConstBuffer()const { return m_d3d_ps_const_buffers; }
 				inline collections::vector<com_wrapper<ID3D11SamplerState>> const& D3D11PSSamplers()const { return m_d3d_ps_samplers; }
-
-			private:
-				virtual~d3d11_shaders();
 			};
 
 			bool d3d_load_shader_input(collections::vector<graphics::reflect::attribute_desc> const& attributes, collections::vector<D3D11_INPUT_ELEMENT_DESC>& input_layout_desc);
@@ -110,8 +111,8 @@ namespace ang
 }
 
 
-inline bool operator == (D3D_SHADER_MACRO const&, D3D_SHADER_MACRO const&) { return false; } //dummy
-inline bool operator == (D3D11_INPUT_ELEMENT_DESC const&, D3D11_INPUT_ELEMENT_DESC const&) { return false; } //dummy
+//inline bool operator == (D3D_SHADER_MACRO const&, D3D_SHADER_MACRO const&) { return false; } //dummy
+//inline bool operator == (D3D11_INPUT_ELEMENT_DESC const&, D3D11_INPUT_ELEMENT_DESC const&) { return false; } //dummy
 
 //ANG_REGISTER_RUNTIME_TYPENAME(D3D_SHADER_MACRO);
 //ANG_REGISTER_RUNTIME_TYPENAME(D3D11_INPUT_ELEMENT_DESC);

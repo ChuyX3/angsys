@@ -170,7 +170,7 @@ cstr_t graphics::reflect::var_semantic_t::to_string()const
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 varying_desc::varying_desc(var_type_t _type, var_class_t _class
-	, astring name, uint _array, uint aligment)
+	, astring name, wsize _array, wsize aligment)
 {
 	m_var_type = _type;
 	m_var_class = _class;
@@ -180,7 +180,7 @@ varying_desc::varying_desc(var_type_t _type, var_class_t _class
 	m_array_count = max(_array, 1U);
 }
 
-varying_desc::varying_desc(astring name, collections::vector<varying_desc> vars, uint _array, uint aligment)
+varying_desc::varying_desc(astring name, collections::vector<varying_desc> vars, wsize _array, wsize aligment)
 {
 	m_var_name = name.get();
 	m_aligment = aligment;
@@ -218,7 +218,7 @@ varying_desc::~varying_desc() {
 }
 
 
-bool varying_desc::load(dom::xml::xml_node_t input, uint aligment)
+bool varying_desc::load(dom::xml::xml_node_t input, wsize aligment)
 {
 	if (input.is_empty())
 		return false;
@@ -232,9 +232,9 @@ bool varying_desc::load(dom::xml::xml_node_t input, uint aligment)
 			if (name == "name"_s)
 				m_var_name = (cstr_t)att->xml_value();
 			else if (name == "array"_s)
-				m_array_count = att->xml_value()->xml_as<uint>();
+				m_array_count = att->xml_value()->xml_as<wsize>();
 			else if (name == "aligment"_s)
-				m_aligment = att->xml_value()->xml_as<uint>();
+				m_aligment = att->xml_value()->xml_as<wsize>();
 		}
 
 		m_aligment = (aligment != invalid_index) ? aligment : max(m_aligment, 1u);
@@ -283,9 +283,9 @@ bool varying_desc::load(dom::xml::xml_node_t input, uint aligment)
 			else if (name == "class"_s)
 				m_var_class = att->xml_value()->xml_as<var_class_t>();
 			else if (name == "array"_s)
-				m_array_count = att->xml_value()->xml_as<uint>();
+				m_array_count = att->xml_value()->xml_as<wsize>();
 			else if (name == "aligment"_s)
-				m_aligment = att->xml_value()->xml_as<uint>();
+				m_aligment = att->xml_value()->xml_as<wsize>();
 		}
 
 		m_position = 0;
@@ -308,11 +308,11 @@ var_class_t varying_desc::var_class()const { return m_var_class; }
 
 astring const& varying_desc::var_name()const { return m_var_name; }
 
-uint varying_desc::array_count()const { return m_array_count; }
+wsize varying_desc::array_count()const { return m_array_count; }
 
-uint varying_desc::aligment()const { return m_aligment; }
+wsize varying_desc::aligment()const { return m_aligment; }
 
-uint varying_desc::position()const { return m_position; }
+wsize varying_desc::position()const { return m_position; }
 
 //uniform_fields_t& varying_desc::fields() { return m_fields; }
 
@@ -339,19 +339,19 @@ void varying_desc::var_name(astring value)
 	m_var_name = value;
 }
 
-void varying_desc::array_count(uint value)
+void varying_desc::array_count(wsize value)
 {
 	m_array_count = value;
 }
 
-void varying_desc::aligment(uint value)
+void varying_desc::aligment(wsize value)
 {
 	if (m_aligment == value) return;
 	m_aligment = value;
 	calculate_positions(true);
 }
 
-void varying_desc::position(uint value)
+void varying_desc::position(wsize value)
 {
 	m_position = value;
 }
@@ -475,7 +475,7 @@ wsize varying_desc::get_size_in_bytes()const
 	}
 }
 
-wsize varying_desc::get_size_in_bytes(uint aligment)const
+wsize varying_desc::get_size_in_bytes(wsize aligment)const
 {
 	if (m_array_count == 0)
 		return 0;
@@ -589,7 +589,7 @@ wsize attribute_desc::calculate_positions(array_view<attribute_desc>& attributes
 	return align_up(aligment, total);
 }
 
-wsize attribute_desc::get_size_in_bytes(array_view<attribute_desc> attributes, wsize aligment, uint from, uint to)
+wsize attribute_desc::get_size_in_bytes(array_view<attribute_desc> attributes, wsize aligment, wsize from, wsize to)
 {
 	if (attributes.size() <= from || from >= to)
 		return 0;
@@ -599,7 +599,7 @@ wsize attribute_desc::get_size_in_bytes(array_view<attribute_desc> attributes, w
 	wsize temp = 0;
 	wsize res = 0;
 	to = min(attributes.size(), to);
-	for (index i = from; i < to; ++i)
+	for (windex i = from; i < to; ++i)
 	{
 		attribute_desc const& desc = attributes[i];
 		size = desc.get_size_in_bytes();
@@ -634,7 +634,7 @@ bool attribute_desc::load(dom::xml::xml_node_t inputs, collections::vector<attri
 }
 
 attribute_desc::attribute_desc(var_type_t _type, var_class_t _class,
-	astring name, var_semantic_t sem, index idx, uint pos)
+	astring name, var_semantic_t sem, windex idx, wsize pos)
 {
 	m_var_type = _type;
 	m_var_class = _class;
@@ -662,7 +662,7 @@ bool attribute_desc::load(dom::xml::xml_node_t input)
 	m_var_type = att["type"_s]->xml_as<var_type_t>();
 	m_var_class = att["class"_s]->xml_as<var_class_t>();
 	m_semantic = att["semantic"_s]->xml_as<var_semantic_t>();
-	m_semantic_index = att["semantic_idx"_s]->xml_as<uint>();
+	m_semantic_index = att["semantic_idx"_s]->xml_as<wsize>();
 	return true;
 }
 
@@ -675,15 +675,15 @@ var_type_t attribute_desc::var_type()const { return m_var_type.get(); }
 var_class_t attribute_desc::var_class()const { return m_var_class.get(); }
 astring const& attribute_desc::var_name()const { return m_var_name; }
 var_semantic_t attribute_desc::semantic()const { return m_semantic.get(); }
-index attribute_desc::semantic_index()const { return m_semantic_index; }
-uint attribute_desc::position()const { return m_position; }
+windex attribute_desc::semantic_index()const { return m_semantic_index; }
+wsize attribute_desc::position()const { return m_position; }
 
 void attribute_desc::var_type(var_type_t value) { m_var_type = value; }
 void attribute_desc::var_class(var_class_t value){ m_var_class = value; }
 void attribute_desc::var_name(astring value){ m_var_name = value; }
 void attribute_desc::semantic(var_semantic_t value) { m_semantic = value; }
-void attribute_desc::semantic_index(index value) { m_semantic_index = value; }
-void attribute_desc::position(uint value) { m_position = value; }
+void attribute_desc::semantic_index(windex value) { m_semantic_index = value; }
+void attribute_desc::position(wsize value) { m_position = value; }
 
 wsize attribute_desc::get_size_in_bytes()const
 {

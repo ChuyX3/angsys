@@ -26,10 +26,12 @@ namespace ang
 
 			public:
 				d3d11_index_buffer();
-
-			public: //overrides
 				ANG_DECLARE_INTERFACE();
 
+			protected: //override
+				void dispose()override;
+
+			public: //overrides
 				resources::iresource_t resource()const override;
 				buffers::buffer_type_t buffer_type()const override;
 				buffers::buffer_usage_t buffer_usage()const override;
@@ -61,9 +63,6 @@ namespace ang
 				bool close();
 				void use_buffer(d3d11_driver_t);
 				inline ID3D11Buffer* D3D11Buffer()const { return m_index_buffer.get(); }
-
-			private:
-				virtual~d3d11_index_buffer();
 			};
 
 			class d3d11_vertex_buffer
@@ -80,9 +79,12 @@ namespace ang
 			public:
 				d3d11_vertex_buffer();
 
-			public: //overrides
 				ANG_DECLARE_INTERFACE();
 
+			protected: //override
+				void dispose()override;
+
+			public: //overrides
 				resources::iresource_t resource()const override;
 				buffers::buffer_type_t buffer_type()const override;
 				buffers::buffer_usage_t buffer_usage()const override;
@@ -114,9 +116,6 @@ namespace ang
 				bool close();
 				void use_buffer(d3d11_driver_t);
 				inline ID3D11Buffer* D3D11Buffer()const { return m_vertex_buffer.get(); }
-
-			private:
-				virtual~d3d11_vertex_buffer();
 			};
 
 		}
