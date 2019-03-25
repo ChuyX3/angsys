@@ -189,26 +189,21 @@ namespace ang
 
 namespace ang
 {
-	template<text::encoding E1, template<typename>class A1, text::encoding E2, template<typename>class A2> bool operator == (text::basic_string<E1, A1> const& str1, text::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1->cstr(), str2->cstr()) == 0; }
-	template<text::encoding E1, template<typename>class A1, text::encoding E2, template<typename>class A2> bool operator != (text::basic_string<E1, A1> const& str1, text::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1->cstr(), str2->cstr()) != 0; }
-	template<text::encoding E1, template<typename>class A1, text::encoding E2, template<typename>class A2> bool operator <= (text::basic_string<E1, A1> const& str1, text::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1->cstr(), str2->cstr()) <= 0; }
-	template<text::encoding E1, template<typename>class A1, text::encoding E2, template<typename>class A2> bool operator >= (text::basic_string<E1, A1> const& str1, text::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1->cstr(), str2->cstr()) >= 0; }
-	template<text::encoding E1, template<typename>class A1, text::encoding E2, template<typename>class A2> bool operator < (text::basic_string<E1, A1> const& str1, text::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1->cstr(), str2->cstr()) < 0; }
-	template<text::encoding E1, template<typename>class A1, text::encoding E2, template<typename>class A2> bool operator > (text::basic_string<E1, A1> const& str1, text::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1->cstr(), str2->cstr()) > 0; }
+	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2>
+	struct str_view_compare_helper<str_view<T1, E1>, text::basic_string<E2,A2>>
+	{
+		static int compare(const str_view<T1, E1>& value1, text::basic_string<E2, A2> const& value2) {
+			return str_view_compare_helper<str_view<T1, E1>, decltype(value2->cstr())>(value1, value2);
+		}
+	};
 
-	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>	bool operator == (text::basic_string<E1, A1> const& str1, const str_view<T2, E2>& str2) { return text::encoder<E1>::template compare<T2 const*>(str1->cstr(), str2.cstr()) == 0; }
-	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>	bool operator != (text::basic_string<E1, A1> const& str1, const str_view<T2, E2>& str2) { return text::encoder<E1>::template compare<T2 const*>(str1->cstr(), str2.cstr()) != 0; }
-	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>	bool operator >= (text::basic_string<E1, A1> const& str1, const str_view<T2, E2>& str2) { return text::encoder<E1>::template compare<T2 const*>(str1->cstr(), str2.cstr()) >= 0; }
-	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>	bool operator <= (text::basic_string<E1, A1> const& str1, const str_view<T2, E2>& str2) { return text::encoder<E1>::template compare<T2 const*>(str1->cstr(), str2.cstr()) <= 0; }
-	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>	bool operator > (text::basic_string<E1, A1> const& str1, const str_view<T2, E2>& str2) { return text::encoder<E1>::template compare<T2 const*>(str1->cstr(), str2.cstr()) > 0; }
-	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>	bool operator < (text::basic_string<E1, A1> const& str1, const str_view<T2, E2>& str2) { return text::encoder<E1>::template compare<T2 const*>(str1->cstr(), str2.cstr()) < 0; }
-
-	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2> bool operator == (const str_view<T1, E1>& str1, text::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1.cstr(), str2->cstr()) == 0; }
-	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2> bool operator != (const str_view<T1, E1>& str1, text::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1.cstr(), str2->cstr()) != 0; }
-	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2> bool operator >= (const str_view<T1, E1>& str1, text::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1.cstr(), str2->cstr()) >= 0; }
-	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2> bool operator <= (const str_view<T1, E1>& str1, text::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1.cstr(), str2->cstr()) <= 0; }
-	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2> bool operator > (const str_view<T1, E1>& str1, text::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1.cstr(), str2->cstr()) > 0; }
-	template<typename T1, text::encoding E1, text::encoding E2, template<typename>class A2> bool operator < (const str_view<T1, E1>& str1, text::basic_string<E1, A2> const& str2) { return text::encoder<E1>::template compare<typename text::char_type_by_encoding<E2>::cstr_t>(str1.cstr(), str2->cstr()) < 0; }
+	template<text::encoding E1, template<typename>class A1, typename T2, text::encoding E2>
+	struct str_view_compare_helper<text::basic_string<E1, A1>, str_view<T2, E2>>
+	{
+		static int compare(text::basic_string<E1, A1> const& value1, const str_view<T2, E2>& value2) {
+			return str_view_compare_helper<decltype(value1->cstr()), str_view<T2, E2>>(value1, value2);
+		}
+	};
 }
 
 #endif//__STRING_H__

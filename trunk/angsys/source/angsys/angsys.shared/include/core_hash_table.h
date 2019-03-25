@@ -152,7 +152,7 @@ namespace ang
 				node_ptr_t temp = *prev;
 
 				while (temp != null) {
-					if (logic_operation<K,K, logic_operation_type::same>::operate(temp->data.key, key)) {
+					if (logic_operation<logic_operation_type::same, K,K>::operate(temp->data.key, key)) {
 						*prev = temp->next;
 						if (out)*out = temp->data.value;
 						alloc.template destroy<node_t>(temp);
@@ -194,7 +194,7 @@ namespace ang
 				ulong64 hash = hash_code_maker<K>::make(key, m_table.size());
 				node_ptr_t temp = m_table[hash];
 				while (temp != null) {
-					if (logic_operation<K, K, logic_operation_type::same>::operate(temp->data.key, key))
+					if (logic_operation<logic_operation_type::same, K, K>::operate(temp->data.key, key))
 						return temp;
 					temp = temp->next;
 				}
@@ -301,7 +301,7 @@ namespace ang
 				node_ptr_t temp = *prev;
 
 				while (temp != null) {
-					if (logic_operation<T, T, logic_operation_type::same>::operate(temp->data, out)) {
+					if (logic_operation<logic_operation_type::same, T, T>::operate(temp->data, out)) {
 						*prev = temp->next;
 						if (out)*out = temp->data;
 						alloc.template destroy<node_t>(temp);
@@ -341,7 +341,7 @@ namespace ang
 				ulong64 hash = hash_code_maker<T>::make(value, m_table.size());
 				node_ptr_t temp = m_table[hash];
 				while (temp != null) {
-					if (logic_operation<T, T, logic_operation_type::same>::operate(temp->data, value))
+					if (logic_operation<logic_operation_type::same, T, T>::operate(temp->data, value))
 						return temp;
 					temp = temp->next;
 				}

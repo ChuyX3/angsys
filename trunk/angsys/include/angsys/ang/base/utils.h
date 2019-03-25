@@ -315,6 +315,8 @@ namespace ang //testing
 	template<typename T> inline constexpr genre_t genre_of() { return __genre_of<T>::value; }
 	template<typename T> inline constexpr genre_t genre_of(T const&) { return __genre_of<T>::value; }
 
+	template<typename T>
+	struct is_value_type : or_expression<genre_of<T>() == genre::value_type, genre_of<T>() == genre::enum_type> { };
 
 	template<typename T> struct is_integer_value : false_type { };
 	
@@ -369,6 +371,7 @@ namespace ang //operations
 {
 	typedef enum class logic_operation_type : uint
 	{
+		affirmation,
 		negation,
 		same,
 		diferent,
@@ -399,6 +402,7 @@ namespace ang //operations
 	}arithmetic_operation_t;
 
 	template<logic_operation_type TYPE, typename T1, typename T2 = T1, typename = void> struct has_logic_operation : false_type { };
+	template<typename T> struct has_logic_operation<logic_operation_type::affirmation, T, T, void_t<decltype(!!declval<T>())>> : true_type { };
 	template<typename T> struct has_logic_operation<logic_operation_type::negation, T, T, void_t<decltype(!declval<T>())>> : true_type { };
 	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::same, T1, T2, void_t<decltype(declval<T1>() == declval<T2>())>> : true_type { };
 	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::diferent, T1, T2, void_t<decltype(declval<T1>() != declval<T2>())>> : true_type { };
@@ -407,74 +411,133 @@ namespace ang //operations
 	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::minor, T1, T2, void_t<decltype(declval<T1>() < declval<T2>())>> : true_type { };
 	template<typename T1, typename T2> struct has_logic_operation<logic_operation_type::major, T1, T2, void_t<decltype(declval<T1>() > declval<T2>())>> : true_type { };
 	
+	template<logic_operation_type TYPE, typename T1, typename T2, bool VALUE1 = is_value_type<T1>::value, bool VALUE2 = is_value_type<T2>::value>
+	struct logic_operation;
 
-	template<typename T1, typename T2, logic_operation_type TYPE, bool VALUE = has_logic_operation<TYPE, T1, T2>::value>
-	struct logic_operation { static bool operate(const T1&, const T2&) { return false; }  };
+	template<logic_operation_type TYPE, typename T1, typename T2, bool VALUE = has_logic_operation<TYPE, T1, T2>::value>
+	struct __logic_operation_helper;
 
-	template<typename T> struct logic_operation<T, T, logic_operation_type::negation, false> {
-		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T& value) { return false; }
+
+	template<typename T> struct __logic_operation_helper<logic_operation_type::affirmation, T, T, false> {
+		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T& value) { return (T const*)&value != null; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same, false> {
+	template<typename T> struct __logic_operation_helper<logic_operation_type::negation, T, T, false> {
+		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T& value) { return (T const*)&value == null; }
+	};
+
+	template<typename T1, typename T2> struct __logic_operation_helper<logic_operation_type::same, T1, T2, false> {
 		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T1& value1, const T2& value2) { return memcmp(&value1,&value2, min<size_of<T1>(), size_of<T2>()>()) == 0; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::diferent, false> {
+	template<typename T1, typename T2> struct __logic_operation_helper<logic_operation_type::diferent, T1, T2,  false> {
 		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T1& value1, const T2& value2) { return memcmp(&value1, &value2, min<size_of<T1>(), size_of<T2>()>()) != 0; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_minor, false> {
+	template<typename T1, typename T2> struct __logic_operation_helper<logic_operation_type::same_or_minor, T1, T2, false> {
 		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T1& value1, const T2& value2) { return memcmp(&value1, &value2, min<size_of<T1>(), size_of<T2>()>()) <= 0; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_major, false> {
+	template<typename T1, typename T2> struct __logic_operation_helper<logic_operation_type::same_or_major, T1, T2, false> {
 		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T1& value1, const T2& value2) { return memcmp(&value1, &value2, min<size_of<T1>(), size_of<T2>()>()) >= 0; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::minor, false> {
+	template<typename T1, typename T2> struct __logic_operation_helper<logic_operation_type::minor, T1, T2, false> {
 		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T1& value1, const T2& value2) { return memcmp(&value1, &value2, min<size_of<T1>(), size_of<T2>()>()) < 0; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::major, false> {
+	template<typename T1, typename T2> struct __logic_operation_helper<logic_operation_type::major, T1, T2, false> {
 		static bool ANG_DEPRECATE(operate, "template parameter T has no logic operator")(const T1& value1, const T2& value2) { return memcmp(&value1, &value2, min<size_of<T1>(), size_of<T2>()>()) > 0; }
 	};
 
-	template<typename T> struct logic_operation<T, T, logic_operation_type::negation, true> {
+	template<typename T> struct __logic_operation_helper<logic_operation_type::affirmation, T, T, true> {
+		static bool operate(const T& value) { return !!value; }
+	};
+
+	template<typename T> struct __logic_operation_helper<logic_operation_type::negation, T, T, true> {
 		static bool operate(const T& value) { return !value; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same, true> {
+	template<typename T1, typename T2> struct __logic_operation_helper<logic_operation_type::same, T1, T2, true> {
 		static bool operate(const T1& value1, const T2& value2) { return value1 == value2; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::diferent, true> {
+	template<typename T1, typename T2> struct __logic_operation_helper<logic_operation_type::diferent, T1, T2,  true> {
 		static bool operate(const T1& value1, const T2& value2) { return value1 != value2; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_minor, true> {
+	template<typename T1, typename T2> struct __logic_operation_helper<logic_operation_type::same_or_minor, T1, T2,  true> {
 		static bool operate(const T1& value1, const T2& value2) { return value1 <= value2; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::same_or_major, true> {
+	template<typename T1, typename T2> struct __logic_operation_helper<logic_operation_type::same_or_major, T1, T2,  true> {
 		static bool operate(const T1& value1, const T2& value2) { return value1 >= value2; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::minor, true> {
+	template<typename T1, typename T2> struct __logic_operation_helper<logic_operation_type::minor, T1, T2, true> {
 		static bool operate(const T1& value1, const T2& value2) { return value1 < value2; }
 	};
 
-	template<typename T1, typename T2> struct logic_operation<T1, T2, logic_operation_type::major, true> {
+	template<typename T1, typename T2> struct __logic_operation_helper<logic_operation_type::major, T1, T2, true> {
 		static bool operate(const T1& value1, const T2& value2) { return value1 > value2; }
 	};
 
+	template<logic_operation_type TYPE, typename T1, typename T2, bool VALUE1, bool VALUE2> struct logic_operation {
+		static bool operate(const T1& value1, const T2& value2) { return __logic_operation_helper<TYPE, T1, T2>::operate(value1, value2); }
+	};
 
-	template<typename T> using logic_operation_negation = logic_operation<T, T, logic_operation_type::negation>;
-	template<typename T1, typename T2> using logic_operation_same = logic_operation<T1, T2, logic_operation_type::same>;
-	template<typename T1, typename T2> using logic_operation_diferent = logic_operation<T1, T2, logic_operation_type::diferent>;
-	template<typename T1, typename T2> using logic_operation_same_or_minor = logic_operation<T1, T2, logic_operation_type::same_or_minor>;
-	template<typename T1, typename T2> using logic_operation_same_or_major = logic_operation<T1, T2, logic_operation_type::same_or_major>;
-	template<typename T1, typename T2> using logic_operation_minor = logic_operation<T1, T2, logic_operation_type::minor>;
-	template<typename T1, typename T2> using logic_operation_major = logic_operation<T1, T2, logic_operation_type::major>;
+	template<typename T, bool VALUE> struct logic_operation<logic_operation_type::negation, T,T, VALUE, VALUE> {
+		static bool operate(const T& value) { return __logic_operation_helper<logic_operation_type::negation, T, T>::operate(value); }
+	};
+
+	template<typename T>
+	struct logic_operation<logic_operation_type::affirmation, T, T, true, true> {
+		static bool operate(const T& value) { return !!value; }
+	};
+
+	template<typename T>
+	struct logic_operation<logic_operation_type::negation, T, T, true, true> {
+		static bool operate(const T& value) { return !value; }
+	};
+
+	template<typename T1, typename T2>
+	struct logic_operation<logic_operation_type::same, T1, T2, true, true> {
+		static bool operate(const T1& value1, const T2& value2) { return value1 == (T1)value2; }
+	};
+
+	template<typename T1, typename T2>
+	struct logic_operation<logic_operation_type::diferent, T1, T2, true, true> {
+		static bool operate(const T1& value1, const T2& value2) { return value1 != (T1)value2; }
+	};
+
+	template<typename T1, typename T2>
+	struct logic_operation<logic_operation_type::same_or_major, T1, T2, true, true> {
+		static bool operate(const T1& value1, const T2& value2) { return value1 >= (T1)value2; }
+	};
+
+	template<typename T1, typename T2>
+	struct logic_operation<logic_operation_type::same_or_minor, T1, T2, true, true> {
+		static bool operate(const T1& value1, const T2& value2) { return value1 <= (T1)value2; }
+	};
+
+	template<typename T1, typename T2>
+	struct logic_operation<logic_operation_type::major, T1, T2, true, true> {
+		static bool operate(const T1& value1, const T2& value2) { return value1 > (T1)value2; }
+	};
+
+	template<typename T1, typename T2>
+	struct logic_operation<logic_operation_type::minor, T1, T2, true, true> {
+		static bool operate(const T1& value1, const T2& value2) { return value1 < (T1)value2; }
+	};
+
+
+	template<typename T> using logic_operation_negation = logic_operation<logic_operation_type::negation, T, T>;
+	template<typename T1, typename T2> using logic_operation_same = logic_operation<logic_operation_type::same, T1, T2>;
+	template<typename T1, typename T2> using logic_operation_diferent = logic_operation<logic_operation_type::diferent, T1, T2>;
+	template<typename T1, typename T2> using logic_operation_same_or_minor = logic_operation<logic_operation_type::same_or_minor, T1, T2>;
+	template<typename T1, typename T2> using logic_operation_same_or_major = logic_operation<logic_operation_type::same_or_major, T1, T2>;
+	template<typename T1, typename T2> using logic_operation_minor = logic_operation<logic_operation_type::minor, T1, T2>;
+	template<typename T1, typename T2> using logic_operation_major = logic_operation<logic_operation_type::major, T1, T2>;
 
 
 	template<boolean_operation_type TYPE, typename T1, typename T2 = T1, typename = void> struct has_boolean_operation : false_type { };

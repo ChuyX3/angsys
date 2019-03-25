@@ -210,6 +210,14 @@ namespace ang
 			(object_wrapper<text::basic_string_buffer<ENCODING>>& str1, str_view<T, E> const& str2) {
 			return str1 += str2;	
 		}
+
+		template<text::encoding E2, template<typename>class A2> bool operator == (text::basic_string<E2, A2> const& str2) { return ((cstr_view<typename text::char_type_by_encoding<ENCODING>::char_t, ENCODING>)*this) == str2->cstr(); }
+		template<text::encoding E2, template<typename>class A2> bool operator != (text::basic_string<E2, A2> const& str2) { return ((cstr_view<typename text::char_type_by_encoding<ENCODING>::char_t, ENCODING>)*this) != str2->cstr(); }
+		template<text::encoding E2, template<typename>class A2> bool operator >= (text::basic_string<E2, A2> const& str2) { return ((cstr_view<typename text::char_type_by_encoding<ENCODING>::char_t, ENCODING>)*this) >= str2->cstr(); }
+		template<text::encoding E2, template<typename>class A2> bool operator <= (text::basic_string<E2, A2> const& str2) { return ((cstr_view<typename text::char_type_by_encoding<ENCODING>::char_t, ENCODING>)*this) <= str2->cstr(); }
+		template<text::encoding E2, template<typename>class A2> bool operator > (text::basic_string<E2, A2> const& str2) { return ((cstr_view<typename text::char_type_by_encoding<ENCODING>::char_t, ENCODING>)*this) > str2->cstr(); }
+		template<text::encoding E2, template<typename>class A2> bool operator < (text::basic_string<E2, A2> const& str2) { return ((cstr_view<typename text::char_type_by_encoding<ENCODING>::char_t, ENCODING>)*this) < str2->cstr(); }
+
 	ANG_END_OBJECT_WRAPPER();
 
 }

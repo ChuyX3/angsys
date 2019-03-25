@@ -35,8 +35,8 @@ namespace ang //constants
 		str_t str();
 		cstr_t cstr()const;
 		void set(str_t str, wsize sz = -1);
-		sefl_t begin()const;
-		sefl_t end()const;
+		char_t* begin()const;
+		char_t* end()const;
 		sefl_t& operator = (sefl_t const& str);
 		sefl_t& operator = (str_t str);
 		template<wsize SIZE>
@@ -85,8 +85,8 @@ namespace ang //constants
 		}
 		wsize size()const;
 		cstr_t cstr()const;
-		sefl_t begin()const;
-		sefl_t end()const;
+		char_t const* begin()const;
+		char_t const* end()const;
 		void set(cstr_t str, wsize sz = -1);
 		sefl_t& operator = (sefl_t const& str);
 		sefl_t& operator = (cstr_t str);

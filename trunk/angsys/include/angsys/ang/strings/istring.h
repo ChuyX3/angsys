@@ -134,6 +134,23 @@ namespace ang
 		inline bool operator < (text::istring_t cstr)const { return (cstr_t)*this > (cstr_t)cstr; }
 	ANG_END_INTF_WRAPPER();
 
+
+	template<typename T, text::encoding E>
+	struct str_view_compare_helper<str_view<T, E>, string>
+	{
+		static int compare(const str_view<T, E>& value1, string value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>(value1, value2);
+		}
+	};
+
+	template<typename T, text::encoding E>
+	struct str_view_compare_helper<string, str_view<T, E>>
+	{
+		static int compare(string value1, const str_view<T, E>& value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>(value1, value2);
+		}
+	};
+
 	using text::istring_t;
 }
 

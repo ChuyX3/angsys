@@ -570,7 +570,7 @@ inline ang::comparision_result_t ang::collections::array_buffer<T, allocator>::c
 		else if (counter() < other->counter())
 			return comparision_result::minor;
 		else for (auto it = other->begin(); it != other->end(); ++it)
-			if (logic_operation<T, T, logic_operation_type::same>::operate(m_data[i++],*it))
+			if (logic_operation<logic_operation_type::same, T, T>::operate(m_data[i++],*it))
 				return comparision_result::diferent;
 		return comparision_result::same;
 	}

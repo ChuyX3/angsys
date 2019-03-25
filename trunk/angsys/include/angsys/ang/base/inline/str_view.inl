@@ -63,14 +63,14 @@ void ang::str_view<MY_CHAR_TYPE, MY_ENCODING>::set(MY_STR_TYPE str, wsize sz)
 	}
 }
 
-ang::str_view<MY_CHAR_TYPE, MY_ENCODING> ang::str_view<MY_CHAR_TYPE, MY_ENCODING>::begin()const
+MY_CHAR_TYPE* ang::str_view<MY_CHAR_TYPE, MY_ENCODING>::begin()const
 {
-	return sefl_t(m_view, m_size);
+	return m_view;
 }
 
-ang::str_view<MY_CHAR_TYPE, MY_ENCODING> ang::str_view<MY_CHAR_TYPE, MY_ENCODING>::end()const
+MY_CHAR_TYPE* ang::str_view<MY_CHAR_TYPE, MY_ENCODING>::end()const
 {
-	return sefl_t(m_view + m_size, 0);
+	return m_view + m_size;
 }
 
 ang::str_view<MY_CHAR_TYPE, MY_ENCODING>& ang::str_view<MY_CHAR_TYPE, MY_ENCODING>::operator = (ang::str_view<MY_CHAR_TYPE, MY_ENCODING> const& str)
@@ -161,14 +161,14 @@ MY_CSTR_TYPE ang::str_view<const MY_CHAR_TYPE, MY_ENCODING>::cstr()const
 	return m_view;
 }
 
-ang::str_view<const MY_CHAR_TYPE, MY_ENCODING> ang::str_view<const MY_CHAR_TYPE, MY_ENCODING>::begin()const
+MY_CHAR_TYPE const* ang::str_view<const MY_CHAR_TYPE, MY_ENCODING>::begin()const
 {
-	return sefl_t(m_view, m_size);
+	return m_view;
 }
 
-ang::str_view<const MY_CHAR_TYPE, MY_ENCODING> ang::str_view<const MY_CHAR_TYPE, MY_ENCODING>::end()const
+MY_CHAR_TYPE const* ang::str_view<const MY_CHAR_TYPE, MY_ENCODING>::end()const
 {
-	return sefl_t(m_view + m_size, 0);
+	return m_view + m_size;
 }
 
 void ang::str_view<const MY_CHAR_TYPE, MY_ENCODING>::set(MY_CSTR_TYPE str, wsize sz)

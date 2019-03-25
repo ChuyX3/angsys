@@ -315,191 +315,6 @@ namespace ang //constants
 		};
 	}
 
-	template<typename T, text::encoding ENCODING_>
-	struct str_view {
-		static_assert(is_same_type<
-			typename text::char_type_by_type<T>::char_t,
-			typename text::char_type_by_encoding<ENCODING_>::char_t
-		>::value, "T is not a valid type");
-
-		static constexpr text::encoding ENCODING = ENCODING_;
-		typedef str_view<T, ENCODING_> sefl_t;
-		typedef typename text::char_type_by_encoding<ENCODING>::char_t char_t;
-		typedef typename text::char_type_by_encoding<ENCODING>::str_t str_t;
-		typedef typename text::char_type_by_encoding<ENCODING>::cstr_t cstr_t;
-
-
-		str_view() : m_size(0), m_view(nullptr) {
-		}
-		str_view(str_t str, wsize sz = -1) : m_size(0), m_view(nullptr) {
-			set(str, sz);
-		}
-		template<wsize SIZE> str_view(char_t(&str)[SIZE]) : m_size(0), m_view(nullptr) {
-			set(str, SIZE - 1);
-		}
-		wsize size()const {
-			return m_size;
-		};
-		str_t str() {
-			return m_view;
-		};
-		cstr_t cstr()const {
-			return m_view;
-		};
-		void set(str_t str, wsize sz = -1) {
-			if (str) {
-				m_view = str;
-				m_size = (sz == wsize(-1)) ? m_size = text::encoder<ENCODING>::lenght(str) : sz;
-			}
-			else {
-				m_view = nullptr;
-				m_size = 0;
-			}
-		}
-		sefl_t begin()const {
-			return sefl_t(m_view, m_size);
-		}
-		sefl_t end()const {
-			return sefl_t(m_view + m_size, 0);
-		}
-		sefl_t& operator = (sefl_t const& str) {
-			set(str.m_view, str.m_size);
-			return*this;
-		}
-		sefl_t& operator = (str_t str) {
-			set(str);
-			return*this;
-		}
-		template<wsize SIZE> sefl_t& operator = (char_t(&str)[SIZE]) {
-			set(str, SIZE - 1);
-			return*this;
-		}
-		char_t& operator*() {
-			return *str();
-		}
-		char_t const& operator*()const {
-			return *cstr();
-		}
-		char_t** operator & () {
-			return &m_view;
-		}
-		operator str_t () {
-			return str();
-		}
-		operator cstr_t () {
-			return cstr();
-		}
-		template<typename index_t> char_t& operator[](index_t const& i) {
-			return str()[i];
-		}
-		template<typename index_t> char_t const& operator[](index_t const& i)const {
-			return cstr()[i];
-		}
-		template<typename index_t> sefl_t& operator += (index_t i) {
-			set(str() + (wsize)i, size() - (wsize)i);
-			return this;
-		}
-		sefl_t& operator ++ () {
-			set(str() + 1, size() - 1);
-			return *this;
-		}
-		sefl_t operator ++ (int) {
-			sefl_t ret = *this;
-			set(str() + 1, size() - 1);
-			return ang::move(ret);
-		}
-		friend sefl_t operator + (sefl_t const& str, wsize i) {
-			return sefl_t(str.m_view + i, str.size() - i);
-		}
-
-	private:
-		str_t m_view;
-		wsize m_size;
-	};
-
-	template<typename T, text::encoding ENCODING_>
-	struct str_view<const T, ENCODING_> {
-		static constexpr text::encoding ENCODING = ENCODING_;
-		typedef str_view<const T, ENCODING_> sefl_t;
-		typedef typename text::char_type_by_encoding<ENCODING>::char_t char_t;
-		typedef typename text::char_type_by_encoding<ENCODING>::cstr_t cstr_t;
-
-		str_view() : m_size(0), m_view(nullptr) {
-		}
-		str_view(cstr_t str, wsize sz = -1) : m_size(0), m_view(nullptr) {
-			set(str, sz);
-		}
-		template<wsize SIZE> str_view(const char_t(&str)[SIZE]) : m_size(0), m_view(nullptr) {
-			set(str, SIZE - 1);
-		}
-		wsize size()const {
-			return m_size;
-		};
-		cstr_t cstr()const {
-			return m_view;
-		};
-		sefl_t begin()const {
-			return sefl_t(m_view, m_size);
-		}
-		sefl_t end()const {
-			return sefl_t(m_view + m_size, 0);
-		}
-		void set(cstr_t str, wsize sz = -1) {
-			if (str) {
-				m_view = str;
-				m_size = (sz == wsize(-1)) ? m_size = text::encoder<ENCODING>::lenght(str) : sz;
-			}
-			else {
-				m_view = nullptr;
-				m_size = 0;
-			}
-		}
-		sefl_t& operator = (sefl_t const& str) {
-			set(str.m_view, str.m_size);
-			return*this;
-		}
-		sefl_t& operator = (cstr_t str) {
-			set(str);
-			return*this;
-		}
-		template<wsize SIZE> sefl_t& operator = (const char_t(&str)[SIZE]) {
-			set(str, SIZE - 1);
-			return*this;
-		}
-		char_t const& operator*()const {
-			return *cstr();
-		}
-		char_t const** operator & () {
-			return &m_view;
-		}
-		operator cstr_t () {
-			return cstr();
-		}
-		template<typename index_t> char_t const& operator[](index_t const& i)const {
-			return cstr()[i];
-		}
-		template<typename index_t> sefl_t& operator += (index_t i) {
-			set(cstr() + (wsize)i, size() - (wsize)i);
-			return *this;
-		}
-		sefl_t& operator ++ () {
-			set(cstr() + 1, size() - 1);
-			return *this;
-		}
-		sefl_t operator ++ (int) {
-			sefl_t ret = *this;
-			set(cstr() + 1, size() - 1);
-			return ang::move(ret);
-		}
-		friend sefl_t operator + (sefl_t const& str, wsize i) {
-			return sefl_t(str.cstr() + (wsize)i, str.size() - (wsize)i);
-		}
-
-	private:
-		cstr_t m_view;
-		wsize m_size;
-	};
-
 }
 
 
@@ -705,19 +520,176 @@ namespace ang
 		static int compare(const cstr_t& value1, const cstr_t& value2);
 	};
 
+	template<> struct str_view_compare_helper<str_t, str_t>
+	{
+		static inline int compare(const str_t& value1, const str_t& value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<> struct str_view_compare_helper<cstr_t, str_t>
+	{
+		static inline int compare(const cstr_t& value1, const str_t& value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<> struct str_view_compare_helper<str_t, cstr_t>
+	{
+		static inline int compare(const str_t& value1, const cstr_t& value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<typename T, text::encoding E> struct str_view_compare_helper<cstr_t, str_view<T,E>>
+	{
+		static inline int compare(const cstr_t& value1, const str_view<T, E>& value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<typename T, text::encoding E> struct str_view_compare_helper<str_view<T, E>, cstr_t>
+	{
+		static inline int compare(const str_view<T, E>& value1, const cstr_t& value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<typename T, text::encoding E> struct str_view_compare_helper<str_t, str_view<T, E>>
+	{
+		static inline int compare(const str_t& value1, const str_view<T, E>& value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<typename T, text::encoding E> struct str_view_compare_helper<str_view<T, E>, str_t>
+	{
+		static inline int compare(const str_view<T, E>& value1, const str_t& value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<typename T> struct str_view_compare_helper<cstr_t, const T*>
+	{
+		static inline int compare(const cstr_t& value1, const T* value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, str_view<const T>(value2));
+		}
+	};
+
+	template<typename T> struct str_view_compare_helper<const T*, cstr_t>
+	{
+		static inline int compare(const T* value1, const cstr_t& value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(str_view<const T>(value1), value2);
+		}
+	};
+
+	template<typename T> struct str_view_compare_helper<str_t, const T*>
+	{
+		static inline int compare(const str_t& value1, const T* value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, str_view<const T>(value2));
+		}
+	};
+
+	template<typename T> struct str_view_compare_helper<const T*, str_t>
+	{
+		static inline int compare(const T* value1, const str_t& value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(str_view<const T>(value1), value2);
+		}
+	};
+
+	template<typename T, wsize N> struct str_view_compare_helper<cstr_t, T[N]>
+	{
+		static inline int compare(const cstr_t& value1, const T(&value2)[N]) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<typename T, wsize N> struct str_view_compare_helper<T[N], cstr_t>
+	{
+		static inline int compare(const T(&value1)[N], const cstr_t& value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<typename T, wsize N> struct str_view_compare_helper<str_t, T[N]>
+	{
+		static inline int compare(const str_t& value1, const T(&value2)[N]) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<typename T, wsize N> struct str_view_compare_helper<T[N], str_t>
+	{
+		static inline int compare(const T(&value1)[N], const str_t& value2) {
+			return str_view_compare_helper<cstr_t, cstr_t>::compare(value1, value2);
+		}
+	};
+
+	template<> struct str_view_compare_helper<cstr_t, nullptr_t>
+	{
+		static inline int compare(const cstr_t& value, nullptr_t const&) {
+			return value.ptr() ? 1 : 0;
+		}
+	};
+
+	template<> struct str_view_compare_helper<nullptr_t, cstr_t>
+	{
+		static inline int compare(nullptr_t const&, const cstr_t& value) {
+			return value.ptr() ? -1 : 0;
+		}
+	};
+
+	template<> struct str_view_compare_helper<str_t, nullptr_t>
+	{
+		static inline int compare(const str_t& value, nullptr_t const&) {
+			return value.ptr() ? 1 : 0;
+		}
+	};
+
+	template<> struct str_view_compare_helper<nullptr_t, str_t>
+	{
+		static inline int compare(nullptr_t const&, const str_t& value) {
+			return value.ptr() ? -1 : 0;
+		}
+	};
+
 	template<typename T1, text::encoding E1, typename T2, text::encoding E2>
 	struct str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>
 	{
 		static int compare(const str_view<T1, E1>& value1, const str_view<T2, E2>& value2) {
-			return str_view_compare_helper<ang::cstr_t, ang::cstr_t>::compare(value1, value2);
+			return text::encoder<E1>::compare(value1.cstr(), value2.cstr());
 		}
 	};
 
-	template<typename T, text::encoding E, typename cstr_t>
-	struct str_view_compare_helper<str_view<T, E>, cstr_t>
+	template<typename T, text::encoding E, typename C>
+	struct str_view_compare_helper<str_view<T, E>, const C*>
 	{
-		static int compare(const str_view<T, E>& value1, const cstr_t& value2) {
-			return str_view_compare_helper<ang::cstr_t, ang::cstr_t>::compare(value1, value2);
+		static int compare(const str_view<T, E>& value1, const C* value2) {
+			return text::encoder<E>::compare(value1.cstr(), value2);
+		}
+	};
+
+	template<typename C, typename T, text::encoding E>
+	struct str_view_compare_helper<const C*, str_view<T, E>>
+	{
+		static int compare(const C* value1, const str_view<T, E>& value2) {
+			return text::encoder<text::encoding::auto_detect>::compare(value1, value2.cstr());
+		}
+	};
+
+	template<typename T, text::encoding E, typename C, wsize N>
+	struct str_view_compare_helper<str_view<T, E>, C[N]>
+	{
+		static int compare(const str_view<T, E>& value1, const C(&value2)[N]) {
+			return text::encoder<E>::compare(value1.cstr(), (C const*)value2);
+		}
+	};
+
+	template<typename C, wsize N, typename T, text::encoding E>
+	struct str_view_compare_helper<C[N], str_view<T, E>>
+	{
+		static int compare(const C(&value1)[N], const str_view<T, E>& value2) {
+			return text::encoder<text::encoding::auto_detect>::compare((C const*)value1, value2.cstr());
 		}
 	};
 
@@ -734,14 +706,6 @@ namespace ang
 	{
 		static int compare(const nullptr_t&, const str_view<T, E>& value1) {
 			return cstr_t(value1).ptr() ? -1 : 0;
-		}
-	};
-
-	template<typename T, text::encoding E, typename cstr_t>
-	struct str_view_compare_helper<cstr_t, str_view<T, E>>
-	{
-		static int compare(const cstr_t& value1, const str_view<T, E>& value2) {
-			return str_view_compare_helper<ang::cstr_t, ang::cstr_t>::compare(value1, value2);
 		}
 	};
 

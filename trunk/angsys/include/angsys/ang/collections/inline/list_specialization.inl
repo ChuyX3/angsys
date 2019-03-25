@@ -2,7 +2,7 @@
 #error Can't include binary_tree.h, please include binary_tree.h inside
 #else
 
-//ang::collections::list_object<MY_TYPE, MY_ALLOC>::allocator_t ang::collections::list_object<MY_TYPE, MY_ALLOC>::m_alloc;
+DECLARE_ALLOC(MY_TYPE, MY_ALLOC);
 
 ang::collections::list_object<MY_TYPE, MY_ALLOC>::list_object()
 	: m_count(0)
@@ -110,7 +110,7 @@ ang::comparision_result_t ang::collections::list_object<MY_TYPE, MY_ALLOC>::comp
 		else if (counter() < items->counter())
 			return comparision_result::minor;
 		else for (const_forward_iterator_t it1 = begin(), it2 = items->begin(); it1 != end() && it2 != items->end(); ++it1, ++it2)
-			if (logic_operation<MY_TYPE, MY_TYPE, logic_operation_type::same>::operate(*it1, *it2))
+			if (logic_operation<logic_operation_type::same, MY_TYPE, MY_TYPE>::operate(*it1, *it2))
 				return comparision_result::diferent;
 		return comparision_result::same;
 	}
@@ -385,7 +385,6 @@ void ang::collections::list_object<MY_TYPE, MY_ALLOC>::extend(const ienum<MY_TYP
 
 void ang::collections::list_object<MY_TYPE, MY_ALLOC>::push(MY_TYPE const& value, bool last) 
 {
-	static allocator_t m_alloc;
 	node_ptr_t new_node = m_alloc.allocate(1);
 	m_alloc.template construct<node_t, MY_TYPE const&>(new_node, value);
 
@@ -416,8 +415,6 @@ void ang::collections::list_object<MY_TYPE, MY_ALLOC>::push(MY_TYPE const& value
 
 bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::insert(windex idx, MY_TYPE const& value) 
 {
-	static allocator_t m_alloc;
-
 	if (idx == 0U)
 	{
 		push(value, false);
@@ -462,8 +459,6 @@ bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::insert(windex idx, MY_TYP
 
 bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::insert(base_iterator_t it, MY_TYPE const& value)
 {
-	static allocator_t m_alloc;
-
 	if (it.parent() != this || it.current() == null)
 		return false;
 	node_ptr_t node = reinterpret_cast<node_ptr_t>(it.current());
@@ -483,8 +478,6 @@ bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::insert(base_iterator_t it
 
 bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop(bool last)
 {
-	static allocator_t m_alloc;
-
 	if (m_count == 0)
 		return false;
 	if (last) {
@@ -511,8 +504,6 @@ bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop(bool last)
 
 bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop(MY_TYPE& value, bool last)
 {
-	static allocator_t m_alloc;
-
 	if (m_count == 0)
 		return false;
 	if (last) {
@@ -540,8 +531,6 @@ bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop(MY_TYPE& value, bool 
 
 bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop_at(windex idx)
 {
-	static allocator_t m_alloc;
-
 	if (idx >= m_count)
 		return false;
 	else if (idx <= (m_count / 2))
@@ -575,8 +564,6 @@ bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop_at(windex idx)
 
 bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop_at(base_iterator_t it)
 {
-	static allocator_t m_alloc;
-
 	if (it.parent() != this || it.current() == null)
 		return false;
 	node_ptr_t node = reinterpret_cast<node_ptr_t>(it.current());
@@ -592,8 +579,6 @@ bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop_at(base_iterator_t it
 
 bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop_at(windex idx, MY_TYPE& value)
 {
-	static allocator_t m_alloc;
-
 	if (idx >= m_count)
 		return false;
 	else if (idx <= (m_count / 2))
@@ -629,8 +614,6 @@ bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop_at(windex idx, MY_TYP
 
 bool ang::collections::list_object<MY_TYPE, MY_ALLOC>::pop_at(base_iterator_t it, MY_TYPE& value)
 {
-	static allocator_t m_alloc;
-
 	if (it.parent() != this || it.current() == null)
 		return false;
 	node_ptr_t node = reinterpret_cast<node_ptr_t>(it.current());

@@ -153,13 +153,21 @@ inline wsize ang::collections::vector_buffer<T, A>::size()const
 template<typename T, template<typename> class A>
 inline void ang::collections::vector_buffer<T, A>::size(wsize size, bool save)
 {
+	static A<T> m_alloc;
 	if (m_size != size)
 	{
 		realloc(size, save);
-		for (long64 i = size - m_size; i > 0 && i < long64(size); ++i)
+		if (size > m_size)
 		{
-			m_alloc.template construct<T, T const&>((T*)&m_data[i], default_value<T>::value);
+			for (wsize i = m_size; i < size; ++i)
+				m_alloc.template construct<T, T const&>((T*)&m_data[i], default_value<T>::value);	
 		}
+		else
+		{
+			for (wsize i = m_size; i > size; --i)
+				m_alloc.destroy((T*)&m_data[i - 1]);
+		}
+		m_size = size;
 	}
 }
 
@@ -380,16 +388,16 @@ template<typename T, template<typename> class A>
 inline ang::collections::iterator<T> ang::collections::vector_buffer<T, A>::at(windex idx)
 {
 	if (idx >= m_size)
-		return  iterator_t(const_cast<self_t*>(this), null, 0);
-	return iterator_t(const_cast<self_t*>(this), (pointer)m_data, idx);
+		return  iterator_t(const_cast<self*>(this), null, 0);
+	return iterator_t(const_cast<self*>(this), (pointer)m_data, idx);
 }
 
 template<typename T, template<typename> class A>
 inline ang::collections::iterator<const T> ang::collections::vector_buffer<T, A>::at(windex idx)const
 {
 	if (idx >= m_size)
-		return  const_iterator_t(const_cast<self_t*>(this), null, 0);
-	return const_iterator_t(const_cast<self_t*>(this), (pointer)m_data, idx);
+		return  const_iterator_t(const_cast<self*>(this), null, 0);
+	return const_iterator_t(const_cast<self*>(this), (pointer)m_data, idx);
 }
 
 template<typename T, template <typename> class A>
@@ -594,7 +602,7 @@ inline ang::comparision_result_t ang::collections::vector_buffer<T, A>::compare(
 		else if (counter() < other->counter())
 			return comparision_result::minor;
 		else for (auto it = other->begin(); it != other->end(); ++it)
-			if (logic_operation<T, T, logic_operation_type::same>::operate(m_data[i++], *it))
+			if (logic_operation<logic_operation_type::same, T, T>::operate(m_data[i++], *it))
 				return comparision_result::diferent;
 		return comparision_result::same;
 	}
@@ -614,6 +622,7 @@ inline void ang::collections::vector_buffer<T, A>::extend(const ang::collections
 template<typename T, template<typename> class A>
 inline void ang::collections::vector_buffer<T, A>::push(T const& value, bool last)
 {
+	static A<T> m_alloc;
 	if ((capacity() - counter()) <= 1U) //TODO: optimization
 		capacity(capacity() + 1, true);
 
@@ -636,6 +645,7 @@ inline void ang::collections::vector_buffer<T, A>::push(T const& value, bool las
 template<typename T, template<typename> class A>
 inline bool ang::collections::vector_buffer<T, A>::insert(windex idx, T const& value)
 {
+	static A<T> m_alloc;
 	if (idx == 0U)
 	{
 		push(value, false);
@@ -671,6 +681,7 @@ inline bool ang::collections::vector_buffer<T, A>::insert(ang::collections::base
 template<typename T, template<typename> class A>
 inline bool ang::collections::vector_buffer<T, A>::pop(bool last)
 {
+	static A<T> m_alloc;
 	if (m_size == 0)
 		return false;
 	if (!last) for (windex i = 1U; i < m_size; ++i)
@@ -682,6 +693,7 @@ inline bool ang::collections::vector_buffer<T, A>::pop(bool last)
 template<typename T, template<typename> class A>
 inline bool ang::collections::vector_buffer<T, A>::pop(T& value, bool last)
 {
+	static A<T> m_alloc;
 	if (m_size == 0)
 		return false;
 	if (!last)
@@ -701,6 +713,7 @@ inline bool ang::collections::vector_buffer<T, A>::pop(T& value, bool last)
 template<typename T, template<typename> class A>
 inline bool ang::collections::vector_buffer<T, A>::pop_at(windex idx)
 {
+	static A<T> m_alloc;
 	if (m_size == 0U)
 		return false;
 	if (idx == 0U)
@@ -722,6 +735,7 @@ inline bool ang::collections::vector_buffer<T, A>::pop_at(ang::collections::base
 template<typename T, template<typename> class A>
 inline bool ang::collections::vector_buffer<T, A>::pop_at(windex idx, T& value)
 {
+	static A<T> m_alloc;
 	if (m_size == 0U)
 		return false;
 	if (idx == 0U)
@@ -750,6 +764,7 @@ inline void ang::collections::vector_buffer<T, A>::dispose()
 template<typename T, template<typename> class A>
 inline void ang::collections::vector_buffer<T, A>::clear()
 {
+	static A<T> m_alloc;
 	if (m_data != null)
 	{
 		for (wsize i = 0; i < m_size; ++i)
@@ -764,6 +779,7 @@ inline void ang::collections::vector_buffer<T, A>::clear()
 template<typename T, template<typename> class A>
 inline void ang::collections::vector_buffer<T, A>::empty()
 {
+	static A<T> m_alloc;
 	if (m_data != null)
 	{
 		for (wsize i = 0; i < m_size; ++i)
@@ -775,6 +791,7 @@ inline void ang::collections::vector_buffer<T, A>::empty()
 template<typename T, template<typename> class A>
 inline bool ang::collections::vector_buffer<T, A>::realloc(wsize new_size, bool save)
 {
+	static A<T> m_alloc;
 	new_size++;
 	if (capacity() >= new_size)
 		return true;

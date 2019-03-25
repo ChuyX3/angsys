@@ -344,6 +344,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\socket_library.h">
       <Filter>header\include</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\vector_specialization.hpp">
+      <Filter>header\angsys\collections\inline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\angsys.cpp">
@@ -553,6 +556,12 @@
       <Filter>header\angsys\base\inline</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\list_specialization.inl">
+      <Filter>header\angsys\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\vector_specialization.inl">
+      <Filter>header\angsys\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\include\angsys\ang\collections\inline\vector_value_specialization.inl">
       <Filter>header\angsys\collections\inline</Filter>
     </None>
   </ItemGroup>

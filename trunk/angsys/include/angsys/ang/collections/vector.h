@@ -15,23 +15,20 @@ namespace ang
 			: public smart<vector_buffer<T,A>, object, ivariant, ibuffer, ilist<T>>
 		{
 		public:
-			typedef T							type;
-			typedef vector_buffer<T, A> self_t;
-			typedef A<T>				allocator_t;
-			typedef ilist<T>					ilist_t;
-			typedef iarray<T>					iarray_t;
-			typedef ienum<T>					ienum_type;
-			typedef base_iterator<T>			base_iterator_t;
-			typedef iterator<T>					iterator_t;
-			typedef const_iterator<T>			const_iterator_t;
-			typedef forward_iterator<T>			forward_iterator_t;
-			typedef const_forward_iterator<T>	const_forward_iterator_t;
-			typedef backward_iterator<T>		backward_iterator_t;
-			typedef const_backward_iterator<T>	const_backward_iterator_t;
-
+			using type							= T;
+			using alloc_t						= A<type>;
+			using ilist_t						= ilist<type>;
+			using iarray_t						= iarray<type>;
+			using ienum_type					= ienum<type>;
+			using base_iterator_t				= base_iterator<type>;
+			using iterator_t					= iterator<type>;
+			using const_iterator_t				= const_iterator<type>;
+			using forward_iterator_t			= forward_iterator<type>;
+			using const_forward_iterator_t		= const_forward_iterator<type>;
+			using backward_iterator_t			= backward_iterator<type>;
+			using const_backward_iterator_t		= const_backward_iterator<type>;
 
 		protected:
-			allocator_t m_alloc;
 			wsize m_size;
 			wsize m_capacity;
 			type* m_data;
@@ -57,7 +54,7 @@ namespace ang
 
 		public: //methods
 			inline bool is_empty()const;
-			inline T* data()const;
+			inline type* data()const;
 			inline wsize size()const;
 			inline void size(wsize, bool save);
 			inline wsize capacity()const;
@@ -65,7 +62,7 @@ namespace ang
 
 			inline void clear();
 			inline void empty();
-			inline bool move(vector_buffer<T, A>&);
+			inline bool move(vector_buffer<type, A>&);
 
 			template<typename U> inline void copy(array_view<U>const&);
 			template<typename U, template<typename> class allocator2> inline void copy(scope_array<U, allocator2>const&);
@@ -98,7 +95,7 @@ namespace ang
 		public: //ienum overrides
 			inline wsize counter()const override;
 
-			inline T& at(base_iterator_t const&) override;
+			inline type& at(base_iterator_t const&) override;
 			inline bool increase(base_iterator_t&)const override;
 			inline bool increase(base_iterator_t&, int offset)const override;
 			inline bool decrease(base_iterator_t&)const override;
@@ -119,23 +116,23 @@ namespace ang
 		public: //iarray overrides
 			inline iterator_t at(windex) override;
 			inline const_iterator_t at(windex)const override;
-			inline void copy(const ienum<T>*) override;
-			inline iterator_t find(core::delegates::function<bool(T const&)>, bool invert = false)const override;
-			inline iterator_t find(core::delegates::function<bool(T const&)>, base_iterator_t next_to, bool invert = false)const override;
-			inline collections::ienum_ptr<T> find_all(core::delegates::function<bool(T const&)>)const override;
-			template<typename U> inline collections::ienum_ptr<U> find_all(core::delegates::function<bool(T const&, U& out)>)const;
+			inline void copy(const ienum<type>*) override;
+			inline iterator_t find(core::delegates::function<bool(type const&)>, bool invert = false)const override;
+			inline iterator_t find(core::delegates::function<bool(type const&)>, base_iterator_t next_to, bool invert = false)const override;
+			inline collections::ienum_ptr<type> find_all(core::delegates::function<bool(type const&)>)const override;
+			template<typename U> inline collections::ienum_ptr<U> find_all(core::delegates::function<bool(type const&, U& out)>)const;
 
 		public: //ilist overrides
-			inline void extend(const ienum<T>*) override;
-			inline void push(T const&, bool last = true) override;
-			inline bool insert(windex idx, T const&) override;
-			inline bool insert(base_iterator_t it, T const&) override;
+			inline void extend(const ienum<type>*) override;
+			inline void push(type const&, bool last = true) override;
+			inline bool insert(windex idx, type const&) override;
+			inline bool insert(base_iterator_t it, type const&) override;
 			inline bool pop(bool last = true) override;
-			inline bool pop(T&, bool last = true) override;
+			inline bool pop(type&, bool last = true) override;
 			inline bool pop_at(windex idx) override;
 			inline bool pop_at(base_iterator_t it) override;
-			inline bool pop_at(windex idx, T&) override;
-			inline bool pop_at(base_iterator_t it, T&) override;
+			inline bool pop_at(windex idx, type&) override;
+			inline bool pop_at(base_iterator_t it, type&) override;
 
 		public: //overrides
 			ANG_DECLARE_INTERFACE();
@@ -148,10 +145,10 @@ namespace ang
 	}//collections
 
 
-	 /******************************************************************/
-	 /* template class ang::object_wrapper<vector_buffer> :             */
-	 /*  -> specialization of object_wrapper<vector_buffer> -> array    */
-	 /******************************************************************/
+	/******************************************************************/
+	/* template class ang::object_wrapper<vector_buffer> :            */
+	/*  -> specialization of object_wrapper<vector_buffer> -> array   */
+	/******************************************************************/
 	template<typename T, template<typename> class A>
 	class object_wrapper<collections::vector_buffer<T, A>>
 	{
@@ -233,13 +230,10 @@ namespace ang
 		template<typename I>T const& operator[](I const& idx)const;
 	};
 
-
-
-
 	/******************************************************************/
-	 /* template class ang::object_wrapper<vector_buffer> :             */
-	 /*  -> specialization of object_wrapper<vector_buffer> -> array    */
-	 /******************************************************************/
+	/* template class ang::object_wrapper<vector_buffer> :            */
+	/*  -> specialization of object_wrapper<vector_buffer> -> array   */
+	/******************************************************************/
 	template<template<typename> class A>
 	class object_wrapper<collections::vector_buffer<var, A>>
 	{
@@ -331,7 +325,6 @@ namespace ang
 		template<typename I>var const& operator[](I const& idx)const;
 	};
 
-
 	template<typename T, template<typename>class A>
 	struct property_helper<vector<T, A>, smart_type::none> {
 		using type = vector<T, A>;
@@ -354,8 +347,122 @@ namespace ang
 		using setter_type = void(*)(property_class const*, arg_type);
 	};
 
-
 }//ang
 
+#define MY_LINKAGE LINK
+#define MY_ALLOC ang::memory::buffer_allocator
+
+#define MY_TYPE char
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE uchar
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE wchar
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE char16
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE char32
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE short
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE ushort
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE int
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE uint
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE long
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE ulong
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE long64
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE ulong64
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE float
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE double
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE pointer
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE ang::intfptr
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE ang::objptr
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE ang::string
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+
+#undef MY_ALLOC
+#define MY_ALLOC ang::memory::aligned16_allocator
+
+#define MY_TYPE char
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE uchar
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE wchar
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE char16
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE char32
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE short
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE ushort
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE int
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE uint
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE long
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE ulong
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE long64
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE ulong64
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE float
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE double
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+#define MY_TYPE pointer
+#include <ang/collections/inline/vector_specialization.hpp>
+#undef MY_TYPE
+
+#undef MY_ALLOC
+#undef MY_LINKAGE
 
 #endif //__ANG_COLLECTIONS_VECTOR_H__

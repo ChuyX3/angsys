@@ -214,7 +214,7 @@ inline ang::collections::double_linked_node<ang::collections::pair<K, T>>* ang::
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<K, K, logic_operation_type::same>::operate(key, temp->data.key))
+		if (logic_operation<logic_operation_type::same, K, K>::operate(key, temp->data.key))
 			return temp;
 		temp = temp->next;
 	}
@@ -631,7 +631,7 @@ inline bool ang::collections::hash_map_object<K, T, allocator, hash_index_maker>
 
 	while (temp != nullptr)
 	{
-		if (logic_operation<K, K, logic_operation_type::same>::operate(temp->data.key, key))
+		if (logic_operation<logic_operation_type::same, K, K>::operate(temp->data.key, key))
 		{
 			if (temp->prev)
 			{
@@ -666,7 +666,7 @@ inline bool ang::collections::hash_map_object<K, T, allocator, hash_index_maker>
 
 	while (temp != nullptr)
 	{
-		if (logic_operation<K, K, logic_operation_type::same>::operate(temp->data.key, key))
+		if (logic_operation<logic_operation_type::same, K, K>::operate(temp->data.key, key))
 		{
 			if (temp->prev)
 			{
@@ -722,7 +722,7 @@ inline ang::collections::iterator<ang::collections::pair<K, T>> ang::collections
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<K, K, logic_operation_type::same>::operate(key, temp->data.key))
+		if (logic_operation<logic_operation_type::same, K, K>::operate(key, temp->data.key))
 			return iterator_t(const_cast<hash_map_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -740,7 +740,7 @@ inline ang::collections::const_iterator<ang::collections::pair<K, T>> ang::colle
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<K, K, logic_operation_type::same>::operate(key, temp->data.key))
+		if (logic_operation<logic_operation_type::same, K, K>::operate(key, temp->data.key))
 			return iterator_t(const_cast<hash_map_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -958,7 +958,7 @@ inline ang::collections::double_linked_node<ang::collections::pair<ang::text::ba
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(key, (cstr_t)temp->data.key))
+		if (logic_operation<logic_operation_type::same, ang::cstr_t, ang::cstr_t>::operate(key, (cstr_t)temp->data.key))
 			return temp;
 		temp = temp->next;
 	}
@@ -1374,7 +1374,7 @@ inline bool ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, a
 
 	while (temp != nullptr)
 	{
-		if (logic_operation<ang::text::basic_string<E,A>, ang::text::basic_string<E,A>, logic_operation_type::same>::operate(temp->data.key, key))
+		if (logic_operation<logic_operation_type::same, ang::text::basic_string<E,A>, ang::text::basic_string<E,A>>::operate(temp->data.key, key))
 		{
 			if (temp->prev)
 			{
@@ -1409,7 +1409,7 @@ inline bool ang::collections::hash_map_object<ang::text::basic_string<E,A>, T, a
 
 	while (temp != nullptr)
 	{
-		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate((cstr_t)temp->data.key, key))
+		if (logic_operation<logic_operation_type::same, ang::cstr_t, ang::cstr_t>::operate((cstr_t)temp->data.key, key))
 		{
 			if (temp->prev)
 			{
@@ -1465,7 +1465,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::text::basic_string
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(key, (cstr_t)temp->data.key))
+		if (logic_operation<logic_operation_type::same, ang::cstr_t, ang::cstr_t>::operate(key, (cstr_t)temp->data.key))
 			return iterator_t(const_cast<hash_map_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -1483,7 +1483,7 @@ inline ang::collections::const_iterator<ang::collections::pair<ang::text::basic_
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(key, (cstr_t)temp->data.key))
+		if (logic_operation<logic_operation_type::same, ang::cstr_t, ang::cstr_t>::operate(key, (cstr_t)temp->data.key))
 			return iterator_t(const_cast<hash_map_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -1703,7 +1703,7 @@ inline ang::collections::double_linked_node<ang::collections::pair<ang::string, 
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(key, temp->data.key))
+		if (logic_operation<logic_operation_type::same, ang::cstr_t, ang::cstr_t>::operate(key, temp->data.key))
 			return temp;
 		temp = temp->next;
 	}
@@ -2119,7 +2119,7 @@ inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_in
 
 	while (temp != nullptr)
 	{
-		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(temp->data.key, key))
+		if (logic_operation<logic_operation_type::same, ang::cstr_t, ang::cstr_t>::operate(temp->data.key, key))
 		{
 			if (temp->prev)
 			{
@@ -2154,7 +2154,7 @@ inline bool ang::collections::hash_map_object<ang::string, T, allocator, hash_in
 
 	while (temp != nullptr)
 	{
-		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(temp->data.key, key))
+		if (logic_operation<logic_operation_type::same, ang::cstr_t, ang::cstr_t>::operate(temp->data.key, key))
 		{
 			if (temp->prev)
 			{
@@ -2210,7 +2210,7 @@ inline ang::collections::iterator<ang::collections::pair<ang::string, T>> ang::c
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(key, temp->data.key))
+		if (logic_operation<logic_operation_type::same, ang::cstr_t, ang::cstr_t>::operate(key, temp->data.key))
 			return iterator_t(const_cast<hash_map_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -2228,7 +2228,7 @@ inline ang::collections::const_iterator<ang::collections::pair<ang::string, T>> 
 	node_ptr_t temp = m_table[idx];
 	while (temp != null)
 	{
-		if (logic_operation<ang::cstr_t, ang::cstr_t, logic_operation_type::same>::operate(key, temp->data.key))
+		if (logic_operation<logic_operation_type::same, ang::cstr_t, ang::cstr_t>::operate(key, temp->data.key))
 			return iterator_t(const_cast<hash_map_object*>(this), temp, idx);
 		temp = temp->next;
 	}
@@ -2866,11 +2866,11 @@ ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator,
 template<typename T, template<typename> class allocator, template<typename> class hash_index_maker>
 ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>& ang::object_wrapper<ang::collections::hash_map_object<ang::string, T, allocator, hash_index_maker>>::operator = (object_wrapper && ptr)
 {
-	if (this == &other)
+	if (this == &ptr)
 		return *this;
 	reset();
-	m_ptr = other.m_ptr;
-	other.m_ptr = null;
+	m_ptr = ptr.m_ptr;
+	ptr.m_ptr = null;
 	return*this;
 }
 

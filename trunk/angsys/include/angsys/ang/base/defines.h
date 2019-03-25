@@ -20,6 +20,10 @@
 #define ANG_EXPAND(x) x
 #define ANG_CATAB(A, B) ANG_CATAB_(A, B)
 #define ANG_CATAB_(A, B) A##B
+#define ANG_CATABC(A, B, C) ANG_CATABC_(A, B, C)
+#define ANG_CATABC_(A, B, C) A##B##C
+#define ANG_CATABCD(A, B, C, D) ANG_CATABCD_(A, B, C, D)
+#define ANG_CATABCD_(A, B, C, D) A##B##C##D
 
 #define ANG_NUM_ARGS_EXPAND__(...) unused, __VA_ARGS__
 #define ANG_NUM_ARGS(...)	ANG_EXPAND(ANG_NUM_ARGS_(ANG_NUM_ARGS_EXPAND__(__VA_ARGS__)))
@@ -99,7 +103,7 @@
 #define FUNCX_TYPENAME(A0) typename A0
 #define FUNCX_TYPE_OF(A0) ang::rtti::type_of<A0>()
 #define FUNCX_TYPE_OF_PTR(A0) &ang::rtti::type_of<A0>()
-#define FUNCX_QUERY_INTERFACE(A0) if(id.type_id() == A0::class_info().type_id()) { if (out == null) return false; *out = static_cast<A0*>(this); return true; } \
+#define FUNCX_QUERY_INTERFACE(A0) if(id.type_id() ==  FUNCX_TYPE_OF(A0).type_id()) { if (out == null) return false; *out = static_cast<A0*>(this); return true; } \
 
 #define TEMPLATE(...) template<ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPENAME, COMA_SEPARATOR,##__VA_ARGS__))>
 #define TYPE_OF_ARRAY(...) { ANG_EXPAND(APPLY_FUNCX_N(FUNCX_TYPE_OF, COMA_SEPARATOR,##__VA_ARGS__)) }

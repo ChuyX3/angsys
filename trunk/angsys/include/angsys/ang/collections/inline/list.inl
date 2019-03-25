@@ -157,7 +157,7 @@ inline ang::comparision_result_t ang::collections::list_object<T, A>::compare(co
 		else if (counter() < items->counter())
 			return comparision_result::minor;
 		else for (const_forward_iterator_t it1 = begin(), it2 = items->begin(); it1 != end() && it2 != items->end(); ++it1, ++it2)
-			if (logic_operation<T, T, logic_operation_type::same>::operate(*it1, *it2))
+			if (logic_operation<logic_operation_type::same, T, T>::operate(*it1, *it2))
 				return comparision_result::diferent;
 		return comparision_result::same;
 	}
