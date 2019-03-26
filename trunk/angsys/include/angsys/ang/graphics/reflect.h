@@ -7,14 +7,17 @@
 
 namespace ang
 {
+
 	namespace graphics
 	{
 		namespace reflect
 		{
-			typedef collections::vector<varying_desc> uniform_fields_t;
+			typedef collections::vector<varying_desc> uniform_fields_t;	
 
 			struct LINK varying_desc : auto_self<varying_desc>
 			{
+				template<typename T> static varying_desc_t from_type(string = null);
+
 			private:
 				var_type_t m_var_type;
 				var_class_t m_var_class;
@@ -23,6 +26,7 @@ namespace ang
 				wsize m_aligment;
 				wsize m_position;
 				uniform_fields_t m_fields;
+
 
 			public:
 				varying_desc(
@@ -58,6 +62,7 @@ namespace ang
 				void aligment(wsize);
 				void position(wsize);
 				void fields(uniform_fields_t, bool calc_pos = true);
+				void push_field(varying_desc_t, bool calc_pos = true);
 
 				wsize get_size_in_bytes()const;
 				wsize get_size_in_bytes(wsize aligment)const;
@@ -123,12 +128,95 @@ namespace ang
 				bool operator != (const attribute_desc& other)const;
 			};
 
+			template<typename T>
+			struct __varying_desc_from_type {
+				static inline varying_desc_t desc(string) {
+					return varying_desc(); //null descriptor
+				}
+			};
 
-			typedef class LINK varying : auto_self<varying>
+			template<typename T> 
+			inline varying_desc_t type_desc(cstr_t name) {
+				return __varying_desc_from_type<T>::desc(name);
+			}
+			
+			template<typename T, wsize N> struct __varying_desc_from_type<T[N]> {
+				static inline varying_desc_t desc(string name) {
+					varying_desc_t desc = type_desc<T>::desc(name);
+					desc.array_count(N);
+					return desc;
+				}
+			};
+
+
+			class LINK varying
+				: public auto_self<varying>
+				, public intf
 			{
-			private:
-				array_view<byte> _raw_data;
-				varying_desc _descriptor;
+			public:
+				template<typename T> class iterator;
+				typedef iterator<varying> iterator_t;
+				typedef iterator<const varying> const_iterator_t;
+
+				typedef class LINK base_iterator
+				{
+				protected:
+					friend varying;
+					varying_t* m_parent;
+					windex m_offset;
+
+				public:
+					base_iterator();
+					base_iterator(base_iterator &&) = default;
+					base_iterator(base_iterator const&);
+					base_iterator(varying_t*, windex idx);
+
+					varying_t* parent()const;
+					windex offset()const;
+
+					base_iterator& operator++();
+					base_iterator& operator--();
+
+					base_iterator operator++(int);
+					base_iterator operator--(int);
+
+					bool operator == (const base_iterator&)const;
+					bool operator != (const base_iterator&)const;
+					bool operator >= (const base_iterator&)const;
+					bool operator <= (const base_iterator&)const;
+					bool operator > (const base_iterator&)const;
+					bool operator < (const base_iterator&)const;
+
+				private:
+					void parent(varying_t*);
+					void offset(windex);
+				}base_iterator_t;
+
+				template<> class LINK iterator<varying_t> :public base_iterator
+				{
+				public:
+					iterator();
+					iterator(base_iterator_t &&);
+					iterator(base_iterator_t const&);
+					iterator(varying_t*, windex idx);
+					base_iterator_t& operator =(base_iterator_t const&);
+					varying_t operator*()const;
+				};
+
+				template<> class LINK iterator<varying_t const> :public base_iterator
+				{
+				public:
+					iterator();
+					iterator(base_iterator_t &&);
+					iterator(base_iterator_t const&);
+					iterator(varying_t*, windex idx);
+					base_iterator_t& operator =(base_iterator_t const&);
+					const varying_t operator*()const;
+				};
+
+			protected:
+				array_view<byte> m_raw_data;
+				varying_desc m_descriptor;
 
 				template<typename T> struct varying_cast {
 					static T cast(varying*) {
@@ -141,10 +229,16 @@ namespace ang
 
 			public:
 				explicit varying(); //empty
+				template<typename T> 
+				inline explicit varying(T&, cstr_t = null); //from var
 				varying(varying &&);
 				varying(varying const&);
 				varying(array_view<byte> bytes, varying_desc desc, wsize aligment = (wsize)invalid_index);
+				virtual~varying() {}
 
+				ANG_DECLARE_INTERFACE();
+
+			public:
 				wsize aligment()const;
 				array_view<byte> raw_data()const;
 				varying_desc const& descriptor()const;
@@ -155,9 +249,18 @@ namespace ang
 				varying& operator = (varying &&);
 				varying& operator = (varying const&);
 				collections::vector<varying> fragment();
-
-				varying operator [](windex);
 				varying operator [](cstr_t);
+
+			public: //iteration
+				wsize counter()const;
+				varying at(base_iterator_t const&);
+				base_iterator_t increase(base_iterator_t&);
+				base_iterator_t decrease(base_iterator_t&);
+				iterator_t begin();
+				iterator_t end();
+				const_iterator_t begin()const;
+				const_iterator_t end()const;
+				varying operator [](windex);	
 
 				template<typename T> inline auto cast() -> decltype(varying_cast<T>::cast(this)) {
 					return varying_cast<T>::cast(this);
@@ -174,35 +277,76 @@ namespace ang
 
 				bool operator == (const varying& other)const;
 				bool operator != (const varying& other)const;
-			}varying_t;
+			};
 
-			template<typename T> varying_desc type_desc(cstr_t);
+			class LINK struct_buffer
+				: public smart<struct_buffer, varying, ibuffer>
+			{
+			private:
+				collections::vector<byte, memory::aligned16_allocator> m_aligned_data;
 
-			/*inline wsize get_memory_size_aligned(wsize size, wsize aligment)
-			{
-				wsize res = (size % aligment);
-				if (res == 0u) return size;
-				return size + aligment - res;
-			}
-			inline wsize get_memory_size_aligned_less(wsize size, wsize aligment)
-			{
-				wsize res = (size % aligment);
-				if (res == 0u) return size;
-				return size - res;
-			}*/
+			public:
+				explicit struct_buffer(); //empty
+				struct_buffer(varying_t const&);
+				struct_buffer(struct_buffer const*);
+				struct_buffer(varying_desc desc, wsize aligment = (wsize)invalid_index);
+				
+				ANG_DECLARE_INTERFACE();
+
+			private: //overrides	
+				void dispose()override;	
+				bool is_readonly()const override;
+				text::encoding_t encoding()const override;
+				pointer buffer_ptr() override;
+				const_pointer buffer_ptr()const override;
+				wsize buffer_size()const override;
+				wsize mem_copy(wsize, pointer, text::encoding_t = text::encoding::binary) override;
+				ibuffer_view_t map_buffer(windex, wsize) override;
+				bool unmap_buffer(ibuffer_view_t&, wsize) override;
+				bool can_realloc_buffer()const override;
+				bool realloc_buffer(wsize) override;
+
+				operator varying_t&() { return*this; }
+				operator varying_t const&()const { return*this; }
+
+			public:
+				void clear();
+				bool load(dom::xml::xml_node_t node);
+				bool copy(varying_t const&);
+				void push_var(varying_t desc);
+				vector<varying> push_var(varying_desc_t desc);
+				varying_t make_var(varying_desc_t const& desc, wsize ALIGMENT = 16U);
+				varying_t make_struct(wsize ALIGMENT = 16U);
+				varying_t make_struct(array_view<varying_desc> const& desc, wsize ALIGMENT = 16U);
+				vector<varying> make_array(varying_desc_t const& desc, wsize count, wsize ALIGMENT = 16U);
+				vector<varying> make_struct_array(array_view<varying_desc> const& desc, wsize count, wsize ALIGMENT = 16U);
+
+			private:
+				virtual~struct_buffer();
+			};
+
 
 		}
 	}
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, graphics::reflect::struct_buffer)
+		graphics::reflect::varying_t operator [](windex idx);
+		graphics::reflect::varying_t operator [](cstr_t name);
+		graphics::reflect::varying::iterator_t begin();
+		graphics::reflect::varying::iterator_t end();
+		graphics::reflect::varying::const_iterator_t begin()const;
+		graphics::reflect::varying::const_iterator_t end()const;
+	ANG_END_OBJECT_WRAPPER();
 }
 
 template<typename T> struct ang::graphics::reflect::varying::varying_cast<ang::array_view<T>>
 {
 	static ang::array_view<T> force_cast(ang::graphics::reflect::varying* var) {
-		wsize size = var->_raw_data.size() / get_memory_size_aligned_less(sizeof(T), var->descriptor().aligment());
-		return ang::array_view<T>((T*)var->_raw_data.get(),  min(size, var->descriptor().array_count()));
+		wsize size = var->m_raw_data.size() / max(sizeof(T), align_down(var->descriptor().aligment(), sizeof(T)));
+		return to_array((T*)var->m_raw_data.get(),  min(size, var->descriptor().array_count()));
 	}
 	static ang::array_view<T> cast(ang::graphics::reflect::varying* var) {
-		return ang::array_view<T>((T*)var->_raw_data.get(), var->descriptor()->array_count);
+		return to_array((T*)var->m_raw_data.get(), var->descriptor()->array_count);
 	}
 	static bool is_type_of(varying* var) { return varying_cast<T>::is_type_of(var); }
 };
@@ -251,5 +395,19 @@ ANG_GRAPHICS_REFLECT_DECLARE_TEMPLATE_VARIABLE_CAST(LINK, ang::maths::uint2, ang
 ANG_GRAPHICS_REFLECT_DECLARE_TEMPLATE_VARIABLE_CAST(LINK, ang::maths::uint3, ang::maths::uint3&);
 ANG_GRAPHICS_REFLECT_DECLARE_TEMPLATE_VARIABLE_CAST(LINK, ang::maths::uint4, ang::maths::uint4&);
 
+
+namespace ang
+{
+	namespace graphics
+	{
+		namespace reflect
+		{
+			template<typename T> inline varying::varying(T& val, cstr_t name)
+				:varying(to_array((byte*)&val, size_of<T>()), type_desc<T>(name))
+			{
+			}
+		}
+	}
+}
 
 #endif//__ANG_GRAPHICS_REFLECT_H__

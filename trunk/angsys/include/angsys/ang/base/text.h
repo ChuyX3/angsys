@@ -411,32 +411,6 @@ namespace ang
 				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
 		}
 
-		/*friend LINK bool operator == (raw_str_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator == (raw_str_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator != (raw_str_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator != (raw_str_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator >= (raw_str_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator >= (raw_str_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator <= (raw_str_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator <= (raw_str_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator > (raw_str_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator > (raw_str_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator < (raw_str_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator < (raw_str_t const& str1, raw_cstr_t const& str2);
-
-		template<typename T, text::encoding E> friend inline bool operator == (raw_str_t const& str1, str_view<T, E> const& str2) { return operator == (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator == (str_view<T, E> const& str1, raw_str_t const& str2) { return operator == (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator != (raw_str_t const& str1, str_view<T, E> const& str2) { return operator != (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator != (str_view<T, E> const& str1, raw_str_t const& str2) { return operator != (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator >= (raw_str_t const& str1, str_view<T, E> const& str2) { return operator >= (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator >= (str_view<T, E> const& str1, raw_str_t const& str2) { return operator >= (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator <= (raw_str_t const& str1, str_view<T, E> const& str2) { return operator <= (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator <= (str_view<T, E> const& str1, raw_str_t const& str2) { return operator <= (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator > (raw_str_t const& str1, str_view<T, E> const& str2) { return operator > (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator > (str_view<T, E> const& str1, raw_str_t const& str2) { return operator > (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator < (raw_str_t const& str1, str_view<T, E> const& str2) { return operator < (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator < (str_view<T, E> const& str1, raw_str_t const& str2) { return operator < (raw_cstr(str1), str2); }*/
-
 	private:
 		void* m_value;
 		wsize m_size;
@@ -478,33 +452,6 @@ namespace ang
 				m_size / sizeof(typename text::char_type_by_encoding<E>::char_t))
 				: cstr_view<typename text::char_type_by_encoding<E>::char_t, E>();
 		}
-
-		/*friend LINK bool operator == (raw_cstr_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator == (raw_cstr_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator != (raw_cstr_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator != (raw_cstr_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator >= (raw_cstr_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator >= (raw_cstr_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator <= (raw_cstr_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator <= (raw_cstr_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator > (raw_cstr_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator > (raw_cstr_t const& str1, raw_str_t const& str2);
-		friend LINK bool operator < (raw_cstr_t const& str1, raw_cstr_t const& str2);
-		friend LINK bool operator < (raw_cstr_t const& str1, raw_str_t const& str2);
-
-
-		template<typename T, text::encoding E> friend inline bool operator == (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator == (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator == (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator == (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator != (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator != (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator != (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator != (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator >= (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator >= (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator >= (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator >= (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator <= (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator <= (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator <= (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator <= (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator > (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator > (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator > (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator > (raw_cstr(str1), str2); }
-		template<typename T, text::encoding E> friend inline bool operator < (raw_cstr_t const& str1, str_view<T, E> const& str2) { return operator < (str1, raw_cstr(str2)); }
-		template<typename T, text::encoding E> friend inline bool operator < (str_view<T, E> const& str1, raw_cstr_t const& str2) { return operator < (raw_cstr(str1), str2); }*/
 
 	private:
 		void const* m_value;

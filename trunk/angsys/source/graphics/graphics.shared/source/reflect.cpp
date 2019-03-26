@@ -171,6 +171,7 @@ cstr_t graphics::reflect::var_semantic_t::to_string()const
 
 varying_desc::varying_desc(var_type_t _type, var_class_t _class
 	, astring name, wsize _array, wsize aligment)
+	: m_fields(null)
 {
 	m_var_type = _type;
 	m_var_class = _class;
@@ -178,9 +179,11 @@ varying_desc::varying_desc(var_type_t _type, var_class_t _class
 	m_aligment = aligment;
 	m_position = 0U;
 	m_array_count = max(_array, 1U);
+	
 }
 
 varying_desc::varying_desc(astring name, collections::vector<varying_desc> vars, wsize _array, wsize aligment)
+	: m_fields(null)
 {
 	m_var_name = name.get();
 	m_aligment = aligment;
@@ -192,7 +195,9 @@ varying_desc::varying_desc(astring name, collections::vector<varying_desc> vars,
 	calculate_positions(true);
 }
 
-varying_desc::varying_desc(varying_desc&& value) {
+varying_desc::varying_desc(varying_desc&& value)
+	: m_fields(null) 
+{
 	m_var_name = ang::move(value.m_var_name);
 	m_aligment = ang::move(value.m_aligment);
 	m_position = ang::move(value.m_position);
@@ -202,7 +207,9 @@ varying_desc::varying_desc(varying_desc&& value) {
 	m_var_class = ang::move(value.m_var_class);
 }
 
-varying_desc::varying_desc(const varying_desc& value) {
+varying_desc::varying_desc(const varying_desc& value)
+	: m_fields(null) 
+{
 	m_var_name = value.m_var_name;
 	m_aligment = value.m_aligment;
 	m_position = value.m_position;
@@ -363,6 +370,15 @@ void varying_desc::fields(uniform_fields_t value, bool calc_pos)
 	m_var_class = var_class::scalar;
 	m_fields = ang::move(value);
 	if(calc_pos)
+		calculate_positions(true);
+}
+
+void varying_desc::push_field(varying_desc_t value, bool calc_pos)
+{
+	if (m_var_type != var_type::block) return;
+
+	m_fields += ang::move(value);
+	if (calc_pos)
 		calculate_positions(true);
 }
 

@@ -2,16 +2,33 @@
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
   <Type Name="ang::graphics::reflect::varying_desc">
-    <DisplayString Condition="m_var_name.m_ptr != 0">var:{m_var_name}</DisplayString>
-    <DisplayString>var:"unnamed"</DisplayString>
+    <DisplayString Condition="m_var_name.m_ptr != 0 &amp;&amp; m_array_count &gt; 1">{m_var_class}&lt;{m_var_type}&gt;[{m_array_count}]:{m_var_name}</DisplayString>
+    <DisplayString Condition="m_var_name.m_ptr == 0 &amp;&amp; m_array_count &gt; 1">{m_var_class}&lt;{m_var_type}&gt;[{m_array_count}]</DisplayString>
+    <DisplayString>{m_var_class}&lt;{m_var_type}&gt;</DisplayString>
     <Expand>
-      <Item Name="[name]" ExcludeView="simple">m_var_name</Item>
+      <Item Name="[name]" Condition="m_var_name.m_ptr != 0" ExcludeView="simple">m_var_name</Item>
       <Item Name="[type]" ExcludeView="simple">m_var_type</Item>
       <Item Name="[class]" ExcludeView="simple">m_var_class</Item>
       <Item Name="[aligment]" ExcludeView="simple">m_aligment</Item>
       <Item Name="[array_size]" ExcludeView="simple">m_array_count</Item>
       <Item Name="[index]" ExcludeView="simple">m_position</Item>
-      <Item Name="[fields]" ExcludeView="simple" Condition="m_var_type.m_value == 13">m_fields</Item>
+      <Item Name="[fields]" ExcludeView="simple" Condition="m_var_type.m_value == 14">m_fields</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::graphics::reflect::varying">
+    <DisplayString>{m_descriptor}</DisplayString>
+    <Expand>
+      <Item Name="[layout]" ExcludeView="simple">m_descriptor</Item>
+      <Item Name="[data]" ExcludeView="simple">m_raw_data</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::graphics::reflect::struct_buffer">
+    <DisplayString>{m_descriptor}</DisplayString>
+    <Expand>
+      <Item Name="[layout]" ExcludeView="simple">m_descriptor</Item>
+      <Item Name="[data]" ExcludeView="simple">m_raw_data</Item>
     </Expand>
   </Type>
   

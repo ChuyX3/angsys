@@ -60,6 +60,8 @@ namespace ang
 	
 		namespace reflect
 		{
+			ang_object(struct_buffer);
+			typedef class varying varying_t;
 			typedef struct varying_desc varying_desc_t, uniform_desc, uniform_desc_t;
 			typedef struct attribute_desc attribute_desc_t;
 

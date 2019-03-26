@@ -49,10 +49,13 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\graphics.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\reflect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\resources.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\textures.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\varying.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="$(MSBuildThisFileDirectory)utils\graphics.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)utils\graphics.natvis">
+      <SubType>Designer</SubType>
+    </Natvis>
   </ItemGroup>
 </Project>

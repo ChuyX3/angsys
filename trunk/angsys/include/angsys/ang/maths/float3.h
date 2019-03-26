@@ -13,8 +13,8 @@ namespace ang
 		{
 			intern_f32x3_t _vector;
 
-			float3(float3&&) = default;
-			float3& operator = (float3&&) = default;
+			//float3(float3&&) = default;
+			//float3& operator = (float3&&) = default;
 
 			inline float3();
 			inline float3(float val);
@@ -89,8 +89,8 @@ namespace ang
 		{
 			intern_f64x3_t _vector;
 
-			double3(double3&&) = default;
-			double3& operator = (double3&&) = default;
+			//double3(double3&&) = default;
+			//double3& operator = (double3&&) = default;
 
 			inline double3();
 			inline double3(double val);

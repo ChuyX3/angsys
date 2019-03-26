@@ -8,22 +8,6 @@ namespace ang
 	{
 		namespace scenes
 		{
-			safe_enum(, light_type, uint)
-			{
-				directional,
-				spot,
-			};
-
-			struct light_info
-			{
-				maths::float3 color;
-				maths::float3 pos_dir;
-				light_type_t type;
-
-				//bool operator == (const light_info& other)const { return false; } //dummy
-				//bool operator != (const light_info& other)const { return false; } //dummy
-			};
-
 			ang_begin_interface(LINK icamera)
 				/*Sets the Current Viewport*/
 				visible vcall void viewport(box<float>) pure

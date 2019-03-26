@@ -113,6 +113,10 @@ void ang::collections::vector_buffer<MY_TYPE, MY_ALLOC>::size(wsize size, bool s
 	if (m_size != size)
 	{
 		realloc(size, save);
+		if (m_size <= size)
+			memset(&m_data[m_size], 0, size - m_size);
+		else
+			memset(&m_data[size], 0, m_size - size);
 		m_size = size;
 	}
 }

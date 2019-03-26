@@ -18,11 +18,8 @@ ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::ifactory, intf)
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::icamera, intf)
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::imodel, intf)
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::imodel_element, intf)
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::iscene_object, dom::xml::ixml_serializable)
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::iscene, dom::xml::ixml_serializable)
-
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::resources::iresource, intf)
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::resources::ilibrary, dom::xml::ixml_serializable);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::iscene_object, intf)
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::scenes::iscene, resources::ilibrary)
 
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ishaders, intf)
 ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::effects::ipass, intf)

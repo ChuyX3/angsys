@@ -128,6 +128,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\d3d11_shaders.cpp">
       <Filter>source files\d3d11</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\resources.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)utils\graphics.natvis">

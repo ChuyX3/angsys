@@ -42,35 +42,39 @@
     </Expand>
   </Type>
 
-  <Type Name="ang::raw_str">
-    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 1">{m_value, s}</DisplayString>
-    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 2">{m_value, su}</DisplayString>
-    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 3">{m_value, s8}</DisplayString>
-    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 4">{m_value, su}</DisplayString>
-    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 8">{m_value, s32}</DisplayString>
+  <Type Name="ang::str_view&lt;void,*&gt;">
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding == 1">{m_value, s}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding == 2">{m_value, su}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding == 3">{m_value, s8}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding == 4">{m_value, su}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding == 8">{m_value, s32}</DisplayString>
     <DisplayString>null</DisplayString>
-    <StringView Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 1">{m_value, s}</StringView>
-    <StringView Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 2">{m_value, su}</StringView>
-    <StringView Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 3">{m_value, s8}</StringView>
-    <StringView Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 4">{m_value, su}</StringView>
-    <StringView Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 8">{m_value, s32}</StringView>
+    <StringView Condition="m_value != 0 &amp;&amp; m_encoding == 1">{m_value, s}</StringView>
+    <StringView Condition="m_value != 0 &amp;&amp; m_encoding == 2">{m_value, su}</StringView>
+    <StringView Condition="m_value != 0 &amp;&amp; m_encoding == 3">{m_value, s8}</StringView>
+    <StringView Condition="m_value != 0 &amp;&amp; m_encoding == 4">{m_value, su}</StringView>
+    <StringView Condition="m_value != 0 &amp;&amp; m_encoding == 8">{m_value, s32}</StringView>
     <Expand>
-      <Item Name="[format]" ExcludeView="simple">m_encoding</Item>
+      <Item Name="[format]" ExcludeView="simple">m_encoding,en</Item>
       <Item Name="[size]" ExcludeView="simple">m_size</Item>
       <Item Name="[buffer]" ExcludeView="simple">m_value</Item>
     </Expand>
   </Type>
 
-  <Type Name="ang::raw_cstr">
-    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 1">{m_value, s}</DisplayString>
-    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 2">{m_value, su}</DisplayString>
-    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 3">{m_value, s8}</DisplayString>
-    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 4">{m_value, su}</DisplayString>
-    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding.m_value == 8">{m_value, s32}</DisplayString>
+  <Type Name="ang::str_view&lt;void const,*&gt;">
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding == 1">{m_value, s}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding == 2">{m_value, su}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding == 3">{m_value, s8}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding == 4">{m_value, su}</DisplayString>
+    <DisplayString Condition="m_value != 0 &amp;&amp; m_encoding == 8">{m_value, s32}</DisplayString>
     <DisplayString>null</DisplayString>
     <Expand>
-      <Item Name="[format]" ExcludeView="simple">m_encoding</Item>
-      <Item Name="[size]" ExcludeView="simple">m_size</Item>
+      <Item Name="[format]" ExcludeView="simple">m_encoding,en</Item>
+      <Item Name="[size]" Condition="m_encoding == 1" ExcludeView="simple">m_size/sizeof(char)</Item>
+      <Item Name="[size]" Condition="m_encoding == 2" ExcludeView="simple">m_size/sizeof(wchar_t)</Item>
+      <Item Name="[size]" Condition="m_encoding == 3" ExcludeView="simple">m_size/sizeof(unsigned char)</Item>
+      <Item Name="[size]" Condition="m_encoding == 4" ExcludeView="simple">m_size/sizeof(char16_t)</Item>
+      <Item Name="[size]" Condition="m_encoding == 8" ExcludeView="simple">m_size/sizeof(char32_t)</Item>
       <Item Name="[buffer]" ExcludeView="simple">m_value</Item>
     </Expand>
   </Type>
