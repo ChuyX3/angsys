@@ -73,18 +73,18 @@ void framework::load_scene()
 	core::files::input_text_file_t file = new core::files::input_text_file();
 	file->open(L"res/fx_library.xml"_s);
 	dom::xml::xml_document_t doc = dom::xml::xml_document::from_file(file);
-	file->clear();
+	file->dispose();
 	m_fx_library = interface_cast<effects::ieffect_library>(rm->load_library(doc->xml_root_element()).get());
 
 	file->open(L"res/texture_apex.xml"_s);
 	doc = dom::xml::xml_document::from_file(file);
-	file->clear();
+	file->dispose();
 
 	m_tex_loader = interface_cast<textures::itexture_loader>(rm->load_library(doc->xml_root_element()).get());
 
 	file->open(L"res/scenes/scenes.xml"_s);
 	doc = dom::xml::xml_document::from_file(file);
-	file->clear();
+	file->dispose();
 
 	m_driver->blend_mode(blend_mode::enable);
 }

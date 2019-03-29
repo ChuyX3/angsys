@@ -125,7 +125,7 @@ effect_library::~effect_library()
 
 ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::effects::effect_library);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::effects::effect_library, object, ieffect_library);
-ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::effects::effect_library, object, ieffect_library, ilibrary, dom::xml::ixml_serializable);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::effects::effect_library, object, ieffect_library, ilibrary);
 
 void effect_library::clear()
 {

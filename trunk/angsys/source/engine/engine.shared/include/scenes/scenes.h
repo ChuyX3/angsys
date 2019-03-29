@@ -2,7 +2,7 @@
 #include <ang/graphics/graphics.h>
 #include <ang/core/timer.h>
 #include "resources/resources.h"
-#include "scenes/model_loader.h"
+//#include "scenes/model_loader.h"
 
 namespace ang
 {
@@ -14,7 +14,6 @@ namespace ang
 			ang_object(scene);
 			ang_object(camera);
 			ang_object(model);
-
 		}
 	}
 
@@ -26,7 +25,8 @@ namespace ang
 	{
 		namespace scenes
 		{
-			class aligned_object: public smart<aligned_object>
+			class aligned_object
+				: public smart<aligned_object>
 			{
 			public:
 				pointer operator new(wsize);
@@ -46,7 +46,7 @@ namespace ang
 			};
 
 			class scene_object
-				: public smart<scene_object, aligned_object>
+				: public smart<scene_object, aligned_object, iscene_object>
 			{
 			protected:
 				maths::float4 m_position;
@@ -59,13 +59,6 @@ namespace ang
 
 			public:
 				ANG_DECLARE_INTERFACE();
-
-				virtual bool load(scene_t, dom::xml::xml_node_t) = 0;
-				virtual void update(core::time::step_timer const&) = 0;
-				virtual void draw(scene_t) = 0;
-				virtual void close() = 0;
-
-				virtual maths::matrix4 world_matrix()const;
 
 			public:
 				maths::float4 position()const { return m_position; }
@@ -101,16 +94,18 @@ namespace ang
 				camera();
 				ANG_DECLARE_INTERFACE();
 				
-				bool load(scene_t, dom::xml::xml_node_t) override;
-				bool load(maths::float3 const& position, maths::float3 const& rotation, maths::float4 const& projection);
-				void update(core::time::step_timer const&)override;
-				void draw(scene_t)override;
-				void close()override;
+				bool load(iscene_t, dom::xml::xml_node_t)override;
+				bool save(iscene_t, dom::xml::xml_document_t)const override;
+				core::async::iasync<bool> load_async(iscene_t, dom::xml::xml_node_t)override;
+				core::async::iasync<bool> save_async(iscene_t, dom::xml::xml_document_t)const override;
+				void draw(iscene_t)override;
+				void update(core::time::step_timer_t)override;
+				void clear(void)override;
 
 				box<float> viewport()const override;
 				void viewport(box<float>) override;
 				maths::float4x4 view_projection_matrix()const override;
-				maths::matrix4 world_matrix()const override;
+				maths::matrix4 world_matrix()const;
 
 				void projection(float fov, float aspect, float near_plane, float far_plane);
 				void projection(const maths::float4&);
@@ -132,36 +127,20 @@ namespace ang
 				virtual~camera();
 			};
 
-			safe_enum(, light_type, uint)
-			{
-				directional,
-				spot,
-			};
-
-			struct light_info
-			{
-				maths::float3 color;
-				maths::float3 pos_dir;
-				light_type_t type;
-
-				bool operator == (const light_info& other)const { return false; } //dummy
-				bool operator != (const light_info& other)const { return false; } //dummy
-			};
-
 			class scene 
-				: public smart<scene, aligned_object>
+				: public smart<scene, aligned_object, iscene>
 			{
 			protected:
 			
 				maths::float3 m_ambient_color;
 				float m_saturation;
-				vector<light_info> m_lights;
+				vector<effects::light_info> m_lights;
 				core::async::thread_t m_dispatcher;
 
 				idriver_t m_driver;
 				effects::ieffect_library_t m_effect_library;
 				textures::itexture_loader_t m_texture_loader;
-				camera_t m_camera;
+				icamera_t m_camera;
 				vector<scene_object_t> m_objects;
 				collections::hash_map<string, string> m_source_map;
 				mutable core::async::mutex_t m_mutex;
@@ -175,23 +154,26 @@ namespace ang
 
 				void clear()override;
 
-				bool load(
-					idriver_t driver, 
-					effects::ieffect_library_t fxlibrary,
-					textures::itexture_loader_t texloader,
-					dom::xml::xml_node_t scene_info
-				);
+				void draw(idriver_t, iframe_buffer_t, icamera_t = nullptr)override;
+				void update(core::time::step_timer_t)override;
+				effects::ieffect_library_t fx_libreary()const override;
+				textures::itexture_loader_t tex_loader()const override;
+				icamera_t active_camera()const override;
 
-				core::async::iasync<bool> load_async(
-					idriver_t driver,
-					effects::ieffect_library_t fxlibrary,
-					textures::itexture_loader_t texloader,
-					dom::xml::xml_node_t scene_info
-				);
-
-				void update(core::time::step_timer const&);
-				void draw(idriver_t, iframe_buffer_t);
-				void close();
+				bool load(dom::xml::xml_node_t)override;
+				bool save(dom::xml::xml_document_t)const override;
+				core::async::iasync<bool> load_async(dom::xml::xml_node_t)override;
+				core::async::iasync<bool> save_async(dom::xml::xml_document_t)const override;
+				bool load_sources(dom::xml::xml_node_t) override;
+				resources::ilibrary_t load_library(dom::xml::xml_node_t) override;
+				resources::iresource_t load_resource(dom::xml::xml_node_t) override;
+				core::async::iasync<resources::ilibrary_t> load_library_async(dom::xml::xml_node_t) override;
+				core::async::iasync<resources::iresource_t> load_resource_async(dom::xml::xml_node_t) override;
+				ifactory_t factory()const override;
+				core::async::idispatcher_t dispatcher()const override;
+				string find_source(cstr_t)const override;
+				resources::iresource_t find_resource(cstr_t)const override;
+				void clear()override;
 
 			protected:
 				bool load_sources(dom::xml::xml_node_t);
@@ -199,18 +181,8 @@ namespace ang
 				bool load_object(dom::xml::xml_node_t);
 	
 			public: //inlines
-				inline idriver* driver()const { return m_driver.get(); }
-				inline effects::ieffect_library* effect_library()const { return m_effect_library.get(); }
-				inline textures::itexture_loader* texture_loader()const { return m_texture_loader.get(); }
-				inline camera* camera()const { return m_camera.get(); }
 				inline size<float>const& clip_size()const { return m_clip_size; }
-				inline string find_file(cstr_t sid)const {
-					core::async::scope_locker<core::async::mutex> lock = m_mutex;
-					if (m_source_map.is_empty())
-						return L""_r;
-					auto it = m_source_map->find(sid);
-					return it.is_valid() ? it->value : L""_r;
-				}
+				
 
 				template<typename T> core::async::iasync<T> run_async(core::delegates::function<T(core::async::iasync<T>)> func) {
 					return m_dispatcher->run_async<T>(func);
@@ -218,28 +190,39 @@ namespace ang
 
 				inline maths::float3 ambient_color()const { return m_ambient_color; }
 				inline float ambient_saturation()const { return m_saturation; }
-				array_view<light_info> ligths()const { return m_lights; }
+				array_view<effects::light_info> ligths()const { return m_lights; }
 			protected:
 				virtual~scene();
 			};
 
 			class model
-				: public smart<model, scene_object>
+				: public smart<model, scene_object, imodel>
 			{
 			public:
-				struct model_element
+				class model_element
+					: public smart<model_element, imodel_element>
 				{
-					effects::itechnique_t technique;
-					buffers::iindex_buffer_t index_buffer;
-					buffers::ivertex_buffer_t vertex_buffer;
-					collections::vector<textures::itexture_t> textures;
+				private:
+					buffers::iindex_buffer_t m_index_buffer;
+					buffers::ivertex_buffer_t m_vertex_buffer;
+					reflect::struct_buffer_t m_uniforms;
+					vector<textures::itexture_t> m_textures;
 
-					bool operator == (const model_element&)const { return false; }//dummy
-					bool operator != (const model_element&)const { return false; }//dummy
+				public:
+					model_element();
+
+					ANG_DECLARE_INTERFACE();
+
+				public:
+					string technique() const override;
+					buffers::iindex_buffer_t index_buffer() const override;
+					buffers::ivertex_buffer_t vertex_buffer() const override;
+					reflect::varying_t uniform(cstr_t) const override;
+					collections::ienum_ptr<textures::itexture_t> textures() const override;
 				};
 
 			protected:
-				collections::vector<model_element> model_elements;
+				collections::vector<imodel_element_t> model_elements;
 
 			public:
 				model();
@@ -247,31 +230,16 @@ namespace ang
 			public:
 				ANG_DECLARE_INTERFACE();
 
-				virtual bool load(scene_t, dom::xml::xml_node_t) override;
-				virtual void update(core::time::step_timer const&) override;
-				virtual void draw(scene_t) override;
-				virtual void close() override;
+				bool load(iscene_t, dom::xml::xml_node_t)override;
+				bool save(iscene_t, dom::xml::xml_document_t)const override;
+				core::async::iasync<bool> load_async(iscene_t, dom::xml::xml_node_t)override;
+				core::async::iasync<bool> save_async(iscene_t, dom::xml::xml_document_t)const override;
+				void draw(iscene_t)override;
+				void update(core::time::step_timer_t)override;
+				void clear(void)override;
 
-				virtual bool load(idriver_t driver,
-					effects::ieffect_library_t fxlibrary,
-					textures::itexture_loader_t texloader, 
-					core::files::input_text_file_t file
-					);
-
-				virtual bool load(idriver_t driver,
-					effects::ieffect_library_t fxlibrary,
-					textures::itexture_loader_t texloader,
-					dom::xml::xml_node_t model_info
-				);
-
-			public:
-				maths::float4 position()const { return m_position; }
-				maths::float4 rotation()const { return m_rotation; }
-				maths::float4 scale()const { return m_scale; }
-
-				void position(maths::float4 const& value) { m_position = value; }
-				void rotation(maths::float4 const& value) { m_rotation = value; }
-				void scale(maths::float4 const& value) { m_scale = value; }
+				collections::ienum_ptr<imodel_element_t> elements()const override;
+				maths::float4x4 world_matrix()const override;
 
 			private:
 				virtual~model();
@@ -284,6 +252,3 @@ namespace ang
 	}
 
 }
-
-ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_INLINE(ang::graphics::scenes::light_info);
-ANG_REGIST_RUNTIME_VALUE_TYPE_INFO_INLINE(ang::graphics::scenes::model::model_element);

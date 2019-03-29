@@ -45,13 +45,6 @@ bool library::query_interface(ang::rtti_t const& id, ang::unknown_ptr_t out)
 		*out = static_cast<ilibrary*>(this);
 		return true;
 	}
-	else if (id.type_id() == dom::xml::ixml_serializable::class_info().type_id())
-	{
-		if (out == null)
-			return false;
-		*out = static_cast<dom::xml::ixml_serializable*>(this);
-		return true;
-	}
 	else if (id.type_id() == effects::ieffect_library::class_info().type_id())
 	{
 		if (out == null)

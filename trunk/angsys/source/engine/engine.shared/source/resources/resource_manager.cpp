@@ -17,9 +17,9 @@ resource_manager::~resource_manager()
 
 }
 
-ANG_IMPLEMENT_INTERFACE_RUNTIME_INFO(ang::graphics::resources::resource_manager);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::resources::resource_manager, library, core::files::ifile_system);
-ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(ang::graphics::resources::resource_manager, library, core::files::ifile_system);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::resources::resource_manager);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::resources::resource_manager, library, core::files::ifile_system);
+ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::resources::resource_manager, library, core::files::ifile_system);
 
 void resource_manager::clear()
 {

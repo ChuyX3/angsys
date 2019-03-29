@@ -13,9 +13,6 @@
     <Filter Include="source\scenes">
       <UniqueIdentifier>{366e12ed-f446-4b50-a5a7-b013f212ba9d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="header\effects">
-      <UniqueIdentifier>{31313c11-5646-4c1f-9e0a-ac16629cb58f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="header\resources">
       <UniqueIdentifier>{3835ce7f-e252-4398-9141-d532215bcdd2}</UniqueIdentifier>
     </Filter>
@@ -36,18 +33,30 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\resources.h">
       <Filter>header\resources</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\buffers.h">
+      <Filter>header\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\library.h">
+      <Filter>header\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\models.h">
+      <Filter>header\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\effects.h">
+      <Filter>header\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\resource.h">
+      <Filter>header\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\textures.h">
+      <Filter>header\resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\camera.cpp">
       <Filter>source\scenes</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\indexed_model.cpp">
-      <Filter>source\scenes</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\model.cpp">
-      <Filter>source\scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\ordered_model.cpp">
       <Filter>source\scenes</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\scenes.cpp">
@@ -56,9 +65,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\engine.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\resources.cpp">
-      <Filter>source\resources</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\library.cpp">
       <Filter>source\resources</Filter>
     </ClCompile>
@@ -66,6 +72,12 @@
       <Filter>source\resources</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\effects.cpp">
+      <Filter>source\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\resource.cpp">
+      <Filter>source\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\model_loader.cpp">
       <Filter>source\resources</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,8 +5,7 @@ using namespace ang;
 using namespace ang::graphics;
 using namespace ang::graphics::resources;
 
-resource::resource(ilibrary* lib)
-	: m_library(lib)
+resource::resource()
 {
 
 }
@@ -16,8 +15,8 @@ resource::~resource()
 
 }
 
-ANG_IMPLEMENT_INTERFACE_RUNTIME_INFO(ang::graphics::resources::resource);
-ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::resources::resource, object, dom::xml::ixml_serializable, iresource);
+ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::resources::resource);
+ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::resources::resource, object, iresource);
 //ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(ang::graphics::resources::resource, object, dom::xml::ixml_serializable, iresource);
 
 bool resource::query_interface(rtti_t const& type, unknown_ptr_t out)
@@ -31,13 +30,6 @@ bool resource::query_interface(rtti_t const& type, unknown_ptr_t out)
 	}
 	else if (object::query_interface(type, out))
 	{
-		return true;
-	}
-	else if (type.type_id() == dom::xml::ixml_serializable::class_info().type_id())
-	{
-		if (out == null)
-			return false;
-		*out = static_cast<dom::xml::ixml_serializable*>(this);
 		return true;
 	}
 	else if (type.type_id() == iresource::class_info().type_id())
@@ -109,9 +101,13 @@ bool resource::query_interface(rtti_t const& type, unknown_ptr_t out)
 	}
 }
 
+void resource::dispose()
+{
+	clear();
+}
+
 void resource::clear()
 {
-	m_library = null;
 	m_resource = null;
 }
 
@@ -161,72 +157,74 @@ buffers::ivertex_buffer_t resource::to_vertex_buffer()
 	return m_resource.is_empty() ? null : m_resource->to_vertex_buffer();
 }
 
-bool resource::load(dom::xml::xml_node_t node)
+bool resource::load(ilibrary_t lib, dom::xml::xml_node_t node)
 {
 	cstr_t name = node->xml_name();
 	if (name == "technique")
 	{
-		return static_cast<effects::technique*>(this)->load(node);
+		return static_cast<effects::technique*>(this)->load(lib, node);
 	}
 	else if (name == "effect")
 	{
-		effects::effect_t effect = new effects::effect(m_library.lock());
-		if (!effect->load(node))
+		effects::effect_t effect = new effects::effect();
+		if (!effect->load(lib, node))
 			return false;
 		m_resource = effect.get();
 	}
 	else if (name == "texture")
 	{
-		return static_cast<textures::texture*>(this)->load(node);
+		return static_cast<textures::texture*>(this)->load(lib, node);
 	}
 	else if (name == "frame_buffer")
 	{
-		return static_cast<buffers::frame_buffer*>(this)->load(node);
+		return static_cast<buffers::frame_buffer*>(this)->load(lib, node);
 	}
 	else if (name == "index_buffer")
 	{
-		return static_cast<buffers::index_buffer*>(this)->load(node);
+		return static_cast<buffers::index_buffer*>(this)->load(lib, node);
 	}
 	else if (name == "vertex_buffer")
 	{
-		return static_cast<buffers::vertex_buffer*>(this)->load(node);
+		return static_cast<buffers::vertex_buffer*>(this)->load(lib, node);
 	}
 	return false;
 }
 
-bool resource::save(dom::xml::xml_document_t node)const
+bool resource::save(ilibrary_t lib, dom::xml::xml_document_t node)const
 {
 	//TODO:
 	return false;
 }
 
-core::async::iasync<bool> resource::load_async(dom::xml::xml_node_t node)
+void resource::async_worker(ilibrary_t lib, core::async::idispatcher_t /*unused*/)
 {
-	auto lib = m_library.lock();
+	//resources only can be readed by the driver dispatcher
+}
+
+core::async::iasync<bool> resource::load_async(ilibrary_t lib, dom::xml::xml_node_t node)
+{
 	if (lib.is_empty())
 		return null;
 	resource_t auto_save = this;
 	return lib->factory()->driver()->dispatcher()->run_async<bool>(
 		[=](core::async::iasync<bool> task)
 	{
-		return auto_save->load(node);
+		return auto_save->load(lib, node);
 	});
 }
 
-core::async::iasync<bool> resource::save_async(dom::xml::xml_document_t doc)const
-{
-	auto lib = m_library.lock();
-	if (lib.is_empty())
+core::async::iasync<bool> resource::save_async(ilibrary_t lib, dom::xml::xml_document_t doc)const
+{	if (lib.is_empty())
 		return null;
 	resource_t auto_save = const_cast<resource*>(this);
 	return lib->factory()->driver()->dispatcher()->run_async<bool>(
 		[=](core::async::iasync<bool> task)
 	{
-		return auto_save->save(doc);
+		return auto_save->save(lib, doc);
 	});
 }
 
-bool effects::technique::load(dom::xml::xml_node_t node)
+bool effects::technique::load(ilibrary_t lib, dom::xml::xml_node_t node)
 {
 	using namespace ang::dom;
 
@@ -248,7 +246,7 @@ bool effects::technique::load(dom::xml::xml_node_t node)
 	if (!res)
 		return false;
 	
-	auto factory = m_library.lock()->factory();
+	auto factory = lib->factory();
 	auto shaders = factory->compile_shaders(vertex, pixel, sid, &log);
 	if (shaders.is_empty())
 	{
@@ -307,7 +305,7 @@ bool effects::technique::load_shader(dom::xml::xml_node_t shader, shader_info_t&
 	return false;
 }
 
-bool textures::texture::load(dom::xml::xml_node_t node)
+bool textures::texture::load(ilibrary_t lib, dom::xml::xml_node_t node)
 {
 	using namespace ang::dom;
 	if (node.is_empty())
@@ -332,7 +330,7 @@ bool textures::texture::load(dom::xml::xml_node_t node)
 			files += tex_node->xml_value()->xml_as<cstr_t>();
 		}
 
-		auto factory = m_library.lock()->factory();
+		auto factory = lib->factory();
 		auto tex = factory->load_texture(files, type, sid);
 		if (tex.is_empty())
 			return false;
@@ -347,7 +345,7 @@ bool textures::texture::load(dom::xml::xml_node_t node)
 		type = att["type"]->xml_as<textures::tex_type_t>();
 		string file = node->xml_value()->xml_as<cstr_t>();
 
-		auto factory = m_library.lock()->factory();
+		auto factory = lib->factory();
 		auto tex = factory->load_texture(file, type, sid);
 		if (tex.is_empty())
 			return false;
@@ -356,7 +354,7 @@ bool textures::texture::load(dom::xml::xml_node_t node)
 	}
 }
 
-bool buffers::frame_buffer::load(dom::xml::xml_node_t node)
+bool buffers::frame_buffer::load(ilibrary_t lib, dom::xml::xml_node_t node)
 {
 	using namespace ang::dom;
 	if (node.is_empty() || !node->xml_children())
@@ -386,7 +384,7 @@ bool buffers::frame_buffer::load(dom::xml::xml_node_t node)
 		}
 	}
 
-	auto factory = m_library.lock()->factory();
+	auto factory = lib->factory();
 	auto fbo = factory->create_frame_buffer(
 		desc.color_format,
 		desc.depth_stencil_format,
@@ -399,13 +397,13 @@ bool buffers::frame_buffer::load(dom::xml::xml_node_t node)
 	return true;
 }
 
-bool buffers::index_buffer::load(dom::xml::xml_node_t node)
+bool buffers::index_buffer::load(ilibrary_t lib, dom::xml::xml_node_t node)
 {
 	if (!node->xml_has_children())
 		return false;
 
 	iindex_buffer_t ibo;
-	auto factory = m_library.lock()->factory();
+	auto factory = lib->factory();
 
 #if defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
 	/*nedded for engine editor to read data from buffers*/
@@ -465,13 +463,13 @@ bool buffers::index_buffer::load(dom::xml::xml_node_t node)
 	return true;
 }
 
-bool buffers::vertex_buffer::load(dom::xml::xml_node_t node)
+bool buffers::vertex_buffer::load(ilibrary_t lib, dom::xml::xml_node_t node)
 {
 	if (!node->xml_has_children())
 		return false;
 
 	ivertex_buffer_t vbo;
-	auto factory = m_library.lock()->factory();
+	auto factory = lib->factory();
 
 #if defined WINDOWS_PLATFORM && WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
 	/*nedded for engine editor to read data from buffers*/

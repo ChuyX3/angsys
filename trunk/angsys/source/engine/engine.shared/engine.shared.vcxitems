@@ -15,6 +15,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\engine.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\buffers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\effects.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\library.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\models.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\textures.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\resource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\resources\resources.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\scenes\model_loader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\scenes\scenes.h" />
@@ -23,12 +29,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\engine.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\effects.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\library.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\resources.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\model_loader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\resource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\resources\resource_manager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\camera.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\indexed_model.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\model.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\ordered_model.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\scenes\scenes.cpp" />
   </ItemGroup>
 </Project>
