@@ -131,6 +131,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\resources.cpp">
       <Filter>source files</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\data_parser.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)utils\graphics.natvis">

@@ -47,6 +47,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)source\d3d11\drawing\d3d11_drawer.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)source\data_parser.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\graphics.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\reflect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)source\resources.cpp" />

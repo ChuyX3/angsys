@@ -55,7 +55,7 @@ namespace ang
 				the focus of the specular highlight.
 				"float3 Ka" statement specifies the ambient reflectivity of the current material
 				"float3 Kd" statement specifies the diffuse reflectivity of the current material
-				"float3 Kd" statement specifies the specular reflectivity of the current material
+				"float3 Ks" statement specifies the specular reflectivity of the current material
 				"float3 Tf" statement specifies the transmission filter of the current material.
 				Any light passing through the object is filtered by the transmission
 				filter, which only allows the specifiec colors to pass through*/
@@ -75,6 +75,49 @@ namespace ang
 				reflect::struct_buffer_t index_data;
 				reflect::struct_buffer_t vertex_data;
 				material_t material;
+
+				model_element() {
+					technique_name = null;
+					index_data = null;
+					vertex_data = null;
+				}
+				model_element(model_element&& other) {
+					technique_name = ang::move(other.technique_name);
+					index_data = ang::move(other.index_data);
+					vertex_data = ang::move(other.vertex_data);
+					material.fields = ang::move(other.material.fields);
+					material.samplers = ang::move(other.material.samplers);
+				}
+				model_element(model_element const& other) {
+					technique_name = other.technique_name;
+					index_data = new reflect::struct_buffer(other.index_data.get());
+					vertex_data = new reflect::struct_buffer(other.vertex_data.get());
+					material.fields = new reflect::struct_buffer(other.material.fields.get());
+					material.samplers->copy(other.material.samplers.get());
+				}
+
+				model_element& operator = (model_element&& other) {
+					if (this != &other)
+					{
+						technique_name = ang::move(other.technique_name);
+						index_data = ang::move(other.index_data);
+						vertex_data = ang::move(other.vertex_data);
+						material.fields = ang::move(other.material.fields);
+						material.samplers = ang::move(other.material.samplers);
+					}
+					return*this;
+				}
+				model_element& operator = (model_element const& other) {
+					if (this != &other)
+					{
+						technique_name = other.technique_name;
+						index_data = new reflect::struct_buffer(other.index_data.get());
+						vertex_data = new reflect::struct_buffer(other.vertex_data.get());
+						material.fields = new reflect::struct_buffer(other.material.fields.get());
+						material.samplers->copy(other.material.samplers.get());
+					}
+					return*this;
+				}
 			};
 
 			ang_begin_interface(LINK iresource)
@@ -97,12 +140,12 @@ namespace ang
 				visible vcall bool save(core::files::output_text_file_t)const pure
 				visible vcall bool load(core::files::input_binary_file_t)pure
 				visible vcall bool save(core::files::output_binary_file_t)const pure
-				visible vcall core::async::iasync<bool> load_async(dom::xml::xml_node_t)pure
-				visible vcall core::async::iasync<bool> save_async(dom::xml::xml_document_t)const pure
-				visible vcall core::async::iasync<bool> load_async(core::files::input_text_file_t)pure
-				visible vcall core::async::iasync<bool> save_async(core::files::output_text_file_t)const pure
-				visible vcall core::async::iasync<bool> load_async(core::files::input_binary_file_t)pure
-				visible vcall core::async::iasync<bool> save_async(core::files::output_binary_file_t)const pure
+				visible vcall core::async::iasync<imodel_loader_t> load_async(dom::xml::xml_node_t)pure
+				visible vcall core::async::iasync<imodel_loader_t> save_async(dom::xml::xml_document_t)const pure
+				visible vcall core::async::iasync<imodel_loader_t> load_async(core::files::input_text_file_t)pure
+				visible vcall core::async::iasync<imodel_loader_t> save_async(core::files::output_text_file_t)const pure
+				visible vcall core::async::iasync<imodel_loader_t> load_async(core::files::input_binary_file_t)pure
+				visible vcall core::async::iasync<imodel_loader_t> save_async(core::files::output_binary_file_t)const pure
 				visible vcall collections::ienum_ptr<model_element> elements()const pure
 			ang_end_interface();
 

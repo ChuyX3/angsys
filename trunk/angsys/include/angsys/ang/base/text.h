@@ -1,5 +1,5 @@
 /*********************************************************************************************************************/
-/*   File Name: ang/base/text.h                                                                                     */
+/*   File Name: ang/base/text.h                                                                                      */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
 /*                                                                                                                   */
 /*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
@@ -22,13 +22,20 @@ namespace ang //constants
 #ifdef _WIN32
 		native = little
 #elif defined ANDROID_PLATFORM
-		native = endian_proxy::big
+		native = big
 #else 
-		native = endian_proxy::little
+		native = little
 #endif
 	}endian;
 
-	constexpr bool LITTLE_ENDIAN_PLATFORM = yes_expression<endian::little == endian::native>::value;
+#ifdef _WIN32
+#define LITTLE_ENDIAN_PLATFORM (1)
+#elif defined ANDROID_PLATFORM
+#define BIG_ENDIAN_PLATFORM (1)
+#else 
+#define LITTLE_ENDIAN_PLATFORM (1)
+#endif
+	constexpr bool IS_LITTLE_ENDIAN_PLATFORM = yes_expression<endian::little == endian::native>::value;
 
 	namespace text
 	{
@@ -55,12 +62,12 @@ namespace ang //constants
 
 		template<>
 		struct native_encoding<encoding::utf16>
-			: value_selector<encoding, encoding::utf16_le, encoding::utf16_be, LITTLE_ENDIAN_PLATFORM> {
+			: value_selector<encoding, encoding::utf16_le, encoding::utf16_be, IS_LITTLE_ENDIAN_PLATFORM> {
 		};
 
 		template<>
 		struct native_encoding<encoding::utf32>
-			: value_selector<encoding, encoding::utf32_le, encoding::utf32_be, LITTLE_ENDIAN_PLATFORM > {
+			: value_selector<encoding, encoding::utf32_le, encoding::utf32_be, IS_LITTLE_ENDIAN_PLATFORM > {
 		};
 
 		template<>
@@ -74,17 +81,17 @@ namespace ang //constants
 
 		template<>
 		struct native_inverse_encoding<encoding::utf16>
-			: value_selector<encoding, encoding::utf16_be, encoding::utf16_le, LITTLE_ENDIAN_PLATFORM > {
+			: value_selector<encoding, encoding::utf16_be, encoding::utf16_le, IS_LITTLE_ENDIAN_PLATFORM > {
 		};
 
 		template<>
 		struct native_inverse_encoding<encoding::utf32>
-			: value_selector<encoding, encoding::utf32_be, encoding::utf32_le, LITTLE_ENDIAN_PLATFORM > {
+			: value_selector<encoding, encoding::utf32_be, encoding::utf32_le, IS_LITTLE_ENDIAN_PLATFORM > {
 		};
 
 		template<>
 		struct native_inverse_encoding<encoding::unicode>
-			: value_selector<encoding, native_inverse_encoding<encoding::utf16>::value, native_inverse_encoding<encoding::utf32>::value, sizeof(wchar) == 2> {
+			: value_selector<encoding, native_inverse_encoding<encoding::utf16>::value, native_inverse_encoding<encoding::utf32>::value, size_of<wchar>() == size_of<short>()> {
 		};
 
 
@@ -226,11 +233,11 @@ namespace ang //constants
 
 		template<encoding ENCODING> struct is_endian_swapped : false_type {};
 		template<> struct is_endian_swapped<encoding::utf16_se> : true_type {};
-		template<> struct is_endian_swapped<encoding::utf16_be> : yes_expression<LITTLE_ENDIAN_PLATFORM> {};
-		template<> struct is_endian_swapped<encoding::utf16_le> : not_expression<LITTLE_ENDIAN_PLATFORM> {};
+		template<> struct is_endian_swapped<encoding::utf16_be> : yes_expression<IS_LITTLE_ENDIAN_PLATFORM> {};
+		template<> struct is_endian_swapped<encoding::utf16_le> : not_expression<IS_LITTLE_ENDIAN_PLATFORM> {};
 		template<> struct is_endian_swapped<encoding::utf32_se> : true_type {};
-		template<> struct is_endian_swapped<encoding::utf32_be> : yes_expression<LITTLE_ENDIAN_PLATFORM> {};
-		template<> struct is_endian_swapped<encoding::utf32_le> : not_expression<LITTLE_ENDIAN_PLATFORM> {};
+		template<> struct is_endian_swapped<encoding::utf32_be> : yes_expression<IS_LITTLE_ENDIAN_PLATFORM> {};
+		template<> struct is_endian_swapped<encoding::utf32_le> : not_expression<IS_LITTLE_ENDIAN_PLATFORM> {};
 
 		template<encoding ENCODING_>
 		struct encoder

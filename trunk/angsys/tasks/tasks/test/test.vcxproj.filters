@@ -3,23 +3,10 @@
   <ItemGroup>
     <ClInclude Include="targetver.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="vulkan\vk_driver.h">
-      <Filter>driver\vulkan</Filter>
-    </ClInclude>
+    <ClInclude Include="btree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="vulkan\vk_driver.cpp">
-      <Filter>driver\vulkan</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="driver">
-      <UniqueIdentifier>{42035134-a44d-49ca-ad29-2ac40010229a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="driver\vulkan">
-      <UniqueIdentifier>{38e7df01-63b7-408f-bfdc-8432d21e692f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>

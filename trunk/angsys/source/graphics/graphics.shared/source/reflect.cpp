@@ -169,6 +169,89 @@ cstr_t graphics::reflect::var_semantic_t::to_string()const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+typedef struct type_class
+{
+	union {
+		uint value;
+		struct {
+#ifdef LITTLE_ENDIAN_PLATFORM
+			word var_class;
+			word var_type;
+#else //TOCHECK:
+			word var_type;
+			word var_class;
+#endif
+		};
+	};
+
+	type_class(reflect::var_type t, reflect::var_class c) {
+		var_type = (word)t;
+		var_class = (word)c;
+	}
+
+	bool operator == (type_class const& val)const {
+		return value == val.value;
+	}
+	bool operator != (type_class const& val)const {
+		return value != val.value;
+	}
+	bool operator >= (type_class const& val)const {
+		return value >= val.value;
+	}
+	bool operator <= (type_class const& val)const {
+		return value <= val.value;
+	}
+	bool operator > (type_class const& val)const {
+		return value > val.value;
+	}
+	bool operator < (type_class const& val)const {
+		return value < val.value;
+	}
+}type_class_t;
+
+static collections::pair<type_class_t, wsize> s_align_of_var_map[] =
+{
+	{ {var_type::s8, var_class::scalar} , align_of<char>() },
+	{ {var_type::s8, var_class::vec2} , align_of<char>() },
+	{ {var_type::s8, var_class::vec3} , align_of<char>() },
+	{ {var_type::s8, var_class::vec4} , align_of<char>() },
+	{ {var_type::u8, var_class::scalar} , align_of<uchar>() },
+	{ {var_type::u8, var_class::vec2} , align_of<uchar>() },
+	{ {var_type::u8, var_class::vec3} , align_of<uchar>() },
+	{ {var_type::u8, var_class::vec4} , align_of<uchar>() },
+	{ {var_type::s16, var_class::scalar} , align_of<short>() },
+	{ {var_type::s16, var_class::vec2} , align_of<short>() },
+	{ {var_type::s16, var_class::vec3} , align_of<short>() },
+	{ {var_type::s16, var_class::vec4} , align_of<short>() },
+	{ {var_type::u16, var_class::scalar} , align_of<ushort>() },
+	{ {var_type::u16, var_class::vec2} , align_of<ushort>() },
+	{ {var_type::u16, var_class::vec3} , align_of<ushort>() },
+	{ {var_type::u16, var_class::vec4} , align_of<ushort>() },
+	{ {var_type::s32, var_class::scalar} , align_of<int>() },
+	{ {var_type::s32, var_class::vec2} , align_of<maths::int2>() },
+	{ {var_type::s32, var_class::vec3} , align_of<maths::int3>() },
+	{ {var_type::s32, var_class::vec4} , align_of<maths::int4>() },
+	{ {var_type::u32, var_class::scalar} , align_of<uint>() },
+	{ {var_type::u32, var_class::vec2} , align_of<maths::uint2>() },
+	{ {var_type::u32, var_class::vec3} , align_of<maths::uint3>() },
+	{ {var_type::u32, var_class::vec4} , align_of<maths::uint4>() },
+	{ {var_type::f32, var_class::scalar} , align_of<float>() },
+	{ {var_type::f32, var_class::vec2} , align_of<maths::float2>() },
+	{ {var_type::f32, var_class::vec3} , align_of<maths::float3>() },
+	{ {var_type::f32, var_class::vec4} , align_of<maths::float4>() },
+	{ {var_type::f32, var_class::mat4} , align_of<maths::float4x4>() },
+};
+
+wsize align_of_var(var_type_t t, var_class_t c) {
+	type_class_t tc(t, c);
+	wsize idx = algorithms::binary_search(tc, collections::to_array(s_align_of_var_map));
+	if (idx > algorithms::array_size(s_align_of_var_map))
+		return 4U;
+	else
+		return s_align_of_var_map[idx].value;
+}
+
+
 varying_desc::varying_desc(var_type_t _type, var_class_t _class
 	, astring name, wsize _array, wsize aligment)
 	: m_fields(null)
@@ -225,10 +308,10 @@ varying_desc::~varying_desc() {
 }
 
 
-bool varying_desc::load(dom::xml::xml_node_t input, wsize aligment)
+wsize varying_desc::load(dom::xml::xml_node_t input, wsize aligment)
 {
 	if (input.is_empty())
-		return false;
+		return 0;
 	auto atts = input->xml_attributes();
 	if (input->xml_has_children())
 	{
@@ -244,27 +327,30 @@ bool varying_desc::load(dom::xml::xml_node_t input, wsize aligment)
 				m_aligment = att->xml_value()->xml_as<wsize>();
 		}
 
-		m_aligment = (aligment != invalid_index) ? aligment : max(m_aligment, 1u);
 		m_array_count = max(m_array_count, 1u);
 		m_position = 0;
 		m_var_type = var_type::block;
 		m_var_class = var_class::scalar;
 		m_fields = null;
+		m_aligment = (aligment != invalid_index) ? aligment : m_aligment ? m_aligment : 1U;
 
 		wsize total = 0;
 		wsize size = 0;
 		wsize temp = 0;
 		wsize res = 0;
+		wsize align = 0;
+		wsize max_align = 0;
 		for(dom::xml::xml_node_t field : input->xml_children())
 		{
 			varying_desc desc;
 			auto name = field->xml_name();
-			if (((cstr_t)name == L"var"_s || (cstr_t)name == L"block"_s) && desc.load(field, m_aligment))
+			if (((cstr_t)name == L"var"_s || (cstr_t)name == L"block"_s) && (align = desc.load(field)))
 			{
+				max_align = max(max_align, align);
 				size = desc.get_size_in_bytes();
-				temp = total % m_aligment;
-				res = m_aligment - temp;
-				if (res < m_aligment)
+				temp = total % desc.m_aligment;
+				res = desc.m_aligment - temp;
+				if (res < desc.m_aligment)
 				{
 					if (res > size)
 						total += align_up(size, temp) - temp;
@@ -276,10 +362,12 @@ bool varying_desc::load(dom::xml::xml_node_t input, wsize aligment)
 				m_fields += ang::move(desc);
 			}
 		}
-		return true;
+		m_aligment = max(max_align, m_aligment);
+		return m_aligment;
 	}
 	else if (!atts.is_empty())
 	{
+		m_aligment = 0;
 		for(dom::xml::xml_node_t att : atts)
 		{
 			auto name = att->xml_name()->xml_as<cstr_t>();
@@ -296,12 +384,12 @@ bool varying_desc::load(dom::xml::xml_node_t input, wsize aligment)
 		}
 
 		m_position = 0;
-		m_aligment = (aligment != invalid_index) ? aligment : max(m_aligment, 1u);
+		m_aligment = (aligment != invalid_index) ? aligment : m_aligment ? m_aligment : align_of_var(m_var_type, m_var_class);
 		m_array_count = max(m_array_count, 1u);
 		m_fields = null;
-		return true;
+		return m_aligment;
 	}
-	return false;
+	return 0;
 }
 
 bool varying_desc::save(dom::xml::xml_document_t)const

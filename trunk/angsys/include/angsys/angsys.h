@@ -111,7 +111,9 @@ namespace ang
 		template<typename T, template<typename> class allocator = memory::object_allocator> class vector_buffer;
 		template<typename T, template<typename> class allocator = memory::object_allocator> using array = object_wrapper<array_buffer<T, allocator>>;
 		template<typename T, template<typename> class allocator = memory::object_allocator> using vector = object_wrapper<vector_buffer<T, allocator>>;
-	
+		template<typename T, template<typename> class allocator = memory::object_allocator> using array_ptr = object_wrapper_ptr<array_buffer<T, allocator>>;
+		template<typename T, template<typename> class allocator = memory::object_allocator> using vector_ptr = object_wrapper_ptr<vector_buffer<T, allocator>>;
+
 		template<typename T> struct ienum;
 		template<typename T> struct iarray;
 		template<typename T> struct ilist;
@@ -160,6 +162,8 @@ namespace ang
 
 	using collections::array;
 	using collections::vector;
+	using collections::array_ptr;
+	using collections::vector_ptr;
 
 	using core::delegates::function;
 

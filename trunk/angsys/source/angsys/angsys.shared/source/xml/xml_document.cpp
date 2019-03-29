@@ -1121,7 +1121,10 @@ bool xml_document::decode_elements(xml_document_t doc, text::istring_view_t code
 	string name = null;// = { 0 };
 	string value = null;
 
-	beg = code->find("<"_s, beg);
+	beg += xml_utils<void, text::encoding::auto_detect>::xml_skip_space(code, beg);
+	if (code[beg] != '<')
+		return false;
+	//beg = code->find("<"_s, beg);
 	while (beg != invalid_index)
 	{
 		c = 0;

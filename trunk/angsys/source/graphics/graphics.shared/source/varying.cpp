@@ -511,19 +511,44 @@ void struct_buffer::clear()
 
 bool struct_buffer::load(dom::xml::xml_node_t node)
 {
-	clear();
-
-
-
-
-
-	if (!m_descriptor.load(data))
+	if (node.is_empty() || !node->xml_has_children())
 		return false;
 
-	m_descriptor.aligment(16);//for default
-	m_descriptor.calculate_positions(true);
+	cstr_t data;
+
+	for (dom::xml::xml_node_t node : node->xml_children())
+	{
+		auto name = node->xml_name()->xml_as<cstr_t>();
+		if (name == "data_layout")
+		{
+			if (!m_descriptor.load(node))
+				return false;
+		}
+		else if (name == "data")
+		{
+			data = node->xml_value();
+		}
+	}
+
+	//m_descriptor.aligment(16);//for default
+	//m_descriptor.calculate_positions(true);
+
 	realloc_buffer(m_descriptor.get_size_in_bytes());
 	memset(m_raw_data.data(), 0, m_raw_data.size());
+
+	text_data_loader_context_t parser;
+	text_data_loader::create_context(m_descriptor, parser);
+
+	text_data_loader_input_context_t input = {
+		text::iparser::get_parser(data.encoding()),
+		data
+	};
+	text_data_loader_output_context_t output = {
+		m_raw_data.data(),
+		0
+	};
+	
+	parser.load_data(parser, input, output);
 	return true;
 }
 
@@ -563,10 +588,10 @@ void struct_buffer::push_var(varying_t var)
 
 }
 
-vector<varying> struct_buffer::push_var(varying_desc_t desc)
+varying_t struct_buffer::push_var(varying_desc_t desc)
 {
 	if (m_descriptor.var_type() != var_type::block)
-		return null;
+		return varying();
 
 	desc.aligment(m_descriptor.aligment());
 	desc.calculate_positions(true);
@@ -577,6 +602,29 @@ vector<varying> struct_buffer::push_var(varying_desc_t desc)
 	scope_array<byte> temp(my_sz);
 
 	realloc_buffer((new_sz) * m_descriptor.array_count());
+	
+	wsize c = m_descriptor.array_count();
+	for (wsize i = 1; i < c; i++) {
+		memcpy(&temp[0], &m_raw_data[(c - i) * my_sz], my_sz); //copying data to temporal buffer
+		memcpy(&m_raw_data[(c - i) * (new_sz)], &temp[0], my_sz);//reinserting data in the correct position
+	}
+	return varying(to_array(&m_raw_data[my_sz], sz), desc, desc.aligment());
+}
+
+bool struct_buffer::push_var(varying_desc_t desc, vector_ptr<varying> out)
+{
+	if (m_descriptor.var_type() != var_type::block)
+		return false;
+
+	desc.aligment(m_descriptor.aligment());
+	desc.calculate_positions(true);
+	wsize my_sz = m_raw_data.size() / m_descriptor.array_count();
+	m_descriptor.push_field(ang::move(desc));
+	wsize new_sz = m_descriptor.get_size_in_bytes() / m_descriptor.array_count();
+	wsize sz = new_sz - my_sz;
+	scope_array<byte> temp(my_sz);
+
+	realloc_buffer((new_sz)* m_descriptor.array_count());
 	vector<varying_t> vars;
 
 	array_view<byte> data;
@@ -590,7 +638,10 @@ vector<varying> struct_buffer::push_var(varying_desc_t desc)
 
 	data.set(&m_raw_data[c * my_sz + sz * (c - 1)], sz);
 	vars += varying(data, desc, desc.aligment());
-	return vars.get();
+	if (!out.is_empty())
+		*out = vars.get();
+
+	return true;
 }
 
 varying_t struct_buffer::make_var(varying_desc_t const& desc, wsize ALIGMENT)

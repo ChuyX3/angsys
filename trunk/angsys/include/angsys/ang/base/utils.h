@@ -67,7 +67,7 @@ namespace ang //constants
 	invalid_handle_type const invalid_handle = {};
 
 	typedef decltype(nullptr) nullptr_t;
-	nullptr_t const null = {};
+	nullptr_t constexpr null = {};
 
 	template<typename T> using initializer_list = std::initializer_list<T>;
 

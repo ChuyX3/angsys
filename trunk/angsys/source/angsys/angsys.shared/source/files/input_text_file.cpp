@@ -76,11 +76,13 @@ stream_mode_t input_text_file::mode()const
 
 bool input_text_file::map(function<bool(ibuffer_view_t)> func, wsize sz, file_offset_t offset)
 {
-	ibuffer_t buff =  file::map(min(size(), (file_offset_t)sz), min(size(), offset));
+	file_offset_t _sz = sz == invalid_index ? size() : min(size(), file_offset_t(sz));
+	file_offset_t _off = offset == invalid_index ? size() : min(size(), file_offset_t(offset));
+	ibuffer_t buff =  file::map(_sz, _off);
 	if (buff.is_empty())
 		return false;
 	func(buff.get());
-	unmap(buff, min(size(), (file_offset_t)sz));
+	unmap(buff, _sz);
 	return true;
 }
 

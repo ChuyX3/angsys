@@ -393,7 +393,7 @@ bool core_file::create(cstr_t path_, open_flags_t flags)
 	);
 #endif
 
-	if (m_hfile == INVALID_HANDLE_VALUE)
+	if (m_hfile == invalid_handle)
 	{
 		HRESULT err = GetLastError();
 		m_hfile = null;
@@ -586,7 +586,7 @@ file_handle_t core_file::map_handle(ulong64 _min)
 
 bool core_file::is_created()const
 {
-	return m_hfile != 0;
+	return m_hfile != invalid_handle;
 }
 
 void core_file::dispose()
@@ -596,7 +596,7 @@ void core_file::dispose()
 	if (m_hfile == invalid_handle)
 		return;
 	CloseHandle(m_hfile);
-	m_hfile = null;
+	m_hfile = invalid_handle;
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 	if (m_hfile < 0)
 		return;

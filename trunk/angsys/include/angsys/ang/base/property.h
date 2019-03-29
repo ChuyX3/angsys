@@ -41,7 +41,7 @@ namespace ang //constants
 		using setter_type = void(*)(property_class*, arg_type);
 	};
 
-	template<typename T, typename property_helper<T>::getter_type getter, typename property_helper<T>::setter_type setter = nullptr>
+	template<typename T, typename property_helper<T>::getter_type getter, typename property_helper<T>::setter_type setter = null>
 	struct property : property_helper<T>::property_class {
 		using self = property<T, getter, setter>;
 

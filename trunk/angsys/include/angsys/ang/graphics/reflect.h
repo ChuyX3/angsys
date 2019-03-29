@@ -12,7 +12,7 @@ namespace ang
 	{
 		namespace reflect
 		{
-			typedef collections::vector<varying_desc> uniform_fields_t;	
+			typedef collections::vector<varying_desc> uniform_fields_t;		
 
 			struct LINK varying_desc : auto_self<varying_desc>
 			{
@@ -37,13 +37,13 @@ namespace ang
 					wsize aligment = 4U
 				);
 
-				varying_desc(astring name, uniform_fields_t vars, wsize _array = 1U, wsize aligment = 4U);
+				varying_desc(astring name, collections::vector<varying_desc> vars, wsize _array = 1U, wsize aligment = 4U);
 
 				varying_desc(varying_desc&& value);
 				varying_desc(const varying_desc& value);
 				~varying_desc();
 
-				bool load(dom::xml::xml_node_t, wsize aligment = -1);
+				wsize load(dom::xml::xml_node_t, wsize aligment = -1);
 				bool save(dom::xml::xml_document_t)const;
 
 				var_type_t var_type()const;
@@ -312,9 +312,12 @@ namespace ang
 			public:
 				void clear();
 				bool load(dom::xml::xml_node_t node);
+				bool save(dom::xml::xml_document_t doc);
+
 				bool copy(varying_t const&);
 				void push_var(varying_t desc);
-				vector<varying> push_var(varying_desc_t desc);
+				varying_t push_var(varying_desc_t desc);
+				bool push_var(varying_desc_t desc, vector_ptr<varying>);
 				varying_t make_var(varying_desc_t const& desc, wsize ALIGMENT = 16U);
 				varying_t make_struct(wsize ALIGMENT = 16U);
 				varying_t make_struct(array_view<varying_desc> const& desc, wsize ALIGMENT = 16U);
@@ -326,6 +329,139 @@ namespace ang
 			};
 
 
+
+			template<var_type TYPE, var_class CLASS>
+			struct text_data_value_loader;
+
+			typedef struct text_data_loader_input_context
+			{
+				text::iparser_t parser;
+				cstr_t data;
+				windex idx;
+			}text_data_loader_input_context_t;
+
+			typedef struct text_data_loader_output_context
+			{
+				byte* data;
+				windex idx;
+			}text_data_loader_output_context_t;
+
+			typedef struct LINK text_data_loader_context
+			{
+				using load_data_func_t = wsize(*)(
+					text_data_loader_context const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+
+				wsize position;
+				wsize aligment;
+				wsize array_count;
+				vector<text_data_loader_context> children;
+				load_data_func_t load_data;
+
+				text_data_loader_context(
+					wsize position = 0,
+					wsize aligment = 4,
+					wsize array_count = 1,
+					vector<text_data_loader_context> children = null,
+					load_data_func_t load_data = null
+				);
+				text_data_loader_context(text_data_loader_context&&);
+				text_data_loader_context(const text_data_loader_context&);
+
+				text_data_loader_context& operator = (text_data_loader_context&&);
+				text_data_loader_context& operator = (const text_data_loader_context&);
+			}text_data_loader_context_t;
+
+			template<> struct LINK text_data_value_loader<var_type::s8, var_class::scalar> {
+				static wsize load_data(
+					text_data_loader_context_t const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+			};
+
+			template<> struct LINK text_data_value_loader<var_type::u8, var_class::scalar> {
+				static wsize load_data(
+					text_data_loader_context_t const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+			};
+
+			template<> struct LINK text_data_value_loader<var_type::s16, var_class::scalar> {
+				static wsize load_data(
+					text_data_loader_context_t const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+			};
+
+			template<> struct LINK text_data_value_loader<var_type::u16, var_class::scalar> {
+				static wsize load_data(
+					text_data_loader_context_t const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+			};
+
+			template<> struct LINK text_data_value_loader<var_type::s32, var_class::scalar> {
+				static wsize load_data(
+					text_data_loader_context_t const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+			};
+
+			template<> struct LINK text_data_value_loader<var_type::u32, var_class::scalar> {
+				static wsize load_data(
+					text_data_loader_context_t const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+			};
+
+			template<> struct LINK text_data_value_loader<var_type::f32, var_class::scalar> {
+				static wsize load_data(
+					text_data_loader_context_t const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+			};
+
+			template<> struct LINK text_data_value_loader<var_type::f32, var_class::vec2> {
+				static wsize load_data(
+					text_data_loader_context_t const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+			};
+
+			template<> struct LINK text_data_value_loader<var_type::f32, var_class::vec3> {
+				static wsize load_data(
+					text_data_loader_context_t const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+			};
+
+			template<> struct LINK text_data_value_loader<var_type::f32, var_class::vec4> {
+				static wsize load_data(
+					text_data_loader_context_t const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+			};
+
+			template<> struct LINK text_data_value_loader<var_type::f32, var_class::mat4> {
+				static wsize load_data(
+					text_data_loader_context_t const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+			};
+
+
+			template<> struct LINK text_data_value_loader<var_type::block, var_class::scalar> {
+				static wsize load_data(
+					text_data_loader_context_t const&,
+					text_data_loader_input_context_t& input,
+					text_data_loader_output_context_t& output);
+
+				static bool create_context(varying_desc_t const& desc, text_data_loader_context_t&);
+			};
+
+			using text_data_loader = text_data_value_loader<var_type::block, var_class::scalar>;
+			
 		}
 	}
 

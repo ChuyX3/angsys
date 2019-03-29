@@ -56,6 +56,7 @@ namespace ang
 	
 			ang_interface(ilibrary);
 			ang_interface(iresource);
+			ang_interface(imodel_loader);	
 		}
 	
 		namespace reflect
