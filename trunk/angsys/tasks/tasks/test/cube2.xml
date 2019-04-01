@@ -9,12 +9,12 @@
       <var type="f32" class="vec3" name="Kd">{0.5, 0.5, 0.5}</var>
       <texture name="map_Kd">textures_seafloor_dds</texture>
     </material>
-    <buffer usage="index">
-      <data_layout type="u16" array="36"/>
+    <buffer usage="index" name="CUBE_INDEX_BUFFER">
+      <data_layout type="u16" array="36" />
       <data>3,1,0,2,1,3,6,4,5,7,4,6,11,9,8,10,9,11,14,12,13,15,12,14,19,17,16,18,17,19,22,20,21,23,20,22</data>
     </buffer>
-    <buffer usage="vertex">
-      <data_layout array="24">
+    <buffer usage="vertex" name="CUBE_INDEX_BUFFER">
+      <data_layout array="24" >
         <var type="f32" class="vec3" semantic="POSITION" semantic_idx="0"/>
         <var type="f32" class="vec4" semantic="COLOR" semantic_idx="0"/>
         <var type="f32" class="vec2" semantic="TEXCOORD" semantic_idx="0"/>

@@ -515,7 +515,7 @@ bool struct_buffer::load(dom::xml::xml_node_t node)
 		return false;
 
 	cstr_t data;
-
+	m_name = node->xml_attributes()["name"]->xml_as<cstr_t>();
 	for (dom::xml::xml_node_t node : node->xml_children())
 	{
 		auto name = node->xml_name()->xml_as<cstr_t>();
