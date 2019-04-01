@@ -134,6 +134,8 @@ namespace ang
 
 			ang_begin_interface(LINK imodel_loader)
 				visible vcall void clear()pure
+				visible vcall string resource_sid()const pure
+				visible vcall collections::ienum_ptr<model_element> elements()const pure
 				visible vcall bool load(dom::xml::xml_node_t)pure
 				visible vcall bool save(dom::xml::xml_document_t)const pure
 				visible vcall bool load(core::files::input_text_file_t)pure
@@ -146,7 +148,6 @@ namespace ang
 				visible vcall core::async::iasync<imodel_loader_t> save_async(core::files::output_text_file_t)const pure
 				visible vcall core::async::iasync<imodel_loader_t> load_async(core::files::input_binary_file_t)pure
 				visible vcall core::async::iasync<imodel_loader_t> save_async(core::files::output_binary_file_t)const pure
-				visible vcall collections::ienum_ptr<model_element> elements()const pure
 			ang_end_interface();
 
 			ang_begin_interface(LINK ilibrary)

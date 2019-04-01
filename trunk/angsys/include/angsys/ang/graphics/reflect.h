@@ -283,6 +283,7 @@ namespace ang
 				: public smart<struct_buffer, varying, ibuffer>
 			{
 			private:
+				string m_name;
 				collections::vector<byte, memory::aligned16_allocator> m_aligned_data;
 
 			public:
