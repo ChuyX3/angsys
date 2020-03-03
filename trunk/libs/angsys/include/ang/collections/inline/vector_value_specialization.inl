@@ -1,0 +1,822 @@
+#ifndef __COFFE_COLLECTIONS_VECTOR_H__
+#error Can't include vector.inl, please include vector.hpp inside
+#else
+
+DECLARE_ALLOC(MY_TYPE, MY_ALLOC);
+
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::vector_buffer()
+	: m_size(0)
+	, m_capacity(0)
+	, m_data(null)
+{
+}
+
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::vector_buffer(const coffe::nullptr_t&)
+	: vector_buffer()
+{
+
+}
+
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::vector_buffer(coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>&& ar)
+	: vector_buffer()
+{
+	m_size = ar.m_size;
+	m_data = ar.m_data;
+	m_capacity = ar.m_capacity;
+	ar.m_size = 0;
+	ar.m_capacity = 0;
+	ar.m_data = null;
+}
+
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::vector_buffer(const coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>& ar)
+	: vector_buffer()
+{
+	copy(to_array(ar.data(), ar.size()));
+}
+
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::vector_buffer(const coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>* ar)
+	: vector_buffer()
+{
+	if (ar)copy(to_array(ar->data(), ar->size()));
+}
+
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::vector_buffer(const coffe::collections::ienum<MY_TYPE>* store)
+	: vector_buffer()
+{
+	copy(store);
+}
+
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::~vector_buffer()
+{
+}
+
+coffe::rtti_t const& coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::class_info()
+{
+	static const char name[] = COFFE_UTILS_TO_STRING(COFFE_EXPAND_ARGS(coffe::collections::vector<MY_TYPE, MY_ALLOC>));
+	static rtti_t const* parents[] = { 
+		&runtime::type_of<object>(),
+		&runtime::type_of<ivariant>(),
+		&runtime::type_of<ibuffer>(),
+		&runtime::type_of<ilist<MY_TYPE>>(),
+		&runtime::type_of<ienum<MY_TYPE>>()
+	};
+	static rtti_t const& info = rtti::regist(name, genre::class_type, size_of<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>(), align_of<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>(), parents, &default_query_interface);
+	return info;
+}
+
+coffe::rtti_t const& coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::runtime_info()const
+{
+	return class_info();
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::query_interface(coffe::rtti_t const& id, coffe::unknown_ptr_t out)
+{
+	if (id.type_id() == class_info().type_id())
+	{
+		if (out == null) return false;
+		*out = static_cast<vector_buffer<MY_TYPE, MY_ALLOC>*>(this);
+		return true;
+	}
+	else if (object::query_interface(id, out))
+	{
+		return true;
+	}
+	else if (id.type_id() == coffe::type_of<ilist<MY_TYPE>>().type_id()) {
+		if (out == null) return false;
+		*out = static_cast<ilist<MY_TYPE>*>(this);
+		return true;
+	}
+	else if (id.type_id() == coffe::type_of<iarray<MY_TYPE>>().type_id()) {
+		if (out == null) return false;
+		*out = static_cast<iarray<MY_TYPE>*>(this);
+		return true;
+	}
+	else if (id.type_id() == coffe::type_of<ienumerable<MY_TYPE>>().type_id()) {
+		if (out == null) return false;
+		*out = static_cast<ienumerable<MY_TYPE>*>(this);
+		return true;
+	}
+	else if (id.type_id() == coffe::type_of<ienum<MY_TYPE>>().type_id()) {
+		if (out == null) return false;
+		*out = static_cast<ienum<MY_TYPE>*>(this);
+		return true;
+	}
+	return false;
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::is_empty()const
+{
+	return size() == 0;
+}
+
+MY_TYPE* coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::data()const
+{
+	return m_data;
+}
+
+wsize coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::size()const
+{
+	return m_size;
+}
+
+void coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::size(wsize size, bool save)
+{
+	if (m_size != size)
+	{
+		realloc(size, save);
+		if (m_size <= size)
+			memset(&m_data[m_size], 0, size - m_size);
+		else
+			memset(&m_data[size], 0, m_size - size);
+		m_size = size;
+	}
+}
+
+wsize coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::capacity()const
+{
+	return m_capacity;
+}
+
+void coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::capacity(wsize size, bool save)
+{
+	realloc(size, save);
+}
+
+coffe::rtti_t const& coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::value_type()const
+{
+	return coffe::type_of<array_view<MY_TYPE>>();
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::set_value(coffe::rtti_t const& id, coffe::unknown_t value)
+{
+	if (id.is_type_of<array_view<MY_TYPE>>())
+	{
+		array_view<MY_TYPE>& ar = *reinterpret_cast<array_view<MY_TYPE>*>(value);
+		copy(ar);
+		return true;
+	}
+	return false;
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::get_value(coffe::rtti_t const& id, coffe::unknown_t value)const
+{
+	if (id.is_type_of<array_view<MY_TYPE>>())
+	{
+		array_view<MY_TYPE>& ar = *reinterpret_cast<array_view<MY_TYPE>*>(value);
+		ar.set(m_data, m_size);
+	}
+	return false;
+}
+
+coffe::variant coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::clone()const
+{
+	return (ivariant*) new coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>(*this);
+}
+
+coffe::string coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::to_string()const
+{
+	return (cstr_t)class_info().type_name();
+}
+
+coffe::string coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::to_string(coffe::text::text_format_t)const
+{
+	return (cstr_t)class_info().type_name();
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::is_readonly()const
+{
+	return false;
+}
+
+coffe::text::encoding_t coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::encoding()const
+{
+	return text::encoding::binary;
+}
+
+const_pointer coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::buffer_ptr()const
+{
+	return (pointer)m_data;
+}
+
+pointer coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::buffer_ptr()
+{
+	return (pointer)m_data;
+}
+
+wsize coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::buffer_size()const
+{
+	return m_capacity * sizeof(MY_TYPE);
+}
+
+wsize coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::mem_copy(wsize _s, pointer _p, text::encoding_t)
+{
+	throw(exception_t(error_code::unsupported));
+	return 0;
+}
+
+coffe::ibuffer_view_t coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::map_buffer(windex start, wsize size)
+{
+	return null;
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::unmap_buffer(coffe::ibuffer_view_t&, wsize used)
+{
+	return false;
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::can_realloc_buffer()const { return true; };
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::realloc_buffer(wsize size) { return realloc(size, true); };
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::move(coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>& ar)
+{
+	if (&ar == this)
+		return false;
+	clear();
+	m_size = ar.m_size;
+	m_data = ar.m_data;
+	m_capacity = ar.m_capacity;
+	ar.m_data = null;
+	ar.m_size = 0;
+	ar.m_capacity = 0;
+	return true;
+}
+
+void coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::copy(const coffe::collections::ienum<MY_TYPE>* _items)
+{
+	if (!_items)
+		return;
+	capacity(_items->counter(), false);
+	for (MY_TYPE const& value : *_items)
+		push(value);
+}
+
+wsize coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::counter()const
+{
+	return m_size;
+}
+
+MY_TYPE& coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::at(coffe::collections::base_iterator<MY_TYPE> const& it)
+{
+#ifdef DEBUG_SAFE_CODE
+	if (is_empty())
+		throw(exception_t(error_code::invalid_memory));
+	if (m_data != it.current())
+		throw(exception_t(error_code::invalid_param));
+	if (it.offset() >= m_size)
+		throw(exception_t(error_code::array_overflow));
+#endif
+	return m_data[it.offset()];
+}
+
+coffe::collections::ienum_ptr<MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::enumerate(iteration_method_t)const
+{
+	return const_cast<vector_buffer<MY_TYPE, MY_ALLOC>*>(this);
+}
+
+coffe::collections::iterator<MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::at(windex idx)
+{
+	if (idx >= m_size)
+		return  iterator_t(const_cast<self*>(this), null, 0);
+	return iterator_t(const_cast<self*>(this), (pointer)m_data, idx);
+}
+
+coffe::collections::iterator<const MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::at(windex idx)const
+{
+	if (idx >= m_size)
+		return  const_iterator_t(const_cast<self*>(this), null, 0);
+	return const_iterator_t(const_cast<self*>(this), (pointer)m_data, idx);
+}
+
+coffe::collections::iterator<MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::find(coffe::core::delegates::function<bool(MY_TYPE const&)> cond, bool invert)const
+{
+	if (!is_empty())
+	{
+		if (invert) for (auto i = size(); i > 0; --i)
+		{
+			if (cond(m_data[i - 1]))
+				return at(i - 1);
+		}
+		else for (auto i = 0U; i < size(); ++i)
+		{
+			if (cond(m_data[i]))
+				return at(i);
+		}
+	}
+	return at((wsize)invalid_index);
+}
+
+coffe::collections::iterator<MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::find(coffe::core::delegates::function<bool(MY_TYPE const&)> cond, coffe::collections::base_iterator<MY_TYPE> next_to, bool invert)const
+{
+	if (!is_empty() && next_to.parent() == this)
+	{
+		if (invert) for (auto i = next_to.offset() + 1; i > 0; --i)
+		{
+			if (cond(m_data[i - 1]))
+				return at(i - 1);
+		}
+		else for (auto i = next_to.offset(); i < size(); ++i)
+		{
+			if (cond(m_data[i]))
+				return at(i);
+		}
+	}
+	return at((wsize)invalid_index);
+}
+
+coffe::collections::ienum_ptr<MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::find_all(coffe::core::delegates::function<bool(MY_TYPE const&)> cond)const
+{
+	vector<MY_TYPE, MY_ALLOC> out = new vector_buffer<MY_TYPE, MY_ALLOC>();
+	if (!is_empty())
+	{
+		for (auto i = size(); i > 0; --i)
+		{
+			if (cond(m_data[i - 1]))
+				out += m_data[i - 1];
+		}
+	}
+	return out->is_empty() ? null : out.get();
+}
+
+coffe::collections::forward_iterator<MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::begin()
+{
+	return forward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data));
+}
+
+coffe::collections::forward_iterator<MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::end()
+{
+	return forward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), m_size);
+}
+
+coffe::collections::forward_iterator<const MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::begin()const
+{
+	return const_forward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data));
+}
+
+coffe::collections::forward_iterator<const MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::end()const
+{
+	return const_forward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), m_size);
+}
+
+coffe::collections::forward_iterator<MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::last()
+{
+	return m_size ? forward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), m_size - 1) : end();
+}
+
+coffe::collections::forward_iterator<const MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::last()const
+{
+	return m_size ? const_forward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), m_size - 1) : end();
+}
+
+coffe::collections::backward_iterator<MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::rbegin()
+{
+	return backward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), m_size - 1);
+}
+
+coffe::collections::backward_iterator<MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::rend()
+{
+	return backward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), (wsize)invalid_index);
+}
+
+coffe::collections::backward_iterator<const MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::rbegin()const
+{
+	return const_backward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), m_size - 1);
+}
+
+coffe::collections::backward_iterator<const MY_TYPE> coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::rend()const
+{
+	return const_backward_iterator_t(const_cast<vector_buffer*>(this), pointer(m_data), (wsize)invalid_index);
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::increase(coffe::collections::base_iterator<MY_TYPE>& it)const
+{
+#ifdef DEBUG_SAFE_CODE
+	if (it.parent() != this || it.current() != m_data)
+		throw(exception_t(error_code::invalid_param));
+	if (it.offset() >= m_size)
+		throw(exception_t(error_code::array_overflow));
+#endif
+	it.offset(it.offset() + 1);
+	if (it.offset() > m_size) it.offset(m_size);
+	return true;
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::increase(coffe::collections::base_iterator<MY_TYPE>& it, int val)const
+{
+#ifdef DEBUG_SAFE_CODE
+	if (it.parent() != this || it.current() != m_data)
+		throw(exception_t(error_code::invalid_param));
+	if (it.offset() >= m_size)
+		throw(exception_t(error_code::array_overflow));
+#endif
+	it.offset(it.offset() + val);
+	if (it.offset() >= m_size)
+		it.offset(m_size);
+	return true;
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::decrease(coffe::collections::base_iterator<MY_TYPE>& it)const
+{
+#ifdef DEBUG_SAFE_CODE
+	if (it.parent() != this || it.current() != m_data)
+		throw(exception_t(error_code::invalid_param));
+	if (it.offset() >= m_size)
+		throw(exception_t(error_code::array_overflow));
+#endif
+	it.offset(it.offset() - 1);
+	if ((int)it.offset() < -1)
+		it.offset((wsize)invalid_index);
+	return true;
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::decrease(coffe::collections::base_iterator<MY_TYPE>& it, int val)const
+{
+#ifdef DEBUG_SAFE_CODE
+	if (it.parent() != this || it.current() != m_data)
+		throw(exception_t(error_code::invalid_param));
+	if (it.offset() >= m_size)
+		throw(exception_t(error_code::array_overflow));
+#endif
+	it.offset(it.offset() - val);
+	if ((int)it.offset() < -1)
+		it.offset((wsize)invalid_index);
+	return true;
+}
+
+coffe::comparision_result_t coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::compare(const coffe::object* obj)const
+{
+	windex i = 0;
+	intf_wrapper<ienum<MY_TYPE>> other = const_cast<object*>(obj)->as<ienum<MY_TYPE>>();
+
+	if (!other.is_empty())
+	{
+		if (counter() > other->counter())
+			return comparision_result::mayor;
+		else if (counter() < other->counter())
+			return comparision_result::minor;
+		else for (auto it = other->begin(); it != other->end(); ++it)
+			if (logic_operation<logic_operation_type::same, MY_TYPE, MY_TYPE>::operate(m_data[i++], *it))
+				return comparision_result::diferent;
+		return comparision_result::same;
+	}
+	return comparision_result::diferent;
+}
+
+void coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::extend(const coffe::collections::ienum<MY_TYPE>* items)
+{
+	if (!items) return;
+	capacity(counter() + items->counter());
+	for (MY_TYPE const& value : *items)
+		push(value);
+}
+
+void coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::push(MY_TYPE const& value, bool last)
+{
+	if ((capacity() - counter()) <= 1U) //TODO: optimization
+		capacity(capacity() + 1, true);
+
+	if (last)
+	{
+		m_data[m_size++] = value;
+	}
+	else
+	{
+		for (auto i = m_size; i > 0U; --i)
+			m_data[i] = m_data[i - 1U];	
+		m_data[0] = value;
+		m_size++;
+	}
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::insert(windex idx, MY_TYPE const& value)
+{
+	if (idx == 0U)
+	{
+		push(value, false);
+		return true;
+	}
+	else if (idx >= m_size)
+	{
+		push(value, true);
+		return true;
+	}
+
+	if ((capacity() - counter()) <= 1U) //TODO: optimization
+		capacity(capacity() + 1, true);
+
+	for (auto i = m_size; i > idx; --i)
+		m_data[i] = m_data[i - 1U];
+	m_data[idx] = value;
+	m_size++;
+	return true;
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::insert(coffe::collections::base_iterator<MY_TYPE> it, MY_TYPE const& value)
+{
+	if (it.parent() != this || it.current() != m_data)
+		return false;
+	return insert(it.offset(), value);
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::pop(bool last)
+{
+	if (m_size == 0)
+		return false;
+	if (!last) for (windex i = 1U; i < m_size; ++i)
+		m_data[i - 1] = m_data[i];
+	m_data[--m_size] = default_value<MY_TYPE>::value;
+	return true;
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::pop(MY_TYPE& value, bool last)
+{
+	if (m_size == 0)
+		return false;
+	if (!last)
+	{
+		value = coffe::move(m_data[0]);
+		for (windex i = 1U; i < m_size; ++i)
+			m_data[i - 1] = m_data[i];
+	}
+	else
+	{
+		value = coffe::move(m_data[m_size - 1U]);
+	}
+	m_data[--m_size] = default_value<MY_TYPE>::value;
+	return true;
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::pop_at(windex idx)
+{
+	if (m_size == 0U)
+		return false;
+	if (idx == 0U)
+		return pop(false);
+	for (windex i = idx; i < m_size; ++i)
+		m_data[i - 1] = coffe::move(m_data[i]);
+	m_data[--m_size] = default_value<MY_TYPE>::value;
+	return true;
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::pop_at(coffe::collections::base_iterator<MY_TYPE> it)
+{
+	if (it.parent() != this || it.current() != m_data)
+		return false;
+	return pop_at(it.offset());
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::pop_at(windex idx, MY_TYPE& value)
+{
+	if (m_size == 0U)
+		return false;
+	if (idx == 0U)
+		return pop(value, false);
+	value = coffe::move(m_data[0]);
+	for (windex i = idx; i < m_size; ++i)
+		m_data[i - 1] = coffe::move(m_data[i]);
+	m_data[--m_size] = default_value<MY_TYPE>::value;
+	return true;
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::pop_at(coffe::collections::base_iterator<MY_TYPE> it, MY_TYPE& value)
+{
+	if (it.parent() != this || it.current() != m_data)
+		return false;
+	return pop_at(it.offset(), value);
+}
+
+void coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::dispose()
+{
+	clear();
+}
+
+void coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::clear()
+{
+	if (m_data != null)
+	{
+		m_size = 0U;
+		m_capacity = 0U;
+		m_alloc.deallocate(m_data);
+	}
+	m_data = null;
+}
+
+void coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::empty()
+{
+	if (m_data != null)
+	{
+		while(m_size)
+			m_data[--m_size] = default_value<MY_TYPE>::value;
+	}
+}
+
+bool coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>::realloc(wsize new_size, bool save)
+{
+	new_size++;
+	if (capacity() >= new_size)
+		return true;
+
+	wsize sz = 16U, temp = 0U;
+	while (sz <= new_size)
+		sz *= 2U;
+	MY_TYPE* new_buffer = m_alloc.allocate(sz);
+
+	if (save)
+	{
+		temp = m_size;
+		memcpy(new_buffer, m_data, min(m_size, sz));
+		m_alloc.deallocate(m_data);
+	}
+	else
+	{
+		clear();
+	}
+	m_data = new_buffer;
+	m_size = temp;
+	m_capacity = sz;
+	return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::object_wrapper()
+	: m_ptr(null)
+{
+	set(new coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>());
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::object_wrapper(coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>* ptr)
+	: m_ptr(null)
+{
+	set(ptr ? ptr : new coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>());
+}
+
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::object_wrapper(std::nullptr_t const&)
+	: m_ptr(null)
+{
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::object_wrapper(const coffe::collections::ienum<data_type>* store)
+	: m_ptr(null)
+{
+	set(new collections::vector_buffer<MY_TYPE, MY_ALLOC>(store));
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::object_wrapper(coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>> && ptr)
+	: m_ptr(null)
+{
+	if (ptr.is_empty())
+	{
+		set(new coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>());
+	}
+	else
+	{
+		auto temp = ptr.m_ptr;
+		ptr.m_ptr = null;
+		m_ptr = temp;
+	}
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::object_wrapper(coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>> const& ptr)
+	: m_ptr(null)
+{
+	set(!ptr.is_empty() ? ptr.get() : new coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>());
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::~object_wrapper()
+{
+	reset();
+}
+
+void coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::reset()
+{
+	if (m_ptr)
+		m_ptr->release();
+	m_ptr = null;
+}
+
+void coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::reset_unsafe()
+{
+	m_ptr = null;
+}
+
+bool coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::is_empty()const
+{
+	return m_ptr == null;
+}
+
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>* coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::get(void)const
+{
+	return m_ptr;
+}
+
+void coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::set(coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>* ptr)
+{
+	coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC> * temp = m_ptr;
+	if (ptr == m_ptr) return;
+	m_ptr = ptr;
+	if (m_ptr)m_ptr->add_ref();
+	if (temp)temp->release();
+}
+
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>** coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::addres_of(void)
+{
+	return &m_ptr;
+}
+
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>** coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::addres_for_init(void)
+{
+	reset();
+	return &m_ptr;
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>& coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator = (coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>* ptr)
+{
+	set(ptr);
+	return*this;
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>& coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator = (const std::nullptr_t&)
+{
+	reset();
+	return*this;
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>& coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator = (coffe::collections::ienum<data_type> const* items)
+{
+	if (m_ptr == null)
+		set(new collections::vector_buffer<MY_TYPE, MY_ALLOC>(items));
+	else
+		m_ptr->copy(items);
+	return *this;
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>& coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator = (coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>> && other)
+{
+	if (this == &other)
+		return *this;
+	reset();
+	m_ptr = other.m_ptr;
+	other.m_ptr = null;
+	return*this;
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>& coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator = (coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>> const& other)
+{
+	set(other.m_ptr);
+	return*this;
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>& coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator += (MY_TYPE item)
+{
+	if (is_empty())
+		set(new collections::vector_buffer<MY_TYPE, MY_ALLOC>());
+	m_ptr->push(item);
+	return*this;
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>& coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator += (collections::ienum<data_type> const* items)
+{
+	if (is_empty())
+		set(new collections::vector_buffer<MY_TYPE, MY_ALLOC>(items));
+	else m_ptr->extend(items);
+	return*this;
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>& coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator += (object_wrapper const& items)
+{
+	if (is_empty())
+		set(new collections::vector_buffer<MY_TYPE, MY_ALLOC>(items.get()));
+	else m_ptr->extend((array_view<MY_TYPE>)items);
+	return*this;
+}
+
+coffe::object_wrapper_ptr<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>> coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator & (void)
+{
+	return this;
+}
+
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC> * coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator -> (void)
+{
+	return get();
+}
+
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC> const* coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator -> (void)const
+{
+	return get();
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC> * (void)
+{
+	return get();
+}
+
+coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC> const* (void)const
+{
+	return get();
+}
+
+
+#endif//__COFFE_VECTOR_INL__

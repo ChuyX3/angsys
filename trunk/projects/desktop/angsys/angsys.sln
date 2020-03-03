@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{C6A99AA7-577A-48CE-B004-9B498D0FEAC6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{7D647C18-D216-4FCF-AC08-E4936315921C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "angsys", "angsys", "{B0B0111E-5589-4B68-ADD4-65B32CE64C80}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "angsys.shared", "..\..\..\libs\angsys\projects\angsys.shared\angsys.shared.vcxitems", "{F8A339DC-FF4F-4618-9002-DB0F8D2CD980}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "angsys", "..\..\..\libs\angsys\projects\angsys.desktop\angsys.desktop.vcxproj", "{28146DC5-FDCF-4376-892E-8A4806BD609D}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\..\..\libs\angsys\projects\angsys.shared\angsys.shared.vcxitems*{28146dc5-fdcf-4376-892e-8a4806bd609d}*SharedItemsImports = 4
+		..\..\..\libs\angsys\projects\angsys.shared\angsys.shared.vcxitems*{f8a339dc-ff4f-4618-9002-db0f8d2cd980}*SharedItemsImports = 9
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C6A99AA7-577A-48CE-B004-9B498D0FEAC6}.Debug|x64.ActiveCfg = Debug|x64
+		{C6A99AA7-577A-48CE-B004-9B498D0FEAC6}.Debug|x64.Build.0 = Debug|x64
+		{C6A99AA7-577A-48CE-B004-9B498D0FEAC6}.Debug|x86.ActiveCfg = Debug|Win32
+		{C6A99AA7-577A-48CE-B004-9B498D0FEAC6}.Debug|x86.Build.0 = Debug|Win32
+		{C6A99AA7-577A-48CE-B004-9B498D0FEAC6}.Release|x64.ActiveCfg = Release|x64
+		{C6A99AA7-577A-48CE-B004-9B498D0FEAC6}.Release|x64.Build.0 = Release|x64
+		{C6A99AA7-577A-48CE-B004-9B498D0FEAC6}.Release|x86.ActiveCfg = Release|Win32
+		{C6A99AA7-577A-48CE-B004-9B498D0FEAC6}.Release|x86.Build.0 = Release|Win32
+		{28146DC5-FDCF-4376-892E-8A4806BD609D}.Debug|x64.ActiveCfg = Debug|x64
+		{28146DC5-FDCF-4376-892E-8A4806BD609D}.Debug|x64.Build.0 = Debug|x64
+		{28146DC5-FDCF-4376-892E-8A4806BD609D}.Debug|x86.ActiveCfg = Debug|Win32
+		{28146DC5-FDCF-4376-892E-8A4806BD609D}.Debug|x86.Build.0 = Debug|Win32
+		{28146DC5-FDCF-4376-892E-8A4806BD609D}.Release|x64.ActiveCfg = Release|x64
+		{28146DC5-FDCF-4376-892E-8A4806BD609D}.Release|x64.Build.0 = Release|x64
+		{28146DC5-FDCF-4376-892E-8A4806BD609D}.Release|x86.ActiveCfg = Release|Win32
+		{28146DC5-FDCF-4376-892E-8A4806BD609D}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B0B0111E-5589-4B68-ADD4-65B32CE64C80} = {7D647C18-D216-4FCF-AC08-E4936315921C}
+		{F8A339DC-FF4F-4618-9002-DB0F8D2CD980} = {B0B0111E-5589-4B68-ADD4-65B32CE64C80}
+		{28146DC5-FDCF-4376-892E-8A4806BD609D} = {B0B0111E-5589-4B68-ADD4-65B32CE64C80}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D1448957-638C-4614-975E-DD9F0DE99C1B}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{f8a339dc-ff4f-4618-9002-db0f8d2cd980}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\angsys.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\algorithms.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\anyone.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\array.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\async.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\base.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\binary_tree.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\defines.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\encoder.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\errors.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\formater.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\hash.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\interface.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\list.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\memory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\packs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\platform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\property.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\runtime.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\string.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\str_view.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\text.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\tuple.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\types.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\utils.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\value.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\vector.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\ibuffers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\com_wrapper.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\intf_wrapper.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\object_wrapper.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\string_declaration.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\wrapper_specialization_definition.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\iobject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\ivariable.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\maths\angle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\maths\complex.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\maths\float2.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\maths\float3.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\maths\float4.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\maths\float4x4.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\maths\int128.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\maths\maths.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\maths\quad.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\maths\quaternions.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\maths\vectors.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\object.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\optional.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\property.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\singleton.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\smart_ptr.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\streams.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\variable.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\compile_config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\inline\encoder_bridge.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\library.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\memory_manager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\runtime_manager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\angsys.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\async.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\errors.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\memory_manager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\object.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\runtime.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\strings\encoder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\strings\raw_str.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\strings\string.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\strings\text_format.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\value\boolean.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\value\floating.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\value\integer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\value\uinteger.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\value\value.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\value\variant.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)utilities\coffe.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)utilities\coffe_base.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)utilities\internal.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)utilities\maths.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\intf_wrapper_specialization.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\object_wrapper_specialization.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\variable.inl" />
+  </ItemGroup>
+</Project>

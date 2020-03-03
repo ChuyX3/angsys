@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+  <Type Name="ang::object_wrapper&lt;*&gt;">
+    <DisplayString Condition="m_ptr != 0">{*m_ptr}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <ExpandedItem>*m_ptr</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::intf_wrapper&lt;*&gt;">
+    <DisplayString Condition="m_ptr != 0">{*m_ptr}</DisplayString>
+    <DisplayString>null</DisplayString>
+    <Expand>
+      <ExpandedItem>*m_ptr</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::bean" Priority="Low">
+    <DisplayString>object</DisplayString>
+    <Expand>
+      <Synthetic Name="ref_count" Optional="true">
+        <DisplayString>{ *(dword*)(wsize(this) - 12) }</DisplayString>
+      </Synthetic>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::variable&lt;*&gt;">
+    <DisplayString>{*(base_type*)this,nd}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(base_type*)this,nd</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::text::basic_string_buffer&lt;*&gt;">
+    <DisplayString>{*(fast_string_t*)this,nd}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(fast_string_t*)this,nd</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::array_buffer&lt;*&gt;">
+    <DisplayString Optional="true">array[{wsize(m_last - m_first)}]</DisplayString>
+    <Expand>
+      <ExpandedItem Optional="true">*(ang::collections::array&lt;$T1,$T2&gt;*)this,nd</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::vector_buffer&lt;*&gt;">
+    <DisplayString Optional="true">vector[{wsize(m_last - m_first)}]</DisplayString>
+    <Expand>
+      <ExpandedItem Optional="true">*(ang::collections::vector&lt;$T1,$T2&gt;*)this,nd</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::list_object&lt;*&gt;">
+    <DisplayString Optional="true">list[{m_size}]</DisplayString>
+    <Expand>
+      <ExpandedItem Optional="true">*(ang::collections::list&lt;$T1,$T2&gt;*)this,nd</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::core::files::file">
+    <DisplayString Optional="true">{m_hfile}</DisplayString>
+    <Expand>
+      <ExpandedItem>m_hfile</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::core::files::input_text_file">
+    <DisplayString Optional="true">{m_hfile}</DisplayString>
+    <Expand>
+      <Synthetic Name="[type]" Condition="m_hfile.m_ptr != 0">
+        <DisplayString>text</DisplayString>
+      </Synthetic>
+      <Synthetic Name="[mode]" Condition="m_hfile.m_ptr != 0">
+        <DisplayString>input</DisplayString>
+      </Synthetic>
+      <ExpandedItem>m_hfile</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::core::files::output_text_file">
+    <DisplayString Optional="true">{m_hfile}</DisplayString>
+    <Expand>
+      <Synthetic Name="[type]" Condition="m_hfile.m_ptr != 0">
+        <DisplayString>text</DisplayString>
+      </Synthetic>
+      <Synthetic Name="[mode]" Condition="m_hfile.m_ptr != 0">
+        <DisplayString>output</DisplayString>
+      </Synthetic>
+      <ExpandedItem>m_hfile</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::core::files::input_binary_file">
+    <DisplayString Optional="true">{m_hfile}</DisplayString>
+    <Expand>
+      <Synthetic Name="[type]" Condition="m_hfile.m_ptr != 0">
+        <DisplayString>binary</DisplayString>
+      </Synthetic>
+      <Synthetic Name="[mode]" Condition="m_hfile.m_ptr != 0">
+        <DisplayString>input</DisplayString>
+      </Synthetic>
+      <ExpandedItem>m_hfile</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::core::files::output_binary_file">
+    <DisplayString Optional="true">{m_hfile}</DisplayString>
+    <Expand>
+      <Synthetic Name="[type]" Condition="m_hfile.m_ptr != 0">
+        <DisplayString>binary</DisplayString>
+      </Synthetic>
+      <Synthetic Name="[mode]" Condition="m_hfile.m_ptr != 0">
+        <DisplayString>output</DisplayString>
+      </Synthetic>
+      <ExpandedItem>m_hfile</ExpandedItem>
+    </Expand>
+  </Type>
+
+
+  <Type Name="ang::collections::btree_node&lt;*&gt;">
+    <DisplayString Optional="true">index = {index}</DisplayString>
+    <Expand>
+      <Item Name="[leaf]" ExcludeView="true">is_leaf</Item>
+      <Item Name="[index]" ExcludeView="true">index</Item>
+      <Item Name="[parent]" Condition="parent.m_value != 0" ExcludeView="true">*parent.m_value</Item>
+      <Synthetic Name="[data]" Condition="size != 0">
+        <DisplayString>count = {size}</DisplayString>
+        <Expand>
+          <ArrayItems>
+            <Size>size</Size>
+            <ValuePointer>data.m_data</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="[children]" Condition="size != 0 &amp;&amp; is_leaf == false">
+        <DisplayString>count = {size + 1}</DisplayString>
+        <Expand>
+          <ArrayItems>
+            <Size>size + 1</Size>
+            <ValuePointer>children.m_data</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::collections::btree&lt;*&gt;">
+    <DisplayString Optional="true">map[{m_size}]</DisplayString>
+    <Expand>
+      <Item Name="[count]" ExcludeView="true">m_size</Item>
+      <CustomListItems MaxItemsPerView="10000" ExcludeView="Test" Optional="true">
+        <Variable Name="node" InitialValue="m_root.m_value" />
+        <Variable Name="i" InitialValue="0"/>
+        <Variable Name="at" InitialValue="0"/>
+        <Loop Condition="node != 0">
+          <Loop Condition="(*node).is_leaf == false">
+            <Exec>node = (*node).children.m_data[at].m_value</Exec>
+            <Exec>at = 0</Exec>
+          </Loop>
+          <Exec>i = 0</Exec>
+          <Loop Condition="i &lt; (*node).size">
+            <Item>(*node).data.m_data[i]</Item>
+            <Exec>i = i + 1</Exec>
+          </Loop>
+          <Loop>
+            <Exec>at = (*node).index + 1</Exec>
+            <Exec>node = (*node).parent.m_value</Exec>
+            <Break Condition="node == 0 || (*node).size &gt;= at"/>
+          </Loop>
+          <If Condition="node != 0">
+            <Item>(*node).data.m_data[at - 1]</Item>
+          </If>
+        </Loop>
+      </CustomListItems>
+    </Expand>
+  </Type>
+  
+</AutoVisualizer>

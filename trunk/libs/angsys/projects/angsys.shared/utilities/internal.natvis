@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="ang::core::thread_task">
+    <DisplayString>iasync</DisplayString>
+    <Expand>
+      <Item Name="[status]">m_status</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::core::async::core_thread">
+    <DisplayString Optional="true">thread : {m_id}</DisplayString>
+    <DisplayString>thread : {(size_t)m_thread}</DisplayString>
+    <Expand>
+      <Synthetic Name="[type]">
+        <DisplayString>attached</DisplayString>
+      </Synthetic>
+      <Item Name="[id]" Optional="true">m_id</Item>
+      <Item Name="[handle]">m_thread</Item>
+      <Item Name="[is_main]">m_is_main_thread</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::core::async::worker_thread">
+    <DisplayString Optional="true">thread : {m_id}</DisplayString>
+    <DisplayString>thread : {(size_t)m_thread}</DisplayString>
+    <Expand>
+      <Synthetic Name="[type]">
+        <DisplayString>worker</DisplayString>
+      </Synthetic>
+      <Item Name="[id]" Optional="true">m_id</Item>
+      <Item Name="[handle]" Optional="true">m_thread</Item>
+      <Item Name="[state]">(ang::core::async::async_action_status)m_state.m_value,en</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::core::async::dispatcher">
+    <DisplayString>dispatcher</DisplayString>
+    <Expand>
+      <Synthetic Name="[thread]">
+        <DisplayString Optional="true">thread : {m_id}</DisplayString>
+        <DisplayString>thread : {(size_t)m_thread}</DisplayString>
+        <Expand>
+          <Synthetic Name="[type]">
+            <DisplayString>worker</DisplayString>
+          </Synthetic>
+          <Item Name="[id]" Optional="true">m_id</Item>
+          <Item Name="[handle]" Optional="true">m_thread</Item>
+          <Item Name="[state]">(ang::core::async::async_action_status)m_state.m_value,en</Item>
+          <ExpandedItem>(ang::bean*)this,nd</ExpandedItem>
+        </Expand>
+      </Synthetic>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::core::files::core_file">
+    <DisplayString Optional="true">file : {m_path}</DisplayString>
+    <Expand>
+      <Item Name="[path]" Optional="true">m_path</Item>
+    </Expand>
+  </Type>
+
+</AutoVisualizer>

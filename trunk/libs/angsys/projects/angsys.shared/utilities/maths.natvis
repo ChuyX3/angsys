@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+  <Type Name="ang::graphics::point&lt;*&gt;">
+    <DisplayString>point[{x}, {y}]</DisplayString>
+    <Expand>
+      <Item Name="[x]">x</Item>
+      <Item Name="[y]">y</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::graphics::size&lt;*&gt;">
+    <DisplayString>size[{width}, {height}]</DisplayString>
+    <Expand>
+      <Item Name="[width]">width</Item>
+      <Item Name="[height]">height</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::graphics::rect&lt;*&gt;">
+    <DisplayString>rect[point[{left}, {top}], size[{right - left}, {bottom - top}]]</DisplayString>
+    <Expand>
+      <Item Name="[left]">left</Item>
+      <Item Name="[top]">top</Item>
+      <Item Name="[right]">right</Item>
+      <Item Name="[bottom]">bottom</Item>
+      <Item Name="[width]">right - left</Item>
+      <Item Name="[height]">bottom - top</Item>
+    </Expand>
+  </Type>
+    
+  <Type Name="ang::maths::angle">
+    <DisplayString>{m_value} rad</DisplayString>
+    <Expand>
+      <Item Name="[radians]">m_value</Item>
+      <Item Name="[degrees]">m_value * 180.0 / 3.14159265358979323846</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::maths::real">
+    <DisplayString>{m_value}</DisplayString>
+    <Expand>
+      <Item Name="[value]">m_value</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::maths::imaginary">
+    <DisplayString>i{m_value}</DisplayString>
+    <Expand>
+      <Item Name="[value]">m_value</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::maths::complex">
+    <DisplayString Condition="m_imag.m_value == 0">{m_real}</DisplayString>
+    <DisplayString Condition="m_real.m_value == 0">{m_imag}</DisplayString>
+    <DisplayString>{m_real} + {m_imag}</DisplayString>
+    <Expand>
+      <Item Name="[real]">m_real</Item>
+      <Item Name="[imaginary]">m_imag</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::maths::float2">
+    <DisplayString>float2[{_vector.x}, {_vector.y}]</DisplayString>
+    <Expand>
+      <Item Name="[x]">_vector.x</Item>
+      <Item Name="[y]">_vector.y</Item>
+    </Expand>
+  </Type>
+  
+</AutoVisualizer>

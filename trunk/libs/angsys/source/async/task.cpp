@@ -1,0 +1,265 @@
+#include "pch.h"
+#include <coffe/core/async.h>
+#include "thread_manager.h"
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+using namespace coffe;
+using namespace coffe::core;
+using namespace coffe::core::async;
+
+COFFE_EXTERN ulong64 get_performance_time_us(void);
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<void>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<char>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<mchar>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<wchar>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<char16>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<char32>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<short>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<ushort>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<int>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<uint>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<long>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<ulong>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<long64>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<ulong64>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<float>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<double>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<bean_t>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<variant>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<string>);
+
+
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<void>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<char>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<mchar>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<wchar>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<char16>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<char32>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<short>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<ushort>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<int>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<uint>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<long>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<ulong>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<long64>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<ulong64>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<float>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<double>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<objptr>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<variant>);
+COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<string>);
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+template<> iasync<void> task::run_async(function<void(iasync<void>)> callback)
+{
+	return thread::create_worker_thread(coffe::forward<function<void(iasync<void>)>>(callback));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+task::task()
+{
+
+}
+
+task::~task()
+{
+
+}
+
+//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::core::async::task);
+//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::core::async::task);
+//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::core::async::task, bean, itask<void>);
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+thread_task::thread_task(core_thread_t th)
+	: m_was_canceled(false)
+	, m_status(async_action_status::initializing)
+	, m_parent_task(null)
+	, m_child_task(null)
+	, m_thread(th)
+{
+}
+
+thread_task::~thread_task()
+{
+}
+
+//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::core::async::thread_task);
+//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::core::async::thread_task);
+//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::core::async::thread_task, task);
+
+void thread_task::dispose()
+{
+	task::dispose();
+	action.reset();
+}
+
+void thread_task::run()
+{
+	core_thread_t thread = m_thread;
+	m_mutex.lock();
+	if (m_status == async_action_status::canceled)
+	{
+		m_status = async_action_status::completed;
+		action.reset();
+		m_cond.signal();
+		m_mutex.unlock();
+		return;
+	}
+
+	m_status = async_action_status::running;
+	m_mutex.unlock();
+	action(this);	
+	m_mutex.lock();
+
+	if (m_status == async_action_status::canceled)
+	{
+		m_status = async_action_status::completed;
+		if (!m_child_task.is_empty())
+		{
+			m_child_task->cancel();
+			m_child_task = null;
+		}
+	}
+	else if (m_child_task.is_empty())
+	{
+		m_status = async_action_status::wait_for_then;
+	}
+	else
+	{
+		m_child_task->mutex().lock();
+		if (m_child_task->m_status == async_action_status::canceled)
+		{
+			m_child_task->mutex().unlock();
+			m_child_task = null;
+			m_status = async_action_status::wait_for_then;
+		}
+		else
+		{
+			m_status = async_action_status::completed;
+			m_thread->post_task(m_child_task);
+			m_child_task->mutex().unlock();
+			m_child_task = null;
+			m_thread = null; //unreference thread
+		}
+	}
+	
+	action.reset();
+	m_cond.signal();
+	m_mutex.unlock();
+}
+
+iasync<void> thread_task::then(function<void(iasync<void>)> func)
+{
+	scope_locker<async::mutex_t> lock = m_mutex;
+	if (async_action_status::finished & m_status)
+		return null;
+
+	if (m_child_task.is_empty() || m_child_task->m_status == async_action_status::canceled)
+		m_child_task = new thread_task(m_thread);
+
+	thread_task_t task = m_child_task;
+	m_child_task->action = func;
+
+	if (m_status == async_action_status::wait_for_then)
+	{
+		m_thread->post_task(m_child_task);
+		m_child_task = null;
+		m_thread = null; //unreference thread
+		action.reset();
+		m_status = async_action_status::completed;
+		m_cond.signal();
+	}
+
+	return task.get();
+}
+
+bool thread_task::wait(async_action_status_t st)const
+{
+	if (!m_thread.is_empty() && m_thread->is_this_thread())
+		return false;
+	scope_locker<async::mutex_t> lock = m_mutex;
+	if (m_status > st)return false;
+	m_cond.waitfor(m_mutex, [&]() { return !(st & m_status); });
+	return true;
+}
+
+bool thread_task::wait(async_action_status_t st, dword ms)const
+{
+	if (m_thread.is_empty() || m_thread->is_this_thread())
+		return false;
+	dword last_time = (dword)(get_performance_time_us() / 1000.0);
+	dword current = 0;
+
+	scope_locker<async::mutex_t> lock = m_mutex;
+	if (m_status > st)return false;
+	while (!(st & m_status))
+	{
+		m_cond.wait(m_mutex, ms);
+		thread::sleep(1);
+		current = (dword)(get_performance_time_us() / 1000);
+		if (ms <= (current - last_time))
+			break;
+		else ms -= (current - last_time);
+		last_time = current;
+	}
+	return st&m_status;
+}
+
+async_action_status_t thread_task::status()const
+{
+	return m_status;
+}
+
+bool thread_task::cancel()
+{
+	scope_locker<async::mutex_t> lock = m_mutex;
+	if (m_thread.is_empty() || m_status & (async_action_status_t(async_action_status::finished) | async_action_status::attached))
+		return false;
+
+	if (m_status & async_action_status::initializing && !m_child_task.is_empty())
+		m_child_task->cancel();
+
+	m_was_canceled = true;
+	m_status = async_action_status::canceled;
+	action.reset();
+	if (!m_thread->is_this_thread())
+		m_cond.signal();
+	m_thread = null;
+	return true;
+}
+
+void thread_task::result()const
+{
+	scope_locker<async::mutex_t> lock = m_mutex;
+	//	if (m_thread.is_empty())
+	//		return;
+
+	if (!m_thread.is_empty() && !m_thread->is_this_thread()) m_cond.waitfor(m_mutex, [&]() ->bool
+	{
+		return m_status <= async_action_status::running;//  !(async_action_status::finished | async_action_status::wait_for_then).is_active(state);
+	});
+
+	if (m_was_canceled)
+		//throw_exception(error_code::operation_canceled);
+		__debugbreak();
+
+	if (m_status == async_action_status::completed)
+		return;
+
+	m_status = async_action_status::completed;
+	if (!m_thread->is_this_thread())
+		m_cond.signal();
+	const_cast<thread_task*>(this)->m_thread = null;
+	const_cast<thread_task*>(this)->action.reset();
+}
+
+
