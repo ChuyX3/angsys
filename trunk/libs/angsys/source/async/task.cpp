@@ -1,64 +1,64 @@
 #include "pch.h"
-#include <coffe/core/async.h>
+#include <ang/core/async.h>
 #include "thread_manager.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-using namespace coffe;
-using namespace coffe::core;
-using namespace coffe::core::async;
+using namespace ang;
+using namespace ang::core;
+using namespace ang::core::async;
 
-COFFE_EXTERN ulong64 get_performance_time_us(void);
+ANG_EXTERN ulong64 get_performance_time_us(void);
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<void>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<char>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<mchar>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<wchar>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<char16>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<char32>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<short>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<ushort>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<int>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<uint>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<long>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<ulong>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<long64>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<ulong64>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<float>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<double>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<bean_t>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<variant>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::iaction<string>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<void>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<char>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<mchar>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<wchar>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<char16>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<char32>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<short>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<ushort>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<int>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<uint>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<long>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<ulong>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<long64>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<ulong64>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<float>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<double>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<object_t>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<variant>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::iaction<string>);
 
 
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<void>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<char>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<mchar>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<wchar>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<char16>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<char32>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<short>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<ushort>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<int>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<uint>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<long>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<ulong>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<long64>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<ulong64>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<float>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<double>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<objptr>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<variant>);
-COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::itask<string>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<void>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<char>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<mchar>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<wchar>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<char16>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<char32>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<short>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<ushort>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<int>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<uint>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<long>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<ulong>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<long64>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<ulong64>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<float>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<double>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<objptr>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<variant>);
+ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::itask<string>);
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 template<> iasync<void> task::run_async(function<void(iasync<void>)> callback)
 {
-	return thread::create_worker_thread(coffe::forward<function<void(iasync<void>)>>(callback));
+	return thread::create_worker_thread(ang::forward<function<void(iasync<void>)>>(callback));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -73,9 +73,9 @@ task::~task()
 
 }
 
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::core::async::task);
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::core::async::task);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::core::async::task, bean, itask<void>);
+//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::task);
+//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::task);
+//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::task, object, itask<void>);
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -92,9 +92,9 @@ thread_task::~thread_task()
 {
 }
 
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::core::async::thread_task);
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::core::async::thread_task);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::core::async::thread_task, task);
+//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::thread_task);
+//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::thread_task);
+//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::thread_task, task);
 
 void thread_task::dispose()
 {
@@ -258,6 +258,7 @@ void thread_task::result()const
 	m_status = async_action_status::completed;
 	if (!m_thread->is_this_thread())
 		m_cond.signal();
+	const_cast<thread_task*>(this)->m_thread->done(const_cast<thread_task*>(this));
 	const_cast<thread_task*>(this)->m_thread = null;
 	const_cast<thread_task*>(this)->action.reset();
 }

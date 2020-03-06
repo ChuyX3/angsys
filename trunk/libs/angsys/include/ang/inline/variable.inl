@@ -1,11 +1,22 @@
+/*********************************************************************************************************************/
+/*   File Name: ang/inline/ariable.inl                                                                               */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes many native types and wrappers for them as well as useful macros.        */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
+
 #ifndef __SAMRT_PTR_H__
 #error ...
-#elif !defined __VARIABLE_INL__
-#define __VARIABLE_INL__
+#elif !defined __ANG_VARIABLE_INL__
+#define __ANG_VARIABLE_INL__
 
 namespace ang
 {
-
 	template<typename T, gender_t TYPE>
 	struct intf_class_info<variable<T, TYPE>>
 	{
@@ -13,12 +24,12 @@ namespace ang
 		{
 			static inherit_pack_info_t parents
 				= rtti_from_type<variable<T, TYPE>>::types();
-				//= {	&runtime::type_of<bean>(), &runtime::type_of<ivariable>() };
+			//= {	&runtime::type_of<object>(), &runtime::type_of<ivariable>() };
 			static rtti_t const& info = rtti::regist([]()->fast_astring_t {
-					fast_astring_t out;
-					out << "ang::variable<"_sv << rtti::type_of<T>().type_name() << ">"_sv;
-					return ang::move(out);
-				}()
+				fast_astring_t out;
+				out << "ang::variable<"_sv << rtti::type_of<T>().type_name() << ">"_sv;
+				return ang::move(out);
+			}()
 				, gender::class_type
 				, size_of<variable<T, TYPE>>()
 				, align_of<variable<T, TYPE>>()
@@ -36,11 +47,11 @@ namespace ang
 			static inherit_pack_info_t parents
 				= rtti_from_type<variable<enum_class<T>, ang::gender::enum_type>>::types();
 			static rtti_t const& info = rtti::regist([]()->fast_astring_t
-				{
-					fast_astring_t out;
-					out << "ang::variable<"_sv << rtti::type_of<enum_class<T>>().type_name() << ">"_sv;
-					return ang::move(out);
-				}()
+			{
+				fast_astring_t out;
+				out << "ang::variable<"_sv << rtti::type_of<enum_class<T>>().type_name() << ">"_sv;
+				return ang::move(out);
+			}()
 				, gender::class_type
 				, size_of<variable<enum_class<T>, ang::gender::enum_type>>()
 				, align_of<variable<enum_class<T>, ang::gender::enum_type>>()
@@ -58,11 +69,11 @@ namespace ang
 			static inherit_pack_info_t parents
 				= rtti_from_type<variable<flags_class<T>, ang::gender::enum_type>>::types();
 			static rtti_t const& info = rtti::regist([]()->fast_astring_t
-				{
-					fast_astring_t out;
-					out << "ang::variable<"_sv << rtti::type_of<flags_class<T>>().type_name() << ">"_sv;
-					return ang::move(out);
-				}()
+			{
+				fast_astring_t out;
+				out << "ang::variable<"_sv << rtti::type_of<flags_class<T>>().type_name() << ">"_sv;
+				return ang::move(out);
+			}()
 				, gender::class_type
 				, size_of<variable<flags_class<T>, ang::gender::enum_type>>()
 				, align_of<variable<flags_class<T>, ang::gender::enum_type>>()
@@ -71,7 +82,7 @@ namespace ang
 			return info;
 		}
 	};
-	
+
 
 	template<typename T>
 	struct __variable_constructor_helper<T, true>
@@ -148,7 +159,7 @@ namespace ang
 	template<typename T, gender_t TYPE>
 	inline variable<T, TYPE>::variable(variable<T, TYPE> const* val)
 	{
-		__variable_constructor_helper<T>::construct(this, (value<T> const&)*val);
+		__variable_constructor_helper<T>::construct(this, (value<T> const&) * val);
 	}
 
 	template<typename T, gender_t TYPE>
@@ -213,7 +224,7 @@ namespace ang
 	template<typename T>
 	inline variable<enum_class<T>, ang::gender::enum_type>::variable(variable<enum_class<T>, ang::gender::enum_type> const* val)
 	{
-		__variable_constructor_helper<enum_class<T>>::construct(this, (value<T> const&)*val);
+		__variable_constructor_helper<enum_class<T>>::construct(this, (value<T> const&) * val);
 	}
 
 	template<typename T>
@@ -281,7 +292,7 @@ namespace ang
 	template<typename T>
 	inline variable<flags_class<T>, ang::gender::enum_type>::variable(variable<flags_class<T>, ang::gender::enum_type> const* val)
 	{
-		__variable_constructor_helper<flags_class<T>>::construct(this, (value<T> const&)*val);
+		__variable_constructor_helper<flags_class<T>>::construct(this, (value<T> const&) * val);
 	}
 
 	template<typename T>
@@ -379,7 +390,7 @@ namespace ang
 	}
 
 	template<text::encoding E, template<typename>class A>
-	inline intf_wrapper<ivariable>::intf_wrapper(text::fast_string<E, A> const& str) 
+	inline intf_wrapper<ivariable>::intf_wrapper(text::fast_string<E, A> const& str)
 		: intf_wrapper<ivariable>(null) {
 		set(new text::basic_string_buffer<E>(str.cstr()));
 	}
@@ -390,30 +401,30 @@ namespace ang
 		set(str.is_empty() ? new text::basic_string_buffer<E>() : str.get());
 	}
 
-	template<typename T> 
+	template<typename T>
 	intf_wrapper<ivariable>& intf_wrapper<ivariable>::operator = (T* ptr) {
 		static_assert(is_base_of<ivariable, T>::value, "Invalid argument for var");
 		set(ptr);
 		return*this;
 	}
 
-	template<typename T, gender_t TYPE> 
+	template<typename T, gender_t TYPE>
 	intf_wrapper<ivariable>& intf_wrapper<ivariable>::operator = (object_wrapper<variable<T, TYPE>> ptr) {
 		set(ptr.get());
 		return*this;
 	}
 
-	template<typename T> 
+	template<typename T>
 	intf_wrapper<ivariable>& intf_wrapper<ivariable>::operator = (intf_wrapper<T> const& ptr) {
 		ivariable* var_ = interface_cast<ivariable>(ptr.get());
 		set(var_);
 		return*this;
 	}
 
-	template<typename T, text::encoding E> 
+	template<typename T, text::encoding E>
 	intf_wrapper<ivariable>& intf_wrapper<ivariable>::operator = (str_view<T, E> const& str) {
-		text::istring *_string;
-		if(_string = interface_cast<text::istring>(get()))
+		text::istring* _string;
+		if (_string = interface_cast<text::istring>(get()))
 		{
 			_string->copy(str);
 		}
@@ -424,7 +435,7 @@ namespace ang
 		return*this;
 	}
 
-	template<typename T, wsize N> 
+	template<typename T, wsize N>
 	intf_wrapper<ivariable>& intf_wrapper<ivariable>::operator = (T(&ar)[N]) {
 		if (interface_cast<collections::iarray<T>>(get()))
 		{
@@ -437,7 +448,109 @@ namespace ang
 		}
 		return*this;
 	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+
+	template<wsize N>
+	inline object_wrapper<object>::object_wrapper(const char(&ar)[N])
+		: m_ptr(null) {
+		set(new text::basic_string_buffer<text::encoding::ascii>(ar));
+	}
+
+	template<wsize N>
+	inline object_wrapper<object>::object_wrapper(const wchar(&ar)[N])
+		: m_ptr(null) {
+		set(new text::basic_string_buffer<text::encoding::unicode>(ar));
+	}
+
+	template<wsize N>
+	inline object_wrapper<object>::object_wrapper(const mchar(&ar)[N])
+		: m_ptr(null) {
+		set(new text::basic_string_buffer<text::encoding::utf8>(ar));
+	}
+
+	template<wsize N>
+	inline object_wrapper<object>::object_wrapper(const char16(&ar)[N])
+		: m_ptr(null) {
+		set(new text::basic_string_buffer<text::encoding::utf16>(ar));
+	}
+
+	template<wsize N>
+	inline object_wrapper<object>::object_wrapper(const char32(&ar)[N])
+		: m_ptr(null) {
+		set(new text::basic_string_buffer<text::encoding::utf32>(ar));
+	}
+
+	template<typename T, wsize N>
+	inline object_wrapper<object>::object_wrapper(T(&ar)[N])
+		: m_ptr(null) {
+		set(new	collections::array_buffer<T>(ar));
+	}
+
+	template<typename T, text::encoding E>
+	inline object_wrapper<object>::object_wrapper(str_view<T, E> cstr)
+		: m_ptr(null) {
+		set(new	text::basic_string_buffer<E>(cstr));
+	}
+
+	inline object_wrapper<object>::object_wrapper(bool value)
+		: m_ptr(null) {
+		set(new	variable<bool>(value));
+	}
+
+	inline object_wrapper<object>::object_wrapper(int value)
+		: m_ptr(null) {
+		set(new	variable<int>(value));
+	}
+
+	inline object_wrapper<object>::object_wrapper(uint value)
+		: m_ptr(null) {
+		set(new	variable<uint>(value));
+	}
+
+	inline object_wrapper<object>::object_wrapper(long value)
+		: m_ptr(null) {
+		set(new	variable<long>(value));
+	}
+
+	inline object_wrapper<object>::object_wrapper(ulong value)
+		: m_ptr(null) {
+		set(new	variable<ulong>(value));
+	}
+
+	inline object_wrapper<object>::object_wrapper(long64 value)
+		: m_ptr(null) {
+		set(new	variable<long64>(value));
+	}
+
+	inline object_wrapper<object>::object_wrapper(ulong64 value)
+		: m_ptr(null) {
+		set(new	variable<ulong64>(value));
+	}
+
+	inline object_wrapper<object>::object_wrapper(float value)
+		: m_ptr(null) {
+		set(new	variable<float>(value));
+	}
+
+	inline object_wrapper<object>::object_wrapper(double value)
+		: m_ptr(null) {
+		set(new	variable<double>(value));
+	}
+
+	template<typename T>//object convertible
+	inline object_wrapper<object>::object_wrapper(object_wrapper<T> value)
+		: m_ptr(null) {
+		set(new	smart<T>(value));
+	}
+
+	template<typename T>//array convertible
+	inline object_wrapper<object>::object_wrapper(initializer_list<T> list)
+		: m_ptr(null) {
+		set(new	collections::array_buffer<T>(list));
+	}
+
 }
 
 
-#endif//__VARIABLE_INL__
+#endif//__ANG_VARIABLE_INL__

@@ -1,19 +1,19 @@
 #include "pch.h"
 #include "thread_manager.h"
 
-using namespace coffe;
-using namespace coffe::core;
-using namespace coffe::core::async;
+using namespace ang;
+using namespace ang::core;
+using namespace ang::core::async;
 
-//COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::isync);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::core::async::sync);
+//ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::isync);
+//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::sync);
 
 /////////////////////////////////////////////////////////////////////////////
 
 void sync::synchronize(function<void(isync_t)>&& callback) 
 {
 	sync_task_t task = new sync_task();
-	task->run(coffe::forward<function<void(isync_t)>>(callback));
+	task->run(ang::forward<function<void(isync_t)>>(callback));
 }
 
 sync::sync()
@@ -26,15 +26,15 @@ sync::~sync()
 
 }
 
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::core::async::sync);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::core::async::sync, bean, isync);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::core::async::sync, bean, isync);
+//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::sync);
+//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::sync, bean, isync);
+//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::sync, bean, isync);
 
-//coffe::rtti_t const& coffe::intf_class_info<coffe::core::async::sync>::class_info()
+//ang::rtti_t const& ang::intf_class_info<ang::core::async::sync>::class_info()
 //{
-//	static type_name_t name = "coffe::core::async::sync"_sv;
+//	static type_name_t name = "ang::core::async::sync"_sv;
 //	static inherit_pack_info_t parents
-//		= rtti_from_type<coffe::core::async::sync>::types();
+//		= rtti_from_type<ang::core::async::sync>::types();
 //	static rtti_t const& info = rtti::regist(name, gender::class_type, size_of<sync>(), align_of<sync>(), parents, &iintf::default_query_interface);
 //	return info;
 //}
@@ -51,9 +51,9 @@ sync_task::~sync_task()
 
 }
 
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::core::async::sync_task);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::core::async::sync_task);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::core::async::sync_task, sync);
+//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::sync_task);
+//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::sync_task);
+//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::sync_task, sync);
 
 void sync_task::run(function<void(isync_t)> callback)
 {
@@ -77,7 +77,7 @@ void sync_task::run_sync(function<void(isync_t)> callback)
 		m_cond.signal();
 	});
 
-	m_task_set.insert(coffe::forward<iasync<void>>(task));
+	m_task_set.insert(ang::forward<iasync<void>>(task));
 }
 
 mutex_t& sync_task::shared_mutex()const

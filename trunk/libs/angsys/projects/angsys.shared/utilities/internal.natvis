@@ -46,7 +46,7 @@
           <Item Name="[id]" Optional="true">m_id</Item>
           <Item Name="[handle]" Optional="true">m_thread</Item>
           <Item Name="[state]">(ang::core::async::async_action_status)m_state.m_value,en</Item>
-          <ExpandedItem>(ang::bean*)this,nd</ExpandedItem>
+          <ExpandedItem>(ang::object*)this,nd</ExpandedItem>
         </Expand>
       </Synthetic>
     </Expand>

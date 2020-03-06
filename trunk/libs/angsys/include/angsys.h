@@ -103,19 +103,19 @@ namespace ang
 
 #include <ang/smart_ptr.h>
 #include <ang/object.h>
-//#include <ang/property.h>
+#include <ang/property.h>
 #include <ang/ibuffers.h>
-//#include <ang/collections.h>
+#include <ang/collections.h>
 #include <ang/strings/istring.h>
 #include <ang/ivariable.h>
 #include <ang/variable.h>
-//#include <ang/collections/array.h>
-//#include <ang/collections/vector.h>
-//#include <ang/delegates/function.h>
-//#include <ang/delegates/listener.h>
+#include <ang/collections/array.h>
+#include <ang/collections/vector.h>
+#include <ang/delegates/function.h>
+#include <ang/delegates/listener.h>
 #include <ang/strings/string.h>
-//#include <ang/singleton.h>
-//#include <ang/optional.h>
+#include <ang/singleton.h>
+#include <ang/optional.h>
 
 namespace ang
 {
@@ -176,7 +176,8 @@ namespace ang
 
 	template<typename T, typename CP, typename... Ts>
 	inline bool implement<T, ang::iid_type<CP>, Ts...>::query_interface(rtti_t const& id, unknown_ptr_t out) {
-		if (id.type_id() == class_info().type_id()) {
+		rtti_t const& id2 = class_info();
+		if (id.type_id() == id2.type_id()) {
 			if (out == null)
 				return false;
 			*out = static_cast<T*>(this);
@@ -218,11 +219,12 @@ namespace ang
 #undef LINK
 #endif//LINK
 
-//#include <ang/collections/inline/collections.inl>
-//#include <ang/delegates/inline/function.inl>
-//#include <ang/delegates/inline/listener.inl>
-//#include <ang/inline/variable.inl>
-//#include <ang/collections/inline/array.inl>
-//#include <ang/collections/inline/vector.inl>
+//#include <ang/inline/>
+#include <ang/collections/inline/collections.inl>
+#include <ang/delegates/inline/function.inl>
+#include <ang/delegates/inline/listener.inl>
+#include <ang/inline/variable.inl>
+#include <ang/collections/inline/array.inl>
+#include <ang/collections/inline/vector.inl>
 
 #endif//__ANGSYS_H__

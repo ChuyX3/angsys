@@ -42,6 +42,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\value.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\vector.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\core\async.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\core\time.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\ibuffers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\com_wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\intf_wrapper.hpp" />
@@ -73,11 +75,19 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\library.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\memory_manager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\runtime_manager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\thread_manager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\angsys.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\async.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\core_thread.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\dispatcher.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\sync_task.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\task.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\thread_manager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\worker_thread.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\collections\collections.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\errors.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\memory_manager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\object.cpp" />

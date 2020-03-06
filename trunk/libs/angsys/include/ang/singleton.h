@@ -1,8 +1,20 @@
-#ifndef __COFFE_H__
-#elif !defined __SINGLETON_H__
-#define __SINGLETON_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/singleton.h                                                                                      */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes many native types and wrappers for them as well as useful macros.        */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-namespace coffe
+#ifndef __ANGSYS_H__
+#elif !defined __ANG_SINGLETON_H__
+#define __ANG_SINGLETON_H__
+
+namespace ang
 {
 	template<typename T, template<typename> class A = memory::default_allocator>
 	class singleton
@@ -72,7 +84,7 @@ namespace coffe
 		template<typename... Ts>
 		static object_wrapper<T> instance(Ts... args) {
 			if (!is_instanced()) {
-				new T(coffe::forward<Ts>(args)...);
+				new T(ang::forward<Ts>(args)...);
 			}
 			return instance_manager(null, false);
 		}
@@ -94,4 +106,4 @@ namespace coffe
 	};
 }
 
-#endif//__SINGLETON_H__
+#endif//__ANG_SINGLETON_H__

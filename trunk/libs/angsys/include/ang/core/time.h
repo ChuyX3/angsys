@@ -1,30 +1,42 @@
-#ifndef __COFFE_CORE_TIME_H__
-#define __COFFE_CORE_TIME_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/core/time.h                                                                                      */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes many native types and wrappers for them as well as useful macros.        */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-#include <coffe.h>
+#ifndef __ANG_CORE_TIME_H__
+#define __ANG_CORE_TIME_H__
+
+#include <angsys.h>
 
 #ifdef  LINK
 #undef  LINK
 #endif//LINK
 
 #if defined WINDOWS_PLATFORM
-#if defined COFFE_DYNAMIC_LIBRARY
+#if defined ANG_DYNAMIC_LIBRARY
 
-#ifdef COFFE_EXPORTS
+#ifdef ANG_EXPORTS
 #define LINK __declspec(dllexport)
 #else
 #define LINK __declspec(dllimport)
-#endif//COFFE_EXPORTS
-#else//#elif defined COFFE_STATIC_LIBRARY
+#endif//ANG_EXPORTS
+#else//#elif defined ANG_STATIC_LIBRARY
 #define LINK
-#endif//COFFE_DYNAMIC_LIBRARY
+#endif//ANG_DYNAMIC_LIBRARY
 #elif defined LINUX_PLATFORM || defined ANDROID_PLATFORM
 #define LINK
 #else
 #define LINK
 #endif
 
-namespace coffe
+namespace ang
 {
 	namespace core
 	{
@@ -185,4 +197,4 @@ namespace coffe
 #undef  LINK
 #endif//LINK
 
-#endif//__COFFE_CORE_ASYNC_H__
+#endif//__ANG_CORE_ASYNC_H__

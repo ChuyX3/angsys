@@ -1,20 +1,20 @@
 /*********************************************************************************************************************/
-/*   File Name: coffe/base/property.h                                                                                     */
+/*   File Name: ang/base/property.h                                                                                     */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
 /*                                                                                                                   */
-/*   Copyright (C) coffe sys, Jesus Angel Rocha Morales                                                                 */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
 /*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
 /*   to whom the Software is furnished to do so.                                                                     */
 /*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
 /*                                                                                                                   */
 /*********************************************************************************************************************/
 
-#ifndef __COFFE_H__
-#error coffe.h is not included
-#elif !defined __COFFE_PROPERTY_H__
-#define __COFFE_PROPERTY_H__
+#ifndef __ANGSYS_H__
+#error angsys.h is not included
+#elif !defined __ANG_PROPERTY_H__
+#define __ANG_PROPERTY_H__
 
-namespace coffe //constants
+namespace ang //constants
 {
 	struct base_property { };
 	template<typename T, smart_type TYPE = smart_ptr_type<typename remove_reference<typename remove_const<T>::type>::type>::smart_type> struct property_helper;
@@ -51,17 +51,6 @@ namespace coffe //constants
 		using getter_type = ret_type(*)(property_class const*);
 		using setter_type = void(*)(property_class*, arg_type);
 	};
-
-	//template<typename T>
-	//struct property_helper<const T, smart_type::none> {
-	//	using type = typename remove_reference<typename remove_const<T>::type>::type;
-	//	using ret_type = type;
-	//	using ptr_type = typename __to_pointer_helper<type>::ptr_type;
-	//	using arg_type = type&&;
-	//	using property_class = base_property;
-	//	using getter_type = ret_type(*)(property_class const*);
-	//	using setter_type = void(*)(property_class*, arg_type);
-	//};
 
 	template<typename T, typename property_helper<T>::getter_type getter, typename property_helper<T>::setter_type setter = null>
 	struct property : property_helper<T>::property_class {
@@ -203,4 +192,4 @@ namespace coffe //constants
 	};
 }
 
-#endif /*__COFFE_PROPERTY_H__*/
+#endif /*__ANG_PROPERTY_H__*/

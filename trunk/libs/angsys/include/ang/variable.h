@@ -1174,7 +1174,7 @@ namespace ang
 	template<typename T>
 	inline intf_wrapper<ivariable>::intf_wrapper(T const& val)
 		: intf_wrapper((ivariable*)new variable<T>(val)) {
-		static_assert(false);
+		//static_assert(false);
 	}
 
 	template<typename T>

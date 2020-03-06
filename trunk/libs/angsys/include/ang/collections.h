@@ -1,8 +1,20 @@
-#ifndef __COFFE_H__
-#elif !defined __COFFE_COLLECTIONS_H__
-#define __COFFE_COLLECTIONS_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/collections.h                                                                                    */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes many native types and wrappers for them as well as useful macros.        */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-namespace coffe
+#ifndef __ANGSYS_H__
+#elif !defined __ANG_COLLECTIONS_H__
+#define __ANG_COLLECTIONS_H__
+
+namespace ang
 {
 	namespace collections
 	{
@@ -83,14 +95,14 @@ namespace coffe
 		};
 
 		/******************************************************************/
-		/* interface coffe::collections::ienum :                          */
+		/* interface ang::collections::ienum :                            */
 		/*  -> represents an enumeration of objects or variables which    */
 		/*     can be accessed orderly                                    */
 		/******************************************************************/
 		template<typename T>
 		struct nvt ienum
 			: intf<ienum<T>
-			, iid("coffe::collections::ienum")>
+			, iid("ang::collections::ienum")>
 		{
 			virtual wsize counter()const = 0;
 			virtual typename auto_type<T>::return_type at(base_iterator<T> const&) = 0;
@@ -113,13 +125,13 @@ namespace coffe
 		};
 
 		/******************************************************************/
-		/* interface coffe::collections::ienum :                          */
+		/* interface ang::collections::ienum :                            */
 		/*  -> represents a search algorithm                              */
 		/******************************************************************/
 		template<typename T, typename K = function<bool(typename auto_type<T>::arg_type const&)>>
 		struct nvt ifinder
 			: intf<ifinder<T, K>
-			, iid("coffe::collections::ienum")>
+			, iid("ang::collections::ifinder")>
 		{
 			virtual iterator<T> find(K, bool invert = false)const = 0;
 			virtual iterator<T> find(K, base_iterator<T> next_to, bool invert = false)const = 0;
@@ -129,21 +141,21 @@ namespace coffe
 		template<typename T>
 		struct nvt ienumerable
 			: intf<ienumerable<T>
-			, iid("coffe::collections::ienumerable")>
+			, iid("ang::collections::ienumerable")>
 		{
 			virtual ienum_ptr<T> enumerate(iteration_method_t = iteration_method::def)const = 0;
 		};
 
 
 		/******************************************************************/
-		/* interface coffe::collections::iarray :						  */
+		/* interface ang::collections::iarray :                           */
 		/*  -> represents a collection of objects or variables which      */
-		/*     can be accessed unorderly                                  */
+		/*     can be accessed unorderly using an index                   */
 		/******************************************************************/
 		template<typename T>
 		struct nvt iarray
 			: intf<iarray<T>
-			, iid("coffe::collections::iarray")
+			, iid("ang::collections::iarray")
 			, ifinder<T>
 			, ienum<T>>
 		{
@@ -153,14 +165,14 @@ namespace coffe
 		};
 
 		/******************************************************************/
-		/* interface coffe::collections::ilist :                          */
+		/* interface ang::collections::ilist :                            */
 		/*  -> represents a list of objects or variables where the user   */
 		/*     can insert or remove elements randomly                     */
 		/******************************************************************/
 		template<typename T>
 		struct nvt ilist
 			: intf<ilist<T>
-			, iid("coffe::collections::ilist")
+			, iid("ang::collections::ilist")
 			, ifinder<T>
 			, ienum<T>>
 		{
@@ -178,14 +190,14 @@ namespace coffe
 		};
 
 		/******************************************************************/
-		/* interface coffe::collections::isequence :                      */
+		/* interface ang::collections::isequence :                        */
 		/*  -> represents a list of objects or variables where the user   */
 		/*     can insert or remove elements sequentialy                  */
 		/******************************************************************/
 		template<typename T>
 		struct nvt isequence_list
 			: intf<isequence_list<T>
-			, iid("coffe::collections::isequence_list")
+			, iid("ang::collections::isequence_list")
 			, ienum<T>>
 		{
 			virtual void extend(const ienum_ptr<T>&) = 0;
@@ -195,14 +207,14 @@ namespace coffe
 		};
 
 		/******************************************************************/
-		/* interface coffe::collections::ivector :                        */
+		/* interface ang::collections::ivector :                          */
 		/*  -> represents a list of objects or variables where the user   */
 		/*     can insert or remove elements randomly by index            */
 		/******************************************************************/
 		template<typename T>
 		struct nvt ivector
 			: intf<ivector<T>
-			, iid("coffe::collections::ivector")
+			, iid("ang::collections::ivector")
 			, iarray<T>>
 		{
 			virtual void extend(const ienum_ptr<T>&) = 0;
@@ -222,14 +234,14 @@ namespace coffe
 
 
 		/******************************************************************/
-		/* interface coffe::collections::iset :							  */
+		/* interface ang::collections::iset :							  */
 		/*  -> represents a collection of objects or variables which      */
 		/*     can be accessed by a key                                   */
 		/******************************************************************/
 		template<typename T>
 		struct nvt iset
 			: intf< iset<T>
-			, iid("coffe::collections::iset")
+			, iid("ang::collections::iset")
 			, ienumerable<T>>
 		{
 			virtual void copy(const ienum_ptr<T>&) = 0;
@@ -244,14 +256,14 @@ namespace coffe
 		};
 
 		/******************************************************************/
-		/* interface coffe::collections::imap :							  */
+		/* interface ang::collections::imap :							  */
 		/*  -> represents a collection of objects or variables which      */
 		/*     can be accessed by a key                                   */
 		/******************************************************************/
 		template<typename K, typename T>
 		struct nvt imap
 			: intf<imap<K, T>
-			, iid("coffe::collections::imap")
+			, iid("ang::collections::imap")
 			, ienumerable<pair<typename auto_type<K>::type const, typename auto_type<T>::type>>>
 		{
 			using pair_type = pair<typename auto_type<K>::type, typename auto_type<T>::type>;
@@ -276,7 +288,7 @@ namespace coffe
 		template<typename T>
 		struct nvt imap<string, T>
 			: intf<imap<string, T>
-			, iid("coffe::collections::imap")
+			, iid("ang::collections::imap")
 			, ienumerable<pair<const string, typename auto_type<T>::type>>>
 		{
 			using pair_type = pair<const string, typename auto_type<T>::type>;
@@ -302,7 +314,7 @@ namespace coffe
 	using collections::smart_array;
 	using collections::smart_vector;
 
-	COFFE_BEGIN_INTF_WRAPPER_TEMPLATE(collections::ienum, T)
+	ANG_BEGIN_INTF_WRAPPER_TEMPLATE(collections::ienum, T)
 		inline collections::forward_iterator<T> begin() { return is_empty() ? collections::forward_iterator<T>() : get()->begin(); }
 		inline collections::forward_iterator<T> end() { return is_empty() ? collections::forward_iterator<T>() : get()->end(); }
 		inline collections::const_forward_iterator<T> begin()const { return is_empty() ? collections::const_forward_iterator<T>() : ((type const*)get())->begin(); }
@@ -312,9 +324,9 @@ namespace coffe
 		inline collections::backward_iterator<T> rend() { return is_empty() ? collections::backward_iterator<T>() : get()->rend(); }
 		inline collections::const_backward_iterator<T> rbegin()const { return is_empty() ? collections::const_backward_iterator<T>() : ((type const*)get())->rbegin(); }
 		inline collections::const_backward_iterator<T> rend()const { return is_empty() ? collections::const_backward_iterator<T>() : ((type const*)get())->rend(); }
-	COFFE_END_INTF_WRAPPER();
+	ANG_END_INTF_WRAPPER();
 
-	COFFE_BEGIN_INTF_WRAPPER_TEMPLATE(collections::iarray, T)
+	ANG_BEGIN_INTF_WRAPPER_TEMPLATE(collections::iarray, T)
 		inline collections::forward_iterator<T> begin() { return is_empty() ? collections::forward_iterator<T>() : get()->begin(); }
 		inline collections::forward_iterator<T> end() { return is_empty() ? collections::forward_iterator<T>() : get()->end(); }
 		inline collections::const_forward_iterator<T> begin()const { return is_empty() ? collections::const_forward_iterator<T>() : ((type const*)get())->begin(); }
@@ -326,9 +338,9 @@ namespace coffe
 		inline collections::const_backward_iterator<T> rend()const { return is_empty() ? collections::const_backward_iterator<T>() : ((type const*)get())->rend(); }
 		template<typename I> T& operator [](I idx) { return get()->at(get()->at(idx)); }
 		template<typename I> T const& operator [](I idx)const { return get()->at(get()->at(idx)); }
-	COFFE_END_INTF_WRAPPER();
+	ANG_END_INTF_WRAPPER();
 
-	COFFE_BEGIN_INTF_WRAPPER_TEMPLATE(collections::ilist, T)
+	ANG_BEGIN_INTF_WRAPPER_TEMPLATE(collections::ilist, T)
 		inline collections::forward_iterator<T> begin() { return is_empty() ? collections::forward_iterator<T>() : get()->begin(); }
 		inline collections::forward_iterator<T> end() { return is_empty() ? collections::forward_iterator<T>() : get()->end(); }
 		inline collections::const_forward_iterator<T> begin()const { return is_empty() ? collections::const_forward_iterator<T>() : ((type const*)get())->begin(); }
@@ -341,9 +353,9 @@ namespace coffe
 
 		template<typename I> T& operator [](I idx) { return get()->at(get()->at(idx)); }
 		template<typename I> T const& operator [](I idx)const { return get()->at(get()->at(idx)); }
-	COFFE_END_INTF_WRAPPER();
+	ANG_END_INTF_WRAPPER();
 }
 
-#include <coffe/collections/iterators.h>
+#include <ang/collections/iterators.h>
 
-#endif//__COFFE_COLLECTIONS_H__
+#endif//__ANG_COLLECTIONS_H__

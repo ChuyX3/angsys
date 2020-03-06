@@ -6,6 +6,12 @@ using namespace ang;
 
 ANG_EXTERN ulong64 get_performance_time_us(void)
 {
+	return core::time::get_performance_time_us();
+	
+}
+
+ulong64 core::time::get_performance_time_us(void)
+{
 	static struct PerformanceFrequency {
 		ulong64 QuadPart;
 		PerformanceFrequency() {
@@ -20,12 +26,10 @@ ANG_EXTERN ulong64 get_performance_time_us(void)
 	return  (1000000 * count.QuadPart) / frec.QuadPart; //uS
 }
 
-
-
 ang_library_initializer::ang_library_initializer()
 	: main_mutex()
 	, runtime_type_manager()
-//	, thread_manager(null)
+	, thread_manager(null)
 //	, file_system(null)
 #if defined _DEBUG || defined _DEVELOPPER
 	, objects(null)
@@ -46,16 +50,16 @@ ang_library_initializer::ang_library_initializer()
 	objects = new(malloc(sizeof(object_manager))) object_manager();
 #endif // _DEBUG
 
-//	thread_manager = new(malloc(sizeof(core::async::thread_manager))) core::async::thread_manager();
+	thread_manager = new(malloc(sizeof(core::async::thread_manager))) core::async::thread_manager();
 
 }
 
 ang_library_initializer::	~ang_library_initializer()
 {
 //	file_system = null;
-//	thread_manager->~thread_manager();
-//	free(thread_manager);
-//	thread_manager = null;
+	thread_manager->~thread_manager();
+	free(thread_manager);
+	thread_manager = null;
 
 #if defined _DEBUG || defined _DEVELOPPER
  	objects->~object_manager();

@@ -1,10 +1,10 @@
 #include "pch.h"
-#include <coffe/core/async.h>
+#include <ang/core/async.h>
 #include "thread_manager.h"
 
-using namespace coffe;
-using namespace coffe::core;
-using namespace coffe::core::async;
+using namespace ang;
+using namespace ang::core;
+using namespace ang::core::async;
 
 extern thread_local bool m_auto_release;
 
@@ -18,9 +18,9 @@ dispatcher::~dispatcher()
 {
 }
 
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::core::async::dispatcher);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::core::async::dispatcher);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::core::async::dispatcher, core_thread, idispatcher);
+//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::dispatcher);
+//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::dispatcher);
+//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::dispatcher, core_thread, idispatcher);
 
 void dispatcher::dispose()
 {
@@ -31,9 +31,9 @@ void dispatcher::dispose()
 bool dispatcher::auto_release()
 {
 	if (!is_this_thread())
-		return bean::auto_release();
+		return object::auto_release();
 	else if (is_this_thread() && m_state == async_action_status::completed)
-		return bean::auto_release();
+		return object::auto_release();
 	m_auto_release = true;
 	join();
 	return false;
@@ -152,10 +152,14 @@ int dispatcher::dispatch()
 
 	long err = m_was_joined ? 0 : -1;
 	if (m_auto_release) 
-		bean::auto_release();
+		object::auto_release();
 	return err;
 }
 
+void dispatcher::done(thread_task_t task)
+{
+	//join();
+}
 
 thread_task_t dispatcher::post_task(thread_task_t task)
 {

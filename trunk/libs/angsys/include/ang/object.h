@@ -118,7 +118,8 @@ namespace ang
 	template<typename T, typename U, typename... Ts>
 	struct __query_interface<T, U, Ts...> {
 		static bool query_interface(T* ptr, rtti_t const& id, unknown_ptr_t out) {
-			if (id.type_id() == type_of<U>().type_id()) {
+			rtti_t const& id2 = type_of<U>();
+			if (id.type_id() == id2.type_id()) {
 				if (out == null)
 					return false;
 				*out = static_cast<U*>(ptr);

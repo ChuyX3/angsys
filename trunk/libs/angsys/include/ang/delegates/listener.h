@@ -1,21 +1,21 @@
 /*********************************************************************************************************************/
-/*   File Name: coffe/function.h                                                                                 */
+/*   File Name: ang/function.h                                                                                 */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, 2019.                                                   */
 /*                                                                                                                   */
-/*   Copyright (C) coffe sys, Jesus Angel Rocha Morales                                                              */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                              */
 /*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
 /*   to whom the Software is furnished to do so.                                                                     */
 /*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
 /*                                                                                                                   */
 /*********************************************************************************************************************/
 
-#ifndef __COFFE_H__
-#error coffe.h is not included
-#elif !defined __COFFE_LISTENER_H__
-#define __COFFE_LISTENER_H__
+#ifndef __ANGSYS_H__
+#error ang.h is not included
+#elif !defined __ANG_LISTENER_H__
+#define __ANG_LISTENER_H__
 
 
-namespace coffe
+namespace ang
 {
 	namespace delegates
 	{
@@ -26,7 +26,7 @@ namespace coffe
 		template<typename T, typename...Ts>
 		struct ilistener<T(Ts...)> 
 			: intf<ilistener<T(Ts...)>
-			, iid("coffe::delegates::ilistener")>
+			, iid("ang::delegates::ilistener")>
 		{
 			virtual array<T> invoke(Ts... args)const = 0;
 			virtual listen_token<T(Ts...)> push(function<T(Ts...)> func) = 0;
@@ -231,7 +231,7 @@ namespace coffe
 				return add_event(this, func.get());
 			}
 			inline auto operator -= (typename event_helper<T>::listen_token token) {
-				return remove_event(this, coffe::forward<typename event_helper<T>::listen_token>(token));
+				return remove_event(this, ang::forward<typename event_helper<T>::listen_token>(token));
 			}
 		};
 
@@ -242,18 +242,18 @@ namespace coffe
 	using delegates::listener;
 	using delegates::listen_token;
 
-#define coffe_event(NAME, ...) _coffe_event(NAME, __VA_ARGS__)
-#define _coffe_event(NAME, TYPE) \
+#define ang_event(NAME, ...) _ang_event(NAME, __VA_ARGS__)
+#define _ang_event(NAME, TYPE) \
 private: \
-	static coffe::listen_token<TYPE> add_##NAME(coffe::base_event*, coffe::function<TYPE>); \
-	static bool remove_##NAME(coffe::base_event*, coffe::listen_token<TYPE>); \
-	coffe::listener<TYPE> m_##NAME; \
+	static ang::listen_token<TYPE> add_##NAME(ang::base_event*, ang::function<TYPE>); \
+	static bool remove_##NAME(ang::base_event*, ang::listen_token<TYPE>); \
+	ang::listener<TYPE> m_##NAME; \
 public: \
-	coffe::event<TYPE, add_##NAME, remove_##NAME> NAME;
+	ang::event<TYPE, add_##NAME, remove_##NAME> NAME;
 
 
 
 
 }
 
-#endif//__COFFE_LISTENER_H__
+#endif//__ANG_LISTENER_H__

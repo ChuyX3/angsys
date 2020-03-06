@@ -1,24 +1,24 @@
 /*********************************************************************************************************************/
-/*   File Name: coffe/function.h                                                                                 */
+/*   File Name: ang/function.h                                                                                 */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, 2019.                                                   */
 /*                                                                                                                   */
-/*   Copyright (C) coffe sys, Jesus Angel Rocha Morales                                                              */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                              */
 /*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
 /*   to whom the Software is furnished to do so.                                                                     */
 /*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
 /*                                                                                                                   */
 /*********************************************************************************************************************/
 
-#ifndef __COFFE_H__
-#error coffe.h is not included
-#elif !defined __COFFE_FUNCTION_H__
-#define __COFFE_FUNCTION_H__
+#ifndef __ANGSYS_H__
+#error ang.h is not included
+#elif !defined __ANG_FUNCTION_H__
+#define __ANG_FUNCTION_H__
 
-namespace coffe
+namespace ang
 {
 	template<typename T, typename...Ts>
 	struct smart_ptr_type<T(Ts...), false, false> {
-		static constexpr coffe::smart_type smart_type = coffe::smart_type::none;
+		static constexpr ang::smart_type smart_type = ang::smart_type::none;
 		using smart_ptr_t = function<T(Ts...)>;
 		using type = delegates::function_base<T(Ts...)>;
 	};
@@ -28,7 +28,7 @@ namespace coffe
 		template<typename T, typename... Ts>
 		struct nvt ifunction<T(Ts...)>
 			: intf<ifunction<T(Ts...)>
-			, iid("coffe::delegates::ifunction")>
+			, iid("ang::delegates::ifunction")>
 		{
 			virtual T invoke(Ts...)const = 0;
 			virtual ifunction* clone()const = 0;
@@ -37,7 +37,7 @@ namespace coffe
 		template<typename T, typename... Ts>
 		class function_base<T(Ts...)>
 			: public implement<function_base<T(Ts...)>
-			, iid("coffe::delegates::function")
+			, iid("ang::delegates::function")
 			, ifunction<T(Ts...)>>
 		{
 		public:
@@ -60,10 +60,10 @@ namespace coffe
 		public:
 			template<typename F2>
 			static_function(F2&& f)
-				: m_functor(coffe::forward<F2>(f)) {
+				: m_functor(ang::forward<F2>(f)) {
 			}
 			T invoke(Ts... args)const override {
-				return m_functor(coffe::forward<Ts>(args)...);
+				return m_functor(ang::forward<Ts>(args)...);
 			}
 			ifunction<T(Ts...)>* clone()const override {
 				return new static_function(m_functor);
@@ -96,7 +96,7 @@ namespace coffe
 				, m_member(f) {
 			}
 			T invoke(Ts... args)const override {
-				return (m_object->*m_member)(coffe::forward<Ts>(args)...);
+				return (m_object->*m_member)(ang::forward<Ts>(args)...);
 			}
 			ifunction<T(Ts...)>* clone()const override {
 				return new member_function(m_object, m_member);
@@ -132,7 +132,7 @@ namespace coffe
 
 			T invoke(Ts... args)const override {
 				object_wrapper<O> lock = m_object.lock();
-				return lock.is_empty() ? T() : (lock->*m_member)(coffe::forward<Ts>(args)...);
+				return lock.is_empty() ? T() : (lock->*m_member)(ang::forward<Ts>(args)...);
 			}
 			ifunction<T(Ts...)>* clone()const override {
 				object_wrapper<O> lock = m_object.lock();
@@ -167,7 +167,7 @@ namespace coffe
 			}
 
 			T invoke(Ts... args)const override {
-				return m_member(m_object, coffe::forward<Ts>(args)...);
+				return m_member(m_object, ang::forward<Ts>(args)...);
 			}
 			ifunction<T(Ts...)>* clone()const override {
 				return new pseudo_member_function(m_object, m_member);
@@ -201,7 +201,7 @@ namespace coffe
 			}
 
 			T invoke(Ts... args)const override {
-				return m_member(m_object.lock(), coffe::forward<Ts>(args)...);
+				return m_member(m_object.lock(), ang::forward<Ts>(args)...);
 			}
 			ifunction<T(Ts...)>* clone()const override {
 				return new pseudo_member_function(m_object.lock(), m_member);
@@ -231,7 +231,7 @@ namespace coffe
 		object_wrapper(delegates::function_base<T(Ts...)>*);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
-		object_wrapper(coffe::nullptr_t const&);
+		object_wrapper(ang::nullptr_t const&);
 		~object_wrapper();
 
 		template<typename F>
@@ -261,19 +261,19 @@ namespace coffe
 		T invoke(Ts&&... args)const {
 			if (is_empty())
 				return T();
-			return get()->invoke(coffe::forward<Ts>(args)...);
+			return get()->invoke(ang::forward<Ts>(args)...);
 		}
 
 	public:
 		object_wrapper& operator = (type*);
 		object_wrapper& operator = (object_wrapper &&);
 		object_wrapper& operator = (object_wrapper const&);
-		object_wrapper& operator = (coffe::nullptr_t const&) {
+		object_wrapper& operator = (ang::nullptr_t const&) {
 			reset();
 			return*this;
 		}
 
-		operator bean_t()const {
+		operator object_t()const {
 			return m_ptr;
 		}
 
@@ -288,7 +288,7 @@ namespace coffe
 		object_wrapper_ptr<type> operator & (void);
 
 		T operator()(Ts ... args)const {
-			return invoke(coffe::forward<Ts>(args)...);
+			return invoke(ang::forward<Ts>(args)...);
 		}
 
 	};
@@ -307,7 +307,7 @@ namespace coffe
 		object_wrapper(delegates::function_base<void(Ts...)> * func);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
-		object_wrapper(coffe::nullptr_t const&);
+		object_wrapper(ang::nullptr_t const&);
 		~object_wrapper();
 
 
@@ -318,7 +318,7 @@ namespace coffe
 
 		template<typename O>
 		object_wrapper(O* obj, void(O::*f)(Ts...)) : object_wrapper() {
-			set(new delegates::member_function<O, is_base_of<bean, O>::value, void, Ts...>(obj, f));
+			set(new delegates::member_function<O, is_base_of<object, O>::value, void, Ts...>(obj, f));
 		}
 
 	public:
@@ -332,7 +332,7 @@ namespace coffe
 		void invoke(Ts ... args)const {
 			if (is_empty())
 				return;
-			return get()->invoke(coffe::forward<Ts>(args)...);
+			return get()->invoke(ang::forward<Ts>(args)...);
 		}
 
 	public:
@@ -340,12 +340,12 @@ namespace coffe
 		object_wrapper& operator = (object_wrapper &&);
 		object_wrapper& operator = (object_wrapper const&);
 
-		object_wrapper& operator = (coffe::nullptr_t const&) {
+		object_wrapper& operator = (ang::nullptr_t const&) {
 			reset();
 			return*this;
 		}
 
-		operator bean_t()const {
+		operator object_t()const {
 			return m_ptr;
 		}
 
@@ -359,7 +359,7 @@ namespace coffe
 		object_wrapper_ptr<type> operator & (void);
 
 		void operator()(Ts ... args)const {
-			invoke(coffe::forward<Ts>(args)...);
+			invoke(ang::forward<Ts>(args)...);
 		}
 
 		friend weak_ptr_base;
@@ -424,14 +424,14 @@ namespace coffe
 		template<typename T, typename...Ts, typename delegate_helper<T(Ts...)>::function_type callback>
 		struct delegate<T(Ts...), callback> : delegate_helper<T(Ts...)>::base_class {
 			auto operator()(Ts... args)const {
-				return callback(this, coffe::forward<typename delegate_helper<T(Ts...)>::args_type>(pack_args(coffe::forward<Ts>(args)...)));
+				return callback(this, ang::forward<typename delegate_helper<T(Ts...)>::args_type>(pack_args(ang::forward<Ts>(args)...)));
 			}
 		};
 
 		template<typename T, typename...Ts, typename delegate_helper<T(*)(Ts...)>::function_type callback>
 		struct delegate<T(*)(Ts...), callback> : delegate_helper<T(Ts...)>::base_class {
 			auto operator()(Ts... args)const {
-				return callback(this, coffe::forward<typename delegate_helper<T(Ts...)>::args_type>(pack_args(coffe::forward<Ts>(args)...)));
+				return callback(this, ang::forward<typename delegate_helper<T(Ts...)>::args_type>(pack_args(ang::forward<Ts>(args)...)));
 			}
 		};
 
@@ -454,4 +454,4 @@ namespace coffe
 }
 
 
-#endif//__COFFE_BASE_STRING_H__
+#endif//__ANG_BASE_STRING_H__

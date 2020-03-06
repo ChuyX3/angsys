@@ -30,8 +30,6 @@ rtti_t const& iintf::class_info() {
 	align_of<iintf>();
 }
 
-//COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(ang::iobject);
-
 typedef struct smart_ptr_info
 {
 	ang_atomic_dword_t _mem_ref_counter; //4bytes

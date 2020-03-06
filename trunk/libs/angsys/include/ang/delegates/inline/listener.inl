@@ -1,53 +1,65 @@
-#ifndef __COFFE_LISTENER_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/delegates/inline/listener.inl                                                                    */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes many native types and wrappers for them as well as useful macros.        */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
+
+#ifndef __ANG_LISTENER_H__
 #error ...
-#elif !defined __COFFE_LISTENER_INL__
-#define __COFFE_LISTENER_INL__
+#elif !defined __ANG_LISTENER_INL__
+#define __ANG_LISTENER_INL__
 
 
 template<typename T, typename... Ts>
-coffe::delegates::listener<T(Ts...)>::listener()
+ang::delegates::listener<T(Ts...)>::listener()
 {
 }
 
 template<typename T, typename... Ts>
-coffe::delegates::listener<T(Ts...)>::listener(listener&& other)
-	: functions(coffe::move(other.functions))
+ang::delegates::listener<T(Ts...)>::listener(listener&& other)
+	: functions(ang::move(other.functions))
 {
 }
 
 template<typename T, typename... Ts>
-coffe::delegates::listener<T(Ts...)>::listener(listener const& other)
+ang::delegates::listener<T(Ts...)>::listener(listener const& other)
 	: functions(other.functions)
 {
 }
 
 template<typename T, typename... Ts>
-coffe::delegates::listener<T(Ts...)>::~listener()
+ang::delegates::listener<T(Ts...)>::~listener()
 {
 	clear();
 }
 
 template<typename T, typename... Ts>
-void coffe::delegates::listener<T(Ts...)>::clear()
+void ang::delegates::listener<T(Ts...)>::clear()
 {
 	functions.clear();
 }
 
 template<typename T, typename... Ts>
-bool coffe::delegates::listener<T(Ts...)>::is_empty()const
+bool ang::delegates::listener<T(Ts...)>::is_empty()const
 {
 	return functions.is_empty();
 }
 
 template<typename T, typename... Ts>
-coffe::delegates::listen_token<T(Ts...)> coffe::delegates::listener<T(Ts...)>::push(coffe::delegates::function<T(Ts...)> func)
+ang::delegates::listen_token<T(Ts...)> ang::delegates::listener<T(Ts...)>::push(ang::delegates::function<T(Ts...)> func)
 {
-	functions += coffe::move(func);
+	functions += ang::move(func);
 	return functions.last();
 }
 
 template<typename T, typename... Ts>
-bool coffe::delegates::listener<T(Ts...)>::pop(coffe::delegates::listen_token<T(Ts...)> token)
+bool ang::delegates::listener<T(Ts...)>::pop(ang::delegates::listen_token<T(Ts...)> token)
 {
 	if (functions.is_empty())
 		return false;
@@ -56,33 +68,33 @@ bool coffe::delegates::listener<T(Ts...)>::pop(coffe::delegates::listen_token<T(
 }
 
 template<typename T, typename... Ts>
-coffe::delegates::listener<T(Ts...)>& coffe::delegates::listener<T(Ts...)>::operator = (listener&& other)
+ang::delegates::listener<T(Ts...)>& ang::delegates::listener<T(Ts...)>::operator = (listener&& other)
 {
-	functions = coffe::move(other.functions);
+	functions = ang::move(other.functions);
 	return *this;
 }
 
 template<typename T, typename... Ts>
-coffe::delegates::listener<T(Ts...)>& coffe::delegates::listener<T(Ts...)>::operator = (listener const& other)
+ang::delegates::listener<T(Ts...)>& ang::delegates::listener<T(Ts...)>::operator = (listener const& other)
 {
 	functions = other.functions;
 	return *this;
 }
 
 template<typename T, typename... Ts>
-coffe::delegates::listen_token<T(Ts...)> coffe::delegates::listener<T(Ts...)>::operator += (coffe::delegates::function<T(Ts...)> func)
+ang::delegates::listen_token<T(Ts...)> ang::delegates::listener<T(Ts...)>::operator += (ang::delegates::function<T(Ts...)> func)
 {
-	return push(coffe::move(func));
+	return push(ang::move(func));
 }
 
 template<typename T, typename... Ts>
-bool coffe::delegates::listener<T(Ts...)>::operator -= (coffe::delegates::listen_token<T(Ts...)> token)
+bool ang::delegates::listener<T(Ts...)>::operator -= (ang::delegates::listen_token<T(Ts...)> token)
 {
-	return pop(coffe::move(token));
+	return pop(ang::move(token));
 }
 
 template<typename T, typename... Ts>
-coffe::array<T> coffe::delegates::listener<T(Ts...)>::operator() (Ts... args)const
+ang::array<T> ang::delegates::listener<T(Ts...)>::operator() (Ts... args)const
 {
 	array<T> result;
 	if (!is_empty())
@@ -92,11 +104,11 @@ coffe::array<T> coffe::delegates::listener<T(Ts...)>::operator() (Ts... args)con
 		for (function<T(Ts...)> const& func : functions)
 			result[i++] = func(args...);
 	}
-	return coffe::move(result);
+	return ang::move(result);
 }
 
 template<typename T, typename... Ts>
-coffe::array<T> coffe::delegates::listener<T(Ts...)>::invoke(Ts... args)const
+ang::array<T> ang::delegates::listener<T(Ts...)>::invoke(Ts... args)const
 {
 	array<T> result;
 	if (!is_empty())
@@ -106,53 +118,53 @@ coffe::array<T> coffe::delegates::listener<T(Ts...)>::invoke(Ts... args)const
 		for (function<T(Ts...)> const& func : functions)
 			result[i++] = func(args...);
 	}
-	return coffe::move(result);
+	return ang::move(result);
 }
 
 template<typename... Ts>
-coffe::delegates::listener<void(Ts...)>::listener()
+ang::delegates::listener<void(Ts...)>::listener()
 {
 }
 
 template<typename... Ts>
-coffe::delegates::listener<void(Ts...)>::listener(listener&& other)
-	: functions(coffe::move(other.functions))
+ang::delegates::listener<void(Ts...)>::listener(listener&& other)
+	: functions(ang::move(other.functions))
 {
 }
 
 template<typename... Ts>
-coffe::delegates::listener<void(Ts...)>::listener(listener const& other)
+ang::delegates::listener<void(Ts...)>::listener(listener const& other)
 	: functions(other.functions)
 {
 }
 
 template<typename... Ts>
-coffe::delegates::listener<void(Ts...)>::~listener()
+ang::delegates::listener<void(Ts...)>::~listener()
 {
 	clear();
 }
 
 template<typename... Ts>
-void coffe::delegates::listener<void(Ts...)>::clear()
+void ang::delegates::listener<void(Ts...)>::clear()
 {
 	functions.clear();
 }
 
 template<typename... Ts>
-bool coffe::delegates::listener<void(Ts...)>::is_empty()const
+bool ang::delegates::listener<void(Ts...)>::is_empty()const
 {
 	return functions.is_empty();
 }
 
 template<typename... Ts>
-coffe::delegates::listen_token<void(Ts...)> coffe::delegates::listener<void(Ts...)>::push(coffe::delegates::function<void(Ts...)> func)
+ang::delegates::listen_token<void(Ts...)> ang::delegates::listener<void(Ts...)>::push(ang::delegates::function<void(Ts...)> func)
 {
-	functions += coffe::move(func);
+	functions += ang::move(func);
 	return functions.rbegin();
 }
 
 template<typename... Ts>
-bool coffe::delegates::listener<void(Ts...)>::pop(coffe::delegates::listen_token<void(Ts...)> token)
+bool ang::delegates::listener<void(Ts...)>::pop(ang::delegates::listen_token<void(Ts...)> token)
 {
 	if (functions.is_empty())
 		return false;
@@ -161,34 +173,34 @@ bool coffe::delegates::listener<void(Ts...)>::pop(coffe::delegates::listen_token
 }
 
 template<typename... Ts>
-coffe::delegates::listener<void(Ts...)>& coffe::delegates::listener<void(Ts...)>::operator = (listener&& other)
+ang::delegates::listener<void(Ts...)>& ang::delegates::listener<void(Ts...)>::operator = (listener&& other)
 {
-	functions = coffe::move(other.functions);
+	functions = ang::move(other.functions);
 	return *this;
 }
 
 template<typename... Ts>
-coffe::delegates::listener<void(Ts...)>& coffe::delegates::listener<void(Ts...)>::operator = (listener const& other)
+ang::delegates::listener<void(Ts...)>& ang::delegates::listener<void(Ts...)>::operator = (listener const& other)
 {
 	functions = other.functions;
 	return *this;
 }
 
 template<typename... Ts>
-coffe::delegates::listen_token<void(Ts...)> coffe::delegates::listener<void(Ts...)>::operator += (coffe::delegates::function<void(Ts...)> func)
+ang::delegates::listen_token<void(Ts...)> ang::delegates::listener<void(Ts...)>::operator += (ang::delegates::function<void(Ts...)> func)
 {
-	return push(coffe::move(func));
+	return push(ang::move(func));
 }
 
 template<typename... Ts>
-bool coffe::delegates::listener<void(Ts...)>::operator -= (coffe::delegates::listen_token<void(Ts...)> token)
+bool ang::delegates::listener<void(Ts...)>::operator -= (ang::delegates::listen_token<void(Ts...)> token)
 {
-	return pop(coffe::move(token));
+	return pop(ang::move(token));
 }
 
 
 template<typename... Ts>
-void coffe::delegates::listener<void(Ts...)>::invoke(Ts... args)const
+void ang::delegates::listener<void(Ts...)>::invoke(Ts... args)const
 {
 	if (!is_empty())
 	{
@@ -199,7 +211,7 @@ void coffe::delegates::listener<void(Ts...)>::invoke(Ts... args)const
 }
 
 template<typename... Ts>
-void coffe::delegates::listener<void(Ts...)>::operator() (Ts... args)const
+void ang::delegates::listener<void(Ts...)>::operator() (Ts... args)const
 {
 	if (!is_empty())
 	{
@@ -210,4 +222,4 @@ void coffe::delegates::listener<void(Ts...)>::operator() (Ts... args)const
 }
 
 
-#endif//__CORE_LISTENER_INL__
+#endif//__ANG_LISTENER_INL__

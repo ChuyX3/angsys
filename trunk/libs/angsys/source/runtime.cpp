@@ -73,6 +73,7 @@ rtti_t const& rtti::regist(type_name_t name, gender_t g, wsize sz, wsize a)
 rtti_t const& rtti::regist(type_name_t name, gender_t g, wsize sz, wsize a, inherit_pack_info_t parents, dynamic_cast_proc cast)
 {
 	runtime_type_manager* instance = runtime_type_manager::instance();
+	instance->main_mutex().lock();
 
 	rtti_t* info = instance->allocate();
 	info = new(info)rtti(name, g, sz, a, parents, cast ? cast : &ang_runtime_rtti_default_dyn_cast);
@@ -85,6 +86,7 @@ rtti_t const& rtti::regist(type_name_t name, gender_t g, wsize sz, wsize a, inhe
 	else {
 		instance->push(info);
 	}
+	instance->main_mutex().unlock();
 	return*info;
 }
 

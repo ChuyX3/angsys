@@ -42,6 +42,12 @@
     <Filter Include="source files\value">
       <UniqueIdentifier>{63b1353e-5416-45b2-83aa-8831e75a2b02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source files\collections">
+      <UniqueIdentifier>{9e7fa8de-89e3-4195-ac16-ff5e9b1ecdb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include files\angsys\ang\core">
+      <UniqueIdentifier>{5087de36-e8dd-4529-bf0c-5aafe491c35c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\angsys.h">
@@ -221,6 +227,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\ivariable.h">
       <Filter>include files\angsys\ang</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\core\async.h">
+      <Filter>include files\angsys\ang\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\core\time.h">
+      <Filter>include files\angsys\ang\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\thread_manager.h">
+      <Filter>include files\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\angsys.cpp">
@@ -273,6 +288,27 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\value\uinteger.cpp">
       <Filter>source files\value</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\collections\collections.cpp">
+      <Filter>source files\collections</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\core_thread.cpp">
+      <Filter>source files\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\dispatcher.cpp">
+      <Filter>source files\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\sync_task.cpp">
+      <Filter>source files\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\task.cpp">
+      <Filter>source files\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\thread_manager.cpp">
+      <Filter>source files\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\worker_thread.cpp">
+      <Filter>source files\async</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

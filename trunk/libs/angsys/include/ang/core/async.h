@@ -1,24 +1,36 @@
-#ifndef __COFFE_CORE_ASYNC_H__
-#define __COFFE_CORE_ASYNC_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/core/async.h                                                                                     */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes many native types and wrappers for them as well as useful macros.        */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-#include <coffe.h>
-#include <coffe/core/time.h>
+#ifndef __ANG_CORE_ASYNC_H__
+#define __ANG_CORE_ASYNC_H__
+
+#include <angsys.h>
+#include <ang/core/time.h>
 
 #ifdef  LINK
 #undef  LINK
 #endif//LINK
 
 #if defined WINDOWS_PLATFORM
-#if defined COFFE_DYNAMIC_LIBRARY
+#if defined ANG_DYNAMIC_LIBRARY
 
-#ifdef COFFE_EXPORTS
+#ifdef ANG_EXPORTS
 #define LINK __declspec(dllexport)
 #else
 #define LINK __declspec(dllimport)
-#endif//COFFE_EXPORTS
-#else//#elif defined COFFE_STATIC_LIBRARY
+#endif//ANG_EXPORTS
+#else//#elif defined ANG_STATIC_LIBRARY
 #define LINK
-#endif//COFFE_DYNAMIC_LIBRARY
+#endif//ANG_DYNAMIC_LIBRARY
 #elif defined LINUX_PLATFORM || defined ANDROID_PLATFORM
 #define LINK
 #else
@@ -26,7 +38,7 @@
 #endif
 
 
-namespace coffe
+namespace ang
 {
 	namespace core
 	{
@@ -46,15 +58,15 @@ namespace coffe
 
 			template<typename T> using iasync_op = intf_wrapper<itask<optional<T>>>;
 
-			coffe_declare_interface(isync);
-			coffe_declare_interface(ithread);
-			coffe_declare_interface(idispatcher);
+			ang_declare_interface(isync);
+			ang_declare_interface(ithread);
+			ang_declare_interface(idispatcher);
 
-			coffe_declare_object(sync);
-			coffe_declare_object(thread);
+			ang_declare_object(sync);
+			ang_declare_object(thread);
 
 			/******************************************************************/
-			/* falg coffe::core::async::async_action_status                   */
+			/* falg ang::core::async::async_action_status                     */
 			/*  -> represents the thread status                               */
 			/******************************************************************/
 			declare_flags(LINK, async_action_status, uint)
@@ -75,14 +87,14 @@ namespace coffe
 
 
 			/******************************************************************/
-			/* interface coffe::core::async::iaction< T >                     */
+			/* interface ang::core::async::iaction< T >                       */
 			/*  -> represents a asynchronous operation, it can be waited for  */
 			/*     its result or any status change                            */
 			/******************************************************************/
 			template<typename T>
 			struct nvt iaction
 				: intf<iaction<T>
-				, iid("coffe::core::async::iaction")>
+				, iid("ang::core::async::iaction")>
 			{
 				virtual bool wait(async_action_status_t)const = 0;
 				virtual bool wait(async_action_status_t, dword)const = 0;
@@ -92,14 +104,14 @@ namespace coffe
 			};
 
 			/******************************************************************/
-			/* interface coffe::core::async::itask< T >                       */
-			/*  -> represents a asynchronous operation, it can be waited for  */
+			/* interface ang::core::async::itask< T >                         */
+			/*  -> represents a asynchronous task, it can be waited for       */
 			/*     its result or any status change                            */
 			/******************************************************************/
 			template<typename T>
 			struct nvt itask 
 				: intf<itask<T>
-				, iid("coffe::core::async::itask")
+				, iid("ang::core::async::itask")
 				, iaction<T>>
 			{
 				virtual iasync<void> then(delegates::function<void(iasync<T>)>)= 0;
@@ -108,7 +120,7 @@ namespace coffe
 			
 			struct nvt LINK idispatcher
 				: intf<idispatcher
-				, iid("coffe::core::async::idispatcher")>
+				, iid("ang::core::async::idispatcher")>
 			{
 				virtual bool has_thread_access()const = 0;
 				virtual async_action_status_t status()const = 0;
@@ -122,7 +134,7 @@ namespace coffe
 
 			struct nvt LINK ithread
 				: intf<ithread
-				, iid("coffe::core::async::ithread")>
+				, iid("ang::core::async::ithread")>
 			{
 				virtual bool is_this_thread()const = 0;
 				virtual bool is_main_thread()const = 0;
@@ -134,7 +146,7 @@ namespace coffe
 
 			struct nvt LINK isync
 				: intf<isync
-				, iid("coffe::core::async::isync")>
+				, iid("ang::core::async::isync")>
 			{
 				virtual void run_sync(function<void(isync_t)>) = 0;
 				virtual mutex_t& shared_mutex()const = 0;
@@ -143,16 +155,16 @@ namespace coffe
 		}
 	}
 
-	COFFE_BEGIN_INTF_WRAPPER_TEMPLATE(core::async::iaction, T)
+	ANG_BEGIN_INTF_WRAPPER_TEMPLATE(core::async::iaction, T)
 		inline operator nullable<T>()const;
-	COFFE_END_INTF_WRAPPER();
+	ANG_END_INTF_WRAPPER();
 
-	COFFE_BEGIN_INTF_WRAPPER_TEMPLATE(core::async::itask, T)
+	ANG_BEGIN_INTF_WRAPPER_TEMPLATE(core::async::itask, T)
 		inline operator nullable<T>()const;
-	COFFE_END_INTF_WRAPPER();
+	ANG_END_INTF_WRAPPER();
 }
 
-namespace coffe
+namespace ang
 {
 	namespace core
 	{
@@ -182,7 +194,7 @@ namespace coffe
 	}
 }
 
-namespace coffe
+namespace ang
 {
 	namespace core
 	{
@@ -190,7 +202,7 @@ namespace coffe
 		{
 			class LINK thread
 				: public implement<thread
-				, iid("coffe::core::async::thread")
+				, iid("ang::core::async::thread")
 				, ithread>
 			{
 			public:
@@ -209,7 +221,7 @@ namespace coffe
 	}
 }
 
-namespace coffe
+namespace ang
 {
 	namespace core
 	{
@@ -217,7 +229,7 @@ namespace coffe
 		{
 			class LINK sync
 				: public implement<sync
-				, iid("coffe::core::async::sync")
+				, iid("ang::core::async::sync")
 				, isync>
 			{
 			public:
@@ -231,7 +243,7 @@ namespace coffe
 	}
 }
 
-namespace coffe
+namespace ang
 {
 	namespace core
 	{
@@ -239,7 +251,7 @@ namespace coffe
 		{
 			class LINK task
 				: public implement<task
-				, iid("coffe::core::async::task")
+				, iid("ang::core::async::task")
 				, itask<void>
 				, iaction<void>>
 			{
@@ -256,13 +268,15 @@ namespace coffe
 
 			template<typename T>
 			inline iasync<T> create_task(function<T(iasync<T>)>&& action) {
-				return task::run_async<T>(coffe::forward<function<T(iasync<T>)>>(action));
+				iasync<T> tsk;
+				tsk = task::run_async<T>(ang::forward<function<T(iasync<T>)>>(action));
+				return ang::move(tsk);
 			}
 
 			template<typename T>
 			class task_handler final
 				: public implement<task_handler<T>
-				, iid("coffe::core::async::task_handler")
+				, iid("ang::core::async::task_handler")
 				, itask<T>
 				, iaction<T>>
 			{
@@ -294,52 +308,52 @@ namespace coffe
 }
 
 
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<void>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<char>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<mchar>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<wchar>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<char16_t>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<char32_t>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<short>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<ushort>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<int>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<uint>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<long>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<ulong>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<long64>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<ulong64>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<float>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<double>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<coffe::objptr>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<coffe::string>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::iaction<coffe::variant>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<void>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<char>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<mchar>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<wchar>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<char16_t>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<char32_t>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<short>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<ushort>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<int>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<uint>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<long>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<ulong>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<long64>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<ulong64>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<float>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<double>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<ang::objptr>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<ang::string>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::iaction<ang::variant>);
 
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<void>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<char>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<mchar>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<wchar>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<char16_t>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<char32_t>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<short>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<ushort>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<int>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<uint>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<long>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<ulong>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<long64>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<ulong64>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<float>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<double>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<coffe::objptr>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<coffe::string>);
-COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::core::async::itask<coffe::variant>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<void>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<char>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<mchar>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<wchar>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<char16_t>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<char32_t>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<short>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<ushort>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<int>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<uint>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<long>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<ulong>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<long64>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<ulong64>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<float>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<double>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<ang::objptr>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<ang::string>);
+ANG_DECLARE_CLASS_INFO_OVERRIDE(LINK, ang::core::async::itask<ang::variant>);
 
-COFFE_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, coffe::core::async::async_action_status);
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, ang::core::async::async_action_status);
 
 #ifdef  LINK
 #undef  LINK
 #endif//LINK
 
-#include <coffe/core/inline/async.inl>
+#include <ang/core/inline/async.inl>
 
-#endif//__COFFE_CORE_ASYNC_H__
+#endif//__ANG_CORE_ASYNC_H__

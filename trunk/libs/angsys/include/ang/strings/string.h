@@ -91,7 +91,7 @@ namespace ang
 
 	using text::to_string;
 
-	template<typename T, text::encoding E>
+	/*template<typename T, text::encoding E>
 	inline intf_wrapper<text::istring>::intf_wrapper(str_view<T, E> const& cstr)
 		: m_ptr(null) {
 		set(new text::basic_string_buffer<E>(cstr));
@@ -101,7 +101,7 @@ namespace ang
 	inline intf_wrapper<text::istring>::intf_wrapper(text::fast_string<E, A>&& str)
 		: m_ptr(null) {
 		set(new text::basic_string_buffer<E>(ang::forward<text::fast_string<E, A>>(str)));
-	}
+	}*/
 
 	inline string& operator << (string& stream, string const& cstr) {
 		stream->append(cstr);

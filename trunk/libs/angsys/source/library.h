@@ -1,9 +1,9 @@
 #include "angsys.h"
 #include "memory_manager.h"
 #include "runtime_manager.h"
-//#include "thread_manager.h"
+#include "thread_manager.h"
 //#include "file_system.h"
-//#include "ang/core/time.h"
+#include "ang/core/time.h"
 
 using namespace ang;
 
@@ -14,7 +14,7 @@ namespace ang
 	public:
 		core::async::mutex_t main_mutex;
 		runtime::runtime_type_manager runtime_type_manager;
-		//core::async::thread_manager* thread_manager;
+		core::async::thread_manager* thread_manager;
 		//core::files::file_system_t file_system;
 
 #ifdef _MEMORY_PROFILING

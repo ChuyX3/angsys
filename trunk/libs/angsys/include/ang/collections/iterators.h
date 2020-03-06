@@ -1,8 +1,20 @@
-#ifndef __COFFE_COLLECTIONS_H__
-#elif !defined __COFFE_COLLECTIONS_ITERATORS_H__
-#define __COFFE_COLLECTIONS_ITERATORS_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/collections/iterators.h                                                                          */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes many native types and wrappers for them as well as useful macros.        */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-namespace coffe
+#ifndef __ANG_COLLECTIONS_H__
+#elif !defined __ANG_COLLECTIONS_ITERATORS_H__
+#define __ANG_COLLECTIONS_ITERATORS_H__
+
+namespace ang
 {
 	namespace collections
 	{
@@ -179,8 +191,8 @@ namespace coffe
 		};
 
 	}//collections
-}//coffe
+}//ang
 
-COFFE_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, coffe::collections::iteration_method);
+ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, ang::collections::iteration_method);
 
-#endif //__COFFE_COLLECTIONS_ITERATORS_H__
+#endif //__ANG_COLLECTIONS_ITERATORS_H__

@@ -1,12 +1,24 @@
-#ifndef __COFFE_H__
-#error ...
-#elif !defined __COFFE_OPTIONAL_H__
-#define __COFFE_OPTIONAL_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/optional.h                                                                                       */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes many native types and wrappers for them as well as useful macros.        */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-namespace coffe
+#ifndef __ANGSYS_H__
+#error ...
+#elif !defined __ANG_OPTIONAL_H__
+#define __ANG_OPTIONAL_H__
+
+namespace ang
 {
 
-	template<typename T, coffe::smart_type = smart_ptr_type<T>::smart_type>
+	template<typename T, ang::smart_type = smart_ptr_type<T>::smart_type>
 	struct optional
 	{
 		using type = typename smart_ptr_type<T>::type;
@@ -18,7 +30,7 @@ namespace coffe
 		}
 		optional(type_ptr&& value)
 			: m_error(error_code::success)
-			, m_result(coffe::move(value)) {
+			, m_result(ang::move(value)) {
 		}
 		optional(type_ptr const& value)
 			: m_error(error_code::success)
@@ -29,8 +41,8 @@ namespace coffe
 			, m_result() {
 		}
 		optional(optional && op)
-			: m_error(coffe::move(op.m_error))
-			, m_result(coffe::move(op.m_result)) {
+			: m_error(ang::move(op.m_error))
+			, m_result(ang::move(op.m_result)) {
 		}
 		optional(optional const& op)
 			: m_error(op.m_error)
@@ -52,7 +64,7 @@ namespace coffe
 			return m_error.code() == error_code::success;
 		}
 
-		coffe::error const& error()const {
+		ang::error const& error()const {
 			return m_error;
 		}
 
@@ -80,8 +92,8 @@ namespace coffe
 			if (this != &op)
 			{
 				reset();
-				m_error = coffe::move(op.m_error);
-				m_result = coffe::move(op.m_result);
+				m_error = ang::move(op.m_error);
+				m_result = ang::move(op.m_result);
 			}
 			return*this;
 		}
@@ -94,12 +106,12 @@ namespace coffe
 		}
 
 	private:
-		mutable coffe::error m_error;
+		mutable ang::error m_error;
 		mutable type_ptr m_result;
 	};
 
 	template<typename T>
-	struct optional<T, coffe::smart_type::none>
+	struct optional<T, ang::smart_type::none>
 	{
 		using type = typename remove_const<typename remove_reference<T>::type>::type;
 
@@ -112,7 +124,7 @@ namespace coffe
 		}
 		optional(type&& value)
 			: m_error(error_code::success)
-			, m_result(coffe::move(value)) {
+			, m_result(ang::move(value)) {
 		}
 		optional(type const& value)
 			: m_error(error_code::success)
@@ -126,8 +138,8 @@ namespace coffe
 			}
 		}
 		optional(optional && op)
-			: m_error(coffe::move(op.m_error))
-			, m_result(coffe::move(op.m_result)) {
+			: m_error(ang::move(op.m_error))
+			, m_result(ang::move(op.m_result)) {
 		}
 		optional(optional const& op)
 			: m_error(op.m_error)
@@ -149,7 +161,7 @@ namespace coffe
 			return m_error.code() == error_code::success;
 		}
 
-		coffe::error const& error()const {
+		ang::error const& error()const {
 			return m_error;
 		}
 
@@ -176,8 +188,8 @@ namespace coffe
 			if (this != &op)
 			{
 				reset();
-				m_error = coffe::move(op.m_error);
-				m_result = coffe::move(op.m_result);
+				m_error = ang::move(op.m_error);
+				m_result = ang::move(op.m_result);
 			}
 			return*this;
 		}
@@ -190,12 +202,12 @@ namespace coffe
 		}
 
 	private:
-		mutable coffe::error m_error;
+		mutable ang::error m_error;
 		mutable type m_result;
 	};
 
 	template<typename T>
-	struct optional<intf_wrapper<T>, coffe::smart_type::none>
+	struct optional<intf_wrapper<T>, ang::smart_type::none>
 	{
 		using type = typename remove_const<typename remove_reference<T>::type>::type;
 		using type_ptr = intf_wrapper<T>;
@@ -206,7 +218,7 @@ namespace coffe
 		}
 		optional(type_ptr&& value)
 			: m_error(error_code::success)
-			, m_result(coffe::move(value)) {
+			, m_result(ang::move(value)) {
 		}
 		optional(type_ptr const& value)
 			: m_error(error_code::success)
@@ -217,8 +229,8 @@ namespace coffe
 			, m_result() {
 		}
 		optional(optional && op)
-			: m_error(coffe::move(op.m_error))
-			, m_result(coffe::move(op.m_result)) {
+			: m_error(ang::move(op.m_error))
+			, m_result(ang::move(op.m_result)) {
 		}
 		optional(optional const& op)
 			: m_error(op.m_error)
@@ -240,7 +252,7 @@ namespace coffe
 			return m_error.code() == error_code::success;
 		}
 
-		coffe::error const& error()const {
+		ang::error const& error()const {
 			return m_error;
 		}
 
@@ -268,8 +280,8 @@ namespace coffe
 			if (this != &op)
 			{
 				reset();
-				m_error = coffe::move(op.m_error);
-				m_result = coffe::move(op.m_result);
+				m_error = ang::move(op.m_error);
+				m_result = ang::move(op.m_result);
 			}
 			return*this;
 		}
@@ -282,12 +294,12 @@ namespace coffe
 		}
 
 	private:
-		mutable coffe::error m_error;
+		mutable ang::error m_error;
 		mutable type_ptr m_result;
 	};
 
 	template<typename T>
-	struct optional<object_wrapper<T>, coffe::smart_type::none>
+	struct optional<object_wrapper<T>, ang::smart_type::none>
 	{
 		using type = typename remove_const<typename remove_reference<T>::type>::type;
 		using type_ptr = object_wrapper<T>;
@@ -298,7 +310,7 @@ namespace coffe
 		}
 		optional(type_ptr&& value)
 			: m_error(error_code::success)
-			, m_result(coffe::move(value)) {
+			, m_result(ang::move(value)) {
 		}
 		optional(type_ptr const& value)
 			: m_error(error_code::success)
@@ -309,8 +321,8 @@ namespace coffe
 			, m_result() {
 		}
 		optional(optional && op)
-			: m_error(coffe::move(op.m_error))
-			, m_result(coffe::move(op.m_result)) {
+			: m_error(ang::move(op.m_error))
+			, m_result(ang::move(op.m_result)) {
 		}
 		optional(optional const& op)
 			: m_error(op.m_error)
@@ -332,7 +344,7 @@ namespace coffe
 			return m_error.code() == error_code::success;
 		}
 
-		coffe::error const& error()const {
+		ang::error const& error()const {
 			return m_error;
 		}
 
@@ -359,8 +371,8 @@ namespace coffe
 			if (this != &op)
 			{
 				reset();
-				m_error = coffe::move(op.m_error);
-				m_result = coffe::move(op.m_result);
+				m_error = ang::move(op.m_error);
+				m_result = ang::move(op.m_result);
 			}
 			return*this;
 		}
@@ -373,12 +385,12 @@ namespace coffe
 		}
 
 	private:
-		mutable coffe::error m_error;
+		mutable ang::error m_error;
 		mutable type_ptr m_result;
 	};
 
 	template<typename T>
-	struct optional<T[], coffe::smart_type::none>
+	struct optional<T[], ang::smart_type::none>
 	{
 		using type = array<typename remove_const<typename remove_reference<T>::type>::type>;
 
@@ -388,7 +400,7 @@ namespace coffe
 		}
 		optional(type&& value)
 			: m_error(error_code::success)
-			, m_result(coffe::move(value)) {
+			, m_result(ang::move(value)) {
 		}
 		optional(type const& value)
 			: m_error(error_code::success)
@@ -399,8 +411,8 @@ namespace coffe
 			, m_result() {
 		}
 		optional(optional && op)
-			: m_error(coffe::move(op.m_error))
-			, m_result(coffe::move(op.m_result)) {
+			: m_error(ang::move(op.m_error))
+			, m_result(ang::move(op.m_result)) {
 		}
 		optional(optional const& op)
 			: m_error(op.m_error)
@@ -422,7 +434,7 @@ namespace coffe
 			return m_error.code() == error_code::success;
 		}
 
-		coffe::error const& error()const {
+		ang::error const& error()const {
 			return m_error;
 		}
 
@@ -449,8 +461,8 @@ namespace coffe
 			if (this != &op)
 			{
 				reset();
-				m_error = coffe::move(op.m_error);
-				m_result = coffe::move(op.m_result);
+				m_error = ang::move(op.m_error);
+				m_result = ang::move(op.m_result);
 			}
 			return*this;
 		}
@@ -463,10 +475,10 @@ namespace coffe
 		}
 
 	private:
-		mutable coffe::error m_error;
+		mutable ang::error m_error;
 		mutable type m_result;
 	};
 
 }
 
-#endif /*__COFFE_OPTIONAL_H__*/
+#endif /*__ANG_OPTIONAL_H__*/

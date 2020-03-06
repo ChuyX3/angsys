@@ -17,7 +17,7 @@
     </Expand>
   </Type>
 
-  <Type Name="ang::bean" Priority="Low">
+  <Type Name="ang::object" Priority="Low">
     <DisplayString>object</DisplayString>
     <Expand>
       <Synthetic Name="ref_count" Optional="true">

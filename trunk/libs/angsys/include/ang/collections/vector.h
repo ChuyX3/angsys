@@ -1,13 +1,25 @@
-#ifndef __COFFE_COLLECTIONS_H__
-#elif !defined __COFFE_COLLECTIONS_VECTOR_H__
-#define __COFFE_COLLECTIONS_VECTOR_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/collections/vector.h                                                                             */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes many native types and wrappers for them as well as useful macros.        */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-namespace coffe
+#ifndef __ANG_COLLECTIONS_H__
+#elif !defined __ANG_COLLECTIONS_VECTOR_H__
+#define __ANG_COLLECTIONS_VECTOR_H__
+
+namespace ang
 {
 
 	template<typename T, template<typename>class A>
 	struct smart_ptr_type<vector<T, A>, false, false> {
-		static constexpr coffe::smart_type smart_type = coffe::smart_type::none;
+		static constexpr ang::smart_type smart_type = ang::smart_type::none;
 		using smart_ptr_t = smart_vector<T>;
 		using type = collections::vector_buffer<T, A>;
 	};
@@ -21,7 +33,7 @@ namespace coffe
 		template<typename T, template<typename> class A>
 		class vector_buffer final
 			: public implement<vector_buffer<T,A>
-			, iid("coffe::collections::vector")
+			, iid("ang::collections::vector")
 			, ivariable
 			, ibuffer
 			, ibuffer_view
@@ -50,7 +62,7 @@ namespace coffe
 
 		public:
 			vector_buffer();
-			vector_buffer(const coffe::nullptr_t&);
+			vector_buffer(const ang::nullptr_t&);
 			vector_buffer(wsize sz);
 			vector_buffer(vector<typename auto_type<T>::type, A> && ar);
 			vector_buffer(vector<typename auto_type<T>::type, A> const& ar);
@@ -58,7 +70,7 @@ namespace coffe
 			vector_buffer(const vector_buffer& ar);
 			vector_buffer(const ienum_ptr<T>& store);
 			template<typename T2>
-			vector_buffer(coffe::initializer_list<T2> list);
+			vector_buffer(ang::initializer_list<T2> list);
 			template<typename T2>
 			vector_buffer(array_view<T2> const&);
 			template<typename IT>
@@ -146,7 +158,7 @@ namespace coffe
 
 
 	/******************************************************************/
-	/* template class coffe::object_wrapper<vector_buffer> :          */
+	/* template class ang::object_wrapper<vector_buffer> :          */
 	/*  -> specialization of object_wrapper<vector_buffer> -> vector  */
 	/******************************************************************/
 	template<typename T, template<typename> class A>
@@ -165,7 +177,7 @@ namespace coffe
 		object_wrapper(type* ar);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
-		object_wrapper(const coffe::nullptr_t&);
+		object_wrapper(const ang::nullptr_t&);
 		object_wrapper(data_type arr, wsize sz);
 		object_wrapper(wsize sz);
 		object_wrapper(vector<T, A> && ar);
@@ -173,9 +185,9 @@ namespace coffe
 		object_wrapper(const collections::ienum_ptr<T>& store);
 
 		template<typename T2>
-		object_wrapper(coffe::initializer_list<T2> list)
+		object_wrapper(ang::initializer_list<T2> list)
 			: m_ptr(null) {
-			set(new type(coffe::forward<coffe::initializer_list<T2>>(list)));
+			set(new type(ang::forward<ang::initializer_list<T2>>(list)));
 		}
 		template<typename T2>
 		object_wrapper(array_view<T2> const& ar)
@@ -204,7 +216,7 @@ namespace coffe
 
 	public:
 		object_wrapper& operator = (collections::vector_buffer<T, A>*);
-		object_wrapper& operator = (const coffe::nullptr_t&);
+		object_wrapper& operator = (const ang::nullptr_t&);
 
 		object_wrapper& operator = (object_wrapper &&);
 		object_wrapper& operator = (object_wrapper const&);
@@ -226,7 +238,7 @@ namespace coffe
 		object_wrapper& operator += (typename collections::auto_type<T>::arg_type && item) {
 			if (is_empty())
 				set(new collections::vector_buffer<T, A>());
-			get()->push_back(coffe::forward<typename collections::auto_type<T>::arg_type>(item));
+			get()->push_back(ang::forward<typename collections::auto_type<T>::arg_type>(item));
 			return *this;
 		}
 		object_wrapper& operator += (typename collections::auto_type<T>::arg_type const& item) {
@@ -269,6 +281,6 @@ namespace coffe
 		using setter_type = void(*)(property_class const*, arg_type);
 	};
 
-}//coffe
+}//ang
 
-#endif //__COFFE_COLLECTIONS_VECTOR_H__
+#endif //__ANG_COLLECTIONS_VECTOR_H__

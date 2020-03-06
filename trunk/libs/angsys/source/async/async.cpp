@@ -1,12 +1,11 @@
 #include "pch.h"
-#include <ang/base/base.h>
-//#include <ang/core/async.h>
+#include <ang/core/async.h>
 
 using namespace ang;
 using namespace ang::core;
 using namespace ang::core::async;
 
-//ANG_FLAGS_IMPLEMENT(ang::core::async, async_action_status);
+ANG_FLAGS_IMPLEMENT(ang::core::async, async_action_status);
 
 ////////////////////////////////////////////////////////////////
 

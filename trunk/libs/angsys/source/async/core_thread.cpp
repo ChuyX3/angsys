@@ -1,15 +1,15 @@
 #include "pch.h"
-#include <coffe/core/async.h>
+#include <ang/core/async.h>
 #include "thread_manager.h"
 
-using namespace coffe;
-using namespace coffe::core;
-using namespace coffe::core::async;
+using namespace ang;
+using namespace ang::core;
+using namespace ang::core::async;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::idispatcher);
-//COFFE_IMPLEMENT_INTERFACE_CLASS_INFO(coffe::core::async::ithread);
+//ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::idispatcher);
+//ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::core::async::ithread);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ iasync<void> thread::create_worker_thread(function<void(iasync<void>)>&& callbac
 {
 	worker_thread_t thread = new worker_thread();
 	thread->start();
-	return thread->post_task(coffe::forward<function<void(iasync<void>)>>(callback));
+	return thread->post_task(ang::forward<function<void(iasync<void>)>>(callback));
 }
 
 idispatcher_t thread::create_dispatcher_thread()
@@ -62,14 +62,15 @@ thread::~thread()
 
 }
 
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::core::async::thread);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::core::async::thread);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::core::async::thread, bean, ithread);
+//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::thread);
+//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::thread);
+//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::thread, bean, ithread);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int core_thread::entry_point(core_thread* thread)
+int core_thread::entry_point(core_thread* thread_)
 {
+	core_thread_t thread = thread_;
 	thread->attach();
 	int code = thread->dispatch();
 	thread->detach();
@@ -91,9 +92,9 @@ core_thread::~core_thread()
 
 }
 
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::core::async::core_thread);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::core::async::core_thread);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::core::async::core_thread, thread);
+//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::core_thread);
+//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::core_thread);
+//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::core_thread, thread);
 
 void core_thread::dispose()
 {

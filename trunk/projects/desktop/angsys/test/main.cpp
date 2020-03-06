@@ -2,31 +2,18 @@
 //
 
 #include <angsys.h>
-#include <string>
+#include <ang/core/async.h>
 
 using namespace ang;
 
-ANG_EXTERN ulong64 get_performance_time_us(void)
-{
-	static struct PerformanceFrequency {
-		ulong64 QuadPart;
-		PerformanceFrequency() {
-			LARGE_INTEGER _frec;
-			QueryPerformanceFrequency(&_frec);
-			QuadPart = (ulong64)_frec.QuadPart;
-		}
-	}frec;
-
-	LARGE_INTEGER count;
-	QueryPerformanceCounter(&count);
-	return  (1000000 * count.QuadPart) / frec.QuadPart; //uS
-}
-
-
 int main()
 {
-	string str = "Jesús Ángel Rocha Morales";
-	str->append(" 123456"_r);
-
+	string str;
+	auto task = core::async::create_task<string>([](core::async::iasync<string> task)->string
+	{
+		return u8"Jesús Ángel"_svm;
+	});
+	str = task->result();
+	str->append("..."_r);
 	return 0;
 }

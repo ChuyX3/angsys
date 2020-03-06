@@ -22,14 +22,14 @@ namespace ang
 			operator rtti_t*() { return ptr; }
 			operator rtti_t const*()const { return ptr; }
 
-			bool operator == (rttiptr const& info) {
+			bool operator == (rttiptr const& info)const {
 				return info->gender() == ptr->gender() &&
 					info->size() == ptr->size() &&
 					info->aligment() == ptr->aligment() &&
 					text::ascii::compare(info->type_name().cstr(), ptr->type_name().cstr()) == 0;
 			}
 
-			bool operator != (rttiptr const& info) {
+			bool operator != (rttiptr const& info)const {
 				return !operator==(info);
 			}
 		}rttiptr_t;
@@ -103,6 +103,8 @@ namespace ang
 			void deallocate(rtti_t* ptr)const {
 				A<rtti_t>::deallocate(ptr);
 			}
+
+			core::async::mutex_t& main_mutex()const { return m_mutex; }
 
 		private:
 			mutable core::async::mutex_t m_mutex;

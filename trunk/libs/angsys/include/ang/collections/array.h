@@ -1,26 +1,38 @@
-#ifndef __COFFE_COLLECTIONS_H__
-#elif !defined __COFFE_COLLECTIONS_ARRAY_H__
-#define __COFFE_COLLECTIONS_ARRAY_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/collections/array.h                                                                              */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes many native types and wrappers for them as well as useful macros.        */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-namespace coffe
+#ifndef __ANG_COLLECTIONS_H__
+#elif !defined __ANG_COLLECTIONS_ARRAY_H__
+#define __ANG_COLLECTIONS_ARRAY_H__
+
+namespace ang
 {
 	template<typename T>
 	struct smart_ptr_type<T[], false, false> {
-		static constexpr coffe::smart_type smart_type = coffe::smart_type::none;
+		static constexpr ang::smart_type smart_type = ang::smart_type::none;
 		using smart_ptr_t = smart_array<T>;
 		using type = collections::array_buffer<T>;
 	};
 
 	template<typename T, wsize N>
 	struct smart_ptr_type<T[N], false, false> {
-		static constexpr coffe::smart_type smart_type = coffe::smart_type::none;
+		static constexpr ang::smart_type smart_type = ang::smart_type::none;
 		using smart_ptr_t = smart_array<T>;
 		using type = collections::array_buffer<T>;
 	};
 
 	template<typename T, template<typename>class A>
 	struct smart_ptr_type<array<T, A>, false, false> {
-		static constexpr coffe::smart_type smart_type = coffe::smart_type::none;
+		static constexpr ang::smart_type smart_type = ang::smart_type::none;
 		using smart_ptr_t = smart_array<T>;
 		using type = collections::array_buffer<T, A>;
 	};
@@ -34,7 +46,7 @@ namespace coffe
 		template<typename T, template<typename> class A>
 		class array_buffer final
 			: public implement<array_buffer<T, A>
-			, iid("coffe::collections::array")
+			, iid("ang::collections::array")
 			, ivariable
 			, ibuffer
 			, ibuffer_view
@@ -60,7 +72,7 @@ namespace coffe
 
 		public:
 			array_buffer();
-			array_buffer(const coffe::nullptr_t&);
+			array_buffer(const ang::nullptr_t&);
 			array_buffer(wsize sz);
 			array_buffer(array<element_type, A> && ar);
 			array_buffer(array<element_type, A> const& ar);
@@ -68,7 +80,7 @@ namespace coffe
 			array_buffer(const array_buffer& ar);
 			array_buffer(const ienum_ptr<T>& store);
 			template<typename T2>
-			array_buffer(coffe::initializer_list<T2> list);
+			array_buffer(ang::initializer_list<T2> list);
 			template<typename T2>
 			array_buffer(array_view<T2> const&);
 			template<typename IT>
@@ -139,7 +151,7 @@ namespace coffe
 	}//collections
 
 	/******************************************************************/
-	/* template class coffe::object_wrapper<array_buffer> :           */
+	/* template class ang::object_wrapper<array_buffer> :           */
 	/*  -> specialization of object_wrapper<array_buffer> -> array    */
 	/******************************************************************/
 	template<typename T, template<typename> class A>
@@ -158,7 +170,7 @@ namespace coffe
 		object_wrapper(type* ar);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
-		object_wrapper(const coffe::nullptr_t&);
+		object_wrapper(const ang::nullptr_t&);
 		object_wrapper(data_type arr, wsize sz);
 		object_wrapper(wsize sz);
 		object_wrapper(array<typename collections::auto_type<T>::type, A> && ar);
@@ -166,9 +178,9 @@ namespace coffe
 		object_wrapper(const collections::ienum_ptr<T>& store);
 
 		template<typename T2>
-		object_wrapper(coffe::initializer_list<T2> list)
+		object_wrapper(ang::initializer_list<T2> list)
 			: m_ptr(null) {
-			set(new type(coffe::forward<coffe::initializer_list<T2>>(list)));
+			set(new type(ang::forward<ang::initializer_list<T2>>(list)));
 		}
 		template<typename T2>
 		object_wrapper(array_view<T2> const& ar)
@@ -178,7 +190,7 @@ namespace coffe
 		template<typename T2, wsize N>
 		object_wrapper(T2(&ar)[N])
 			: m_ptr(null) {
-			set(new type(coffe::to_array(coffe::forward<T2(&)[N]>(ar))));
+			set(new type(ang::to_array(ang::forward<T2(&)[N]>(ar))));
 		}
 		~object_wrapper();
 
@@ -197,16 +209,16 @@ namespace coffe
 
 	public:
 		object_wrapper& operator = (collections::array_buffer<T, A>*);
-		object_wrapper& operator = (const coffe::nullptr_t&);
+		object_wrapper& operator = (const ang::nullptr_t&);
 		
 		object_wrapper& operator = (object_wrapper &&);
 		object_wrapper& operator = (object_wrapper const&);
 		template<wsize N>
 		object_wrapper& operator = (typename collections::auto_type<T>::type(&ar)[N]) {
 			if (is_empty())
-				set(new collections::array_buffer<T, A>(coffe::to_array(coffe::forward<typename collections::auto_type<T>::type(&)[N]>(ar))));
+				set(new collections::array_buffer<T, A>(ang::to_array(ang::forward<typename collections::auto_type<T>::type(&)[N]>(ar))));
 			else
-				get()->copy(coffe::to_array(coffe::forward<typename collections::auto_type<T>::type(&)[N]>(ar)));
+				get()->copy(ang::to_array(ang::forward<typename collections::auto_type<T>::type(&)[N]>(ar)));
 			return *this;
 		}
 		template<typename T2>
@@ -249,7 +261,7 @@ namespace coffe
 		using setter_type = void(*)(property_class*, arg_type);
 	};
 
-}//coffe
+}//ang
 
 
-#endif //__COFFE_COLLECTIONS_ITERATORS_H__
+#endif //__ANG_COLLECTIONS_ITERATORS_H__

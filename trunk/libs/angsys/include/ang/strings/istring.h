@@ -104,8 +104,8 @@ namespace ang
 	ANG_BEGIN_INTF_WRAPPER(LINK, text::istring)
 		inline static string create_new(cstr_t cstr) { return text::istring::create_string(cstr); }
 		intf_wrapper(cstr_t cstr);
-		template<typename T, text::encoding E> inline intf_wrapper(str_view<T, E> const& cstr);
-		template<text::encoding E, template<typename> class A> inline intf_wrapper(text::fast_string<E, A>&& str);
+		//template<typename T, text::encoding E> inline intf_wrapper(str_view<T, E> const& cstr);
+		//template<text::encoding E, template<typename> class A> inline intf_wrapper(text::fast_string<E, A>&& str);
 		template<typename T, wsize N> inline intf_wrapper(const T(&cstr)[N])
 			: intf_wrapper(str_view<const T>(cstr, N - 1)) {
 		}

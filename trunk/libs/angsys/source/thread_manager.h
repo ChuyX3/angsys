@@ -1,22 +1,22 @@
 #pragma once
 
-#include <coffe/core/async.h>
+#include <ang/core/async.h>
 
-namespace coffe
+namespace ang
 {
 	namespace core
 	{
 		namespace async
 		{
-			coffe_declare_object(sync_task);
-			coffe_declare_object(thread_task);
-			coffe_declare_object(dispatcher);
-			coffe_declare_object(core_thread);
-			coffe_declare_object(worker_thread);
+			ang_declare_object(sync_task);
+			ang_declare_object(thread_task);
+			ang_declare_object(dispatcher);
+			ang_declare_object(core_thread);
+			ang_declare_object(worker_thread);
 
 			class sync_task
 				: public implement<sync_task
-				, iid("coffe::core::asyc::sync_task")
+				, iid("ang::core::asyc::sync_task")
 				, sync>
 			{
 			private: /*fields*/
@@ -39,7 +39,7 @@ namespace coffe
 
 			class thread_task
 				: public implement<thread_task
-				, iid("coffe::core::asyc::thread_task")
+				, iid("ang::core::asyc::thread_task")
 				, task>
 			{
 			public:
@@ -76,7 +76,7 @@ namespace coffe
 
 			class core_thread
 				: public implement<core_thread
-				, iid("coffe::core::asyc::core_thread")
+				, iid("ang::core::asyc::core_thread")
 				, thread>
 			{
 				friend class thread_manager;
@@ -100,6 +100,7 @@ namespace coffe
 				virtual bool detach();
 
 				virtual bool start() { return false; }
+				virtual void done(thread_task_t) {  }
 				virtual thread_task_t post_task(thread_task_t) { return null; }
 				virtual thread_task_t post_task(function<void(iasync<void>)>) { return null; }
 				virtual int dispatch() { return 0; }
@@ -119,7 +120,7 @@ namespace coffe
 
 			class worker_thread
 				: public implement<worker_thread
-				, iid("coffe::core::asyc::worker_thread")
+				, iid("ang::core::asyc::worker_thread")
 				, core_thread>
 			{
 				friend class thread_manager;
@@ -138,6 +139,7 @@ namespace coffe
 				virtual bool attach()override;
 				virtual bool detach()override;
 
+				virtual void done(thread_task_t)override;
 				virtual thread_task_t post_task(thread_task_t)override;
 				virtual thread_task_t post_task(function<void(iasync<void>)>)override;
 				virtual int dispatch()override;
@@ -156,7 +158,7 @@ namespace coffe
 
 			class dispatcher
 				: public implement<dispatcher
-				, iid("coffe::core::asyc::dispatcher")
+				, iid("ang::core::asyc::dispatcher")
 				, core_thread
 				, idispatcher>
 			{
@@ -177,6 +179,7 @@ namespace coffe
 				virtual listen_token<void(time::step_timer const&)> add_idle_event(function<void(time::step_timer const&)>)override;
 				virtual bool remove_idle_event(listen_token<void(time::step_timer const&)>)override;
 				virtual iasync<void> run_async(function<void(iasync<void>)>)override;
+				virtual void done(thread_task_t)override;
 				virtual thread_task_t post_task(thread_task_t)override;
 				virtual thread_task_t post_task(function<void(iasync<void>)>)override;
 				virtual int dispatch()override;
