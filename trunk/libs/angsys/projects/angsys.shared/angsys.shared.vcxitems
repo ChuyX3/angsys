@@ -43,6 +43,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\vector.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\core\async.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\core\files.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\core\time.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\ibuffers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\com_wrapper.hpp" />
@@ -69,8 +70,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\singleton.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\smart_ptr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\streams.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\strings\istring.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\strings\string.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\variable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\compile_config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\file_system.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\inline\encoder_bridge.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\library.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\memory_manager.h" />
@@ -89,9 +93,17 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\buffers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\collections\collections.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\errors.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\core_file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\files.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\file_system.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\input_binary_file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\input_text_file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\output_binary_file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\output_text_file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\memory_manager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\runtime.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\streams\streams.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\strings\encoder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\strings\raw_str.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\strings\string.cpp" />

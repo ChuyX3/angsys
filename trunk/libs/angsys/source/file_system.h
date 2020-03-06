@@ -1,9 +1,19 @@
-#ifndef __COFFE_FILE_SYSTEM_H__
-#define __COFFE_FILE_SYSTEM_H__
+/*********************************************************************************************************************/
+/*   File Name: file_systm.h                                                                                         */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-#include <coffe/core/files.h>
+#ifndef __ANG_FILE_SYSTEM_H__
+#define __ANG_FILE_SYSTEM_H__
 
-namespace coffe
+#include <ang/core/files.h>
+
+namespace ang
 {
 	namespace core
 	{
@@ -34,7 +44,7 @@ namespace coffe
 		{
 			class mapped_file_buffer 
 				: public implement<mapped_file_buffer
-				, iid("coffe::core::files::mapped_file_buffer")
+				, iid("ang::core::files::mapped_file_buffer")
 				, ibuffer
 				, ibuffer_view>
 			{
@@ -77,7 +87,7 @@ namespace coffe
 
 			class core_file final
 				: public implement<core_file
-				, iid("coffe::core::files::core_file")
+				, iid("ang::core::files::core_file")
 				, ifile>
 			{
 			private:
@@ -137,7 +147,7 @@ namespace coffe
 
 			class file_system
 				: public implement<file_system
-				, iid("coffe::core::files::file_system")
+				, iid("ang::core::files::file_system")
 				, ifile_system>
 			{
 			private:
@@ -173,7 +183,7 @@ namespace coffe
 
 			class folder_file_system
 				: public implement<folder_file_system
-				, iid("coffe::core::files::folder_file_system")
+				, iid("ang::core::files::folder_file_system")
 				, ifile_system>
 			{
 			private:
@@ -202,4 +212,4 @@ namespace coffe
 
 }
 
-#endif//__COFFE_FILE_SYSTEM_H__
+#endif//__ANG_FILE_SYSTEM_H__

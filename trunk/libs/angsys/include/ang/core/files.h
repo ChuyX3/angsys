@@ -1,24 +1,34 @@
-#ifndef __COFFE_CORE_FILES_H__
-#define __COFFE_CORE_FILES_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/core/files.h                                                                                     */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-#include <coffe/streams.h>
-#include <coffe/core/async.h>
+#ifndef __ANG_CORE_FILES_H__
+#define __ANG_CORE_FILES_H__
+
+#include <ang/streams.h>
+#include <ang/core/async.h>
 
 #ifdef  LINK
 #undef  LINK
 #endif//LINK
 
 #if defined WINDOWS_PLATFORM
-#if defined COFFE_DYNAMIC_LIBRARY
+#if defined ANG_DYNAMIC_LIBRARY
 
-#ifdef COFFE_EXPORTS
+#ifdef ANG_EXPORTS
 #define LINK __declspec(dllexport)
 #else
 #define LINK __declspec(dllimport)
-#endif//COFFE_EXPORTS
-#else//#elif defined COFFE_STATIC_LIBRARY
+#endif//ANG_EXPORTS
+#else//#elif defined ANG_STATIC_LIBRARY
 #define LINK
-#endif//COFFE_DYNAMIC_LIBRARY
+#endif//ANG_DYNAMIC_LIBRARY
 #elif defined LINUX_PLATFORM || defined ANDROID_PLATFORM
 #define LINK
 #else
@@ -26,23 +36,23 @@
 #endif
 
 
-namespace coffe
+namespace ang
 {
 	namespace core
 	{
 		namespace files
 		{
-			coffe_declare_interface(ifile);
-			//coffe_declare_interface(ifolder);
-			coffe_declare_interface(ifile_system);
+			ang_declare_interface(ifile);
+			//ang_declare_interface(ifolder);
+			ang_declare_interface(ifile_system);
 
-			//coffe_declare_object(path);
+			//ang_declare_object(path);
 			//typedef struct path path_t;
 
-			coffe_declare_object(input_text_file);
-			coffe_declare_object(output_text_file);
-			coffe_declare_object(input_binary_file);
-			coffe_declare_object(output_binary_file);
+			ang_declare_object(input_text_file);
+			ang_declare_object(output_text_file);
+			ang_declare_object(input_binary_file);
+			ang_declare_object(output_binary_file);
 
 			using streams::stream_mode;
 			using streams::stream_mode_t;
@@ -143,7 +153,7 @@ namespace coffe
 
 			struct nvt LINK ifile
 				: intf<ifile
-				, iid("coffe::core::files::ifile")>
+				, iid("ang::core::files::ifile")>
 			{
 				virtual stream_mode_t mode()const = 0;
 				virtual string path()const = 0;
@@ -164,7 +174,7 @@ namespace coffe
 
 			struct nvt LINK ifile_system
 				: intf<ifile_system
-				, iid("coffe::core::files::ifile_system")>
+				, iid("ang::core::files::ifile_system")>
 			{
 				static ifile_system_t instance();
 				virtual vector<string> paths(path_access_type_t access = path_access_type::read)const = 0;
@@ -199,7 +209,7 @@ namespace coffe
 	}
 }
 
-namespace coffe
+namespace ang
 {
 	namespace core
 	{
@@ -208,7 +218,7 @@ namespace coffe
 			
 			class LINK file
 				: public implement<file
-				, iid("coffe::core::files::file")>
+				, iid("ang::core::files::file")>
 			{
 			protected:
 				ifile_t m_hfile;
@@ -230,7 +240,7 @@ namespace coffe
 
 			class LINK input_text_file final
 				: public implement<input_text_file
-				, iid("coffe::core::files::input_text_file")
+				, iid("ang::core::files::input_text_file")
 				, core::files::file
 				, streams::itext_input_stream
 				, streams::iinput_stream>
@@ -249,11 +259,11 @@ namespace coffe
 				bool cursor(file_offset_t size, stream_reference_t ref)override;
 
 				wsize seek(cstr_t format)override;
-				wsize read(pointer, coffe::rtti_t const&);
+				wsize read(pointer, ang::rtti_t const&);
 				wsize read_format(cstr_t format, var_args_t&)override;
-				wsize read(text::istring_t, wsize, wsize*written = null)override;
+				wsize read(string, wsize, wsize*written = null)override;
 				wsize read(pointer, wsize, text::encoding_t, wsize*written = null)override;
-				wsize read_line(text::istring_t, array_view<const char32_t> = U"\r\n", wsize* written = null)override;
+				wsize read_line(string, array_view<const char32_t> = U"\r\n", wsize* written = null)override;
 				wsize read_line(pointer, wsize, text::encoding_t, array_view<const char32_t> = U"\r\n", wsize* written = null)override;
 
 				bool map(function<bool(ibuffer_view_t)> func, wsize = -1, file_offset_t = 0);
@@ -263,7 +273,7 @@ namespace coffe
 				template<text::encoding E, template<typename> class A>
 				wsize read(text::basic_string<E, A>& str, wsize max) {
 					if (str.is_empty()) str = "";
-					max = coffe::min(max, 1 << 10);
+					max = ang::min(max, 1 << 10);
 					str->realloc(max, false);
 					wsize written = 0;
 					auto view = str->map_buffer(0, max);
@@ -275,7 +285,7 @@ namespace coffe
 				template<text::encoding E, template<typename> class A>
 				wsize read_line(text::basic_string<E, A>& str, wsize max, array_view<const char32_t> end = U"\n\r") {
 					if (str.is_empty()) str = "";
-					max = coffe::min(max, 1 << 10);
+					max = ang::min(max, 1 << 10);
 					str->realloc(max, false);
 					wsize written = 0;
 					auto view = str->map_buffer(0, max);
@@ -299,7 +309,7 @@ namespace coffe
 
 			class LINK output_text_file final
 				: public implement<output_text_file
-				, iid("coffe::core::files::output_text_file")
+				, iid("ang::core::files::output_text_file")
 				, core::files::file
 				, streams::itext_output_stream
 				, streams::ioutput_stream>
@@ -323,7 +333,7 @@ namespace coffe
 					streams::write_text_helper<output_text_file_t, T>::write_text(this, val);
 				}
 				template<typename C, text::encoding E, typename...Ts> wsize write_format(str_view<C, E> format, Ts... args) {
-					return write_format(raw_cstr(format), var_args_t{ coffe::forward<Ts>(args)... });
+					return write_format(raw_cstr(format), var_args_t{ ang::forward<Ts>(args)... });
 				}
 			private:
 				virtual~output_text_file();
@@ -331,7 +341,7 @@ namespace coffe
 
 			class LINK input_binary_file final
 				: public implement<input_binary_file
-				, iid("coffe::core::files::input_binary_file")
+				, iid("ang::core::files::input_binary_file")
 				, core::files::file
 				, streams::ibinary_input_stream
 				, streams::iinput_stream>
@@ -364,7 +374,7 @@ namespace coffe
 
 			class LINK output_binary_file final
 				: public implement<output_binary_file
-				, iid("coffe::core::files::file")
+				, iid("ang::core::files::file")
 				, core::files::file
 				, streams::ibinary_output_stream
 				, streams::ioutput_stream>
@@ -390,14 +400,14 @@ namespace coffe
 	}
 }
 
-COFFE_ENUM_DECLARATION(LINK, coffe::core::files::file_system_priority);
-COFFE_FLAGS_DECLARATION(LINK, coffe::core::files::path_access_type);
-COFFE_FLAGS_DECLARATION(LINK, coffe::core::files::open_flags);
+ANG_ENUM_DECLARATION(LINK, ang::core::files::file_system_priority);
+ANG_FLAGS_DECLARATION(LINK, ang::core::files::path_access_type);
+ANG_FLAGS_DECLARATION(LINK, ang::core::files::open_flags);
 
 #ifdef  LINK
 #undef  LINK
 #endif//LINK
 
-//#include <coffe/core/inline/path.inl>
+//#include <ang/core/inline/path.inl>
 
-#endif//__COFFE_CORE_FILES_H__
+#endif//__ANG_CORE_FILES_H__

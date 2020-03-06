@@ -30,7 +30,7 @@ ang_library_initializer::ang_library_initializer()
 	: main_mutex()
 	, runtime_type_manager()
 	, thread_manager(null)
-//	, file_system(null)
+	, file_system(null)
 #if defined _DEBUG || defined _DEVELOPPER
 	, objects(null)
 #endif //DEBUG
@@ -54,9 +54,9 @@ ang_library_initializer::ang_library_initializer()
 
 }
 
-ang_library_initializer::	~ang_library_initializer()
+ang_library_initializer::~ang_library_initializer()
 {
-//	file_system = null;
+	file_system = null;
 	thread_manager->~thread_manager();
 	free(thread_manager);
 	thread_manager = null;
@@ -128,7 +128,7 @@ object_manager* object_manager::instance()
 }
 #endif
 
-/*
+
 core::files::ifile_system_t core::files::ifile_system::instance() {
 	auto mng = ang_library_initializer::instance();
 	return mng->main_mutex.sync([&]()->core::files::ifile_system*
@@ -138,7 +138,7 @@ core::files::ifile_system_t core::files::ifile_system::instance() {
 		return mng->file_system.get();
 	});
 }
-*/
+
 
 static const ang_uint32_t s_list[] = {
 	7u,

@@ -73,10 +73,6 @@ task::~task()
 
 }
 
-//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::task);
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::task);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::task, object, itask<void>);
-
 ////////////////////////////////////////////////////////////////////////////////////////
 
 thread_task::thread_task(core_thread_t th)
@@ -91,10 +87,6 @@ thread_task::thread_task(core_thread_t th)
 thread_task::~thread_task()
 {
 }
-
-//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::thread_task);
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::thread_task);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::thread_task, task);
 
 void thread_task::dispose()
 {

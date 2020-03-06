@@ -48,6 +48,15 @@
     <Filter Include="include files\angsys\ang\core">
       <UniqueIdentifier>{5087de36-e8dd-4529-bf0c-5aafe491c35c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include files\angsys\ang\strings">
+      <UniqueIdentifier>{4d993dbb-64a0-404f-a13d-a6b0e61646d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\streams">
+      <UniqueIdentifier>{8b065e8a-0e3e-4853-a452-be0e5bb543bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\files">
+      <UniqueIdentifier>{3c2246a1-f599-4ac9-84c3-3a3fc12196cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\angsys.h">
@@ -236,6 +245,18 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\thread_manager.h">
       <Filter>include files\headers</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\strings\istring.h">
+      <Filter>include files\angsys\ang\strings</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\strings\string.h">
+      <Filter>include files\angsys\ang\strings</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\file_system.h">
+      <Filter>include files\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\core\files.h">
+      <Filter>include files\angsys\ang\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\angsys.cpp">
@@ -309,6 +330,30 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\async\worker_thread.cpp">
       <Filter>source files\async</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\streams\streams.cpp">
+      <Filter>source files\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\core_file.cpp">
+      <Filter>source files\files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\file_system.cpp">
+      <Filter>source files\files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\files.cpp">
+      <Filter>source files\files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\input_binary_file.cpp">
+      <Filter>source files\files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\input_text_file.cpp">
+      <Filter>source files\files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\output_binary_file.cpp">
+      <Filter>source files\files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\files\output_text_file.cpp">
+      <Filter>source files\files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

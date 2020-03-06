@@ -1,23 +1,33 @@
-#ifndef __COFFE_STREAMS_H__
-#define __COFFE_STREAMS_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/streams.h                                                                                        */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-#include <coffe.h>
+#ifndef __ANG_STREAMS_H__
+#define __ANG_STREAMS_H__
+
+#include <angsys.h>
 
 #ifdef  LINK
 #undef  LINK
 #endif//LINK
 
 #if defined WINDOWS_PLATFORM
-#if defined COFFE_DYNAMIC_LIBRARY
+#if defined ANG_DYNAMIC_LIBRARY
 
-#ifdef COFFE_EXPORTS
+#ifdef ANG_EXPORTS
 #define LINK __declspec(dllexport)
 #else
 #define LINK __declspec(dllimport)
-#endif//COFFE_EXPORTS
-#else//#elif defined COFFE_STATIC_LIBRARY
+#endif//ANG_EXPORTS
+#else//#elif defined ANG_STATIC_LIBRARY
 #define LINK
-#endif//COFFE_DYNAMIC_LIBRARY
+#endif//ANG_DYNAMIC_LIBRARY
 #elif defined LINUX_PLATFORM || defined ANDROID_PLATFORM
 #define LINK
 #else
@@ -26,28 +36,28 @@
 
 #ifdef __cplusplus
 
-namespace coffe
+namespace ang
 {
 	namespace streams
 	{
 		typedef long64 stream_size_t;
 		typedef long64 stream_index_t;
 
-		coffe_declare_interface(istream);
-		coffe_declare_interface(iinput_stream);
-		coffe_declare_interface(ioutput_stream);
+		ang_declare_interface(istream);
+		ang_declare_interface(iinput_stream);
+		ang_declare_interface(ioutput_stream);
 
-		coffe_declare_interface(itext_input_stream);
-		coffe_declare_interface(itext_output_stream);
-		coffe_declare_interface(ibinary_input_stream);
-		coffe_declare_interface(ibinary_output_stream);
+		ang_declare_interface(itext_input_stream);
+		ang_declare_interface(itext_output_stream);
+		ang_declare_interface(ibinary_input_stream);
+		ang_declare_interface(ibinary_output_stream);
 
-		coffe_declare_object(string_input_stream);
+		ang_declare_object(string_input_stream);
 
-		coffe_declare_object(text_buffer_input_stream);
-		coffe_declare_object(text_buffer_output_stream);
-		coffe_declare_object(binary_buffer_input_stream);
-		coffe_declare_object(binary_buffer_output_stream);
+		ang_declare_object(text_buffer_input_stream);
+		ang_declare_object(text_buffer_output_stream);
+		ang_declare_object(binary_buffer_input_stream);
+		ang_declare_object(binary_buffer_output_stream);
 
 		declare_enum(LINK, stream_mode, byte)
 		{
@@ -86,7 +96,7 @@ namespace coffe
 
 		struct nvt LINK iinput_stream
 			: intf<iinput_stream
-			, iid("coffe::streams::iinput_stream")>
+			, iid("ang::streams::iinput_stream")>
 		{
 			virtual text::encoding_t format()const = 0;
 			virtual stream_index_t cursor()const = 0;
@@ -97,7 +107,7 @@ namespace coffe
 
 		struct nvt LINK ioutput_stream
 			: intf<ioutput_stream
-			, iid("coffe::streams::ioutput_stream")>
+			, iid("ang::streams::ioutput_stream")>
 		{
 			virtual text::encoding_t format()const = 0;
 			virtual stream_index_t cursor()const = 0;
@@ -107,7 +117,7 @@ namespace coffe
 
 		struct nvt LINK istream
 			: intf<istream
-			, iid("coffe::streams::istream")>
+			, iid("ang::streams::istream")>
 		{
 			virtual text::encoding_t format()const = 0;
 			virtual stream_index_t position()const = 0;
@@ -118,15 +128,15 @@ namespace coffe
 
 		struct nvt LINK itext_input_stream
 			: intf<itext_input_stream
-			, iid("coffe::streams::itext_input_stream")
+			, iid("ang::streams::itext_input_stream")
 			, iinput_stream>
 		{
 			virtual wsize seek(cstr_t format)= 0;
-			virtual wsize read(pointer, coffe::rtti_t const&)= 0;
+			virtual wsize read(pointer, ang::rtti_t const&)= 0;
 			virtual wsize read_format(cstr_t format, var_args_t&)= 0;
-			virtual wsize read(text::istring_t, wsize, wsize*written = null)= 0;
+			virtual wsize read(string, wsize, wsize*written = null)= 0;
 			virtual wsize read(pointer, wsize sz, text::encoding_t, wsize*written = null)= 0;
-			virtual wsize read_line(text::istring_t, array_view<const char32_t> = U"\n\r", wsize*written = null)= 0;
+			virtual wsize read_line(string, array_view<const char32_t> = U"\n\r", wsize*written = null)= 0;
 			virtual wsize read_line(pointer, wsize, text::encoding_t, array_view<const char32_t> = U"\n\r", wsize*written = null)= 0;
 			template<typename T> wsize read(T&&);
 			template<typename...Ts> wsize read_format(raw_cstr_t format, Ts&...);
@@ -134,7 +144,7 @@ namespace coffe
 		
 		struct nvt LINK itext_output_stream
 			: intf<itext_output_stream
-			, iid("coffe::streams::itext_output_stream")
+			, iid("ang::streams::itext_output_stream")
 			, ioutput_stream>
 		{
 			virtual bool command(special_command_t) = 0;
@@ -143,13 +153,13 @@ namespace coffe
 			virtual wsize write_format(cstr_t, var_args_t)= 0;
 			template<typename T> wsize write(T const&);
 			template<typename...Ts> wsize write_format(raw_cstr_t format, Ts... args) {
-				return write_format(format, var_args_t{ coffe::forward<Ts>(args)... });
+				return write_format(format, var_args_t{ ang::forward<Ts>(args)... });
 			}
 		};
 
 		struct nvt LINK ibinary_input_stream
 			: intf<ibinary_input_stream
-			, iid("coffe::streams::ibinary_input_stream")
+			, iid("ang::streams::ibinary_input_stream")
 			, iinput_stream> {
 			virtual wsize read(pointer, wsize)= 0;
 			virtual wsize read(ibuffer_t)= 0;
@@ -159,7 +169,7 @@ namespace coffe
 
 		struct nvt LINK ibinary_output_stream
 			: intf<ibinary_output_stream
-			, iid("coffe::streams::ibinary_output_stream")
+			, iid("ang::streams::ibinary_output_stream")
 			, ioutput_stream> {
 			virtual wsize write(pointer, wsize)= 0;
 			virtual wsize write(ibuffer_view_t)= 0;
@@ -168,15 +178,15 @@ namespace coffe
 
 		struct nvt LINK itext_stream
 			: intf<itext_stream
-			, iid("coffe::streams::itext_stream")
+			, iid("ang::streams::itext_stream")
 			, istream>
 		{
 			virtual wsize seek(cstr_t format)= 0;
-			virtual wsize read(pointer, coffe::rtti_t const&)= 0;
+			virtual wsize read(pointer, ang::rtti_t const&)= 0;
 			virtual wsize read_format(cstr_t format, var_args_t&)= 0;
-			virtual wsize read(text::istring_t, wsize, wsize*written = null)= 0;
+			virtual wsize read(string, wsize, wsize*written = null)= 0;
 			virtual wsize read(pointer, wsize sz, text::encoding_t, wsize*written = null)= 0;
-			virtual wsize read_line(text::istring_t, array_view<const char32_t> = U"\n\r", wsize*written = null)= 0;
+			virtual wsize read_line(string, array_view<const char32_t> = U"\n\r", wsize*written = null)= 0;
 			virtual wsize read_line(pointer, wsize, text::encoding_t, array_view<const char32_t> = U"\n\r", wsize*written = null)= 0;
 
 			virtual bool command(special_command_t) = 0;
@@ -186,7 +196,7 @@ namespace coffe
 
 			template<typename T> wsize write(T const&);
 			template<typename...Ts> wsize write_format(raw_cstr_t format, Ts... args) {
-				return write_format(format, var_args_t{ coffe::forward<Ts>(args)... });
+				return write_format(format, var_args_t{ ang::forward<Ts>(args)... });
 			}
 			template<typename T> wsize read(T&&);
 			template<typename...Ts> wsize read_format(raw_cstr_t format, Ts&...);
@@ -194,7 +204,7 @@ namespace coffe
 
 		struct nvt LINK ibinary_stream
 			: intf<ibinary_stream
-			, iid("coffe::streams::ibinary_stream")
+			, iid("ang::streams::ibinary_stream")
 			, istream>
 		{
 			virtual wsize write(pointer, wsize)= 0;
@@ -207,21 +217,11 @@ namespace coffe
 	}
 }
 
-//COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::streams::istream);
-//COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::streams::iinput_stream);
-//COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::streams::ioutput_stream);
-//COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::streams::itext_stream);
-//COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::streams::ibinary_stream);
-//COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::streams::itext_input_stream);
-//COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::streams::itext_output_stream);
-//COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::streams::ibinary_input_stream);
-//COFFE_DECLARE_CLASS_INFO_OVERRIDE(LINK, coffe::streams::ibinary_output_stream);
+ANG_ENUM_DECLARATION(LINK, ang::streams::stream_mode);
+ANG_ENUM_DECLARATION(LINK, ang::streams::stream_reference);
+ANG_ENUM_DECLARATION(LINK, ang::streams::special_command);
 
-COFFE_ENUM_DECLARATION(LINK, coffe::streams::stream_mode);
-COFFE_ENUM_DECLARATION(LINK, coffe::streams::stream_reference);
-COFFE_ENUM_DECLARATION(LINK, coffe::streams::special_command);
-
-namespace coffe
+namespace ang
 {
 	namespace streams
 	{
@@ -249,11 +249,11 @@ namespace coffe
 			bool is_eos()const override;
 			bool cursor(stream_index_t size, stream_reference_t ref)override;
 			wsize seek(cstr_t format)override;
-			wsize read(pointer ptr, coffe::rtti_t const&)override;
+			wsize read(pointer ptr, ang::rtti_t const&)override;
 			wsize read_format(cstr_t format, var_args_t&)override;
-			wsize read(text::istring_t, wsize, wsize*written = null)override;
+			wsize read(string, wsize, wsize*written = null)override;
 			wsize read(pointer, wsize sz, text::encoding_t, wsize*written = null)override;
-			wsize read_line(text::istring_t, array_view<const char32_t> = U"\n\r", wsize*written = null)override;
+			wsize read_line(string, array_view<const char32_t> = U"\n\r", wsize*written = null)override;
 			wsize read_line(pointer, wsize, text::encoding_t, array_view<const char32_t> = U"\n\r", wsize*written = null)override;
 
 		private:
@@ -270,13 +270,13 @@ namespace coffe
 		{
 		private:
 			stream_index_t m_cursor;
-			text::istring_t m_string;
+			string m_string;
 
 		public:
-			string_output_stream(text::istring_t);
+			string_output_stream(string);
 
-			void attach(text::istring_t);
-			text::istring_t data()const;
+			void attach(string);
+			string data()const;
 
 		public: //overrides	
 			virtual void dispose()override;
@@ -295,7 +295,7 @@ namespace coffe
 	}
 }
 
-namespace coffe
+namespace ang
 {
 	namespace streams
 	{
@@ -310,7 +310,7 @@ namespace coffe
 				readed = read_format_helper<S, Ts...>::read_format(stream, format, va, as...);
 				var v;
 				va.pop_back(v);
-				a = coffe::move(v.get<T>());
+				a = ang::move(v.get<T>());
 				return readed;
 			}
 		};
@@ -325,14 +325,14 @@ namespace coffe
 
 		template<typename S, typename T> struct read_text_helper {
 			static wsize read(S, T const&) {
-				static_assert(coffe::is_lvalue_reference<T>::value, "can't writte to rvalue reference");
+				static_assert(ang::is_lvalue_reference<T>::value, "can't writte to rvalue reference");
 				return 0;
 			}
 		};
 
 		template<typename S, typename T> struct read_text_helper<S, T&> {
 			static wsize read(S stream, T& val) {
-				return stream->read(pointer(&val), coffe::type_of<T>());
+				return stream->read(pointer(&val), ang::type_of<T>());
 			}
 		};
 
@@ -380,7 +380,7 @@ namespace coffe
 
 		template<typename T>
 		wsize itext_input_stream::read(T&& val) {
-			return read_text_helper<itext_input_stream*, T>::read(this, coffe::forward<T>(val));
+			return read_text_helper<itext_input_stream*, T>::read(this, ang::forward<T>(val));
 		}
 
 		template<typename...Ts>
@@ -484,7 +484,7 @@ namespace coffe
 
 		template<typename T>
 		itext_input_stream_t& operator >> (itext_input_stream_t& stream, T&& val) {
-			stream->read(coffe::forward<T>(val));
+			stream->read(ang::forward<T>(val));
 			return stream;
 		}
 
@@ -503,4 +503,4 @@ namespace coffe
 #undef  LINK
 #endif//LINK
 
-#endif//__COFFE_STREAMS_H__
+#endif//__ANG_STREAMS_H__

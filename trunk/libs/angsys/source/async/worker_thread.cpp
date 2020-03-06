@@ -19,10 +19,6 @@ worker_thread::~worker_thread()
 {
 }
 
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::worker_thread);
-//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::worker_thread);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::worker_thread, core_thread);
-
 void worker_thread::dispose()
 {
 	core_thread::dispose();

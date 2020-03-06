@@ -117,79 +117,57 @@ string istring::create_string(cstr_t cstr)
 
 #define MY_ENCODING ang::text::encoding::ascii
 #include "inline/string_implement.inl"
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_string_buffer<MY_ENCODING>);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO_OVERRIDE(ang::text::basic_string_buffer<MY_ENCODING>, "ang::text::ascii_string"_sv);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer<MY_ENCODING>, ibuffer_view);
 #undef MY_ENCODING
 
 #define MY_ENCODING ang::text::encoding::unicode
 #include "inline/string_implement.inl"
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_string_buffer<MY_ENCODING>);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO_OVERRIDE(ang::text::basic_string_buffer<MY_ENCODING>, "ang::text::unicode_string"_sv);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer<MY_ENCODING>, ibuffer_view);
 #undef MY_ENCODING
 
 #define MY_ENCODING ang::text::encoding::utf8
 #include "inline/string_implement.inl"
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_string_buffer<MY_ENCODING>);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO_OVERRIDE(ang::text::basic_string_buffer<MY_ENCODING>, "ang::text::utf8_string"_sv);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer<MY_ENCODING>, ibuffer_view);
 #undef MY_ENCODING
 
 #define MY_ENCODING ang::text::encoding::utf16
 #include "inline/string_implement.inl"
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_string_buffer<MY_ENCODING>);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO_OVERRIDE(ang::text::basic_string_buffer<MY_ENCODING>, "ang::text::string16"_sv);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer<MY_ENCODING>, ibuffer_view);
 #undef MY_ENCODING
 
 #define MY_ENCODING ang::text::encoding::utf16_le
 #include "inline/string_implement.inl"
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_string_buffer<MY_ENCODING>);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO_OVERRIDE(ang::text::basic_string_buffer<MY_ENCODING>, "ang::text::string16_le"_sv);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer<MY_ENCODING>, ibuffer_view);
 #undef MY_ENCODING
 
 #define MY_ENCODING ang::text::encoding::utf16_be
 #include "inline/string_implement.inl"
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_string_buffer<MY_ENCODING>);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO_OVERRIDE(ang::text::basic_string_buffer<MY_ENCODING>, "ang::text::string16_be"_sv);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer<MY_ENCODING>, ibuffer_view);
 #undef MY_ENCODING
 
 #define MY_ENCODING ang::text::encoding::utf16_se
 #include "inline/string_implement.inl"
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_string_buffer<MY_ENCODING>);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO_OVERRIDE(ang::text::basic_string_buffer<MY_ENCODING>, "ang::text::string16_se"_sv);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer<MY_ENCODING>, ibuffer_view);
 #undef MY_ENCODING
 
 #define MY_ENCODING ang::text::encoding::utf32
 #include "inline/string_implement.inl"
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_string_buffer<MY_ENCODING>);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO_OVERRIDE(ang::text::basic_string_buffer<MY_ENCODING>, "ang::text::string32"_sv);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer<MY_ENCODING>, ibuffer_view);
 #undef MY_ENCODING
 
 #define MY_ENCODING ang::text::encoding::utf32_le
 #include "inline/string_implement.inl"
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_string_buffer<MY_ENCODING>);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO_OVERRIDE(ang::text::basic_string_buffer<MY_ENCODING>, "ang::text::string32_le"_sv);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer<MY_ENCODING>, ibuffer_view);
 #undef MY_ENCODING
 
 #define MY_ENCODING ang::text::encoding::utf32_be
 #include "inline/string_implement.inl"
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_string_buffer<MY_ENCODING>);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO_OVERRIDE(ang::text::basic_string_buffer<MY_ENCODING>, "ang::text::string_be"_sv);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer<MY_ENCODING>, ibuffer_view);
 #undef MY_ENCODING
 
 #define MY_ENCODING ang::text::encoding::utf32_se
 #include "inline/string_implement.inl"
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::text::basic_string_buffer<MY_ENCODING>);
 ANG_IMPLEMENT_OBJECT_CLASS_INFO_OVERRIDE(ang::text::basic_string_buffer<MY_ENCODING>, "ang::text::string32_se"_sv);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::text::basic_string_buffer<MY_ENCODING>, ibuffer_view);
 #undef MY_ENCODING
 
 #undef MY_ALLOCATOR

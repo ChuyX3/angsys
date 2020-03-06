@@ -18,10 +18,6 @@ dispatcher::~dispatcher()
 {
 }
 
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::dispatcher);
-//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::dispatcher);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::dispatcher, core_thread, idispatcher);
-
 void dispatcher::dispose()
 {
 	m_idle_event.clear();

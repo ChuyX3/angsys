@@ -62,10 +62,6 @@ thread::~thread()
 
 }
 
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::thread);
-//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::thread);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::thread, bean, ithread);
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int core_thread::entry_point(core_thread* thread_)
@@ -91,10 +87,6 @@ core_thread::~core_thread()
 {
 
 }
-
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::async::core_thread);
-//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::async::core_thread);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::async::core_thread, thread);
 
 void core_thread::dispose()
 {
