@@ -7,6 +7,7 @@ using namespace ang;
 static collections::pair<error_code, castr_t> def_except[] = {
 	{ error_code::success, "success"_sv },
 	{ error_code::unknown, "unkown error"_sv },
+	{ error_code::unimplemented, "this feature is not implemented yet..."_sv },
 	{ error_code::unsupported, "the current platform do not support this feature..."_sv },
 	{ error_code::invalid_memory, "there has been an invalid memory accessing"_sv },
 	{ error_code::invalid_access, "the operation is not allowed"_sv },
@@ -49,8 +50,8 @@ error::error(error_code_t const& type)
 	m_message = type.to_string();
 }
 
-error::error(dword errorCode, castr_t msg)
-	: m_code(error_code::custom)
+error::error(dword errorCode, castr_t msg, error_code_t err)
+	: m_code(err)
 	, m_info(errorCode)
 	, m_message(null)
 {

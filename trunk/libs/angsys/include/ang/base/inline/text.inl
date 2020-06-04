@@ -413,10 +413,11 @@ namespace ang
 			while(beg < end) {		
 				j = 0;
 				c2 = to_char32<false, SWAP2>((other_native_cstr_t)(other_cstr_t)second, j);
+				//c1 = to_char32<false, SWAP1>(temp);
 				while (temp < end && (c1 = to_char32<false, SWAP1>(temp)) != c2)
 					beg = temp;
 
-				if (temp >= end)
+				if (beg >= end)
 					break;
 				i = 0;
 				k = j;

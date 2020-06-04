@@ -1,9 +1,21 @@
-#ifndef __COFFE_DOM_XML_H__
-#error ...
-#elif !defined __COFFE_DOM_XML_IXML_ITEMS_H__
-#define __COFFE_DOM_XML_IXML_ITEMS_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/dom/xml/ixml_items.h                                                                             */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes classes for the use of xml files                                         */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-namespace coffe
+#ifndef __ANG_DOM_XML_H__
+#error ...
+#elif !defined __ANG_DOM_XML_IXML_ITEMS_H__
+#define __ANG_DOM_XML_IXML_ITEMS_H__
+
+namespace ang
 {
 	namespace dom
 	{
@@ -11,7 +23,7 @@ namespace coffe
 		{
 			struct ixml_items
 				: intf<ixml_items
-				, iid("coffe::dom::xml::ixml_items")
+				, iid("ang::dom::xml::ixml_items")
 				, ixml_finder
 				, ixml_enum>
 			{
@@ -77,7 +89,7 @@ namespace coffe
 		}
 	}
 
-	COFFE_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_enum)
+	ANG_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_enum)
 		dom::xml::xml_forward_iterator_t begin();
 		dom::xml::xml_forward_iterator_t end();
 		dom::xml::xml_const_forward_iterator_t begin()const;
@@ -87,9 +99,9 @@ namespace coffe
 		dom::xml::xml_backward_iterator_t rend();
 		dom::xml::xml_const_backward_iterator_t rbegin()const;
 		dom::xml::xml_const_backward_iterator_t rend()const;
-	COFFE_END_INTF_WRAPPER();
+	ANG_END_INTF_WRAPPER();
 
-	COFFE_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_items)
+	ANG_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_items)
 		dom::xml::xml_forward_iterator_t begin();
 		dom::xml::xml_forward_iterator_t end();
 		dom::xml::xml_const_forward_iterator_t begin()const;
@@ -100,8 +112,8 @@ namespace coffe
 		dom::xml::xml_const_backward_iterator_t rbegin()const;
 		dom::xml::xml_const_backward_iterator_t rend()const;
 		dom::xml::ixml_node_t operator[](cstr_t cstr)const;
-	COFFE_END_INTF_WRAPPER();
+	ANG_END_INTF_WRAPPER();
 
 }
 
-#endif//__COFFE_DOM_XML_IXML_ITEMS_H__
+#endif//__ANG_DOM_XML_IXML_ITEMS_H__

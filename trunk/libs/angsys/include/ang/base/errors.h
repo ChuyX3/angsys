@@ -21,6 +21,7 @@ namespace ang
 		success = 0,
 		none_error = success,
 		unknown,
+		unimplemented,
 		unsupported,
 		invalid_memory,
 		invalid_access,
@@ -33,6 +34,7 @@ namespace ang
 		operation_canceled,
 		item_not_found,
 		file_not_found,
+		system_error,
 		custom = ~0U,
 	};
 
@@ -41,7 +43,7 @@ namespace ang
 		error();
 		error(error const&);
 		error(error_code_t const& type);
-		error(dword info, castr_t msg);
+		error(dword info, castr_t msg, error_code_t = error_code::custom);
 		error(castr_t msg);
 		~error();
 

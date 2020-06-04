@@ -1,14 +1,5 @@
-/*********************************************************************************************************************/
-/*   File Name: xml_document_builder.cpp                                                                             */
-/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
-/*   Copyright (C) coffe sys, Jesus Angel Rocha Morales                                                              */
-/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
-/*   to whom the Software is furnished to do so.                                                                     */
-/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
-/*                                                                                                                   */
-/*********************************************************************************************************************/
 #include "pch.h"
-#include "coffe/dom/xml.h"
+#include "ang/dom/xml.h"
 #include "xml/xml_impl.h"
 
 #if defined _DEBUG
@@ -20,18 +11,18 @@
 #endif
 
 
-using namespace coffe;
-using namespace coffe::dom::xml;
+using namespace ang;
+using namespace ang::dom::xml;
 
 
 xml_iterator_t xml_document::current()const
 {
-	return m_cursor.child();
+	return m_cursor.current();
 }
 
 ixml_node_t xml_document::current_element()const
 {
-	return m_cursor.child_node().get();
+	return m_cursor.current_node().get();
 }
 
 bool xml_document::move_to(xml_iterator_t it)
@@ -86,8 +77,10 @@ ixml_text_t xml_document::create_pcdata(cstr_t value)const
 	return xml_text_factory::create_text(m_encoding, value);
 }
 
-void xml_document::push_header(cstr_t version, nullable<bool> standalone)
+void xml_document::push_header(xml_encoding_t e, cstr_t version, nullable<bool> standalone)
 {
+	clear(); //new document
+	m_encoding = e;
 	m_version = create_pcdata(version);
 	m_stand_alone = standalone.is_empty() ? stand_alone_none
 		: standalone->get() ? stand_alone_true : stand_alone_false;

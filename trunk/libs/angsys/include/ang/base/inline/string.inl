@@ -163,6 +163,16 @@ inline ang::text::fast_string<E, A>& ang::text::fast_string<E, A>::operator += (
 	return *this;
 }
 
+template<ang::text::encoding E, template<typename>class A> template<typename index_t>
+inline typename ang::text::fast_string<E, A>::type& ang::text::fast_string<E, A>::operator[](index_t const& i) {
+	return str()[i];
+}
+
+template<ang::text::encoding E, template<typename>class A> template<typename index_t>
+inline typename ang::text::fast_string<E, A>::type const& ang::text::fast_string<E, A>::operator[](index_t const& i)const {
+	return cstr()[i];
+}
+
 template<ang::text::encoding E, template<typename>class A>
 inline ang::text::fast_string<E, A>::operator typename ang::text::fast_string<E, A>::view_t() { return str(); }
 
@@ -174,6 +184,24 @@ inline ang::text::fast_string<E, A>::operator ang::raw_str_t() { return str(); }
 
 template<ang::text::encoding E, template<typename>class A>
 inline ang::text::fast_string<E, A>::operator ang::raw_cstr_t()const { return cstr(); }
+
+
+template<ang::text::encoding E, template<typename>class A>
+inline void ang::text::fast_string<E, A>::attach(view_t value) {
+	clear();
+	m_data.m_storage_type = storage_type_attached;
+	m_data.m_attached_buffer = value.str();
+	m_data.m_attached_length = value.size();
+	m_data.m_attached_capacity = 0;
+}
+
+template<ang::text::encoding E, template<typename>class A>
+inline void ang::text::fast_string<E, A>::attach(cview_t value) {
+	m_data.m_storage_type = storage_type_attached;
+	m_data.m_attached_buffer = (ptr_t)value.cstr();
+	m_data.m_attached_length = value.size();
+	m_data.m_attached_capacity = 0;
+}
 
 template<ang::text::encoding E, template<typename>class A>
 inline void ang::text::fast_string<E, A>::move(ang::text::fast_string<E, A>& value) {
@@ -204,6 +232,9 @@ template<ang::text::encoding E, template<typename>class A>
 inline void ang::text::fast_string<E, A>::length(wsize len) {
 	if (m_data.m_storage_type == storage_type_allocated) {
 		m_data.m_allocated_length = min(len, m_data.m_allocated_capacity);
+	}
+	else if(m_data.m_storage_type == storage_type_attached) {
+		m_data.m_attached_length = len;
 	}
 	else {
 		m_data.m_stack_length = min(len, CAPACITY - 1);
@@ -247,21 +278,23 @@ inline void ang::text::fast_string<E, A>::clear() {
 
 template<ang::text::encoding E, template<typename>class A>
 inline wsize ang::text::fast_string<E, A>::length()const {
-	return m_data.m_storage_type == storage_type_allocated ? m_data.m_allocated_length : m_data.m_stack_length;
+	return m_data.m_storage_type == storage_type_allocated ? m_data.m_allocated_length
+		: m_data.m_storage_type == storage_type_attached ? m_data.m_attached_length
+		: m_data.m_stack_length;
 }
 
 template<ang::text::encoding E, template<typename>class A>
 inline typename ang::text::fast_string<E, A>::view_t ang::text::fast_string<E, A>::str() {
-	return m_data.m_storage_type == storage_type_allocated ?
-		view_t(m_data.m_allocated_buffer, m_data.m_allocated_length) :
-		view_t(m_data.m_stack_length ? m_data.m_stack_buffer : null, m_data.m_stack_length);
+	return m_data.m_storage_type == storage_type_allocated ? view_t(m_data.m_allocated_buffer, m_data.m_allocated_length)
+		: m_data.m_storage_type == storage_type_attached ? view_t(m_data.m_attached_buffer, m_data.m_attached_length)
+		: view_t(m_data.m_stack_length ? m_data.m_stack_buffer : null, m_data.m_stack_length);
 }
 
 template<ang::text::encoding E, template<typename>class A>
 inline typename ang::text::fast_string<E, A>::cview_t ang::text::fast_string<E, A>::cstr()const {
-	return m_data.m_storage_type == storage_type_allocated ?
-		cview_t(m_data.m_allocated_buffer, m_data.m_allocated_length) :
-		cview_t(m_data.m_stack_length ? m_data.m_stack_buffer : null, m_data.m_stack_length);
+	return m_data.m_storage_type == storage_type_allocated ? cview_t(m_data.m_allocated_buffer, m_data.m_allocated_length)
+		: m_data.m_storage_type == storage_type_attached ? cview_t(m_data.m_attached_buffer, m_data.m_attached_length)
+		: cview_t(m_data.m_stack_length ? m_data.m_stack_buffer : null, m_data.m_stack_length);
 }
 
 template<ang::text::encoding E, template<typename>class A>

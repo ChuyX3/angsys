@@ -172,6 +172,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Update="D:\ja_ro\Documents\GitHub\angsys\trunk\libs\angsys\projects\angsys.shared\utilities\aany.natvis">
+      <FileType>Document</FileType>
+    </Natvis>
+    <Natvis Update="D:\ja_ro\Documents\GitHub\angsys\trunk\libs\angsys\projects\angsys.shared\utilities\ang_base.natvis">
+      <FileType>Document</FileType>
+    </Natvis>
+    <Natvis Update="D:\ja_ro\Documents\GitHub\angsys\trunk\libs\angsys\projects\angsys.shared\utilities\ansys.natvis">
+      <FileType>Document</FileType>
+    </Natvis>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

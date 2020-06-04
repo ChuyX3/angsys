@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010"> 
+
+  <Type Name="ang::dom::xml::xml_text&lt;*&gt;">
+    <DisplayString>{*(fast_string_t*)this,nd}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(fast_string_t*)this,nd</ExpandedItem>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::dom::xml::xml_node">
+    <DisplayString Optional="true" Condition="m_type.m_value == 8U">xmlns:{m_name} = {m_content}</DisplayString>
+    <DisplayString Optional="true" Condition="m_type.m_value == 7U">{m_name} = {m_content}</DisplayString>
+    <DisplayString Optional="true" Condition="m_type.m_value == 6U">&lt;!--{m_content}--&gt;</DisplayString>
+    <DisplayString Optional="true" Condition="m_type.m_value == 5U">&lt;{m_name}/&gt;</DisplayString>
+    <DisplayString Optional="true" Condition="m_type.m_value == 3U">&lt;![CDATA[ ... ]]&gt;</DisplayString>
+    <DisplayString Optional="true" Condition="m_type.m_value == 10U">&lt;...&gt;</DisplayString>
+    <DisplayString>xml_node</DisplayString>
+   
+    <Expand>
+      <ExpandedItem Optional="true" Condition="m_type.m_value == 10U &amp;&amp; m_content.m_current == 1">m_content.m_data.m_rest.m_first</ExpandedItem>
+      
+      <Item Name="[name]" Optional="true" ExcludeView="simple" Condition="m_name.m_ptr != 0 &amp;&amp; m_type.m_value != 9U &amp;&amp; m_type.m_value != 10U" >m_name</Item>
+      <Item Name="[attributes]" Optional="true" ExcludeView="simple" Condition="m_attribs.m_ptr != 0">*m_attribs.m_ptr</Item>
+      <Item Name="[value]" Optional="true" ExcludeView="simple" Condition="m_type.m_value != 10U &amp;&amp;  m_content.m_current == 0">m_content.m_data.m_first</Item>
+      <Item Name="[children]" Optional="true" ExcludeView="simple" Condition="m_type.m_value != 10U &amp;&amp;  m_content.m_current == 1">m_content.m_data.m_rest.m_first</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::dom::xml::xml_list">
+    <DisplayString>&lt;...&gt;</DisplayString>
+    <Expand>
+      <Item Name="[count]" ExcludeView="simple">m_size</Item>
+      <LinkedListItems>
+        <Size>m_size</Size>
+        <HeadPointer>m_first.m_ptr</HeadPointer>
+        <NextPointer>m_next_sibling.m_ptr</NextPointer>
+        <ValueNode>*this</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+  
+  <Type Name="ang::dom::xml::xml_document">
+    <DisplayString>&lt;?xml ... ?&gt;</DisplayString>
+    <Expand>
+      <Item Name="[version]" ExcludeView="simple">m_version</Item>
+      <Item Name="[encoding]" ExcludeView="simple">m_encoding</Item>
+      <Item Name="[standalone]" ExcludeView="simple" Condition="m_stand_alone != -1">m_stand_alone</Item>
+      <Item Name="[root]" ExcludeView="simple" Condition="m_root.m_ptr != 0">m_items</Item>
+    </Expand>
+  </Type>
+
+</AutoVisualizer>

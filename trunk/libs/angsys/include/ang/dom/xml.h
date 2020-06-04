@@ -1,54 +1,52 @@
 /*********************************************************************************************************************/
-/*   File Name: coffe/dom/xml.h                                                                                        */
+/*   File Name: ang/dom/xml.h                                                                                        */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
 /*   File description: this file is exposes classes for the use of xml files                                         */
 /*                                                                                                                   */
-/*   Copyright (C) coffe sys, Jesus Angel Rocha Morales                                                                 */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
 /*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
 /*   to whom the Software is furnished to do so.                                                                     */
 /*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
 /*                                                                                                                   */
 /*********************************************************************************************************************/
 
-#ifndef __COFFE_DOM_XML_H__
-#define __COFFE_DOM_XML_H__
+#ifndef __ANG_DOM_XML_H__
+#define __ANG_DOM_XML_H__
 
-#include <coffe.h>
-#include <coffe/core/files.h>
+#include <angsys.h>
+#include <ang/core/files.h>
 
 #ifdef  LINK
 #undef  LINK
 #endif//LINK
 
 #if defined WINDOWS_PLATFORM
-#if defined COFFE_DYNAMIC_LIBRARY
+#if defined ANG_DYNAMIC_LIBRARY
 
-#ifdef COFFE_EXPORTS
+#ifdef ANG_EXPORTS
 #define LINK __declspec(dllexport)
 #else
 #define LINK __declspec(dllimport)
-#endif//COFFE_EXPORTS
-#else//#elif defined COFFE_STATIC_LIBRARY
+#endif//ANG_EXPORTS
+#else//#elif defined ANG_STATIC_LIBRARY
 #define LINK
-#endif//COFFE_DYNAMIC_LIBRARY
+#endif//ANG_DYNAMIC_LIBRARY
 #elif defined LINUX_PLATFORM || defined ANDROID_PLATFORM
 #define LINK
 #endif
 
-namespace coffe
+namespace ang
 {
 	namespace dom
 	{
 		namespace xml
 		{
-			coffe_declare_interface(ixml_node);
-			coffe_declare_interface(ixml_text);
-			coffe_declare_interface(ixml_items);
-			coffe_declare_interface(ixml_document);
-			coffe_declare_interface(ixml_document_builder);
-			coffe_declare_interface(ixml_streamer);
-
-
+			ang_declare_interface(ixml_node);
+			ang_declare_interface(ixml_text);
+			ang_declare_interface(ixml_items);
+			ang_declare_interface(ixml_document);
+			ang_declare_interface(ixml_document_builder);
+			ang_declare_interface(ixml_streamer);
 
 			typedef collections::ienum<ixml_node> ixml_enum;
 			typedef collections::ienum_ptr<ixml_node> ixml_enum_t;
@@ -70,16 +68,16 @@ namespace coffe
 			declare_enum(LINK, xml_type, byte)
 			{
 				abstract = 0,
-				document,
-				text,
-				cdata,
-				node,
-				element,
-				comment,
-				attribute,
-				name_space,
-				element_list,
-				attribute_list,
+				document, //= 1
+				text, //= 2
+				cdata, // =3
+				node, //= 4
+				element, //= 5
+				comment, //= 6
+				attribute, //= 7
+				name_space, //= 8
+				element_list, //= 9
+				attribute_list, //= 10
 				
 			};
 
@@ -93,22 +91,35 @@ namespace coffe
 		}
 	}
 
-	COFFE_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_document)
-		dom::xml::ixml_node_t operator[](cstr_t)const;
-	COFFE_END_INTF_WRAPPER();
+	ANG_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_text)
+		operator cstr_t()const;
+		char32_t operator [](windex)const;
+		inline bool operator == (dom::xml::ixml_text_t cstr)const { return (cstr_t)*this == (cstr_t)cstr; }
+		inline bool operator != (dom::xml::ixml_text_t cstr)const { return (cstr_t)*this != (cstr_t)cstr; }
+		inline bool operator >= (dom::xml::ixml_text_t cstr)const { return (cstr_t)*this >= (cstr_t)cstr; }
+		inline bool operator <= (dom::xml::ixml_text_t cstr)const { return (cstr_t)*this <= (cstr_t)cstr; }
+		inline bool operator > (dom::xml::ixml_text_t cstr)const { return (cstr_t)*this > (cstr_t)cstr; }
+		inline bool operator < (dom::xml::ixml_text_t cstr)const { return (cstr_t)*this > (cstr_t)cstr; }
+		inline bool operator == (ang::nullptr_t const&)const { return m_ptr == null; }
+		inline bool operator != (ang::nullptr_t const&)const { return m_ptr != null; }
+	ANG_END_INTF_WRAPPER();
 
-	COFFE_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_node)
+	ANG_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_document)
+		dom::xml::ixml_node_t operator[](cstr_t)const;
+	ANG_END_INTF_WRAPPER();
+
+	ANG_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_node)
 		operator dom::xml::ixml_text_t()const;
 		dom::xml::ixml_node_t operator[](cstr_t)const;
-	COFFE_END_INTF_WRAPPER();
+	ANG_END_INTF_WRAPPER();
 }
 
-#include <coffe/dom/xml/ixml_text.h>
-#include <coffe/dom/xml/ixml_node.h>
-#include <coffe/dom/xml/ixml_items.h>
-#include <coffe/dom/xml/ixml_document.h>
+#include <ang/dom/xml/ixml_text.h>
+#include <ang/dom/xml/ixml_node.h>
+#include <ang/dom/xml/ixml_items.h>
+#include <ang/dom/xml/ixml_document.h>
 
-namespace coffe
+namespace ang
 {
 	namespace dom
 	{
@@ -118,7 +129,7 @@ namespace coffe
 			struct xml_text_as_helper : false_type
 			{
 				static inline T parse(ixml_text const* cstr) {
-					throw_exception(error_code::unsupported);
+					throw_exception(error_code::unimplemented);
 					return T();
 				}
 			};
@@ -153,11 +164,11 @@ namespace coffe
 	}
 }
 
-COFFE_ENUM_DECLARATION(LINK, coffe::dom::xml::xml_type);
-COFFE_FLAGS_DECLARATION(LINK, coffe::dom::xml::xml_format);
+ANG_ENUM_DECLARATION(LINK, ang::dom::xml::xml_type);
+ANG_FLAGS_DECLARATION(LINK, ang::dom::xml::xml_format);
 
 #ifdef  LINK
 #undef  LINK
 #endif//LINK
 
-#endif//__COFFE_DOM_XML_H__
+#endif//__ANG_DOM_XML_H__

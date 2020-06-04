@@ -192,7 +192,7 @@ namespace ang
 
 	template<text::encoding E, template<typename>class A>
 	struct ivariant_setter<text::fast_string<E, A>> {
-		static bool set(ivariable* var, cstr_view<typename text::char_type_by_encoding<E>::char_t,E> const& cstr) {
+		static bool set(ivariable* var, cstr_view<typename text::char_type_by_encoding<E>::char_type,E> const& cstr) {
 			return var->set_value(type_of<array_view<T>>(), (void*)(&ar));
 		}
 	};

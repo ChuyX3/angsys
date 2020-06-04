@@ -1,18 +1,31 @@
+/*********************************************************************************************************************/
+/*   File Name: xml_text.h                                                                                           */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes classes for the use of xml files                                         */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
+
+
 #pragma once
-namespace coffe
+namespace ang
 {
 	namespace dom
 	{
 		namespace xml
 		{
 			template<typename EP> struct xml_text_factory_base;
-
+			
 			using xml_text_factory = xml_text_factory_base<value_pack_from_range<text::encoding, text::encoding::ascii, text::encoding::utf32_be>::type>;
 
 			template<text::encoding E>
 			class xml_text
 				: public implement<xml_text<E>
-				, iid("coffe::dom::xml_text")
+				, iid("ang::dom::xml_text")
 				, ixml_text, text::istring>
 				, public fast_string<E>
 			{
@@ -20,9 +33,9 @@ namespace coffe
 				static constexpr text::encoding ENCODING = E;
 				typedef text::text_encoder<ENCODING> encoder;
 				typedef fast_string<E> fast_string;
-				typedef typename text::char_type_by_encoding<ENCODING>::char_t type;
-				typedef typename text::char_type_by_encoding<ENCODING>::str_t ptr_t;
-				typedef typename text::char_type_by_encoding<ENCODING>::cstr_t cptr_t;
+				typedef typename text::char_type_by_encoding<ENCODING>::char_type type;
+				typedef typename text::char_type_by_encoding<ENCODING>::str_type ptr_t;
+				typedef typename text::char_type_by_encoding<ENCODING>::cstr_type cptr_t;
 				typedef str_view<type, ENCODING> view_t;
 				typedef str_view<const type, ENCODING> cview_t;
 

@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "xml/xml_impl.h"
 
-using namespace coffe;
-using namespace coffe::dom;
-using namespace coffe::dom::xml;
+using namespace ang;
+using namespace ang::dom;
+using namespace ang::dom::xml;
 
 
 xml_attribs::xml_attribs()
@@ -86,7 +86,7 @@ ixml_attbs_t& xml_attribs::operator = (xml::ixml_items* ptr)
 	return*this;
 }
 
-ixml_attbs_t& xml_attribs::operator = (coffe::nullptr_t const&) {
+ixml_attbs_t& xml_attribs::operator = (ang::nullptr_t const&) {
 	reset();
 	return*this;
 }

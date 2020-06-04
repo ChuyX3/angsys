@@ -1,14 +1,5 @@
-/*********************************************************************************************************************/
-/*   File Name: xml.cpp                                                                                           */
-/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
-/*   Copyright (C) coffe sys, Jesus Angel Rocha Morales                                                                 */
-/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
-/*   to whom the Software is furnished to do so.                                                                     */
-/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
-/*                                                                                                                   */
-/*********************************************************************************************************************/
 #include "pch.h"
-#include "coffe/dom/xml.h"
+#include "ang/dom/xml.h"
 #include "xml/xml_impl.h"
 
 #if defined _DEBUG
@@ -20,8 +11,23 @@
 #endif
 
 
-using namespace coffe;
-using namespace coffe::dom::xml;
+using namespace ang;
+using namespace ang::dom::xml;
+
+optional<ixml_document> dom::xml::xml_document_from_file(core::files::input_text_file_t file)
+{
+	xml_document_t doc = new xml_document();
+	
+	auto err = doc->load(file);
+	if (err.code() == error_code::success)
+		return doc.get();
+	return err;
+}
+
+ixml_document_t dom::xml::xml_document_create(xml_encoding_t e)
+{
+	return new xml_document(e);
+}
 
 xml_document_iterator::xml_document_iterator()
 	: m_doc(null)

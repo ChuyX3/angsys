@@ -2,18 +2,22 @@
 //
 
 #include <angsys.h>
-#include <ang/core/async.h>
+#include <ang/dom/xml.h>
 
 using namespace ang;
 
 int main()
 {
-	string str;
-	auto task = core::async::create_task<string>([](core::async::iasync<string> task)->string
+	dom::xml::xml_type_t type = dom::xml::xml_type::element;
+
+	core::files::input_text_file_t file = new core::files::input_text_file();
+	file->open("./resources/fx_library.xml");
+	auto res = dom::xml::xml_document_from_file(file);
+	if (res.successed()) 
 	{
-		return u8"Jesús Ángel"_svm;
-	});
-	str = task->result();
-	str->append("..."_r);
+		dom::xml::ixml_document_t doc = res.get();
+		dom::xml::ixml_node_t node = doc->root_element();
+	}
+
 	return 0;
 }

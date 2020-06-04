@@ -1,9 +1,21 @@
-#ifndef __COFFE_DOM_XML_H__
-#error ...
-#elif !defined __COFFE_DOM_XML_IXML_TEXT_H__
-#define __COFFE_DOM_XML_IXML_TEXT_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/dom/xml/ixml_text.h                                                                              */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes classes for the use of xml files                                         */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-namespace coffe
+#ifndef __ANG_DOM_XML_H__
+#error ...
+#elif !defined __ANG_DOM_XML_IXML_TEXT_H__
+#define __ANG_DOM_XML_IXML_TEXT_H__
+
+namespace ang
 {
 	namespace dom
 	{
@@ -11,7 +23,7 @@ namespace coffe
 		{
 			struct nvt LINK ixml_text
 				: intf<ixml_text
-				, iid("coffe::dom::xml::ixml_text")
+				, iid("ang::dom::xml::ixml_text")
 				, text::istring>
 			{
 				virtual streams::itext_output_stream_t& print(streams::itext_output_stream_t& stream, const xml_format_t& flag, word level = 0)const = 0;
@@ -19,18 +31,6 @@ namespace coffe
 			};
 		}
 	}
-	COFFE_BEGIN_INTF_WRAPPER(LINK, dom::xml::ixml_text)
-		operator cstr_t()const;
-		char32_t operator [](windex)const;
-		inline bool operator == (dom::xml::ixml_text_t cstr)const { return (cstr_t)*this == (cstr_t)cstr; }
-		inline bool operator != (dom::xml::ixml_text_t cstr)const { return (cstr_t)*this != (cstr_t)cstr; }
-		inline bool operator >= (dom::xml::ixml_text_t cstr)const { return (cstr_t)*this >= (cstr_t)cstr; }
-		inline bool operator <= (dom::xml::ixml_text_t cstr)const { return (cstr_t)*this <= (cstr_t)cstr; }
-		inline bool operator > (dom::xml::ixml_text_t cstr)const { return (cstr_t)*this > (cstr_t)cstr; }
-		inline bool operator < (dom::xml::ixml_text_t cstr)const { return (cstr_t)*this > (cstr_t)cstr; }
-		inline bool operator == (coffe::nullptr_t const&)const { return m_ptr == null; }
-		inline bool operator != (coffe::nullptr_t const&)const { return m_ptr != null; }
-	COFFE_END_INTF_WRAPPER();
 
 	namespace text
 	{
@@ -53,4 +53,4 @@ namespace coffe
 }
 
 
-#endif//__COFFE_DOM_XML_IXML_TEXT_H__
+#endif//__ANG_DOM_XML_IXML_TEXT_H__

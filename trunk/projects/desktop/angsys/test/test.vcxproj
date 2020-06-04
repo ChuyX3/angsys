@@ -166,6 +166,11 @@
       <Project>{28146dc5-fdcf-4376-892e-8a4806bd609d}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="resources\character_fx_library.xml" />
+    <Xml Include="resources\fx_library.xml" />
+    <Xml Include="resources\texture_apex.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "xml/xml_impl.h"
 
-using namespace coffe;
-using namespace coffe::dom;
-using namespace coffe::dom::xml;
+using namespace ang;
+using namespace ang::dom;
+using namespace ang::dom::xml;
 
 xml_node_base::xml_node_base(dom::xml::xml_document* doc, xml_type_t type)
 	: m_type(type)
@@ -179,9 +179,9 @@ xml_node::xml_node(xml_document* doc, xml_type_t type)
 
 }
 
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::dom::xml::xml_node);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::dom::xml::xml_node);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::dom::xml::xml_node);
+//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::dom::xml::xml_node);
+//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(ang::dom::xml::xml_node);
+//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::dom::xml::xml_node);
 
 void xml_node::dispose()
 {
@@ -435,7 +435,7 @@ ixml_enum_t xml_node::find_all(cstr_t name)const
 	for (auto it = begin(), e = end(); it != e; it++) {
 		ixml_node_t node = (*it).get();
 		if (name == node->name())
-			nodes += coffe::move(node);
+			nodes += ang::move(node);
 	}
 	return nodes.get();
 }
@@ -483,6 +483,7 @@ xml_iterator_t xml_node::insert(xml_base_iterator_t at, xml_node_t node)
 		m_content = xml_list();
 	xml_list::iterator_t it = xml_list::iterator_t(xml_list::iteration_type(), (xml_node*)at.current(), 0);
 	it = m_content.get<1>().insert(it, node);
+	node->to_intf<xml_node_base>()->parent(this);
 	return it.is_valid() ? xml_forward_iterator_t(this, it.get_node(), 0) : end();
 }
 

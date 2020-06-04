@@ -35,22 +35,29 @@ namespace ang
 		private: /*fields*/
 			typedef enum : wint {
 				storage_type_stack = 0,
+				storage_type_attached = wint(-2),
 				storage_type_allocated = wint(-1)
 			}storage_type_t;
 
-			union str_data_t {
-				storage_type_t m_storage_type;
-				struct {
-					wsize _unused;
-					wsize m_allocated_length;
-					wsize m_allocated_capacity;
-					ptr_t m_allocated_buffer;
-				};
-				struct {
+			typedef struct {
+				union {
+					storage_type_t m_storage_type;
 					wsize m_stack_length;
-					type m_stack_buffer[CAPACITY];
 				};
-			};
+				union {
+					type m_stack_buffer[CAPACITY];
+					struct {
+						ptr_t m_allocated_buffer;
+						wsize m_allocated_length;
+						wsize m_allocated_capacity;		
+					};
+					struct {
+						ptr_t m_attached_buffer;
+						wsize m_attached_length;
+						wsize m_attached_capacity;
+					};
+				};
+			} str_data_t;
 
 			str_data_t m_data;
 
@@ -79,11 +86,15 @@ namespace ang
 			fast_string& operator += (fast_string<E2, A2> const& value);
 			template<typename T2, encoding E2>
 			fast_string& operator += (str_view<const T2, E2> const& value);
+			template<typename index_t> type& operator[](index_t const& i);
+			template<typename index_t> type const& operator[](index_t const& i)const;
 
 			operator view_t();
 			operator cview_t()const;
 			operator raw_str_t();
 			operator raw_cstr_t()const;
+
+			
 
 		public: /*properties*/
 			bool is_empty()const;
@@ -104,6 +115,8 @@ namespace ang
 			type const* end()const { return cstr().end(); }
 
 		public: /*utilities*/
+			void attach(cview_t value);
+			void attach(view_t value);
 			void move(fast_string& value);
 			void realloc(wsize new_size, bool save = true);
 			fast_string sub_string(windex start, windex end)const;

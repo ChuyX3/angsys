@@ -1,5 +1,17 @@
+/*********************************************************************************************************************/
+/*   File Name: xml_node.h                                                                                           */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes classes for the use of xml files                                         */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
+
 #pragma once
-namespace coffe
+namespace ang
 {
 	namespace dom
 	{
@@ -7,7 +19,7 @@ namespace coffe
 		{
 			class xml_node_base
 				: public implement<xml_node_base
-				, iid("coffe::dom::xml::xml_node_base")>
+				, iid("ang::dom::xml::xml_node_base")>
 			{
 			public:
 				xml_node_base(xml_document*, xml_type_t type);
@@ -54,7 +66,7 @@ namespace coffe
 
 			class xml_node
 				: public implement<xml_node
-				, iid("coffe::dom::xml::xml_node")
+				, iid("ang::dom::xml::xml_node")
 				, xml_node_base
 				, ixml_node
 				, ixml_list

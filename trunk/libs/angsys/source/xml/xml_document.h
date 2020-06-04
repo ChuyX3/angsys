@@ -1,5 +1,17 @@
+/*********************************************************************************************************************/
+/*   File Name: xml_document.h                                                                                       */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes classes for the use of xml files                                         */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
+
 #pragma once
-namespace coffe
+namespace ang
 {
 	namespace dom
 	{
@@ -47,7 +59,7 @@ namespace coffe
 
 			class xml_document
 				: public implement<xml_document
-				, iid("coffe::dom::xml_document")
+				, iid("ang::dom::xml_document")
 				, ixml_document
 				, ixml_document_builder
 				, ixml_list
@@ -112,7 +124,7 @@ namespace coffe
 				virtual ixml_text_t create_cdata(cstr_t)const override;
 				virtual ixml_text_t create_pcdata(cstr_t)const override;
 
-				virtual void push_header(cstr_t version = "1.0"_sv, nullable<bool> standalone = null) override;
+				virtual void push_header(xml_encoding_t, cstr_t version = "1.0"_sv, nullable<bool> standalone = null) override;
 				virtual bool begin_element(cstr_t name) override;
 				virtual bool end_element() override;
 				virtual bool push_element(cstr_t name, cstr_t value) override;

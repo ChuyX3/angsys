@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "xml/xml_impl.h"
 
-namespace coffe
+namespace ang
 {
 	namespace algorithms
 	{
@@ -56,266 +56,268 @@ namespace coffe
 		}
 	}
 
-	namespace collections
+	namespace dom
 	{
-		list<dom::xml::xml_node>::list()
-			: m_first(null)
-			, m_last(null)
-			, m_size(0)
+		namespace xml
 		{
-		}
-		list<dom::xml::xml_node>::list(coffe::nullptr_t const&)
-			: list()
-		{
-		}
-
-		list<dom::xml::xml_node>::list(list const& other)
-			: list()
-		{
-			for (auto node : other) {
-				push_back(node);
-			}
-		}
-
-		list<dom::xml::xml_node>::list(list && other)
-			: list()
-		{
-			m_first = other.m_first;
-			m_last = other.m_last;
-			m_size = other.m_size;
-			other.m_first = null;
-			other.m_last = null;
-			other.m_size = 0;
-		}
-
-		list<dom::xml::xml_node>::~list()
-		{
-			clear();
-		}
-
-		bool list<dom::xml::xml_node>::is_empty()const
-		{
-			return m_size == 0;
-		}
-
-		wsize list<dom::xml::xml_node>::size()const
-		{
-			return m_size;
-		}
-
-		dom::xml::xml_node_t list<dom::xml::xml_node>::front()const
-		{
-			return m_first;
-		}
-
-		dom::xml::xml_node_t list<dom::xml::xml_node>::back()const
-		{
-			return m_last ;
-		}
-
-		list<dom::xml::xml_node>::const_iterator_t list<dom::xml::xml_node>::begin(algorithms::iteration_algorithm<node_type> iter)const
-		{
-			return const_iterator_t(iter, m_first.get(), 0);
-		}
-
-		list<dom::xml::xml_node>::const_iterator_t list<dom::xml::xml_node>::end(algorithms::iteration_algorithm<node_type> iter)const
-		{
-			return const_iterator_t(iter, null, 0);
-		}
-
-		list<dom::xml::xml_node>::reverse_const_iterator_t list<dom::xml::xml_node>::rbegin(algorithms::iteration_algorithm<node_type> iter)const
-		{
-			return const_iterator_t(iter, m_last.get(), 0);
-		}
-
-		list<dom::xml::xml_node>::reverse_const_iterator_t list<dom::xml::xml_node>::rend(algorithms::iteration_algorithm<node_type> iter)const
-		{
-			return const_iterator_t(iter, null, 0);
-		}
-
-		void list<dom::xml::xml_node>::clear()
-		{
-			dom::xml::xml_node_t to_del, node = m_first;
-			while (node != null)
+			xml_list::xml_list()
+				: m_first(null)
+				, m_last(null)
+				, m_size(0)
 			{
-				to_del = node;
-				node = node->next_sibling();
-				to_del->dispose();
-				to_del = null;
 			}
-			m_first = null;
-			m_last = null;
-			m_size = 0;
-		}
-
-		void list<dom::xml::xml_node>::push_back(dom::xml::xml_node_t node)
-		{
-			if (node.is_empty())
-				return;
-			if (m_first == null) {
-				m_first = m_last = node;
-			}
-			else {
-				m_last->next_sibling(node);	
-				node->prev_sibling(m_last);
-				m_last = node;
-			}
-			m_size++;
-		}
-
-		void list<dom::xml::xml_node>::push_front(dom::xml::xml_node_t node)
-		{
-			if (node.is_empty())
-				return;
-			if (m_first == null) {
-				m_first = m_last = node;
-			}
-			else {
-				m_first->prev_sibling(node);
-				node->next_sibling(m_first);
-				m_first = node;
-			}
-			m_size++;
-		}
-
-		bool list<dom::xml::xml_node>::pop_front(dom::xml::xml_node_ptr_t out)
-		{
-			if (m_first == null)
-				return false;
-			if (m_first == m_last) {
-				if (!out.is_empty())
-					*out = coffe::move(m_first);
-				m_first = m_last = null;
-			}
-			else {
-				node_type_ptr node = m_first;
-				m_first = m_first->next_sibling();
-				m_first->prev_sibling(null);
-				node->next_sibling(null);
-				if (!out.is_empty())
-					*out = coffe::move(node);
-				node = null;
-			}
-			m_size--;
-			return true;
-		}
-
-		bool list<dom::xml::xml_node>::pop_back(dom::xml::xml_node_ptr_t out)
-		{
-			if (m_first == null)
-				return false;
-			if (m_first == m_last) {
-				if (!out.is_empty())
-					*out = coffe::move(m_first);
-				m_first = m_last = null;
-			}
-			else {
-				node_type_ptr node = m_last;
-				m_last = m_last->prev_sibling();
-				m_last->next_sibling(null);
-				node->prev_sibling(null);
-				if (!out.is_empty())
-					*out = coffe::move(node);
-				node = null;
-			}
-			m_size--;
-			return true;
-		}
-
-		list<dom::xml::xml_node>::base_iterator_t& list<dom::xml::xml_node>::insert(base_iterator_t& at, dom::xml::xml_node_t node)
-		{
-			if (node.is_empty())
+			xml_list::xml_list(ang::nullptr_t const&)
+				: xml_list()
 			{
-				at = end();
-			}		
-			else if (at.get_node() == m_first) {
-				push_front(coffe::forward<element_type>(node));
-				at = base_iterator_t(iteration_type(), m_first.get(), 0);
 			}
-			else if (at.get_node() == null) {
-				push_back(coffe::forward<element_type>(node));
-				at = base_iterator_t(iteration_type(), m_last.get(), 0);
+
+			xml_list::xml_list(xml_list const& other)
+				: xml_list()
+			{
+				for (auto node : other) {
+					push_back(node);
+				}
 			}
-			else {
-				node->prev_sibling(at.get_node()->prev_sibling());
-				at.get_node()->prev_sibling()->next_sibling(node);
-				node->next_sibling(at.get_node());
-				at.get_node()->prev_sibling(node);
-				at = base_iterator_t(iteration_type(), node.get(), 0);
+
+			xml_list::xml_list(xml_list&& other)
+				: xml_list()
+			{
+				m_first = other.m_first;
+				m_last = other.m_last;
+				m_size = other.m_size;
+				other.m_first = null;
+				other.m_last = null;
+				other.m_size = 0;
+			}
+
+			xml_list::~xml_list()
+			{
+				clear();
+			}
+
+			bool xml_list::is_empty()const
+			{
+				return m_size == 0;
+			}
+
+			wsize xml_list::size()const
+			{
+				return m_size;
+			}
+
+			dom::xml::xml_node_t xml_list::front()const
+			{
+				return m_first;
+			}
+
+			dom::xml::xml_node_t xml_list::back()const
+			{
+				return m_last;
+			}
+
+			xml_list::const_iterator_t xml_list::begin(algorithms::iteration_algorithm<node_type> iter)const
+			{
+				return const_iterator_t(iter, m_first.get(), 0);
+			}
+
+			xml_list::const_iterator_t xml_list::end(algorithms::iteration_algorithm<node_type> iter)const
+			{
+				return const_iterator_t(iter, null, 0);
+			}
+
+			xml_list::reverse_const_iterator_t xml_list::rbegin(algorithms::iteration_algorithm<node_type> iter)const
+			{
+				return const_iterator_t(iter, m_last.get(), 0);
+			}
+
+			xml_list::reverse_const_iterator_t xml_list::rend(algorithms::iteration_algorithm<node_type> iter)const
+			{
+				return const_iterator_t(iter, null, 0);
+			}
+
+			void xml_list::clear()
+			{
+				dom::xml::xml_node_t to_del, node = m_first;
+				while (node != null)
+				{
+					to_del = node;
+					node = node->next_sibling();
+					to_del->dispose();
+					to_del = null;
+				}
+				m_first = null;
+				m_last = null;
+				m_size = 0;
+			}
+
+			void xml_list::push_back(dom::xml::xml_node_t node)
+			{
+				if (node.is_empty())
+					return;
+				if (m_first == null) {
+					m_first = m_last = node;
+				}
+				else {
+					m_last->next_sibling(node);
+					node->prev_sibling(m_last);
+					m_last = node;
+				}
 				m_size++;
 			}
-			at = base_iterator_t(at.algorithm(), node.get(), 0);
-			return at;
-		}
 
-		bool list<dom::xml::xml_node>::remove(base_iterator_t& at, dom::xml::xml_node_ptr_t out)
-		{
-			if (at.get_node() == null)
-				return false;
+			void xml_list::push_front(dom::xml::xml_node_t node)
+			{
+				if (node.is_empty())
+					return;
+				if (m_first == null) {
+					m_first = m_last = node;
+				}
+				else {
+					m_first->prev_sibling(node);
+					node->next_sibling(m_first);
+					m_first = node;
+				}
+				m_size++;
+			}
 
-			else if (at.get_node() == m_first) {
-				if (!pop_front(out))
+			bool xml_list::pop_front(dom::xml::xml_node_ptr_t out)
+			{
+				if (m_first == null)
 					return false;
-				at = base_iterator_t(iteration_type(), m_first.get(), 0);
-			}
-			else if (at.get_node() == m_last) {
-				if (!pop_back(out))
-					return false;
-				at = base_iterator_t(iteration_type(), null, 0);
-			}
-			else {
-				node_type_ptr node = at.get_node();
-				at = base_iterator_t(iteration_type(), node->next_sibling().get(), 0);
-				node->prev_sibling()->next_sibling(node->next_sibling());
-				node->next_sibling()->prev_sibling(node->prev_sibling());
-				node->next_sibling(null);
-				node->prev_sibling(null);
-				if (!out.is_empty())
-					*out = coffe::move(node);
-				node = null;
+				if (m_first == m_last) {
+					if (!out.is_empty())
+						*out = ang::move(m_first);
+					m_first = m_last = null;
+				}
+				else {
+					node_type_ptr node = m_first;
+					m_first = m_first->next_sibling();
+					m_first->prev_sibling(null);
+					node->next_sibling(null);
+					if (!out.is_empty())
+						*out = ang::move(node);
+					node = null;
+				}
 				m_size--;
+				return true;
 			}
-			return true;
-		}
 
-		void list<dom::xml::xml_node>::move(list& list)
-		{
-			if (&list == this)
-				return;
-			clear();
-			m_size = list.m_size;
-			m_first = list.m_first;
-			m_last = list.m_last;
-			list.m_size = 0;
-			list.m_first = null;
-			list.m_last = null;
-		}
+			bool xml_list::pop_back(dom::xml::xml_node_ptr_t out)
+			{
+				if (m_first == null)
+					return false;
+				if (m_first == m_last) {
+					if (!out.is_empty())
+						*out = ang::move(m_first);
+					m_first = m_last = null;
+				}
+				else {
+					node_type_ptr node = m_last;
+					m_last = m_last->prev_sibling();
+					m_last->next_sibling(null);
+					node->prev_sibling(null);
+					if (!out.is_empty())
+						*out = ang::move(node);
+					node = null;
+				}
+				m_size--;
+				return true;
+			}
 
-		void list<dom::xml::xml_node>::copy(list const& list)
-		{
-			clear();
-			for (auto node : list) {
-				push_back(node);
+			xml_list::base_iterator_t& xml_list::insert(base_iterator_t& at, dom::xml::xml_node_t node)
+			{
+				if (node.is_empty())
+				{
+					at = end();
+				}
+				else if (at.get_node() == m_first) {
+					push_front(ang::forward<element_type>(node));
+					at = base_iterator_t(iteration_type(), m_first.get(), 0);
+				}
+				else if (at.get_node() == null) {
+					push_back(ang::forward<element_type>(node));
+					at = base_iterator_t(iteration_type(), m_last.get(), 0);
+				}
+				else {
+					node->prev_sibling(at.get_node()->prev_sibling());
+					at.get_node()->prev_sibling()->next_sibling(node);
+					node->next_sibling(at.get_node());
+					at.get_node()->prev_sibling(node);
+					at = base_iterator_t(iteration_type(), node.get(), 0);
+					m_size++;
+				}
+				at = base_iterator_t(at.algorithm(), node.get(), 0);
+				return at;
+			}
+
+			bool xml_list::remove(base_iterator_t& at, dom::xml::xml_node_ptr_t out)
+			{
+				if (at.get_node() == null)
+					return false;
+
+				else if (at.get_node() == m_first) {
+					if (!pop_front(out))
+						return false;
+					at = base_iterator_t(iteration_type(), m_first.get(), 0);
+				}
+				else if (at.get_node() == m_last) {
+					if (!pop_back(out))
+						return false;
+					at = base_iterator_t(iteration_type(), null, 0);
+				}
+				else {
+					node_type_ptr node = at.get_node();
+					at = base_iterator_t(iteration_type(), node->next_sibling().get(), 0);
+					node->prev_sibling()->next_sibling(node->next_sibling());
+					node->next_sibling()->prev_sibling(node->prev_sibling());
+					node->next_sibling(null);
+					node->prev_sibling(null);
+					if (!out.is_empty())
+						*out = ang::move(node);
+					node = null;
+					m_size--;
+				}
+				return true;
+			}
+
+			void xml_list::move(xml_list& list)
+			{
+				if (&list == this)
+					return;
+				clear();
+				m_size = list.m_size;
+				m_first = list.m_first;
+				m_last = list.m_last;
+				list.m_size = 0;
+				list.m_first = null;
+				list.m_last = null;
+			}
+
+			void xml_list::copy(xml_list const& list)
+			{
+				clear();
+				for (auto node : list) {
+					push_back(node);
+				}
+			}
+
+			xml_list& xml_list::operator = (xml_list const& val)
+			{
+				copy(val);
+				return*this;
+			}
+
+			xml_list& xml_list::operator = (xml_list&& val)
+			{
+				move(val);
+				return*this;
+			}
+
+			xml_list& xml_list::operator += (dom::xml::xml_node_t val)
+			{
+				push_back(forward<element_type>(val));
+				return*this;
 			}
 		}
-
-		list<dom::xml::xml_node>& list<dom::xml::xml_node>::operator = (list const& val)
-		{
-			copy(val);
-			return*this;
-		}
-
-		list<dom::xml::xml_node>& list<dom::xml::xml_node>::operator = (list && val)
-		{
-			move(val);
-			return*this;
-		}
-
-		list<dom::xml::xml_node>& list<dom::xml::xml_node>::operator += (dom::xml::xml_node_t val)
-		{
-			push_back(forward<element_type>(val));
-			return*this;
-		}
-
 	}
 }

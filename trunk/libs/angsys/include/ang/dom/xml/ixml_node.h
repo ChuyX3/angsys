@@ -1,9 +1,22 @@
-#ifndef __COFFE_DOM_XML_H__
-#error ...
-#elif !defined __COFFE_DOM_XML_XML_NODE_H__
-#define __COFFE_DOM_XML_XML_NODE_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/dom/xml/ixml_node.h                                                                              */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes classes for the use of xml files                                         */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-namespace coffe
+
+#ifndef __ANG_DOM_XML_H__
+#error ...
+#elif !defined __ANG_DOM_XML_XML_NODE_H__
+#define __ANG_DOM_XML_XML_NODE_H__
+
+namespace ang
 {
 	namespace dom
 	{
@@ -11,7 +24,7 @@ namespace coffe
 		{
 			struct nvt LINK ixml_node
 				: intf<ixml_node
-				, iid("coffe::dom::xml::ixml_node")>
+				, iid("ang::dom::xml::ixml_node")>
 			{
 				virtual xml_type_t type()const = 0;
 				virtual bool is_type_of(xml_type_t)const = 0;
@@ -37,7 +50,7 @@ namespace coffe
 
 			struct nvt LINK ixml_streamer
 				: intf<ixml_streamer
-				, iid("coffe::dom::xml::ixml_streamer")>
+				, iid("ang::dom::xml::ixml_streamer")>
 			{
 				virtual bool load(ixml_node_t) = 0;
 				virtual bool save(ixml_document_t)const = 0;
@@ -49,4 +62,4 @@ namespace coffe
 }
 
 
-#endif//__COFFE_DOM_XML_XML_NODE_H__
+#endif//__ANG_DOM_XML_XML_NODE_H__

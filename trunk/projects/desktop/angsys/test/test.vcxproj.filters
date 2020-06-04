@@ -19,4 +19,15 @@
       <Filter>source files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="resources\character_fx_library.xml">
+      <Filter>resource files</Filter>
+    </Xml>
+    <Xml Include="resources\fx_library.xml">
+      <Filter>resource files</Filter>
+    </Xml>
+    <Xml Include="resources\texture_apex.xml">
+      <Filter>resource files</Filter>
+    </Xml>
+  </ItemGroup>
 </Project>
