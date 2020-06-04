@@ -7,6 +7,7 @@
 #ifndef PCH_H
 #define PCH_H
 
+#include <SDKDDKVer.h>
 #include "compile_config.h"
 
 #endif //PCH_H

@@ -34,7 +34,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='ARM'">
     <ClCompile>
-      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\include\angsys;$(ProjectDir)..\..\include\$(RootNamespace);$(ProjectDir)..\$(RootNamespace).shared\include;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
+      <AdditionalincludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\angsys\include\;$(ProjectDir)..\..\include\;$(ProjectDir)..\..\source\;%(AdditionalIncludeDirectories)</AdditionalincludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -55,6 +55,12 @@
       <AdditionalOptions Condition="'$(Configuration)'=='Debug'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlibd.lib msvcrtd.lib</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)'=='Release'">/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib</AdditionalOptions>
     </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\..\angsys\include\;$(ProjectDir)..\..\include\;$(ProjectDir)..\..\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>
