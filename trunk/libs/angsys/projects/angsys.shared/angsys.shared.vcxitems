@@ -42,6 +42,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\value.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\base\vector.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\array.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\binary_tree.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\btree.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\hash.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\list_specialization.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\vector_specialization.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\iterators.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\list.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\vector.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\core\async.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\core\files.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\core\time.h" />
@@ -142,6 +151,16 @@
     <Natvis Include="$(MSBuildThisFileDirectory)utilities\xml.natvis" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\array.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\binary_tree.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\btree.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\collections.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\hash.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\list.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\list_specialization.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\vector.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\vector_specialization.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\vector_value_specialization.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\intf_wrapper_specialization.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\object_wrapper_specialization.inl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\variable.inl" />

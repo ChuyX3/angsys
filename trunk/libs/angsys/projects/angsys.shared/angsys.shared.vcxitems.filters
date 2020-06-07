@@ -69,6 +69,12 @@
     <Filter Include="include files\headers\xml">
       <UniqueIdentifier>{68a5d971-3b4b-4fc2-ad14-f33ce8fed3f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include files\angsys\ang\collections">
+      <UniqueIdentifier>{db098a13-9200-421e-93e7-09b287368c8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include files\angsys\ang\collections\inline">
+      <UniqueIdentifier>{fb0d4bf3-6b2d-48b6-ba9c-d16905dc0219}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\angsys.h">
@@ -200,9 +206,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\library.h">
       <Filter>include files\headers</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections.h">
-      <Filter>include files\angsys\ang</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\ibuffers.h">
       <Filter>include files\angsys\ang</Filter>
     </ClInclude>
@@ -225,9 +228,6 @@
       <Filter>include files\angsys\ang</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\streams.h">
-      <Filter>include files\angsys\ang</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\variable.h">
       <Filter>include files\angsys\ang</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\inline\com_wrapper.hpp">
@@ -304,6 +304,39 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\inline\string_operations.hpp">
       <Filter>include files\headers\inline</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections.h">
+      <Filter>include files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\array.h">
+      <Filter>include files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\binary_tree.h">
+      <Filter>include files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\btree.h">
+      <Filter>include files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\hash.h">
+      <Filter>include files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\iterators.h">
+      <Filter>include files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\list.h">
+      <Filter>include files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\vector.h">
+      <Filter>include files\angsys\ang\collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\list_specialization.hpp">
+      <Filter>include files\angsys\ang\collections\inline</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\vector_specialization.hpp">
+      <Filter>include files\angsys\ang\collections\inline</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\ang\variable.h">
+      <Filter>include files\angsys\ang</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -463,6 +496,36 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\source\xml\inline\xml_text.inl">
       <Filter>include files\headers\xml</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\array.inl">
+      <Filter>include files\angsys\ang\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\binary_tree.inl">
+      <Filter>include files\angsys\ang\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\btree.inl">
+      <Filter>include files\angsys\ang\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\collections.inl">
+      <Filter>include files\angsys\ang\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\hash.inl">
+      <Filter>include files\angsys\ang\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\list.inl">
+      <Filter>include files\angsys\ang\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\list_specialization.inl">
+      <Filter>include files\angsys\ang\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\vector.inl">
+      <Filter>include files\angsys\ang\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\vector_specialization.inl">
+      <Filter>include files\angsys\ang\collections\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\include\ang\collections\inline\vector_value_specialization.inl">
+      <Filter>include files\angsys\ang\collections\inline</Filter>
     </None>
   </ItemGroup>
 </Project>

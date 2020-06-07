@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{706efcd3-ed05-4911-9afd-1a02ebad492d}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\framework\align.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\framework\effects.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\framework\framework.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\framework\library.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\framework\meshes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\framework\textures.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\compile_config.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\framework.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\game.cpp" />
+  </ItemGroup>
+</Project>

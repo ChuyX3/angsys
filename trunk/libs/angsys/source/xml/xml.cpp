@@ -82,6 +82,72 @@ xml_entity_values_t xml::xml_entity_values[5] = {
 
 ANG_FLAGS_IMPLEMENT(ang::dom::xml, xml_format);
 
+template<> cstr_t ixml_text::as<cstr_t>()const
+{
+	return this ? cstr() : cstr_t();
+}
+
+template<> string ixml_text::as<string>()const
+{
+	return this ? cstr() : null;
+}
+
+template<> short ixml_text::as<short>()const
+{
+	return this ? (short)integer::parse(cstr()) : 0;
+}
+
+template<> ushort ixml_text::as<ushort>()const
+{
+	return this ? (ushort)uinteger::parse(cstr()) : 0;
+}
+
+template<> int ixml_text::as<int>()const
+{
+	return this ? (int)integer::parse(cstr()) : 0;
+}
+
+template<> uint ixml_text::as<uint>()const
+{
+	return this ? (uint)uinteger::parse(cstr()) : 0;
+}
+
+template<> long ixml_text::as<long>()const
+{
+	return this ? (long)integer::parse(cstr()) : 0;
+}
+
+template<> ulong ixml_text::as<ulong>()const
+{
+	return this ? (ulong)uinteger::parse(cstr()) : 0;
+}
+
+template<> long64 ixml_text::as<long64>()const
+{
+	return this ? (long64)integer64::parse(cstr()) : 0;
+}
+
+template<> ulong64 ixml_text::as<ulong64>()const
+{
+	return this ? (ulong64)uinteger64::parse(cstr()) : 0;
+}
+
+template<> float ixml_text::as<float>()const
+{
+	return this ? (float)floating::parse(cstr()) : 0;
+}
+
+template<> double ixml_text::as<double>()const
+{
+	return this ? (double)floating64::parse(cstr()) : 0;
+}
+
+template<> bool ixml_text::as<bool>()const
+{
+	return this ? (bool)boolean::parse(cstr()) : 0;
+}
+
+
 ang::intf_wrapper<ang::dom::xml::ixml_text>::operator ang::cstr_t()const
 {
 	return is_empty() ? cstr_t() : get()->cstr();

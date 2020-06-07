@@ -181,7 +181,7 @@ namespace ang
 				text_encoder<E>::convert(str.str<E>().str(), at, "", j, true, -1, -1);
 			}
 			template<encoding E> static inline cstr_t convert(str_t str, wsize& i, cstr_t const& cstr, wsize& j, bool eos, wsize max_out, wsize max_in) {
-				return encoder_bridge1<E>::convert(str.str<E>(), i, cstr, i, eos, max_out, max_in);
+				return encoder_bridge1<E>::convert(str.str<E>(), i, cstr, j, eos, max_out, max_in);
 			}
 
 			static constexpr count_type s_lenght_array[] = { &lenght<ES>... };

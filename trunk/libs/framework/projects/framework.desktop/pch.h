@@ -1,0 +1,20 @@
+// pch.h: This is a precompiled header file.
+// Files listed below are compiled only once, improving build performance for future builds.
+// This also affects IntelliSense performance, including code completion and many code browsing features.
+// However, files listed here are ALL re-compiled if any one of them is updated between builds.
+// Do not add files here that you will be updating frequently as this negates the performance advantage.
+
+#ifndef PCH_H
+#define PCH_H
+
+#include "compile_config.h"
+
+#include <angsys.h>
+#include <ang/core/files.h>
+#include <ang/platform/platform.h>
+#include <ang/graphics/graphics.h>
+
+#pragma comment(lib,"angsys.lib")
+#pragma comment(lib,"platform.lib")
+
+#endif //PCH_H
