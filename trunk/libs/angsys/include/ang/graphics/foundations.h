@@ -1,38 +1,38 @@
 /*********************************************************************************************************************/
-/*   Copyright (C) coffe sys, Jesus Angel Rocha Morales                                                                 */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
 /*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
 /*   to whom the Software is furnished to do so.                                                                     */
 /*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
 /*********************************************************************************************************************/
 
-#ifndef __COFFE_FOUNDATIONS_H__
-#define __COFFE_FOUNDATIONS_H__
+#ifndef __ANG_FOUNDATIONS_H__
+#define __ANG_FOUNDATIONS_H__
 
-#include <coffe.h>
+#include <angsys.h>
 
 #ifdef  LINK
 #undef  LINK
 #endif//LINK
 
 #if defined WINDOWS_PLATFORM
-#if defined COFFE_DYNAMIC_LIBRARY
-#ifdef COFFE_EXPORTS
+#if defined ANG_DYNAMIC_LIBRARY
+#ifdef ANG_PLATFORM_EXPORTS
 #define LINK __declspec(dllexport)
 #else
 #define LINK __declspec(dllimport)
-#endif//COFFE_PLATFORM_EXPORTS
-#else//#elif defined COFFE_STATIC_LIBRARY
+#endif//ANG_PLATFORM_EXPORTS
+#else//#elif defined ANG_STATIC_LIBRARY
 #define LINK
-#endif//COFFE_DYNAMIC_LIBRARY
+#endif//ANG_DYNAMIC_LIBRARY
 #elif defined LINUX_PLATFORM || defined ANDROID_PLATFORM
 #define LINK
 #endif
 
-namespace coffe
+namespace ang
 {
 	namespace graphics
 	{
-		coffe_declare_interface(icore_context);
+		ang_declare_interface(icore_context);
 		template<typename T> struct point;
 		template<typename T> struct size;
 		template<typename T> struct rect;
@@ -142,16 +142,6 @@ namespace coffe
 		{
 			static rect<T> parse(cstr_t);
 
-		private:
-			static T get_width_property(base_property const*);
-			static void set_width_property(base_property *,T&&);
-			static T get_height_property(base_property const*);
-			static void set_height_property(base_property *, T&&);
-			static point<T> get_left_top_property(base_property const*);
-			static point<T> get_right_top_property(base_property const*);
-			static point<T> get_left_bottom_property(base_property const*);
-			static point<T> get_right_bottom_property(base_property const*);
-
 		public:
 			T left;
 			T top;
@@ -165,13 +155,15 @@ namespace coffe
 			rect(point<T> lt, point<T> rb);
 			rect(point<T> lt, size<T> sz);
 
-			property<T, get_width_property> width;
-			property<T, get_height_property> height;
-
-			property<const point<T>, get_left_top_property> left_top;
-			property<const point<T>, get_right_top_property> right_top;
-			property<const point<T>, get_left_bottom_property> left_bottom;
-			property<const point<T>, get_right_bottom_property> right_bottom;
+			void width(T);
+			T width()const;
+			void height(T);
+			T height()const;
+	
+			point<T> left_top()const;
+			point<T> right_top()const;
+			point<T> left_bottom()const;
+			point<T> right_bottom()const;
 
 			void move_to(point<T>);
 			void move_to(T x, T y);
@@ -204,22 +196,6 @@ namespace coffe
 		{
 			static box<T> parse(cstr_t);
 
-		private:
-			static T get_width_property(base_property const*);
-			static void set_width_property(base_property *, T&&);
-			static T get_height_property(base_property const*);
-			static void set_height_property(base_property *, T&&);
-			static T get_depth_property(base_property const*);
-			static void set_depth_property(base_property *, T&&);
-			static point3d<T> get_left_top_front_property(base_property const*);
-			static point3d<T> get_left_top_back_property(base_property const*);
-			static point3d<T> get_right_top_front_property(base_property const*);
-			static point3d<T> get_right_top_back_property(base_property const*);
-			static point3d<T> get_left_bottom_front_property(base_property const*);
-			static point3d<T> get_left_bottom_back_property(base_property const*);
-			static point3d<T> get_right_bottom_front_property(base_property const*);
-			static point3d<T> get_right_bottom_back_property(base_property const*);
-
 		public:
 			T left;
 			T top;
@@ -235,18 +211,21 @@ namespace coffe
 			box(point3d<T> ltf, point3d<T> rbb);
 			box(point3d<T> ltf, size3d<T> sz);
 
-			property<T, get_width_property, set_width_property> width;
-			property<T, get_height_property, set_height_property> height;
-			property<T, get_depth_property, set_depth_property> depth;
+			void width(T);
+			T width()const;
+			void height(T);
+			T height()const;
+			void depth(T);
+			T depth()const;
 
-			property<const point3d<T>, get_left_top_front_property> left_top_front;
-			property<const point3d<T>, get_left_top_back_property> left_top_back;
-			property<const point3d<T>, get_right_top_front_property> right_top_front;
-			property<const point3d<T>, get_right_top_back_property> right_top_back;
-			property<const point3d<T>, get_left_bottom_front_property> left_bottom_front;
-			property<const point3d<T>, get_left_bottom_back_property> left_bottom_back;
-			property<const point3d<T>, get_right_bottom_front_property> right_bottom_front;
-			property<const point3d<T>, get_right_bottom_back_property> right_bottom_back;
+			point3d<T> left_top_front()const;
+			point3d<T> left_top_back()const;
+			point3d<T> right_top_front()const;
+			point3d<T> right_top_back()const;
+			point3d<T> left_bottom_front()const;
+			point3d<T> left_bottom_back()const;
+			point3d<T> right_bottom_front()const;
+			point3d<T> right_bottom_back()const;
 
 			void move_to(point3d<T>);
 			void move_to(T x, T y, T z);
@@ -464,7 +443,7 @@ namespace coffe
 
 		struct nvt LINK icore_context
 			: intf<icore_context
-			, iid("coffe::graphics::icore_context")>
+			, iid("ang::graphics::icore_context")>
 		{
 			virtual pointer core_context_handle()const = 0;
 			virtual bool bind_graphic_native_surface(pointer) = 0;
@@ -670,14 +649,14 @@ namespace coffe
 }
 
 
-COFFE_ENUM_DECLARATION(LINK, coffe::graphics::colors)
-COFFE_ENUM_DECLARATION(LINK, coffe::graphics::primitive)
-COFFE_ENUM_DECLARATION(LINK, coffe::graphics::graph_driver_type)
+ANG_ENUM_DECLARATION(LINK, ang::graphics::colors)
+ANG_ENUM_DECLARATION(LINK, ang::graphics::primitive)
+ANG_ENUM_DECLARATION(LINK, ang::graphics::graph_driver_type)
 
 #ifdef  LINK
 #undef  LINK
 #endif//LINK
 
-#include <coffe/graphics/inline/foundations.inl>
+#include <ang/graphics/inline/foundations.inl>
 
-#endif//__COFFE_FOUNDATIONS_H__
+#endif//__ANG_FOUNDATIONS_H__

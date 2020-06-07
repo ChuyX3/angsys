@@ -341,11 +341,11 @@ namespace ang
 
 	///////////////////////////////////////////////////////////////////////////
 
-	template<typename T, gender_t TYPE>
-	inline intf_wrapper<ivariable>::intf_wrapper(object_wrapper<variable<T, TYPE>> ptr)
-		: intf_wrapper<ivariable>(null) {
-		set(ptr.get());
-	}
+	//template<typename T, gender_t TYPE>
+	//inline intf_wrapper<ivariable>::intf_wrapper(object_wrapper<variable<T, TYPE>> ptr)
+	//	: intf_wrapper<ivariable>(null) {
+	//	set(ptr.get());
+	//}
 
 	template<wsize N>
 	inline intf_wrapper<ivariable>::intf_wrapper(const char(&ar)[N])

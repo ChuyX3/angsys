@@ -1,16 +1,16 @@
 /*********************************************************************************************************************/
-/*   Copyright (C) coffe sys, Jesus Angel Rocha Morales                                                                 */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
 /*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
 /*   to whom the Software is furnished to do so.                                                                     */
 /*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
 /*********************************************************************************************************************/
 
-#ifndef __COFFE_PLATFORM_H__
+#ifndef __ANG_PLATFORM_H__
 #error ...
-#elif !defined __COFFE_PLATFORM_MSG_H__
-#define __COFFE_PLATFORM_MSG_H__
+#elif !defined __ANG_PLATFORM_MSG_H__
+#define __ANG_PLATFORM_MSG_H__
 
-namespace coffe
+namespace ang
 {
 	namespace platform
 	{
@@ -47,7 +47,7 @@ namespace coffe
 
 			struct nvt LINK imsg_event_args
 				: intf<imsg_event_args
-				, iid("coffe::platform::events::imsg_event_args")>
+				, iid("ang::platform::events::imsg_event_args")>
 			{
 				virtual const message& msg()const = 0;
 				virtual void handled(bool) = 0;
@@ -56,7 +56,7 @@ namespace coffe
 
 			struct nvt LINK icreated_event_args 
 				: intf<icreated_event_args
-				, iid("coffe::platform::events::icreated_event_args")
+				, iid("ang::platform::events::icreated_event_args")
 				, imsg_event_args>
 			{
 				virtual icore_view_t core_view()const = 0;
@@ -66,7 +66,7 @@ namespace coffe
 
 			struct nvt LINK ivisibility_change_event_args
 				: intf<ivisibility_change_event_args
-				, iid("coffe::platform::events::ivisibility_change_event_args")
+				, iid("ang::platform::events::ivisibility_change_event_args")
 				, imsg_event_args>
 			{
 				virtual icore_view_t core_view()const = 0;
@@ -75,7 +75,7 @@ namespace coffe
 
 			struct nvt LINK idisplay_info_event_args
 				: intf<idisplay_info_event_args
-				, iid("coffe::platform::events::idisplay_info_event_args")
+				, iid("ang::platform::events::idisplay_info_event_args")
 				, imsg_event_args>
 			{
 				virtual icore_view_t core_view()const = 0;
@@ -85,7 +85,7 @@ namespace coffe
 
 			struct nvt LINK iactivate_event_args
 				: intf<iactivate_event_args
-				, iid("coffe::platform::events::iactivate_event_args")
+				, iid("ang::platform::events::iactivate_event_args")
 				, imsg_event_args>
 			{
 				virtual activate_status_t const& status()const = 0;
@@ -93,7 +93,7 @@ namespace coffe
 
 			struct nvt LINK idraw_event_args
 				: intf<idraw_event_args
-				, iid("coffe::platform::events::idraw_event_args")
+				, iid("ang::platform::events::idraw_event_args")
 				, imsg_event_args>
 			{
 				virtual icore_view_t core_view()const = 0;
@@ -103,7 +103,7 @@ namespace coffe
 
 			struct nvt LINK ikey_event_args
 				: intf<ikey_event_args
-				, iid("coffe::platform::events::ikey_event_args")
+				, iid("ang::platform::events::ikey_event_args")
 				, imsg_event_args>
 			{
 				virtual char32_t key()const = 0;
@@ -112,7 +112,7 @@ namespace coffe
 
 			struct nvt LINK ipointer_event_args
 				: intf<ipointer_event_args
-				, iid("coffe::platform::events::ipointer_event_args")
+				, iid("ang::platform::events::ipointer_event_args")
 				, imsg_event_args>
 			{
 				virtual graphics::point<float> const& position()const = 0;
@@ -122,7 +122,7 @@ namespace coffe
 
 			struct nvt LINK iapp_status_event_args
 				: intf<iapp_status_event_args
-				, iid("coffe::platform::events::iapp_status_event_args")
+				, iid("ang::platform::events::iapp_status_event_args")
 				, imsg_event_args>
 			{
 				virtual icore_app_t core_app()const = 0;
@@ -130,7 +130,7 @@ namespace coffe
 
 			struct nvt LINK itext_change_event_args
 				: intf<itext_change_event_args
-				, iid("coffe::platform::events::itext_change_event_args")
+				, iid("ang::platform::events::itext_change_event_args")
 				, imsg_event_args>
 			{
 				virtual text::istring_t text()const = 0;
@@ -139,7 +139,7 @@ namespace coffe
 
 			struct nvt LINK icontroller_status_args
 				: intf<icontroller_status_args
-				, iid("coffe::platform::events::icontroller_status_args")
+				, iid("ang::platform::events::icontroller_status_args")
 				, imsg_event_args>
 			{
 				virtual uint controller_id()const = 0;
@@ -149,7 +149,7 @@ namespace coffe
 
 			struct nvt LINK icontroller_digital_input_args
 				: intf<icontroller_digital_input_args
-				, iid("coffe::platform::events::icontroller_digital_input_args")
+				, iid("ang::platform::events::icontroller_digital_input_args")
 				, imsg_event_args>
 			{
 				virtual input::icontroller_t controller()const = 0;
@@ -159,7 +159,7 @@ namespace coffe
 
 			struct nvt LINK icontroller_analog_input_args
 				: intf<icontroller_analog_input_args
-				, iid("coffe::platform::events::icontroller_analog_input_args")
+				, iid("ang::platform::events::icontroller_analog_input_args")
 				, imsg_event_args>
 			{
 				virtual input::icontroller_t controller()const = 0;
@@ -167,10 +167,10 @@ namespace coffe
 				virtual input::analog_input_state_t state()const = 0;
 			};
 
-			coffe_declare_interface(icontroller_analog_input_args);
+			ang_declare_interface(icontroller_analog_input_args);
 		}
 	}
 }
 
 
-#endif//__COFFE_PLATFORM_MSG_H__
+#endif//__ANG_PLATFORM_MSG_H__

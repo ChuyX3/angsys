@@ -1,13 +1,13 @@
 #pragma once
-#include <coffe.h>
+#include <angsys.h>
 
-namespace coffe
+namespace ang
 {
 	template<typename T> class com_wrapper;
 	template<typename T> class com_wrapper_ptr;
 
 	/******************************************************************/
-	/* template class coffe::com_wrapper :                            */
+	/* template class ang::com_wrapper :                            */
 	/*  -> implements handling of smart pointers                      */
 	/******************************************************************/
 	template<typename T>
@@ -44,7 +44,7 @@ namespace coffe
 			set(ptr.get());
 		}
 
-		com_wrapper(coffe::nullptr_t const&)
+		com_wrapper(ang::nullptr_t const&)
 			: com_wrapper() {
 		}
 
@@ -114,7 +114,7 @@ namespace coffe
 			return*this;
 		}
 
-		com_wrapper& operator = (coffe::nullptr_t const&) {
+		com_wrapper& operator = (ang::nullptr_t const&) {
 			reset();
 			return*this;
 		}
@@ -151,14 +151,14 @@ namespace coffe
 	};
 
 	/******************************************************************/
-	/* template class coffe::com_wrapper_ptr :                     */
+	/* template class ang::com_wrapper_ptr :                     */
 	/*  -> reprecents a com_wrapper pointer                        */
 	/******************************************************************/
 	template<typename T>
 	class com_wrapper_ptr
 	{
 	public:
-		com_wrapper_ptr(coffe::nullptr_t const&)
+		com_wrapper_ptr(ang::nullptr_t const&)
 			: m_ptr(null) {
 		}
 
@@ -273,13 +273,13 @@ namespace coffe
 }
 
 template<typename T>
-inline coffe::com_wrapper_ptr<T> coffe::com_wrapper<T>::operator & (void) {
+inline ang::com_wrapper_ptr<T> ang::com_wrapper<T>::operator & (void) {
 	return this;
 }
 
 
 template<typename T> template<typename U>
-inline HRESULT coffe::com_wrapper<T>::as(coffe::com_wrapper_ptr<U> p) const {
+inline HRESULT ang::com_wrapper<T>::as(ang::com_wrapper_ptr<U> p) const {
 	if (p.is_empty())
 		return S_FALSE;
 	(*p).reset();
@@ -287,7 +287,7 @@ inline HRESULT coffe::com_wrapper<T>::as(coffe::com_wrapper_ptr<U> p) const {
 }
 
 template<typename T> template<typename U>
-inline HRESULT coffe::com_wrapper<T>::as(coffe::com_wrapper<U>* p) const
+inline HRESULT ang::com_wrapper<T>::as(ang::com_wrapper<U>* p) const
 {
 	if (p == null)
 		return S_FALSE;
@@ -295,7 +295,7 @@ inline HRESULT coffe::com_wrapper<T>::as(coffe::com_wrapper<U>* p) const
 }
 
 template<typename T> template<typename U>
-inline HRESULT coffe::com_wrapper<T>::as(U** p) const
+inline HRESULT ang::com_wrapper<T>::as(U** p) const
 {
 	if (p == null)
 		return S_FALSE;

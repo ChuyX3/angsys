@@ -158,11 +158,11 @@ namespace ang //constants
 		struct default_text_format<const T&> : default_text_format<T> { };
 
 		template<> struct default_text_format<bool> {
-			static text_format format() { text_format _format = castr_t("{b:}"); return _format; }
+			static text_format format() { static text_format _format = castr_t("{b:}"); return _format; }
 		};
 
 		template<> struct default_text_format<char> {
-			static text_format format() { text_format _format = castr_t("{c:}"); return _format; }
+			static text_format format() { static text_format _format = castr_t("{c:}"); return _format; }
 		};
 
 		template<> struct default_text_format<mchar> : public default_text_format<char> {};
@@ -171,7 +171,7 @@ namespace ang //constants
 		template<> struct default_text_format<char32_t> : public default_text_format<char> {};
 
 		template<> struct default_text_format<int> {
-			static text_format format() { text_format _format = castr_t("{s:}"); return _format; }
+			static text_format format() { static text_format _format = castr_t("{s:}"); return _format; }
 		};
 
 		template<> struct default_text_format<short> : public default_text_format<int> {};
@@ -179,7 +179,7 @@ namespace ang //constants
 		template<> struct default_text_format<long64> : public default_text_format<int> {};
 
 		template<> struct default_text_format<uint> {
-			static text_format format() { text_format _format = castr_t("{u:}"); return _format; }
+			static text_format format() { static text_format _format = castr_t("{u:}"); return _format; }
 		};
 
 		template<> struct default_text_format<ushort> : public default_text_format<uint> {};
@@ -187,7 +187,7 @@ namespace ang //constants
 		template<> struct default_text_format<ulong64> : public default_text_format<uint> {};
 
 		template<> struct default_text_format<float> {
-			static text_format format() { text_format _format = castr_t("{f:N.4}"); return _format; }
+			static text_format format() { static text_format _format = castr_t("{f:N.4}"); return _format; }
 		};
 
 		template<> struct default_text_format<double> :public default_text_format<float> {};

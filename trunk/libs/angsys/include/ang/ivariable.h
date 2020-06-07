@@ -44,7 +44,11 @@ namespace ang
 		intf_wrapper(intf_wrapper &&);
 		intf_wrapper(intf_wrapper const&);
 
-		template<typename T, gender_t TYPE> intf_wrapper(object_wrapper<variable<T, TYPE>> ptr);
+		template<typename T, enable_if<is_inherited_from<T, ivariable>::value, bool> = true>
+		intf_wrapper(object_wrapper<T> ptr) : m_ptr(null) {
+			set(ptr.get());
+		}
+
 		template<wsize N> intf_wrapper(const char(&ar)[N]);
 		template<wsize N> intf_wrapper(const wchar(&ar)[N]);
 		template<wsize N> intf_wrapper(const mchar(&ar)[N]);

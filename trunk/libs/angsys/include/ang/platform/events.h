@@ -1,16 +1,16 @@
 /*********************************************************************************************************************/
-/*   Copyright (C) coffe sys, Jesus Angel Rocha Morales                                                                 */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
 /*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
 /*   to whom the Software is furnished to do so.                                                                     */
 /*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
 /*********************************************************************************************************************/
 
-#ifndef __COFFE_PLATFORM_H__
+#ifndef __ANG_PLATFORM_H__
 #error ...
-#elif !defined __COFFE_PLATFORM_EVENTS_H__
-#define __COFFE_PLATFORM_EVENTS_H__
+#elif !defined __ANG_PLATFORM_EVENTS_H__
+#define __ANG_PLATFORM_EVENTS_H__
 
-namespace coffe
+namespace ang
 {
 	namespace platform
 	{
@@ -22,7 +22,7 @@ namespace coffe
 			template<typename F, typename A>
 			class static_event_function
 				: public implement<static_event_function<F, A>
-				, iid("coffe::platform::events::static_event_function")
+				, iid("ang::platform::events::static_event_function")
 				, ievent_function>
 			{
 			public:
@@ -43,7 +43,7 @@ namespace coffe
 			template<typename F, typename A>
 			class static_event_function<F, intf_wrapper<A>>
 				: public implement<static_event_function<F, intf_wrapper<A>>
-				, iid("coffe::platform::events::static_event_function")
+				, iid("ang::platform::events::static_event_function")
 				, ievent_function>
 			{
 			public:
@@ -64,7 +64,7 @@ namespace coffe
 			template<typename T, bool IS_OBJECT, typename A>
 			class member_event_function 
 				: public implement<member_event_function<T, IS_OBJECT, A>
-				, iid("coffe::platform::events::member_event_function")
+				, iid("ang::platform::events::member_event_function")
 				, ievent_function>
 			{
 			public:
@@ -86,7 +86,7 @@ namespace coffe
 			template<typename T, typename A>
 			class member_event_function<T, true, A>
 				: public implement<member_event_function<T, true, A>
-				, iid("coffe::platform::events::member_event_function")
+				, iid("ang::platform::events::member_event_function")
 				, ievent_function>
 			{
 			public:
@@ -112,17 +112,17 @@ namespace coffe
 	namespace delegates
 	{
 		template<>
-		struct nvt LINK ifunction<void(bean*, platform::events::imsg_event_args*)>
-			: intf<ifunction<void(bean*, platform::events::imsg_event_args*)>
-			, iid("coffe::delegates::ifunction")> {
+		struct nvt LINK ifunction<void(object*, platform::events::imsg_event_args*)>
+			: intf<ifunction<void(object*, platform::events::imsg_event_args*)>
+			, iid("ang::delegates::ifunction")> {
 			virtual void invoke(objptr, platform::events::imsg_event_args_t)const = 0;
 			virtual ifunction* clone()const = 0;
 		};
 
-		template<> class LINK function_base <void(bean*, platform::events::imsg_event_args*)>
-			: public implement<function_base <void(bean*, platform::events::imsg_event_args*)>
-				, iid("coffe::delegates::function_base")
-				, ifunction<void(bean*, platform::events::imsg_event_args*)>>
+		template<> class LINK function_base <void(object*, platform::events::imsg_event_args*)>
+			: public implement<function_base <void(object*, platform::events::imsg_event_args*)>
+				, iid("ang::delegates::function_base")
+				, ifunction<void(object*, platform::events::imsg_event_args*)>>
 		{
 		protected:
 			platform::events::core_msg_t m_msg;
@@ -153,8 +153,8 @@ namespace coffe
 			virtual void invoke(objptr, platform::events::imsg_event_args_t)const override;
 			virtual~function_base();
 
-			friend listener<void(bean*, platform::events::imsg_event_args*)>;
-			friend object_wrapper<function_base<void(bean*, platform::events::imsg_event_args*)>>;
+			friend listener<void(object*, platform::events::imsg_event_args*)>;
+			friend object_wrapper<function_base<void(object*, platform::events::imsg_event_args*)>>;
 		};
 	}
 
@@ -189,21 +189,20 @@ namespace coffe
 
 }
 
-//COFFE_DECLARE_OBJECT_VECTOR_SPECIALIZATION(LINK, coffe::platform::events::base_event_handler)
+//ANG_DECLARE_OBJECT_VECTOR_SPECIALIZATION(LINK, ang::platform::events::base_event_handler)
 
-namespace coffe
+namespace ang
 {
 	
 	namespace delegates
 	{
-		template<> class LINK listener<void(bean*, platform::events::imsg_event_args*)>
+		template<> class LINK listener<void(object*, platform::events::imsg_event_args*)>
 		{
 		public:
 			typedef platform::events::event_t function;
 
 		protected:
 			mutable weak_ptr_base m_parent;
-			function_type<bool(platform::events::core_msg_t)> m_comp;
 			collections::list<function> m_functions;
 
 			listener(listener &&) = delete;
@@ -213,7 +212,7 @@ namespace coffe
 			listener& operator = (listener const&) = delete;
 
 		public:
-			listener(bean* parent, function_type<bool(platform::events::core_msg_t)>);
+			listener(object* parent);
 			~listener();
 
 		public:
@@ -232,8 +231,8 @@ namespace coffe
 
 		};
 
-		template<> struct event_helper<void(bean*, platform::events::imsg_event_args*)> {
-			using type = void(bean*, platform::events::imsg_event_args*);
+		template<> struct event_helper<void(object*, platform::events::imsg_event_args*)> {
+			using type = void(object*, platform::events::imsg_event_args*);
 			using listen_token = listen_token<type>;
 			using function_type = function_base<type>;
 			using add_event_handler = listen_token(*)(base_event*, object_wrapper<function_type>);
@@ -301,20 +300,20 @@ namespace coffe
 	}
 }
 
-#define coffe_platform_event(_TYPE, _NAME) \
+#define ang_platform_event(_TYPE, _NAME) \
 private: \
-	coffe::platform::events::event_listener m_##_NAME; \
-	static coffe::platform::events::event_token_t add_##_NAME##_event_handler(coffe::platform::events::base_event*, coffe::platform::events::event_t); \
-	static bool remove_##_NAME##_event_handler(coffe::platform::events::base_event*, coffe::platform::events::event_token_t); \
+	ang::platform::events::event_listener m_##_NAME; \
+	static ang::platform::events::event_token_t add_##_NAME##_event_handler(ang::platform::events::base_event*, ang::platform::events::event_t); \
+	static bool remove_##_NAME##_event_handler(ang::platform::events::base_event*, ang::platform::events::event_token_t); \
 public: \
-	coffe::platform::events::event<_TYPE, add_##_NAME##_event_handler, remove_##_NAME##_event_handler> _NAME;
+	ang::platform::events::event<_TYPE, add_##_NAME##_event_handler, remove_##_NAME##_event_handler> _NAME;
 
-#define coffe_platform_implement_event_handler(_CLASS, _NAME) \
-coffe::platform::events::event_token_t _CLASS::add_##_NAME##_event_handler(coffe::platform::events::base_event* prop, coffe::platform::events::event_t e) { \
+#define ang_platform_implement_event_handler(_CLASS, _NAME) \
+ang::platform::events::event_token_t _CLASS::add_##_NAME##_event_handler(ang::platform::events::base_event* prop, ang::platform::events::event_t e) { \
 	return field_to_parent(&_CLASS::_NAME, prop)->m_##_NAME += e;	\
 } \
-bool _CLASS::remove_##_NAME##_event_handler(coffe::platform::events::base_event* prop, coffe::platform::events::event_token_t token) { \
+bool _CLASS::remove_##_NAME##_event_handler(ang::platform::events::base_event* prop, ang::platform::events::event_token_t token) { \
 	return field_to_parent(&_CLASS::_NAME, prop)->m_##_NAME -= token;	\
 }
 
-#endif//__COFFE_PLATFORM_EVENTS_H__
+#endif//__ANG_PLATFORM_EVENTS_H__

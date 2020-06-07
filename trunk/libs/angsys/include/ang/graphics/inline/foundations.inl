@@ -1,10 +1,10 @@
-#ifndef __COFFE_FOUNDATIONS_H__
+#ifndef __ANG_FOUNDATIONS_H__
 #error ...
-#elif !defined __COFFE_FOUNDATIONS_INL__
-#define __COFFE_FOUNDATIONS_INL__
+#elif !defined __ANG_FOUNDATIONS_INL__
+#define __ANG_FOUNDATIONS_INL__
 
 template<typename T>
-inline coffe::graphics::point<T> coffe::graphics::point<T>::parse(coffe::cstr_t cstr)
+inline ang::graphics::point<T> ang::graphics::point<T>::parse(ang::cstr_t cstr)
 {
 	if (cstr.ptr() == null)
 		return{ 0,0 };
@@ -20,28 +20,28 @@ inline coffe::graphics::point<T> coffe::graphics::point<T>::parse(coffe::cstr_t 
 }
 
 template<typename T> 
-inline coffe::graphics::point<T>::point()
+inline ang::graphics::point<T>::point()
 	: x(0)
 	, y(0)
 {
 }
 
 template<typename T> 
-inline coffe::graphics::point<T>::point(point const& p)
+inline ang::graphics::point<T>::point(point const& p)
 	: x(p.x)
 	, y(p.y)
 {
 }
 
 template<typename T> 
-inline coffe::graphics::point<T>::point(T x, T y)
+inline ang::graphics::point<T>::point(T x, T y)
 	: x(x)
 	, y(y)
 {
 }
 
 template<typename T> 
-inline coffe::graphics::point<T>& coffe::graphics::point<T>::operator = (const coffe::graphics::point<T>& p)
+inline ang::graphics::point<T>& ang::graphics::point<T>::operator = (const ang::graphics::point<T>& p)
 {
 	x = p.x;
 	y = p.y;
@@ -49,7 +49,7 @@ inline coffe::graphics::point<T>& coffe::graphics::point<T>::operator = (const c
 }
 
 template<typename T> 
-inline coffe::graphics::point<T>& coffe::graphics::point<T>::operator += (const coffe::graphics::point<T>& p)
+inline ang::graphics::point<T>& ang::graphics::point<T>::operator += (const ang::graphics::point<T>& p)
 {
 	x += p.x;
 	y += p.y;
@@ -57,7 +57,7 @@ inline coffe::graphics::point<T>& coffe::graphics::point<T>::operator += (const 
 }
 
 template<typename T> 
-inline coffe::graphics::point<T>& coffe::graphics::point<T>::operator -= (const coffe::graphics::point<T>& p)
+inline ang::graphics::point<T>& ang::graphics::point<T>::operator -= (const ang::graphics::point<T>& p)
 {
 	x -= p.x;
 	y -= p.y;
@@ -65,7 +65,7 @@ inline coffe::graphics::point<T>& coffe::graphics::point<T>::operator -= (const 
 }
 
 template<typename T> 
-inline coffe::graphics::point<T>& coffe::graphics::point<T>::operator *= (T k)
+inline ang::graphics::point<T>& ang::graphics::point<T>::operator *= (T k)
 {
 	x *= k;
 	y *= k;
@@ -73,7 +73,7 @@ inline coffe::graphics::point<T>& coffe::graphics::point<T>::operator *= (T k)
 }
 
 template<typename T> 
-inline coffe::graphics::point<T>& coffe::graphics::point<T>::operator /= (T k)
+inline ang::graphics::point<T>& ang::graphics::point<T>::operator /= (T k)
 {
 	x /= k;
 	y /= k;
@@ -83,7 +83,7 @@ inline coffe::graphics::point<T>& coffe::graphics::point<T>::operator /= (T k)
 
 
 template<typename T>
-inline coffe::graphics::point3d<T> coffe::graphics::point3d<T>::parse(coffe::cstr_t cstr)
+inline ang::graphics::point3d<T> ang::graphics::point3d<T>::parse(ang::cstr_t cstr)
 {
 	if (cstr.ptr() == null)
 		return{ 0,0,0 };
@@ -101,7 +101,7 @@ inline coffe::graphics::point3d<T> coffe::graphics::point3d<T>::parse(coffe::cst
 }
 
 template<typename T>
-inline coffe::graphics::point3d<T>::point3d()
+inline ang::graphics::point3d<T>::point3d()
 	: x(0)
 	, y(0)
 	, z(0)
@@ -109,7 +109,7 @@ inline coffe::graphics::point3d<T>::point3d()
 }
 
 template<typename T>
-inline coffe::graphics::point3d<T>::point3d(point3d const& p)
+inline ang::graphics::point3d<T>::point3d(point3d const& p)
 	: x(p.x)
 	, y(p.y)
 	, z(p.z)
@@ -117,7 +117,7 @@ inline coffe::graphics::point3d<T>::point3d(point3d const& p)
 }
 
 template<typename T>
-inline coffe::graphics::point3d<T>::point3d(T x, T y, T z)
+inline ang::graphics::point3d<T>::point3d(T x, T y, T z)
 	: x(x)
 	, y(y)
 	, z(z)
@@ -125,7 +125,7 @@ inline coffe::graphics::point3d<T>::point3d(T x, T y, T z)
 }
 
 template<typename T>
-inline coffe::graphics::point3d<T>& coffe::graphics::point3d<T>::operator = (const coffe::graphics::point3d<T>& p)
+inline ang::graphics::point3d<T>& ang::graphics::point3d<T>::operator = (const ang::graphics::point3d<T>& p)
 {
 	x = p.x;
 	y = p.y;
@@ -134,7 +134,7 @@ inline coffe::graphics::point3d<T>& coffe::graphics::point3d<T>::operator = (con
 }
 
 template<typename T>
-inline coffe::graphics::point3d<T>& coffe::graphics::point3d<T>::operator += (const coffe::graphics::point3d<T>& p)
+inline ang::graphics::point3d<T>& ang::graphics::point3d<T>::operator += (const ang::graphics::point3d<T>& p)
 {
 	x += p.x;
 	y += p.y;
@@ -143,7 +143,7 @@ inline coffe::graphics::point3d<T>& coffe::graphics::point3d<T>::operator += (co
 }
 
 template<typename T>
-inline coffe::graphics::point3d<T>& coffe::graphics::point3d<T>::operator -= (const coffe::graphics::point3d<T>& p)
+inline ang::graphics::point3d<T>& ang::graphics::point3d<T>::operator -= (const ang::graphics::point3d<T>& p)
 {
 	x -= p.x;
 	y -= p.y;
@@ -152,7 +152,7 @@ inline coffe::graphics::point3d<T>& coffe::graphics::point3d<T>::operator -= (co
 }
 
 template<typename T>
-inline coffe::graphics::point3d<T>& coffe::graphics::point3d<T>::operator *= (T k)
+inline ang::graphics::point3d<T>& ang::graphics::point3d<T>::operator *= (T k)
 {
 	x *= k;
 	y *= k;
@@ -161,7 +161,7 @@ inline coffe::graphics::point3d<T>& coffe::graphics::point3d<T>::operator *= (T 
 }
 
 template<typename T>
-inline coffe::graphics::point3d<T>& coffe::graphics::point3d<T>::operator /= (T k)
+inline ang::graphics::point3d<T>& ang::graphics::point3d<T>::operator /= (T k)
 {
 	x /= k;
 	y /= k;
@@ -171,7 +171,7 @@ inline coffe::graphics::point3d<T>& coffe::graphics::point3d<T>::operator /= (T 
 
 
 template<typename T>
-inline coffe::graphics::size<T> coffe::graphics::size<T>::parse(coffe::cstr_t cstr)
+inline ang::graphics::size<T> ang::graphics::size<T>::parse(ang::cstr_t cstr)
 {
 	if (cstr.ptr() == null)
 		return{ 0,0 };
@@ -186,7 +186,7 @@ inline coffe::graphics::size<T> coffe::graphics::size<T>::parse(coffe::cstr_t cs
 }
 
 template<typename T> 
-inline coffe::graphics::size<T>::size()
+inline ang::graphics::size<T>::size()
 	: width(0)
 	, height(0)
 {
@@ -194,7 +194,7 @@ inline coffe::graphics::size<T>::size()
 }
 
 template<typename T> 
-inline coffe::graphics::size<T>::size(size<T> const& b)
+inline ang::graphics::size<T>::size(size<T> const& b)
 	: width(b.width)
 	, height(b.height)
 {
@@ -202,7 +202,7 @@ inline coffe::graphics::size<T>::size(size<T> const& b)
 }
 
 template<typename T> 
-inline coffe::graphics::size<T>::size(T width, T height)
+inline ang::graphics::size<T>::size(T width, T height)
 	: width(width)
 	, height(height)
 {
@@ -210,7 +210,7 @@ inline coffe::graphics::size<T>::size(T width, T height)
 }
 
 template<typename T> 
-inline coffe::graphics::size<T>& coffe::graphics::size<T>::operator = (const coffe::graphics::size<T>& b)
+inline ang::graphics::size<T>& ang::graphics::size<T>::operator = (const ang::graphics::size<T>& b)
 {
 	width = b.width;
 	height = b.height;
@@ -218,7 +218,7 @@ inline coffe::graphics::size<T>& coffe::graphics::size<T>::operator = (const cof
 }
 
 template<typename T> 
-inline coffe::graphics::size<T>& coffe::graphics::size<T>::operator += (const coffe::graphics::size<T>& b)
+inline ang::graphics::size<T>& ang::graphics::size<T>::operator += (const ang::graphics::size<T>& b)
 {
 	width += b.width;
 	height += b.height;
@@ -226,7 +226,7 @@ inline coffe::graphics::size<T>& coffe::graphics::size<T>::operator += (const co
 }
 
 template<typename T> 
-inline coffe::graphics::size<T>& coffe::graphics::size<T>::operator -= (const coffe::graphics::size<T>& b)
+inline ang::graphics::size<T>& ang::graphics::size<T>::operator -= (const ang::graphics::size<T>& b)
 {
 	width -= b.width;
 	height -= b.height;
@@ -234,7 +234,7 @@ inline coffe::graphics::size<T>& coffe::graphics::size<T>::operator -= (const co
 }
 
 template<typename T> 
-inline coffe::graphics::size<T>& coffe::graphics::size<T>::operator *= (T k)
+inline ang::graphics::size<T>& ang::graphics::size<T>::operator *= (T k)
 {
 	width *= k;
 	height *= k;
@@ -242,7 +242,7 @@ inline coffe::graphics::size<T>& coffe::graphics::size<T>::operator *= (T k)
 }
 
 template<typename T> 
-inline coffe::graphics::size<T>& coffe::graphics::size<T>::operator /= (T k)
+inline ang::graphics::size<T>& ang::graphics::size<T>::operator /= (T k)
 {
 	width /= k;
 	height /= k;
@@ -252,7 +252,7 @@ inline coffe::graphics::size<T>& coffe::graphics::size<T>::operator /= (T k)
 
 
 template<typename T>
-inline coffe::graphics::size3d<T> coffe::graphics::size3d<T>::parse(coffe::cstr_t cstr)
+inline ang::graphics::size3d<T> ang::graphics::size3d<T>::parse(ang::cstr_t cstr)
 {
 	if (cstr.ptr() == null)
 		return{ 0,0,0 };
@@ -269,7 +269,7 @@ inline coffe::graphics::size3d<T> coffe::graphics::size3d<T>::parse(coffe::cstr_
 }
 
 template<typename T>
-inline coffe::graphics::size3d<T>::size3d()
+inline ang::graphics::size3d<T>::size3d()
 	: width(0)
 	, height(0)
 	, depth(0)
@@ -278,7 +278,7 @@ inline coffe::graphics::size3d<T>::size3d()
 }
 
 template<typename T>
-inline coffe::graphics::size3d<T>::size3d(size3d<T> const& b)
+inline ang::graphics::size3d<T>::size3d(size3d<T> const& b)
 	: width(b.width)
 	, height(b.height)
 	, depth(b.depth)
@@ -287,7 +287,7 @@ inline coffe::graphics::size3d<T>::size3d(size3d<T> const& b)
 }
 
 template<typename T>
-inline coffe::graphics::size3d<T>::size3d(T width, T height, T depth)
+inline ang::graphics::size3d<T>::size3d(T width, T height, T depth)
 	: width(width)
 	, height(height)
 	, depth(depth)
@@ -296,7 +296,7 @@ inline coffe::graphics::size3d<T>::size3d(T width, T height, T depth)
 }
 
 template<typename T>
-inline coffe::graphics::size3d<T>& coffe::graphics::size3d<T>::operator = (const coffe::graphics::size3d<T>& b)
+inline ang::graphics::size3d<T>& ang::graphics::size3d<T>::operator = (const ang::graphics::size3d<T>& b)
 {
 	width = b.width;
 	height = b.height;
@@ -305,7 +305,7 @@ inline coffe::graphics::size3d<T>& coffe::graphics::size3d<T>::operator = (const
 }
 
 template<typename T>
-inline coffe::graphics::size3d<T>& coffe::graphics::size3d<T>::operator += (const coffe::graphics::size3d<T>& b)
+inline ang::graphics::size3d<T>& ang::graphics::size3d<T>::operator += (const ang::graphics::size3d<T>& b)
 {
 	width += b.width;
 	height += b.height;
@@ -314,7 +314,7 @@ inline coffe::graphics::size3d<T>& coffe::graphics::size3d<T>::operator += (cons
 }
 
 template<typename T>
-inline coffe::graphics::size3d<T>& coffe::graphics::size3d<T>::operator -= (const coffe::graphics::size3d<T>& b)
+inline ang::graphics::size3d<T>& ang::graphics::size3d<T>::operator -= (const ang::graphics::size3d<T>& b)
 {
 	width -= b.width;
 	height -= b.height;
@@ -323,7 +323,7 @@ inline coffe::graphics::size3d<T>& coffe::graphics::size3d<T>::operator -= (cons
 }
 
 template<typename T>
-inline coffe::graphics::size3d<T>& coffe::graphics::size3d<T>::operator *= (T k)
+inline ang::graphics::size3d<T>& ang::graphics::size3d<T>::operator *= (T k)
 {
 	width *= k;
 	height *= k;
@@ -332,7 +332,7 @@ inline coffe::graphics::size3d<T>& coffe::graphics::size3d<T>::operator *= (T k)
 }
 
 template<typename T>
-inline coffe::graphics::size3d<T>& coffe::graphics::size3d<T>::operator /= (T k)
+inline ang::graphics::size3d<T>& ang::graphics::size3d<T>::operator /= (T k)
 {
 	width /= k;
 	height /= k;
@@ -343,7 +343,7 @@ inline coffe::graphics::size3d<T>& coffe::graphics::size3d<T>::operator /= (T k)
 
 
 template<typename T>
-inline coffe::graphics::rect<T> coffe::graphics::rect<T>::parse(coffe::cstr_t cstr)
+inline ang::graphics::rect<T> ang::graphics::rect<T>::parse(ang::cstr_t cstr)
 {
 	if (cstr.ptr() == null)
 		return{ 0,0,0,0 };
@@ -362,7 +362,7 @@ inline coffe::graphics::rect<T> coffe::graphics::rect<T>::parse(coffe::cstr_t cs
 }
 
 template<typename T>
-inline coffe::graphics::rect<T>::rect()
+inline ang::graphics::rect<T>::rect()
 	: left(0)
 	, top(0)
 	, right(0)
@@ -372,7 +372,7 @@ inline coffe::graphics::rect<T>::rect()
 }
 
 template<typename T>
-inline coffe::graphics::rect<T>::rect(coffe::graphics::rect<T> const& rc)
+inline ang::graphics::rect<T>::rect(ang::graphics::rect<T> const& rc)
 	: left(rc.left)
 	, top(rc.top)
 	, right(rc.right)
@@ -382,7 +382,7 @@ inline coffe::graphics::rect<T>::rect(coffe::graphics::rect<T> const& rc)
 }
 
 template<typename T>
-inline coffe::graphics::rect<T>::rect(T l, T t, T r, T b)
+inline ang::graphics::rect<T>::rect(T l, T t, T r, T b)
 	: left(l)
 	, top(t)
 	, right(r < l ? l : r)
@@ -392,7 +392,7 @@ inline coffe::graphics::rect<T>::rect(T l, T t, T r, T b)
 }
 
 template<typename T>
-inline coffe::graphics::rect<T>::rect(coffe::graphics::point<T> lt, coffe::graphics::point<T> rb)
+inline ang::graphics::rect<T>::rect(ang::graphics::point<T> lt, ang::graphics::point<T> rb)
 	: left(lt.x)
 	, top(lt.y)
 	, right(rb.x)
@@ -402,7 +402,7 @@ inline coffe::graphics::rect<T>::rect(coffe::graphics::point<T> lt, coffe::graph
 }
 
 template<typename T>
-inline coffe::graphics::rect<T>::rect(coffe::graphics::point<T> lt, coffe::graphics::size<T> sz)
+inline ang::graphics::rect<T>::rect(ang::graphics::point<T> lt, ang::graphics::size<T> sz)
 	: left(lt.x)
 	, top(lt.y)
 	, right(lt.x + sz.width)
@@ -412,48 +412,45 @@ inline coffe::graphics::rect<T>::rect(coffe::graphics::point<T> lt, coffe::graph
 }
 
 template<typename T> 
-inline T coffe::graphics::rect<T>::get_width_property(coffe::base_property const*prop) {
-	rect<T>* proxy = field_to_parent(&rect<T>::width, prop);
-	return proxy->right - proxy->left;
-}
-template<typename T> 
-inline void coffe::graphics::rect<T>::set_width_property(coffe::base_property*prop, T&& value) {
-	rect<T>* proxy = field_to_parent(&rect<T>::width, prop);
-	proxy->right = proxy->left + forward<T>(value);
+inline T ang::graphics::rect<T>::width()const {
+	return right - left;
 }
 template<typename T>
-inline T coffe::graphics::rect<T>::get_height_property(coffe::base_property const*prop) {
-	rect<T>* proxy = field_to_parent(&rect<T>::height, prop);
-	return proxy->bottom - proxy->top;
+inline void ang::graphics::rect<T>::width(T value) {
+	left = right + forward<T>(value);
 }
-template<typename T> 
-inline void coffe::graphics::rect<T>::set_height_property(coffe::base_property*prop, T&& value) {
-	rect<T>* proxy = field_to_parent(&rect<T>::height, prop);
-	proxy->bottom = proxy->top + forward<T>(value);
+
+template<typename T>
+inline T ang::graphics::rect<T>::height()const {
+	return bottom - top;
 }
 template<typename T>
-inline coffe::graphics::point<T> coffe::graphics::rect<T>::get_left_top_property(coffe::base_property const*prop) {
-	rect<T>* proxy = field_to_parent(&rect<T>::left_top, prop);
-	return point<T>(proxy->left, proxy->top);
+inline void ang::graphics::rect<T>::height(T value) {
+	bottom = top + forward<T>(value);
 }
-template<typename T> 
-inline coffe::graphics::point<T> coffe::graphics::rect<T>::get_right_top_property(coffe::base_property const*prop) {
-	rect<T>* proxy = field_to_parent(&rect<T>::right_top, prop);
-	return point<T>(proxy->right, proxy->top);
-}
+
 template<typename T>
-inline coffe::graphics::point<T> coffe::graphics::rect<T>::get_left_bottom_property(coffe::base_property const*prop) {
-	rect<T>* proxy = field_to_parent(&rect<T>::left_bottom, prop);
-	return point<T>(proxy->left, proxy->bottom);
+inline ang::graphics::point<T> ang::graphics::rect<T>::left_top()const {
+	return point<T>(left, top);
 }
+
 template<typename T>
-inline coffe::graphics::point<T> coffe::graphics::rect<T>::get_right_bottom_property(coffe::base_property const*prop) {
-	rect<T>* proxy = field_to_parent(&rect<T>::right_bottom, prop);
-	return point<T>(proxy->right, proxy->bottom);
+inline ang::graphics::point<T> ang::graphics::rect<T>::right_top()const {
+	return point<T>(right, top);
+}
+
+template<typename T>
+inline ang::graphics::point<T> ang::graphics::rect<T>::left_bottom()const {
+	return point<T>(left, bottom);
+}
+
+template<typename T>
+inline ang::graphics::point<T> ang::graphics::rect<T>::right_bottom()const {
+	return point<T>(right, bottom);
 }
 
 template<typename T> 
-inline void coffe::graphics::rect<T>::move_to(coffe::graphics::point<T> p)
+inline void ang::graphics::rect<T>::move_to(ang::graphics::point<T> p)
 {
 	right = right - left + p.x;
 	bottom = bottom - top + p.y;
@@ -462,7 +459,7 @@ inline void coffe::graphics::rect<T>::move_to(coffe::graphics::point<T> p)
 }
 
 template<typename T>
-inline void coffe::graphics::rect<T>::move_to(T x, T y)
+inline void ang::graphics::rect<T>::move_to(T x, T y)
 {
 	right = right - left + x;
 	bottom = bottom - top + y;
@@ -471,21 +468,21 @@ inline void coffe::graphics::rect<T>::move_to(T x, T y)
 }
 
 template<typename T>
-inline void coffe::graphics::rect<T>::resize(coffe::graphics::size<T> sz)
+inline void ang::graphics::rect<T>::resize(ang::graphics::size<T> sz)
 {
 	right = left + sz.width;
 	bottom = top + sz.height;
 }
 
 template<typename T>
-inline void coffe::graphics::rect<T>::resize(T cx, T cy)
+inline void ang::graphics::rect<T>::resize(T cx, T cy)
 {
 	right = left + cx;
 	bottom = top + cy;
 }
 
 template<typename T>
-inline void coffe::graphics::rect<T>::deflate(T l, T t, T r, T b)
+inline void ang::graphics::rect<T>::deflate(T l, T t, T r, T b)
 {
 	left += l;
 	top += t;
@@ -494,7 +491,7 @@ inline void coffe::graphics::rect<T>::deflate(T l, T t, T r, T b)
 }
 
 template<typename T>
-inline void coffe::graphics::rect<T>::inflate(T l, T t, T r, T b)
+inline void ang::graphics::rect<T>::inflate(T l, T t, T r, T b)
 {
 	left -= l;
 	top -= t;
@@ -503,7 +500,7 @@ inline void coffe::graphics::rect<T>::inflate(T l, T t, T r, T b)
 }
 
 template<typename T>
-inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator = (const coffe::graphics::rect<T>& rc)
+inline ang::graphics::rect<T>& ang::graphics::rect<T>::operator = (const ang::graphics::rect<T>& rc)
 {
 	left = rc.left;
 	top = rc.top;
@@ -513,7 +510,7 @@ inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator = (const cof
 }
 
 template<typename T>
-inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator += (const coffe::graphics::rect<T>& rc)
+inline ang::graphics::rect<T>& ang::graphics::rect<T>::operator += (const ang::graphics::rect<T>& rc)
 {
 	left += rc.left;
 	top += rc.top;
@@ -523,7 +520,7 @@ inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator += (const co
 }
 
 template<typename T>
-inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator -= (const coffe::graphics::rect<T>& rc)
+inline ang::graphics::rect<T>& ang::graphics::rect<T>::operator -= (const ang::graphics::rect<T>& rc)
 {
 	left -= rc.left;
 	top -= rc.top;
@@ -533,7 +530,7 @@ inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator -= (const co
 }
 
 template<typename T>
-inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator += (const coffe::graphics::point<T>& pt)
+inline ang::graphics::rect<T>& ang::graphics::rect<T>::operator += (const ang::graphics::point<T>& pt)
 {
 	left += pt.x;
 	top += pt.y;
@@ -543,7 +540,7 @@ inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator += (const co
 }
 
 template<typename T>
-inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator -= (const coffe::graphics::point<T>& pt)
+inline ang::graphics::rect<T>& ang::graphics::rect<T>::operator -= (const ang::graphics::point<T>& pt)
 {
 	left -= pt.x;
 	top -= pt.y;
@@ -553,7 +550,7 @@ inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator -= (const co
 }
 
 template<typename T>
-inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator += (const coffe::graphics::size<T>& sz)
+inline ang::graphics::rect<T>& ang::graphics::rect<T>::operator += (const ang::graphics::size<T>& sz)
 {
 	right += sz.width;
 	bottom += sz.height;
@@ -561,7 +558,7 @@ inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator += (const co
 }
 
 template<typename T> 
-inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator -= (const coffe::graphics::size<T>& sz)
+inline ang::graphics::rect<T>& ang::graphics::rect<T>::operator -= (const ang::graphics::size<T>& sz)
 {
 	right -= min(sz.width, left);
 	bottom -= min(sz.height, top) ;
@@ -569,7 +566,7 @@ inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator -= (const co
 }
 
 template<typename T> 
-inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator *= (T k)
+inline ang::graphics::rect<T>& ang::graphics::rect<T>::operator *= (T k)
 {
 	left *= k;
 	top *= k;
@@ -579,7 +576,7 @@ inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator *= (T k)
 }
 
 template<typename T> 
-inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator /= (T k)
+inline ang::graphics::rect<T>& ang::graphics::rect<T>::operator /= (T k)
 {
 	left /= k;
 	top /= k;
@@ -591,7 +588,7 @@ inline coffe::graphics::rect<T>& coffe::graphics::rect<T>::operator /= (T k)
 
 
 template<typename T>
-inline coffe::graphics::box<T> coffe::graphics::box<T>::parse(coffe::cstr_t cstr)
+inline ang::graphics::box<T> ang::graphics::box<T>::parse(ang::cstr_t cstr)
 {
 	if (cstr.ptr() == null)
 		return{ 0,0,0,0,0,0 };
@@ -614,7 +611,7 @@ inline coffe::graphics::box<T> coffe::graphics::box<T>::parse(coffe::cstr_t cstr
 }
 
 template<typename T>
-inline coffe::graphics::box<T>::box()
+inline ang::graphics::box<T>::box()
 	: left(0)
 	, top(0)
 	, front(0)
@@ -626,7 +623,7 @@ inline coffe::graphics::box<T>::box()
 }
 
 template<typename T>
-inline coffe::graphics::box<T>::box(coffe::graphics::box<T> const& bx)
+inline ang::graphics::box<T>::box(ang::graphics::box<T> const& bx)
 	: left(bx.left)
 	, top(bx.top)
 	, front(bx.front)
@@ -638,7 +635,7 @@ inline coffe::graphics::box<T>::box(coffe::graphics::box<T> const& bx)
 }
 
 template<typename T>
-inline coffe::graphics::box<T>::box(T l, T t, T f, T r, T b, T bk)
+inline ang::graphics::box<T>::box(T l, T t, T f, T r, T b, T bk)
 	: left(l)
 	, top(t)
 	, front(f)
@@ -650,7 +647,7 @@ inline coffe::graphics::box<T>::box(T l, T t, T f, T r, T b, T bk)
 }
 
 template<typename T>
-inline coffe::graphics::box<T>::box(coffe::graphics::point3d<T> ltf, coffe::graphics::point3d<T> rbb)
+inline ang::graphics::box<T>::box(ang::graphics::point3d<T> ltf, ang::graphics::point3d<T> rbb)
 	: left(ltf.x)
 	, top(ltf.y)
 	, front(ltf.z)
@@ -662,7 +659,7 @@ inline coffe::graphics::box<T>::box(coffe::graphics::point3d<T> ltf, coffe::grap
 }
 
 template<typename T>
-inline coffe::graphics::box<T>::box(coffe::graphics::point3d<T> ltf, coffe::graphics::size3d<T> sz)
+inline ang::graphics::box<T>::box(ang::graphics::point3d<T> ltf, ang::graphics::size3d<T> sz)
 	: left(ltf.x)
 	, top(ltf.y)
 	, front(ltf.z)
@@ -673,78 +670,77 @@ inline coffe::graphics::box<T>::box(coffe::graphics::point3d<T> ltf, coffe::grap
 
 }
 
+
 template<typename T>
-inline T coffe::graphics::box<T>::get_width_property(coffe::base_property const*prop) {
-	box<T>* proxy = field_to_parent(&box<T>::width, prop);
-	return proxy->right - proxy->left;
+inline T ang::graphics::box<T>::width()const {
+	return right - left;
 }
 template<typename T>
-inline void coffe::graphics::box<T>::set_width_property(coffe::base_property *prop, T&& value) {
-	box<T>* proxy = field_to_parent(&box<T>::width, prop);
-	proxy->right = proxy->left + forward<T>(value);
+inline void ang::graphics::box<T>::width(T value) {
+	left = right + forward<T>(value);
+}
+
+template<typename T>
+inline T ang::graphics::box<T>::height()const {
+	return bottom - top;
 }
 template<typename T>
-inline T coffe::graphics::box<T>::get_height_property(coffe::base_property const*prop) {
-	box<T>* proxy = field_to_parent(&box<T>::height, prop);
-	return proxy->bottom - proxy->top;
+inline void ang::graphics::box<T>::height(T value) {
+	bottom = top + forward<T>(value);
+}
+
+
+template<typename T>
+inline T ang::graphics::box<T>::depth()const {
+	return back - front;
 }
 template<typename T>
-inline void coffe::graphics::box<T>::set_height_property(coffe::base_property *prop, T&& value) {
-	box<T>* proxy = field_to_parent(&box<T>::height, prop);
-	proxy->bottom = proxy->top + forward<T>(value);
+inline void ang::graphics::box<T>::depth(T value) {
+	back = front + forward<T>(value);
 }
+
 template<typename T>
-inline T coffe::graphics::box<T>::get_depth_property(coffe::base_property const*prop) {
-	box<T>* proxy = field_to_parent(&box<T>::depth, prop);
-	return proxy->back - proxy->front;
+inline ang::graphics::point3d<T> ang::graphics::box<T>::left_top_front()const {
+	return point3d<T>(left, top, front);
 }
+
 template<typename T>
-inline void coffe::graphics::box<T>::set_depth_property(coffe::base_property *prop, T&& value) {
-	box<T>* proxy = field_to_parent(&box<T>::depth, prop);
-	proxy->back = proxy->front + forward<T>(value);
+inline ang::graphics::point3d<T> ang::graphics::box<T>::left_top_back()const {
+	return point3d<T>(left, top, back);
 }
+
 template<typename T>
-inline coffe::graphics::point3d<T> coffe::graphics::box<T>::get_left_top_front_property(coffe::base_property const*prop) {
-	box<T>* proxy = field_to_parent(&box<T>::left_top_front, prop);
-	return point3d<T>(proxy->left, proxy->top, proxy->front);
+inline ang::graphics::point3d<T> ang::graphics::box<T>::right_top_front()const {
+	return point3d<T>(right, top, front);
 }
+
 template<typename T>
-inline coffe::graphics::point3d<T> coffe::graphics::box<T>::get_left_top_back_property(coffe::base_property const*prop) {
-	box<T>* proxy = field_to_parent(&box<T>::left_top_back, prop);
-	return point3d<T>(proxy->left, proxy->top, proxy->back);
+inline ang::graphics::point3d<T> ang::graphics::box<T>::right_top_back()const {
+	return point3d<T>(right, top, back);
 }
+
 template<typename T>
-inline coffe::graphics::point3d<T> coffe::graphics::box<T>::get_right_top_front_property(coffe::base_property const*prop) {
-	box<T>* proxy = field_to_parent(&box<T>::right_top_front, prop);
-	return point3d<T>(proxy->right, proxy->top, proxy->front);
+inline ang::graphics::point3d<T> ang::graphics::box<T>::left_bottom_front()const {
+	return point3d<T>(left, bottom, front);
 }
+
 template<typename T>
-inline coffe::graphics::point3d<T> coffe::graphics::box<T>::get_right_top_back_property(coffe::base_property const*prop) {
-	box<T>* proxy = field_to_parent(&box<T>::right_top_back, prop);
-	return point3d<T>(proxy->right, proxy->top, proxy->back);
+inline ang::graphics::point3d<T> ang::graphics::box<T>::left_bottom_back()const {
+	return point3d<T>(left, bottom, back);
 }
+
 template<typename T>
-inline coffe::graphics::point3d<T> coffe::graphics::box<T>::get_left_bottom_front_property(coffe::base_property const*prop) {
-	box<T>* proxy = field_to_parent(&box<T>::left_bottom_front, prop);
-	return point3d<T>(proxy->left, proxy->bottom, proxy->front);
+inline ang::graphics::point3d<T> ang::graphics::box<T>::right_bottom_front()const {
+	return point3d<T>(right, bottom, front);
 }
+
 template<typename T>
-inline coffe::graphics::point3d<T> coffe::graphics::box<T>::get_left_bottom_back_property(coffe::base_property const*prop) {
-	box<T>* proxy = field_to_parent(&box<T>::left_bottom_back, prop);
-	return point3d<T>(proxy->left, proxy->bottom, proxy->back);
+inline ang::graphics::point3d<T> ang::graphics::box<T>::right_bottom_back()const {
+	return point3d<T>(right, bottom, back);
 }
+
 template<typename T>
-inline coffe::graphics::point3d<T> coffe::graphics::box<T>::get_right_bottom_front_property(coffe::base_property const*prop) {
-	box<T>* proxy = field_to_parent(&box<T>::right_bottom_front, prop);
-	return point3d<T>(proxy->right, proxy->bottom, proxy->front);
-}
-template<typename T>
-inline coffe::graphics::point3d<T> coffe::graphics::box<T>::get_right_bottom_back_property(coffe::base_property const*prop) {
-	box<T>* proxy = field_to_parent(&box<T>::right_bottom_back, prop);
-	return point3d<T>(proxy->right, proxy->bottom, proxy->back);
-}
-template<typename T>
-inline void coffe::graphics::box<T>::move_to(coffe::graphics::point3d<T> p)
+inline void ang::graphics::box<T>::move_to(ang::graphics::point3d<T> p)
 {
 	right = right - left + p.x;
 	bottom = bottom - top + p.y;
@@ -755,7 +751,7 @@ inline void coffe::graphics::box<T>::move_to(coffe::graphics::point3d<T> p)
 }
 
 template<typename T>
-inline void coffe::graphics::box<T>::move_to(T x, T y, T z)
+inline void ang::graphics::box<T>::move_to(T x, T y, T z)
 {
 	right = right - left + x;
 	bottom = bottom - top + y;
@@ -766,7 +762,7 @@ inline void coffe::graphics::box<T>::move_to(T x, T y, T z)
 }
 
 template<typename T>
-inline void coffe::graphics::box<T>::resize(coffe::graphics::size3d<T> sz)
+inline void ang::graphics::box<T>::resize(ang::graphics::size3d<T> sz)
 {
 	right = left + sz.width;
 	bottom = top + sz.height;
@@ -774,7 +770,7 @@ inline void coffe::graphics::box<T>::resize(coffe::graphics::size3d<T> sz)
 }
 
 template<typename T>
-inline void coffe::graphics::box<T>::resize(T cx, T cy, T cz)
+inline void ang::graphics::box<T>::resize(T cx, T cy, T cz)
 {
 	right = left + cx;
 	bottom = top + cy;
@@ -782,7 +778,7 @@ inline void coffe::graphics::box<T>::resize(T cx, T cy, T cz)
 }
 
 template<typename T>
-inline void coffe::graphics::box<T>::deflate(T l, T t, T f, T r, T b, T bk)
+inline void ang::graphics::box<T>::deflate(T l, T t, T f, T r, T b, T bk)
 {
 	left += l;
 	top += t;
@@ -793,7 +789,7 @@ inline void coffe::graphics::box<T>::deflate(T l, T t, T f, T r, T b, T bk)
 }
 
 template<typename T>
-inline void coffe::graphics::box<T>::inflate(T l, T t, T f, T r, T b, T bk)
+inline void ang::graphics::box<T>::inflate(T l, T t, T f, T r, T b, T bk)
 {
 	left -= l;
 	top -= t;
@@ -804,7 +800,7 @@ inline void coffe::graphics::box<T>::inflate(T l, T t, T f, T r, T b, T bk)
 }
 
 template<typename T>
-inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator = (const coffe::graphics::box<T>& bx)
+inline ang::graphics::box<T>& ang::graphics::box<T>::operator = (const ang::graphics::box<T>& bx)
 {
 	left = bx.left;
 	top = bx.top;
@@ -816,7 +812,7 @@ inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator = (const coffe
 }
 
 template<typename T>
-inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator += (const coffe::graphics::box<T>& bx)
+inline ang::graphics::box<T>& ang::graphics::box<T>::operator += (const ang::graphics::box<T>& bx)
 {
 	left += bx.left;
 	top += bx.top;
@@ -828,7 +824,7 @@ inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator += (const coff
 }
 
 template<typename T>
-inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator -= (const coffe::graphics::box<T>& bx)
+inline ang::graphics::box<T>& ang::graphics::box<T>::operator -= (const ang::graphics::box<T>& bx)
 {
 	left -= bx.left;
 	top -= bx.top;
@@ -840,7 +836,7 @@ inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator -= (const coff
 }
 
 template<typename T>
-inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator += (const coffe::graphics::point3d<T>& pt)
+inline ang::graphics::box<T>& ang::graphics::box<T>::operator += (const ang::graphics::point3d<T>& pt)
 {
 	left += pt.x;
 	top += pt.y;
@@ -852,7 +848,7 @@ inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator += (const coff
 }
 
 template<typename T>
-inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator -= (const coffe::graphics::point3d<T>& pt)
+inline ang::graphics::box<T>& ang::graphics::box<T>::operator -= (const ang::graphics::point3d<T>& pt)
 {
 	left -= pt.x;
 	top -= pt.y;
@@ -864,7 +860,7 @@ inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator -= (const coff
 }
 
 template<typename T>
-inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator += (const coffe::graphics::size3d<T>& sz)
+inline ang::graphics::box<T>& ang::graphics::box<T>::operator += (const ang::graphics::size3d<T>& sz)
 {
 	right += sz.width;
 	bottom += sz.height;
@@ -873,7 +869,7 @@ inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator += (const coff
 }
 
 template<typename T>
-inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator -= (const coffe::graphics::size3d<T>& sz)
+inline ang::graphics::box<T>& ang::graphics::box<T>::operator -= (const ang::graphics::size3d<T>& sz)
 {
 	right -= min(sz.width, left);
 	bottom -= min(sz.height, top);
@@ -882,7 +878,7 @@ inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator -= (const coff
 }
 
 template<typename T>
-inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator *= (T k)
+inline ang::graphics::box<T>& ang::graphics::box<T>::operator *= (T k)
 {
 	left *= k;
 	top *= k;
@@ -894,7 +890,7 @@ inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator *= (T k)
 }
 
 template<typename T>
-inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator /= (T k)
+inline ang::graphics::box<T>& ang::graphics::box<T>::operator /= (T k)
 {
 	left /= k;
 	top /= k;
@@ -906,60 +902,60 @@ inline coffe::graphics::box<T>& coffe::graphics::box<T>::operator /= (T k)
 }
 
 
-template<typename T> inline coffe::graphics::point<T> coffe::graphics::operator + (const coffe::graphics::point<T>& a1, const coffe::graphics::point<T>& a2) { return{ a1.x + a2.x, a1.y + a2.y }; }
-template<typename T> inline coffe::graphics::point<T> coffe::graphics::operator - (const coffe::graphics::point<T>& a1, const coffe::graphics::point<T>& a2) { return{ a1.x - a2.x, a1.y - a2.y }; }
-template<typename T> inline coffe::graphics::point<T> coffe::graphics::operator * (const coffe::graphics::point<T>& a1, T k) { return{ a1.x * k, a1.y * k }; }
-template<typename T> inline coffe::graphics::point<T> coffe::graphics::operator * (T k, const coffe::graphics::point<T>& a2) { return{ a2.x * k, a2.y * k }; }
-template<typename T> inline coffe::graphics::point<T> coffe::graphics::operator / (const coffe::graphics::point<T>& a1, T k) { return{ a1.x / k, a1.y / k }; }
+template<typename T> inline ang::graphics::point<T> ang::graphics::operator + (const ang::graphics::point<T>& a1, const ang::graphics::point<T>& a2) { return{ a1.x + a2.x, a1.y + a2.y }; }
+template<typename T> inline ang::graphics::point<T> ang::graphics::operator - (const ang::graphics::point<T>& a1, const ang::graphics::point<T>& a2) { return{ a1.x - a2.x, a1.y - a2.y }; }
+template<typename T> inline ang::graphics::point<T> ang::graphics::operator * (const ang::graphics::point<T>& a1, T k) { return{ a1.x * k, a1.y * k }; }
+template<typename T> inline ang::graphics::point<T> ang::graphics::operator * (T k, const ang::graphics::point<T>& a2) { return{ a2.x * k, a2.y * k }; }
+template<typename T> inline ang::graphics::point<T> ang::graphics::operator / (const ang::graphics::point<T>& a1, T k) { return{ a1.x / k, a1.y / k }; }
 
-template<typename T> inline coffe::graphics::size<T> coffe::graphics::operator + (const coffe::graphics::size<T>& a1, const coffe::graphics::size<T>& a2) { return{ a1.width + a2.width, a1.height + a2.height }; }
-template<typename T> inline coffe::graphics::size<T> coffe::graphics::operator - (const coffe::graphics::size<T>& a1, const coffe::graphics::size<T>& a2) { return{ a1.width - a2.width, a1.height - a2.height }; }
-template<typename T> inline coffe::graphics::size<T> coffe::graphics::operator * (const coffe::graphics::size<T>& a1, T k) { return{ a1.width * k, a1.height * k }; }
-template<typename T> inline coffe::graphics::size<T> coffe::graphics::operator * (T k, const coffe::graphics::size<T>& a2) { return{ a2.width * k, a2.height * k }; }
-template<typename T> inline coffe::graphics::size<T> coffe::graphics::operator / (const coffe::graphics::size<T>& a1, T k) { return{ a1.width / k, a1.height / k }; }
+template<typename T> inline ang::graphics::size<T> ang::graphics::operator + (const ang::graphics::size<T>& a1, const ang::graphics::size<T>& a2) { return{ a1.width + a2.width, a1.height + a2.height }; }
+template<typename T> inline ang::graphics::size<T> ang::graphics::operator - (const ang::graphics::size<T>& a1, const ang::graphics::size<T>& a2) { return{ a1.width - a2.width, a1.height - a2.height }; }
+template<typename T> inline ang::graphics::size<T> ang::graphics::operator * (const ang::graphics::size<T>& a1, T k) { return{ a1.width * k, a1.height * k }; }
+template<typename T> inline ang::graphics::size<T> ang::graphics::operator * (T k, const ang::graphics::size<T>& a2) { return{ a2.width * k, a2.height * k }; }
+template<typename T> inline ang::graphics::size<T> ang::graphics::operator / (const ang::graphics::size<T>& a1, T k) { return{ a1.width / k, a1.height / k }; }
 
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator + (const coffe::graphics::point<T>& a1, const coffe::graphics::size<T>& a2) { return{ a1,a2 }; }
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator + (const coffe::graphics::size<T>& a1, const coffe::graphics::point<T>& a2) { return{ a2,a1 }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator + (const ang::graphics::point<T>& a1, const ang::graphics::size<T>& a2) { return{ a1,a2 }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator + (const ang::graphics::size<T>& a1, const ang::graphics::point<T>& a2) { return{ a2,a1 }; }
 
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator + (const coffe::graphics::rect<T>& a1, const coffe::graphics::rect<T>& a2) { return{ a1.left + a2.left, a1.top + a2.top, a1.right + a2.right, a1.bottom + a2.bottom }; }
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator - (const coffe::graphics::rect<T>& a1, const coffe::graphics::rect<T>& a2) { return{ a1.left - a2.left, a1.top - a2.top, a1.right - a2.right, a1.bottom - a2.bottom }; }
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator + (const coffe::graphics::rect<T>& a1, const coffe::graphics::point<T>& a2) { return{ a1.left + a2.x, a1.top + a2.y, a1.right + a2.x, a1.bottom + a2.y }; }
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator - (const coffe::graphics::rect<T>& a1, const coffe::graphics::point<T>& a2) { return{ a1.left - a2.x, a1.top - a2.y, a1.right - a2.x, a1.bottom - a2.y }; }
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator + (const coffe::graphics::point<T>& a1, const coffe::graphics::rect<T>& a2) { return{ a2.left + a1.x, a2.top + a1.y, a2.right + a1.x, a2.bottom + a1.y }; }
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator + (const coffe::graphics::rect<T>& a1, const coffe::graphics::size<T>& a2) { return{ a1.left, a1.top, a1.right + a2.width, a1.bottom + a2.height }; }
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator - (const coffe::graphics::rect<T>& a1, const coffe::graphics::size<T>& a2) { return{ a1.left, a1.top, a1.right - a2.width, a1.bottom - a2.height }; }
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator + (const coffe::graphics::size<T>& a1, const coffe::graphics::rect<T>& a2) { return{ a2.left, a2.top, a2.right + a1.width, a2.bottom + a1.height }; }
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator * (const coffe::graphics::rect<T>& a1, T k) { return{ a1.left * k, a1.top * k, a1.right * k, a1.bottom * k }; }
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator * (T k, const coffe::graphics::rect<T>& a2) { return{ a2.left * k, a2.top * k, a2.right * k, a2.bottom * k }; }
-template<typename T> inline coffe::graphics::rect<T> coffe::graphics::operator / (const coffe::graphics::rect<T>& a1, T k) { return{ a1.left / k, a1.top / k, a1.right / k, a1.bottom / k }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator + (const ang::graphics::rect<T>& a1, const ang::graphics::rect<T>& a2) { return{ a1.left + a2.left, a1.top + a2.top, a1.right + a2.right, a1.bottom + a2.bottom }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator - (const ang::graphics::rect<T>& a1, const ang::graphics::rect<T>& a2) { return{ a1.left - a2.left, a1.top - a2.top, a1.right - a2.right, a1.bottom - a2.bottom }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator + (const ang::graphics::rect<T>& a1, const ang::graphics::point<T>& a2) { return{ a1.left + a2.x, a1.top + a2.y, a1.right + a2.x, a1.bottom + a2.y }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator - (const ang::graphics::rect<T>& a1, const ang::graphics::point<T>& a2) { return{ a1.left - a2.x, a1.top - a2.y, a1.right - a2.x, a1.bottom - a2.y }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator + (const ang::graphics::point<T>& a1, const ang::graphics::rect<T>& a2) { return{ a2.left + a1.x, a2.top + a1.y, a2.right + a1.x, a2.bottom + a1.y }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator + (const ang::graphics::rect<T>& a1, const ang::graphics::size<T>& a2) { return{ a1.left, a1.top, a1.right + a2.width, a1.bottom + a2.height }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator - (const ang::graphics::rect<T>& a1, const ang::graphics::size<T>& a2) { return{ a1.left, a1.top, a1.right - a2.width, a1.bottom - a2.height }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator + (const ang::graphics::size<T>& a1, const ang::graphics::rect<T>& a2) { return{ a2.left, a2.top, a2.right + a1.width, a2.bottom + a1.height }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator * (const ang::graphics::rect<T>& a1, T k) { return{ a1.left * k, a1.top * k, a1.right * k, a1.bottom * k }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator * (T k, const ang::graphics::rect<T>& a2) { return{ a2.left * k, a2.top * k, a2.right * k, a2.bottom * k }; }
+template<typename T> inline ang::graphics::rect<T> ang::graphics::operator / (const ang::graphics::rect<T>& a1, T k) { return{ a1.left / k, a1.top / k, a1.right / k, a1.bottom / k }; }
 
 
 
-template<typename T> inline coffe::graphics::point3d<T> coffe::graphics::operator + (const coffe::graphics::point3d<T>& a1, const coffe::graphics::point3d<T>& a2) { return{ a1.x + a2.x, a1.y + a2.y, a1.z + a2.z }; }
-template<typename T> inline coffe::graphics::point3d<T> coffe::graphics::operator - (const coffe::graphics::point3d<T>& a1, const coffe::graphics::point3d<T>& a2) { return{ a1.x - a2.x, a1.y - a2.y, a1.z - a2.z }; }
-template<typename T> inline coffe::graphics::point3d<T> coffe::graphics::operator * (const coffe::graphics::point3d<T>& a1, T k) { return{ a1.x * k, a1.y * k, a1.z * k }; }
-template<typename T> inline coffe::graphics::point3d<T> coffe::graphics::operator * (T k, const coffe::graphics::point3d<T>& a2) { return{ a2.x * k, a2.y * k, a2.z * k }; }
-template<typename T> inline coffe::graphics::point3d<T> coffe::graphics::operator / (const coffe::graphics::point3d<T>& a1, T k) { return{ a1.x / k, a1.y / k, a1.z / k }; }
+template<typename T> inline ang::graphics::point3d<T> ang::graphics::operator + (const ang::graphics::point3d<T>& a1, const ang::graphics::point3d<T>& a2) { return{ a1.x + a2.x, a1.y + a2.y, a1.z + a2.z }; }
+template<typename T> inline ang::graphics::point3d<T> ang::graphics::operator - (const ang::graphics::point3d<T>& a1, const ang::graphics::point3d<T>& a2) { return{ a1.x - a2.x, a1.y - a2.y, a1.z - a2.z }; }
+template<typename T> inline ang::graphics::point3d<T> ang::graphics::operator * (const ang::graphics::point3d<T>& a1, T k) { return{ a1.x * k, a1.y * k, a1.z * k }; }
+template<typename T> inline ang::graphics::point3d<T> ang::graphics::operator * (T k, const ang::graphics::point3d<T>& a2) { return{ a2.x * k, a2.y * k, a2.z * k }; }
+template<typename T> inline ang::graphics::point3d<T> ang::graphics::operator / (const ang::graphics::point3d<T>& a1, T k) { return{ a1.x / k, a1.y / k, a1.z / k }; }
 
-template<typename T> inline coffe::graphics::size3d<T> coffe::graphics::operator + (const coffe::graphics::size3d<T>& a1, const coffe::graphics::size3d<T>& a2) { return{ a1.width + a2.width, a1.height + a2.height, a1.depth + a2.depth }; }
-template<typename T> inline coffe::graphics::size3d<T> coffe::graphics::operator - (const coffe::graphics::size3d<T>& a1, const coffe::graphics::size3d<T>& a2) { return{ a1.width - a2.width, a1.height - a2.height, a1.depth - a2.depth }; }
-template<typename T> inline coffe::graphics::size3d<T> coffe::graphics::operator * (const coffe::graphics::size3d<T>& a1, T k) { return{ a1.width * k, a1.height * k, a1.depth * k }; }
-template<typename T> inline coffe::graphics::size3d<T> coffe::graphics::operator * (T k, const coffe::graphics::size3d<T>& a2) { return{ a2.width * k, a2.height * k, a2.depth * k }; }
-template<typename T> inline coffe::graphics::size3d<T> coffe::graphics::operator / (const coffe::graphics::size3d<T>& a1, T k) { return{ a1.width / k, a1.height / k, a1.depth / k }; }
+template<typename T> inline ang::graphics::size3d<T> ang::graphics::operator + (const ang::graphics::size3d<T>& a1, const ang::graphics::size3d<T>& a2) { return{ a1.width + a2.width, a1.height + a2.height, a1.depth + a2.depth }; }
+template<typename T> inline ang::graphics::size3d<T> ang::graphics::operator - (const ang::graphics::size3d<T>& a1, const ang::graphics::size3d<T>& a2) { return{ a1.width - a2.width, a1.height - a2.height, a1.depth - a2.depth }; }
+template<typename T> inline ang::graphics::size3d<T> ang::graphics::operator * (const ang::graphics::size3d<T>& a1, T k) { return{ a1.width * k, a1.height * k, a1.depth * k }; }
+template<typename T> inline ang::graphics::size3d<T> ang::graphics::operator * (T k, const ang::graphics::size3d<T>& a2) { return{ a2.width * k, a2.height * k, a2.depth * k }; }
+template<typename T> inline ang::graphics::size3d<T> ang::graphics::operator / (const ang::graphics::size3d<T>& a1, T k) { return{ a1.width / k, a1.height / k, a1.depth / k }; }
 
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator + (const coffe::graphics::point3d<T>& a1, const coffe::graphics::size3d<T>& a2) { return{ a1,a2 }; }
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator + (const coffe::graphics::size3d<T>& a1, const coffe::graphics::point3d<T>& a2) { return{ a2,a1 }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator + (const ang::graphics::point3d<T>& a1, const ang::graphics::size3d<T>& a2) { return{ a1,a2 }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator + (const ang::graphics::size3d<T>& a1, const ang::graphics::point3d<T>& a2) { return{ a2,a1 }; }
 
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator + (const coffe::graphics::box<T>& a1, const coffe::graphics::box<T>& a2) { return{ a1.left + a2.left, a1.top + a2.top, a1.front + a2.front, a1.right + a2.right, a1.bottom + a2.bottom, a1.back + a2.back }; }
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator - (const coffe::graphics::box<T>& a1, const coffe::graphics::box<T>& a2) { return{ a1.left - a2.left, a1.top - a2.top, a1.front - a2.front, a1.right - a2.right, a1.bottom - a2.bottom, a1.back - a2.back }; }
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator + (const coffe::graphics::box<T>& a1, const coffe::graphics::point3d<T>& a2) { return{ a1.left + a2.x, a1.top + a2.y, a1.front + a2.z, a1.right + a2.x, a1.bottom + a2.y, a1.back + a2.z }; }
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator - (const coffe::graphics::box<T>& a1, const coffe::graphics::point3d<T>& a2) { return{ a1.left - a2.x, a1.top - a2.y, a1.front - a2.z, a1.right - a2.x, a1.bottom - a2.y, a1.back - a2.z }; }
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator + (const coffe::graphics::point3d<T>& a1, const coffe::graphics::box<T>& a2) { return{ a2.left + a1.x, a2.top + a1.y, a2.front + a1.z, a2.right + a1.x, a2.bottom + a1.y, a2.back + a1.z }; }
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator + (const coffe::graphics::box<T>& a1, const coffe::graphics::size3d<T>& a2) { return{ a1.left, a1.top, a1.front, a1.right + a2.width, a1.bottom + a2.height, a1.back + a2.depth }; }
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator - (const coffe::graphics::box<T>& a1, const coffe::graphics::size3d<T>& a2) { return{ a1.left, a1.top, a1.front, a1.right - min(a2.width, a1.left), a1.bottom - min(a2.height,a1.top), a1.back - min(a2.depth, a1.front) }; }
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator + (const coffe::graphics::size3d<T>& a1, const coffe::graphics::box<T>& a2) { return{ a2.left, a2.top, a2.front, a2.right + a1.width, a2.bottom + a1.height, a2.back + a1.depth }; }
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator * (const coffe::graphics::box<T>& a1, T k) { return{ a1.left * k, a1.top * k, a1.front * k, a1.right * k, a1.bottom * k, a1.back * k }; }
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator * (T k, const coffe::graphics::box<T>& a2) { return{ a2.left * k, a2.top * k, a2.front * k, a2.right * k, a2.bottom * k, a2.back * k }; }
-template<typename T> inline coffe::graphics::box<T> coffe::graphics::operator / (const coffe::graphics::box<T>& a1, T k) { return{ a1.left / k, a1.top / k, a1.front / k, a1.right / k, a1.bottom / k, a1.back / k }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator + (const ang::graphics::box<T>& a1, const ang::graphics::box<T>& a2) { return{ a1.left + a2.left, a1.top + a2.top, a1.front + a2.front, a1.right + a2.right, a1.bottom + a2.bottom, a1.back + a2.back }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator - (const ang::graphics::box<T>& a1, const ang::graphics::box<T>& a2) { return{ a1.left - a2.left, a1.top - a2.top, a1.front - a2.front, a1.right - a2.right, a1.bottom - a2.bottom, a1.back - a2.back }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator + (const ang::graphics::box<T>& a1, const ang::graphics::point3d<T>& a2) { return{ a1.left + a2.x, a1.top + a2.y, a1.front + a2.z, a1.right + a2.x, a1.bottom + a2.y, a1.back + a2.z }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator - (const ang::graphics::box<T>& a1, const ang::graphics::point3d<T>& a2) { return{ a1.left - a2.x, a1.top - a2.y, a1.front - a2.z, a1.right - a2.x, a1.bottom - a2.y, a1.back - a2.z }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator + (const ang::graphics::point3d<T>& a1, const ang::graphics::box<T>& a2) { return{ a2.left + a1.x, a2.top + a1.y, a2.front + a1.z, a2.right + a1.x, a2.bottom + a1.y, a2.back + a1.z }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator + (const ang::graphics::box<T>& a1, const ang::graphics::size3d<T>& a2) { return{ a1.left, a1.top, a1.front, a1.right + a2.width, a1.bottom + a2.height, a1.back + a2.depth }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator - (const ang::graphics::box<T>& a1, const ang::graphics::size3d<T>& a2) { return{ a1.left, a1.top, a1.front, a1.right - min(a2.width, a1.left), a1.bottom - min(a2.height,a1.top), a1.back - min(a2.depth, a1.front) }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator + (const ang::graphics::size3d<T>& a1, const ang::graphics::box<T>& a2) { return{ a2.left, a2.top, a2.front, a2.right + a1.width, a2.bottom + a1.height, a2.back + a1.depth }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator * (const ang::graphics::box<T>& a1, T k) { return{ a1.left * k, a1.top * k, a1.front * k, a1.right * k, a1.bottom * k, a1.back * k }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator * (T k, const ang::graphics::box<T>& a2) { return{ a2.left * k, a2.top * k, a2.front * k, a2.right * k, a2.bottom * k, a2.back * k }; }
+template<typename T> inline ang::graphics::box<T> ang::graphics::operator / (const ang::graphics::box<T>& a1, T k) { return{ a1.left / k, a1.top / k, a1.front / k, a1.right / k, a1.bottom / k, a1.back / k }; }
 
-#endif//__COFFE_FOUNDATIONS_INL__
+#endif//__ANG_FOUNDATIONS_INL__

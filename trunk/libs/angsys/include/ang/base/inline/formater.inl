@@ -1410,13 +1410,13 @@ namespace ang
 				if (exp)
 				{
 					bool bexp = false;
-					if (value > 10.0f)
+					if (value >= 10.0f)
 					{
 						bexp = false;
 						do {
 							iexp++;
 							value /= 10.0f;
-						} while (value > 10.0f);
+						} while (value >= 10.0f);
 					}
 					else if (value < 1.0f)
 					{

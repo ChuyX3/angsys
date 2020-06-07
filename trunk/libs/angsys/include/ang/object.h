@@ -162,8 +162,8 @@ namespace ang
 	public:
 		using iid_type = iid_t<0>;
 		using base_pack = typename object_inherit<T, Ts...>::base_pack;
-		using object_base = typename base_pack::first;
-		using intf_pack = typename base_pack::rest;
+		using object_base = typename base_pack::first_type;
+		using intf_pack = typename base_pack::rest_types;
 
 		static rtti_t const& class_info();
 		virtual rtti_t const& runtime_info()const override;

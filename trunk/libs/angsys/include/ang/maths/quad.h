@@ -1,9 +1,9 @@
-#ifndef __COFFE_QUAD_MATHS_H__
-#define __COFFE_QUAD_MATHS_H__
+#ifndef __ANG_QUAD_MATHS_H__
+#define __ANG_QUAD_MATHS_H__
 
-#include <coffe/maths/maths.h>
+#include <ang/maths/maths.h>
 
-namespace coffe
+namespace ang
 {
 	namespace maths
 	{

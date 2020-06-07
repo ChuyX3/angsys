@@ -140,7 +140,7 @@ namespace ang
 
 			template<text::encoding E> inline operator cstr_view<typename text::char_type_by_encoding<E>::char_type, E>()const {
 				return E == m_encoding ? cstr_view<typename text::char_type_by_encoding<E>::char_type, E>(
-					(typename text::char_type_by_encoding<E>::cstr_t)m_value,
+					(typename text::char_type_by_encoding<E>::cstr_type)m_value,
 					m_size / sizeof(typename text::char_type_by_encoding<E>::char_type))
 					: cstr_view<typename text::char_type_by_encoding<E>::char_type, E>();
 			}

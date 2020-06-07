@@ -1,24 +1,24 @@
 /*********************************************************************************************************************/
-/*   Copyright (C) coffe sys, Jesus Angel Rocha Morales                                                                 */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
 /*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
 /*   to whom the Software is furnished to do so.                                                                     */
 /*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
 /*********************************************************************************************************************/
 
-#ifndef __COFFE_PLATFORM_H__
+#ifndef __ANG_PLATFORM_H__
 #error ...
-#elif !defined __COFFE_PLATFORM_INPUT_H__
-#define __COFFE_PLATFORM_INPUT_H__
+#elif !defined __ANG_PLATFORM_INPUT_H__
+#define __ANG_PLATFORM_INPUT_H__
 
-namespace coffe
+namespace ang
 {
 	namespace platform
 	{
 		namespace input
 		{
-			coffe_declare_interface(ikeyboard);
-			coffe_declare_interface(icontroller);
-			coffe_declare_interface(icontroller_manager);
+			ang_declare_interface(ikeyboard);
+			ang_declare_interface(icontroller);
+			ang_declare_interface(icontroller_manager);
 
 			declare_flags(LINK, key_modifiers, uint)
 			{
@@ -175,7 +175,7 @@ namespace coffe
 		
 			struct nvt LINK ikeyboard
 				: intf<ikeyboard
-				, iid("coffe::platform::input::ikeyboard")>
+				, iid("ang::platform::input::ikeyboard")>
 			{
 				virtual bool show_touch_keyboard() = 0;
 				virtual bool show_touch_keyboard(text::istring_t, const text_selection_t&) = 0;
@@ -201,7 +201,7 @@ namespace coffe
 
 			struct nvt LINK icontroller
 				: intf<icontroller
-				, iid("coffe::platform::input::icontroller")>
+				, iid("ang::platform::input::icontroller")>
 			{
 				virtual uint get_controller_id()const = 0;
 				virtual controller_buttons_state_t get_state()const = 0;
@@ -216,7 +216,7 @@ namespace coffe
 
 			struct nvt LINK icontroller_manager
 				: intf<icontroller_manager
-				, iid("coffe::platform::input::icontroller_manager")>
+				, iid("ang::platform::input::icontroller_manager")>
 			{
 				static icontroller_manager_t get_instance();
 				virtual icontroller_t get_controller(uint)const = 0;
@@ -230,4 +230,4 @@ namespace coffe
 	}
 }
 
-#endif//__COFFE_PLATFORM_INPUT_H__
+#endif//__ANG_PLATFORM_INPUT_H__
