@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<game>
+  <config>
+    <name>puyopuyo</name>
+    <title>Puyo Puyo</title>
+    <driver>DirectX11</driver>
+  </config>
+  
+  <library>
+
+    <effect_library>
+      <file>data/default_fx.xml</file>
+      <effect>
+        <file>data/character.xml</file>
+      </effect>
+    </effect_library>
+
+    <texture_library>
+      <texture sid="skybox_tex" type="texCube">data/models/tex/skybox1.tga</texture>
+      <texture sid="3ea80e0f.dds" type="tex2D">data/models/girl/tex/3ea80e0f.dds</texture>
+      <texture sid="abbec2ad.dds" type="tex2D">data/models/girl/tex/abbec2ad.dds</texture>
+      <texture sid="cc5a76c0.dds" type="tex2D">data/models/girl/tex/cc5a76c0.dds</texture>
+      <texture sid="3919bbeb.dds" type="tex2D">data/models/girl/tex/3919bbeb.dds</texture>
+      <texture sid="38be34e5.dds" type="tex2D">data/models/girl/tex/38be34e5.dds</texture>
+      <texture sid="c5b56029.dds" type="tex2D">data/models/girl/tex/c5b56029.dds</texture>
+      <texture sid="67ed3ecb.dds" type="tex2D">data/models/girl/tex/67ed3ecb.dds</texture>
+      <texture sid="5c203d00.dds" type="tex2D">data/models/girl/tex/5c203d00.dds</texture>
+      <texture sid="1376b488.dds" type="tex2D">data/models/girl/tex/1376b488.dds</texture>
+      <texture sid="d117864b.dds" type="tex2D">data/models/girl/tex/d117864b.dds</texture>
+    </texture_library>
+
+    <mesh_library>
+      <mesh sid="skybox">
+        <file>data/models/skybox.xml</file>
+      </mesh>
+
+      <mesh sid="girl">
+        <file>data/models/girl/girl.obj</file>
+      </mesh>
+    </mesh_library>
+
+  </library>
+
+  <scene>
+    
+  </scene>
+</game>

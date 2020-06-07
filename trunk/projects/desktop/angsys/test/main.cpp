@@ -1,23 +1,19 @@
 // test.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <angsys.h>
-#include <ang/dom/xml.h>
+#include "pch.h"
+
 
 using namespace ang;
+using namespace ang::platform;
+
+
+ang_declare_object(engine);
+
 
 int main()
 {
-	dom::xml::xml_type_t type = dom::xml::xml_type::element;
-
-	core::files::input_text_file_t file = new core::files::input_text_file();
-	file->open("./resources/fx_library.xml");
-	auto res = dom::xml::xml_document_from_file(file);
-	if (res.successed()) 
-	{
-		dom::xml::ixml_document_t doc = res.get();
-		dom::xml::ixml_node_t node = doc->root_element();
-	}
-
+	framework::game_t game = new framework::game();
+	game->run(graphics::graph_driver_type::DirectX11, "puyopuyo"_s, "Puyo Puyo"_s);
 	return 0;
 }

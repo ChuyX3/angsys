@@ -18,6 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>source files</Filter>
     </ClCompile>
+    <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\character_fx_library.xml">
@@ -29,5 +30,11 @@
     <Xml Include="resources\texture_apex.xml">
       <Filter>resource files</Filter>
     </Xml>
+    <Xml Include="resources\puyo.xml">
+      <Filter>resource files</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
   </ItemGroup>
 </Project>

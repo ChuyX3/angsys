@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{e4f46c22-6e50-44f1-9ff4-a7cae97ed199}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\foundations.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\app.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\core_msg.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\events.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\input.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\platform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\compile_config.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\app.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\events.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\graphics.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\message.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\platform.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\inline\foundations.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\inline\platform.inl" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include files">
+      <UniqueIdentifier>{e95bb4c2-3d90-40f1-bcda-4475892da3a1}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="source files">
+      <UniqueIdentifier>{9a6daa93-fabc-4479-9b14-2b38b1bdcc47}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="include files\ang">
+      <UniqueIdentifier>{65f9f7c7-e350-46bf-b6a5-a28689b88a3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include files\ang\platform">
+      <UniqueIdentifier>{9832be4b-84f8-428b-9b6e-00d662904da0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include files\ang\graphics">
+      <UniqueIdentifier>{da91d08f-c108-4c24-9fa4-45fbe44e4c63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include files\ang\graphics\inline">
+      <UniqueIdentifier>{138cb0e4-b726-4080-b3ef-c4be90239b30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include files\ang\platform\inline">
+      <UniqueIdentifier>{594166ee-fd61-4e73-9c0b-3ca36e4b56a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include files\headers">
+      <UniqueIdentifier>{dbdf5643-e269-4a2e-8e47-05aa2b0556e1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\compile_config.h">
+      <Filter>include files\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\foundations.h">
+      <Filter>include files\ang\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\app.h">
+      <Filter>include files\ang\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\core_msg.h">
+      <Filter>include files\ang\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\events.h">
+      <Filter>include files\ang\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\input.h">
+      <Filter>include files\ang\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\platform.h">
+      <Filter>include files\ang\platform</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\platform.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\events.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\graphics.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\message.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\ja_ro\Documents\GitHub\angsys\trunk\libs\platform\projects\platform.shared\..\..\source\app.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\inline\foundations.inl">
+      <Filter>include files\ang\graphics\inline</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\inline\platform.inl">
+      <Filter>include files\ang\platform\inline</Filter>
+    </None>
+  </ItemGroup>
+</Project>

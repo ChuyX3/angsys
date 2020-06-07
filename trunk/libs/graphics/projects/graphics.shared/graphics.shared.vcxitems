@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{42dd4286-8ba1-4c08-b7b7-aeeeeeaf4387}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\buffers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\drawing.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\graphics.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\meshes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\reflect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\resources.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\scenes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\shaders.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\textures.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\compile_config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_buffers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_driver.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_shaders.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_textures.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\drawing\d3d11_drawer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\graphic_object.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_driver.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_frame_buffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_holographic_camera.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_holographic_driver.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_holographic_scene.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_shaders.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_surface.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_texture.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_texture_loader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\drawing\d3d11_brush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\drawing\d3d11_drawer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\data_parser.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\graphics.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\graphic_object.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\reflect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\resources.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\textures.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\varying.cpp" />
+  </ItemGroup>
+</Project>
