@@ -22,114 +22,54 @@
 #pragma config STVREN   = ON
 #pragma config LVP      = OFF
 
+#include <p18f2550.h>
+
 #include "main.h"
 
-
-adc_t adc;
-bool_t read_done;
 dword last_time;
+dword count = 0;
 
-digital_pin_t F0, F1, B0, B1;
-pwm_t pwm;
-pwm_pin_t pwm0, pwm1;
+rom const char sin_table[] = { 
+    0X80,0X83,0X86,0X89,0X8c,0X90,0X93,0X96,0X99,0X9c,
+    0X9f,0Xa2,0Xa5,0Xa8,0Xab,0Xae,0Xb1,0Xb4,0Xb7,0Xb9,
+    0Xbc,0Xbf,0Xc2,0Xc4,0Xc7,0Xc9,0Xcc,0Xce,0Xd1,0Xd3,
+    0Xd6,0Xd8,0Xda,0Xdc,0Xde,0Xe1,0Xe3,0Xe5,0Xe6,0Xe8,
+    0Xea,0Xec,0Xed,0Xef,0Xf0,0Xf2,0Xf3,0Xf5,0Xf6,0Xf7,
+    0Xf8,0Xf9,0Xfa,0Xfb,0Xfc,0Xfc,0Xfd,0Xfe,0Xfe,0Xff,
+    0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,
+    0Xfe,0Xfe,0Xfd,0Xfc,0Xfc,0Xfb,0Xfa,0Xf9,0Xf8,0Xf7,
+    0Xf6,0Xf5,0Xf3,0Xf2,0Xf0,0Xef,0Xed,0Xec,0Xea,0Xe8,
+    0Xe6,0Xe5,0Xe3,0Xe1,0Xde,0Xdc,0Xda,0Xd8,0Xd6,0Xd3,
+    0Xd1,0Xce,0Xcc,0Xc9,0Xc7,0Xc4,0Xc2,0Xbf,0Xbc,0Xb9,
+    0Xb7,0Xb4,0Xb1,0Xae,0Xab,0Xa8,0Xa5,0Xa2,0X9f,0X9c,
+    0X99,0X96,0X93,0X90,0X8c,0X89,0X86,0X83,0X80,0X7d,
+    0X7a,0X77,0X74,0X70,0X6d,0X6a,0X67,0X64,0X61,0X5e,
+    0X5b,0X58,0X55,0X52,0X4f,0X4c,0X49,0X47,0X44,0X41,
+    0X3e,0X3c,0X39,0X37,0X34,0X32,0X2f,0X2d,0X2a,0X28,
+    0X26,0X24,0X22,0X1f,0X1d,0X1b,0X1a,0X18,0X16,0X14,
+    0X13,0X11,0X10,0X0e,0X0d,0X0b,0X0a,0X09,0X08,0X07,
+    0X06,0X05,0X04,0X04,0X03,0X02,0X02,0X01,0X01,0X01,
+    0X01,0X01,0X00,0X01,0X01,0X01,0X01,0X01,0X02,0X02,
+    0X03,0X04,0X04,0X05,0X06,0X07,0X08,0X09,0X0a,0X0b,
+    0X0d,0X0e,0X10,0X11,0X13,0X14,0X16,0X18,0X1a,0X1b,
+    0X1d,0X1f,0X22,0X24,0X26,0X28,0X2a,0X2d,0X2f,0X32,
+    0X34,0X37,0X39,0X3c,0X3e,0X41,0X44,0X47,0X49,0X4c,
+    0X4f,0X52,0X55,0X58,0X5b,0X5e,0X61,0X64,0X67,0X6a,
+    0X6d,0X70,0X74,0X77,0X7a,0X7d
+};
 
-void adc_conversion_completed_event(analog_id_t, word);
 
 void setup(void)
 {  
     ang_set_fosc(FOSC);
-    tick_count_start();
-    
-    adc_initialize(&adc, ADC_CONFIG1_AN0TOAN3, ADC_DEFCONFIG2);
-    
-    pwm_initialize(FPWM, &pwm);
-    
-    pwm.open_channel(PINC2, &pwm0);
-    pwm.open_channel(PINB3, &pwm1);
-     
-    read_done = false;
-    adc.set_completed_event(&adc_conversion_completed_event);
-    adc.read_async(A0);
-  
-    ang_create_digital_pin(PINC0, &F0);
-    ang_create_digital_pin(PINB2, &F1);
-    ang_create_digital_pin(PINC1, &B0);
-    ang_create_digital_pin(PINB1, &B1);
-    
-    
-    pwm0.write(100);
-    pwm1.write(100);
-    
-    F0.set_mode(OUTPUT);
-    B0.set_mode(OUTPUT);
-    F1.set_mode(OUTPUT);
-    B1.set_mode(OUTPUT);
-    
-    F0.write(LOW);
-    B0.write(LOW);
-    
-    F1.write(LOW);
-    B1.write(LOW);
-    
-    last_time = get_tick_count();
+    tmr0_initialize(TMR0_8BITS | TMR0_CLK_EXTERN);
+    TRISB = 0;
+    TRISAbits.RA4 = 1;
+    tmr0_start();
 }
 
 void loop(void)
-{
-    float value;
-    if(read_done)
-    {
-        read_done = false;
-        value = adc.get_value(A0) * 5.0 / 1023 - 2.5;
-        adc.read_async(A0);
-        
-        
-        if(value > 0)
-        {
-            pwm0.write(100);
-            F0.write(HIGH);
-            B0.write(LOW);
-            
-            if(value > 0.5)
-            {
-                pwm1.write(100 - 25 * (value - 0.5));
-                F1.write(LOW);
-                B1.write(HIGH);
-            }
-            else
-            {
-                pwm1.write(100 - 100 * value);
-                F1.write(HIGH);
-                B1.write(LOW);
-            }
-        }
-        else if(value < 0)
-        {
-            pwm1.write(100);
-            F1.write(HIGH);
-            B1.write(LOW);
-            
-            if(value < -0.5)
-            {
-                pwm0.write(100 + 25 * (value + 5.0));
-                F0.write(LOW);
-                B0.write(HIGH);
-            }
-            else
-            {
-                pwm0.write(100 + 100 * value);
-                F0.write(HIGH);
-                B0.write(LOW);
-            }
-        }
-        
-    }
-}
-
-
-void adc_conversion_completed_event(analog_id_t id, word value)
-{
-    if(id == A0)
-        read_done = true;
+{ 
+    PORTB = sin_table[tmr0_get()];
 }
 
