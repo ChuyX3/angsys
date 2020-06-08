@@ -13,11 +13,11 @@ namespace ang
 				, iid("ang::graphics::meshes::imaterial")>
 			{
 				virtual string technique()const = 0;
-				virtual array_view<reflect::varying_desc> fields_layout()const = 0;
-				virtual reflect::varying fields() = 0; //only one per time
+				virtual array<reflect::varying_desc> fields_layout()const = 0;
+				virtual array<reflect::varying> fields() = 0; //only one per time
 				virtual reflect::varying field(windex) = 0; //only one per time
 				virtual reflect::varying field(cstr_t) = 0; //only one per time
-				virtual array_view<textures::itexture_t> textures() const = 0;
+				virtual array<textures::itexture_t> textures() const = 0;
 			};
 
 			struct nvt LINK igeometry

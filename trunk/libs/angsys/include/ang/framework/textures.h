@@ -26,6 +26,7 @@ namespace ang
 				mutable core::async::mutex_t m_mutex;
 				collections::hash_map<string, tex_info> m_tex_info_map;
 				collections::hash_map<string, weak_ptr<iresource>> m_texture_map;
+				listener<void(ilibrary_t)> m_dispose_event;
 
 			public:
 				texture_loader(ilibrary* parent);
@@ -60,6 +61,9 @@ namespace ang
 				core::async::iasync<bool> load_texture_info_async(dom::xml::ixml_node_t) override;
 				core::async::iasync_op<itexture> load_texture_async(dom::xml::ixml_node_t) override;
 				itexture_t find_texture(cstr_t)const override;
+
+				virtual listen_token<void(ilibrary_t)> disposed_event(function<void(ilibrary_t)>) override;
+				virtual void disposed_event(listen_token<void(ilibrary_t)>) override;
 
 			public: //internal
 				inline ilibrary_t parent()const {

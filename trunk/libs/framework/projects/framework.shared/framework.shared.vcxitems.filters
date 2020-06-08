@@ -49,5 +49,17 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\game.cpp">
       <Filter>source files</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\align.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\texture_loader.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\geometry.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\material.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -16,6 +16,12 @@ namespace ang
 				, iid("ang::graphics::meshes::material")
 				, imaterial>
 			{
+			private:
+				string m_tectnique_name;
+				array<byte> m_data;
+				reflect::varying m_fields;
+				vector<textures::itexture_t> m_textures;
+
 			public:
 				material();
 
@@ -24,11 +30,11 @@ namespace ang
 
 			public:
 				string technique()const override;
-				array_view<reflect::varying_desc> fields_layout()const override;
-				reflect::varying fields() override; //only one per time
+				array<reflect::varying_desc> fields_layout()const override;
+				array<reflect::varying> fields() override; //only one per time
 				reflect::varying field(windex) override; //only one per time
 				reflect::varying field(cstr_t) override; //only one per time
-				array_view<textures::itexture_t> textures() const override;
+				array<textures::itexture_t> textures() const override;
 
 			private:
 				virtual~material();

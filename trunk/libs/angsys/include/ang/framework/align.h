@@ -11,14 +11,10 @@ namespace ang
 			, iid("ang::framework::aligned")>
 		{
 		public:
-			pointer operator new(wsize sz) {
-				return object::operator new(sz, 16U);
-			}
+			pointer operator new(wsize sz);
 
 #ifdef _DEBUG
-			pointer operator new(wsize sz, const char*, int) {
-				return object::operator new(sz, 16U);
-			}
+			pointer operator new(wsize sz, const char*, int);
 #endif//_DEBUG
 
 		protected:

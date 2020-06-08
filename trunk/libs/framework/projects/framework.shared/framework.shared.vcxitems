@@ -23,7 +23,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\compile_config.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\align.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\framework.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\game.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\geometry.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\material.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\texture_loader.cpp" />
   </ItemGroup>
 </Project>

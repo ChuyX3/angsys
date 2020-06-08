@@ -9,3 +9,6 @@
 test/tasks/tasks.VC.VC.opendb
 test/tasks/tasks.VC.db
 *.user
+*.db
+*.ipch
+*.opendb

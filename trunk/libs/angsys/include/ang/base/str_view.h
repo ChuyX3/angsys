@@ -244,11 +244,11 @@ namespace ang
 			return str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>::compare(value1, value2) == 0;
 		}
 		template<typename T, text::encoding E, typename cstr_t>
-		bool operator == (const str_view<T, E>& value1, const cstr_t& value2) {
+		bool operator == (const str_view<T, E>& value1, cstr_t value2) {
 			return str_view_compare_helper<str_view<T, E>, cstr_t>::compare(value1, value2) == 0;
 		}
 		template<typename T, text::encoding E, typename cstr_t>
-		bool operator == (const cstr_t& value1, const str_view<T, E>& value2) {
+		bool operator == (cstr_t value1, const str_view<T, E>& value2) {
 			return str_view_compare_helper<cstr_t, str_view<T, E>>::compare(value1, value2) == 0;
 		}
 
@@ -258,11 +258,11 @@ namespace ang
 			return str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>::compare(value1, value2) != 0;
 		}
 		template<typename T, text::encoding E, typename cstr_t>
-		bool operator != (const str_view<T, E>& value1, const cstr_t& value2) {
+		bool operator != (const str_view<T, E>& value1, cstr_t value2) {
 			return str_view_compare_helper<str_view<T, E>, cstr_t>::compare(value1, value2) != 0;
 		}
 		template<typename T, text::encoding E, typename cstr_t>
-		bool operator != (const cstr_t& value1, const str_view<T, E>& value2) {
+		bool operator != (cstr_t value1, const str_view<T, E>& value2) {
 			return str_view_compare_helper<cstr_t, str_view<T, E>>::compare(value1, value2) != 0;
 		}
 
@@ -271,11 +271,11 @@ namespace ang
 			return str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>::compare(value1, value2) >= 0;
 		}
 		template<typename T, text::encoding E, typename cstr_t>
-		bool operator >= (const str_view<T, E>& value1, const cstr_t& value2) {
+		bool operator >= (const str_view<T, E>& value1, cstr_t value2) {
 			return str_view_compare_helper<str_view<T, E>, cstr_t>::compare(value1, value2) >= 0;
 		}
 		template<typename T, text::encoding E, typename cstr_t>
-		bool operator >= (const cstr_t& value1, const str_view<T, E>& value2) {
+		bool operator >= (cstr_t value1, const str_view<T, E>& value2) {
 			return str_view_compare_helper<cstr_t, str_view<T, E>>::compare(value1, value2) >= 0;
 		}
 
@@ -284,11 +284,11 @@ namespace ang
 			return str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>::compare(value1, value2) <= 0;
 		}
 		template<typename T, text::encoding E, typename cstr_t>
-		bool operator <= (const str_view<T, E>& value1, const cstr_t& value2) {
+		bool operator <= (const str_view<T, E>& value1, cstr_t value2) {
 			return str_view_compare_helper<str_view<T, E>, cstr_t>::compare(value1, value2) <= 0;
 		}
 		template<typename T, text::encoding E, typename cstr_t>
-		bool operator <= (const cstr_t& value1, const str_view<T, E>& value2) {
+		bool operator <= (cstr_t value1, const str_view<T, E>& value2) {
 			return str_view_compare_helper<cstr_t, str_view<T, E>>::compare(value1, value2) <= 0;
 		}
 
@@ -297,11 +297,11 @@ namespace ang
 			return str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>::compare(value1, value2) > 0;
 		}
 		template<typename T, text::encoding E, typename cstr_t>
-		bool operator > (const str_view<T, E>& value1, const cstr_t& value2) {
+		bool operator > (const str_view<T, E>& value1, cstr_t value2) {
 			return str_view_compare_helper<str_view<T, E>, cstr_t>::compare(value1, value2) > 0;
 		}
 		template<typename T, text::encoding E, typename cstr_t>
-		bool operator > (const cstr_t& value1, const str_view<T, E>& value2) {
+		bool operator > (cstr_t value1, const str_view<T, E>& value2) {
 			return str_view_compare_helper<cstr_t, str_view<T, E>>::compare(value1, value2) > 0;
 		}
 
@@ -310,11 +310,11 @@ namespace ang
 			return str_view_compare_helper<str_view<T1, E1>, str_view<T2, E2>>::compare(value1, value2) < 0;
 		}
 		template<typename T, text::encoding E, typename cstr_t>
-		bool operator < (const str_view<T, E>& value1, const cstr_t& value2) {
+		bool operator < (const str_view<T, E>& value1, cstr_t value2) {
 			return str_view_compare_helper<str_view<T, E>, cstr_t>::compare(value1, value2) < 0;
 		}
 		template<typename T, text::encoding E, typename cstr_t>
-		bool operator < (const cstr_t& value1, const str_view<T, E>& value2) {
+		bool operator < (cstr_t value1, const str_view<T, E>& value2) {
 			return str_view_compare_helper<cstr_t, str_view<T, E>>::compare(value1, value2) < 0;
 		}
 

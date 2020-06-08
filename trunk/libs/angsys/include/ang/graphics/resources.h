@@ -72,7 +72,7 @@ namespace ang
 			};
 
 			/*See more: http://paulbourke.net/dataformats/mtl/ */
-			typedef struct material_data
+			typedef struct alignas(16) material_data
 			{
 				/*Most common data:
 				"uint illum" statement specifies the illumination model to use in the material.

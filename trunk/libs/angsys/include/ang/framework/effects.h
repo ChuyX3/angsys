@@ -25,11 +25,11 @@ namespace ang
 
 			public: //overrides
 				string technique()const override;
-				array_view<reflect::varying_desc> fields_layout()const override;
-				reflect::varying fields() override;
-				reflect::varying field(windex) override;
-				reflect::varying field(cstr_t) override;
-				array_view<textures::itexture_t> textures() const override;
+				array<reflect::varying_desc> fields_layout()const override;
+				array<reflect::varying> fields() override; //only one per time
+				reflect::varying field(windex) override; //only one per time
+				reflect::varying field(cstr_t) override; //only one per time
+				array<textures::itexture_t> textures() const override;
 
 				void push_texture(textures::itexture_t tex);
 

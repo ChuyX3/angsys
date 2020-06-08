@@ -64,7 +64,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\message.cpp">
       <Filter>source files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\ja_ro\Documents\GitHub\angsys\trunk\libs\platform\projects\platform.shared\..\..\source\app.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\app.cpp">
       <Filter>source files</Filter>
     </ClCompile>
   </ItemGroup>
