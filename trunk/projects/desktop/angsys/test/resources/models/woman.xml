@@ -1,12 +1,12 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<model name="WOMAN_MODEL">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<mesh name="WOMAN_MODEL">
   <element>
     <material>
-      <fx>character_normal_map_fx</fx>
-      <texture>textures_woman_tga</texture>
+      <fx>character_fx</fx>
+      <texture name="map_Kd">tex_woman_dds</texture>
     </material>
-    <index_buffer>
-      <data_type type="u16" />
+    <buffer target="indices">
+      <data_layout type="u16" class="scalar" array="2052" aligment="2"/>
       <data count="2052" >
   0,1,2,2,3,0,4,5,3,3,2,4,1,0,6,6,7,1,8,9,10,10,11,8,2,
   1,12,12,13,2,4,2,13,13,14,4,1,7,15,15,12,1,16,6,0,0,17,16,18,
@@ -94,16 +94,16 @@
   477,476,475,445,441,440,475,441,473,478,474,417,416,471,431,442,432,425,424,449,440,423,422,472,
   397,404,477,479,476,100,108,123,123,101,100,269,264,278,278,261,269,321,291,299,299,320,321,320,
   299,298,298,322,320,298,312,323,323,322,298,</data>
-    </index_buffer>
-    <vertex_buffer>
-      <data_layout>
-        <var type="f32" class="vec4" />
-        <var type="f32" class="vec4" />
-        <var type="f32" class="vec4" />
-        <var type="f32" class="vec4" />
-        <var type="f32" class="vec2" />
+    </buffer>
+    <buffer target="vertices">
+      <data_layout array="480">
+        <var name="position" type="f32" class="vec4" semantic="POSITION" semantic_idx="0"/>
+        <var name="normal" type="f32" class="vec4" semantic="NORMAL" semantic_idx="0" />
+        <var name="binormal" type="f32" class="vec4" semantic="BINORMAL" semantic_idx="0" />
+        <var name="tangent" type="f32" class="vec4" semantic="TANGENT" semantic_idx="0" />
+        <var name="texcoord" type="f32" class="vec2" semantic="TEXCOORD" semantic_idx="0" />
       </data_layout>
-      <data vertex_count="480" >
+      <data count="8640‬" >
   0.159584,0.985521,0.097743,1.000000,0.753557,0.141000,0.642083,0.000000,-0.092994,0.989769,-0.108213,0.000000,0.650772,-0.021835,-0.758959,0.000000,0.562943,0.205915,
   0.139464,1.067339,0.083031,1.000000,0.798703,0.312300,0.514336,0.000000,-0.249670,0.949717,-0.188952,0.000000,0.547484,-0.022503,-0.836514,0.000000,0.556792,0.261476,
   0.084433,1.059399,0.124904,1.000000,0.397998,0.110581,0.910697,0.000000,-0.077705,0.993205,-0.086640,0.000000,0.914089,0.036283,-0.403886,0.000000,0.510821,0.258443,
@@ -585,6 +585,6 @@
   -0.134262,0.705267,-0.059801,1.000000,-0.579204,-0.208409,-0.788092,0.000000,-0.075768,0.976345,-0.202507,0.000000,0.811654,-0.057581,-0.581294,0.000000,0.889984,0.150894,
   -0.142626,0.701182,0.097846,1.000000,-0.662921,-0.234998,0.710853,0.000000,-0.024366,-0.942188,-0.334197,0.000000,0.748293,-0.238867,0.618870,0.000000,0.883855,0.031877,
   </data>
-    </vertex_buffer>
+    </buffer>
   </element>
-</model>
+</mesh>

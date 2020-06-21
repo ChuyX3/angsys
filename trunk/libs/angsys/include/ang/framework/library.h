@@ -16,9 +16,10 @@ namespace ang
 			protected:
 				weak_ptr<ilibrary> m_parent;
 				mutable core::async::mutex_t m_mutex;
-				core::async::thread_t m_async_worker;
+				core::async::idispatcher_t m_async_worker;
 				effects::effect_library_t m_fx_library;
 				textures::texture_loader_t m_tex_loader;
+				meshes::mesh_loader_t m_mesh_loader;
 
 			public:
 				library(ilibrary* parent);
@@ -27,6 +28,7 @@ namespace ang
 				void dispose()override;
 
 			public: //overrides
+				bool query_interface(rtti_t const& id, unknown_ptr_t out)override;
 				void clear()override;
 				ifactory_t factory()const override;
 				core::files::ifile_system_t file_system()const override;
@@ -45,8 +47,9 @@ namespace ang
 				iresource_t find_resource(cstr_t)const override;
 				core::async::iasync<iresource_t> find_resource_async(cstr_t) override;
 
-				effects::ieffect_library_t fx_library()const { return m_fx_library.get(); }
-				textures::itexture_loader_t tex_loader()const { return m_tex_loader.get(); }
+				inline effects::ieffect_library_t fx_library()const { return m_fx_library.get(); }
+				inline textures::itexture_loader_t tex_loader()const { return m_tex_loader.get(); }
+				inline meshes::mesh_loader_t mesh_loader()const { return m_mesh_loader.get(); }
 
 			public:
 				inline ilibrary_t parent()const {
@@ -84,13 +87,13 @@ namespace ang
 
 			public: //overrides
 				void clear()override;
-
+			
 				vector<string> paths(core::files::path_access_type_t)const override;
 				void push_path(cstr_t, core::files::path_access_type_t, cstr_t macro = null) override;
 				vector<string> find_paths(cstr_t macro)const override;
 				core::files::path_access_type_t path_access_type(cstr_t)const override;
 				bool create_handle(cstr_t path, core::files::open_flags_t flags, core::files::ifile_ptr_t out, cstr_t macro = null) override;
-				core::async::iasync_op<core::files::ifile_t> create_handle_async(cstr_t path, core::files::open_flags_t flags, cstr_t macro = null) override;
+				core::async::iasync_op<core::files::ifile> create_handle_async(cstr_t path, core::files::open_flags_t flags, cstr_t macro = null) override;
 				bool open(cstr_t, core::files::input_text_file_ptr_t, cstr_t macro = null)override;
 				bool open(cstr_t, core::files::output_text_file_ptr_t, cstr_t macro = null)override;
 				bool open(cstr_t, core::files::input_binary_file_ptr_t, cstr_t macro = null)override;

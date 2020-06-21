@@ -571,13 +571,7 @@ inline coffe::object_wrapper_ptr<coffe::collections::list_object<T, A>> coffe::o
 }
 
 template<typename T, template <typename> class A>
-inline coffe::collections::list_object<T, A> * coffe::object_wrapper<coffe::collections::list_object<T, A>>::operator -> (void)
-{
-	return get();
-}
-
-template<typename T, template <typename> class A>
-inline coffe::collections::list_object<T, A> const* coffe::object_wrapper<coffe::collections::list_object<T, A>>::operator -> (void)const
+inline coffe::collections::list_object<T, A> * coffe::object_wrapper<coffe::collections::list_object<T, A>>::operator -> (void)const
 {
 	return get();
 }

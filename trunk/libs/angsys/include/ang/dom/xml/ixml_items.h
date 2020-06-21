@@ -77,8 +77,7 @@ namespace ang
 				ixml_attbs_t& operator = (ixml_attbs_t const&);
 
 				//intf_wrapper_ptr<xml::ixml_items> operator & (void);
-				xml::ixml_items * operator -> (void);
-				xml::ixml_items const* operator -> (void)const;
+				xml::ixml_items * operator -> (void)const;
 
 				operator xml::ixml_items * (void);
 				operator xml::ixml_items const* (void)const;

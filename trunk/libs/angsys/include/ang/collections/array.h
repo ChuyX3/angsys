@@ -146,6 +146,8 @@ namespace ang
 			const_iterator_t at(windex)const override;
 			void copy(const ienum_ptr<T>&) override;		
 
+		private:
+			ienum_ptr<T> items()const override;
 		};
 
 	}//collections
@@ -229,11 +231,10 @@ namespace ang
 			return *this;
 		}
 		object_wrapper_ptr<collections::array_buffer<T, A>> operator & (void);
-		collections::array_buffer<T, A> * operator -> (void);
-		collections::array_buffer<T, A> const* operator -> (void)const;
+		collections::array_buffer<T, A> * operator -> (void)const;
 		explicit operator collections::array_buffer<T, A> * (void);
 		explicit operator collections::array_buffer<T, A> const* (void)const;
-		operator array_view<T>()const { return m_ptr ? to_array(m_ptr->begin(), m_ptr->end()) : array_view<T>(); }
+		operator array_view<T>()const { return m_ptr ? to_array((T*)m_ptr->begin(), (T*)m_ptr->end()) : array_view<T>(); }
 		operator array_view<const T>()const { return m_ptr ? to_array((const T*)m_ptr->begin(), m_ptr->end()) : array_view<T>(); }
 		template<typename I>typename collections::auto_type<T>::type& operator[](I const& idx);
 		template<typename I>typename collections::auto_type<T>::type const& operator[](I const& idx)const;

@@ -410,6 +410,10 @@
     </Expand>
   </Type>
 
+  <Type Name="enum_class&lt;*&gt;">
+    <DisplayString>{($T1)m_value, en}</DisplayString>
+  </Type>
+
   <Type Name="ang::error">
     <DisplayString>error : {m_message}</DisplayString>
     <Expand>

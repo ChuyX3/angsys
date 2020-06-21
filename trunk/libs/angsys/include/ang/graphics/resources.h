@@ -121,15 +121,15 @@ namespace ang
 
 			typedef struct geometry_data
 			{
-				string technique_name;	
-				reflect::struct_buffer_t index_data;
-				reflect::struct_buffer_t vertex_data;
+				string technique_name;
+				collections::tuple<reflect::var_type_t, windex, ibuffer_t, string> index_data;
+				collections::tuple<array<reflect::attribute_desc>, windex, ibuffer_t, string> vertex_data;
 				material_data_t material;
 
 				geometry_data() {
 					technique_name = null;
-					index_data = null;
-					vertex_data = null;
+					index_data = { reflect::var_type::none, 0, null };
+					vertex_data = { null, 0, null };
 				}
 				geometry_data(geometry_data&& other) {
 					technique_name = ang::move(other.technique_name);
@@ -140,8 +140,8 @@ namespace ang
 				}
 				geometry_data(geometry_data const& other) {
 					technique_name = other.technique_name;
-					index_data = new reflect::struct_buffer(other.index_data.get());
-					vertex_data = new reflect::struct_buffer(other.vertex_data.get());
+					index_data = other.index_data;
+					vertex_data = other.vertex_data;
 					material.fields = new reflect::struct_buffer(other.material.fields.get());
 					material.samplers.copy(other.material.samplers);
 				}
@@ -161,8 +161,8 @@ namespace ang
 					if (this != &other)
 					{
 						technique_name = other.technique_name;
-						index_data = new reflect::struct_buffer(other.index_data.get());
-						vertex_data = new reflect::struct_buffer(other.vertex_data.get());
+						index_data = other.index_data;
+						vertex_data = other.vertex_data;
 						material.fields = new reflect::struct_buffer(other.material.fields.get());
 						material.samplers.copy(other.material.samplers);
 					}
@@ -206,8 +206,6 @@ namespace ang
 				virtual iresource_t find_resource(cstr_t)const = 0;
 				virtual core::async::iasync<iresource_t> find_resource_async(cstr_t) = 0;
 				virtual void clear() = 0;
-				virtual listen_token<void(ilibrary_t)> disposed_event(function<void(ilibrary_t)>)= 0;
-				virtual void disposed_event(listen_token<void(ilibrary_t)>) = 0;
 			};
 		}
 	}

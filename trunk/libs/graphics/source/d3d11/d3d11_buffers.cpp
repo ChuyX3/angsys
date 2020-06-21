@@ -191,7 +191,7 @@ bool d3d11_vertex_buffer::unmap(idriver_t, ibuffer_t)
 	return false;
 }
 
-array_view<reflect::attribute_desc> d3d11_vertex_buffer::descriptor()const
+array<reflect::attribute_desc> d3d11_vertex_buffer::descriptor()const
 {
 	if (m_vertex_desc.is_empty())
 		return array_view<reflect::attribute_desc>(null);
@@ -202,23 +202,12 @@ wsize d3d11_vertex_buffer::block_counter()const { return m_vertex_count; }
 
 wsize d3d11_vertex_buffer::size_in_bytes()const { return m_stride *m_vertex_count; }
 
-bool d3d11_vertex_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t usage, array_view<reflect::attribute_desc> vertex_desc, wsize count, array_view<byte> init_data, string sid)
+bool d3d11_vertex_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t usage, array_view<reflect::attribute_desc_t> vertex_desc, wsize count, ibuffer_t vertex_data, string sid)
 {
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
-
-	m_vertex_count = count;
-	m_usage = usage;// buffers::buffer_usage::dynamic;
-	m_vertex_desc = vertex_desc;
-	m_stride = reflect::attribute_desc::get_size_in_bytes(vertex_desc);
-
-	if (m_stride == 0)
-		return false;
-
-	bd.ByteWidth = m_stride * m_vertex_count;
 	bd.Usage = (D3D11_USAGE)usage.get();
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.StructureByteStride = m_stride;
 
 	switch (bd.Usage)
 	{
@@ -227,7 +216,7 @@ bool d3d11_vertex_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t 
 		break;
 	case D3D11_USAGE_IMMUTABLE:
 		bd.CPUAccessFlags = 0;
-		if (init_data.data() == null)
+		if (vertex_data.is_empty())
 			return false;
 		break;
 	case D3D11_USAGE_DYNAMIC:
@@ -240,20 +229,29 @@ bool d3d11_vertex_buffer::create(d3d11_driver_t driver, buffers::buffer_usage_t 
 		break;
 	}
 
-	if (init_data.size() < bd.ByteWidth)
-		return false;
+	uint i = 0;
+	m_vertex_count = count;
+	m_usage = usage;// buffers::buffer_usage::dynamic;
+	reflect::attribute_desc::calculate_positions(vertex_desc);	
+	m_stride = reflect::attribute_desc::get_size_in_bytes(vertex_desc);
+	bd.ByteWidth = m_vertex_count * m_stride;
+	bd.StructureByteStride = m_stride;
+	m_vertex_desc = vertex_desc;
+	for (windex i = 0; i < vertex_desc.size(); i++)
+		m_attribute_by_id[{vertex_desc[i].semantic(), vertex_desc[i].semantic_index()}] = i;	
 
 	D3D11_SUBRESOURCE_DATA InitData;
 	D3D11_SUBRESOURCE_DATA* pInitData = null;
 	ZeroMemory(&InitData, sizeof(InitData));
-	if (init_data.size() > 0)
+	if (!vertex_data.is_empty())
 	{
 		pInitData = &InitData;
-		InitData.pSysMem = init_data.data();
+		InitData.pSysMem = vertex_data->buffer_ptr();
 	}
 
 	if (FAILED(driver->D3D11Device()->CreateBuffer(&bd, pInitData, &m_vertex_buffer)))
 		return !close();
+
 	m_resource_sid = sid;
 	return true;
 }
@@ -266,13 +264,40 @@ bool d3d11_vertex_buffer::close()
 	m_usage = buffers::buffer_usage::def;
 	m_vertex_desc = null;
 	m_vertex_buffer = null;
+	m_attribute_by_id.clear();
 	return true;
 }
 
 void d3d11_vertex_buffer::use_buffer(d3d11_driver_t driver)
 {
+	ID3D11Buffer* buffer = m_vertex_buffer.get();
+	uint stride = m_stride;
 	uint offset = 0;
-	driver->D3D11Context()->IASetVertexBuffers(0, 1, &m_vertex_buffer, &m_stride, &offset);
+	driver->D3D11Context()->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+}
+
+void d3d11_vertex_buffer::use_buffer(d3d11_driver_t driver, array_view<reflect::attribute_desc_t> const& desc)
+{
+	vector<ID3D11Buffer*> buffer;
+	vector<uint> stride;
+	vector<uint> offset;
+	buffer.size(desc.size());
+	stride.size(desc.size());
+	offset.size(desc.size());
+	for (wsize i = 0; i < desc.size(); i++)
+	{
+		buffer[i] = null;
+		stride[i] = 0;
+		offset[i] = 0;
+		auto it = m_attribute_by_id.find({ desc[i].semantic(), desc[i].semantic_index() });
+		if (it.is_valid()) {
+			buffer[i] = m_vertex_buffer.get();
+			stride[i] = m_stride;
+			offset[i] = m_vertex_desc[it->value].position();
+		}
+		i++;
+	}
+	driver->D3D11Context()->IASetVertexBuffers(0, buffer.size(), &buffer[0], &stride[0], &offset[0]);
 }
 
 #endif

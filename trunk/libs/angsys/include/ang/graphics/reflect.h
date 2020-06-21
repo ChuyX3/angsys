@@ -7,17 +7,56 @@
 
 namespace ang
 {
+	namespace algorithms
+	{
+		struct LINK varying_iteration
+			: iteration_algorithm<graphics::reflect::varying>
+		{
+			using type = graphics::reflect::varying;
+			using node_ptr_type = graphics::reflect::varying*;
+			using iteration_callback_type = typename iteration_algorithm<graphics::reflect::varying>::iteration_callback_type;
+
+			varying_iteration();
+
+		private:
+			static node_ptr_type begin(node_ptr_type node, windex* idx);
+			static node_ptr_type end(node_ptr_type node, windex* idx);
+			static node_ptr_type rbegin(node_ptr_type node, windex* idx);
+			static node_ptr_type rend(node_ptr_type node, windex* idx);
+			static node_ptr_type increase(node_ptr_type node, windex* idx);
+			static node_ptr_type decrease(node_ptr_type node, windex* idx);
+			static node_ptr_type most_left(node_ptr_type node, windex* idx);
+			static node_ptr_type most_right(node_ptr_type node, windex* idx);
+
+			static constexpr iteration_callback_type s_vtable[] = {
+				&begin,
+				&end,
+				&rbegin,
+				&rend,
+				&increase,
+				&decrease,
+				&most_left,
+				&most_right
+			};
+		};
+
+		template<typename U>
+		struct node_value<U, graphics::reflect::varying > {
+			using type = U;
+			using type_ptr = typename remove_reference<U>::type*;
+			static type get(graphics::reflect::varying* node, windex at);
+			static type_ptr get_ptr(graphics::reflect::varying* node, windex at);
+		};
+	}
 
 	namespace graphics
 	{
 		namespace reflect
 		{
-			typedef collections::vector<varying_desc> uniform_fields_t;		
+			typedef collections::vector<varying_desc> uniform_fields_t;
 
 			struct LINK varying_desc
 			{
-				template<typename T> static varying_desc_t from_type(string = null);
-
 			private:
 				var_type_t m_var_type;
 				var_class_t m_var_class;
@@ -130,19 +169,19 @@ namespace ang
 
 			template<typename T>
 			struct __varying_desc_from_type {
-				static inline varying_desc_t desc(string) {
+				static inline varying_desc_t desc(astring) {
 					return varying_desc(); //null descriptor
 				}
 			};
 
-			template<typename T> 
+			template<typename T>
 			inline varying_desc_t type_desc(cstr_t name) {
 				return __varying_desc_from_type<T>::desc(name);
 			}
-			
+
 			template<typename T, wsize N> struct __varying_desc_from_type<T[N]> {
-				static inline varying_desc_t desc(string name) {
-					varying_desc_t desc = type_desc<T>(name);
+				static inline varying_desc_t desc(astring name) {
+					varying_desc_t desc = __varying_desc_from_type<T>::desc(name);
 					desc.array_count(N);
 					return desc;
 				}
@@ -154,43 +193,15 @@ namespace ang
 				, iid("ang::graphics::reflect::varying")>
 			{
 			public:
-				template<typename T> class iterator;
-				typedef iterator<varying> iterator_t;
-				typedef iterator<const varying> const_iterator_t;
-
-				typedef class LINK base_iterator
-				{
-				protected:
-					friend varying;
-					varying_t* m_parent;
-					windex m_offset;
-
-				public:
-					base_iterator();
-					base_iterator(base_iterator &&) = default;
-					base_iterator(base_iterator const&);
-					base_iterator(varying_t*, windex idx);
-
-					varying_t* parent()const;
-					windex offset()const;
-
-					base_iterator& operator++();
-					base_iterator& operator--();
-
-					base_iterator operator++(int);
-					base_iterator operator--(int);
-
-					bool operator == (const base_iterator&)const;
-					bool operator != (const base_iterator&)const;
-					bool operator >= (const base_iterator&)const;
-					bool operator <= (const base_iterator&)const;
-					bool operator > (const base_iterator&)const;
-					bool operator < (const base_iterator&)const;
-
-				private:
-					void parent(varying_t*);
-					void offset(windex);
-				}base_iterator_t;
+				using type = varying;
+				using element_type = varying;
+				using base_iterator_t = algorithms::base_iterator<varying>;
+				using iterator_t = algorithms::forward_iterator<varying, varying>;
+				using const_iterator_t = algorithms::forward_iterator<const varying, varying>;
+				using reverse_iterator_t = algorithms::backward_iterator<varying, varying>;
+				using reverse_const_iterator_t = algorithms::backward_iterator<const varying, varying>;
+				using node_type = varying;
+				using iteration_type = algorithms::varying_iteration;
 
 			protected:
 				array_view<byte> m_raw_data;
@@ -212,6 +223,7 @@ namespace ang
 				varying(varying &&);
 				varying(varying const&);
 				varying(array_view<byte> bytes, varying_desc desc, wsize aligment = (wsize)invalid_index);
+				varying(array_view<byte> bytes, array_view<attribute_desc_t> const& desc, wsize aligment = (wsize)invalid_index);
 				virtual~varying() {}
 
 				virtual rtti_t const& runtime_info()const override;
@@ -232,13 +244,16 @@ namespace ang
 
 			public: //iteration
 				wsize counter()const;
-				varying at(base_iterator_t const&);
-				base_iterator_t increase(base_iterator_t&);
-				base_iterator_t decrease(base_iterator_t&);
-				iterator_t begin();
-				iterator_t end();
-				const_iterator_t begin()const;
-				const_iterator_t end()const;
+				iterator_t begin(algorithms::iteration_algorithm<varying> = iteration_type());
+				iterator_t end(algorithms::iteration_algorithm<varying> = iteration_type());
+				const_iterator_t begin(algorithms::iteration_algorithm<varying> = iteration_type())const;
+				const_iterator_t end(algorithms::iteration_algorithm<varying> = iteration_type())const;
+
+				reverse_iterator_t rbegin(algorithms::iteration_algorithm<varying> = iteration_type());
+				reverse_iterator_t rend(algorithms::iteration_algorithm<varying> = iteration_type());
+				reverse_const_iterator_t rbegin(algorithms::iteration_algorithm<varying> = iteration_type())const;
+				reverse_const_iterator_t rend(algorithms::iteration_algorithm<varying> = iteration_type())const;
+
 				varying operator [](windex);	
 
 				template<typename T> inline auto cast() -> decltype(varying_cast<T>::cast(this)) {
@@ -261,41 +276,78 @@ namespace ang
 					return true;
 				}
 
-				template<typename T> bool try_copy(varying const& value) {
-					if (!is_type_of<T>() && !value.is_type_of<T>())
-						return false;
-					cast<T>() = value.cast<T>();
-					return true;
-				}
+				bool try_copy(varying const& value);
 
 				bool operator == (const varying& other)const;
 				bool operator != (const varying& other)const;
 			};
-
-
 		
-			template<> class LINK varying::iterator<varying_t> : public varying::base_iterator
+
+			class LINK vertex_buffer
+				: public implement<vertex_buffer
+				, iid("ang::graphics::reflect::vertex_buffer")
+				, ibuffer>
 			{
 			public:
-				iterator();
-				iterator(base_iterator_t &&);
-				iterator(base_iterator_t const&);
-				iterator(varying_t*, windex idx);
-				base_iterator_t& operator =(base_iterator_t const&);
-				varying_t operator*()const;
-			};
+				using type = varying;
+				using element_type = varying;
+				using base_iterator_t = algorithms::base_iterator<varying>;
+				using iterator_t = algorithms::forward_iterator<varying, varying>;
+				using const_iterator_t = algorithms::forward_iterator<const varying, varying>;
+				using reverse_iterator_t = algorithms::backward_iterator<varying, varying>;
+				using reverse_const_iterator_t = algorithms::backward_iterator<const varying, varying>;
+				using node_type = varying;
+				using iteration_type = algorithms::varying_iteration;
 
-			template<> class LINK varying::iterator<varying_t const> : public varying::base_iterator
-			{
+			private:
+				string m_name;
+				windex m_stride;
+				windex m_array_count;
+				collections::vector<long64, memory::aligned16_allocator> m_aligned_data;
+				collections::vector<attribute_desc> m_descriptor;
+
 			public:
-				iterator();
-				iterator(base_iterator_t &&);
-				iterator(base_iterator_t const&);
-				iterator(varying_t*, windex idx);
-				base_iterator_t& operator =(base_iterator_t const&);
-				const varying_t operator*()const;
-			};
+				vertex_buffer();
+				vertex_buffer(vertex_buffer const*);
+				vertex_buffer(collections::array_view<attribute_desc> const&, windex = 1);
 
+			private: //overrides	
+				void dispose()override;
+				bool is_readonly()const override;
+				text::encoding_t encoding()const override;
+				pointer buffer_ptr() override;
+				const_pointer buffer_ptr()const override;
+				wsize buffer_size()const override;
+				wsize mem_copy(wsize, pointer, text::encoding_t = text::encoding::binary) override;
+				ibuffer_view_t map_buffer(windex, wsize) override;
+				bool unmap_buffer(ibuffer_view_t&, wsize) override;
+				bool can_realloc_buffer()const override;
+				bool realloc_buffer(wsize) override;
+
+			public:
+				void clear();
+				bool load(dom::xml::ixml_node_t node);
+				bool save(dom::xml::ixml_document_t doc);
+
+				wsize array_count()const;
+				collections::array_view<attribute_desc> descriptor()const;
+				varying make(collections::array_view<attribute_desc> const& desc, wsize count);
+				varying data();
+				varying block(windex);
+
+				iterator_t begin(algorithms::iteration_algorithm<varying> = iteration_type());
+				iterator_t end(algorithms::iteration_algorithm<varying> = iteration_type());
+				const_iterator_t begin(algorithms::iteration_algorithm<varying> = iteration_type())const;
+				const_iterator_t end(algorithms::iteration_algorithm<varying> = iteration_type())const;
+
+				reverse_iterator_t rbegin(algorithms::iteration_algorithm<varying> = iteration_type());
+				reverse_iterator_t rend(algorithms::iteration_algorithm<varying> = iteration_type());
+				reverse_const_iterator_t rbegin(algorithms::iteration_algorithm<varying> = iteration_type())const;
+				reverse_const_iterator_t rend(algorithms::iteration_algorithm<varying> = iteration_type())const;
+
+			private:
+				virtual~vertex_buffer();
+			};
 
 			class LINK struct_buffer
 				: public implement<struct_buffer
@@ -305,7 +357,7 @@ namespace ang
 			{
 			private:
 				string m_name;
-				collections::vector<long long, memory::aligned16_allocator> m_aligned_data;
+				collections::vector<long64, memory::aligned16_allocator> m_aligned_data;
 
 			public:
 				explicit struct_buffer(); //empty
@@ -347,8 +399,6 @@ namespace ang
 			private:
 				virtual~struct_buffer();
 			};
-
-
 
 			template<var_type TYPE, var_class CLASS>
 			struct text_data_value_loader;
@@ -478,12 +528,22 @@ namespace ang
 					text_data_loader_output_context_t& output);
 
 				static bool create_context(varying_desc_t const& desc, text_data_loader_context_t&);
+				static bool create_context(attribute_desc_t const& desc, text_data_loader_context_t&);
+				static bool create_context(array_view<attribute_desc_t> const& desc, text_data_loader_context_t&);
 			};
 
 			using text_data_loader = text_data_value_loader<var_type::block, var_class::scalar>;
 			
 		}
 	}
+
+	ANG_BEGIN_OBJECT_WRAPPER(LINK, graphics::reflect::vertex_buffer)
+		graphics::reflect::varying_t operator [](windex idx);
+		graphics::reflect::vertex_buffer::iterator_t begin();
+		graphics::reflect::vertex_buffer::iterator_t end();
+		graphics::reflect::vertex_buffer::const_iterator_t begin()const;
+		graphics::reflect::vertex_buffer::const_iterator_t end()const;
+	ANG_END_OBJECT_WRAPPER();
 
 	ANG_BEGIN_OBJECT_WRAPPER(LINK, graphics::reflect::struct_buffer)
 		graphics::reflect::varying_t operator [](windex idx);
@@ -493,6 +553,17 @@ namespace ang
 		graphics::reflect::varying::const_iterator_t begin()const;
 		graphics::reflect::varying::const_iterator_t end()const;
 	ANG_END_OBJECT_WRAPPER();
+}
+
+
+template<typename U>
+inline typename ang::algorithms::node_value<U, ang::graphics::reflect::varying>::type ang::algorithms::node_value<U, ang::graphics::reflect::varying>::get(ang::graphics::reflect::varying* node, windex at) {
+	return node->field(at);
+}
+
+template<typename U>
+inline typename ang::algorithms::node_value<U, ang::graphics::reflect::varying>::type_ptr ang::algorithms::node_value<U, ang::graphics::reflect::varying>::get_ptr(ang::graphics::reflect::varying* node, windex at) {
+	return null;
 }
 
 template<typename T> struct ang::graphics::reflect::varying::varying_cast<ang::array_view<T>>

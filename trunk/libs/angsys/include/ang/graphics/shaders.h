@@ -21,9 +21,9 @@ namespace ang
 				, iid("ang::graphics::effects::ishaders")>
 			{
 				virtual resources::iresource_t resource()const = 0;
-				virtual array_view<reflect::attribute_desc> input_layout()const = 0;
-				virtual array_view<reflect::varying_desc> vs_uniforms_layouts()const = 0;
-				virtual array_view<reflect::varying_desc> ps_uniforms_layouts()const = 0;
+				virtual array_view<reflect::attribute_desc>const& input_layout()const = 0;
+				virtual array_view<reflect::varying_desc>const& vs_uniforms_layouts()const = 0;
+				virtual array_view<reflect::varying_desc>const& ps_uniforms_layouts()const = 0;
 				virtual bool bind_vertex_buffer(idriver_t, buffers::ivertex_buffer_t) = 0;
 				virtual bool bind_texture(idriver_t, windex, windex) = 0;
 				virtual bool bind_texture(idriver_t, cstr_t, windex) = 0;
@@ -43,7 +43,7 @@ namespace ang
 				virtual ishaders_t shaders()const = 0;
 				virtual string frame_buffer()const = 0;
 				virtual string geometry()const = 0;
-				virtual array_view<string> resources()const = 0;
+				virtual array<string> resources()const = 0;
 			};
 
 			struct nvt LINK ieffect

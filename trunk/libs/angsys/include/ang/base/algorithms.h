@@ -90,9 +90,9 @@ namespace ang
 		template<typename T, typename N>
 		struct node_value {
 			using type = T;
-			using tyupe_ptr = typename remove_reference<T>::type*;
+			using type_ptr = typename remove_reference<T>::type*;
 			static type get(N* node, windex at);
-			static tyupe_ptr get_ptr(N* node, windex at);
+			static type_ptr get_ptr(N* node, windex at);
 		};
 
 		template<typename N>
@@ -192,14 +192,21 @@ namespace ang
 				index = 0;
 				return*this;
 			}
-			T operator*()const {
+
+			T get()const {
 				return node_value<T, N>::get(node, index);
 			}
-			operator typename node_value<T, N>::type_ptr ()const {
+			typename node_value<T, N>::type_ptr get_ptr()const {
 				return node_value<T, N>::get_ptr(node, index);
 			}
-			typename typename node_value<T, N>::type_ptr operator->()const {
-				return node_value<T, N>::get_ptr(node, index);
+			T operator*()const {
+				return get();
+			}
+			operator typename node_value<T, N>::type_ptr ()const {
+				return get_ptr();
+			}
+			typename node_value<T, N>::type_ptr operator->()const {
+				return get_ptr();
 			}
 		};
 

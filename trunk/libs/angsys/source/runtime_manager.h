@@ -16,8 +16,7 @@ namespace ang
 			rttiptr& operator = (rtti_t* p) { ptr = p; return*this; }
 			rttiptr& operator = (rttiptr const& p) { ptr = p.ptr; return*this; }
 
-			rtti_t* operator ->() { return ptr; }
-			rtti_t const* operator ->()const { return ptr; }
+			rtti_t* operator ->()const { return ptr; }
 
 			operator rtti_t*() { return ptr; }
 			operator rtti_t const*()const { return ptr; }

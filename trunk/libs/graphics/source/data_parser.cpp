@@ -293,6 +293,116 @@ bool text_data_value_loader<var_type::block, var_class::scalar>::create_context(
 	}
 }
 
+bool text_data_value_loader<var_type::block, var_class::scalar>::create_context(attribute_desc_t const& desc, text_data_loader_context_t& context)
+{
+	switch (desc.var_type())
+	{
+	case var_type::s8:
+		context.position = desc.position();
+		context.aligment = align_of<char>();
+		context.array_count = (uint)desc.var_class().get();
+		context.children = null;
+		context.load_data = &text_data_value_loader<var_type::s8, var_class::scalar>::load_data;
+		return true;
+	case var_type::u8:
+		context.position = desc.position();
+		context.aligment = align_of<uchar>();
+		context.array_count = (uint)desc.var_class().get();
+		context.children = null;
+		context.load_data = &text_data_value_loader<var_type::u8, var_class::scalar>::load_data;
+		return true;
+	case var_type::s16:
+		context.position = desc.position();
+		context.aligment = align_of<short>();
+		context.array_count = (uint)desc.var_class().get();
+		context.children = null;
+		context.load_data = &text_data_value_loader<var_type::s16, var_class::scalar>::load_data;
+		return true;
+	case var_type::u16:
+		context.position = desc.position();
+		context.aligment = align_of<ushort>();
+		context.array_count = (uint)desc.var_class().get();
+		context.children = null;
+		context.load_data = &text_data_value_loader<var_type::u16, var_class::scalar>::load_data;
+		return true;
+	case var_type::s32:
+		context.position = desc.position();
+		context.aligment = align_of<int>();
+		context.array_count = (uint)desc.var_class().get();
+		context.children = null;
+		context.load_data = &text_data_value_loader<var_type::s32, var_class::scalar>::load_data;
+		return true;
+	case var_type::u32:
+		context.position = desc.position();
+		context.aligment = align_of<uint>();
+		context.array_count = (uint)desc.var_class().get();
+		context.children = null;
+		context.load_data = &text_data_value_loader<var_type::u32, var_class::scalar>::load_data;
+		return true;
+	case var_type::f32:
+		switch (desc.var_class())
+		{
+		case var_class::scalar:
+			context.position = desc.position();
+			context.aligment = align_of<float>();
+			context.array_count = 1;
+			context.children = null;
+			context.load_data = &text_data_value_loader<var_type::f32, var_class::scalar>::load_data;
+			break;
+		case var_class::vec2:
+			context.position = desc.position();
+			context.aligment = align_of<maths::float2>();
+			context.array_count = 1;
+			context.children = null;
+			context.load_data = &text_data_value_loader<var_type::f32, var_class::vec2>::load_data;
+			break;
+		case var_class::vec3:
+			context.position = desc.position();
+			context.aligment = align_of<maths::float3>();
+			context.array_count = 1;
+			context.children = null;
+			context.load_data = &text_data_value_loader<var_type::f32, var_class::vec3>::load_data;
+			break;
+		case var_class::vec4:
+			context.position = desc.position();
+			context.aligment = align_of<maths::float4>();
+			context.array_count = 1;
+			context.children = null;
+			context.load_data = &text_data_value_loader<var_type::f32, var_class::vec4>::load_data;
+			break;
+		case var_class::mat4:
+			context.position = desc.position();
+			context.aligment = align_of<maths::float4x4>();
+			context.array_count = 1;
+			context.children = null;
+			context.load_data = &text_data_value_loader<var_type::f32, var_class::mat4>::load_data;
+			break;
+		default:
+			break;
+		}
+		return true;
+	default:
+		return false;
+	}
+}
+
+
+bool text_data_value_loader<var_type::block, var_class::scalar>::create_context(array_view<attribute_desc_t> const& desc, text_data_loader_context_t& context)
+{
+	text_data_loader_context_t child;
+	context.position = 0;
+	context.aligment = 16;
+	context.array_count = 1;
+	context.load_data = &text_data_value_loader<var_type::block, var_class::scalar>::load_data;
+	for (attribute_desc_t const& vars : desc)
+	{
+		create_context(vars, child);
+		context.children += ang::move(child);
+	}
+	return true;
+}
+
+
 text_data_loader_context::text_data_loader_context(
 	wsize position,
 	wsize aligment,

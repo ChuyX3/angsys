@@ -17,6 +17,7 @@ namespace ang
 				virtual array<reflect::varying> fields() = 0; //only one per time
 				virtual reflect::varying field(windex) = 0; //only one per time
 				virtual reflect::varying field(cstr_t) = 0; //only one per time
+				virtual textures::itexture_t texture(cstr_t) const = 0;
 				virtual array<textures::itexture_t> textures() const = 0;
 			};
 
@@ -52,8 +53,8 @@ namespace ang
 				: intf<imesh
 				, iid("ang::graphics::meshes::imesh")>
 			{
-				virtual resources::iresource_t resource()const = 0;;
-				virtual array_view<igeometry_t> elements()const = 0;
+				virtual resources::iresource_t resource()const = 0;
+				virtual array<igeometry_t> elements()const = 0;
 			};
 
 			struct nvt LINK imesh_loader

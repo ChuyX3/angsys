@@ -35,23 +35,17 @@ namespace ang
 			struct nvt LINK inode
 				: intf<inode
 				, iid("ang::graphics::scenes::inode")
-				, ixml_streamer
-				, collections::ienum<inode_t>>
+				, ixml_streamer>
 			{
+				virtual string sid()const = 0;
 				virtual node_type_t type()const = 0;
 				virtual void draw(idriver_t, iscene_t, iframe_buffer_t, effects::ipass_t) = 0;
 				virtual void update(core::time::step_timer const&) = 0;
 				virtual inode_t parent()const = 0;
 				virtual void parent(inode_t) = 0;
-				virtual collections::iterator<inode_t> find(function<bool(inode_t const&)> func, bool invert = false)const = 0;
-				virtual collections::iterator<inode_t> find(function<bool(inode_t const&)> func, collections::base_iterator<inode_t> next_to, bool invert = false)const = 0;
-				virtual collections::ienum_ptr<inode_t> find_all(function<bool(inode_t const&)> func)const = 0;
-				virtual void push(inode_t const& val, bool last = true) = 0;
-				virtual bool insert(collections::base_iterator<inode_t> it, inode_t const& val) = 0;
-				virtual bool pop(bool last = true) = 0;
-				virtual bool pop(inode_t& val, bool last = true) = 0;
-				virtual bool pop_at(collections::base_iterator<inode_t> it) = 0;
-				virtual bool pop_at(collections::base_iterator<inode_t> it, inode_t& val) = 0;
+
+				virtual collections::ienum_ptr<inode> children()const = 0;
+				virtual collections::ilist_ptr<inode> children() = 0;
 			};
 
 			struct nvt LINK icamera
@@ -69,12 +63,11 @@ namespace ang
 				, inode>
 			{
 				virtual void draw(idriver_t, iframe_buffer_t, icamera_t = nullptr)= 0;
-				virtual void update(core::time::step_timer const&)= 0;
 				virtual resources::ilibrary_t library()const = 0;
 				virtual size<uint> clip_size()const = 0;
 				virtual icamera_t active_camera()const = 0;
 				virtual maths::float4 ambient_color()const = 0;
-				virtual array_view<resources::light_info> ligths()const = 0;
+				virtual array<resources::light_info> ligths()const = 0;
 			};
 
 			template<typename T> 

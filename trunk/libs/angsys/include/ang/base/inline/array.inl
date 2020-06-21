@@ -184,6 +184,108 @@ inline typename ang::collections::array_view<T>::element_type*const* ang::collec
 	return &m_first;
 }
 
+
+template<typename T> template<typename T2, template<typename> class A2>
+inline bool ang::collections::array_view<T>::operator == (ang::collections::vector<T2, A2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return false;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return false;
+		}
+		return true;
+	}
+	else
+		return false;
+}
+
+template<typename T> template<typename T2, template<typename> class A2>
+inline bool ang::collections::array_view<T>::operator != (ang::collections::vector<T2, A2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return true;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return true;
+		}
+		return false;
+	}
+	else
+		return true;
+}
+
+template<typename T> template<typename T2, template<typename> class A2>
+inline bool ang::collections::array_view<T>::operator == (ang::collections::array<T2, A2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return false;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return false;
+		}
+		return true;
+	}
+	else
+		return false;
+}
+
+template<typename T> template<typename T2, template<typename> class A2>
+inline bool ang::collections::array_view<T>::operator != (ang::collections::array<T2, A2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return true;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return true;
+		}
+		return false;
+	}
+	else
+		return true;
+}
+
+template<typename T> template<typename T2>
+inline bool ang::collections::array_view<T>::operator == (ang::collections::array_view<T2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return false;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return false;
+		}
+		return true;
+	}
+	else
+		return false;
+}
+
+template<typename T> template<typename T2>
+inline bool ang::collections::array_view<T>::operator != (ang::collections::array_view<T2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return true;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return true;
+		}
+		return false;
+	}
+	else
+		return true;
+}
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, wsize SIZE>
@@ -443,18 +545,20 @@ inline ang::collections::array<T, A>::array(T2(&ar)[N])
 template<typename T, template<typename>class A> template<typename IT>
 inline ang::collections::array<T, A>::array(IT first, IT last)
 	: array_node<T>(null, null) {
-	sz = min(wsize(-1) / size_of<T>(), wsize(max(first, last) - first));
+	wsize sz = 0;
+	for (auto it = first; it != last; it++) sz++;
+
 	if (sz > 0) {
 		m_first = A<element_type>::allocate(sz);
 		m_last = m_first + sz;
 		if constexpr (is_trivially_constructible<T>::value) {
-			if (first) for (iterator_t it = m_first; it != m_last && first != last; it++, first++)
+			if (first) for (auto it = m_first; it != m_last && first != last; it++, first++)
 				*it = (element_type)*first;
 		}
 		else {
-			if (first) for (iterator_t it = m_first; it != m_last && first != last; it++, first++)
-				A<element_type>::template construct<T, T const&>((T*)it, first);
-			else for (iterator_t it = m_first; it != m_last; it++)
+			if (first) for (auto it = m_first; it != m_last && first != last; it++, first++)
+				A<element_type>::template construct<T, T const&>((T*)it, (element_type)*first);
+			else for (auto it = m_first; it != m_last; it++)
 				A<element_type>::template construct<T>((T*)it);
 		}
 	}
@@ -596,7 +700,7 @@ inline void ang::collections::array<T, A>::copy(IT first, IT last) {
 			for (auto it = m_first; first != last && it != m_last; it++, first++)
 				*it = *first;
 		} else {
-			for (windex i = 0; i < sz; ++i)
+			for (auto it = m_first; first != last && it != m_last; it++, first++)
 				A<element_type>::template construct<T, decltype(*first)>((T*)it, *first);
 		}	
 	}
@@ -724,13 +828,8 @@ inline ang::collections::array<T, A>::operator typename ang::collections::array<
 }
 
 template<typename T, template<typename>class A>
-inline ang::collections::array<T, A>::operator ang::array_view<T>()const {
-	return view();
-}
-
-template<typename T, template<typename>class A>
-inline ang::collections::array<T, A>::operator ang::array_view<const T>()const {
-	return const_view();
+inline ang::collections::array<T, A>::operator ang::collections::array_view<T> const& ()const {
+	return *reinterpret_cast<array_view<T>*>(const_cast<array<T, A>*>(this));
 }
 
 template<typename T, template<typename>class A> template<typename I>
@@ -751,4 +850,105 @@ inline typename ang::collections::array<T, A>::element_type** ang::collections::
 }
 
 
+template<typename T, template<typename>class A> template<typename T2, template<typename> class A2>
+inline bool ang::collections::array<T, A>::operator == (ang::collections::vector<T2, A2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return false;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return false;
+		}
+		return true;
+	}
+	else
+		return false;
+}
+
+template<typename T, template<typename>class A> template<typename T2, template<typename> class A2>
+inline bool ang::collections::array<T, A>::operator != (ang::collections::vector<T2, A2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return true;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return true;
+		}
+		return false;
+	}
+	else
+		return true;
+}
+
+template<typename T, template<typename>class A> template<typename T2, template<typename> class A2>
+inline bool ang::collections::array<T, A>::operator == (ang::collections::array<T2, A2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return false;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return false;
+		}
+		return true;
+	}
+	else
+		return false;
+}
+
+template<typename T, template<typename>class A> template<typename T2, template<typename> class A2>
+inline bool ang::collections::array<T, A>::operator != (ang::collections::array<T2, A2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return true;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return true;
+		}
+		return false;
+	}
+	else
+		return true;
+}
+
+template<typename T, template<typename>class A> template<typename T2>
+inline bool ang::collections::array<T, A>::operator == (ang::collections::array_view<T2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return false;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return false;
+		}
+		return true;
+	}
+	else
+		return false;
+}
+
+template<typename T, template<typename>class A> template<typename T2>
+inline bool ang::collections::array<T, A>::operator != (ang::collections::array_view<T2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return true;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return true;
+		}
+		return false;
+	}
+	else
+		return true;
+}
 #endif//__ANG_BASE_ARRAY_H__

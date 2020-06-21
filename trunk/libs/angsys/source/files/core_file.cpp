@@ -38,11 +38,6 @@ mapped_file_buffer::~mapped_file_buffer()
 	m_original_source->unmap(this);
 }
 
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::files::mapped_file_buffer);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::files::mapped_file_buffer);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::files::mapped_file_buffer, bean, ibuffer, ibuffer_view);
-
-
 bool mapped_file_buffer::map(open_flags_t access, wsize size, ulong64 offset)
 {
 	m_access_flag = bool(access & open_flags::access_out) ? open_flags::access_out : open_flags::access_in;
@@ -225,7 +220,7 @@ file_size_t core_file::get_file_size(file_handle_t handle)
 
 text::encoding_t core_file::get_file_encoding(file_handle_t handle)
 {
-	dword bom[2] = { 0,0 };
+	byte bom[8] = { 0 };
 	dword offset = 0;
 	text::encoding_t result = text::encoding::ascii;
 #ifdef WINDOWS_PLATFORM
@@ -333,7 +328,6 @@ core_file::core_file()
 	, m_hmap(0)
 	, m_path(""_sv)
 	, m_flags()
-	//, _size(0)
 	//, _cursor(0)
 	, m_map_counter(0)
 {
@@ -343,10 +337,6 @@ core_file::core_file()
 core_file::~core_file()
 {
 }
-
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::core::files::core_file);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(ang::core::files::core_file);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::core::files::core_file, bean, ifile);
 
 bool core_file::create(path_t&& path, open_flags_t flags)
 {
@@ -473,8 +463,7 @@ bool core_file::create(path_t&& path, open_flags_t flags)
 				break;
 			case text::encoding::utf32_be:
 				set_file_encoding(m_hfile, text::encoding::utf32_be);
-				m_flags += open_flags::format_utf32_be;
-				break;
+				m_flags += open_flags::format_utf32_be;				break;
 			default:// case text::encoding::utf8:
 				set_file_encoding(m_hfile, text::encoding::utf8);
 				m_flags += open_flags::format_utf8;
@@ -514,10 +503,11 @@ file_handle_t core_file::map_handle(ulong64 _min)
 	{
 #ifdef WINDOWS_PLATFORM
 		LARGE_INTEGER lint;
+		auto cur = cursor();
 		lint.QuadPart = _min;
 		SetFilePointerEx(m_hfile, lint, null, FILE_BEGIN);
 		SetEndOfFile(m_hfile);
-		lint.QuadPart = cursor();
+		lint.QuadPart = cur;
 		SetFilePointerEx(m_hfile, lint, null, FILE_BEGIN);
 #elif defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 		auto _cursor = cursor();
@@ -537,8 +527,8 @@ file_handle_t core_file::map_handle(ulong64 _min)
 		dword accessFlags = bool(m_flags & open_flags::access_out) ? PAGE_READWRITE : PAGE_READONLY;
 
 #if WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
-		LARGE_INTEGER lint;
-		lint.QuadPart = size();
+		//LARGE_INTEGER lint;
+		//lint.QuadPart = size();
 		
 		m_hmap = CreateFileMappingW(m_hfile, NULL, accessFlags, 0,0, NULL);
 #else//STOREAPP
@@ -560,8 +550,8 @@ file_handle_t core_file::map_handle(ulong64 _min)
 		dword accessFlags = bool(m_flags & open_flags::access_out) ? PAGE_READWRITE : PAGE_READONLY;
 
 #if WINDOWS_PLATFORM == WINDOWS_DESKTOP_PLATFORM
-		LARGE_INTEGER lint;
-		lint.QuadPart = size();
+		//LARGE_INTEGER lint;
+		//lint.QuadPart = size();
 
 		auto hmap = CreateFileMappingW(m_hfile, NULL, accessFlags, 0, 0, NULL);
 #else//STOREAPP
@@ -602,7 +592,7 @@ void core_file::dispose()
 #endif
 	m_path = null;
 	m_flags = open_flags::null;
-	
+
 	return;
 }
 

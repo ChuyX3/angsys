@@ -11,6 +11,9 @@ namespace ang
 		{
 			using namespace resources;
 
+			ang_declare_object(material);
+			ang_declare_object(geometry);
+
 			class LINK material
 				: public implement<material
 				, iid("ang::graphics::meshes::material")
@@ -20,7 +23,7 @@ namespace ang
 				string m_tectnique_name;
 				array<byte> m_data;
 				reflect::varying m_fields;
-				vector<textures::itexture_t> m_textures;
+				vector<collections::pair<string, textures::itexture_t>> m_textures;
 
 			public:
 				material();
@@ -29,11 +32,13 @@ namespace ang
 				void dispose() override;
 
 			public:
+				bool load(ilibrary_t lib, material_data_t const& data);
 				string technique()const override;
 				array<reflect::varying_desc> fields_layout()const override;
 				array<reflect::varying> fields() override; //only one per time
 				reflect::varying field(windex) override; //only one per time
 				reflect::varying field(cstr_t) override; //only one per time
+				textures::itexture_t texture(cstr_t) const override;
 				array<textures::itexture_t> textures() const override;
 
 			private:
@@ -47,10 +52,11 @@ namespace ang
 				, igeometry>
 			{
 			private:
+				string m_technique;
 				maths::mat4 m_transform;
 				buffers::iindex_buffer_t m_index_buffer;
 				buffers::ivertex_buffer_t m_vertex_buffer;
-				imaterial_t m_material;
+				material_t m_material;
 
 			public:
 				geometry();
@@ -59,7 +65,7 @@ namespace ang
 				void dispose() override;
 
 			public:
-				bool load(ifactory_t lib, geometry_data_t const& data);
+				bool load(ilibrary_t lib, geometry_data_t const& data);
 				string technique() const override;
 				buffers::iindex_buffer_t index_buffer() const override;
 				buffers::ivertex_buffer_t vertex_buffer() const override;
@@ -95,7 +101,7 @@ namespace ang
 
 				string resource_sid()const override;
 				void resource_sid(cstr_t) override;
-				array_view<igeometry_t> elements()const override;
+				array<igeometry_t> elements()const override;
 
 			private:
 				resources::iresource_t resource()const override;
@@ -123,7 +129,6 @@ namespace ang
 				weak_ptr<ilibrary> m_parent;
 				mutable core::async::mutex_t m_mutex;
 				collections::hash_map<string, imesh_t> m_mesh_map;
-
 			public:
 				mesh_loader(ilibrary* parent);
 

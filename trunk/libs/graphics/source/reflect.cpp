@@ -318,11 +318,11 @@ wsize varying_desc::load(dom::xml::ixml_node_t input, wsize aligment)
 		{
 			//xml::xml_attribute_t att = node->xml_as<xml::xml_attribute>();
 			auto name = att->name()->as<cstr_t>();
-			if (name == "name"_s)
+			if (name == "name"_r)
 				m_var_name = (cstr_t)att->value();
-			else if (name == "array"_s)
+			else if (name == "array"_r)
 				m_array_count = att->value()->as<wsize>();
-			else if (name == "aligment"_s)
+			else if (name == "aligment"_r)
 				m_aligment = att->value()->as<wsize>();
 		}
 
@@ -343,7 +343,7 @@ wsize varying_desc::load(dom::xml::ixml_node_t input, wsize aligment)
 		{
 			varying_desc desc;
 			auto name = field->name();
-			if (((cstr_t)name == L"var"_s || (cstr_t)name == L"block"_s) && (align = desc.load(field)))
+			if (((cstr_t)name == L"var"_r || (cstr_t)name == L"block"_r) && (align = desc.load(field)))
 			{
 				max_align = max(max_align, align);
 				size = desc.get_size_in_bytes();
@@ -370,15 +370,15 @@ wsize varying_desc::load(dom::xml::ixml_node_t input, wsize aligment)
 		for(dom::xml::ixml_node_t att : atts)
 		{
 			auto name = att->name()->as<cstr_t>();
-			if (name == "name"_s)
+			if (name == "name"_r)
 				m_var_name = (cstr_t)att->value();
-			else if (name == "type"_s)
+			else if (name == "type"_r)
 				m_var_type = att->value()->as<var_type_t>();
-			else if (name == "class"_s)
+			else if (name == "class"_r)
 				m_var_class = att->value()->as<var_class_t>();
-			else if (name == "array"_s)
+			else if (name == "array"_r)
 				m_array_count = att->value()->as<wsize>();
-			else if (name == "aligment"_s)
+			else if (name == "aligment"_r)
 				m_aligment = att->value()->as<wsize>();
 		}
 
@@ -646,11 +646,12 @@ varying_desc& varying_desc::operator = (const varying_desc& value) {
 
 bool varying_desc::operator == (const varying_desc& value)const
 {
-	return m_var_name == value.m_var_name
-		|| m_array_count == value.m_array_count
-		//|| m_fields == value.m_fields
-		|| m_var_type == value.m_var_type
-		|| m_var_class == value.m_var_class;
+	bool val = //m_var_name == value.m_var_name &&
+		m_array_count == value.m_array_count &&
+		m_fields == value.m_fields &&
+		m_var_type == value.m_var_type &&
+		m_var_class == value.m_var_class;
+	return val;
 }
 
 bool varying_desc::operator != (const varying_desc& value)const
@@ -760,12 +761,20 @@ bool attribute_desc::load(dom::xml::ixml_node_t input)
 {
 	if (input.is_empty() || !input->has_attributes())
 		return false;
-	auto att = input->attributes();
-	m_var_name = (cstr_t)att["name"_s];
-	m_var_type = att["type"_s]->as<var_type_t>();
-	m_var_class = att["class"_s]->as<var_class_t>();
-	m_semantic = att["semantic"_s]->as<var_semantic_t>();
-	m_semantic_index = att["semantic_idx"_s]->as<wsize>();
+	for (auto att : input->attributes())
+	{
+		auto name = att->name()->as<cstr_t>();
+		if (name == "name"_r)
+			m_var_name = att->value()->as<cstr_t>();
+		else if (name == "type"_r)
+			m_var_type = att->value()->as<var_type_t>();
+		else if (name == "class"_r)
+			m_var_class = att->value()->as<var_class_t>();
+		else if (name == "semantic"_r)
+			m_semantic = att->value()->as<var_semantic_t>();
+		else if (name == "semantic_idx"_r)
+			m_semantic_index = att->value()->as<wsize>();
+	}
 	return true;
 }
 

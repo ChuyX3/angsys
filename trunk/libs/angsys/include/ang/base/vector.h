@@ -18,8 +18,7 @@ namespace ang //constants
 {
 	namespace collections
 	{
-		template<typename T, template<typename> class A = memory::auto_detect_buffer_allocator>
-		struct vector;
+
 
 		template<typename T, template<typename> class A>
 		struct vector : protected array_node<T>
@@ -143,8 +142,7 @@ namespace ang //constants
 			vector& operator = (const T2(&ar)[N]);
 			explicit operator type& ();
 			explicit operator type ()const;
-			operator array_view<T>()const;
-			operator array_view<const T>()const;
+			operator array_view<T> const&()const;
 			template<typename I>
 			element_type& operator [](I const& idx);
 			template<typename I>
@@ -153,6 +151,24 @@ namespace ang //constants
 			vector& operator += (element_type && val);
 			vector& operator += (element_type const& val);
 			vector& operator -= (element_type& val);
+
+			template<typename T2, template<typename> class A2>
+			bool operator == (vector<T2, A2> const& items)const;
+
+			template<typename T2, template<typename> class A2>
+			bool operator != (vector<T2, A2> const& items)const;
+
+			template<typename T2, template<typename> class A2>
+			bool operator == (array<T2, A2> const& items)const;
+
+			template<typename T2, template<typename> class A2>
+			bool operator != (array<T2, A2> const& items)const;
+
+			template<typename T2>
+			bool operator == (array_view<T2> const& items)const;
+
+			template<typename T2>
+			bool operator != (array_view<T2> const& items)const;
 		};
 
 	}

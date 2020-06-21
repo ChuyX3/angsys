@@ -412,25 +412,25 @@ namespace ang
 	}
 }
 
-#undef __ANG_VECTOR_MATHS_FLOAT2_HPP__
+#undef __ANG_VECTOR_MATHS_FLOAT2_INL__
 #include <ang/maths/implement/float2.inl>
-#undef __ANG_VECTOR_MATHS_FLOAT3_HPP__
+#undef __ANG_VECTOR_MATHS_FLOAT3_INL__
 #include <ang/maths/implement/float3.inl>
-#undef __ANG_VECTOR_MATHS_FLOAT4_HPP__
+#undef __ANG_VECTOR_MATHS_FLOAT4_INL__
 #include <ang/maths/implement/float4.inl>
-#undef __ANG_VECTOR_MATHS_FLOAT4X4_HPP__
+#undef __ANG_VECTOR_MATHS_FLOAT4X4_INL__
 #include <ang/maths/implement/float4x4.inl>
 
-#undef __ANG_VECTOR_MATHS_DOUBLE2_HPP__
+#undef __ANG_VECTOR_MATHS_DOUBLE2_INL__
 #include <ang/maths/implement/double2.inl>
-#undef __ANG_VECTOR_MATHS_DOUBLE3_HPP__
+#undef __ANG_VECTOR_MATHS_DOUBLE3_INL__
 #include <ang/maths/implement/double3.inl>
-#undef __ANG_VECTOR_MATHS_DOUBLE4_HPP__
+#undef __ANG_VECTOR_MATHS_DOUBLE4_INL__
 #include <ang/maths/implement/double4.inl>
 //#undef __ANG_VECTOR_MATHS_DOUBLE4X4_HPP__
 //#include <ang/maths/implement/double4x4.inl>
 
-#undef __ANG_MATHS_MATRIX_HPP__
+#undef __ANG_MATHS_MATRIX_INL__
 #include <ang/maths/implement/maths_matrix.inl>
 
 //ANG_REGISTER_RUNTIME_TYPENAME(ang::maths::float2);

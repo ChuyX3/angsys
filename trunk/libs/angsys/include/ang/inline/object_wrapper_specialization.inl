@@ -114,12 +114,7 @@ ang::object_wrapper_ptr<MY_TYPE> ang::object_wrapper<MY_TYPE>::operator& (void)
 	return this;
 }
 
-MY_TYPE* ang::object_wrapper<MY_TYPE>::operator -> (void)
-{
-	return get();
-}
-
-MY_TYPE const* ang::object_wrapper<MY_TYPE>::operator -> (void)const
+MY_TYPE* ang::object_wrapper<MY_TYPE>::operator -> (void) const
 {
 	return get();
 }

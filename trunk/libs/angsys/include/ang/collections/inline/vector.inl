@@ -259,6 +259,12 @@ inline bool ang::collections::vector_buffer<T, A>::realloc_buffer(wsize sz)
 }
 
 template<typename T, template<typename>class A>
+ang::collections::ienum_ptr<T> ang::collections::vector_buffer<T, A>::items()const
+{
+	return const_cast<ang::collections::vector_buffer<T, A>*>(this);
+}
+
+template<typename T, template<typename>class A>
 inline wsize ang::collections::vector_buffer<T, A>::counter()const
 {
 	return size();
@@ -718,13 +724,7 @@ inline ang::object_wrapper_ptr<ang::collections::vector_buffer<T, A>> ang::objec
 }
 
 template<typename T, template <typename> class A>
-inline ang::collections::vector_buffer<T, A> * ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator -> (void)
-{
-	return get();
-}
-
-template<typename T, template <typename> class A>
-inline ang::collections::vector_buffer<T, A> const* ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator -> (void)const
+inline ang::collections::vector_buffer<T, A> * ang::object_wrapper<ang::collections::vector_buffer<T, A>>::operator -> (void)const
 {
 	return get();
 }

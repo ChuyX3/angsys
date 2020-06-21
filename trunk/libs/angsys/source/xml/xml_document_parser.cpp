@@ -14,6 +14,8 @@
 using namespace ang;
 using namespace ang::dom::xml;
 
+static xml_encoding_t  xml_detect_encoding(pointer bom, xml_encoding_t e, windex& idx);
+
 error xml_document::load(core::files::input_text_file_t file)
 {
 	error er = error_code::success;
@@ -102,7 +104,7 @@ static xml_encoding_t  xml_detect_encoding(pointer bom, xml_encoding_t e, windex
 error xml_document::parse(cstr_t data)
 {
 	windex idx = 0;
-	xml_encoding_t e = xml_detect_encoding((void*)data.ptr(), data.encoding(), idx);
+	xml_encoding_t e = xml_detect_encoding((void*)data.ptr(), text::encoding::auto_detect, idx);
 	return xml_utils::parse(this, (void*)data.ptr(), data.size(), e, idx);
 }
 

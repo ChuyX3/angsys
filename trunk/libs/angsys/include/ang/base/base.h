@@ -79,6 +79,7 @@ namespace ang
 		template<typename T> struct array_view;
 		template<typename T, wsize SIZE> struct stack_array;
 		template<typename T, template<typename> class A = memory::auto_detect_buffer_allocator> struct array;
+		template<typename T, template<typename> class A = memory::auto_detect_buffer_allocator>	struct vector;
 	}
 
 	using collections::array_view;

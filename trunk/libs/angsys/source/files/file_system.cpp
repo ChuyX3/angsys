@@ -50,7 +50,7 @@ file_system::file_system()
 	, m_lowest_priority()
 	, m_async_worker(null)
 {
-	m_async_worker = async::thread::create_dispatcher_thread();
+	//m_async_worker = async::thread::create_dispatcher_thread();
 }
 
 file_system::~file_system()
@@ -68,7 +68,10 @@ void file_system::dispose()
 	m_highest_priority.clear();
 	m_paths.clear();
 	m_macros.clear();
-	m_async_worker->join();
+	//m_async_worker->join();
+	if(!m_async_worker.is_empty())
+		m_async_worker->exit();
+	m_async_worker = null;
 }
 
 bool file_system::register_file_system(ifile_system* fs, file_system_priority_t prio)
@@ -295,11 +298,12 @@ bool file_system::create_handle(cstr_t path_, open_flags_t flags, ifile_ptr_t ou
 	});
 }
 
-async::iasync_op<ifile_t> file_system::create_handle_async(cstr_t path_, open_flags_t flags, cstr_t macro_) {
+async::iasync_op<ifile> file_system::create_handle_async(cstr_t path_, open_flags_t flags, cstr_t macro_) {
 	string path = path_;
 	string macro = macro_;
-	
-	return m_async_worker->run_async<optional<ifile_t>>([=](async::iasync_op<ifile_t>)->optional<ifile_t>
+	if(m_async_worker.is_empty())
+		m_async_worker = async::thread::create_dispatcher_thread();
+	return m_async_worker->run_async<optional<ifile>>([=](async::iasync_op<ifile>)->optional<ifile>
 	{
 		ifile_t file;
 		if (!this->create_handle(path, flags, &file, macro))

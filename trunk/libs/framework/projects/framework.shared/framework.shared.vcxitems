@@ -19,15 +19,28 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\framework\framework.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\framework\library.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\framework\meshes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\framework\scenes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\framework\state_machine.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\framework\textures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\compile_config.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\align.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\effects.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\effect_library.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\framework.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\game.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\geometry.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\ingame_state.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\library.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\loading_state.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\material.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\mesh.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\mesh_loader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\mesh_streamer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\resource_manager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\scenes.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\state_manager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\texture_loader.cpp" />
   </ItemGroup>
 </Project>

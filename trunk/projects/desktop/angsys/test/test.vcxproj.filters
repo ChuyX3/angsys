@@ -13,12 +13,19 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="resource files\shaders">
+      <UniqueIdentifier>{1f77632e-b3f1-463d-b149-6b675bf2c812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource files\models">
+      <UniqueIdentifier>{0f7fbb5f-7220-471c-bfc0-2ff6e846341b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="puyo.cpp">
       <Filter>source files</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\character_fx_library.xml">
@@ -33,8 +40,43 @@
     <Xml Include="resources\puyo.xml">
       <Filter>resource files</Filter>
     </Xml>
+    <Xml Include="resources\states\state_manager.xml">
+      <Filter>resource files</Filter>
+    </Xml>
+    <Xml Include="resources\models\cube.xml">
+      <Filter>resource files\models</Filter>
+    </Xml>
+    <Xml Include="resources\models\cube2.xml">
+      <Filter>resource files\models</Filter>
+    </Xml>
+    <Xml Include="resources\models\skybox.xml">
+      <Filter>resource files\models</Filter>
+    </Xml>
+    <Xml Include="resources\models\woman.xml">
+      <Filter>resource files\models</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="puyo.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\sky_box.hlsl">
+      <Filter>resource files\shaders</Filter>
+    </None>
+    <None Include="resources\shaders\postfx_gray_scale.hlsl">
+      <Filter>resource files\shaders</Filter>
+    </None>
+    <None Include="resources\shaders\character2.hlsl">
+      <Filter>resource files\shaders</Filter>
+    </None>
+    <None Include="resources\shaders\character.hlsl">
+      <Filter>resource files\shaders</Filter>
+    </None>
+    <None Include="resources\shaders\basic_shader.hlsl">
+      <Filter>resource files\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

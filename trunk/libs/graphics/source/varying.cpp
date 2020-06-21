@@ -8,145 +8,81 @@ using namespace ang::graphics;
 using namespace ang::graphics::reflect;
 
 
-varying::base_iterator::base_iterator()
-	: m_parent(null)
-	, m_offset(invalid_index)
+algorithms::varying_iteration::varying_iteration()
 {
+	vtable = s_vtable;
 }
 
-varying::base_iterator::base_iterator(varying::base_iterator const& it)
-	: m_parent(it.m_parent)
-	, m_offset(it.m_offset)
+typename algorithms::varying_iteration::node_ptr_type algorithms::varying_iteration::begin(node_ptr_type node, windex* idx)
 {
-
+	if (idx != null)
+		*idx = 0;
+	return node;
 }
 
-varying::base_iterator::base_iterator(varying_t* parent, windex idx)
-	: m_parent(parent)
-	, m_offset(idx)
+typename algorithms::varying_iteration::node_ptr_type algorithms::varying_iteration::end(node_ptr_type node, windex* idx)
 {
-
+	if (idx != null)
+		*idx = invalid_index;
+	return node;
 }
 
-varying_t* varying::base_iterator::parent()const {
-	return m_parent;
-}
-
-windex varying::base_iterator::offset()const {
-	return m_offset;
-}
-
-varying::base_iterator& varying::base_iterator::operator++() {
-	m_parent->increase(*this);
-	return*this;
-}
-
-varying::base_iterator& varying::base_iterator::operator--() {
-	m_parent->decrease(*this);
-	return*this;
-}
-
-varying::base_iterator varying::base_iterator::operator++(int) {
-	return m_parent->increase(*this);
-}
-
-varying::base_iterator varying::base_iterator::operator--(int) {
-	return m_parent->decrease(*this);
-}
-
-bool varying::base_iterator::operator == (const varying::base_iterator& it)const {
-	return m_parent == it.m_parent && m_offset == it.m_offset;
-}
-
-bool varying::base_iterator::operator != (const varying::base_iterator& it)const {
-	return m_parent != it.m_parent || m_offset != it.m_offset;
-}
-
-bool varying::base_iterator::operator >= (const varying::base_iterator& it)const {
-	return m_parent == it.m_parent && m_offset >= it.m_offset;
-}
-
-bool varying::base_iterator::operator <= (const varying::base_iterator& it)const {
-	return m_parent == it.m_parent && m_offset <= it.m_offset;
-}
-
-bool varying::base_iterator::operator > (const varying::base_iterator& it)const {
-	return m_parent == it.m_parent && m_offset > it.m_offset;
-}
-
-bool varying::base_iterator::operator < (const varying::base_iterator& it)const {
-	return m_parent == it.m_parent && m_offset < it.m_offset;
-}
-
-void varying::base_iterator::parent(varying_t* parent) {
-	m_parent = parent;
-}
-
-void varying::base_iterator::offset(windex offset) {
-	m_offset = offset;
-}
-
-varying::iterator<varying>::iterator()
-	: base_iterator()
+typename algorithms::varying_iteration::node_ptr_type algorithms::varying_iteration::rbegin(node_ptr_type node, windex* idx)
 {
+	if (idx != null)
+		*idx = node->counter() - 1;
+	return node;
 }
 
-varying::iterator<varying>::iterator(varying::base_iterator_t && it)
-	: base_iterator(ang::forward<varying::base_iterator_t&&>(it))
+typename algorithms::varying_iteration::node_ptr_type algorithms::varying_iteration::rend(node_ptr_type node, windex* idx)
 {
+	if (idx != null)
+		*idx = invalid_index;
+	return node;
 }
 
-varying::iterator<varying>::iterator(varying::base_iterator_t const& it)
-	: base_iterator(it)
+typename algorithms::varying_iteration::node_ptr_type algorithms::varying_iteration::increase(node_ptr_type node, windex* idx)
 {
+	wsize count = node->counter();
+#ifdef DEBUG_SAFE_CODE
+	if (node == null || idx == null)
+		throw_exception(error_code::array_overflow);
+	if (*idx >= count)
+		throw_exception(error_code::array_overflow);
+#endif
+	(*idx)++;
+	if (*idx >= count)
+		*idx = invalid_handle;
+	return node;
 }
 
-varying::iterator<varying>::iterator(varying_t* parent, windex idx)
-	: base_iterator(parent, idx)
+typename algorithms::varying_iteration::node_ptr_type algorithms::varying_iteration::decrease(node_ptr_type node, windex* idx)
 {
+	wsize count = node->counter();
+#ifdef DEBUG_SAFE_CODE
+	if (node == null || idx == null)
+		throw_exception(error_code::array_overflow);
+	if (*idx >= count)
+		throw_exception(error_code::array_overflow);
+#endif
+	(*idx)--;
+	if (*idx >= count)
+		*idx = invalid_handle;
+	return node;
 }
 
-varying::base_iterator_t& varying::iterator<varying>::operator =(varying::base_iterator_t const& it) {
-	m_parent = it.m_parent;
-	m_offset = it.m_offset;
-	return*this;
-}
-
-
-varying_t varying::iterator<varying>::operator*()const {
-	return ang::move(m_parent->at(*this));
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-varying::iterator<varying const>::iterator()
-	: base_iterator()
+typename algorithms::varying_iteration::node_ptr_type algorithms::varying_iteration::most_left(node_ptr_type node, windex* idx)
 {
+	if (idx != null)
+		*idx = 0;
+	return node;
 }
 
-varying::iterator<varying const>::iterator(varying::base_iterator_t && it)
-	: base_iterator(ang::forward<varying::base_iterator_t&&>(it))
+typename algorithms::varying_iteration::node_ptr_type algorithms::varying_iteration::most_right(node_ptr_type node, windex* idx)
 {
-}
-
-varying::iterator<varying const>::iterator(varying::base_iterator_t const& it)
-	: base_iterator(it)
-{
-}
-
-varying::iterator<varying const>::iterator(varying_t* parent, windex idx)
-	: base_iterator(parent, idx)
-{
-}
-
-varying::base_iterator_t& varying::iterator<varying const>::operator =(varying::base_iterator_t const& it) {
-	m_parent = it.m_parent;
-	m_offset = it.m_offset;
-	return*this;
-}
-
-const varying_t varying::iterator<varying const>::operator*()const {
-	return ang::move(m_parent->at(*this));
+	if (idx != null)
+		*idx = node->counter() - 1;
+	return node;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -180,9 +116,23 @@ varying::varying(array_view<byte> bytes, varying_desc desc, wsize aligment)
 		throw(exception(error_code::invalid_param));
 }
 
-//ANG_IMPLEMENT_INTERFACE_RUNTIME_INFO(ang::graphics::reflect::varying);
-//ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::reflect::varying, lattelib);
-//ANG_IMPLEMENT_INTERFACE_QUERY_INTERFACE(ang::graphics::reflect::varying, intf);
+varying::varying(array_view<byte> bytes, array_view<attribute_desc_t>const& desc, wsize aligment)
+	: m_raw_data(ang::move(bytes))
+	, m_descriptor()
+{
+	m_descriptor.var_type(var_type::block);
+	m_descriptor.var_class(var_class::scalar);
+
+	for(auto att : desc)
+		m_descriptor.push_field(varying_desc(att.var_type(), att.var_class(), att.var_name(), 1));
+
+	if (aligment != invalid_index)
+		m_descriptor.aligment(aligment);
+	auto size = m_descriptor.get_size_in_bytes();
+	if (bytes.size() < size)
+		throw(exception(error_code::invalid_param));
+	m_descriptor.array_count(bytes.size() / size);
+}
 
 ang::rtti_t const& varying::runtime_info()const {
 	return class_info();
@@ -345,70 +295,326 @@ wsize varying::counter()const
 		1;
 }
 
-varying_t varying::at(varying::base_iterator const& it)
-{
-#ifdef DEBUG_SAFE_CODE
-	if (this != it.parent())
-		throw_exception(error_code::invalid_param);
-	if (it.offset() >= counter())
-		throw_exception(error_code::array_overflow);
-#endif
-	return field(it.offset());
+bool varying::try_copy(varying const& value) {
+	if (value.descriptor() == descriptor())
+		return false;
+	//temporal fix
+	memcpy(m_raw_data.data(), value.m_raw_data.data(), min(m_raw_data.size(), value.m_raw_data.size()));
+	return true;
 }
 
-varying::base_iterator_t varying::increase(base_iterator_t& it)
+//varying_t varying::at(varying::base_iterator_t const& it)
+//{
+//#ifdef DEBUG_SAFE_CODE
+//	if (this != it.parent())
+//		throw_exception(error_code::invalid_param);
+//	if (it.offset() >= counter())
+//		throw_exception(error_code::array_overflow);
+//#endif
+//	return field(it.offset());
+//}
+
+varying::iterator_t varying::begin(algorithms::iteration_algorithm<varying> iter)
 {
-	base_iterator_t ret = it;
-	wsize count = counter();
-#ifdef DEBUG_SAFE_CODE
-	if (it.parent() != this)
-		throw_exception(error_code::invalid_param);
-	if (it.offset() >= count)
-		throw_exception(error_code::array_overflow);
-#endif
-	it.offset(it.offset() + 1);
-	if (it.offset() >= count) 
-		it.offset(invalid_handle);
-	return ret;
+	wsize idx = 0;
+	return iterator_t(iter, iter.begin(const_cast<varying*>(this), &idx), idx);
 }
 
-varying::base_iterator_t varying::decrease(base_iterator_t& it)
+varying::iterator_t varying::end(algorithms::iteration_algorithm<varying> iter)
 {
-	base_iterator_t ret = it;
-	wsize count = counter();
-#ifdef DEBUG_SAFE_CODE
-	if (it.parent() != this)
-		throw_exception(error_code::invalid_param);
-	if (it.offset() >= count)
-		throw_exception(error_code::array_overflow);
-#endif
-	it.offset(it.offset() - 1);
-	if (it.offset() >= count) //unsingned overflow
-		it.offset(invalid_handle);
-	return ret;
+	wsize idx = 0;
+	return iterator_t(iter, iter.end(const_cast<varying*>(this), &idx), idx);
 }
 
-varying::iterator_t varying::begin()
+varying::const_iterator_t varying::begin(algorithms::iteration_algorithm<varying> iter)const
 {
-	return base_iterator(this, 0);
+	wsize idx = 0;
+	return const_iterator_t(iter, iter.begin(const_cast<varying*>(this), &idx), idx);
 }
 
-varying::iterator_t varying::end()
+varying::const_iterator_t varying::end(algorithms::iteration_algorithm<varying> iter)const
 {
-	return base_iterator(this, invalid_index);
+	wsize idx = 0;
+	return const_iterator_t(iter, iter.end(const_cast<varying*>(this), &idx), idx);
 }
 
-varying::const_iterator_t varying::begin()const
+varying::reverse_iterator_t varying::rbegin(algorithms::iteration_algorithm<varying> iter)
 {
-	return base_iterator(const_cast<varying*>(this), 0);
+	wsize idx = 0;
+	return reverse_iterator_t(iter, iter.rbegin(const_cast<varying*>(this), &idx), idx);
 }
 
-varying::const_iterator_t varying::end()const
+varying::reverse_iterator_t varying::rend(algorithms::iteration_algorithm<varying> iter)
 {
-	return base_iterator(const_cast<varying*>(this), invalid_index);
+	wsize idx = 0;
+	return reverse_iterator_t(iter, iter.rend(const_cast<varying*>(this), &idx), idx);
 }
 
-/////////////////////////////////////////////////////////////////////////////////
+varying::reverse_const_iterator_t varying::rbegin(algorithms::iteration_algorithm<varying> iter)const
+{
+	wsize idx = 0;
+	return reverse_const_iterator_t(iter, iter.rbegin(const_cast<varying*>(this), &idx), idx);
+}
+
+varying::reverse_const_iterator_t varying::rend(algorithms::iteration_algorithm<varying> iter)const
+{
+	wsize idx = 0;
+	return reverse_const_iterator_t(iter, iter.rend(const_cast<varying*>(this), &idx), idx);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+vertex_buffer::vertex_buffer()
+{
+
+}
+
+vertex_buffer::vertex_buffer(vertex_buffer const* buff)
+{
+
+}
+
+vertex_buffer::vertex_buffer(collections::array_view<attribute_desc> const& desc, windex idx)
+{
+
+}
+
+vertex_buffer::~vertex_buffer()
+{
+	dispose();
+}
+
+void vertex_buffer::dispose()
+{
+	clear();
+}
+
+bool vertex_buffer::is_readonly()const
+{
+	return true;
+}
+
+text::encoding_t vertex_buffer::encoding()const
+{
+	return text::encoding::binary;
+}
+
+pointer vertex_buffer::buffer_ptr()
+{
+	return m_aligned_data.data();
+}
+
+const_pointer vertex_buffer::buffer_ptr()const
+{
+	return m_aligned_data.data();
+}
+
+wsize vertex_buffer::buffer_size()const
+{
+	return m_stride * m_array_count;
+}
+
+wsize vertex_buffer::mem_copy(wsize sz, pointer ptr, text::encoding_t e)
+{
+	if (e != text::encoding::binary)
+		return 0;
+	memcpy(m_aligned_data.data(), ptr, min(m_stride * m_array_count, sz));
+	return  min(m_stride * m_array_count, sz);
+}
+
+ibuffer_view_t vertex_buffer::map_buffer(windex, wsize)
+{
+	return null;
+}
+
+bool vertex_buffer::unmap_buffer(ibuffer_view_t&, wsize)
+{
+	return false;
+}
+
+bool vertex_buffer::can_realloc_buffer()const
+{
+	return false;
+}
+
+bool vertex_buffer::realloc_buffer(wsize sz)
+{
+	m_aligned_data.capacity(sz / size_of<long64>(), true);
+	m_aligned_data.size(sz / size_of<long64>());
+	//m_raw_data = to_array((byte*)&m_aligned_data[0], (byte*)&m_aligned_data[0] + sz);
+	return true;
+}
+
+void vertex_buffer::clear()
+{
+	m_aligned_data.clear();
+	m_descriptor.clear();
+}
+
+bool vertex_buffer::load(dom::xml::ixml_node_t node)
+{
+	if (node.is_empty() || !node->has_children())
+		return false;
+
+	cstr_t data;
+	wsize size_in_bytes = 0;
+	m_name = node->attributes()["name"]->as<cstr_t>();
+	for (dom::xml::ixml_node_t node : node->children())
+	{
+		auto name = node->name()->as<cstr_t>();
+		if (name == "data_layout"_sv && node->has_children())
+		{
+			for (dom::xml::ixml_node_t att : node->children())
+			{
+				attribute_desc_t desc;
+				desc.load(att);
+				m_descriptor += move(desc);
+			}
+			m_array_count = node->attributes()["array"_sv]->as<uint>();
+		}
+		else if (name == "data"_sv)
+		{
+			data = node->value();			
+		}
+	}
+
+	attribute_desc::calculate_positions(*reinterpret_cast<array_view<attribute_desc_t>*>(&m_descriptor));
+	m_stride = attribute_desc::get_size_in_bytes(m_descriptor);
+	realloc_buffer(m_stride * m_array_count);
+	memset(m_aligned_data.data(), 0, m_aligned_data.size());
+
+	text_data_loader_context_t parser;
+	text_data_loader::create_context(m_descriptor, parser);
+	parser.array_count = m_array_count;
+
+	text_data_loader_input_context_t input = {
+		//text::iparser::get_parser(data.encoding()),
+		data,
+		0
+	};
+	text_data_loader_output_context_t output = {
+		(byte*)m_aligned_data.data(),
+		0
+	};
+	parser.load_data(parser, input, output);
+	return true;
+}
+
+bool vertex_buffer::save(dom::xml::ixml_document_t doc)
+{
+	return false;
+}
+
+wsize vertex_buffer::array_count()const
+{
+	return m_array_count;
+}
+
+collections::array_view<attribute_desc> vertex_buffer::descriptor()const
+{
+	return m_descriptor;
+}
+
+varying vertex_buffer::make(collections::array_view<attribute_desc> const& desc, wsize count)
+{
+	clear();
+	m_descriptor = desc;
+	m_array_count = max(count, 1);
+	attribute_desc::calculate_positions(*reinterpret_cast<array_view<attribute_desc_t>*>(&m_descriptor));
+	m_stride = attribute_desc::get_size_in_bytes(m_descriptor);
+	realloc_buffer(m_stride * m_array_count);
+
+	memset(m_aligned_data.data(), 0, m_stride * m_array_count);
+
+	return varying(to_array<byte>((byte*)(&m_aligned_data[0]), (byte*)(&m_aligned_data[0] + (m_stride * m_array_count))), desc, 16);
+}
+
+varying vertex_buffer::data()
+{
+	return varying(to_array<byte>((byte*)(&m_aligned_data[0]), (byte*)(&m_aligned_data[0] + (m_stride * m_array_count))), m_descriptor, 16);
+}
+
+varying vertex_buffer::block(windex idx)
+{
+	if (idx >= m_array_count)
+		return varying();
+	auto data = to_array((byte*)(&m_aligned_data[0] + (m_stride * idx)), (byte*)(&m_aligned_data[0] + (m_stride * (idx + 1))));
+	return varying(data, m_descriptor, 16);
+}
+
+vertex_buffer::iterator_t vertex_buffer::begin(algorithms::iteration_algorithm<varying> it)
+{
+	return const_cast<vertex_buffer*>(this)->data().begin(it);
+}
+
+vertex_buffer::iterator_t vertex_buffer::end(algorithms::iteration_algorithm<varying> it)
+{
+	return const_cast<vertex_buffer*>(this)->data().end(it);
+}
+
+vertex_buffer::const_iterator_t vertex_buffer::begin(algorithms::iteration_algorithm<varying> it)const
+{
+	return const_cast<vertex_buffer*>(this)->data().begin(it);
+}
+
+vertex_buffer::const_iterator_t vertex_buffer::end(algorithms::iteration_algorithm<varying> it)const
+{
+	return const_cast<vertex_buffer*>(this)->data().end(it);
+}
+
+vertex_buffer::reverse_iterator_t vertex_buffer::rbegin(algorithms::iteration_algorithm<varying> it)
+{
+	return const_cast<vertex_buffer*>(this)->data().rbegin(it);
+}
+
+vertex_buffer::reverse_iterator_t vertex_buffer::rend(algorithms::iteration_algorithm<varying> it)
+{
+	return const_cast<vertex_buffer*>(this)->data().rend(it);
+}
+
+vertex_buffer::reverse_const_iterator_t vertex_buffer::rbegin(algorithms::iteration_algorithm<varying> it)const
+{
+	return const_cast<vertex_buffer*>(this)->data().rbegin(it);
+}
+
+vertex_buffer::reverse_const_iterator_t vertex_buffer::rend(algorithms::iteration_algorithm<varying> it)const
+{
+	return const_cast<vertex_buffer*>(this)->data().rend(it);
+}
+
+varying object_wrapper<vertex_buffer>::operator[](windex idx)
+{
+	return m_ptr ? move(m_ptr->block(idx)) : varying();
+}
+
+vertex_buffer::iterator_t object_wrapper<vertex_buffer>::begin()
+{
+	return m_ptr ? m_ptr->begin() : vertex_buffer::iterator_t();
+}
+
+vertex_buffer::iterator_t object_wrapper<vertex_buffer>::end()
+{
+	return m_ptr ? m_ptr->end() : vertex_buffer::iterator_t();
+}
+
+vertex_buffer::const_iterator_t object_wrapper<vertex_buffer>::begin()const
+{
+	return m_ptr ? m_ptr->begin() : vertex_buffer::const_iterator_t();
+}
+
+vertex_buffer::const_iterator_t object_wrapper<vertex_buffer>::end()const
+{
+	return m_ptr ? m_ptr->end() : vertex_buffer::const_iterator_t();
+}
+
+#define MY_TYPE vertex_buffer
+#include "ang/inline/object_wrapper_specialization.inl"
+#undef MY_TYPE
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct_buffer::struct_buffer()
 {
@@ -439,12 +645,8 @@ struct_buffer::struct_buffer(varying_desc desc, wsize aligment)
 
 struct_buffer::~struct_buffer()
 {
-
+	dispose();
 }
-
-//ANG_IMPLEMENT_OBJECT_RUNTIME_INFO(ang::graphics::reflect::struct_buffer);
-//ANG_IMPLEMENT_OBJECT_CLASS_INFO(ang::graphics::reflect::struct_buffer, lattelib);
-//ANG_IMPLEMENT_OBJECT_QUERY_INTERFACE(ang::graphics::reflect::struct_buffer, object, varying, ibuffer);
 
 void struct_buffer::dispose()
 {

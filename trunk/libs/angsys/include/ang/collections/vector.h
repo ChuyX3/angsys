@@ -138,7 +138,7 @@ namespace ang
 			const_iterator_t at(windex)const override;
 			void copy(const ienum_ptr<T>&) override;		
 
-		public: /*ilist overrides*/
+		public: /*ivector overrides*/
 			void extend(const ienum_ptr<T>&) override;
 			void push_front(typename auto_type<T>::arg_type &&) override;
 			void push_front(typename auto_type<T>::arg_type const&) override;
@@ -152,6 +152,9 @@ namespace ang
 			bool pop_back(typename auto_type<T>::arg_ptr_type = null) override;
 			iterator_t remove(windex idx, typename auto_type<T>::arg_ptr_type = null) override;
 			iterator_t remove(base_iterator_t it, typename auto_type<T>::arg_ptr_type = null) override;
+
+		private: /*ivector overrides*/
+			ienum_ptr<T> items()const override;
 		};
 
 	}//collections
@@ -248,8 +251,7 @@ namespace ang
 			return *this;
 		}
 		object_wrapper_ptr<collections::vector_buffer<T, A>> operator & (void);
-		collections::vector_buffer<T, A> * operator -> (void);
-		collections::vector_buffer<T, A> const* operator -> (void)const;
+		collections::vector_buffer<T, A> * operator -> (void)const;
 		explicit operator collections::vector_buffer<T, A> * (void);
 		explicit operator collections::vector_buffer<T, A> const* (void)const;
 		operator array_view<typename collections::auto_type<T>::type>()const { return m_ptr ? to_array(m_ptr->data(), m_ptr->size()) : array_view<typename collections::auto_type<T>::type>(); }

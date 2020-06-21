@@ -436,12 +436,7 @@ object_wrapper_ptr<object> object_wrapper<object>::operator& (void)
 	return this;
 }
 
-object* object_wrapper<object>::operator -> (void)
-{
-	return get();
-}
-
-object const* object_wrapper<object>::operator -> (void)const
+object* object_wrapper<object>::operator -> (void)const
 {
 	return get();
 }
@@ -548,12 +543,7 @@ intf_wrapper_ptr<iintf> intf_wrapper<iintf>::operator & (void)
 	return this;
 }
 
-iintf* intf_wrapper<iintf>::operator -> (void)
-{
-	return get();
-}
-
-iintf const* intf_wrapper<iintf>::operator -> (void)const
+iintf* intf_wrapper<iintf>::operator -> (void)const
 {
 	return get();
 }

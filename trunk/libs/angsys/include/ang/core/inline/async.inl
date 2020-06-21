@@ -338,13 +338,7 @@ ang::intf_wrapper<ang::core::async::iaction<T>>::operator ang::intfptr()const
 }
 
 template<typename T> inline
-ang::core::async::iaction<T>* ang::intf_wrapper<ang::core::async::iaction<T>>::operator -> (void)
-{
-	return get();
-}
-
-template<typename T> inline
-ang::core::async::iaction<T> const* ang::intf_wrapper<ang::core::async::iaction<T>>::operator -> (void)const
+ang::core::async::iaction<T>* ang::intf_wrapper<ang::core::async::iaction<T>>::operator -> (void)const
 {
 	return get();
 }
@@ -496,13 +490,7 @@ ang::intf_wrapper<ang::core::async::itask<T>>::operator ang::intfptr()const
 }
 
 template<typename T> inline
-ang::core::async::itask<T>* ang::intf_wrapper<ang::core::async::itask<T>>::operator -> (void)
-{
-	return get();
-}
-
-template<typename T> inline
-ang::core::async::itask<T> const* ang::intf_wrapper<ang::core::async::itask<T>>::operator -> (void)const
+ang::core::async::itask<T>* ang::intf_wrapper<ang::core::async::itask<T>>::operator -> (void)const
 {
 	return get();
 }

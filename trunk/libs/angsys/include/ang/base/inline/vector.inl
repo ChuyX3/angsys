@@ -752,13 +752,8 @@ inline ang::collections::vector<T, A>::operator typename ang::collections::vecto
 }
 
 template<typename T, template<typename>class A>
-inline ang::collections::vector<T, A>::operator ang::collections::array_view<T>()const {
-	return array_view<T>(data(), data() + size());
-}
-
-template<typename T, template<typename>class A>
-inline ang::collections::vector<T, A>::operator ang::collections::array_view<const T>()const {
-	return array_view<const T>((T const*)data(), (T const*)data() + size());
+inline ang::collections::vector<T, A>::operator ang::collections::array_view<T> const&()const {
+	return *reinterpret_cast<array_view<T>*>(const_cast<vector<T, A>*>(this));
 }
 
 template<typename T, template<typename>class A> template<typename I>
@@ -796,4 +791,107 @@ inline ang::collections::vector<T, A>& ang::collections::vector<T, A>::operator 
 	return*this;
 }
 	
+
+template<typename T, template<typename>class A> template<typename T2, template<typename> class A2>
+inline bool ang::collections::vector<T, A>::operator == (ang::collections::vector<T2, A2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return false;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return false;
+		}
+		return true;
+	}
+	else
+		return false;
+}
+
+template<typename T, template<typename>class A> template<typename T2, template<typename> class A2>
+inline bool ang::collections::vector<T, A>::operator != (ang::collections::vector<T2, A2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return true;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return true;
+		}
+		return false;
+	}
+	else
+		return true;
+}
+
+template<typename T, template<typename>class A> template<typename T2, template<typename> class A2>
+inline bool ang::collections::vector<T, A>::operator == (ang::collections::array<T2, A2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return false;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return false;
+		}
+		return true;
+	}
+	else
+		return false;
+}
+
+template<typename T, template<typename>class A> template<typename T2, template<typename> class A2>
+inline bool ang::collections::vector<T, A>::operator != (ang::collections::array<T2, A2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return true;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return true;
+		}
+		return false;
+	}
+	else
+		return true;
+}
+
+template<typename T, template<typename>class A> template<typename T2>
+inline bool ang::collections::vector<T, A>::operator == (ang::collections::array_view<T2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return false;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return false;
+		}
+		return true;
+	}
+	else
+		return false;
+}
+
+template<typename T, template<typename>class A> template<typename T2>
+inline bool ang::collections::vector<T, A>::operator != (ang::collections::array_view<T2> const& items)const
+{
+	if constexpr (has_logic_operation<logic_operation_type::same, T, T2>::value) {
+		if (size() != items.size())
+			return true;
+
+		for (int i = 0; i < size(); i++) {
+			if (!logic_operation<logic_operation_type::same, T, T2>::operate(m_first[i], items[i]))
+				return true;
+		}
+		return false;
+	}
+	else
+		return true;
+}
+
 #endif//__ANG_BASE_ARRAY_H__

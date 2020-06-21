@@ -95,7 +95,7 @@ namespace ang
 				void end_point(point<float> value) override;
 				point<float> end_point()const override;
 				void stop_colors(array_view<drawing::stop_color_info_t> value) override;
-				array_view<drawing::stop_color_info_t const> stop_colors()const override;
+				array<drawing::stop_color_info_t> stop_colors()const override;
 				void draw(d3d11_drawer_t context, maths::mat4 const& tranform, model_ptr_t) override;
 
 			public: /*methods*/
@@ -137,7 +137,7 @@ namespace ang
 				void second_focus(point<float>) override;
 				point<float> second_focus()const override;
 				void stop_colors(array_view<drawing::stop_color_info_t>) override;
-				array_view<drawing::stop_color_info_t> stop_colors()const override;
+				array<drawing::stop_color_info_t> stop_colors()const override;
 				void draw(d3d11_drawer_t context, maths::mat4 const& tranform, model_ptr_t) override;
 			
 			public: /*methods*/

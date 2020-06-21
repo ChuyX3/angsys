@@ -650,13 +650,7 @@ coffe::object_wrapper_ptr<coffe::collections::hash_map_object<K, T, A, H>> coffe
 }
 
 template<typename K, typename T, template<typename> class A, template<typename> class H>
-coffe::collections::hash_map_object<K, T, A, H> * coffe::object_wrapper<coffe::collections::hash_map_object<K, T, A, H>>::operator -> (void)
-{
-	return get();
-}
-
-template<typename K, typename T, template<typename> class A, template<typename> class H>
-coffe::collections::hash_map_object<K, T, A, H> const* coffe::object_wrapper<coffe::collections::hash_map_object<K, T, A, H>>::operator -> (void)const
+coffe::collections::hash_map_object<K, T, A, H> * coffe::object_wrapper<coffe::collections::hash_map_object<K, T, A, H>>::operator -> (void)const
 {
 	return get();
 }

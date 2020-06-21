@@ -323,6 +323,12 @@ inline void ang::collections::array_buffer<T, A>::copy(const ang::collections::i
 }
 
 template<typename T, template<typename>class A>
+ang::collections::ienum_ptr<T> ang::collections::array_buffer<T, A>::items()const
+{
+	return const_cast<ang::collections::array_buffer<T, A>*>(this);
+}
+
+template<typename T, template<typename>class A>
 inline typename ang::collections::array_buffer<T, A>::iterator_t ang::collections::array_buffer<T, A>::find(function<bool(typename ang::collections::auto_type<T>::arg_type const&)> cond, bool invert)const
 {
 	if (!is_empty())
@@ -658,13 +664,7 @@ inline ang::object_wrapper_ptr<ang::collections::array_buffer<T, A>> ang::object
 }
 
 template<typename T, template <typename> class A>
-inline ang::collections::array_buffer<T, A> * ang::object_wrapper<ang::collections::array_buffer<T, A>>::operator -> (void)
-{
-	return get();
-}
-
-template<typename T, template <typename> class A>
-inline ang::collections::array_buffer<T, A> const* ang::object_wrapper<ang::collections::array_buffer<T, A>>::operator -> (void)const
+inline ang::collections::array_buffer<T, A> * ang::object_wrapper<ang::collections::array_buffer<T, A>>::operator -> (void)const
 {
 	return get();
 }

@@ -130,11 +130,7 @@ namespace ang
 
 		com_wrapper_ptr<T> operator & (void);
 
-		type* operator -> (void) {
-			return get();
-		}
-
-		type const* operator -> (void)const {
+		type* operator -> (void) const {
 			return get();
 		}
 
@@ -220,11 +216,7 @@ namespace ang
 			return *m_ptr;
 		}
 
-		com_wrapper<T>* operator ->() {
-			return m_ptr;
-		}
-
-		com_wrapper<T> const* operator ->()const {
+		com_wrapper<T>* operator ->()const {
 			return m_ptr;
 		}
 

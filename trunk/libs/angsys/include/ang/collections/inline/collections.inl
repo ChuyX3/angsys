@@ -841,13 +841,7 @@ ang::intf_wrapper<ang::collections::ienum<T>>::operator ang::intfptr()const
 }
 
 template<typename T> inline
-ang::collections::ienum<T>* ang::intf_wrapper<ang::collections::ienum<T>>::operator -> (void)
-{
-	return get();
-}
-
-template<typename T> inline
-ang::collections::ienum<T> const* ang::intf_wrapper<ang::collections::ienum<T>>::operator -> (void)const
+ang::collections::ienum<T>* ang::intf_wrapper<ang::collections::ienum<T>>::operator -> (void)const
 {
 	return get();
 }
@@ -983,13 +977,7 @@ ang::intf_wrapper<ang::collections::iarray<T>>::operator ang::intfptr()const
 }
 
 template<typename T> inline
-ang::collections::iarray<T>* ang::intf_wrapper<ang::collections::iarray<T>>::operator -> (void)
-{
-	return get();
-}
-
-template<typename T> inline
-ang::collections::iarray<T> const* ang::intf_wrapper<ang::collections::iarray<T>>::operator -> (void)const
+ang::collections::iarray<T>* ang::intf_wrapper<ang::collections::iarray<T>>::operator -> (void)const
 {
 	return get();
 }
@@ -1124,13 +1112,7 @@ ang::intf_wrapper<ang::collections::ilist<T>>::operator ang::intfptr()const
 }
 
 template<typename T> inline
-ang::collections::ilist<T>* ang::intf_wrapper<ang::collections::ilist<T>>::operator -> (void)
-{
-	return get();
-}
-
-template<typename T> inline
-ang::collections::ilist<T>const* ang::intf_wrapper<ang::collections::ilist<T>>::operator -> (void)const
+ang::collections::ilist<T>* ang::intf_wrapper<ang::collections::ilist<T>>::operator -> (void)const
 {
 	return get();
 }

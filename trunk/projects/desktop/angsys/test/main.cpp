@@ -2,18 +2,23 @@
 //
 
 #include "pch.h"
-
+#include "puyo.h"
 
 using namespace ang;
-using namespace ang::platform;
 
-
-ang_declare_object(engine);
-
-
-int main()
+struct light_data
 {
-	framework::game_t game = new framework::game();
-	game->run(graphics::graph_driver_type::DirectX11, "puyopuyo"_s, "Puyo Puyo"_s);
-	return 0;
+	maths::float4 ambient_color;
+	uint light_count;
+	float specular_power;
+	struct {
+		maths::float4 color;
+		maths::float3 position;
+		uint type;
+	}light_data[10];
+};
+
+int main(int argc, char* argv[])
+{
+	return entrypoint<puyo>::run(argc, argv);
 }

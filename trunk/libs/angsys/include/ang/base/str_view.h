@@ -351,6 +351,23 @@ namespace ang
 			}
 		};
 
+		template<>
+		struct hash<cstr_t> {
+			static ulong64 make(cstr_t const& value) {
+				ulong64 h = 75025;
+				windex i = 0, c = value.size();
+				for (char32_t n = text::encoder::to_char32(value, i);
+					n != 0;
+					n = text::encoder::to_char32(value, i))
+				{
+					h = (h << 5) + h + n + 1;
+				}
+				return h;
+			}
+			ulong64 operator()(cstr_t const& value)const {
+				return make(value);
+			}
+		};
 	}
 
 	template<typename T, T VALUE>

@@ -81,6 +81,14 @@ namespace ang
 
 	namespace framework
 	{
+		declare_enum(LINK, game_state, uint)
+		{
+			none,
+			loading,
+			main_menu,
+			ingame
+		};
+
 		struct igame 
 			: intf<igame
 			, iid("ang::framework::igame")>
@@ -88,11 +96,13 @@ namespace ang
 			virtual graphics::idriver_t driver()const = 0;
 			virtual graphics::isurface_t surface()const = 0;
 			virtual graphics::ifactory_t factory()const = 0;
+			virtual const core::time::step_timer& timer()const = 0;
+			virtual core::async::idispatcher_t dispatcher()const = 0;
 			virtual graphics::resources::ilibrary_t library()const = 0;
 			virtual istate_manager_t state_manager()const = 0;
 
 			virtual error run(graphics::graph_driver_type_t, string app_name, string app_title) = 0;
-			virtual void update(double delta, double total) = 0;
+			virtual void update() = 0;
 			virtual void draw(graphics::scenes::itransform_t cam, graphics::iframe_buffer_t fbo) = 0;
 
 		};
@@ -101,10 +111,12 @@ namespace ang
 			: intf<istate
 			, iid("ang::framework::istate")>
 		{
-			virtual uint state_id()const = 0;
+			virtual game_state_t state_id()const = 0;
 			virtual graphics::scenes::iscene_t scene()const = 0;
-			virtual bool load(igame_t, dom::xml::ixml_node_t) = 0;
-			virtual istate_t update(igame_t, double, double) = 0;
+			virtual core::async::iasync<bool> load_async(igame_t, dom::xml::ixml_node_t) = 0;
+			virtual istate_t next_state()const = 0;
+			virtual bool update(igame_t, core::time::step_timer const&) = 0;
+			virtual void draw(igame_t, graphics::iframe_buffer_t, graphics::scenes::icamera_t) = 0;
 			virtual bool unload(igame_t) = 0;
 		};
 
@@ -113,8 +125,10 @@ namespace ang
 			, iid("ang::framework::istate_manager")>
 		{
 			virtual istate_t current()const = 0;
-			virtual bool load(dom::xml::ixml_node_t) = 0;
-			virtual istate_t update(igame_t, double, double) = 0;
+			virtual bool load(igame_t, dom::xml::ixml_node_t) = 0;
+			virtual istate_t create_state(dom::xml::ixml_node_t)const = 0;
+			virtual void update(igame_t, core::time::step_timer const&) = 0;
+			virtual void draw(igame_t) = 0;
 			virtual bool unload() = 0;
 		};
 
@@ -126,6 +140,8 @@ namespace ang
 #include <ang/framework/meshes.h>
 #include <ang/framework/effects.h>
 #include <ang/framework/library.h>
+#include <ang/framework/scenes.h>
+#include <ang/framework/state_machine.h>
 
 namespace ang
 {
@@ -140,19 +156,24 @@ namespace ang
 			graphics::graph_driver_type_t m_driver_type;
 			graphics::idriver_t m_driver;
 			graphics::isurface_t m_surface;
+			core::time::step_timer m_timer;
+			graphics::resources::resource_manager_t m_res_manager;
+			state_manager_t m_state_manager;
 
 		public: /*constructor*/
 			game();
 
 		public: /**/
 			error run(graphics::graph_driver_type_t, string app_name = "game", string app_title = "game") override;
-			void update(double delta, double total) override;
+			void update() override;
 			void draw(graphics::scenes::itransform_t cam, graphics::iframe_buffer_t fbo) override;
 
 		public: /*properties*/
 			graphics::idriver_t driver()const override;
 			graphics::isurface_t surface()const override;
 			graphics::ifactory_t factory()const override;
+			const core::time::step_timer& timer()const override;
+			core::async::idispatcher_t dispatcher()const override;
 			graphics::resources::ilibrary_t library()const override;
 			istate_manager_t state_manager()const override;
 

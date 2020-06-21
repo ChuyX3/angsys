@@ -11,6 +11,7 @@ texture_loader::texture_loader(ilibrary* parent)
 	: m_parent(parent)
 	, m_tex_info_map()
 	, m_texture_map()
+	, m_async_worker(core::async::thread::create_dispatcher_thread())
 {
 	throw_exception_if(parent == null, error_code::invalid_param);
 }
@@ -21,10 +22,9 @@ texture_loader::~texture_loader()
 
 void texture_loader::dispose()
 {
-	m_dispose_event.invoke(this);
-
 	clear();
-
+	m_async_worker->exit();
+	m_async_worker = null;
 	m_parent = null;
 	m_texture_map = null;
 }
@@ -48,7 +48,7 @@ core::files::ifile_system_t texture_loader::file_system()const
 
 core::async::idispatcher_t texture_loader::dispatcher()const
 {
-	return parent()->dispatcher();
+	return m_async_worker;
 }
 
 bool texture_loader::load(dom::xml::ixml_node_t node)
@@ -367,14 +367,4 @@ itexture_t texture_loader::find_texture(cstr_t sid)const
 			return res->cast<resources::resource_type::texture>();
 	}
 	return null;
-}
-
-listen_token<void(ilibrary_t)> texture_loader::disposed_event(function<void(ilibrary_t)> e)
-{
-	return m_dispose_event += e;
-}
-
-void texture_loader::disposed_event(listen_token<void(ilibrary_t)> token)
-{
-	m_dispose_event -= token;
 }

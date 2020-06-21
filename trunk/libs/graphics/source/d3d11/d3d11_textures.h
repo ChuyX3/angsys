@@ -47,8 +47,8 @@ namespace ang
 				buffers::buffer_usage_t m_usage;
 				buffers::buffer_bind_flag_t m_bind_flags;
 				textures::tex_type_t m_tex_type;
+				textures::tex_wrap_mode_t m_tex_wrap_mode;
 				size3d<uint> m_tex_dimentions;
-				//com_wrapper<ID3D11SamplerState> m_d3d_sampler;
 				com_wrapper<ID3D11Resource> m_d3d_raw_resource;
 				com_wrapper<ID3D11ShaderResourceView> m_d3d_shader_view;
 
@@ -62,6 +62,8 @@ namespace ang
 				resources::iresource_t resource()const override;
 				textures::tex_type_t tex_type()const override;
 				textures::tex_format_t tex_format()const override;
+				void tex_wrap_mode(textures::tex_wrap_mode_t) override;
+				textures::tex_wrap_mode_t tex_wrap_mode()const override;
 				size3d<uint> tex_dimentions()const override;
 				buffers::buffer_type_t buffer_type()const override;
 				buffers::buffer_usage_t buffer_usage()const override;

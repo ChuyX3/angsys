@@ -34,7 +34,7 @@ namespace ang //constants
 	struct property_helper<T[], smart_type::none> {
 		using type = typename remove_reference<typename remove_const<T>::type>::type;
 		using ret_type = array<type>&;
-		using ptr_type = typename __to_pointer_helper<type>::ptr_type;
+		using ptr_type = array<type>*;
 		using arg_type = array_view<type> && ;
 		using property_class = base_property;
 		using getter_type = ret_type(*)(property_class const*);
@@ -45,7 +45,7 @@ namespace ang //constants
 	struct property_helper<const T[], smart_type::none> {
 		using type = typename remove_reference<typename remove_const<T>::type>::type;
 		using ret_type = array_view<const type>;
-		using ptr_type = typename __to_pointer_helper<type>::ptr_type;
+		using ptr_type = array_view<const type>*;
 		using arg_type = array_view<type> &&;
 		using property_class = base_property;
 		using getter_type = ret_type(*)(property_class const*);
@@ -78,12 +78,12 @@ namespace ang //constants
 		template<typename I> 
 		auto operator[](I&& i)
 		{
-			return getter(prop())[i];
+			return ang::forward<decltype(getter(prop())[i])>(getter(prop())[i]);
 		}
 		template<typename I>
 		auto operator[](I&& i)const
 		{
-			return getter(prop())[i];
+			return ang::forward<decltype(getter(prop())[i])>(getter(prop())[i]);
 		}
 
 		template<typename U> friend auto operator + (const self& a, const U& b) { return getter(a.prop()) + b; }

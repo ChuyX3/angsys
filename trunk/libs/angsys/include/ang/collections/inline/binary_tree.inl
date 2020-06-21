@@ -1587,13 +1587,7 @@ inline coffe::object_wrapper_ptr<coffe::collections::binary_map_object<K, T, all
 }
 
 template<typename K, typename T, template<typename> class allocator>
-inline coffe::collections::binary_map_object<K, T, allocator> * coffe::object_wrapper<coffe::collections::binary_map_object<K, T, allocator>>::operator -> (void)
-{
-	return get();
-}
-
-template<typename K, typename T, template<typename> class allocator>
-inline coffe::collections::binary_map_object<K, T, allocator> const* coffe::object_wrapper<coffe::collections::binary_map_object<K, T, allocator>>::operator -> (void)const
+inline coffe::collections::binary_map_object<K, T, allocator> * coffe::object_wrapper<coffe::collections::binary_map_object<K, T, allocator>>::operator -> (void)const
 {
 	return get();
 }

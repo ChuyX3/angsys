@@ -140,11 +140,7 @@ namespace ang
 
 		object_wrapper_ptr<T> operator & (void);
 
-		type* operator -> (void) {
-			return get();
-		}
-
-		type const* operator -> (void)const {
+		type* operator -> (void)const {
 			return get();
 		}
 
@@ -230,11 +226,7 @@ namespace ang
 			return *m_ptr;
 		}
 
-		object_wrapper<T>* operator ->() {
-			return m_ptr;
-		}
-
-		object_wrapper<T> const* operator ->()const {
+		object_wrapper<T>* operator ->()const {
 			return m_ptr;
 		}
 
@@ -360,8 +352,7 @@ namespace ang
 		object_wrapper& operator = (object_wrapper const&);
 
 		object_wrapper_ptr<object> operator & (void);
-		object* operator -> (void);
-		object const* operator -> (void)const;
+		object* operator -> (void)const;
 		operator object* (void);
 		operator object const* (void)const;
 

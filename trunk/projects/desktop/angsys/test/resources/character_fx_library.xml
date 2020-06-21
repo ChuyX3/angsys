@@ -14,7 +14,7 @@
         <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
       </input_layout>
       <entry>main_vs</entry>
-      <code>resources/shaders/character2.hlsl</code>
+      <file>resources/shaders/character2.hlsl</file>
       <compile_config>-DVERTEX_SHADER</compile_config>
     </vertex_shader>
     <pixel_shader>
@@ -27,7 +27,7 @@
         <var type="f32" class="vec4" name="Kd"/>
       </uniforms>
       <entry>main_ps</entry>
-      <code>resources/shaders/character2.hlsl</code>
+      <file>resources/shaders/character2.hlsl</file>
       <compile_config>-DPIXEL_SHADER</compile_config>
     </pixel_shader>
   </technique>
@@ -45,7 +45,7 @@
         <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
       </input_layout>
       <entry>main_vs</entry>
-      <code>resources/shaders/character2.hlsl</code>
+      <file>resources/shaders/character2.hlsl</file>
       <compile_config>-DVERTEX_SHADER-DLIGHTING</compile_config>
     </vertex_shader>
     <pixel_shader>
@@ -68,11 +68,10 @@
         </block>
       </uniforms>
       <entry>main_ps</entry>
-      <code>resources/shaders/character2.hlsl</code>
+      <file>resources/shaders/character2.hlsl</file>
       <compile_config>-DPIXEL_SHADER-DLIGHTING</compile_config>
     </pixel_shader>
   </technique>
-
 
   <technique name="character02_fx">
     <vertex_shader>
@@ -87,7 +86,7 @@
         <var type="f32" class="vec2" name="texcoord" semantic="TEXCOORD" semantic_idx="0"/>
       </input_layout>
       <entry>main_vs</entry>
-      <code>resources/shaders/character2.hlsl</code>
+      <file>resources/shaders/character2.hlsl</file>
       <compile_config>-DVERTEX_SHADER-DLIGHTING-DHIGHLIGHT</compile_config>
     </vertex_shader>
     <pixel_shader>
@@ -112,7 +111,7 @@
         </block>
       </uniforms>
       <entry>main_ps</entry>
-      <code>resources/shaders/character2.hlsl</code>
+      <file>resources/shaders/character2.hlsl</file>
       <compile_config>-DPIXEL_SHADER-DLIGHTING-DHIGHLIGHT</compile_config>
     </pixel_shader>
   </technique>

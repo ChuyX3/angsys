@@ -247,6 +247,29 @@ bool d3d11_driver::init_driver(platform::icore_view_t, long64 adapter_id)
 	m_d3d_device->CreateBlendState(&bl, &m_d3d_blend_state);
 	//m_d3d_context->OMSetBlendState(m_d3d_blend_state, NULL, -1);
 
+	D3D11_SAMPLER_DESC sampDesc;
+	ZeroMemory(&sampDesc, sizeof(sampDesc));
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	sampDesc.MaxAnisotropy = 1;
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	D3D11Device()->CreateSamplerState(&sampDesc, &m_d3d_samplers[0]);
+
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	D3D11Device()->CreateSamplerState(&sampDesc, &m_d3d_samplers[1]);
+
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_MIRROR;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_MIRROR;
+	D3D11Device()->CreateSamplerState(&sampDesc, &m_d3d_samplers[2]);
+
+
 	D2D1_FACTORY_OPTIONS options;
 	ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));
 #if defined(_DEBUG)
@@ -302,7 +325,9 @@ void d3d11_driver::close_driver()
 	m_d3d_blend_state = null;
 	m_current_frame_buffer = null;
 	m_current_technique = null;
-
+	m_d3d_samplers[0] = null;
+	m_d3d_samplers[1] = null;
+	m_d3d_samplers[2] = null;
 	//m_d2d_context = null;
 	//m_d2d_device = null;
 	//m_d2d_factory = null;
@@ -342,17 +367,15 @@ ifactory_t d3d11_driver::get_factory()const
 	return const_cast<d3d11_driver*>(this);
 }
 
-optional<buffers::ivertex_buffer> d3d11_driver::create_vertex_buffer(buffers::buffer_usage_t usage, vector<reflect::attribute_desc> vertex_desc, wsize vertex_count, ibuffer_t buff, string sid)const
+optional<buffers::ivertex_buffer> d3d11_driver::create_vertex_buffer(buffers::buffer_usage_t usage, array_view<reflect::attribute_desc_t> vertex_desc, wsize vertex_count, ibuffer_t vertex_data, string sid)const
 {
-	array_view<byte> init_data = buff.is_empty() ? to_array((byte*)null, (byte*)null) : to_array((byte*)buff->buffer_ptr(), (byte*)buff->buffer_ptr() + buff->buffer_size());
-
 	d3d11_vertex_buffer_t buffer = new d3d11_vertex_buffer();
 	if (!buffer->create(
 		const_cast<d3d11_driver*>(this),
 		usage,
 		vertex_desc,
 		vertex_count,
-		init_data,
+		vertex_data,
 		sid
 		))
 		return error(error_code::unknown);
@@ -450,43 +473,41 @@ optional<iframe_buffer> d3d11_driver::create_frame_buffer(array_view<textures::i
 
 optional<effects::ishaders> d3d11_driver::compile_shaders(string vertex_shader, string pixel_shader, string sid)const
 {
-	astring log;
+	error err;
 	d3d11_shaders_t shaders = new d3d11_shaders();
-	if(!shaders->load(
+	if((err = shaders->load(
 		const_cast<d3d11_driver*>(this),
 		vertex_shader,
 		pixel_shader,
-		sid,
-		&log))
-		return error(log);
-	
+		sid)).code() != error_code::success)
+		return err;
 	return shaders.get();
 }
 
 optional<effects::ishaders> d3d11_driver::compile_shaders(effects::shader_info_t const& vertex_shader, effects::shader_info_t const& pixel_shader, string sid)const
 {
-	astring log;
+	error err;
 	d3d11_shaders_t shaders = new d3d11_shaders();
-	if (!shaders->load(
+	if ((err = shaders->load(
 		const_cast<d3d11_driver*>(this),
 		vertex_shader,
 		pixel_shader,
-		sid,
-		&log))
-		return error(log);
+		sid)).code() != error_code::success)
+		return err;
 	return shaders.get();
 }
 
 core::async::iasync_op<buffers::ivertex_buffer> d3d11_driver::create_vertex_buffer_async(
 	buffers::buffer_usage_t usage,
-	vector<reflect::attribute_desc> vertex_desc,
+	array_view<reflect::attribute_desc_t> vertex_desc_,
 	wsize vertex_count,
-	ibuffer_t init_data,
+	ibuffer_t vertex_data,
 	string sid)const
 {
+	smart<reflect::attribute_desc[]> vertex_desc = vertex_desc_; //copy data
 	return create_task<optional<buffers::ivertex_buffer>>([=](core::async::iasync_op<buffers::ivertex_buffer>, d3d11_driver_t driver)
 	{
-		return driver->create_vertex_buffer(usage, vertex_desc, vertex_count, init_data, sid);
+		return driver->create_vertex_buffer(usage, vertex_desc, vertex_count, vertex_data, sid);
 	});
 }
 
@@ -843,7 +864,10 @@ void d3d11_driver::bind_vertex_buffer(buffers::ivertex_buffer_t buff)
 	else
 	{
 		core::async::scope_locker<core::async::mutex_t>::lock(m_mutex, [&]() {
-			buffer->use_buffer(this);
+			if(!m_current_technique.is_empty())
+				buffer->use_buffer(this, m_current_technique->input_layout());
+			else
+				buffer->use_buffer(this);
 		});
 	}
 }

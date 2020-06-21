@@ -182,14 +182,14 @@ namespace ang
 				virtual vector<string> find_paths(cstr_t macro)const = 0;
 				virtual path_access_type_t path_access_type(cstr_t path)const = 0;
 				virtual bool create_handle(cstr_t path, open_flags_t flags, ifile_ptr_t out, cstr_t macro = null) = 0;
-				virtual async::iasync_op<ifile_t> create_handle_async(cstr_t path, open_flags_t flags, cstr_t macro = null) = 0;
+				virtual async::iasync_op<ifile> create_handle_async(cstr_t path, open_flags_t flags, cstr_t macro = null) = 0;
 				virtual bool open(cstr_t path, input_text_file_ptr_t out, cstr_t macro = null) = 0;
 				virtual bool open(cstr_t path, output_text_file_ptr_t out, cstr_t macro = null) = 0;
 				virtual bool open(cstr_t path, input_binary_file_ptr_t out, cstr_t macro = null) = 0;
 				virtual bool open(cstr_t path, output_binary_file_ptr_t out, cstr_t macro = null) = 0;
 				template<file_mode FM> inline async::iasync_op<typename type_by_mode<FM>::type_ptr> open_async(cstr_t path, cstr_t macro = null) {
 					return create_handle_async(path, type_by_mode<FM>::flags(), macro)->then<optional<typename type_by_mode<FM>::type_ptr>>(
-						[](async::iasync_op<ifile_t> task)->optional<typename type_by_mode<FM>::type_ptr> {
+						[](async::iasync_op<ifile> task)->optional<typename type_by_mode<FM>::type_ptr> {
 						try {
 							auto op = task->result();
 							if (op.failed())

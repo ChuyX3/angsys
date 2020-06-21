@@ -389,14 +389,14 @@ xml_iterator_t xml_node::find(cstr_t name, bool invert)const
 		for (auto it = rbegin(), e = rend(); it != e; it++) {
 			ixml_node_t node = (*it).get();
 			if (name == node->name())
-				return xml_iterator_t(const_cast<xml_node*>(this), node.get());
+				return xml_iterator_t(const_cast<xml_node*>(this), static_cast<xml_node*>(node.get()));
 		}
 	}
 	else {
 		for (auto it = begin(), e = end(); it != e; it++) {
 			ixml_node_t node = (*it).get();
 			if (name == node->name())
-				return xml_iterator_t(const_cast<xml_node*>(this), node.get());
+				return xml_iterator_t(const_cast<xml_node*>(this), static_cast<xml_node*>(node.get()));
 		}
 	}
 	return end();
@@ -412,7 +412,7 @@ xml_iterator_t xml_node::find(cstr_t name, xml_base_iterator_t next_to, bool inv
 		for (auto it = rbegin(), e = rend(); it != e; it++) {
 			ixml_node_t node = (*it).get();
 			if (name == node->name())
-				return xml_iterator_t(const_cast<xml_node*>(this), node.get());
+				return xml_iterator_t(const_cast<xml_node*>(this), static_cast<xml_node*>(node.get()));
 		}
 	}
 	else {
@@ -421,7 +421,7 @@ xml_iterator_t xml_node::find(cstr_t name, xml_base_iterator_t next_to, bool inv
 		for (auto it = begin(), e = end(); it != e; it++) {
 			ixml_node_t node = (*it).get();
 			if (name == node->name())
-				return xml_iterator_t(const_cast<xml_node*>(this), node.get());
+				return xml_iterator_t(const_cast<xml_node*>(this), static_cast<xml_node*>(node.get()));
 		}
 	}
 	return end();

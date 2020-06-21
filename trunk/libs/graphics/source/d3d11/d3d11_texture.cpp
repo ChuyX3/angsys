@@ -384,7 +384,9 @@ bool d3d11_texture::load(d3d11_driver_t driver, string filename, textures::tex_t
 
 bool d3d11_texture::use_texture(d3d11_driver_t driver, windex idx)const
 {
+	ID3D11SamplerState* sampler = driver->D3D11SamplerState((wsize)m_tex_wrap_mode.get());
 	driver->D3D11Context()->PSSetShaderResources(idx, 1, (ID3D11ShaderResourceView**)&m_d3d_shader_view);
+	driver->D3D11Context()->PSSetSamplers(idx, 1, &sampler);
 	return true;
 }
 
@@ -394,6 +396,16 @@ textures::tex_type_t d3d11_texture::tex_type()const {
 
 textures::tex_format_t d3d11_texture::tex_format()const { 
 	return traslate_format_dx(m_tex_format); 
+}
+
+void d3d11_texture::tex_wrap_mode(textures::tex_wrap_mode_t value)
+{
+	m_tex_wrap_mode = value;
+}
+
+textures::tex_wrap_mode_t d3d11_texture::tex_wrap_mode()const
+{
+	return m_tex_wrap_mode;
 }
 
 size3d<uint> d3d11_texture::tex_dimentions()const { 

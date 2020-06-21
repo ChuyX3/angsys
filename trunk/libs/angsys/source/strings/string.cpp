@@ -74,10 +74,7 @@ ang::intf_wrapper_ptr<istring> ang::intf_wrapper<istring>::operator & (void) {
 ang::intf_wrapper<istring>::operator ang::intfptr()const {
 	return static_interface_cast(get());
 }
-istring* ang::intf_wrapper<istring>::operator -> (void) {
-	return get();
-}
-istring const* ang::intf_wrapper<istring>::operator -> (void)const {
+istring* ang::intf_wrapper<istring>::operator -> (void)const {
 	return get();
 }
 ang::intf_wrapper<istring>::operator istring* (void) {

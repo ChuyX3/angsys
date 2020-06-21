@@ -265,7 +265,7 @@ void d3d11_linear_gradient_brush::stop_colors(array_view<drawing::stop_color_inf
 	m_gradients = value;
 }
 
-array_view<drawing::stop_color_info_t const> d3d11_linear_gradient_brush::stop_colors()const
+array<drawing::stop_color_info_t> d3d11_linear_gradient_brush::stop_colors()const
 {
 	return m_gradients;
 }

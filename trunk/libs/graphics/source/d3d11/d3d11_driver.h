@@ -77,7 +77,7 @@ namespace ang
 			ang_declare_object(d3d11_frame_buffer);
 			ang_declare_object(d3d11_texture);
 			ang_declare_object(d3d11_shaders);
-			ang_declare_object(d3d11_pass);
+			ang_declare_object(d3d11_shader_code);
 
 #if DIRECTX11_VRX_SUPPORT
 			ang_declare_object(holographic_driver);
@@ -239,6 +239,7 @@ namespace ang
 				com_wrapper<ID3D11Device2> m_d3d_device;
 				com_wrapper<ID3D11DeviceContext2> m_d3d_context;
 				com_wrapper<ID3D11BlendState> m_d3d_blend_state;
+				collections::stack_array<com_wrapper<ID3D11SamplerState>, 3> m_d3d_samplers;
 
 				d3d11_frame_buffer_t m_current_frame_buffer;
 				d3d11_shaders_t m_current_technique;
@@ -255,6 +256,8 @@ namespace ang
 
 				astring m_vs_model;
 				astring m_ps_model;
+
+				collections::hash_map<string, d3d11_shader_code_t> m_compiled_shaders;
 
 			public:
 				d3d11_driver();
@@ -276,7 +279,7 @@ namespace ang
 
 				idriver_t driver()const override { return const_cast<d3d11_driver*>(this); }
 				void set_file_system(core::files::ifile_system_t)override;
-				optional<buffers::ivertex_buffer> create_vertex_buffer(buffers::buffer_usage_t usage, vector<reflect::attribute_desc> vertex_desc, wsize vertex_count, ibuffer_t init_data, string sid = null)const override;
+				optional<buffers::ivertex_buffer> create_vertex_buffer(buffers::buffer_usage_t usage, array_view<reflect::attribute_desc_t> vertex_desc, wsize vertex_count, ibuffer_t vertex_data, string sid = null)const override;
 				optional<buffers::iindex_buffer> create_index_buffer(buffers::buffer_usage_t usage, reflect::var_type_t index_type, wsize index_count, ibuffer_t init_data, string sid = null)const override;
 				optional<textures::itexture> create_texture(textures::tex_type_t type, textures::tex_format_t color_format, buffers::buffer_usage_t usage, buffers::buffer_bind_flag_t flags, size3d<uint> dimentions, string sid = null)const override;
 				optional<textures::itexture> create_texture(unknown_t tex_handle, string sid = null)const override;
@@ -287,7 +290,7 @@ namespace ang
 				optional<effects::ishaders> compile_shaders(string vertex_shader, string pixel_shader, string sid = null)const override;
 				optional<effects::ishaders> compile_shaders(effects::shader_info_t const& vertex_shader, effects::shader_info_t const& pixel_shader, string sid = null)const override;
 
-				core::async::iasync_op<buffers::ivertex_buffer> create_vertex_buffer_async(buffers::buffer_usage_t usage, vector<reflect::attribute_desc> vertex_desc, wsize vertex_count, ibuffer_t init_data, string sid = null)const override;
+				core::async::iasync_op<buffers::ivertex_buffer> create_vertex_buffer_async(buffers::buffer_usage_t usage, array_view<reflect::attribute_desc_t> vertex_desc, wsize vertex_count, ibuffer_t vertex_data, string sid = null)const override;
 				core::async::iasync_op<buffers::iindex_buffer> create_index_buffer_async(buffers::buffer_usage_t usage, reflect::var_type_t index_type, wsize index_count, ibuffer_t init_data, string sid = null)const override;
 				core::async::iasync_op<textures::itexture> create_texture_async(textures::tex_type_t type, textures::tex_format_t color_format, buffers::buffer_usage_t usage, buffers::buffer_bind_flag_t flags, size3d<uint> dimentions, string sid = null)const override;
 				core::async::iasync_op<textures::itexture> create_texture_async(unknown_t tex_handle, string sid = null)const override;
@@ -298,6 +301,8 @@ namespace ang
 				core::async::iasync_op<effects::ishaders> compile_shaders_async(string vertex_shader, string pixel_shader, string sid = null)const override;
 				core::async::iasync_op<effects::ishaders> compile_shaders_async(effects::shader_info_t const& vertex_shader, effects::shader_info_t const& pixel_shader, string sid = null)const override;
 
+				optional<d3d11_shader_code_t> compile_shader(string, shader_type_t const&);
+				optional<d3d11_shader_code_t> compile_shader(effects::shader_info_t const&, shader_type_t const&);
 
 				void d3d11_driver::viewport(box<float> vp) override;
 				box<float> d3d11_driver::viewport()const override;
@@ -346,9 +351,11 @@ namespace ang
 				inline ID3D11Device2* D3D11Device()const { return m_d3d_device.get(); }
 				inline ID3D11DeviceContext2* D3D11Context()const { return m_d3d_context.get(); }
 				//	inline safe_thread_wrapper<ID3D11DeviceContext2> D3D11Context()const { return{ d3d_context.get(), main_mutex }; }
-				inline IDXGIFactory2* DXGIFactory()const { return m_dxgi_factory.get(); }
+				inline IDXGIFactory2* DXGIFactory()const { return m_dxgi_factory.get(); }				
+				inline ID3D11SamplerState* D3D11SamplerState(windex i)const { return m_d3d_samplers[i].get(); }
 				inline d3d11_frame_buffer_t current_frame_buffer()const { return m_current_frame_buffer.get(); }
 			
+
 				inline castr_t vs_model()const {
 					return m_vs_model;
 				}

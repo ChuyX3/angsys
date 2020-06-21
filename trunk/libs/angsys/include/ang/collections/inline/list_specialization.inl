@@ -803,12 +803,7 @@ coffe::object_wrapper_ptr<coffe::collections::list_object<MY_TYPE, MY_ALLOC>> co
 	return this;
 }
 
-coffe::collections::list_object<MY_TYPE, MY_ALLOC> * coffe::object_wrapper<coffe::collections::list_object<MY_TYPE, MY_ALLOC>>::operator -> (void)
-{
-	return get();
-}
-
-coffe::collections::list_object<MY_TYPE, MY_ALLOC> const* coffe::object_wrapper<coffe::collections::list_object<MY_TYPE, MY_ALLOC>>::operator -> (void)const
+coffe::collections::list_object<MY_TYPE, MY_ALLOC> * coffe::object_wrapper<coffe::collections::list_object<MY_TYPE, MY_ALLOC>>::operator -> (void)const
 {
 	return get();
 }

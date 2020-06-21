@@ -284,8 +284,7 @@ namespace coffe
 		}
 
 		object_wrapper_ptr<type> operator & (void);
-		type * operator -> (void);
-		type const* operator -> (void)const;
+		type * operator -> (void)const;
 		explicit operator type * (void);
 		explicit operator type const* (void)const;
 		operator array_view<data_type>()const { return m_ptr ? collections::to_array(m_ptr->data(), m_ptr->size()) : array_view<data_type>(); }

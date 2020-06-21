@@ -449,7 +449,7 @@ inline wsize ang::text::fast_string<E, A>::copy(ang::str_view<const T2, E2> cons
 	else {
 		realloc(sz + 1, false);
 		if constexpr (E2 == ang::text::encoding::auto_detect)
-			text::encoder::convert(ang::str_t(m_data.m_stack_buffer, m_data.m_allocated_capacity, E), m_data.m_allocated_length, value, j, true, m_data.m_allocated_capacity, value.size());
+			text::encoder::convert(ang::str_t(m_data.m_allocated_buffer, m_data.m_allocated_capacity, E), m_data.m_allocated_length, value, j, true, m_data.m_allocated_capacity, value.size());
 		else
 			encoder::convert(m_data.m_allocated_buffer, m_data.m_allocated_length, value, j, true, m_data.m_allocated_capacity, value.size());
 	}
@@ -479,7 +479,7 @@ inline wsize ang::text::fast_string<E, A>::append(ang::str_view<const T2, E2> co
 	else {
 		realloc(sz + i + 1, true);
 		if constexpr (E2 == ang::text::encoding::auto_detect)
-			text::encoder::convert(ang::str_t(m_data.m_stack_buffer, m_data.m_allocated_capacity, E), m_data.m_allocated_length, value, j, true, m_data.m_allocated_capacity, value.size());
+			text::encoder::convert(ang::str_t(m_data.m_allocated_buffer, m_data.m_allocated_capacity, E), m_data.m_allocated_length, value, j, true, m_data.m_allocated_capacity, value.size());
 		else
 			encoder::convert(m_data.m_allocated_buffer, m_data.m_allocated_length, value, j, true, m_data.m_allocated_capacity, value.size());
 	}
@@ -510,7 +510,7 @@ inline wsize ang::text::fast_string<E, A>::insert(ang::str_view<const T2, E2> co
 	else {
 		realloc(sz + i + 1, true);
 		if constexpr (E2 == ang::text::encoding::auto_detect)
-			text::encoder::convert(ang::str_t(m_data.m_stack_buffer, m_data.m_allocated_capacity, E), m_data.m_allocated_length, value, j, true, m_data.m_allocated_capacity, value.size());
+			text::encoder::convert(ang::str_t(m_data.m_allocated_buffer, m_data.m_allocated_capacity, E), m_data.m_allocated_length, value, j, true, m_data.m_allocated_capacity, value.size());
 		else
 			encoder::convert(m_data.m_allocated_buffer, m_data.m_allocated_length, value, j, true, m_data.m_allocated_capacity, value.size());
 	}

@@ -639,8 +639,7 @@ namespace coffe
 		inline operator object_t()const;
 
 		object_wrapper_ptr<collections::binary_map_object<K, T, allocator>> operator & (void);
-		collections::binary_map_object<K, T, allocator> * operator -> (void);
-		collections::binary_map_object<K, T, allocator> const* operator -> (void)const;
+		collections::binary_map_object<K, T, allocator> * operator -> (void)const;
 		explicit operator collections::binary_map_object<K, T, allocator> * (void);
 		explicit operator collections::binary_map_object<K, T, allocator> const* (void)const;
 

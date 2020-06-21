@@ -8,6 +8,41 @@ namespace ang
 	{
 		namespace d3d11
 		{
+			declare_enum(, shader_type, uint)
+			{
+				vertex,
+				pixel,
+				geometry,
+			};
+
+			class d3d11_shader_code
+				: public graphic<d3d11_shader_code
+				, iid("ang::graphics::d3d11::d3d11_shader_code")>
+			{
+			private:
+				string m_shader_info;
+				com_wrapper<ID3D11InputLayout> m_d3d_input_layout;
+				com_wrapper<ID3DBlob> m_compiled_code;
+				vector<reflect::attribute_desc> m_input_layout;
+				vector<reflect::varying_desc> m_uniforms;
+
+			public:
+				d3d11_shader_code();
+
+			protected: //override
+				void dispose()override;
+
+			public:
+				error load(d3d11_driver_t, string, shader_type_t const&);
+				error load(d3d11_driver_t, effects::shader_info_t const&, string info, shader_type_t const&);
+
+				string shader_info()const;
+				ID3D11InputLayout* input_layout()const;
+				ID3DBlob* compiled_code()const;
+				array<reflect::attribute_desc> attributes()const;
+				array<reflect::varying_desc> uniforms()const;
+			};
+
 			class d3d11_shaders
 				: public graphic<d3d11_shaders
 				, iid("ang::graphics::d3d11::d3d11_shaders")
@@ -37,9 +72,9 @@ namespace ang
 
 			public: //overrides		
 				resources::iresource_t resource()const override;
-				array_view<reflect::attribute_desc> input_layout()const override;
-				array_view<reflect::varying_desc> vs_uniforms_layouts()const override;
-				array_view<reflect::varying_desc> ps_uniforms_layouts()const override;
+				array_view<reflect::attribute_desc>const& input_layout()const override;
+				array_view<reflect::varying_desc>const& vs_uniforms_layouts()const override;
+				array_view<reflect::varying_desc>const& ps_uniforms_layouts()const override;
 				bool bind_vertex_buffer(idriver_t, buffers::ivertex_buffer_t) override;
 				bool bind_texture(idriver_t, windex, windex) override;
 				bool bind_texture(idriver_t, cstr_t, windex) override;
@@ -56,18 +91,18 @@ namespace ang
 				intfptr fast_cast(resources::resource_type_t) override;
 
 			public:
-				bool load(d3d11_driver_t, string, string, string, astring* log = null);
-				bool load(d3d11_driver_t, effects::shader_info_t const&, effects::shader_info_t const&, string, astring* log = null);
+				error load(d3d11_driver_t, string, string, string);
+				error load(d3d11_driver_t, effects::shader_info_t const&, effects::shader_info_t const&, string);
 				bool use_shaders(d3d11_driver_t);
 				bool close();
 
 			private:
-				astring load_vertex_shader(d3d11_driver_t, effects::shader_info_t const&);
-				astring load_vertex_shader(d3d11_driver_t, string);
-				astring load_pixel_shader(d3d11_driver_t, effects::shader_info_t const&);
-				astring load_pixel_shader(d3d11_driver_t, string);
-				bool load_vs_const_buffer(d3d11_driver_t, reflect::varying_desc&);
-				bool load_ps_const_buffer(d3d11_driver_t, reflect::varying_desc&);
+				error load_vertex_shader(d3d11_driver_t, effects::shader_info_t const&);
+				error load_vertex_shader(d3d11_driver_t, string);
+				error load_pixel_shader(d3d11_driver_t, effects::shader_info_t const&);
+				error load_pixel_shader(d3d11_driver_t, string);
+				bool load_vs_const_buffer(d3d11_driver_t, reflect::varying_desc const&);
+				bool load_ps_const_buffer(d3d11_driver_t, reflect::varying_desc const&);
 				//bool load_ps_samplers(d3d11_driver_t, dom::xml::xml_node_t);
 
 			public: //internal
@@ -80,9 +115,9 @@ namespace ang
 			};
 
 
-			bool d3d_load_shader_input(collections::vector<graphics::reflect::attribute_desc> const& attributes, collections::vector<D3D11_INPUT_ELEMENT_DESC>& input_layout_desc);
+			bool d3d_load_shader_input(collections::array_view<graphics::reflect::attribute_desc> const& attributes, collections::vector<D3D11_INPUT_ELEMENT_DESC>& input_layout_desc);
 			bool d3d_reflect_shader_input(collections::vector<graphics::reflect::attribute_desc>& attributes, ID3D11ShaderReflection* vertexShaderReflection);
-			bool d3d_reflect_shader_variable(reflect::varying_desc_t& field, ID3D11ShaderReflectionVariable* varInfo);
+			bool d3d_reflect_shader_variable(reflect::varying_desc_t& field, astring name, wsize offset, ID3D11ShaderReflectionType* varInfo);
 			bool d3d_reflect_shader_uniforms(reflect::uniform_fields_t& uniforms, ID3D11ShaderReflection* vertexShaderReflection);
 		}
 	}

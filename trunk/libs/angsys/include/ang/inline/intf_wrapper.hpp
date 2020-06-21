@@ -144,11 +144,7 @@ namespace ang
 
 		intf_wrapper_ptr<type> operator & (void);
 
-		type* operator -> (void) {
-			return get();
-		}
-
-		type const* operator -> (void) const {
+		type* operator -> (void) const {
 			return get();
 		}
 
@@ -227,11 +223,7 @@ namespace ang
 			return *this;
 		}
 
-		intf_wrapper<T>* operator ->() {
-			return m_ptr;
-		}
-
-		intf_wrapper<T> const* operator ->()const {
+		intf_wrapper<T>* operator ->()const {
 			return m_ptr;
 		}
 
@@ -348,8 +340,8 @@ namespace ang
 
 		intf_wrapper_ptr<type> operator & (void);
 
-		type* operator -> (void);
-		type const* operator -> (void)const;
+		type* operator -> (void)const;
+
 		operator type* (void);
 		operator type const* (void)const;
 

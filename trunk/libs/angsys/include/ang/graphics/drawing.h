@@ -116,7 +116,7 @@ namespace ang
 				virtual void end_point(point<float>) = 0;
 				virtual point<float> end_point()const = 0;
 				virtual void stop_colors(array_view<stop_color_info_t>) = 0;
-				virtual array_view<stop_color_info_t const> stop_colors()const = 0;
+				virtual array<stop_color_info_t> stop_colors()const = 0;
 			};
 
 			struct nvt LINK iradial_gradient_brush
@@ -129,7 +129,7 @@ namespace ang
 				virtual void second_focus(point<float>) = 0;
 				virtual point<float> second_focus()const = 0;
 				virtual void stop_colors(array_view<stop_color_info_t>) = 0;
-				virtual array_view<stop_color_info_t> stop_colors()const = 0;
+				virtual array<stop_color_info_t> stop_colors()const = 0;
 			};
 
 			struct nvt LINK itexturing_brush

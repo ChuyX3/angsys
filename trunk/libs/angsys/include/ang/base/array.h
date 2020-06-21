@@ -201,6 +201,24 @@ namespace ang //constants
 			element_type const& operator [](I idx)const;
 			element_type** operator & ();
 			element_type*const* operator & ()const;
+
+			template<typename T2, template<typename> class A2>
+			bool operator == (vector<T2, A2> const& items)const;
+
+			template<typename T2, template<typename> class A2>
+			bool operator != (vector<T2, A2> const& items)const;
+
+			template<typename T2, template<typename> class A2>
+			bool operator == (array<T2, A2> const& items)const;
+
+			template<typename T2, template<typename> class A2>
+			bool operator != (array<T2, A2> const& items)const;
+
+			template<typename T2>
+			bool operator == (array_view<T2> const& items)const;
+
+			template<typename T2>
+			bool operator != (array_view<T2> const& items)const;
 		};
 
 		template<typename T, wsize N>
@@ -360,13 +378,30 @@ namespace ang //constants
 			array& operator = (T2(&ar)[N]);
 			explicit operator type& ();
 			explicit operator type ()const;
-			operator array_view<T>()const;
-			operator array_view<const T>()const;
+			operator array_view<T> const&()const;
 			template<typename I>
 			element_type& operator [](I const& idx);
 			template<typename I>
 			element_type const& operator [](I const& idx)const;
 			element_type** operator & ();
+
+			template<typename T2, template<typename> class A2>
+			bool operator == (vector<T2, A2> const& items)const;
+
+			template<typename T2, template<typename> class A2>
+			bool operator != (vector<T2, A2> const& items)const;
+
+			template<typename T2, template<typename> class A2>
+			bool operator == (array<T2, A2> const& items)const;
+
+			template<typename T2, template<typename> class A2>
+			bool operator != (array<T2, A2> const& items)const;
+
+			template<typename T2>
+			bool operator == (array_view<T2> const& items)const;
+
+			template<typename T2>
+			bool operator != (array_view<T2> const& items)const;
 		};
 	}
 
@@ -387,6 +422,18 @@ namespace ang //constants
 				else return (wsize)mid;
 			}
 			return (wsize)invalid_index;
+		}
+
+
+		template<typename T, typename A>
+		bool search(array_view<T> const& items, T& out, A cond) {
+			for (auto const& item : items) {
+				if (cond(item)) {
+					out = item;
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 

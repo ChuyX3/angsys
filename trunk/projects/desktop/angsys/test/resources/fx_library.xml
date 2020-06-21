@@ -6,7 +6,7 @@
     <file sid="SKYBOX_HLSL">resources/shaders/sky_box.hlsl</file>
   </sources>
 
-  <technique name="solid_color_fx">
+  <technique sid="solid_color_fx">
     <vertex_shader>
       <uniforms name="wvp">
         <var type="f32" class="mat4" name="world"/>
@@ -28,7 +28,7 @@
     </pixel_shader>
   </technique>
   
-  <technique name="character_fx">
+  <technique sid="character_fx">
     <vertex_shader>
       <uniforms name="wvp">
         <var type="f32" class="mat4" name="world"/>
@@ -54,7 +54,7 @@
     </pixel_shader>
   </technique>
 
-  <technique name="character_lighting_fx">
+  <technique sid="character_lighting_fx">
     <vertex_shader>
       <uniforms name="wvp">
         <var type="f32" class="mat4" name="world"/>
@@ -90,7 +90,7 @@
     </pixel_shader>
   </technique>
 
-  <technique name="character_normal_map_fx">
+  <technique sid="character_normal_map_fx">
     <vertex_shader>
       <uniforms name="wvp">
         <var type="f32" class="mat4" name="world"/>
@@ -128,7 +128,7 @@
     </pixel_shader>
   </technique>
 
-  <technique name="sky_box_fx">
+  <technique sid="sky_box_fx">
     <vertex_shader>
       <uniforms name="wvp">
         <var type="f32" class="mat4" name="world"/>

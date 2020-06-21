@@ -1,42 +1,41 @@
 /*********************************************************************************************************************/
-/*   File Name: coffe/collections/list.h                                                                             */
+/*   File Name: ang/collections/list.h                                                                               */
 /*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
 /*   File description: Implements list object                                                                        */
 /*                                                                                                                   */
-/*   Copyright (C) Angsys, - All Rights Reserved                                                                     */
-/*   Copyright (C) coffe sys, Jesus Angel Rocha Morales                                                              */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
 /*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
 /*   to whom the Software is furnished to do so.                                                                     */
 /*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
 /*                                                                                                                   */
 /*********************************************************************************************************************/
-#ifndef __COFFE_COLLECTIONS_LIST_H__
-#define __COFFE_COLLECTIONS_LIST_H__
+#ifndef __ANG_COLLECTIONS_LIST_H__
+#define __ANG_COLLECTIONS_LIST_H__
 
-#include <coffe.h>
+#include <angsys.h>
 
 #ifdef  LINK
 #undef  LINK
 #endif//LINK
 
 #if defined WINDOWS_PLATFORM
-#if defined COFFE_DYNAMIC_LIBRARY
+#if defined ANG_DYNAMIC_LIBRARY
 
-#ifdef COFFE_EXPORTS
+#ifdef ANG_EXPORTS
 #define LINK __declspec(dllexport)
 #else
 #define LINK __declspec(dllimport)
-#endif//COFFE_EXPORTS
-#else//#elif defined COFFE_STATIC_LIBRARY
+#endif//ANG_EXPORTS
+#else//#elif defined ANG_STATIC_LIBRARY
 #define LINK
-#endif//COFFE_DYNAMIC_LIBRARY
+#endif//ANG_DYNAMIC_LIBRARY
 #elif defined LINUX_PLATFORM || defined ANDROID_PLATFORM
 #define LINK
 #else
 #define LINK
 #endif
 
-namespace coffe
+namespace ang
 {
 	namespace collections
 	{
@@ -46,7 +45,7 @@ namespace coffe
 
 	template<typename T, template<typename>class A>
 	struct smart_ptr_type<collections::list<T, A>, false, false> {
-		static constexpr coffe::smart_type smart_type = coffe::smart_type::none;
+		static constexpr ang::smart_type smart_type = ang::smart_type::none;
 		using smart_ptr_t = collections::smart_list<T>;
 		using type = collections::list_object<T, A>;
 	};
@@ -60,7 +59,7 @@ namespace coffe
 		template<typename T, template<typename>class A>
 		class list_object
 			: public implement<list_object<T,A>
-			, iid("coffe::collections::list")
+			, iid("ang::collections::list")
 			, ilist<T>
 			, ifinder<T>
 			, ienum<T>>
@@ -86,7 +85,7 @@ namespace coffe
 
 		public:
 			list_object();
-			list_object(const coffe::nullptr_t&);
+			list_object(const ang::nullptr_t&);
 			list_object(wsize sz);
 			list_object(list<element_type, A> && ar);
 			list_object(list<element_type, A> const& ar);
@@ -94,7 +93,7 @@ namespace coffe
 			list_object(const list_object& ar);
 			list_object(const ienum_ptr<T>& store);
 			template<typename T2>
-			list_object(coffe::initializer_list<T2> list);
+			list_object(ang::initializer_list<T2> list);
 			template<typename T2>
 			list_object(array_view<T2> const&);
 			template<typename IT>
@@ -156,7 +155,7 @@ namespace coffe
 	}
 
 	/******************************************************************/
-	/* template class coffe::object_wrapper<list_object> :            */
+	/* template class ang::object_wrapper<list_object> :            */
 	/*  -> specialization of object_wrapper<list_object> -> list      */
 	/******************************************************************/
 	template<typename T, template<typename> class A>
@@ -174,16 +173,16 @@ namespace coffe
 		object_wrapper(type* ar);
 		object_wrapper(object_wrapper &&);
 		object_wrapper(object_wrapper const&);
-		object_wrapper(const coffe::nullptr_t&);
+		object_wrapper(const ang::nullptr_t&);
 		object_wrapper(wsize sz);
 		object_wrapper(collections::list<T, A> && ar);
 		object_wrapper(collections::list<T, A> const& ar);
 		object_wrapper(const collections::ienum_ptr<T>& store);
 
 		template<typename T2>
-		object_wrapper(coffe::initializer_list<T2> list)
+		object_wrapper(ang::initializer_list<T2> list)
 			: m_ptr(null) {
-			set(new type(coffe::forward<coffe::initializer_list<T2>>(list)));
+			set(new type(ang::forward<ang::initializer_list<T2>>(list)));
 		}
 		template<typename T2>
 		object_wrapper(array_view<T2> const& ar)
@@ -212,7 +211,7 @@ namespace coffe
 
 	public:
 		object_wrapper& operator = (collections::list_object<T, A>*);
-		object_wrapper& operator = (const coffe::nullptr_t&);
+		object_wrapper& operator = (const ang::nullptr_t&);
 
 		object_wrapper& operator = (object_wrapper &&);
 		object_wrapper& operator = (object_wrapper const&);
@@ -234,7 +233,7 @@ namespace coffe
 		object_wrapper& operator += (typename collections::auto_type<T>::arg_type && item) {
 			if (is_empty())
 				set(new collections::list_object<T, A>());
-			get()->push_back(coffe::forward<typename collections::auto_type<T>::arg_type>(item));
+			get()->push_back(ang::forward<typename collections::auto_type<T>::arg_type>(item));
 			return *this;
 		}
 		object_wrapper& operator += (typename collections::auto_type<T>::arg_type const& item) {
@@ -244,13 +243,12 @@ namespace coffe
 			return *this;
 		}
 		object_wrapper_ptr<collections::list_object<T, A>> operator & (void);
-		collections::list_object<T, A> * operator -> (void);
-		collections::list_object<T, A> const* operator -> (void)const;
+		collections::list_object<T, A> * operator -> (void)const;
 		explicit operator collections::list_object<T, A> * (void);
 		explicit operator collections::list_object<T, A> const* (void)const;
 	};
 }
 
-#include <coffe/collections/inline/list.inl>
+#include <ang/collections/inline/list.inl>
 
-#endif//__COFFE_COLLECTIONS_LIST_H__
+#endif//__ANG_COLLECTIONS_LIST_H__

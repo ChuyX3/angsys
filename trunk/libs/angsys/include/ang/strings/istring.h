@@ -145,6 +145,19 @@ namespace ang
 			}
 		};
 	}
+
+	namespace algorithms
+	{
+		template<>
+		struct LINK hash<text::istring_t> {
+			static ulong64 make(text::istring_t const& value) {
+				return hash<cstr_t>::make(value);
+			}
+			ulong64 operator()(text::istring_t const& value)const {
+				return make(value);
+			}
+		};
+	}
 }
 
 #endif//__ANG_ISTRING_H__

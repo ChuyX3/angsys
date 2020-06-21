@@ -108,12 +108,7 @@ ixml_attbs_t& xml_attribs::operator = (ixml_attbs_t const& ptr)
 	return*this;
 }
 
-xml::ixml_items * xml_attribs::operator -> (void)
-{
-	return m_ptr;
-}
-
-xml::ixml_items const* xml_attribs::operator -> (void)const
+xml::ixml_items * xml_attribs::operator -> (void)const
 {
 	return m_ptr;
 }
@@ -133,5 +128,5 @@ ixml_text_t xml_attribs::operator[](cstr_t name)const
 	if (m_ptr == null)
 		return null;
 	auto it = m_ptr->find(name);
-	return it.is_valid() ? it->name().get() : null;
+	return it.is_valid() ? it->value().get() : null;
 }

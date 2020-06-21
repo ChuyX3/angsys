@@ -84,12 +84,11 @@ namespace ang
 
 			ang_declare_interface(ilibrary);
 			ang_declare_interface(iresource);
-			
-			
 		}
 	
 		namespace reflect
 		{
+			ang_declare_object(vertex_buffer);
 			ang_declare_object(struct_buffer);
 			typedef class varying varying_t;
 			typedef struct varying_desc varying_desc_t, uniform_desc, uniform_desc_t;
@@ -153,6 +152,7 @@ namespace ang
 				texture,
 				vertex_buffer,
 				index_buffer,
+				uniform_buffer,
 			};
 
 			declare_enum(LINK, buffer_usage, uint)
@@ -282,7 +282,6 @@ namespace ang
 			};
 		}
 	}
-
 }
 
 #include <ang/graphics/reflect.h>
@@ -341,17 +340,17 @@ namespace ang
 			/*creates a buffer to allocate vertices*/
 			virtual optional<buffers::ivertex_buffer> create_vertex_buffer(
 				buffers::buffer_usage_t usage,
-				vector<reflect::attribute_desc> vertex_desc,
+				array_view<reflect::attribute_desc_t> vertex_desc,
 				wsize vertex_count,
-				ibuffer_t init_data,
+				ibuffer_t vertex_data,
 				string sid = null
 			)const = 0;
 			/*creates a buffer to allocate vertices asynchronously*/
 			virtual core::async::iasync_op<buffers::ivertex_buffer> create_vertex_buffer_async(
 				buffers::buffer_usage_t usage,
-				vector<reflect::attribute_desc> vertex_desc,
+				array_view<reflect::attribute_desc_t> vertex_desc,
 				wsize vertex_count,
-				ibuffer_t init_data,
+				ibuffer_t vertex_data,
 				string sid = null
 			)const = 0;
 			/*creates a buffer to allocate indices*/

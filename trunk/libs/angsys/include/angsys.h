@@ -111,6 +111,7 @@ namespace ang
 #include <ang/variable.h>
 #include <ang/collections/array.h>
 #include <ang/collections/vector.h>
+#include <ang/collections/hash.h>
 #include <ang/delegates/function.h>
 #include <ang/delegates/listener.h>
 #include <ang/strings/string.h>

@@ -96,10 +96,10 @@ namespace ang
 				file_handle_t m_hmap;
 				path_t m_path;
 				open_flags_t m_flags;
-				//long64 _size;
 				//long64 _cursor;
 				core::async::mutex_ptr_t m_mutex;
 				wsize m_map_counter;
+				friend mapped_file_buffer;
 
 			public:
 				core_file();
@@ -172,7 +172,7 @@ namespace ang
 				virtual vector<string> find_paths(cstr_t)const override;
 				virtual path_access_type_t path_access_type(cstr_t path)const override;
 				virtual bool create_handle(cstr_t, open_flags_t, ifile_ptr_t, cstr_t macro = null)override;
-				virtual async::iasync_op<ifile_t> create_handle_async(cstr_t path, open_flags_t flags, cstr_t macro = null) override;
+				virtual async::iasync_op<ifile> create_handle_async(cstr_t path, open_flags_t flags, cstr_t macro = null) override;
 
 				virtual bool open(cstr_t, input_text_file_ptr_t, cstr_t macro = null)override;
 				virtual bool open(cstr_t, output_text_file_ptr_t, cstr_t macro = null)override;

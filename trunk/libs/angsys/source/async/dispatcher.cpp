@@ -256,6 +256,7 @@ void dispatcher::exit()
 			m_state = async_action_status::completed;
 			m_cond.signal();
 			detach();
+			release();//hack
 		}
 	});
 #endif // WINDOWS_PLATFORM

@@ -1,253 +1,531 @@
-#ifndef __COFFE_COLLECTIONS_HASH_MAP_H__
-#define __COFFE_COLLECTIONS_HASH_MAP_H__
+/*********************************************************************************************************************/
+/*   File Name: ang/collections/vector.h                                                                             */
+/*   Author: Ing. Jesus Rocha <chuyangel.rm@gmail.com>, July 2016.                                                   */
+/*   File description: this file is exposes many native types and wrappers for them as well as useful macros.        */
+/*                                                                                                                   */
+/*   Copyright (C) angsys, Jesus Angel Rocha Morales                                                                 */
+/*   You may opt to use, copy, modify, merge, publish and/or distribute copies of the Software, and permit persons   */
+/*   to whom the Software is furnished to do so.                                                                     */
+/*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
+/*                                                                                                                   */
+/*********************************************************************************************************************/
 
-#include <coffe.h>
+#ifndef __ANG_COLLECTIONS_H__
+#elif !defined __ANG_COLLECTIONS_HASH_H__
+#define __ANG_COLLECTIONS_HASH_H__
 
-#ifdef  LINK
-#undef  LINK
-#endif//LINK
-
-#if defined WINDOWS_PLATFORM
-#if defined COFFE_DYNAMIC_LIBRARY
-
-#ifdef COFFE_EXPORTS
-#define LINK __declspec(dllexport)
-#else
-#define LINK __declspec(dllimport)
-#endif//COFFE_EXPORTS
-#else//#elif defined COFFE_STATIC_LIBRARY
-#define LINK
-#endif//COFFE_DYNAMIC_LIBRARY
-#elif defined LINUX_PLATFORM || defined ANDROID_PLATFORM
-#define LINK
-#else
-#define LINK
-#endif
-
-namespace coffe
+namespace ang
 {
 	namespace collections
 	{
-		template<typename K, typename T, template<typename>class A = memory::default_allocator, template<typename>class H = algorithms::hash> class hash_map_object;
-		template<typename K, typename T, template<typename>class A = memory::default_allocator, template<typename>class H = algorithms::hash> using smart_hash_map = object_wrapper<hash_map_object<K, T, A, H>>;
-	}
 
-	template<typename K, typename T>
-	struct smart_ptr_type<collections::pair<K,T>[], false, false> {
-		static constexpr coffe::smart_type smart_type = coffe::smart_type::none;
-		using smart_ptr_t = collections::hash_map<typename remove_const<K>::type,T>;
-		using type = collections::hash_map_object<typename remove_const<K>::type, T>;
-	};
-
-	template<typename K, typename T, wsize N>
-	struct smart_ptr_type<collections::pair<K, T>[N], false, false> {
-		static constexpr coffe::smart_type smart_type = coffe::smart_type::none;
-		using smart_ptr_t = collections::hash_map<typename remove_const<K>::type, T>;
-		using type = collections::hash_map_object<typename remove_const<K>::type, T>;
-	};
-
-	template<typename K, typename T, template<typename>class A, template<typename>class H>
-	struct smart_ptr_type<collections::hash_map<K, T, A, H>, false, false> {
-		static constexpr coffe::smart_type smart_type = coffe::smart_type::none;
-		using smart_ptr_t = collections::hash_map<typename remove_const<K>::type, T, A, H>;
-		using type = collections::hash_map_object<typename remove_const<K>::type, T, A, H>;
-	};
-
-	template<typename K, typename T, template<typename>class A, template<typename>class H>
-	struct smart_ptr_type<collections::hash_map<K, object_wrapper<T>, A, H>, false, false> {
-		static constexpr coffe::smart_type smart_type = coffe::smart_type::none;
-		using smart_ptr_t = collections::hash_map<typename remove_const<K>::type, T, A, H>;
-		using type = collections::hash_map_object<typename remove_const<K>::type, T, A, H>;
-	};
-
-	template<typename K, typename T, template<typename>class A, template<typename>class H>
-	struct smart_ptr_type<collections::hash_map<K, intf_wrapper<T>, A, H>, false, false> {
-		static constexpr coffe::smart_type smart_type = coffe::smart_type::none;
-		using smart_ptr_t = collections::hash_map<typename remove_const<K>::type, T, A, H>;
-		using type = collections::hash_map_object<typename remove_const<K>::type, T, A, H>;
-	};
-
-	namespace collections
-	{
-		/******************************************************************/
-		/* template class hash_map_object :                               */
-		/*  -> implements a hash table object                             */
-		/******************************************************************/
-		template<typename K, typename T, template<typename> class A, template<typename> class H>
-		class hash_map_object final
-			: public implement<hash_map_object<K, T, A>
-			, iid("coffe::collections::hash_map")
-			, imap<K, T>
-			, ienumerable<typename imap<K, T>::pair_view_type>
-			, ienum<typename imap<K, T>::pair_view_type>>
-			, public hash_map<typename auto_type<K>::type, typename auto_type<T>::type>
+		template<typename T, template<typename> class A, template<typename> class H>
+		struct hash_map<string, T, A, H>
 		{
-		public:
-			//using base = implement<hash_map_object<K, T, A, H>, , imap<K, T>>;
-			using pair_type = typename imap<K, T>::pair_type;
-			using pair_view_type = typename imap<K, T>::pair_view_type;
-			using value_type = typename auto_type<T>::type;
-			using key_type = typename auto_type<K>::type;
-			using self_type = hash_map_object<K, T, A, H>;
-			using index_maker = H<key_type>;
-			using imap_type = imap<K, T>;
-			using ienum_type = ienum<pair_view_type>;
-			using ienum_ptr_type = ienum_ptr<pair_view_type>;
-			using base_iterator_t = collections::base_iterator<pair_view_type>;
-			using iterator_t = collections::iterator<pair_view_type>;
-			using const_iterator_t = collections::const_iterator<pair_view_type>;
-			using forward_iterator_t = collections::forward_iterator<pair_view_type>;
-			using const_forward_iterator_t = collections::const_forward_iterator<pair_view_type>;
-			using backward_iterator_t = collections::backward_iterator<pair_view_type>;
-			using const_backward_iterator_t = collections::const_backward_iterator<pair_view_type>;
-			using fast_hash_map_t = hash_map<typename auto_type<K>::type, typename auto_type<T>::type>;
-
-		private:
+			static_assert(!is_const<T>::value, "T is constant type");
+			using key_type = cstr_t;
+			using element_type = typename remove_reference<T>::type;
+			using pair_type = pair<string, element_type>;
+			using pair_view_type = pair<const string, element_type>;
 			using node_type = doubly_linked_node<pair_type>;
 			using node_type_ptr = value<doubly_linked_node<pair_type>*>; //for auto initializing to null
 			using node_type_ptr_ptr = value<doubly_linked_node<pair_type>**>; //for auto initializing to null
+			template<typename R>struct iterator;
+			using iterator_t = iterator<pair_type&>;
+			using const_iterator_t = iterator<const pair_type&>;
+			struct list_type {
+				list_type()
+					: first(null)
+					, last(null) {
+				}
+				list_type(list_type&& list)
+					: first(ang::move(list.first))
+					, last(ang::move(list.last)) {
+				}
+				list_type(list_type const& list)
+					: first(list.first)
+					, last(list.last) {
+				}
 
-		public:
-			hash_map_object();
-			hash_map_object(wsize reserve);
-			hash_map_object(const coffe::nullptr_t&);
-			hash_map_object(hash_map_object<K, T, A, H>&& ar);
-			hash_map_object(const hash_map_object<K, T, A, H>& ar);
-			hash_map_object(fast_hash_map_t&& ar);
-			hash_map_object(const fast_hash_map_t& ar);
-			hash_map_object(const collections::ienum_ptr<pair_view_type>& store);
-			template<typename U, typename V>inline hash_map_object(coffe::array_view<pair<U, V>> list);
-			template<typename U, typename V>inline hash_map_object(coffe::initializer_list<pair<U, V>> list);
+				list_type& operator = (list_type&& list) {
+					first = ang::move(list.first);
+					last = ang::move(list.last);
+					return*this;
+				}
+				list_type& operator = (list_type const& list) {
+					first = list.first;
+					last = list.last;
+					return*this;
+				}
 
-		private:
-			virtual ~hash_map_object();
+				void push(node_type_ptr ptr) {
+					if (first == null) {
+						first = last = ptr;
+						first->next = null;
+						first->prev = null;
+					}
+					else {
+						first->set_prev(ptr);
+						first = ptr;
+						first->prev = null;
+					}
+				}
+				void pop(node_type_ptr_ptr ptr) {
+					*ptr = last;
+					if (last) {
+						last = last->prev;
+						if (last)
+							last->next = null;
+						else
+							first = null;
+					}
+				}
+				void remove(node_type_ptr ptr) {
+					if (ptr == first) {
+						first = first->next;
+						if (first == null)
+							last = null;
+						else
+							first->prev = null;
+					}
+					else if (ptr == last) {
+						last = last->prev;
+						if (last == null)
+							first = null;
+						else
+							last->next = null;
+					}
+					else {
+						ptr->prev->set_next(ptr->next);
+						ptr->prev = null;
+						ptr->next = null;
+					}
+				}
+				node_type* first;
+				node_type* last;
+			};
 
-		public: //methods
-			template<typename U, typename V> inline void copy(array_view<pair<U, V>>const&);
-			template<typename U, typename V> inline void extend(array_view<pair<U, V>>const&);
+			struct base_iterator
+			{
+				base_iterator()
+					: table()
+					, current(null)
+					, idx(0) {
+				}
+				base_iterator(array_view<list_type> t, node_type_ptr n, windex i)
+					: table(t)
+					, current(n)
+					, idx(i) {
+				}
+				base_iterator(base_iterator&& ptr)
+					: table(ang::move(ptr.table))
+					, current(ang::move(ptr.current))
+					, idx(ang::move(ptr.idx)) {
+					ptr.current = null;
+					ptr.idx = 0;
+				}
+				base_iterator(base_iterator const& ptr)
+					: table(ptr.table)
+					, current(ptr.current)
+					, idx(ptr.idx) {
+				}
+				bool is_valid()const {
+					return current != null;
+				}
+				bool operator == (base_iterator const& it) {
+					return current == it.current;
+				}
+				bool operator != (base_iterator const& it) {
+					return current != it.current;
+				}
+				operator bool()const {
+					return is_valid();
+				}
+			protected:
+				friend hash_map<string, T, A, H>;
+				mutable array_view<list_type> table;
+				mutable node_type_ptr current;
+				mutable ulong64 idx;
+			};
+			template<typename R>
+			struct iterator : base_iterator {
+				friend hash_map<string, T, A, H>;
+				template<typename...Ts> iterator(Ts&&... it)
+					: base_iterator(forward<Ts>(it)...) {
+				}
+				iterator& operator = (base_iterator const& it) {
+					table = it.table;
+					current = it.current;
+					idx = it.idx;
+					return*this;
+				}
+				iterator& operator = (iterator const& it) {
+					table = it.table;
+					current = it.current;
+					idx = it.idx;
+					return*this;
+				}
+				iterator& operator ++()const {
+					current = current->next;
+					while (current == null && idx < table.size())
+						current = table[++idx].first;
+					if (table.size() <= idx) {
+						idx = 0;
+						current = null;
+						table = null;
+					}
+					return *const_cast<iterator*>(this);
+				}
+				iterator operator ++(int)const {
+					iterator it = *this;
+					current = current->next;
+					while (current == null && idx < table.size())
+						current = table[++idx].first;
+					if (table.size() <= idx) {
+						idx = 0;
+						current = null;
+						table = null;
+					}
+					return ang::move(it);
+				}
+				R operator*()const {
+					return current->data;
+				}
+				typename remove_reference<R>::type* operator ->()const {
+					return &current->data;
+				}
+			};
 
-		public: //ienum overrides
-			wsize counter()const override;
-			typename auto_type<pair_view_type>::return_type at(base_iterator_t const&) override;
-			bool increase(base_iterator_t&)const override;
-			bool increase(base_iterator_t&, int offset)const override;
-			bool decrease(base_iterator_t&)const override;
-			bool decrease(base_iterator_t&, int offset)const override;
-			forward_iterator_t begin() override;
-			forward_iterator_t end() override;
-			const_forward_iterator_t begin()const override;
-			const_forward_iterator_t end()const override;
-			forward_iterator_t last() override;
-			const_forward_iterator_t last()const override;
-			backward_iterator_t rbegin() override;
-			backward_iterator_t rend() override;
-			const_backward_iterator_t rbegin()const override;
-			const_backward_iterator_t rend()const override;
+		protected:
+			wsize m_size;
+			array<list_type, A> m_table;
+			H<key_type> m_hash;
 
-			iterator_t find(function<bool(typename auto_type<pair_view_type>::arg_type const&)>, bool invert = false)const override;
-			iterator_t find(function<bool(typename auto_type<pair_view_type>::arg_type const&)>, base_iterator_t next_to, bool invert = false)const override;
-			ienum_ptr_type find_all(function<bool(typename auto_type<pair_view_type>::arg_type const&)>)const override;
+		public: /*constructors and destructor*/
+			hash_map()
+				: m_size(0)
+				, m_table(31) {
+			}
+			hash_map(wsize sz)
+				: m_size(0)
+				, m_table() {
+				m_table.size(algorithms::hash_table_get_next_size(sz));
+			}
+			hash_map(hash_map&& other)
+				: m_size(other.m_size)
+				, m_table(ang::move(other.m_table)) {
+				other.m_size = 0;
+			}
+			hash_map(hash_map const& other)
+				: m_size(other.m_size)
+				, m_table(other.m_table) {
+			}
+			~hash_map() {
+				clear();
+			}
 
-		public: //imap overrides
-			ienum_ptr_type enumerate(iteration_method_t = iteration_method::def)const override;
-			void copy(const ienum_ptr_type&) override;
-			void extend(const ienum_ptr_type&) override;
-			iterator_t insert(typename auto_type<K>::arg_type const&, typename auto_type<T>::arg_type &&) override;
-			iterator_t insert(typename auto_type<K>::arg_type const&, typename auto_type<T>::arg_type const&) override;
-			iterator_t insert(pair_type &&) override;
-			iterator_t insert(pair_type const&) override;
-			iterator_t update(typename auto_type<K>::arg_type const&, typename auto_type<T>::arg_type &&) override;
-			iterator_t update(typename auto_type<K>::arg_type const&, typename auto_type<T>::arg_type const&) override;
-			iterator_t update(pair_type&&) override;
-			iterator_t update(pair_type const&) override;
-			bool remove(typename auto_type<K>::arg_type const&, typename auto_type<T>::arg_ptr_type = null) override;
-			bool remove(base_iterator_t it, typename auto_type<T>::arg_ptr_type = null) override;
-			bool has_key(typename auto_type<K>::arg_type const&)const override;
-			iterator_t find(typename auto_type<K>::arg_type const&) override;
-			const_iterator_t find(typename auto_type<K>::arg_type const&)const override;
+		public: /*properties*/
+			bool is_empty()const {
+				return m_size == 0;
+			}
+			wsize size()const {
+				return m_size;
+			}
+
+		public: /*iterators*/
+			iterator_t begin() {
+				windex i = 0;
+				node_type_ptr node = null;
+				while (node == null && i < m_table.size())
+					node = m_table[i++].first;
+				return iterator_t(m_table.view(), node, --i);
+			}
+			iterator_t end() {
+				return iterator_t(null, null, 0);
+			}
+			const_iterator_t begin()const {
+				windex i = 0;
+				node_type_ptr node = null;
+				while (node == null && i < m_table.size())
+					node = m_table[i++].first;
+				return iterator_t(m_table.view(), node, --i);
+			}
+			const_iterator_t end()const {
+				return iterator_t(null, null, 0);
+			}
+
+		public: /*utilities*/
+			void clear() {
+				for (wsize i = 0; i < m_table.size() && m_size > 0; ++i) {
+					node_type_ptr temp = m_table[i].first;
+					m_table[i].first = null;
+					m_table[i].last = null;
+					while (temp) {
+						node_type_ptr to_delete = temp;
+						temp = temp->next;
+						A<node_type>::template destroy<node_type>(to_delete);
+						A<node_type>::deallocate(to_delete);
+						m_size--;
+					}
+				}
+				m_size = 0;
+				m_table.clear();
+			}
+			template<typename F>
+			void clear(F const& callback) {
+				for (wsize i = 0; i < m_table.size() && m_size > 0; ++i) {
+					node_type_ptr temp = m_table[i].first;
+					m_table[i].first = null;
+					m_table[i].last = null;
+					while (temp) {
+						node_type_ptr to_delete = temp;
+						temp = temp->next;
+						callback(to_delete->data);
+						A<node_type>::template destroy<node_type>(to_delete);
+						A<node_type>::deallocate(to_delete);
+						m_size--;
+					}
+				}
+				m_size = 0;
+				m_table.clear();
+			}
+			inline bool contains(key_type const& key)const {
+				return find(key).is_valid();
+			}
+			inline iterator_t find(key_type const& key)const {
+				ulong64 hash = 0;
+				node_type_ptr node = find_node(key, hash);
+				return iterator_t(m_table.view(), node, hash);
+			}
+			iterator_t insert(key_type const& key, element_type&& value) {
+				if (m_size > (m_table.size() * 0.75))
+					realloc();
+				ulong64 hash = 0;
+				if (find_node(key, hash) != null)
+					return end();
+				m_table[hash].push(create_node(key, forward<element_type>(value)));
+				m_size++;
+				return iterator_t(m_table.view(), m_table[hash].first, hash);
+			}
+			iterator_t insert(key_type const& key, element_type const& value) {
+				if (m_size > (m_table.size() * 0.75))
+					realloc();
+				ulong64 hash = 0;
+				if (find_node(key, hash) != null)
+					return end();
+				m_table[hash].push(create_node(key, value));
+				m_size++;
+				return iterator_t(m_table.view(), m_table[hash].first, hash);
+			}
+			iterator_t insert(pair_type&& pair) {
+				if (m_size > (m_table.size() * 0.75))
+					realloc();
+				ulong64 hash = 0;
+				if (find_node(pair.key, hash) != null)
+					return end();
+				m_table[hash].push(create_node(forward<pair_type>(pair)));
+				m_size++;
+				return iterator_t(m_table.view(), m_table[hash].first, hash);
+			}
+			iterator_t insert(pair_type const& pair) {
+				if (m_size > (m_table.size() * 0.75))
+					realloc();
+				ulong64 hash = 0;
+				if (find_node(pair.key, hash) != null)
+					return end();
+				m_table[hash].push(create_node(pair));
+				m_size++;
+				return iterator_t(m_table.view(), m_table[hash].first, hash);
+			}
+			bool remove(key_type const& key, element_type& out) {
+				if (m_table.is_empty())
+					return false;
+				ulong64 hash = m_hash(key) % m_table.size();
+
+				node_type_ptr temp = m_table[hash].first;
+				while (temp != null) {
+					if (equal_to<key_type>::operate(temp->data.key, key)) {
+						m_table[hash].remove(temp);
+						out = ang::move(temp->data.value);
+						A<node_type>::template destroy<node_type>(temp);
+						A<node_type>::deallocate(temp);
+						m_size--;
+						return true;
+					}
+					temp = temp->next;
+				}
+				return false;
+			}
+			bool remove(key_type const& key) {
+				if (m_table.is_empty())
+					return false;
+				ulong64 hash = m_hash(key) % m_table.size();
+				node_type_ptr temp = m_table[hash].first;
+				while (temp != null) {
+					if (equal_to<key_type>::operate(temp->data.key, key)) {
+						m_table[hash].remove(temp);
+						A<node_type>::template destroy<node_type>(temp);
+						A<node_type>::deallocate(temp);
+						m_size--;
+						return true;
+					}
+					temp = temp->next;
+				}
+				return false;
+			}
+
+			bool remove(base_iterator& it, element_type& out) {
+				if (m_table.is_empty() || it.current == null)
+					return false;
+				ulong64 hash = it.idx;// m_hash(it.current->data.key) % m_table.size();
+
+				node_type_ptr temp = m_table[hash].first;
+				while (temp != null) {
+					if (equal_to<key_type>::operate(temp->data.key, it.current->data.key)) {
+						it.current = temp->next;
+						m_table[hash].remove(temp);
+						out = ang::move(temp->data.value);
+						A<node_type>::template destroy<node_type>(temp);
+						A<node_type>::deallocate(temp);
+						m_size--;
+						return true;
+					}
+					temp = temp->next;
+				}
+				return false;
+			}
+			bool remove(base_iterator& it) {
+				if (m_table.is_empty() || it.current == null)
+					return false;
+				ulong64 hash = it.idx;// m_hash(it.current->data.key) % m_table.size();
+
+				node_type_ptr temp = m_table[hash].first;
+				while (temp != null) {
+					if (equal_to<key_type>::operate(temp->data.key, it.current->data.key)) {
+						it.current = temp->next;
+						m_table[hash].remove(temp);
+						A<node_type>::template destroy<node_type>(temp);
+						A<node_type>::deallocate(temp);
+						m_size--;
+						return true;
+					}
+					temp = temp->next;
+				}
+				return false;
+			}
+
+			bool copy(hash_map<string, T, A, H> const& map) {
+				clear();
+				for (const pair_type& pair : map) {
+					insert(pair);
+				}
+			}
+			bool extend(hash_map<string, T, A, H> const& map) {
+				for (const pair_type& pair : map) {
+					insert(pair);
+				}
+			}
+		protected: /*utilities*/
+			template<typename... Ts> node_type_ptr create_node(Ts...args) {
+				node_type_ptr node = A<node_type>::allocate(1);
+				A<node_type>::template construct<node_type, pair_type>(node, pair_type(ang::forward<Ts>(args)...));
+				return node;
+			}
+			node_type_ptr find_node(key_type const& key)const {
+				if (m_table.size() == 0)
+					return null;
+				ulong64 hash = m_hash(key) % m_table.size();
+				node_type_ptr temp = m_table[hash].first;
+				while (temp != null) {
+					if (equal_to<key_type>::operate(temp->data.key, key))
+						return temp;
+					temp = temp->next;
+				}
+				return null;
+			}
+			node_type_ptr find_node(key_type const& key, ulong64& hash)const {
+				if (m_table.size() == 0)
+					return null;
+				hash = m_hash(key) % m_table.size();
+				node_type_ptr temp = m_table[hash].first;
+				while (temp != null) {
+					if (equal_to<key_type>::operate(temp->data.key, key))
+						return temp;
+					temp = temp->next;
+				}
+				return null;
+			}
+			void realloc() {
+				array<list_type, A> new_data;
+				wsize new_size = algorithms::hash_table_get_next_size(m_table.size() + 20);
+				new_data.size(new_size);
+
+				if (!m_table.is_empty() && m_size)
+				{
+					for (wsize i = 0; i < m_table.size(); ++i) {
+						node_type_ptr temp = m_table[i].first;
+						m_table[i].first = null;
+						m_table[i].last = null;
+						while (temp) {
+							ulong64 hash = m_hash(temp->data.key) % new_data.size();
+							node_type_ptr entry = temp;
+							temp = temp->next;
+							new_data[hash].push(entry);
+						}
+					}
+					m_table.clear();
+				}
+				m_table.move(new_data);
+			}
+
+			node_type_ptr get_node(base_iterator const& it)const {
+				return it.current;
+			}
+
+			ulong64 get_index(base_iterator const& it)const {
+				return it.idx;
+			}
+
+		public: /*operators*/
+			hash_map& operator = (hash_map&& map) {
+				if (&map != this) {
+					clear();
+					m_size = map.m_size;
+					m_table = ang::move(map.m_table);
+					map.m_size = 0;
+				}
+				return*this;
+			}
+			hash_map& operator = (hash_map const& map) {
+				if (&map != this) {
+					clear();
+					for (auto const& p : map)
+						insert(p);
+				}
+				return*this;
+			}
+			hash_map& operator = (nullptr_t const&) {
+				clear();
+				return*this;
+			}
+			element_type const& operator [](key_type const& key)const {
+				iterator_t it = find(key);
+				if (it == end())
+					throw_exception(error_code::array_overflow);
+				return it->value;
+			}
+			element_type& operator [](key_type const& key) {
+				iterator_t it = find(key);
+				if (it == end())
+					it = insert(key, default_value<element_type>::value);
+				return it->value;
+			}
 		};
 
+	}
 
-		
-	}//collections
-
-	/********************************************************************/
-	/* template class coffe::object_wrapper<hash_map_object> :          */
-	/*  -> specialization of object_wrapper<hash_map_object> -> has_map */
-	/********************************************************************/
-	template<typename K, typename T, template<typename> class A, template<typename> class H>
-	class object_wrapper<collections::hash_map_object<K, T, A, H>>
-	{
-	public:
-		typedef collections::hash_map_object<K, T, A, H> type;
-		typedef typename collections::hash_map_object<K, T, A, H>::key_type key_type;
-		typedef typename collections::hash_map_object<K, T, A, H>::value_type value_type;
-		typedef typename collections::hash_map_object<K, T, A, H>::pair_type pair_type;
-		typedef typename collections::hash_map_object<K, T, A, H>::pair_view_type pair_view_type;
-
-	private:
-		collections::hash_map_object<K, T, A, H>* m_ptr;
-
-	public:
-		object_wrapper();
-		object_wrapper(type* map);
-		object_wrapper(object_wrapper &&);
-		object_wrapper(object_wrapper const&);
-		object_wrapper(const coffe::nullptr_t&);
-		object_wrapper(typename type::fast_hash_map_t && map);
-		object_wrapper(typename type::fast_hash_map_t const& map);
-		object_wrapper(const collections::ienum_ptr<pair_view_type>& store);
-		template<typename U, typename V>inline object_wrapper(coffe::array_view<collections::pair<U, V>> items);
-		template<typename U, typename V>inline object_wrapper(coffe::initializer_list<collections::pair<U, V>> list);
-
-		~object_wrapper();
-
-	public:
-		void reset();
-		void reset_unsafe();
-		bool is_empty()const;
-		type* get(void)const;
-		void set(type*);
-		type** addres_of(void);
-
-		collections::forward_iterator<pair_view_type> begin() { return m_ptr ? m_ptr->begin() : collections::iterator<pair_view_type>(); }
-		collections::forward_iterator<pair_view_type> end() { return m_ptr ? m_ptr->end() : collections::iterator<pair_view_type>(); }
-		collections::forward_iterator<const pair_view_type> begin()const { return m_ptr ? ((const type*)m_ptr)->begin() : collections::iterator<const pair_view_type>(); }
-		collections::forward_iterator<const pair_view_type> end()const { return m_ptr ? ((const type*)m_ptr)->end() : collections::iterator<const pair_view_type>(); }
-
-	public:
-		object_wrapper& operator = (type*);
-		object_wrapper& operator = (const coffe::nullptr_t&);
-
-		object_wrapper& operator = (object_wrapper &&);
-		object_wrapper& operator = (object_wrapper const&);
-		template<typename U, typename V>
-		object_wrapper& operator = (collections::ienum_ptr<collections::pair<U, V>> const& items) {
-			if (is_empty())
-				set(new type());
-			get()->copy(items);
-			return *this;
-		}
-		object_wrapper& operator += (pair_type const&);
-		object_wrapper& operator -= (key_type const&);
-		object_wrapper_ptr<type> operator & (void);
-		type * operator -> (void);
-		type const* operator -> (void)const;
-		explicit operator type * (void);
-		explicit operator type const* (void)const;
-		
-		value_type& operator[](key_type const& key);
-		value_type const& operator[](key_type const& key)const;
-	};
+}//ang
 
 
-}//coffe
 
-
-#ifdef  LINK
-#undef  LINK
-#endif//LINK
-
-#include <coffe/collections/inline/hash.inl>
-
-#endif //__COFFE_COLLECTIONS_HASH_MAP_H__
+#endif //__ANG_COLLECTIONS_HASH_H__

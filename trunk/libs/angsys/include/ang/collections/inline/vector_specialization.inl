@@ -822,12 +822,7 @@ coffe::object_wrapper_ptr<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>> 
 	return this;
 }
 
-coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC> * coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator -> (void)
-{
-	return get();
-}
-
-coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC> const* coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator -> (void)const
+coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC> * coffe::object_wrapper<coffe::collections::vector_buffer<MY_TYPE, MY_ALLOC>>::operator -> (void)const
 {
 	return get();
 }

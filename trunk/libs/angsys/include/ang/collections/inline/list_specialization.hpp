@@ -243,8 +243,7 @@ namespace coffe
 		}
 
 		object_wrapper_ptr<type> operator & (void);
-		type * operator -> (void);
-		type const* operator -> (void)const;
+		type * operator -> (void)const;
 		explicit operator type * (void);
 		explicit operator type const* (void)const;
 

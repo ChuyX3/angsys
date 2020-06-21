@@ -155,10 +155,9 @@ namespace ang
 		template<typename T>
 		struct nvt iarray
 			: intf<iarray<T>
-			, iid("ang::collections::iarray")
-			, ifinder<T>
-			, ienum<T>>
+			, iid("ang::collections::iarray")>
 		{
+			virtual ienum_ptr<T> items()const = 0;
 			virtual iterator<T> at(windex) = 0;
 			virtual const_iterator<T> at(windex)const = 0;
 			virtual void copy(const ienum_ptr<T>&) = 0;
@@ -172,10 +171,9 @@ namespace ang
 		template<typename T>
 		struct nvt ilist
 			: intf<ilist<T>
-			, iid("ang::collections::ilist")
-			, ifinder<T>
-			, ienum<T>>
+			, iid("ang::collections::ilist")>
 		{
+			virtual ienum_ptr<T> items()const = 0;
 			virtual void copy(const ienum_ptr<T>&) = 0;
 			virtual void extend(const ienum_ptr<T>&) = 0;
 			virtual void push_front(typename auto_type<T>::arg_type &&) = 0;
@@ -197,9 +195,9 @@ namespace ang
 		template<typename T>
 		struct nvt isequence_list
 			: intf<isequence_list<T>
-			, iid("ang::collections::isequence_list")
-			, ienum<T>>
+			, iid("ang::collections::isequence_list")>
 		{
+			virtual ienum_ptr<T> items()const = 0;
 			virtual void extend(const ienum_ptr<T>&) = 0;
 			virtual void push(typename auto_type<T>::arg_type &&) = 0;
 			virtual void push(typename auto_type<T>::arg_type const&) = 0;
@@ -327,32 +325,29 @@ namespace ang
 	ANG_END_INTF_WRAPPER();
 
 	ANG_BEGIN_INTF_WRAPPER_TEMPLATE(collections::iarray, T)
-		inline collections::forward_iterator<T> begin() { return is_empty() ? collections::forward_iterator<T>() : get()->begin(); }
-		inline collections::forward_iterator<T> end() { return is_empty() ? collections::forward_iterator<T>() : get()->end(); }
-		inline collections::const_forward_iterator<T> begin()const { return is_empty() ? collections::const_forward_iterator<T>() : ((type const*)get())->begin(); }
-		inline collections::const_forward_iterator<T> end()const { return is_empty() ? collections::const_forward_iterator<T>() : ((type const*)get())->end(); }
+		inline collections::forward_iterator<T> begin() { return is_empty() ? collections::forward_iterator<T>() : get()->items()->begin(); }
+		inline collections::forward_iterator<T> end() { return is_empty() ? collections::forward_iterator<T>() : get()->items()->end(); }
+		inline collections::const_forward_iterator<T> begin()const { return is_empty() ? collections::const_forward_iterator<T>() : get()->items()->begin(); }
+		inline collections::const_forward_iterator<T> end()const { return is_empty() ? collections::const_forward_iterator<T>() : get()->items()->end(); }
 
 		inline collections::backward_iterator<T> rbegin() { return is_empty() ? collections::backward_iterator<T>() : get()->rbegin(); }
 		inline collections::backward_iterator<T> rend() { return is_empty() ? collections::backward_iterator<T>() : get()->rend(); }
-		inline collections::const_backward_iterator<T> rbegin()const { return is_empty() ? collections::const_backward_iterator<T>() : ((type const*)get())->rbegin(); }
-		inline collections::const_backward_iterator<T> rend()const { return is_empty() ? collections::const_backward_iterator<T>() : ((type const*)get())->rend(); }
-		template<typename I> T& operator [](I idx) { return get()->at(get()->at(idx)); }
-		template<typename I> T const& operator [](I idx)const { return get()->at(get()->at(idx)); }
+		inline collections::const_backward_iterator<T> rbegin()const { return is_empty() ? collections::const_backward_iterator<T>() : get()->items()->rbegin(); }
+		inline collections::const_backward_iterator<T> rend()const { return is_empty() ? collections::const_backward_iterator<T>() : get()->items()->rend(); }
+		template<typename I> T& operator [](I idx) { return get()->items()->at(get()->at(idx)); }
+		template<typename I> T const& operator [](I idx)const { return get()->items()->at(get()->at(idx)); }
 	ANG_END_INTF_WRAPPER();
 
 	ANG_BEGIN_INTF_WRAPPER_TEMPLATE(collections::ilist, T)
-		inline collections::forward_iterator<T> begin() { return is_empty() ? collections::forward_iterator<T>() : get()->begin(); }
-		inline collections::forward_iterator<T> end() { return is_empty() ? collections::forward_iterator<T>() : get()->end(); }
-		inline collections::const_forward_iterator<T> begin()const { return is_empty() ? collections::const_forward_iterator<T>() : ((type const*)get())->begin(); }
-		inline collections::const_forward_iterator<T> end()const { return is_empty() ? collections::const_forward_iterator<T>() : ((type const*)get())->end(); }
+		inline collections::forward_iterator<T> begin() { return is_empty() ? collections::forward_iterator<T>() : get()->items()->begin(); }
+		inline collections::forward_iterator<T> end() { return is_empty() ? collections::forward_iterator<T>() : get()->items()->end(); }
+		inline collections::const_forward_iterator<T> begin()const { return is_empty() ? collections::const_forward_iterator<T>() : get()->items()->begin(); }
+		inline collections::const_forward_iterator<T> end()const { return is_empty() ? collections::const_forward_iterator<T>() : get()->items()->end(); }
 
-		inline collections::backward_iterator<T> rbegin() { return is_empty() ? collections::backward_iterator<T>() : get()->rbegin(); }
-		inline collections::backward_iterator<T> rend() { return is_empty() ? collections::backward_iterator<T>() : get()->rend(); }
-		inline collections::const_backward_iterator<T> rbegin()const { return is_empty() ? collections::const_backward_iterator<T>() : ((type const*)get())->rbegin(); }
-		inline collections::const_backward_iterator<T> rend()const { return is_empty() ? collections::const_backward_iterator<T>() : ((type const*)get())->rend(); }
-
-		template<typename I> T& operator [](I idx) { return get()->at(get()->at(idx)); }
-		template<typename I> T const& operator [](I idx)const { return get()->at(get()->at(idx)); }
+		inline collections::backward_iterator<T> rbegin() { return is_empty() ? collections::backward_iterator<T>() : get()->items()->rbegin(); }
+		inline collections::backward_iterator<T> rend() { return is_empty() ? collections::backward_iterator<T>() : get()->items()->rend(); }
+		inline collections::const_backward_iterator<T> rbegin()const { return is_empty() ? collections::const_backward_iterator<T>() : get()->items()->rbegin(); }
+		inline collections::const_backward_iterator<T> rend()const { return is_empty() ? collections::const_backward_iterator<T>() : get()->items()->rend(); }
 	ANG_END_INTF_WRAPPER();
 }
 

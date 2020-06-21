@@ -15,6 +15,8 @@ namespace ang
 			{
 				virtual tex_type_t tex_type()const = 0;
 				virtual tex_format_t tex_format()const = 0;
+				virtual void tex_wrap_mode(tex_wrap_mode_t) = 0;
+				virtual tex_wrap_mode_t tex_wrap_mode()const = 0;
 				virtual size3d<uint> tex_dimentions()const = 0;
 			};
 

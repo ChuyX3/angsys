@@ -18,7 +18,7 @@ namespace ang
 				, meshes::imaterial>
 			{
 			private:
-				vector<textures::itexture_t> m_textures;
+				vector<collections::pair<string, textures::itexture_t>> m_textures;
 
 			public:
 				quad_material();
@@ -29,9 +29,10 @@ namespace ang
 				array<reflect::varying> fields() override; //only one per time
 				reflect::varying field(windex) override; //only one per time
 				reflect::varying field(cstr_t) override; //only one per time
+				textures::itexture_t texture(cstr_t) const override;
 				array<textures::itexture_t> textures() const override;
 
-				void push_texture(textures::itexture_t tex);
+				void push_texture(cstr_t name, textures::itexture_t tex);
 
 				void clear();
 
@@ -49,7 +50,6 @@ namespace ang
 				, meshes::igeometry>
 			{
 			private:
-
 				maths::mat4 m_transform;
 				quad_material_t m_material;
 				buffers::ivertex_buffer_t m_vertex_buffer;
@@ -64,14 +64,8 @@ namespace ang
 				meshes::imaterial_t material() const override;
 				void transform(maths::mat4 const&) override;
 				maths::mat4 const& transform() const override;
-
-				void push_texture(textures::itexture_t tex) {
-					m_material->push_texture(tex);
-				}
-
-				void clear() {
-					m_material->clear();
-				}
+				void push_texture(cstr_t name, textures::itexture_t tex);
+				void clear();
 
 			private: //overrides
 				void dispose()override;
@@ -139,7 +133,7 @@ namespace ang
 				effects::ishaders_t shaders()const override;
 				string frame_buffer()const override;
 				string geometry()const override;
-				array_view<string> resources()const override;
+				array<string> resources()const override;
 			private:
 				virtual~pass();
 			};
