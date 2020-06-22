@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<effect sid="gray_scale_fx">
+  <render_targets>
+    <render_target sid="gray_scale_fbo">
+      <color_formats>
+        <format>R8G8B8A8</format>
+      </color_formats>
+      <dimentions>default</dimentions>
+    </render_target>
+  </render_targets>
+  <render_state/>
+  <technique sid="gray_scale_fx:default">
+    <vertex_shader>
+      <uniforms name="wvp">
+        <var type="f32" class="mat4" name="wm"/>
+      </uniforms>
+      <input_layout>
+        <var type="f32" class="vec3" name="position" semantic="POSITION" semantic_idx="0"/>
+      </input_layout>
+      <entry>vs</entry>
+      <file>GRAY_SCALE_HLSL</file>
+      <compile_config>-DVERTEX_SHADER</compile_config>
+    </vertex_shader>
+    <pixel_shader>
+      <samplers>
+        <sampler type="linear" wrap="clamp"/>
+      </samplers>
+      <entry>ps</entry>
+      <file>GRAY_SCALE_HLSL</file>
+      <compile_config>-DPIXEL_SHADER</compile_config>
+    </pixel_shader>
+  </technique>
+
+  <pass idx="0">
+    <geometry>default</geometry>
+    <render_target>gray_scale_fbo</render_target>
+    <technique sid="default"/>
+  </pass>
+
+  <pass idx="1">
+    <geometry>quad</geometry>
+    <resources>
+      <resource>gray_scale_fbo</resource>
+    </resources>
+    <render_target>default</render_target>
+    <technique sid="gray_scale_fx:default"/>
+  </pass>
+</effect>

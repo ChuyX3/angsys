@@ -29,7 +29,7 @@ void puyo::on_initialize(objptr sender, platform::events::icreated_event_args_t 
 	game::on_initialize(sender, args);
 
 	core::files::input_text_file_t file;
-	library()->file_system()->open("./resources/fx_library.xml"_r, &file);
+	library()->file_system()->open("./data/library.xml"_r, &file);
 	auto doc = dom::xml::xml_document_from_file(file);
 	if (doc.successed()) {
 		library()->load(doc->root_element());
@@ -37,23 +37,7 @@ void puyo::on_initialize(objptr sender, platform::events::icreated_event_args_t 
 	file = null;
 	doc.reset();
 
-	library()->file_system()->open("./resources/texture_apex.xml"_r, &file);
-	doc = dom::xml::xml_document_from_file(file);
-	if (doc.successed()) {
-		library()->load(doc->root_element());
-	}
-	file = null;
-	doc.reset();
-
-
-	library()->file_system()->open("./resources/models/woman.xml"_r, &file);
-	doc = dom::xml::xml_document_from_file(file);
-	if (doc.successed()) {
-		auto res = library()->load_resource(doc->root_element());
-		m_mesh = res->cast<graphics::resources::resource_type::mesh>();
-	}
-	file = null;
-	doc.reset();
+	m_mesh = library()->find_resource("woman"_r)->cast<graphics::resources::resource_type::mesh>();
 
 	//smart<float[]> vertices = {
 	//	-0.1f, -0.1f, -0.1f, 1.0f,  0.0f, 0.0f, 0.0f, 1.0f,
@@ -107,14 +91,12 @@ void puyo::on_initialize(objptr sender, platform::events::icreated_event_args_t 
 	//m_driver->bind_index_buffer(m_indices);
 	//m_driver->bind_vertex_buffer(m_vertices);
 
-
-
-	auto res = library()->find_resource("character_fx");
+	auto res = library()->find_resource("character_fx:difuse"_r);
 	m_shaders = res->cast<graphics::resources::resource_type::shaders>();
-	m_driver->bind_shaders(m_shaders);
+	auto size = args->core_view()->core_view_size();
+	wvp.pmatrix = maths::matrix::perspective(0.9f, size.width / size.height, 0.001f, 1000.0f);
 
-
-	m_driver->cull_mode(graphics::cull_mode::none);
+	m_driver->cull_mode(graphics::cull_mode::back);
 	m_driver->blend_mode(graphics::blend_mode::enable);
 
 }
@@ -125,18 +107,38 @@ void puyo::draw(graphics::scenes::itransform_t cam, graphics::iframe_buffer_t fb
 	m_driver->bind_frame_buffer(fbo);
 	m_driver->clear(graphics::colors::dark_gray);
 
-	wvp.wmatrix = maths::matrix::rotation_y(m_timer.total_time() / 1000000.0f)
-		* maths::matrix::translation(0, 0, -5.0f);
+	wvp.wmatrix = maths::matrix::scale(0.01f)
+		//* maths::matrix::rotation_y(m_timer.total_time() / 1000000.0f)
+		* maths::matrix::translation(0, 0.0f, -2.0f);
 
 	m_driver->bind_shaders(m_shaders);
-
-	auto var = m_shaders->map_vs_uniform(m_driver, 0);
-	var[0].cast<maths::float4x4>() = maths::matrix::transpose(wvp.wmatrix);
-	var[1].cast<maths::float4x4>() = maths::matrix::transpose(wvp.vmatrix);
-	var[2].cast<maths::float4x4>() = maths::matrix::transpose(wvp.pmatrix);
-	m_shaders->unmap_vs_uniform(m_driver, var);
+	if (cam == null)
+	{
+		auto var = m_shaders->map_vs_uniform(m_driver, 0);
+		var[0].cast<maths::float4x4>() = maths::matrix::transpose(wvp.wmatrix);
+		var[1][0].cast<maths::float4x4>() = maths::matrix::transpose(wvp.vmatrix * wvp.pmatrix);
+		m_shaders->unmap_vs_uniform(m_driver, var);
+	}
+	else if(cam->is_stereo())
+	{
+		m_driver->viewport(cam->viewport());
+		auto var = m_shaders->map_vs_uniform(m_driver, 0);
+		var[0].cast<maths::float4x4>() = maths::matrix::transpose(wvp.wmatrix);
+		var[1][0].cast<maths::float4x4>() = maths::matrix::transpose(cam->view_matrix(0) * cam->projection_matrix(0));
+		var[1][1].cast<maths::float4x4>() = maths::matrix::transpose(cam->view_matrix(1) * cam->projection_matrix(1));
+		m_shaders->unmap_vs_uniform(m_driver, var);
+	}
+	else
+	{
+		m_driver->viewport(cam->viewport());
+		auto var = m_shaders->map_vs_uniform(m_driver, 0);
+		var[0].cast<maths::float4x4>() = maths::matrix::transpose(wvp.wmatrix);
+		var[1][0].cast<maths::float4x4>() = maths::matrix::transpose(cam->view_matrix(0) * cam->projection_matrix(0));
+		m_shaders->unmap_vs_uniform(m_driver, var);
+	}
 
 	for (auto element : m_mesh->elements()) {
+		
 		windex c = 0;
 		for (graphics::textures::itexture_t tex : element->material()->textures())
 		{
@@ -144,9 +146,21 @@ void puyo::draw(graphics::scenes::itransform_t cam, graphics::iframe_buffer_t fb
 			c++;
 		}
 
-		m_driver->bind_index_buffer(element->index_buffer());
-		m_driver->bind_vertex_buffer(element->vertex_buffer());
-		m_driver->draw_indexed(element->index_buffer()->counter(), graphics::primitive::triangle);
+		auto var = m_shaders->map_ps_uniform(m_driver, 0);
+		
+		m_shaders->unmap_ps_uniform(m_driver, var);
+
+		if (element->index_buffer())
+		{
+			m_driver->bind_index_buffer(element->index_buffer());
+			m_driver->bind_vertex_buffer(element->vertex_buffer());
+			m_driver->draw_indexed(element->index_buffer()->counter(), graphics::primitive::triangle);
+		}
+		else
+		{
+			m_driver->bind_vertex_buffer(element->vertex_buffer());
+			m_driver->draw(element->vertex_buffer()->block_counter(), graphics::primitive::triangle);
+		}
 
 		m_driver->bind_index_buffer(null);
 		m_driver->bind_vertex_buffer(null);

@@ -5,19 +5,31 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="resource files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="source files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="resource files\shaders">
-      <UniqueIdentifier>{1f77632e-b3f1-463d-b149-6b675bf2c812}</UniqueIdentifier>
+    <Filter Include="data">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="resource files\models">
-      <UniqueIdentifier>{0f7fbb5f-7220-471c-bfc0-2ff6e846341b}</UniqueIdentifier>
+    <Filter Include="data\models">
+      <UniqueIdentifier>{e080e437-c671-4964-b290-eb3309085be4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data\shaders">
+      <UniqueIdentifier>{4d3419e5-c549-4895-9ea2-8f28b3719659}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data\scenes">
+      <UniqueIdentifier>{7a9a22d7-4253-4eea-b7e0-11cc5830cc6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data\models\tex">
+      <UniqueIdentifier>{1417df3f-90de-4955-8b9c-22f9015eef27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data\models\nude">
+      <UniqueIdentifier>{70665d92-48cf-4e44-a43d-91aa46085b8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data\models\nude\tex">
+      <UniqueIdentifier>{e229de02-4ba3-42ec-b551-c450012df0aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -28,55 +40,98 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="resources\character_fx_library.xml">
-      <Filter>resource files</Filter>
-    </Xml>
-    <Xml Include="resources\fx_library.xml">
-      <Filter>resource files</Filter>
-    </Xml>
-    <Xml Include="resources\texture_apex.xml">
-      <Filter>resource files</Filter>
-    </Xml>
-    <Xml Include="resources\puyo.xml">
-      <Filter>resource files</Filter>
-    </Xml>
-    <Xml Include="resources\states\state_manager.xml">
-      <Filter>resource files</Filter>
-    </Xml>
-    <Xml Include="resources\models\cube.xml">
-      <Filter>resource files\models</Filter>
-    </Xml>
-    <Xml Include="resources\models\cube2.xml">
-      <Filter>resource files\models</Filter>
-    </Xml>
-    <Xml Include="resources\models\skybox.xml">
-      <Filter>resource files\models</Filter>
-    </Xml>
-    <Xml Include="resources\models\woman.xml">
-      <Filter>resource files\models</Filter>
-    </Xml>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="puyo.h">
       <Filter>header files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\sky_box.hlsl">
-      <Filter>resource files\shaders</Filter>
+    <None Include="data\shaders\solid_color.hlsl">
+      <Filter>data\shaders</Filter>
     </None>
-    <None Include="resources\shaders\postfx_gray_scale.hlsl">
-      <Filter>resource files\shaders</Filter>
+    <None Include="data\shaders\sky_box.hlsl">
+      <Filter>data\shaders</Filter>
     </None>
-    <None Include="resources\shaders\character2.hlsl">
-      <Filter>resource files\shaders</Filter>
+    <None Include="data\shaders\character.hlsl">
+      <Filter>data\shaders</Filter>
     </None>
-    <None Include="resources\shaders\character.hlsl">
-      <Filter>resource files\shaders</Filter>
+    <None Include="data\shaders\character_2.hlsl">
+      <Filter>data\shaders</Filter>
     </None>
-    <None Include="resources\shaders\basic_shader.hlsl">
-      <Filter>resource files\shaders</Filter>
+    <None Include="data\models\nude\nude_obj.mtl">
+      <Filter>data\models\nude</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="data\character.xml">
+      <Filter>data</Filter>
+    </Xml>
+    <Xml Include="data\default_fx.xml">
+      <Filter>data</Filter>
+    </Xml>
+    <Xml Include="data\gray_scale_fx.xml">
+      <Filter>data</Filter>
+    </Xml>
+    <Xml Include="data\library.xml">
+      <Filter>data</Filter>
+    </Xml>
+    <Xml Include="data\texture_apex.xml">
+      <Filter>data</Filter>
+    </Xml>
+    <Xml Include="data\scenes\scenes.xml">
+      <Filter>data\scenes</Filter>
+    </Xml>
+    <Xml Include="data\models\cube.xml">
+      <Filter>data\models</Filter>
+    </Xml>
+    <Xml Include="data\models\cube2.xml">
+      <Filter>data\models</Filter>
+    </Xml>
+    <Xml Include="data\models\skybox.xml">
+      <Filter>data\models</Filter>
+    </Xml>
+    <Xml Include="data\models\woman.xml">
+      <Filter>data\models</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\models\tex\seafloor.dds">
+      <Filter>data\models\tex</Filter>
+    </Image>
+    <Image Include="data\models\tex\skybox1.tga">
+      <Filter>data\models\tex</Filter>
+    </Image>
+    <Image Include="data\models\tex\skybox2.tga">
+      <Filter>data\models\tex</Filter>
+    </Image>
+    <Image Include="data\models\tex\woman.dds">
+      <Filter>data\models\tex</Filter>
+    </Image>
+    <Image Include="data\models\nude\tex\c595_00.tga">
+      <Filter>data\models\nude\tex</Filter>
+    </Image>
+    <Image Include="data\models\nude\tex\c595_01.tga">
+      <Filter>data\models\nude\tex</Filter>
+    </Image>
+    <Image Include="data\models\nude\tex\c595_02.tga">
+      <Filter>data\models\nude\tex</Filter>
+    </Image>
+    <Image Include="data\models\nude\tex\c595_03.tga">
+      <Filter>data\models\nude\tex</Filter>
+    </Image>
+    <Image Include="data\models\nude\tex\c595_04.tga">
+      <Filter>data\models\nude\tex</Filter>
+    </Image>
+    <Image Include="data\models\nude\tex\c595_05.tga">
+      <Filter>data\models\nude\tex</Filter>
+    </Image>
+    <Image Include="data\models\nude\tex\c595_06.tga">
+      <Filter>data\models\nude\tex</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="data\models\nude\nude_obj.obj">
+      <Filter>data\models\nude</Filter>
+    </Object>
   </ItemGroup>
 </Project>

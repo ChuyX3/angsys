@@ -22,11 +22,11 @@ struct vertex
 
 struct raw_material
 {
-	maths::float4 Ka;
-	maths::float4 Kd;
-	maths::float4 Ks;
-	uint ilum;
-	float Ns;
+	maths::float4 Ka = {0,0,0,0};
+	maths::float4 Kd = { 0,0,0,0 };
+	maths::float4 Ks = { 0,0,0,0 };
+	uint ilum = 0;
+	float Ns = 0;
 	string map_Kd;
 	string map_bump;
 	string map_d;
@@ -72,7 +72,7 @@ struct mesh_element
 	}
 	~mesh_element() {
 		material = null;
-		vertices->clear();
+		vertices = null;
 	}
 };
 
@@ -130,7 +130,7 @@ vector<geometry_data> mesh_loader::load_data(ilibrary_t lib, core::files::input_
 		mesh_element model;
 		
 		//model.vertices = new collections::vector_buffer<vertex, memory::aligned16_allocator>();
-		maths::mat4 rotation = maths::matrix::rotation_x(-3.141592f / 2.0f);
+		//maths::mat4 rotation = maths::matrix::rotation_x(-3.141592f / 2.0f);
 
 		maths::ul_float3 vec;
 		vector<maths::ul_float3> vertices;
@@ -149,7 +149,7 @@ vector<geometry_data> mesh_loader::load_data(ilibrary_t lib, core::files::input_
 				vec.set<1>(text::parser::to_value<float>(line, i));
 				vec.set<2>(text::parser::to_value<float>(line, i));
 
-				auto vec2 = maths::float4(vec.get<0>(), vec.get<1>(), vec.get<2>(), 1) * rotation;
+				auto vec2 = maths::float4(vec.get<0>(), vec.get<1>(), vec.get<2>(), 1);// *rotation;
 				vertices += maths::ul_float3{ vec2.get<0>(), vec2.get<1>(), vec2.get<2>() };
 			}
 			else if (line->find(vn_s, 0, vn_s.size() + 1) == 0)
@@ -159,7 +159,7 @@ vector<geometry_data> mesh_loader::load_data(ilibrary_t lib, core::files::input_
 				vec.set<1>(text::parser::to_value<float>(line, i));
 				vec.set<2>(text::parser::to_value<float>(line, i));
 
-				auto vec2 = maths::float4(vec.get<0>(), vec.get<1>(), vec.get<2>(), 0) * rotation;
+				auto vec2 = maths::float4(vec.get<0>(), vec.get<1>(), vec.get<2>(), 0);// *rotation;
 				normals += maths::ul_float3{ vec2.get<0>(), vec2.get<1>(), vec2.get<2>() };
 			}
 			else  if (line->find(vt_s, 0, vt_s.size() + 1) == 0)
@@ -287,7 +287,7 @@ vector<geometry_data> mesh_loader::load_data(ilibrary_t lib, core::files::input_
 	for (auto mat : material_lib)
 	{
 		core::files::input_text_file_t file;
-		if (lib->file_system()->open(mat, &file))
+		if (!lib->file_system()->open(mat, &file))
 			continue;
 		load_material_data(lib, file, material_map);
 		file->dispose();
@@ -338,7 +338,7 @@ void mesh_loader::load_element(ilibrary_t lib, dom::xml::ixml_node_t node, vecto
 			for (auto mat : child->children())
 			{
 				auto name = mat->name()->as<cstr_t>();
-				if (name == "fx")
+				if (name == "technique")
 				{
 					data.technique_name = mat->value()->as<cstr_t>();
 				}
@@ -400,8 +400,9 @@ void mesh_loader::load_material_data(ilibrary_t lib, core::files::input_text_fil
 		while (!file->is_eos())
 		{
 			file->read_line(line);
-			
-			if (line->find(newmtl_s, 0, newmtl_s.size() + 1) == 0)
+			i = 0;
+			text::parser::seek(line, i, " "_r);
+			if (line->find(newmtl_s, i, i + newmtl_s.size() + 1) == i)
 			{
 				if (name != null)
 				{
@@ -426,56 +427,54 @@ void mesh_loader::load_material_data(ilibrary_t lib, core::files::input_text_fil
 				}
 				name = line->sub_string(newmtl_s.size(), -1);
 			}
-			else if (line->find(Ka_s, 0, Ka_s.size() + 1) == 0)
+			else if (line->find(Ka_s, i, i + Ka_s.size() + 1) == i)
 			{
-				i = 0;
 				text::parser::seek(line, i, Ka_s);
 				vec.set<0>(text::parser::to_value<float>(line, i));
 				vec.set<1>(text::parser::to_value<float>(line, i));
 				vec.set<2>(text::parser::to_value<float>(line, i));
 				mat.Ka = vec;
 			}
-			else if (line->find(Kd_s, 0, Kd_s.size() + 1) == 0)
+			else if (line->find(Kd_s, i, i + Kd_s.size() + 1) == i)
 			{
-				i = 0;
 				text::parser::seek(line, i, Kd_s);
 				vec.set<0>(text::parser::to_value<float>(line, i));
 				vec.set<1>(text::parser::to_value<float>(line, i));
 				vec.set<2>(text::parser::to_value<float>(line, i));
 				mat.Kd = vec;
 			}
-			else if (line->find(Ks_s, 0, Ks_s.size() + 1) == 0)
+			else if (line->find(Ks_s, i, i + Ks_s.size() + 1) == i)
 			{
-				i = 0;
 				text::parser::seek(line, i, Ks_s);
 				vec.set<0>(text::parser::to_value<float>(line, i));
 				vec.set<1>(text::parser::to_value<float>(line, i));
 				vec.set<2>(text::parser::to_value<float>(line, i));
 				mat.Ks = vec;
 			}
-			else if (line->find(ilum_s, 0, ilum_s.size() + 1) == 0)
+			else if (line->find(ilum_s, i, i + ilum_s.size() + 1) == i)
 			{
-				i = 0;
 				text::parser::seek(line, i, ilum_s);
 				mat.ilum = text::parser::to_value<uint>(line, i);
 			}
-			else if (line->find(Ns_s, 0, Ns_s.size() + 1) == 0)
+			else if (line->find(Ns_s, i, i + Ns_s.size() + 1) == i)
 			{
-				i = 0;
 				text::parser::seek(line, i, Ns_s);
 				mat.Ns = text::parser::to_value<float>(line, i);		
 			}
-			else if (line->find(map_Kd_s, 0, map_Kd_s.size() + 1) == 0)
+			else if (line->find(map_Kd_s, i, i + map_Kd_s.size() + 1) == i)
 			{
-				mat.map_Kd = line->sub_string(map_Kd_s.size(), -1);
+				text::parser::seek(line, i, map_Kd_s);
+				mat.map_Kd = line->sub_string(i, -1);
 			}
-			else if (line->find(map_bump_s, 0, map_bump_s.size() + 1) == 0)
+			else if (line->find(map_bump_s, i, i + map_bump_s.size() + 1) == i)
 			{
-				mat.map_bump = line->sub_string(map_bump_s.size(), -1);
+				text::parser::seek(line, i, map_bump_s);
+				mat.map_bump = line->sub_string(i, -1);
 			}
-			else if (line->find(map_d_s, 0, map_d_s.size() + 1) == 0)
+			else if (line->find(map_d_s, i, i + map_d_s.size() + 1) == i)
 			{
-				mat.map_d = line->sub_string(map_d_s.size(), -1);
+				text::parser::seek(line, i, map_d_s);
+				mat.map_d = line->sub_string(i, -1);
 			}
 		}
 

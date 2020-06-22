@@ -744,7 +744,10 @@ void d3d11_driver::draw(uint count, primitive_t prim)
 			m_primitive = prim;
 			D3D11Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		}
-		D3D11Context()->Draw(count, 0);
+		if (vr_extension_support())
+			D3D11Context()->DrawInstanced(count, 2, 0, 0);
+		else
+			D3D11Context()->Draw(count, 0);
 	});
 }
 

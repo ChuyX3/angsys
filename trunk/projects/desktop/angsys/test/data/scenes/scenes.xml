@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<scene>
+  <sources>
+    <file sid="SKYBOX_XML">res/models/skybox.xml</file>
+  </sources>
+  <lights>
+    <ambient>
+      <color>#FFFFFFFF</color>
+      <saturation>0.8</saturation>
+    </ambient>
+    <light>
+      <color>1.3362,0.8351,0.3340</color>
+      <position>20.0, 100.0,100.0</position>
+    </light>
+   </lights>
+ 
+  <object type="camera">
+    <position>0.0,1.74,0.0</position>
+    <rotation>0.2,0.0,0.0</rotation>
+    <near_plane>0.01</near_plane>
+    <far_plane>10000.0</far_plane>
+    <fvo>0.99</fvo>
+  </object>
+
+  <object type="skybox">
+    <position>0.0,0.0,0.0</position>
+    <rotation>0.0,0.0,0.0</rotation>
+    <scale>10,10,10</scale>
+    <source type="indexed">SKYBOX_XML</source>
+  </object>
+
+</scene>

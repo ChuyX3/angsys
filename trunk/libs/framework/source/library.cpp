@@ -145,7 +145,7 @@ bool library::load(xml::ixml_node_t data)
 			}
 			else if (name == "mesh_library")
 			{
-				m_mesh_loader->load(data);
+				m_mesh_loader->load(node);
 			}
 		}
 	}
@@ -264,6 +264,9 @@ iresource_t library::find_resource(cstr_t sid)const
 	auto res = m_tex_loader->find_resource(sid);
 	if (!res.is_empty())
 		return res;
+	res = m_mesh_loader->find_resource(sid);
+	if (!res.is_empty())
+		return res;
 	res = m_fx_library->find_resource(sid);
 	if (!res.is_empty())
 		return res;
@@ -280,6 +283,9 @@ core::async::iasync<iresource_t> library::find_resource_async(cstr_t sid_)
 	{
 		core::async::scope_locker<core::async::mutex> locker = m_mutex;
 		auto res = m_fx_library->find_resource(sid);
+		if (!res.is_empty())
+			return res;
+		res = m_mesh_loader->find_resource(sid);
 		if (!res.is_empty())
 			return res;
 		res = m_tex_loader->find_resource(sid);

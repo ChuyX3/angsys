@@ -52,7 +52,6 @@ namespace ang
 				, igeometry>
 			{
 			private:
-				string m_technique;
 				maths::mat4 m_transform;
 				buffers::iindex_buffer_t m_index_buffer;
 				buffers::ivertex_buffer_t m_vertex_buffer;

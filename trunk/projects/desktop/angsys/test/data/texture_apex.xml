@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<texture_library>
+  <sources>
+    <file sid="SKYBOX1_TGA">data/models/tex/skybox1.tga</file>
+    <file sid="SKYBOX2_TGA">data/models/tex/skybox2.tga</file>
+    <file sid="3ea80e0f.dds">data/models/girl/tex/3ea80e0f.dds</file>
+    <file sid="abbec2ad.dds">data/models/girl/tex/abbec2ad.dds</file>
+    <file sid="cc5a76c0.dds">data/models/girl/tex/cc5a76c0.dds</file>
+    <file sid="3919bbeb.dds">data/models/girl/tex/3919bbeb.dds</file>
+    <file sid="38be34e5.dds">data/models/girl/tex/38be34e5.dds</file>
+    <file sid="c5b56029.dds">data/models/girl/tex/c5b56029.dds</file>
+    <file sid="67ed3ecb.dds">data/models/girl/tex/67ed3ecb.dds</file>
+    <file sid="5c203d00.dds">data/models/girl/tex/5c203d00.dds</file>
+    <file sid="1376b488.dds">data/models/girl/tex/1376b488.dds</file>
+    <file sid="d117864b.dds">data/models/girl/tex/d117864b.dds</file>
+  </sources>
+
+  <texture sid="skybox_tex" type="texCube" >SKYBOX2_TGA</texture>
+  <texture sid="3ea80e0f.dds" type="tex2D">3ea80e0f.dds</texture>
+  <texture sid="abbec2ad.dds" type="tex2D">abbec2ad.dds</texture>
+  <texture sid="cc5a76c0.dds" type="tex2D">cc5a76c0.dds</texture>
+  <texture sid="3919bbeb.dds" type="tex2D">3919bbeb.dds</texture>
+  <texture sid="38be34e5.dds" type="tex2D">38be34e5.dds</texture>
+  <texture sid="c5b56029.dds" type="tex2D">c5b56029.dds</texture>
+  <texture sid="67ed3ecb.dds" type="tex2D">67ed3ecb.dds</texture>
+  <texture sid="5c203d00.dds" type="tex2D">5c203d00.dds</texture>
+  <texture sid="1376b488.dds" type="tex2D">1376b488.dds</texture>
+  <texture sid="d117864b.dds" type="tex2D">d117864b.dds</texture>
+
+</texture_library>

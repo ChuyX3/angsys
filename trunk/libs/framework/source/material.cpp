@@ -32,6 +32,7 @@ bool material::load(ilibrary_t lib, material_data_t const& data)
 		m_fields = reflect::varying((array_view<byte> const&)m_data, data.fields->descriptor(), 16);
 	}
 	//lib->query_interface();
+	
 	textures::itexture_loader_t tex_loader = interface_cast<textures::itexture_loader>(lib);
 	for (auto pair : data.samplers) {
 		auto res = tex_loader->find_resource_async(pair.value)->result();

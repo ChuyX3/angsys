@@ -298,7 +298,7 @@ namespace ang
 				return iterator_t(m_table.view(), node, hash);
 			}
 			iterator_t insert(key_type const& key, element_type&& value) {
-				if (m_size > (m_table.size() * 0.75))
+				if (m_size >= (m_table.size() * 0.75))
 					realloc();
 				ulong64 hash = 0;
 				if (find_node(key, hash) != null)
@@ -308,7 +308,7 @@ namespace ang
 				return iterator_t(m_table.view(), m_table[hash].first, hash);
 			}
 			iterator_t insert(key_type const& key, element_type const& value) {
-				if (m_size > (m_table.size() * 0.75))
+				if (m_size >= (m_table.size() * 0.75))
 					realloc();
 				ulong64 hash = 0;
 				if (find_node(key, hash) != null)
@@ -318,7 +318,7 @@ namespace ang
 				return iterator_t(m_table.view(), m_table[hash].first, hash);
 			}
 			iterator_t insert(pair_type&& pair) {
-				if (m_size > (m_table.size() * 0.75))
+				if (m_size >= (m_table.size() * 0.75))
 					realloc();
 				ulong64 hash = 0;
 				if (find_node(pair.key, hash) != null)
@@ -328,7 +328,7 @@ namespace ang
 				return iterator_t(m_table.view(), m_table[hash].first, hash);
 			}
 			iterator_t insert(pair_type const& pair) {
-				if (m_size > (m_table.size() * 0.75))
+				if (m_size >= (m_table.size() * 0.75))
 					realloc();
 				ulong64 hash = 0;
 				if (find_node(pair.key, hash) != null)

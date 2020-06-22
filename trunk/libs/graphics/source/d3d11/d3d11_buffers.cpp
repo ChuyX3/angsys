@@ -295,7 +295,6 @@ void d3d11_vertex_buffer::use_buffer(d3d11_driver_t driver, array_view<reflect::
 			stride[i] = m_stride;
 			offset[i] = m_vertex_desc[it->value].position();
 		}
-		i++;
 	}
 	driver->D3D11Context()->IASetVertexBuffers(0, buffer.size(), &buffer[0], &stride[0], &offset[0]);
 }

@@ -147,10 +147,10 @@ namespace ang
 {
 	namespace framework
 	{
-		class LINK game : public implement<
-			game,
-			iid("ang::framework::game"),
-			igame>
+		class LINK game 
+			: public implement<game
+			, iid("ang::framework::game")
+			, igame>
 		{
 		protected:
 			graphics::graph_driver_type_t m_driver_type;

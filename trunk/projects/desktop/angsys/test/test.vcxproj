@@ -185,54 +185,53 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="resources\character_fx_library.xml" />
-    <Xml Include="resources\fx_library.xml" />
-    <Xml Include="resources\models\cube.xml" />
-    <Xml Include="resources\models\cube2.xml" />
-    <Xml Include="resources\models\skybox.xml" />
-    <Xml Include="resources\models\woman.xml" />
-    <Xml Include="resources\puyo.xml" />
-    <Xml Include="resources\states\state_manager.xml" />
-    <Xml Include="resources\texture_apex.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="puyo.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\basic_shader.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    <Xml Include="data\character.xml" />
+    <Xml Include="data\default_fx.xml" />
+    <Xml Include="data\gray_scale_fx.xml" />
+    <Xml Include="data\library.xml" />
+    <Xml Include="data\models\cube.xml" />
+    <Xml Include="data\models\cube2.xml" />
+    <Xml Include="data\models\skybox.xml" />
+    <Xml Include="data\models\woman.xml" />
+    <Xml Include="data\scenes\scenes.xml" />
+    <Xml Include="data\texture_apex.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="data\models\nude\nude_obj.mtl" />
+    <None Include="data\shaders\character.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="resources\shaders\character.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    <None Include="data\shaders\sky_box.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="resources\shaders\character2.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    <None Include="data\shaders\solid_color.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="resources\shaders\postfx_gray_scale.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\models\nude\tex\c595_00.tga" />
+    <Image Include="data\models\nude\tex\c595_01.tga" />
+    <Image Include="data\models\nude\tex\c595_02.tga" />
+    <Image Include="data\models\nude\tex\c595_03.tga" />
+    <Image Include="data\models\nude\tex\c595_04.tga" />
+    <Image Include="data\models\nude\tex\c595_05.tga" />
+    <Image Include="data\models\nude\tex\c595_06.tga" />
+    <Image Include="data\models\tex\seafloor.dds" />
+    <Image Include="data\models\tex\skybox1.tga" />
+    <Image Include="data\models\tex\skybox2.tga" />
+    <Image Include="data\models\tex\woman.dds" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="data\shaders\character_2.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="resources\shaders\sky_box.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="data\models\nude\nude_obj.obj">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

@@ -8,8 +8,7 @@ using namespace ang::graphics::resources;
 using namespace ang::graphics::meshes;
 
 geometry::geometry()
-	: m_technique("default"_s)
-	, m_transform()
+	: m_transform()
 	, m_index_buffer()
 	, m_vertex_buffer()
 	, m_material()
@@ -58,7 +57,7 @@ bool geometry::load(ilibrary_t lib, geometry_data_t const& data)
 
 string geometry::technique() const
 {
-	return m_technique;
+	return m_material.is_empty()? "default"_s : m_material->technique();
 }
 
 buffers::iindex_buffer_t geometry::index_buffer() const
