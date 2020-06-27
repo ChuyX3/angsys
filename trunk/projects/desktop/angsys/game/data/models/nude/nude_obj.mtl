@@ -1,7 +1,7 @@
 newmtl Material__28
 	Ns 10.0000
 	Ni 1.5000
-	d 1.0000
+	d 0.8000
 	Tr 0.0000
 	Tf 1.0000 1.0000 1.0000 
 	illum 2
@@ -15,7 +15,7 @@ newmtl Material__28
 newmtl Material__27
 	Ns 10.0000
 	Ni 1.5000
-	d 1.0000
+	d 0.8000
 	Tr 0.0000
 	Tf 1.0000 1.0000 1.0000 
 	illum 2
@@ -29,7 +29,7 @@ newmtl Material__27
 newmtl Material__29
 	Ns 10.0000
 	Ni 1.5000
-	d 1.0000
+	d 0.8000
 	Tr 0.0000
 	Tf 1.0000 1.0000 1.0000 
 	illum 2

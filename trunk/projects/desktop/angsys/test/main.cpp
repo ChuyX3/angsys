@@ -2,11 +2,12 @@
 //
 
 #include "pch.h"
-#include "puyo.h"
+#include "test.h"
 
 using namespace ang;
 
 int main(int argc, char* argv[])
 {
-	return entrypoint<puyo>::run(argc, argv);
+	core::files::ifile_system::instance()->push_path("D:\\ja_ro\\Documents\\GitHub\\data\\tasks\\data"_r, core::files::path_access_type::read, "$(Data)"_r);
+	return entrypoint<test>::run(argc, argv);
 }

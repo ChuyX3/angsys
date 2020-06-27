@@ -64,12 +64,12 @@ SamplerState sam_linear : register(s0);
 
 cbuffer material : register(b0)
 {
-    float3 Ka : packoffset(c0);
-    float3 Kd : packoffset(c1);
-    float d : packoffset(c1.w);
-    float3 Ks : packoffset(c2);
-    float Ns : packoffset(c2.w);
-//  uint ilum : packoffset(c3);
+    float4 Ka : packoffset(c0);
+    float4 Kd : packoffset(c1);
+    float4 Ks : packoffset(c2);
+    uint ilum : packoffset(c3.x);
+    float d    : packoffset(c3.y);
+    float Ns   : packoffset(c3.z);
 }
 
 #ifdef LIGHTING
@@ -90,11 +90,11 @@ float4 ps(ps_input input ) : SV_Target
     float4 total;
     float4 difuse = map_Kd.Sample(sam_linear, input.texcoord);
 #ifdef LIGHTING
-    total = float4(difuse.xyz * normalize(Kd), difuse.w * d);
+    total = float4(difuse.xyz * normalize(Kd.xyz), difuse.w * d);
 
     total = difuse;
 #else
-    total = float4(difuse.xyz* normalize(Kd), difuse.w* d);
+    total = float4(difuse.xyz * Kd.xyz, difuse.w * d);
 #endif
    
 #ifdef NO_ALPHA

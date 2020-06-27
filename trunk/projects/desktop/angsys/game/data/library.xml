@@ -2,7 +2,8 @@
 <library>
   
   <sources>
-    <file sid="nude_obj.mtl">data/models/nude/nude_obj.mtl</file> 
+    <file sid="nude_obj.mtl">data/models/nude/nude_obj.mtl</file>
+    <file sid="Beautiful Girl.mtl">data/models/BeautifulGirl/Beautiful Girl.mtl</file>
   </sources>
   
   <effect_library>
@@ -47,6 +48,14 @@
     <texture sid="c595_04.tga" type="tex2D">data/models/nude/tex/c595_04.tga</texture>
     <texture sid="c595_05.tga" type="tex2D">data/models/nude/tex/c595_05.tga</texture>
     <texture sid="c595_06.tga" type="tex2D">data/models/nude/tex/c595_06.tga</texture>
+
+    <texture sid="12c14c70.dds" type="tex2D">data/models/BeautifulGirl/tex/12c14c70.dds</texture>
+    <texture sid="12dbd6d0.dds" type="tex2D">data/models/BeautifulGirl/tex/12dbd6d0.dds</texture>
+    <texture sid="16c2e0d0.dds" type="tex2D">data/models/BeautifulGirl/tex/16c2e0d0.dds</texture>
+    <texture sid="16cecd10.dds" type="tex2D">data/models/BeautifulGirl/tex/16cecd10.dds</texture>
+    <texture sid="19d89130.dds" type="tex2D">data/models/BeautifulGirl/tex/19d89130.dds</texture>
+    <texture sid="13932ef0.dds" type="tex2D">data/models/BeautifulGirl/tex/13932ef0.dds</texture>
+
     <texture sid="skybox_tex" type="texCube">data/models/tex/skybox1.tga</texture>
     <texture sid="tex_woman_dds" type="tex2D">data/models/tex/woman.dds</texture>
   </texture_library>
@@ -57,7 +66,7 @@
     </mesh>
 
     <mesh sid="woman">
-      <file>data/models/nude/nude_obj.obj</file>
+      <file>data/models/BeautifulGirl/Beautiful Girl.obj</file>
     </mesh>
   </mesh_library>
  

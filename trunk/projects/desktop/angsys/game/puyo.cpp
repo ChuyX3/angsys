@@ -28,6 +28,12 @@ void puyo::on_initialize(objptr sender, platform::events::icreated_event_args_t 
 {
 	game::on_initialize(sender, args);
 
+	platform::input::icontroller_manager::instance()->controller_connected_event +=
+		new platform::events::controller_status_change_event(this, &puyo::on_controller_connected);
+
+	platform::input::icontroller_manager::instance()->controller_disconnected_event +=
+		new platform::events::controller_status_change_event(this, &puyo::on_controller_disconnected);
+
 	core::files::input_text_file_t file;
 	library()->file_system()->open("./data/library.xml"_r, &file);
 	auto doc = dom::xml::xml_document_from_file(file);
@@ -38,58 +44,6 @@ void puyo::on_initialize(objptr sender, platform::events::icreated_event_args_t 
 	doc.reset();
 
 	m_mesh = library()->find_resource("woman"_r)->cast<graphics::resources::resource_type::mesh>();
-
-	//smart<float[]> vertices = {
-	//	-0.1f, -0.1f, -0.1f, 1.0f,  0.0f, 0.0f, 0.0f, 1.0f,
-	//	-0.1f, -0.1f,  0.1f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,
-	//	-0.1f,  0.1f, -0.1f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,
-	//	-0.1f,  0.1f,  0.1f, 1.0f,  0.0f, 1.0f, 1.0f, 1.0f,
-	//	 0.1f, -0.1f, -0.1f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-	//	 0.1f, -0.1f,  0.1f, 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-	//	 0.1f,  0.1f, -0.1f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,
-	//	 0.1f,  0.1f,  0.1f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
-	//};
-
-	//graphics::reflect::attribute_desc input_layout[] =
-	//{
-	//	{ graphics::reflect::var_type::f32, graphics::reflect::var_class::vec4 },
-	//	{ graphics::reflect::var_type::f32, graphics::reflect::var_class::vec4 }
-	//};
-
-	//smart<ushort[]> indices = {
-	//		2,1,0, // -x
-	//		2,3,1,
-
-	//		6,4,5, // +x
-	//		6,5,7,
-
-	//		0,1,5, // -y
-	//		0,5,4,
-
-	//		2,6,7, // +y
-	//		2,7,3,
-
-	//		0,4,6, // -z
-	//		0,6,2,
-
-	//		1,3,7, // +z
-	//		1,7,5,
-	//};
-
-	//if (auto res = factory()->create_index_buffer(
-	//	graphics::buffers::buffer_usage::def, indices)) {
-	//	m_indices = res.get();
-	//}
-
-	//if (auto res = factory()->create_vertex_buffer(
-	//	graphics::buffers::buffer_usage::def,
-	//	input_layout,
-	//	8, vertices.get())) {
-	//	m_vertices = res.get();
-	//}
-
-	//m_driver->bind_index_buffer(m_indices);
-	//m_driver->bind_vertex_buffer(m_vertices);
 
 	auto res = library()->find_resource("character_fx:difuse"_r);
 	m_shaders = res->cast<graphics::resources::resource_type::shaders>();
@@ -105,11 +59,12 @@ void puyo::on_initialize(objptr sender, platform::events::icreated_event_args_t 
 void puyo::draw(graphics::scenes::itransform_t cam, graphics::iframe_buffer_t fbo)
 {
 	m_driver->bind_frame_buffer(fbo);
-	m_driver->clear(graphics::colors::dark_gray);
+	m_driver->clear(graphics::colors::gray);
 
-	wvp.wmatrix = maths::matrix::scale(0.01f)
-		//* maths::matrix::rotation_y(m_timer.total_time() / 1000000.0f)
-		* maths::matrix::translation(0, 0.0f, -2.0f);
+	wvp.wmatrix = maths::matrix::scale(1.0f)
+		* maths::matrix::rotation_x(-maths::constants::pi / 2)
+		* maths::matrix::rotation_y(m_timer.total_time() / 1000000.0f)
+		* maths::matrix::translation(0, 0, -5.0f);
 
 	m_driver->bind_shaders(m_shaders);
 	if (cam == null)
@@ -147,9 +102,19 @@ void puyo::draw(graphics::scenes::itransform_t cam, graphics::iframe_buffer_t fb
 		}
 
 		auto var = m_shaders->map_ps_uniform(m_driver, 0);
-		
-		m_shaders->unmap_ps_uniform(m_driver, var);
+		if (!var.raw_data().is_empty())
+		{
+			auto mat = element->material()->fields();
+			var[0].cast<maths::float4>() = mat[0].cast<maths::float3>();
+			var[1].cast<maths::float4>() = mat[1].cast<maths::float3>();
+			var[2].cast<maths::float4>() = mat[2].cast<maths::float3>();
+			var[3].cast<uint>() = mat[3].cast<uint>();
+			var[4].cast<float>() = mat[4].cast<float>();
+			var[5].cast<float>() = mat[5].cast<float>();
 
+			m_shaders->unmap_ps_uniform(m_driver, var);
+		}
+		
 		if (element->index_buffer())
 		{
 			m_driver->bind_index_buffer(element->index_buffer());
@@ -179,4 +144,56 @@ void puyo::on_size_changed(objptr sender, platform::events::idisplay_info_event_
 	game::on_size_changed(sender, args);
 	auto size = args->display_info().display_resolution;
 	wvp.pmatrix = maths::matrix::perspective(0.9f, size.width / size.height, 0.001f, 1000.0f);
+}
+
+void puyo::on_controller_connected(objptr, platform::events::icontroller_status_args_t args)
+{
+	if (m_controller.is_empty()) {
+		m_controller = args->controller();
+		m_analog_event_token = m_controller->analog_input_change_event += 
+			new platform::events::controller_analog_change_event(this, &puyo::on_controller_analog_event);
+		m_digital_event_token = m_controller->digital_button_change_event +=
+			new platform::events::controller_button_change_event(this, &puyo::on_controller_digital_event);
+	}
+}
+
+void puyo::on_controller_disconnected(objptr, platform::events::icontroller_status_args_t args)
+{
+	if (!m_controller.is_empty() && m_controller->controller_id() == args->controller_id()) {
+		m_controller->analog_input_change_event -= m_analog_event_token;
+		m_controller->digital_button_change_event -= m_digital_event_token;
+		m_controller = null;
+	}
+}
+
+void puyo::on_controller_analog_event(objptr, platform::events::icontroller_analog_input_args_t args)
+{
+	switch (args->button())
+	{
+	case platform::input::controller_button::left_thumb:
+		break;
+	default:
+		break;
+	}
+}
+
+void puyo::on_controller_digital_event(objptr, platform::events::icontroller_digital_input_args_t args)
+{
+	switch (args->button())
+	{
+	case platform::input::controller_button::A:
+		break;
+
+	case platform::input::controller_button::B:
+		break;
+
+	case platform::input::controller_button::X:
+		break;
+
+	case platform::input::controller_button::Y:
+		break;
+	default:
+		break;
+	}
+
 }
