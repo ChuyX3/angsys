@@ -463,9 +463,10 @@ namespace ang
 				j = 0;
 				k = 0;
 				l = 0;
-				while (k < s2 && to_char32<false, SWAP1>(beg, j) == to_char32<false, SWAP2>((other_native_cstr_t)(other_cstr_t)second, k))
+				while (k < s2 && to_char32<false, SWAP1>(end, j) == to_char32<false, SWAP2>((other_native_cstr_t)(other_cstr_t)second, k))
 					l = k;
-				if (l == s2) return i;
+				if (l == s2)
+					return i;
 				i--;
 			} while (beg <= --end);
 			return (wsize)invalid_index;

@@ -40,6 +40,10 @@ namespace ang
 			: m_error(err)
 			, m_result() {
 		}
+		optional(error_code err)
+			: m_error(err)
+			, m_result() {
+		}
 		optional(optional && op)
 			: m_error(ang::move(op.m_error))
 			, m_result(ang::move(op.m_result)) {
@@ -137,6 +141,13 @@ namespace ang
 				memset(&m_result, 0, size_of<type>());
 			}
 		}
+		optional(error_code err)
+			: m_error(err)
+			, m_result() {
+			if constexpr (is_trivially_constructible<type>::value) {
+				memset(&m_result, 0, size_of<type>());
+			}
+		}
 		optional(optional && op)
 			: m_error(ang::move(op.m_error))
 			, m_result(ang::move(op.m_result)) {
@@ -225,6 +236,10 @@ namespace ang
 			, m_result(value) {
 		}
 		optional(const error& err)
+			: m_error(err)
+			, m_result() {
+		}
+		optional(error_code err)
 			: m_error(err)
 			, m_result() {
 		}
@@ -320,6 +335,10 @@ namespace ang
 			: m_error(err)
 			, m_result() {
 		}
+		optional(error_code err)
+			: m_error(err)
+			, m_result() {
+		}
 		optional(optional && op)
 			: m_error(ang::move(op.m_error))
 			, m_result(ang::move(op.m_result)) {
@@ -407,6 +426,10 @@ namespace ang
 			, m_result(value) {
 		}
 		optional(const error& err)
+			: m_error(err)
+			, m_result() {
+		}
+		optional(error_code err)
 			: m_error(err)
 			, m_result() {
 		}

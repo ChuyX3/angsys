@@ -154,7 +154,7 @@ namespace ang
 				async::mutex_t m_mutex;
 				async::idispatcher_t m_async_worker;
 				collections::hash_map<path_t, path_access_type_t> m_paths;
-				collections::hash_map<path_t, vector<path_t>> m_macros;
+				collections::hash_map<string, vector<path_t>> m_macros;
 				vector<intf_wrapper<ifile_system>> m_highest_priority;
 				vector<intf_wrapper<ifile_system>> m_lowest_priority;
 

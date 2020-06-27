@@ -376,19 +376,22 @@ inline windex ang::text::fast_string<E, A>::find(ang::text::fast_string<E2, A2> 
 
 template<ang::text::encoding E, template<typename>class A> template<typename T2,  ang::text::encoding E2>
 inline windex ang::text::fast_string<E, A>::find_reverse(ang::str_view<const T2, E2> const& value, windex start, windex end)const {
+	windex idx;
 	auto my_data = cstr();
 	my_data.set(my_data.cstr() + min(end, my_data.size()), max(my_data.size() - end, 0));
 	if constexpr (E2 == ang::text::encoding::auto_detect)
-		return text::encoder::find_reverse(my_data, value, start);
+		idx = text::encoder::find_reverse(my_data, value, start - end);
 	else
-		return encoder::find_reverse(my_data, my_data.size(), value, value.size(), start);
+		idx = encoder::find_reverse(my_data, my_data.size(), value, value.size(), start - end);
+	return idx != invalid_index ? idx + end : invalid_index;
 }
 
 template<ang::text::encoding E, template<typename>class A> template<ang::text::encoding E2, template<typename>class A2>
 inline windex ang::text::fast_string<E, A>::find_reverse(fast_string<E2, A2> const& value, windex start, windex end)const {
 	auto my_data = cstr();
 	auto your_data = value.cstr();
-	return encoder::find_reverse(my_data + min(end, my_data.size()), max(my_data.size() - end, 0), your_data, your_data.size(), start);
+	windex idx = encoder::find_reverse(my_data + min(end, my_data.size()), max(my_data.size() - end, 0), your_data, your_data.size(), start - end);
+	return idx != invalid_index ? idx + end : invalid_index;
 }
 
 template<ang::text::encoding E, template<typename>class A> template<typename T2,  ang::text::encoding E2>

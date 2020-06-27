@@ -62,14 +62,15 @@ mutex::~mutex()
 
 bool mutex::lock()const
 {
-	if (m_handle != NULL)
+	if (m_handle != NULL) {
 #if defined ANDROID_PLATFORM || defined LINUX_PLATFORM
 		return pthread_mutex_lock((pthread_mutex_t*)m_handle) == 0 ? true : false;
 #elif defined WINDOWS_PLATFORM
 		//return WaitForSingleObjectEx(this->m_handle, INFINITE, FALSE) == WAIT_OBJECT_0 ? true : false;
 		EnterCriticalSection(LPCRITICAL_SECTION(m_handle));
-	return true;
+		return true;
 #endif
+	}
 	return false;
 }
 

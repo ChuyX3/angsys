@@ -21,7 +21,8 @@ using namespace ang::core;
 using namespace ang::core::files;
 
 static inline path_t view_to_path(cstr_t const& str) {
-	path_t path;
+	return str;
+	/*path_t path;
 	switch (str.encoding())
 	{
 	case text::encoding::ascii: path = str.cstr<text::encoding::ascii>(); break;
@@ -36,7 +37,7 @@ static inline path_t view_to_path(cstr_t const& str) {
 	case text::encoding::utf32_be: path = str.cstr<text::encoding::utf32_be>(); break;
 	case text::encoding::utf32_se: path = str.cstr<text::encoding::utf32_se>(); break;
 	}
-	return ang::move(path);
+	return ang::move(path);*/
 }
 
 //bool ifile_system::register_file_system(ifile_system* fs, file_system_priority_t prio)
@@ -138,7 +139,7 @@ path_access_type_t file_system::path_access_type(cstr_t path_)const
 	catch (...) { return path_access_type::none; }
 }
 
-bool file_system::create_handle(cstr_t path_, open_flags_t flags, ifile_ptr_t out, cstr_t macro_)
+bool file_system::create_handle(cstr_t path_, open_flags_t flags, ifile_ptr_t out, cstr_t macro)
 {
 	if (out.is_empty())
 		return false;
@@ -147,18 +148,18 @@ bool file_system::create_handle(cstr_t path_, open_flags_t flags, ifile_ptr_t ou
 	{
 		for (auto fs : m_highest_priority)
 		{
-			if (fs->create_handle(path_, flags, out, macro_))
+			if (fs->create_handle(path_, flags, out, macro))
 				return true;
 		}
 		return false;
 	}))
 		return true;
 
-	if (macro_ != null) // if not null tries create file here only
+	if (macro != null) // if not null tries create file here only
 	{
 		try {
 			path_t path;// = view_to_path(path_);
-			path_t macro = view_to_path(macro_);
+			//path_t macro = view_to_path(macro_);
 			auto scope = m_mutex.scope();
 			auto& macro_paths = m_macros[macro];
 			if (flags.is_active(open_flags::access_inout))

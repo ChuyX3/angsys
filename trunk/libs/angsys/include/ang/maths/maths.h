@@ -12,7 +12,9 @@
 #ifndef __ANG_MATHS_H__
 #define __ANG_MATHS_H__
 
-#include <math.h>
+#include <cmath>
+#include <limits>
+#include <cfloat>
 
 namespace ang
 {

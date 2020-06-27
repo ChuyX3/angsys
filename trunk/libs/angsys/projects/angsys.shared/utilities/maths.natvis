@@ -62,10 +62,19 @@
   </Type>
 
   <Type Name="ang::maths::float2">
-    <DisplayString>float2[{_vector.x}, {_vector.y}]</DisplayString>
+    <DisplayString>&lt;{_vector.x}, {_vector.y}&gt;</DisplayString>
     <Expand>
       <Item Name="[x]">_vector.x</Item>
       <Item Name="[y]">_vector.y</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="ang::maths::float3">
+    <DisplayString>&lt;{_vector.x}, {_vector.y}, {_vector.z}&gt;</DisplayString>
+    <Expand>
+      <Item Name="[x]">_vector.x</Item>
+      <Item Name="[y]">_vector.y</Item>
+      <Item Name="[z]">_vector.z</Item>
     </Expand>
   </Type>
   

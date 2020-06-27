@@ -267,6 +267,7 @@ namespace ang
 				wsize read_line(pointer, wsize, text::encoding_t, array_view<const char32_t> = U"\r\n", wsize* written = null)override;
 
 				bool map(function<bool(ibuffer_view_t)> func, wsize = -1, file_offset_t = 0);
+				bool map2(function<bool(string)> func, wsize = -1, file_offset_t = 0);
 
 				bool read(function<bool(streams::itext_input_stream_t)>);
 

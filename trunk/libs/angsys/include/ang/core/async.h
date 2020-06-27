@@ -170,14 +170,37 @@ namespace ang
 	{
 		namespace async
 		{
-			template<> struct scope_locker<mutex_ptr_t> final
+			template<typename T> 
+			struct scope_locker<intf_wrapper<T>> final
 			{
 			private:
-				mutex_ptr_t _mutex;
+				intf_wrapper<T> _mutex;
 
 			public:
-				inline scope_locker(mutex_ptr_t m) : _mutex(m.get()) {
+				inline scope_locker(intf_wrapper<T> m) : _mutex(m.get()) {
 					if(!_mutex.is_empty())_mutex->lock();
+				}
+				inline ~scope_locker() {
+					if (!_mutex.is_empty())_mutex->unlock();
+				}
+
+				template<typename func_t>
+				static auto lock(mutex_ptr_t m, func_t func) -> decltype(func())
+				{
+					scope_locker _lock = m;
+					return func();
+				}
+			};
+
+			template<typename T>
+			struct scope_locker<object_wrapper<T>> final
+			{
+			private:
+				object_wrapper<T> _mutex;
+
+			public:
+				inline scope_locker(object_wrapper<T> m) : _mutex(m.get()) {
+					if (!_mutex.is_empty())_mutex->lock();
 				}
 				inline ~scope_locker() {
 					if (!_mutex.is_empty())_mutex->unlock();

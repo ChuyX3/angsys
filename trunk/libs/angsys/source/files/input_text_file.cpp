@@ -70,6 +70,7 @@ stream_mode_t input_text_file::mode()const
 
 bool input_text_file::map(function<bool(ibuffer_view_t)> func, wsize sz, file_offset_t offset)
 {
+	
 	file_offset_t _sz = sz == invalid_index ? size() : min(size(), file_offset_t(sz));
 	file_offset_t _off = offset == invalid_index ? size() : min(size(), file_offset_t(offset));
 	ibuffer_t buff =  file::map(_sz, _off);
@@ -79,6 +80,119 @@ bool input_text_file::map(function<bool(ibuffer_view_t)> func, wsize sz, file_of
 	unmap(buff, _sz);
 	return result;
 }
+
+
+static text::encoding_t  discard_bom(pointer bom, text::encoding_t e, windex& idx)
+{
+	if (bom == null)
+		return text::encoding::none;
+
+	switch (e.get())
+	{
+	case text::encoding::auto_detect:
+		if (text::load_bom<text::encoding::utf8>(bom) > 0)
+		{
+			idx += 3;
+			return text::encoding::utf8;
+		}
+		else if (text::load_bom<text::encoding::utf32_le>(bom) > 0)
+		{
+			idx += 1;
+			return text::native_encoding<text::encoding::utf32_le>();
+		}
+		else  if (text::load_bom<text::encoding::utf32_be>(bom) > 0)
+		{
+			idx += 1;
+			return text::native_encoding<text::encoding::utf32_be>();
+		}
+		else if (text::load_bom<text::encoding::utf16_le>(bom) > 0)
+		{
+			idx += 1;
+			return text::native_encoding<text::encoding::utf16_le>();
+		}
+		else  if (text::load_bom<text::encoding::utf16_be>(bom) > 0)
+		{
+			idx += 1;
+			return text::native_encoding<text::encoding::utf16_be>();
+		}
+		return text::encoding::ascii;
+	case text::encoding::utf8:
+		if (text::load_bom<text::encoding::utf8>(bom) > 0)
+			idx += 3;
+		return text::encoding::utf8;
+	case text::encoding::utf16_le:
+		if(text::load_bom<text::encoding::utf16_le>(bom) > 0)
+			idx += 1;
+		return text::native_encoding<text::encoding::utf16_le>();
+	case text::encoding::utf16_be:
+		if (text::load_bom<text::encoding::utf16_be>(bom) > 0)
+			idx += 1;
+		return text::native_encoding<text::encoding::utf16_be>();
+	case text::encoding::utf32_le:
+		if (text::load_bom<text::encoding::utf32_le>(bom) > 0)
+			idx += 1;
+		return text::native_encoding<text::encoding::utf32_le>();
+	case text::encoding::utf32_be: 
+		if (text::load_bom<text::encoding::utf32_be>(bom) > 0)
+			idx += 1;
+		return text::native_encoding<text::encoding::utf32_be>();
+	default:
+		return e;
+	}
+}
+
+template<text::encoding E>
+string from_buffer(ibuffer_t buff, wsize i) {
+	using type = typename text::char_type_by_encoding<E>::char_type;
+	text::basic_string<E> str = new text::basic_string_buffer<E>();
+	str_view<const type, E> code(((const type*)buff->buffer_ptr()) + i, (buff->buffer_size() / size_of<type>()) - i);
+	str->attach(code);
+	return str.get();
+}
+
+bool input_text_file::map2(function<bool(string)> func, wsize sz, file_offset_t offset)
+{
+	file_offset_t _sz = sz == invalid_index ? size() : min(size(), file_offset_t(sz));
+	file_offset_t _off = offset == invalid_index ? size() : min(size(), file_offset_t(offset));
+	ibuffer_t buff = file::map(_sz, _off);
+	if (buff.is_empty())
+		return false;
+
+	auto e = buff->encoding();
+	wsize i = 0;
+	string code;
+	e = discard_bom(buff->buffer_ptr(), e, i);
+	switch (e)
+	{
+	case text::encoding::ascii:
+		code = from_buffer<text::encoding::ascii>(buff, i);
+		break;
+	case text::encoding::unicode:
+		code = from_buffer<text::encoding::unicode>(buff, i);
+		break;
+	case text::encoding::utf8:
+		code = from_buffer<text::encoding::utf8>(buff, i);
+		break;
+	case text::encoding::utf16_le:
+		code = from_buffer<text::encoding::utf16_le>(buff, i);
+		break;
+	case text::encoding::utf16_be:
+		code = from_buffer<text::encoding::utf16_be>(buff, i);
+		break;
+	case text::encoding::utf32_le:
+		code = from_buffer<text::encoding::utf32_le>(buff, i);
+		break;
+	case text::encoding::utf32_be:
+		code = from_buffer<text::encoding::utf32_be>(buff, i);
+		break;
+	default:
+		break;
+	}
+	auto result = func(code.get());
+	unmap(buff, _sz);
+	return result;
+}
+
 
 //bool input_text_file::map(function<bool(text::istring_view_t)> func, wsize sz, file_offset_t offset)
 //{
@@ -432,7 +546,7 @@ wsize input_text_file::read(pointer buff, wsize sz, text::encoding_t e, wsize* w
 	while (!m_hfile->is_eof() && out_size > 0)
 	{
 		readed = (wsize)(m_hfile->read(200, _buffer.data()) - (cur + total));
-		auto str = encoder::convert(str_t(ptr, sz, my_e), cstr_t(_buffer.data(), readed, format()), true);
+		auto str = encoder::convert(str_t(ptr, sz, my_e), cstr_t(_buffer.data(), readed, format()), true, sz, readed);
 		ptr = &((byte*)str.ptr())[str.size()];
 		out_size -= str.size() / cs;
 		total += str.size();
