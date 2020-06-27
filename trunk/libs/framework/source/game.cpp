@@ -114,12 +114,15 @@ void game::on_update(objptr sender, platform::events::imsg_event_args_t args)
 	{
 		update();
 		auto cams = m_surface->update();
-		if (!cams.is_empty()) for (auto const& cam : cams) {
-			draw(cam.get<0>(), cam.get<1>());
+		m_driver->lock();
+		if (!cams.is_empty()){
+			for (auto const& cam : cams)
+				draw(cam.get<0>(), cam.get<1>());
 		}		
 		else {
-			draw(null, m_surface->frame_buffer());
-		}		
+			draw(null, m_surface->frame_buffer());	
+		}	
+		m_driver->unlock();
 		m_surface->swap_buffers(false);
 	});	
 }

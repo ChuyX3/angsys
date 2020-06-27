@@ -22,10 +22,11 @@ struct vertex
 
 struct raw_material
 {
-	maths::float4 Ka = {0,0,0,0};
-	maths::float4 Kd = { 0,0,0,0 };
-	maths::float4 Ks = { 0,0,0,0 };
+	maths::float4 Ka = { 1,1,1,0};
+	maths::float4 Kd = { 1,1,1,0 };
+	maths::float4 Ks = { 1,1,1,0 };
 	uint ilum = 0;
+	float d = 1;
 	float Ns = 0;
 	string map_Kd;
 	string map_bump;
@@ -37,6 +38,7 @@ struct raw_material
 			{ reflect::var_type::f32, reflect::var_class::vec3, "Kd"_r, 1, 16 },
 			{ reflect::var_type::f32, reflect::var_class::vec3, "Ks"_r, 1, 16 },
 			{ reflect::var_type::u32, reflect::var_class::scalar, "ilum"_r, 1, 4 },
+			{ reflect::var_type::f32, reflect::var_class::scalar, "d"_r, 1, 4 },
 			{ reflect::var_type::f32, reflect::var_class::scalar, "Ns"_r, 1, 4 }
 		};
 	}
@@ -385,6 +387,7 @@ void mesh_loader::load_material_data(ilibrary_t lib, core::files::input_text_fil
 	cstr_t Kd_s = "Kd "_r;
 	cstr_t Ks_s = "Ks "_r;
 	cstr_t ilum_s = "ilum "_r;
+	cstr_t d_s = "d "_r;
 	cstr_t Ns_s = "Ns "_r;
 	cstr_t map_Kd_s = "map_Kd "_r;
 	cstr_t map_bump_s = "map_bump "_r;
@@ -409,11 +412,19 @@ void mesh_loader::load_material_data(ilibrary_t lib, core::files::input_text_fil
 					material_data_t material;
 					material.fields = new reflect::struct_buffer();
 					auto var = material.fields->make_struct(raw_material::descriptor(), 16);
-					var[0].force_cast<maths::float3>() = (maths::float3)mat.Ka;
-					var[1].force_cast<maths::float3>() = (maths::float3)mat.Kd;
-					var[2].force_cast<maths::float3>() = (maths::float3)mat.Ks;
-					var[3].force_cast<uint>() = mat.ilum;
-					var[4].force_cast<float>() = mat.Ns;
+					var[0].cast<maths::float3>() = (maths::float3)mat.Ka;
+					var[1].cast<maths::float3>() = (maths::float3)mat.Kd;
+					var[2].cast<maths::float3>() = (maths::float3)mat.Ks;
+					var[3].cast<uint>() = mat.ilum;
+					var[4].cast<float>() = mat.d;
+					var[5].cast<float>() = mat.Ns;
+
+					mat.Ka = { 1,1,1,0 };
+					mat.Kd = { 1,1,1,0 };
+					mat.Ks = { 1,1,1,0 };
+					mat.ilum = 0;
+					mat.d = 1;
+					mat.Ns = 0;
 
 					if(!mat.map_Kd.is_empty())
 						material.samplers["map_Kd"] = ang::move(mat.map_Kd);
@@ -456,10 +467,15 @@ void mesh_loader::load_material_data(ilibrary_t lib, core::files::input_text_fil
 				text::parser::seek(line, i, ilum_s);
 				mat.ilum = text::parser::to_value<uint>(line, i);
 			}
+			else if (line->find(d_s, i, i + d_s.size() + 1) == i)
+			{
+				text::parser::seek(line, i, d_s);
+				mat.d = text::parser::to_value<float>(line, i);		
+			}
 			else if (line->find(Ns_s, i, i + Ns_s.size() + 1) == i)
 			{
 				text::parser::seek(line, i, Ns_s);
-				mat.Ns = text::parser::to_value<float>(line, i);		
+				mat.Ns = text::parser::to_value<float>(line, i);
 			}
 			else if (line->find(map_Kd_s, i, i + map_Kd_s.size() + 1) == i)
 			{
@@ -483,11 +499,12 @@ void mesh_loader::load_material_data(ilibrary_t lib, core::files::input_text_fil
 			material_data_t material;
 			material.fields = new reflect::struct_buffer();
 			auto var = material.fields->make_struct(raw_material::descriptor(), 16);
-			var[0].force_cast<maths::float3>() = (maths::float3)mat.Ka;
-			var[1].force_cast<maths::float3>() = (maths::float3)mat.Kd;
-			var[2].force_cast<maths::float3>() = (maths::float3)mat.Ks;
-			var[3].force_cast<uint>() = mat.ilum;
-			var[4].force_cast<float>() = mat.Ns;
+			var[0].cast<maths::float3>() = (maths::float3)mat.Ka;
+			var[1].cast<maths::float3>() = (maths::float3)mat.Kd;
+			var[2].cast<maths::float3>() = (maths::float3)mat.Ks;
+			var[3].cast<uint>() = mat.ilum;
+			var[4].cast<float>() = mat.d;
+			var[5].cast<float>() = mat.Ns;
 
 			if (!mat.map_Kd.is_empty())
 				material.samplers["map_Kd"] = ang::move(mat.map_Kd);

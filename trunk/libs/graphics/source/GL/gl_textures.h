@@ -8,13 +8,13 @@ struct GLTexformat
 	GLuint type;
 };
 
-namespace coffe
+namespace ang
 {
 	namespace graphics
 	{
 		namespace gl
 		{
-			coffe_object(gl_texture);
+			ang_declare_object(gl_texture);
 
 			struct tex_file_info_t
 			{
@@ -39,8 +39,8 @@ namespace coffe
 
 
 			class gl_texture
-				: public smart<gl_texture
-				, system_object
+				: public graphic<gl_texture
+				, iid("ang::graphics::gl::gl_texture")
 				, textures::itexture
 				, resources::iresource>
 			{
@@ -50,6 +50,7 @@ namespace coffe
 				buffers::buffer_usage_t m_usage;
 				buffers::buffer_bind_flag_t m_bind_flags;
 				textures::tex_type_t m_tex_type;
+				textures::tex_wrap_mode_t m_wrap_mode;
 				size3d<uint> m_tex_dimentions;
 				GLuint m_gl_resource;
 
@@ -63,6 +64,8 @@ namespace coffe
 				resources::iresource_t resource()const override;
 				textures::tex_type_t tex_type()const override;
 				textures::tex_format_t tex_format()const override;
+				void tex_wrap_mode(textures::tex_wrap_mode_t) override;
+				textures::tex_wrap_mode_t tex_wrap_mode()const override;
 				size3d<uint> tex_dimentions()const override;
 				buffers::buffer_type_t buffer_type()const override;
 				buffers::buffer_usage_t buffer_usage()const override;
@@ -103,7 +106,7 @@ namespace coffe
 	}
 }
 
-inline GLTexformat coffe::graphics::gl::traslate_format_gl(coffe::graphics::textures::tex_format_t format)
+inline GLTexformat ang::graphics::gl::traslate_format_gl(ang::graphics::textures::tex_format_t format)
 {
 	switch (format)
 	{
@@ -118,7 +121,7 @@ inline GLTexformat coffe::graphics::gl::traslate_format_gl(coffe::graphics::text
 	return { 0,0 };
 }
 
-inline coffe::graphics::textures::tex_format_t coffe::graphics::gl::traslate_format_gl(GLTexformat format)
+inline ang::graphics::textures::tex_format_t ang::graphics::gl::traslate_format_gl(GLTexformat format)
 {
 	switch (format.format)
 	{
@@ -134,7 +137,7 @@ inline coffe::graphics::textures::tex_format_t coffe::graphics::gl::traslate_for
 	return textures::tex_format::null;
 }
 
-inline int coffe::graphics::gl::pixel_size_by_format_gl(coffe::graphics::textures::tex_format format)
+inline int ang::graphics::gl::pixel_size_by_format_gl(ang::graphics::textures::tex_format format)
 {
 	switch (format)
 	{
@@ -153,7 +156,7 @@ inline int coffe::graphics::gl::pixel_size_by_format_gl(coffe::graphics::texture
 	return 0;
 }
 
-inline GLuint coffe::graphics::gl::traslate_type_gl(coffe::graphics::textures::tex_type_t type)
+inline GLuint ang::graphics::gl::traslate_type_gl(ang::graphics::textures::tex_type_t type)
 {
 #ifndef GL_TEXTURE_1D
 #define GL_TEXTURE_1D 0x0DE0
@@ -175,7 +178,7 @@ inline GLuint coffe::graphics::gl::traslate_type_gl(coffe::graphics::textures::t
 	return 0;
 }
 
-inline coffe::graphics::textures::tex_type_t coffe::graphics::gl::traslate_type_gl(GLuint type)
+inline ang::graphics::textures::tex_type_t ang::graphics::gl::traslate_type_gl(GLuint type)
 {
 	switch (type)
 	{

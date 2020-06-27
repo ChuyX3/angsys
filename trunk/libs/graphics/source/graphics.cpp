@@ -6,6 +6,10 @@
 #include "d3d11/drawing/d3d11_drawer.h"
 #endif
 
+#if OPENGL_FAMILY_SUPPORT
+#include "GL/gl_driver.h"
+#endif
+
 
 //ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::idriver)
 //ANG_IMPLEMENT_INTERFACE_CLASS_INFO(ang::graphics::isurface)
@@ -137,7 +141,8 @@ drawing::idrawer_t ang::graphics::drawing::create_drawing_context(idriver_t driv
 #endif//VULKAN_SUPPORT
 
 #if OPENGL_FAMILY_SUPPORT
-	case graph_driver_type::Vulkan:
+	case graph_driver_type::OpenGL:
+	case graph_driver_type::OpenGLES:
 	{
 		gl::gl_drawer_t context;
 		gl::gl_driver_t gl_driver = interface_cast<gl::gl_driver>(driver.get());
@@ -146,7 +151,7 @@ drawing::idrawer_t ang::graphics::drawing::create_drawing_context(idriver_t driv
 		context = new gl::gl_drawer(gl_driver);
 		return context.get();
 	}
-#endif//VULKAN_SUPPORT
+#endif//OPENGL_FAMILY_SUPPORT
 
 	default:
 		return null;

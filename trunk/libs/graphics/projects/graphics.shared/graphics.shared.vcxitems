@@ -29,6 +29,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_shaders.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_textures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\drawing\d3d11_drawer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\d3d9\d3d9_buffers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\d3d9\d3d9_driver.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\d3d9\d3d9_shaders.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\d3d9\d3d9_textures.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\GL\gl_buffers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\GL\gl_driver.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\GL\gl_shaders.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\GL\gl_textures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\graphic_object.h" />
   </ItemGroup>
   <ItemGroup>
@@ -45,7 +53,21 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\d3d11_texture_loader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\drawing\d3d11_brush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d11\drawing\d3d11_drawer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\d3d9\d3d9_driver.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\data_parser.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\GL\gl_buffers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\GL\gl_driver.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\GL\gl_shaders.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\GL\gl_surface.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\graphics.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\graphic_object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\reflect.cpp" />

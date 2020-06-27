@@ -3,19 +3,14 @@
 
 #if OPENGL_FAMILY_SUPPORT
 
-using namespace coffe;
-using namespace coffe::graphics;
-using namespace coffe::graphics::gl;
+using namespace ang;
+using namespace ang::graphics;
+using namespace ang::graphics::gl;
 
 gl_index_buffer::gl_index_buffer()
 	: m_index_count(0)
 {
-
 }
-
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::graphics::gl::gl_index_buffer);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::graphics::gl::gl_index_buffer);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::graphics::gl::gl_index_buffer, system_object, buffers::iindex_buffer, buffers::igpu_buffer, resources::iresource);
 
 void gl_index_buffer::dispose()
 {
@@ -137,10 +132,6 @@ gl_vertex_buffer::gl_vertex_buffer()
 
 }
 
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::graphics::gl::gl_vertex_buffer);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::graphics::gl::gl_vertex_buffer);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::graphics::gl::gl_vertex_buffer, system_object, buffers::ivertex_buffer, buffers::igpu_buffer, resources::iresource);
-
 void gl_vertex_buffer::dispose()
 {
 	close();
@@ -174,11 +165,9 @@ bool gl_vertex_buffer::unmap(idriver_t, ibuffer_t)
 	return false;
 }
 
-array_view<reflect::attribute_desc> gl_vertex_buffer::descriptor()const
+array_view<reflect::attribute_desc>const& gl_vertex_buffer::descriptor()const
 {
-	if (m_vertex_desc.is_empty())
-		return array_view<reflect::attribute_desc>(null);
-	return collections::to_array(m_vertex_desc->data(), m_vertex_desc->size());
+	return m_vertex_desc;
 }
 
 wsize gl_vertex_buffer::block_counter()const { return m_vertex_count; }

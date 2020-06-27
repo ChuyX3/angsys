@@ -8,81 +8,6 @@ namespace ang
 	{
 		namespace d3d11
 		{
-			struct vertex_buffer_id
-			{
-				reflect::var_semantic_t semantic;
-				windex semantic_idx;
-				vertex_buffer_id()
-					: semantic(reflect::var_semantic::none)
-					, semantic_idx(0)
-				{
-				}
-				vertex_buffer_id(vertex_buffer_id&& id)
-					: semantic(id.semantic)
-					, semantic_idx(id.semantic_idx)
-				{
-				}
-				vertex_buffer_id(vertex_buffer_id const& id)
-					: semantic(id.semantic)
-					, semantic_idx(id.semantic_idx)
-				{
-				}
-				vertex_buffer_id(reflect::var_semantic_t semantic, windex semantic_idx)
-					: semantic(semantic)
-					, semantic_idx(semantic_idx)
-				{
-				}
-				~vertex_buffer_id() 
-				{
-				}
-
-				bool operator == (vertex_buffer_id const& id)const
-				{
-					return semantic_idx == id.semantic_idx && semantic == id.semantic;
-				}
-				bool operator != (vertex_buffer_id const& id)const
-				{
-					return semantic_idx != id.semantic_idx && semantic != id.semantic;
-				}
-			};
-		}
-	}
-
-	namespace algorithms
-	{
-		template<>
-		struct hash<graphics::d3d11::vertex_buffer_id>
-		{
-			using type = graphics::d3d11::vertex_buffer_id;
-			static ulong64 make(graphics::d3d11::vertex_buffer_id const& value) {
-				union {
-					struct {
-						graphics::reflect::var_semantic semantic;
-						uint semantic_idx;
-					};
-					ulong64 val;
-				} key;
-				key.semantic = value.semantic;
-				key.semantic_idx = value.semantic_idx;
-
-				return (ulong64)((2475825 + key.val + 1));
-			}
-			ulong64 operator()(type const& value)const {
-				return make(value);
-			}
-		};
-	}
-
-	namespace graphics
-	{
-		namespace d3d11
-		{
-			class d3d11_index_buffer;
-			class d3d11_vertex_buffer;
-
-			typedef object_wrapper<d3d11_index_buffer> d3d11_index_buffer_t;
-			typedef object_wrapper<d3d11_vertex_buffer> d3d11_vertex_buffer_t;
-
 			class d3d11_index_buffer
 				: public graphic<d3d11_index_buffer
 				, iid("ang::graphics::d3d11::d3d11_index_buffer")
@@ -161,7 +86,7 @@ namespace ang
 				buffers::buffer_bind_flag_t buffer_bind_flag()const override;
 				ibuffer_t map(idriver_t, bool writeMode) override;
 				bool unmap(idriver_t, ibuffer_t) override;
-				array<reflect::attribute_desc> descriptor()const override;
+				array_view<reflect::attribute_desc>const& descriptor()const override;
 				wsize block_counter()const override;
 				wsize size_in_bytes()const override;
 
@@ -183,7 +108,6 @@ namespace ang
 				void use_buffer(d3d11_driver_t, array_view<reflect::attribute_desc_t> const&);
 				inline ID3D11Buffer* D3D11Buffer()const { return m_vertex_buffer.get(); }
 			};
-
 		}
 	}
 }

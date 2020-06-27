@@ -8,10 +8,7 @@ namespace ang
 	{
 		namespace d3d11
 		{
-			class d3d11_texture;
-		
-			typedef object_wrapper<d3d11_texture> d3d11_texture_t;
-
+	
 			struct tex_file_info_t
 			{
 				uint width;

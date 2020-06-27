@@ -226,7 +226,7 @@ bool d3d11::d3d_reflect_shader_uniforms(reflect::uniform_fields_t& uniforms, ID3
 		{
 			D3D11_SHADER_VARIABLE_DESC varDesc;
 			reflect::varying_desc_t field;
-			auto var = cb->GetVariableByIndex(j);	
+			auto var = cb->GetVariableByIndex(j);
 			var->GetDesc(&varDesc);
 			d3d_reflect_shader_variable(field, castr_t(varDesc.Name, invalid_index), varDesc.StartOffset, var->GetType());
 			fields += ang::move(field);

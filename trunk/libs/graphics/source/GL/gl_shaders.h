@@ -2,35 +2,17 @@
 
 #if OPENGL_FAMILY_SUPPORT
 
-namespace coffe
+namespace ang
 {
 	namespace graphics
 	{
 		namespace gl
 		{
-
-			typedef struct frame_buffer_data : frame_buffer_desc
-			{
-				mutable gl_frame_buffer_t fbo;
-
-				frame_buffer_data() {
-					static textures::tex_format_t s_color_format[] = { textures::tex_format::R32G32B32A32 };
-					color_format = to_array(s_color_format);
-					depth_stencil_format = textures::tex_format::D24S8;
-					dimentions = { 512,512 };
-					fbo = null;
-				}
-				frame_buffer_data(frame_buffer_data const& other) {
-					color_format = other.color_format;
-					depth_stencil_format = other.depth_stencil_format;
-					dimentions = other.dimentions;
-					fbo = other.fbo;
-				}
-			}frame_buffer_data_t, *frame_buffer_data_ptr_t;
-
-
 			class gl_shaders
-				: public smart<gl_shaders, system_object, effects::ishaders, resources::iresource>
+				: public graphic<gl_shaders
+				, iid("ang::graphics::gl::gl_shader")
+				, effects::ishaders
+				, resources::iresource>
 			{
 			private:
 				astring m_resource_sid;
@@ -54,9 +36,9 @@ namespace coffe
 
 			public: //overrides		
 				resources::iresource_t resource()const override;
-				array_view<reflect::attribute_desc> input_layout()const override;
-				array_view<reflect::varying_desc> vs_uniforms_layouts()const override;
-				array_view<reflect::varying_desc> ps_uniforms_layouts()const override;
+				array_view<reflect::attribute_desc>const& input_layout()const override;
+				array_view<reflect::varying_desc>const& vs_uniforms_layouts()const override;
+				array_view<reflect::varying_desc>const& ps_uniforms_layouts()const override;
 				bool bind_vertex_buffer(idriver_t, buffers::ivertex_buffer_t) override;
 				bool bind_texture(idriver_t, windex, windex) override;
 				bool bind_texture(idriver_t, cstr_t, windex) override;
@@ -73,16 +55,16 @@ namespace coffe
 				intfptr fast_cast(resources::resource_type_t) override;
 
 			public:
-				bool load(gl_driver_t, string, string, string, string_ptr_t log = null);
-				bool load(gl_driver_t, effects::shader_info_t const&, effects::shader_info_t const&, string, string_ptr_t log = null);
+				error load(gl_driver_t, string, string, string);
+				error load(gl_driver_t, effects::shader_info_t const&, effects::shader_info_t const&, string);
 				bool use_shaders(gl_driver_t);
 				bool close();
 
 			private:
-				string load_vertex_shader(gl_driver_t, effects::shader_info_t const&);
-				string load_vertex_shader(gl_driver_t, string);
-				string load_pixel_shader(gl_driver_t, effects::shader_info_t const&);
-				string load_pixel_shader(gl_driver_t, string);
+				error load_vertex_shader(gl_driver_t, effects::shader_info_t const&);
+				error load_vertex_shader(gl_driver_t, string);
+				error load_pixel_shader(gl_driver_t, effects::shader_info_t const&);
+				error load_pixel_shader(gl_driver_t, string);
 				bool load_vs_const_buffer(gl_driver_t, reflect::varying_desc&);
 				bool load_ps_const_buffer(gl_driver_t, reflect::varying_desc&);
 				//bool load_ps_samplers(gl_driver_t, dom::xml::xml_node_t);

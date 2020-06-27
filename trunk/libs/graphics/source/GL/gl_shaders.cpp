@@ -3,9 +3,9 @@
 
 #if OPENGL_FAMILY_SUPPORT
 
-using namespace coffe;
-using namespace coffe::graphics;
-using namespace coffe::graphics::gl;
+using namespace ang;
+using namespace ang::graphics;
+using namespace ang::graphics::gl;
 
 //none = 0,
 //s8,
@@ -41,10 +41,6 @@ gl_shaders::~gl_shaders()
 {
 }
 
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::graphics::gl::gl_shaders);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::graphics::gl::gl_shaders);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::graphics::gl::gl_shaders, system_object, effects::ishaders, resources::iresource);
-
 void gl_shaders::dispose()
 {
 	close();
@@ -68,17 +64,17 @@ intfptr gl_shaders::fast_cast(resources::resource_type_t type) {
 	return type == resources::resource_type::shaders ? static_cast<effects::ishaders*>(this) : null;
 }
 
-array_view<reflect::attribute_desc> gl_shaders::input_layout()const
+array_view<reflect::attribute_desc>const& gl_shaders::input_layout()const
 {
 	return m_input_layout;
 }
 
-array_view<reflect::varying_desc> gl_shaders::vs_uniforms_layouts()const
+array_view<reflect::varying_desc>const& gl_shaders::vs_uniforms_layouts()const
 {
 	return m_vs_uniforms;
 }
 
-array_view<reflect::varying_desc> gl_shaders::ps_uniforms_layouts()const
+array_view<reflect::varying_desc>const& gl_shaders::ps_uniforms_layouts()const
 {
 	return m_ps_uniforms;
 }
@@ -108,32 +104,32 @@ bool gl_shaders::bind_vertex_buffer(idriver_t driver, buffers::ivertex_buffer_t 
 
 bool gl_shaders::bind_texture(idriver_t driver, windex idx, windex idx2)
 {
-
+	return false;
 }
 
 bool gl_shaders::bind_texture(idriver_t, cstr_t, windex)
 {
-
+	return false;
 }
 
 reflect::varying gl_shaders::map_vs_uniform(idriver_t, windex)
 {
-
+	return reflect::varying();
 }
 
 reflect::varying gl_shaders::map_vs_uniform(idriver_t, cstr_t)
 {
-
+	return reflect::varying();
 }
 
 reflect::varying gl_shaders::map_ps_uniform(idriver_t, windex)
 {
-
+	return reflect::varying();
 }
 
 reflect::varying gl_shaders::map_ps_uniform(idriver_t, cstr_t)
 {
-
+	return reflect::varying();
 }
 
 void gl_shaders::unmap_vs_uniform(idriver_t driver, reflect::varying&)
@@ -145,6 +141,5 @@ void gl_shaders::unmap_ps_uniform(idriver_t driver, reflect::varying&)
 {
 
 }
-
 
 #endif

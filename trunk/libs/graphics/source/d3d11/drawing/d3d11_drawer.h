@@ -18,6 +18,12 @@ namespace ang
 			ang_declare_object(d3d11_radial_gradient_brush);
 			ang_declare_object(d3d11_linear_gradient_brush);
 
+			typedef struct _model
+			{
+				buffers::iindex_buffer_t indices;
+				buffers::ivertex_buffer_t vertices;
+			}model_t, * model_ptr_t;
+
 			class d3d11_brush
 				: public graphic<d3d11_brush
 				, iid("ang::graphics::d3d11::d3d11_brush")>

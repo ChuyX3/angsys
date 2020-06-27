@@ -78,20 +78,14 @@ namespace ang
 			ang_declare_object(d3d11_texture);
 			ang_declare_object(d3d11_shaders);
 			ang_declare_object(d3d11_shader_code);
+			ang_declare_object(d3d11_index_buffer);
+			ang_declare_object(d3d11_vertex_buffer);
 
 #if DIRECTX11_VRX_SUPPORT
 			ang_declare_object(holographic_driver);
 			ang_declare_object(holographic_scene);
 			ang_declare_object(holographic_camera);
 #endif
-
-			typedef struct _model
-			{
-				buffers::iindex_buffer_t indices;
-				buffers::ivertex_buffer_t vertices;
-			}model_t, *model_ptr_t;
-
-			
 
 			template<typename... Ts>
 			void d3d11_debug_print(int level, castr_t format, Ts... args)
@@ -167,7 +161,6 @@ namespace ang
 				bool create(array_view<textures::tex_format_t> color_format, textures::tex_format_t depth_stencil_format, graphics::size<uint> dimentions, bool stereo = false, string sid = null);
 				bool update(d3d11_texture_t resource);
 				bool close();
-
 
 			protected: //override
 				void dispose()override;

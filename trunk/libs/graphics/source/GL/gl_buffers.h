@@ -2,20 +2,17 @@
 
 #if OPENGL_FAMILY_SUPPORT
 
-namespace coffe
+namespace ang
 {
 	namespace graphics
 	{
 		namespace gl
 		{
-			class gl_index_buffer;
-			class gl_vertex_buffer;
-
-			typedef object_wrapper<gl_index_buffer> gl_index_buffer_t;
-			typedef object_wrapper<gl_vertex_buffer> gl_vertex_buffer_t;
-
 			class gl_index_buffer
-				: public smart<gl_index_buffer, system_object, buffers::iindex_buffer, resources::iresource>
+				: public graphic<gl_index_buffer
+				, iid("ang::graphics::gl::gl_index_buffer")
+				, buffers::iindex_buffer
+				, resources::iresource>
 			{
 			private:
 				string m_resource_sid;
@@ -74,7 +71,10 @@ namespace coffe
 			};
 
 			class gl_vertex_buffer
-				: public smart<gl_vertex_buffer, system_object, buffers::ivertex_buffer, resources::iresource>
+				: public graphic<gl_vertex_buffer
+				, iid("ang::graphics::gl::gl_vertex_buffer")
+				, buffers::ivertex_buffer
+				, resources::iresource>
 			{
 			private:
 				string m_resource_sid;
@@ -97,7 +97,7 @@ namespace coffe
 				buffers::buffer_bind_flag_t buffer_bind_flag()const override;
 				ibuffer_t map(idriver_t, bool writeMode) override;
 				bool unmap(idriver_t, ibuffer_t) override;
-				array_view<reflect::attribute_desc> descriptor()const override;
+				array_view<reflect::attribute_desc>const& descriptor()const override;
 				wsize block_counter()const override;
 				wsize size_in_bytes()const override;
 

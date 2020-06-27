@@ -25,7 +25,7 @@ namespace ang
 				, iid("ang::graphics::buffers::ivertex_buffer")
 				, igpu_buffer>
 			{
-				virtual array<reflect::attribute_desc> descriptor()const = 0;
+				virtual array_view<reflect::attribute_desc>const& descriptor()const = 0;
 				virtual wsize block_counter()const = 0;
 				virtual wsize size_in_bytes()const = 0;
 			};

@@ -191,11 +191,9 @@ bool d3d11_vertex_buffer::unmap(idriver_t, ibuffer_t)
 	return false;
 }
 
-array<reflect::attribute_desc> d3d11_vertex_buffer::descriptor()const
+array_view<reflect::attribute_desc>const& d3d11_vertex_buffer::descriptor()const
 {
-	if (m_vertex_desc.is_empty())
-		return array_view<reflect::attribute_desc>(null);
-	return collections::to_array(m_vertex_desc.begin(), m_vertex_desc.end());
+	return m_vertex_desc;
 }
 
 wsize d3d11_vertex_buffer::block_counter()const { return m_vertex_count; }

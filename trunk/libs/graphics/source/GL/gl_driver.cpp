@@ -3,9 +3,9 @@
 
 #if OPENGL_FAMILY_SUPPORT
 
-using namespace coffe;
-using namespace coffe::graphics;
-using namespace coffe::graphics::gl;
+using namespace ang;
+using namespace ang::graphics;
+using namespace ang::graphics::gl;
 
 gl_driver::gl_driver()
 #if OPENGLES_SUPPORT
@@ -24,12 +24,8 @@ gl_driver::gl_driver()
 	m_cull_mode = graphics::cull_mode::back;
 	m_front_face = graphics::front_face::def;
 	m_blend_mode = graphics::blend_mode::disable;
-	m_async_worker = core::async::thread::create_thread();
+	m_async_worker = core::async::thread::create_dispatcher_thread();
 }
-
-//COFFE_IMPLEMENT_OBJECT_RUNTIME_INFO(coffe::graphics::gl::gl_driver);
-//COFFE_IMPLEMENT_OBJECT_CLASS_INFO(coffe::graphics::gl::gl_driver);
-//COFFE_IMPLEMENT_OBJECT_QUERY_INTERFACE(coffe::graphics::gl::gl_driver, system_object, idriver, ifactory);
 
 void gl_driver::dispose()
 {
@@ -246,7 +242,7 @@ void gl_driver::viewport(box<float> vp)
 {
 	core::async::scope_locker<core::async::mutex_t> lock = m_mutex;
 
-	glViewport((uint)vp.left, (uint)vp.top, (uint)vp.width, (uint)vp.height);
+	glViewport((uint)vp.left, (uint)vp.top, (uint)vp.width(), (uint)vp.height());
 }
 
 box<float> gl_driver::viewport()const
@@ -399,7 +395,7 @@ void gl_driver::bind_frame_buffer(iframe_buffer_t ifb)
 	}
 	else
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_current_frame_buffer->GLFrameBUfferObject());
+		glBindFramebuffer(GL_FRAMEBUFFER, m_current_frame_buffer->GLFrameBufferObject());
 	}
 }
 
@@ -519,9 +515,9 @@ void gl_driver::set_file_system(core::files::ifile_system_t fs)
 	m_mutex.unlock();
 }
 
-optional<buffers::ivertex_buffer> gl_driver::create_vertex_buffer(buffers::buffer_usage_t usage, vector<reflect::attribute_desc> vertex_desc, wsize vertex_count, ibuffer_t buff, string sid)const
+optional<buffers::ivertex_buffer> gl_driver::create_vertex_buffer(buffers::buffer_usage_t usage, array_view<reflect::attribute_desc> vertex_desc, wsize vertex_count, ibuffer_t buff, string sid)const
 {
-	array_view<byte> init_data = buff.is_empty() ? to_array((byte*)null, 0) : to_array((byte*)buff->buffer_ptr(), buff->buffer_size());
+	array_view<byte> init_data = buff.is_empty() ? to_array((byte*)null, (byte*)null) : to_array((byte*)buff->buffer_ptr(), (byte*)buff->buffer_ptr() + buff->buffer_size());
 
 	gl_vertex_buffer_t buffer = new gl_vertex_buffer();
 	if (!buffer->create(
@@ -532,13 +528,13 @@ optional<buffers::ivertex_buffer> gl_driver::create_vertex_buffer(buffers::buffe
 		init_data,
 		sid
 	))
-		return new error(error_code::unknown);
+		return error_code::unknown;
 	return buffer.get();
 }
 
 optional<buffers::iindex_buffer> gl_driver::create_index_buffer(buffers::buffer_usage_t usage, reflect::var_type_t index_type, wsize index_count, ibuffer_t buff, string sid)const
 {
-	array_view<byte> init_data = buff.is_empty() ? to_array((byte*)null, 0) : to_array((byte*)buff->buffer_ptr(), buff->buffer_size());
+	array_view<byte> init_data = buff.is_empty() ? to_array((byte*)null, (byte*)null) : to_array((byte*)buff->buffer_ptr(), (byte*)buff->buffer_ptr() + buff->buffer_size());
 	gl_index_buffer_t buffer = new gl_index_buffer();
 	if (!buffer->create(
 		const_cast<gl_driver*>(this),
@@ -548,7 +544,7 @@ optional<buffers::iindex_buffer> gl_driver::create_index_buffer(buffers::buffer_
 		init_data,
 		sid
 	))
-		return new error(error_code::unknown);
+		return error_code::unknown;
 	return buffer.get();
 }
 
@@ -564,18 +560,18 @@ optional<textures::itexture> gl_driver::create_texture(textures::tex_type_t type
 		dimentions,
 		sid
 	))
-		return new error(error_code::unknown);
+		return error_code::unknown;
 	return text.get();
 }
 
 optional<textures::itexture> gl_driver::create_texture(unknown_t tex_handle, string sid)const
 {
 	if (tex_handle == null)
-		return new error(error_code::invalid_param);
+		return error_code::invalid_param;
 	uint resource = reinterpret_cast<uint>(tex_handle);	
 	gl_texture_t text = new gl_texture();
 	if (!text->attach(resource, const_cast<gl_driver*>(this), sid))
-		return new error(error_code::unknown);
+		return error_code::unknown;
 	return text.get();
 }
 
@@ -583,16 +579,16 @@ optional<textures::itexture> gl_driver::load_texture(text::string file, textures
 {
 	gl_texture_t tex = new gl_texture();
 	if (!tex->load(const_cast<gl_driver*>(this), file, type, sid))
-		return new error(error_code::unknown);
+		return error_code::unknown;
 	return tex.get();
 }
 
 optional<textures::itexture> gl_driver::load_texture(array_view<text::string> files, textures::tex_type_t type, string sid)const
 {
-	return new error(error_code::unsupported);
+	return error_code::unsupported;
 }
 
-optional<iframe_buffer> gl_driver::create_frame_buffer(array_view<textures::tex_format_t> color_format, textures::tex_format_t depth_stencil_format, graphics::size<uint> dimentions, string sid)const
+optional<iframe_buffer> gl_driver::create_frame_buffer(array_view<textures::tex_format_t> color_format, textures::tex_format_t depth_stencil_format, graphics::size<uint> dimentions, bool is_serio, string sid)const
 {
 	gl_frame_buffer_t buffer = new gl_frame_buffer(const_cast<gl_driver*>(this));
 	if (!buffer->create(
@@ -601,7 +597,7 @@ optional<iframe_buffer> gl_driver::create_frame_buffer(array_view<textures::tex_
 		dimentions,
 		sid
 	))
-		return new error(error_code::unknown);
+		return error_code::unknown;
 	return buffer.get();
 }
 
@@ -616,66 +612,64 @@ optional<iframe_buffer> gl_driver::create_frame_buffer(array_view<textures::itex
 		interface_cast<gl_texture>(depth_stencil.get()),
 		sid
 	))
-		return new error(error_code::unknown);
+		return error_code::unknown;
 	return buffer.get();
 }
 
-optional<effects::ishaders> gl_driver::compile_shaders(wstring vertex_shader, wstring pixel_shader, string sid)const
+optional<effects::ishaders> gl_driver::compile_shaders(string vertex_shader, string pixel_shader, string sid)const
 {
-	string log;
+	error err;
 	gl_shaders_t shaders = new gl_shaders();
-	if (!shaders->load(
+	if ((err = shaders->load(
 		const_cast<gl_driver*>(this),
-		vertex_shader.get(),
-		pixel_shader.get(),
-		sid,
-		&log))
-		return new error(log);
-
+		vertex_shader,
+		pixel_shader,
+		sid)).code() != error_code::success)
+		return err;
 	return shaders.get();
 }
 
 optional<effects::ishaders> gl_driver::compile_shaders(effects::shader_info_t const& vertex_shader, effects::shader_info_t const& pixel_shader, string sid)const
 {
-	string log;
+	error err;
 	gl_shaders_t shaders = new gl_shaders();
-	if (!shaders->load(
+	if ((err = shaders->load(
 		const_cast<gl_driver*>(this),
 		vertex_shader,
 		pixel_shader,
-		sid,
-		&log))
-		return new error(log);
+		sid)).code() != error_code::success)
+		return err;
 	return shaders.get();
 }
 
-core::async::iasync_optional<buffers::ivertex_buffer> gl_driver::create_vertex_buffer_async(
+core::async::iasync_op<buffers::ivertex_buffer> gl_driver::create_vertex_buffer_async(
 	buffers::buffer_usage_t usage,
-	vector<reflect::attribute_desc> vertex_desc,
+	array_view<reflect::attribute_desc> vertex_desc_,
 	wsize vertex_count,
 	ibuffer_t init_data,
 	string sid)const
 {
-	return create_task<optional<buffers::ivertex_buffer>>([=](core::async::iasync_optional<buffers::ivertex_buffer>, gl_driver_t driver)
+	smart<reflect::attribute_desc[]> vertex_desc = vertex_desc_;
+	return create_task<optional<buffers::ivertex_buffer>>([=](core::async::iasync_op<buffers::ivertex_buffer>, gl_driver_t driver)
 	{
 		return driver->create_vertex_buffer(usage, vertex_desc, vertex_count, init_data, sid);
 	});
 }
 
-core::async::iasync_optional<buffers::iindex_buffer> gl_driver::create_index_buffer_async(
+core::async::iasync_op<buffers::iindex_buffer> gl_driver::create_index_buffer_async(
 	buffers::buffer_usage_t usage,
 	reflect::var_type_t index_type,
 	wsize index_count,
 	ibuffer_t init_data,
 	string sid)const
 {
-	return create_task<optional<buffers::iindex_buffer>>([=](core::async::iasync_optional<buffers::iindex_buffer>, gl_driver_t driver)
+	return create_task<optional<buffers::iindex_buffer>>([=](core::async::iasync_op<buffers::iindex_buffer>, gl_driver_t driver)
 	{
 		return driver->create_index_buffer(usage, index_type, index_count, init_data, sid);
 	});
 }
 
-core::async::iasync_optional<textures::itexture> gl_driver::create_texture_async(
+core::async::iasync_op<textures::itexture> gl_driver::create_texture_async(
 	textures::tex_type_t type,
 	textures::tex_format_t color_format,
 	buffers::buffer_usage_t usage,
@@ -683,87 +677,88 @@ core::async::iasync_optional<textures::itexture> gl_driver::create_texture_async
 	size3d<uint> dimentions,
 	string sid)const
 {
-	return create_task<optional<textures::itexture>>([=](core::async::iasync_optional<textures::itexture>, gl_driver_t driver)
+	return create_task<optional<textures::itexture>>([=](core::async::iasync_op<textures::itexture>, gl_driver_t driver)
 	{
 		return driver->create_texture(type, color_format, usage, flags, dimentions, sid);
 	});
 }
 
-core::async::iasync_optional<textures::itexture> gl_driver::create_texture_async(
+core::async::iasync_op<textures::itexture> gl_driver::create_texture_async(
 	unknown_t tex_handle,
 	string sid)const
 {
-	return create_task<optional<textures::itexture>>([=](core::async::iasync_optional<textures::itexture>, gl_driver_t driver)
+	return create_task<optional<textures::itexture>>([=](core::async::iasync_op<textures::itexture>, gl_driver_t driver)
 	{
 		return driver->create_texture(tex_handle, sid);
 	});
 }
 
-core::async::iasync_optional<textures::itexture> gl_driver::load_texture_async(
+core::async::iasync_op<textures::itexture> gl_driver::load_texture_async(
 	text::string file,
 	textures::tex_type_t type,
 	string sid)const
 {
-	return create_task<optional<textures::itexture>>([=](core::async::iasync_optional<textures::itexture>, gl_driver_t driver)
+	return create_task<optional<textures::itexture>>([=](core::async::iasync_op<textures::itexture>, gl_driver_t driver)
 	{
 		return driver->load_texture(file, type, sid);
 	});
 }
 
-core::async::iasync_optional<textures::itexture> gl_driver::load_texture_async(
+core::async::iasync_op<textures::itexture> gl_driver::load_texture_async(
 	array_view<text::string> files_,
 	textures::tex_type_t type,
 	string sid)const
 {
 	array<string> files = files_;
-	return create_task<optional<textures::itexture>>([=](core::async::iasync_optional<textures::itexture>, gl_driver_t driver)
+	return create_task<optional<textures::itexture>>([=](core::async::iasync_op<textures::itexture>, gl_driver_t driver)
 	{
 		return driver->load_texture(files, type, sid);
 	});
 }
 
-core::async::iasync_optional<iframe_buffer> gl_driver::create_frame_buffer_async(
+core::async::iasync_op<iframe_buffer> gl_driver::create_frame_buffer_async(
 	array_view<textures::tex_format_t> color_format_,
 	textures::tex_format_t depth_stencil_format,
 	size<uint> dimentions,
+	bool is_stereo,
 	string sid)const
 {
 	array<textures::tex_format_t> color_format = color_format_;
-	return create_task<optional<iframe_buffer>>([=](core::async::iasync_optional<iframe_buffer>, gl_driver_t driver)
+	return create_task<optional<iframe_buffer>>([=](core::async::iasync_op<iframe_buffer>, gl_driver_t driver)
 	{
-		return driver->create_frame_buffer(color_format, depth_stencil_format, dimentions, sid);
+		return driver->create_frame_buffer(color_format, depth_stencil_format, dimentions, is_stereo, sid);
 	});
 }
 
-core::async::iasync_optional<iframe_buffer> gl_driver::create_frame_buffer_async(
+core::async::iasync_op<iframe_buffer> gl_driver::create_frame_buffer_async(
 	array_view<textures::itexture_t> color_tex_,
 	textures::itexture_t depth_stencil_format,
 	string sid)const
 {
 	array<textures::itexture_t> color_tex = color_tex_;
-	return create_task<optional<iframe_buffer>>([=](core::async::iasync_optional<iframe_buffer>, gl_driver_t driver)
+	return create_task<optional<iframe_buffer>>([=](core::async::iasync_op<iframe_buffer>, gl_driver_t driver)
 	{
 		return driver->create_frame_buffer(color_tex, depth_stencil_format, sid);
 	});
 }
 
-core::async::iasync_optional<effects::ishaders> gl_driver::compile_shaders_async(
-	wstring vertex_shader,
-	wstring pixel_shader,
+core::async::iasync_op<effects::ishaders> gl_driver::compile_shaders_async(
+	string vertex_shader,
+	string pixel_shader,
 	string sid)const
 {
-	return create_task<optional<effects::ishaders>>([=](core::async::iasync_optional<effects::ishaders>, gl_driver_t driver)
+	return create_task<optional<effects::ishaders>>([=](core::async::iasync_op<effects::ishaders>, gl_driver_t driver)
 	{
 		return driver->compile_shaders(vertex_shader, pixel_shader, sid);
 	});
 }
 
-core::async::iasync_optional<effects::ishaders> gl_driver::compile_shaders_async(
+core::async::iasync_op<effects::ishaders> gl_driver::compile_shaders_async(
 	effects::shader_info_t const& vertex_shader,
 	effects::shader_info_t const& pixel_shader,
 	string sid)const
 {
-	return create_task<optional<effects::ishaders>>([=](core::async::iasync_optional<effects::ishaders>, gl_driver_t driver)
+	return create_task<optional<effects::ishaders>>([=](core::async::iasync_op<effects::ishaders>, gl_driver_t driver)
 	{
 		return driver->compile_shaders(vertex_shader, pixel_shader, sid);
 	});

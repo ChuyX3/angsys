@@ -8,13 +8,7 @@ namespace ang
 	{
 		namespace d3d11
 		{
-			declare_enum(, shader_type, uint)
-			{
-				vertex,
-				pixel,
-				geometry,
-			};
-
+			
 			class d3d11_shader_code
 				: public graphic<d3d11_shader_code
 				, iid("ang::graphics::d3d11::d3d11_shader_code")>
@@ -122,12 +116,5 @@ namespace ang
 		}
 	}
 }
-
-
-//inline bool operator == (D3D_SHADER_MACRO const&, D3D_SHADER_MACRO const&) { return false; } //dummy
-//inline bool operator == (D3D11_INPUT_ELEMENT_DESC const&, D3D11_INPUT_ELEMENT_DESC const&) { return false; } //dummy
-
-//COFFE_REGISTER_RUNTIME_TYPENAME(D3D_SHADER_MACRO);
-//COFFE_REGISTER_RUNTIME_TYPENAME(D3D11_INPUT_ELEMENT_DESC);
 
 #endif
