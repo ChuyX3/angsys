@@ -5,10 +5,10 @@
 /*   This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.      */
 /*********************************************************************************************************************/
 
-#ifndef __ANG_PLATFORM_H__
+#ifndef __ANG_PLATFORM_INPUT_H__
 #error ...
-#elif !defined __ANG_PLATFORM_INPUT_H__
-#define __ANG_PLATFORM_INPUT_H__
+#elif !defined __ANG_PLATFORM_INPUT_KEYBOARD_H__
+#define __ANG_PLATFORM_INPUT_KEYBOARD_H__
 
 namespace ang
 {
@@ -16,10 +16,6 @@ namespace ang
 	{
 		namespace input
 		{
-			ang_declare_interface(ikeyboard);
-			ang_declare_interface(icontroller);
-			ang_declare_interface(icontroller_manager);
-
 			declare_flags(LINK, key_modifiers, uint)
 			{
 				none = 0,
@@ -30,14 +26,6 @@ namespace ang
 				window_key = 8,
 				caps_lock = 16,
 				num_lock = 32,
-			};
-
-			declare_enum(LINK, pointer_hardware_type, uint)
-			{
-				touch,
-				pen,
-				mouse,
-				touchpad
 			};
 
 			declare_enum(LINK, keyboard_type, uint)
@@ -105,44 +93,6 @@ namespace ang
 				F17, F18, F19, F20, F21, F22, F23, F24,
 			};
 
-			declare_enum_flags(LINK, controller_button, controller_buttons_state, uint)
-			{
-				none = 0,
-				dpad_up = 1 << 0,
-				dpad_down = 1 << 1,
-				dpad_left = 1 << 2,
-				dpad_rigth = 1 << 3,
-				start = 1 << 4,
-				back = 1 << 5,
-				left_thumb = 1 << 6,
-				right_thumb = 1 << 7,
-				left_shoulder = 1 << 8,
-				right_shoulder = 1 << 9,
-				left_trigger = 1 << 10,
-				right_trigger = 1 << 11,
-				triggers = left_trigger | right_trigger,
-				A = 1 << 12,
-				B = 1 << 13,
-				X = 1 << 14,
-				Y = 1 << 15
-			};
-
-			declare_enum(LINK, controller_status, uint)
-			{
-				disconnected = 0,
-				connected = 1,
-				low_battery = 2,
-			};
-
-			typedef struct poiner_info
-			{
-				graphics::point<float> point;
-				short id;
-				bool is_primary_action;
-				bool is_secondary_action;
-				pointer_hardware_type_t type;
-				key_modifiers_t modifiers;
-			}poiner_info_t;
 
 			typedef struct key_info
 			{
@@ -159,21 +109,6 @@ namespace ang
 				windex last;
 			}text_selection_t;
 
-			typedef graphics::point<float> analog_input_value_t, thumb_stick_value_t;
-
-			typedef struct controller_button_state
-			{
-				controller_button_t button;
-				bool is_presed;
-			}controller_button_state_t;
-
-			typedef struct analog_input_state
-			{
-				controller_buttons_state_t button;
-				analog_input_value_t value; // 'y' for left_trigger and 'x' for right_trigger
-			}analog_input_state_t;
-
-		
 			struct nvt LINK ikeyboard
 				: intf<ikeyboard
 				, iid("ang::platform::input::ikeyboard")>
@@ -198,33 +133,8 @@ namespace ang
 				virtual bool remove_text_change_event(events::event_token_t) = 0;
 			};
 
-			////////////////////////////////////////////////////
-
-			struct nvt LINK icontroller
-				: intf<icontroller
-				, iid("ang::platform::input::icontroller")>
-			{
-				virtual uint controller_id()const = 0;
-				virtual controller_buttons_state_t state()const = 0;
-				virtual thumb_stick_value_t left_thumb_stick()const = 0;
-				virtual thumb_stick_value_t right_thumb_stick()const = 0;
-				virtual analog_input_value_t triggers()const = 0; //'y' = left, 'x' = right
-				ang_intf_event(events::icontroller_digital_input_args, digital_button_change_event);
-				ang_intf_event(events::icontroller_analog_input_args, analog_input_change_event);
-			};
-
-			struct nvt LINK icontroller_manager
-				: intf<icontroller_manager
-				, iid("ang::platform::input::icontroller_manager")>
-			{
-				static icontroller_manager_t instance();
-				virtual icontroller_t controller(uint)const = 0;
-				ang_intf_event(events::icontroller_status_args, controller_connected_event);
-				ang_intf_event(events::icontroller_status_args, controller_disconnected_event);
-			};
-			
 		}//input
 	}
 }
 
-#endif//__ANG_PLATFORM_INPUT_H__
+#endif//__ANG_PLATFORM_INPUT_KEYBOARD_H__

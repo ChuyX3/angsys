@@ -245,7 +245,6 @@ namespace ang
 	{
 		namespace events
 		{
-
 			template<typename T, core_msg MSG >
 			class event_handler final
 				: public implement<event_handler<T, MSG>
@@ -270,7 +269,7 @@ namespace ang
 			};
 
 			using delegates::base_event;
-		
+
 			template<typename T>
 			struct event_helper
 			{
@@ -295,25 +294,8 @@ namespace ang
 					return remove_event(this, token);
 				}
 			};
-
 		}
 	}
-}
-
-#define ang_platform_event(_TYPE, _NAME) \
-private: \
-	ang::platform::events::event_listener m_##_NAME; \
-	static ang::platform::events::event_token_t add_##_NAME##_event_handler(ang::platform::events::base_event*, ang::platform::events::event_t); \
-	static bool remove_##_NAME##_event_handler(ang::platform::events::base_event*, ang::platform::events::event_token_t); \
-public: \
-	ang::platform::events::event<_TYPE, add_##_NAME##_event_handler, remove_##_NAME##_event_handler> _NAME;
-
-#define ang_platform_implement_event_handler(_CLASS, _NAME) \
-ang::platform::events::event_token_t _CLASS::add_##_NAME##_event_handler(ang::platform::events::base_event* prop, ang::platform::events::event_t e) { \
-	return field_to_parent(&_CLASS::_NAME, prop)->m_##_NAME += e;	\
-} \
-bool _CLASS::remove_##_NAME##_event_handler(ang::platform::events::base_event* prop, ang::platform::events::event_token_t token) { \
-	return field_to_parent(&_CLASS::_NAME, prop)->m_##_NAME -= token;	\
 }
 
 #endif//__ANG_PLATFORM_EVENTS_H__

@@ -204,8 +204,9 @@ namespace ang
 	}
 }
 
-#include <ang/platform/input.h>
+#include <ang/platform/defines.h>
 #include <ang/platform/events.h>
+#include <ang/platform/input.h>
 #include <ang/platform/core_msg.h>
 
 namespace ang
@@ -258,6 +259,7 @@ namespace ang
 }
 
 #include <ang/platform/app.h>
+#include <ang/platform/controller.h>
 
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, ang::platform::events::start_app_event);
 ANG_REGIST_RUNTIME_VALUE_TYPE_INFO(LINK, ang::platform::events::exit_app_event);

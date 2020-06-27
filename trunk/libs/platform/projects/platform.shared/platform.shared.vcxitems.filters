@@ -27,6 +27,9 @@
     <Filter Include="include files\headers">
       <UniqueIdentifier>{dbdf5643-e269-4a2e-8e47-05aa2b0556e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source files\inputs">
+      <UniqueIdentifier>{3dd6f9fc-5cb5-4fd0-9ef8-270bde3965d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\compile_config.h">
@@ -48,6 +51,18 @@
       <Filter>include files\ang\platform</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\platform.h">
+      <Filter>include files\ang\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\keyboard.h">
+      <Filter>include files\ang\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\controller.h">
+      <Filter>include files\ang\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\pointer.h">
+      <Filter>include files\ang\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\defines.h">
       <Filter>include files\ang\platform</Filter>
     </ClInclude>
   </ItemGroup>

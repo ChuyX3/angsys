@@ -51,10 +51,12 @@ core_app::core_app()
 	s_current_app = this;
 	m_thread = core::async::thread::this_thread();
 	m_timer.reset();
+	m_controllers = new input::controller_manager();
 }
 
 core_app::~core_app()
 {
+	m_controllers = null;
 	s_current_app = null;
 }
 
@@ -185,6 +187,7 @@ error core_app::run(function<error(icore_app_t)> setup, app_args_t& args)
 		if (msg.message == WM_QUIT)
 			break;
 		else timer.tick([&]() {
+			m_controllers->update(timer.elapsed_time());
 			SendMessageW(m_hwnd, (UINT)core_msg::update, timer.elapsed_time(), timer.total_time());
 		});
 	}

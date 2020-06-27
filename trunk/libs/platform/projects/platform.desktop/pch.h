@@ -11,6 +11,7 @@
 #include "compile_config.h"
 
 #pragma comment(lib,"angsys.lib")
+#pragma comment(lib, "Xinput.lib")
 
 #endif //PCH_H
 

@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\win32\dispatcher.cpp" />
+    <ClCompile Include="..\..\source\win32\input\controller.cpp" />
     <ClCompile Include="..\..\source\win32\win32_events.cpp" />
     <ClCompile Include="..\..\source\win32\core_app.cpp" />
     <ClCompile Include="..\..\source\win32\system_info.cpp" />

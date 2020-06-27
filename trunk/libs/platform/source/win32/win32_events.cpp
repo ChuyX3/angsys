@@ -401,10 +401,8 @@ bool text_change_event_args::handled()const
 
 //////////////////////////////////////////////////////////////////////////
 
-controller_status_args::controller_status_args(message msg, input::icontroller_t controller, input::controller_status_t status)
+controller_status_args::controller_status_args(message msg)
 	: m_msg(msg)
-	, m_controller(controller)
-	, m_status(status)
 {
 
 }
@@ -431,17 +429,110 @@ bool controller_status_args::handled()const
 
 uint controller_status_args::controller_id()const
 {
-	return m_controller->get_controller_id();
+	return ((input::controller*)m_msg.wparam())->controller_id();
 }
 
 input::icontroller_t controller_status_args::controller()const
 {
-	return m_controller.get();
+	return ((input::controller*)m_msg.wparam());
 }
 
 input::controller_status_t controller_status_args::status()const
 {
-	return m_status;
+	return ((input::controller_status)m_msg.lparam());
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////
+
+controller_digital_input_args::controller_digital_input_args(message msg)
+	: m_msg(msg)
+{
+}
+
+controller_digital_input_args::~controller_digital_input_args()
+{
+}
+
+const message& controller_digital_input_args::msg()const
+{
+	return m_msg;
+}
+
+void controller_digital_input_args::handled(bool value)
+{
+	m_msg.result(value ? 0 : -1);
+}
+
+bool controller_digital_input_args::handled()const
+{
+	return m_msg.result() != -1;
+}
+
+input::icontroller_t controller_digital_input_args::controller()const
+{
+	return interface_cast<input::icontroller>((iintf*)m_msg.wparam());
+}
+
+input::controller_button_t controller_digital_input_args::button()const
+{
+	return ((input::controller_button_state_t*)m_msg.lparam())->button;
+}
+
+input::controller_button_state_t controller_digital_input_args::state()const
+{
+	return *((input::controller_button_state_t*)m_msg.lparam());
+}
+
+void controller_digital_input_args::msg(const message& m)
+{
+	m_msg = m;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+controller_analog_input_args::controller_analog_input_args(message msg)
+	: m_msg(msg)
+{
+}
+
+controller_analog_input_args::~controller_analog_input_args()
+{
+}
+
+const message& controller_analog_input_args::msg()const
+{
+	return m_msg;
+}
+
+void controller_analog_input_args::handled(bool value)
+{
+	m_msg.result(value ? 0 : -1);
+}
+
+bool controller_analog_input_args::handled()const
+{
+	return m_msg.result() != -1;
+}
+
+input::icontroller_t controller_analog_input_args::controller()const
+{
+	return interface_cast<input::icontroller>((iintf*)m_msg.wparam());
+}
+
+input::controller_button_t controller_analog_input_args::button()const
+{
+	return ((input::analog_input_state_t*)m_msg.lparam())->button;
+}
+
+input::analog_input_state_t controller_analog_input_args::state()const
+{
+	return *((input::analog_input_state_t*)m_msg.lparam());
+}
+
+void controller_analog_input_args::msg(const message& m)
+{
+	m_msg = m;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
 

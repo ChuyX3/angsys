@@ -4,6 +4,8 @@
 #include <ang/core/async.h>
 #include <ang/platform/platform.h>
 
+#include <Xinput.h>
+
 namespace ang
 {
 	namespace platform
@@ -12,6 +14,11 @@ namespace ang
 		{
 			ang_declare_object(core_app);
 			ang_declare_object(async_task);
+		}
+		namespace input
+		{
+			ang_declare_object(controller);
+			ang_declare_object(controller_manager);
 		}
 	}
 
@@ -328,6 +335,9 @@ namespace ang
 
 			/////////////////////////////////////////////////////////////////////////////////
 
+			ang_declare_object(controller_digital_input_args);
+			ang_declare_object(controller_analog_input_args);
+
 			class controller_status_args
 				: public implement<controller_status_args
 				, iid("ang::platform::events::controller_status_args")
@@ -335,11 +345,9 @@ namespace ang
 			{
 			private:
 				message m_msg;
-				input::icontroller_t m_controller;
-				input::controller_status_t m_status;
 
 			public:
-				controller_status_args(message, input::icontroller_t, input::controller_status_t);
+				controller_status_args(message);
 
 			public: /*overrides*/
 				virtual const message& msg()const override;
@@ -353,7 +361,6 @@ namespace ang
 				virtual~controller_status_args();
 			};
 
-
 			class controller_digital_input_args
 				: public implement<controller_digital_input_args
 				, iid("ang::platform::events::controller_digital_input_args")
@@ -363,7 +370,7 @@ namespace ang
 				message m_msg;
 
 			public:
-				controller_digital_input_args();
+				controller_digital_input_args(message);
 
 			public: /*overrides*/
 				virtual const message& msg()const override;
@@ -373,6 +380,7 @@ namespace ang
 				virtual input::controller_button_t button()const override;
 				virtual input::controller_button_state_t state()const override;
 
+				void msg(const message&);
 			private:
 				virtual~controller_digital_input_args();
 			};
@@ -386,7 +394,7 @@ namespace ang
 				message m_msg;
 
 			public:
-				controller_analog_input_args();
+				controller_analog_input_args(message);
 
 			public: /*overrides*/
 				virtual const message& msg()const override;
@@ -396,6 +404,7 @@ namespace ang
 				virtual input::controller_button_t button()const override;
 				virtual input::analog_input_state_t state()const override;
 
+				void msg(const message&);
 			private:
 				virtual~controller_analog_input_args();
 			};
@@ -431,6 +440,7 @@ namespace ang
 				//weak_ptr<framework> m_frm;
 				core::async::thread_t m_thread;
 				core::time::step_timer m_timer;
+				input::controller_manager_t m_controllers;
 
 				listener<void(core::time::step_timer const&)> m_idle_event;
 				collections::hash_map<events::core_msg_t,smart<events::core_listener>> m_event_listeners;
@@ -524,6 +534,93 @@ namespace ang
 				virtual~async_task();
 			};
 
+		}
+	}
+
+	namespace platform
+	{
+		namespace input
+		{
+		
+			class controller 
+				: public implement<controller
+				, iid("ang::platform::input::controller")
+				, icontroller>
+			{
+			private:
+				uint m_id;
+				bool m_is_enable;
+				XINPUT_STATE m_state;
+
+				analog_input_value_t m_triggers;
+				analog_input_value_t m_left_thumb_stick;
+				analog_input_value_t m_right_thumb_stick;
+				controller_buttons_state_t m_buttons_state;
+
+				events::controller_analog_input_args_t m_analog_input_args;
+				events::controller_digital_input_args_t m_digital_input_args;
+				
+				ang::platform::events::event_listener m_digital_button_change_event;
+				ang::platform::events::event_listener m_analog_input_change_event;
+
+			public:
+				controller(uint id);
+
+			public:
+				uint controller_id()const override;
+				controller_buttons_state_t state()const override;
+				thumb_stick_value_t left_thumb_stick()const override;
+				thumb_stick_value_t right_thumb_stick()const override;
+				analog_input_value_t triggers()const override;
+
+			public:
+				bool is_enable()const;
+				void init(XINPUT_STATE const&);
+				void update(float, XINPUT_STATE const&);
+				void exit();
+
+			protected:
+				void dispose()override;
+
+				ang::platform::events::event_token_t add_digital_button_change_event(ang::platform::events::event_t)override;
+				bool remove_digital_button_change_event(ang::platform::events::event_token_t) override;
+				ang::platform::events::event_token_t add_analog_input_change_event(ang::platform::events::event_t)override;
+				bool remove_analog_input_change_event(ang::platform::events::event_token_t) override;
+			
+			private:
+				virtual~controller();
+
+			};
+
+			class controller_manager
+				: public implement<controller_manager
+				, iid("ang::platform::input::icontroller_manager")
+				, icontroller_manager>
+			{
+			private:
+				stack_array<controller_t, 4> m_controllers;
+				events::event_listener m_controller_connected_event;
+				events::event_listener m_controller_disconnected_event;
+			public:
+				controller_manager();
+
+			public:
+				icontroller_t controller(uint)const override;
+
+			public:
+				void update(float);
+
+			protected:
+				void dispose()override;
+
+				ang::platform::events::event_token_t add_controller_connected_event(ang::platform::events::event_t)override;
+				bool remove_controller_connected_event(ang::platform::events::event_token_t) override;
+				ang::platform::events::event_token_t add_controller_disconnected_event(ang::platform::events::event_t)override;
+				bool remove_controller_disconnected_event(ang::platform::events::event_token_t) override;
+
+			private:
+				virtual~controller_manager();
+			};
 		}
 	}
 }

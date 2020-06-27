@@ -16,10 +16,14 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\graphics\foundations.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\app.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\controller.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\core_msg.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\defines.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\events.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\input.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\keyboard.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\platform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\angsys\include\ang\platform\pointer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\source\compile_config.h" />
   </ItemGroup>
   <ItemGroup>

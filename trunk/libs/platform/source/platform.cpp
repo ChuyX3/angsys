@@ -34,14 +34,14 @@ namespace ang::platform {
 	extern icore_app* s_current_app = null;
 }
 
-static input::icontroller_manager_t s_controller_manager = null;
+input::icontroller_manager_t s_controller_manager = null;
 
 icore_app_t icore_app::current_app()
 {
 	return s_current_app;
 }
 
-input::icontroller_manager_t input::icontroller_manager::get_instance()
+input::icontroller_manager_t input::icontroller_manager::instance()
 {
 	return s_controller_manager.get();
 }
