@@ -86,6 +86,7 @@ namespace ang
 
 	};
 
+
 	template<typename T1, typename T2>
 	bool operator == (object_wrapper<T1> const& obj1, object_wrapper<T2> const& obj2) {
 		if ((object*)obj1.get() == (object*)obj2.get())
@@ -192,6 +193,27 @@ namespace ang
 		static rtti_t const& class_info();
 		virtual rtti_t const& runtime_info()const override;
 		virtual bool query_interface(rtti_t const& id, unknown_ptr_t out)override;
+	};
+
+	template<wsize ALIGMENT>
+	class aligned
+		: public implement<aligned<ALIGMENT>
+		, iid("ang::aligned")>
+	{
+	public:
+		pointer operator new(wsize sz) {
+			return object::operator new(sz, ALIGMENT);
+		}
+
+#ifdef _DEBUG
+		pointer operator new(wsize sz, const char*, int) {
+			return object::operator new(sz, ALIGMENT);
+		}
+#endif//_DEBUG
+
+	protected:
+		aligned() {
+		}
 	};
 }
 

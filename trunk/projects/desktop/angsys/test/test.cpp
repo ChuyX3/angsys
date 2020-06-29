@@ -31,9 +31,9 @@ void test::init()
 	};
 
 	glClearColor(_color[0], _color[1], _color[2], _color[3]);
-	
+	glEnable(GL_DEPTH_TEST);
 	m_object = new object3D();
-	m_object->load(m_context, "shaders/model_vs.glsl"_s, "shaders/model_fs.glsl"_s, "models/woman1.nfg"_s, ""_s);
+	m_object->load(m_context, "shaders/model_vs.glsl"_s, "shaders/model_fs.glsl"_s, "models/woman1.nfg"_s, { "textures/Woman1.tga"_s });
 }
 
 void test::update(const core::time::step_timer& timer)
@@ -190,7 +190,7 @@ void test::on_controller_analog_event(objptr, platform::events::icontroller_anal
 	{
 	case platform::input::controller_button::left_thumb:
 		value = args->state().value;
-		m_camera->move_x(value.x * m_timer.elapsed_time() / 1000000.0f);
+		m_camera->move_x(-value.x * m_timer.elapsed_time() / 1000000.0f);
 		m_camera->move_z(value.y * m_timer.elapsed_time() / 1000000.0f);
 		break;
 	case platform::input::controller_button::right_thumb:

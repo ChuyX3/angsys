@@ -53,7 +53,7 @@ namespace ang
 			class LINK scene
 				: public implement<scene
 				, iid("ang::graphics::scenes::scene")
-				, framework::aligned
+				, aligned<16>
 				, iscene
 				, inode
 				, ixml_streamer

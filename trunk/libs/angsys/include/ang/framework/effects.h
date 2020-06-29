@@ -46,7 +46,7 @@ namespace ang
 			class LINK quad_geometry
 				: public implement<quad_geometry
 				, iid("ang::graphics::meshes::quad_geometry")
-				, framework::aligned
+				, aligned<16>
 				, meshes::igeometry>
 			{
 			private:

@@ -5,10 +5,12 @@ namespace ang
 	ang_declare_object(test);
 	ang_declare_object(camera);
 	ang_declare_object(object3D);
+	ang_declare_object(library);
 
 	namespace graphics
 	{
 		ang_declare_object(gl_context);
+		ang_declare_object(gl_resource);
 		ang_declare_object(gl_shaders);
 		ang_declare_object(gl_mesh);
 		ang_declare_object(gl_texture);
@@ -38,7 +40,6 @@ namespace ang
 
 namespace ang
 {
-
 	class camera
 		: public implement<camera
 		, iid("ang::camera")
@@ -77,7 +78,6 @@ namespace ang
 		virtual~camera();
 	};
 
-
 	class object3D
 		: public implement<object3D
 		, iid("ang::object3D")
@@ -88,19 +88,41 @@ namespace ang
 		maths::float3 m_rotation;
 		maths::float3 m_scale;
 
+		core::async::mutex_t m_mutex;
 		graphics::gl_mesh_t m_mesh;
 		graphics::gl_shaders_t m_shaders;
+		vector<graphics::gl_texture_t> m_textures;
 
 	public:
 		object3D();
 
-		bool load(graphics::gl_context_t, string vshader, string fshader, string model, string texture);
-		void update(core::time::step_timer const&);
-		void draw(graphics::gl_context_t, camera_t);
-
-		void dispose()override;
+		virtual bool load(graphics::gl_context_t, string vshader, string fshader, string model, array<string> textures);
+		virtual void update(core::time::step_timer const&);
+		virtual void draw(graphics::gl_context_t, camera_t);
+		virtual void dispose()override;
 
 		maths::float4x4 world_matrix()const;
+	};
+
+	class library
+		: public implement<library
+		, iid("ang::resource_manager")>
+	{
+	private:
+		collections::hash_map<string, string> m_sources;
+		collections::hash_map<string, graphics::gl_mesh_t> m_meshes;
+		collections::hash_map<string, graphics::gl_shaders_t> m_shaders;
+		collections::hash_map<string, graphics::gl_texture_t> m_textures;
+
+	public:
+		library();
+
+		void load(dom::xml::ixml_node_t);
+		void load_sources(dom::xml::ixml_node_t);
+		void load_resources(dom::xml::ixml_node_t);
+		
+		core::async::iasync<library_t> load_async(dom::xml::ixml_node_t);
+		void load_resources(dom::xml::ixml_node_t);
 	};
 
 	class test

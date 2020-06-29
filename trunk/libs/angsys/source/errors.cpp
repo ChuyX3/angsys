@@ -6,6 +6,7 @@ using namespace ang;
 
 static collections::pair<error_code, castr_t> def_except[] = {
 	{ error_code::success, "success"_sv },
+	{ error_code::failed, "operation failed"_sv },
 	{ error_code::unknown, "unkown error"_sv },
 	{ error_code::unimplemented, "this feature is not implemented yet..."_sv },
 	{ error_code::unsupported, "the current platform do not support this feature..."_sv },

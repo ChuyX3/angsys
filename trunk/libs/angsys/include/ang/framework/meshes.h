@@ -48,7 +48,7 @@ namespace ang
 			class LINK geometry
 				: public implement<geometry
 				, iid("ang::graphics::meshes::geometry")
-				, framework::aligned
+				, aligned<16>
 				, igeometry>
 			{
 			private:

@@ -151,6 +151,7 @@ error gl_shaders::init(gl_context_t context, string vsfile, string psfile)
 
 	windex beg = invalid_index, end = invalid_index;
 	windex idx = vssource->find("attribute"_r);
+	windex tex = 0;
 	string name = null;
 	while (idx != invalid_index) {
 		end = vssource->find(";"_r, idx);
@@ -166,10 +167,32 @@ error gl_shaders::init(gl_context_t context, string vsfile, string psfile)
 	name = null;
 	while (idx != invalid_index) {
 		end = vssource->find(";"_r, idx);
-		beg = vssource->find_reverse(" "_r, end, idx);
-		if (beg != invalid_index) {
-			name = vssource->sub_string(beg + 1, end);
-			m_uniforms[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+		tex = vssource->find("sampler2D"_r, idx, end);
+		if (tex != invalid_index) {
+			beg = vssource->find_reverse(" "_r, end, idx);
+			if (beg != invalid_index) {
+				name = vssource->sub_string(beg + 1, end);
+				m_samplers[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+			}
+		}
+		else
+		{
+			tex = vssource->find("samplerCube"_r, idx, end);
+			if (tex != invalid_index) {
+				beg = vssource->find_reverse(" "_r, end, idx);
+				if (beg != invalid_index) {
+					name = vssource->sub_string(beg + 1, end);
+					m_samplers[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+				}
+			}
+			else
+			{
+				beg = vssource->find_reverse(" "_r, end, idx);
+				if (beg != invalid_index) {
+					name = vssource->sub_string(beg + 1, end);
+					m_uniforms[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+				}
+			}
 		}
 		idx = vssource->find("uniform"_r, end);
 	}
@@ -178,10 +201,32 @@ error gl_shaders::init(gl_context_t context, string vsfile, string psfile)
 	name = null;
 	while (idx != invalid_index) {
 		end = fssource->find(";"_r, idx);
-		beg = fssource->find_reverse(" "_r, end, idx);
-		if (beg != invalid_index) {
-			name = fssource->sub_string(beg + 1, end);
-			m_uniforms[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+		tex = fssource->find("sampler2D"_r, idx, end);
+		if (tex != invalid_index) {
+			beg = fssource->find_reverse(" "_r, end, idx);
+			if (beg != invalid_index) {
+				name = fssource->sub_string(beg + 1, end);
+				m_samplers[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+			}
+		}
+		else
+		{
+			tex = fssource->find("samplerCube"_r, idx, end);
+			if (tex != invalid_index) {
+				beg = fssource->find_reverse(" "_r, end, idx);
+				if (beg != invalid_index) {
+					name = fssource->sub_string(beg + 1, end);
+					m_samplers[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+				}
+			}
+			else
+			{
+				beg = fssource->find_reverse(" "_r, end, idx);
+				if (beg != invalid_index) {
+					name = fssource->sub_string(beg + 1, end);
+					m_uniforms[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+				}
+			}
 		}
 		idx = fssource->find("uniform"_r, end);
 	}
@@ -237,6 +282,7 @@ core::async::iasync_op<gl_shaders_t> gl_shaders::init_async(gl_context_t context
 
 		windex beg = invalid_index, end = invalid_index;
 		windex idx = vssource->find("attribute"_r);
+		windex tex = 0;
 		string name = null;
 		while (idx != invalid_index) {
 			end = vssource->find(";"_r, idx);
@@ -252,10 +298,33 @@ core::async::iasync_op<gl_shaders_t> gl_shaders::init_async(gl_context_t context
 		name = null;
 		while (idx != invalid_index) {
 			end = vssource->find(";"_r, idx);
-			beg = vssource->find_reverse(" "_r, end, idx);
-			if (beg != invalid_index) {
-				name = vssource->sub_string(beg + 1, end);
-				m_uniforms[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+			tex = vssource->find("sampler2D"_r, idx, end);
+
+			if (tex != invalid_index) {
+				beg = vssource->find_reverse(" "_r, end, idx);
+				if (beg != invalid_index) {
+					name = vssource->sub_string(beg + 1, end);
+					m_samplers[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+				}
+			}
+			else
+			{
+				tex = vssource->find("samplerCube"_r, idx, end);
+				if (tex != invalid_index) {
+					beg = vssource->find_reverse(" "_r, end, idx);
+					if (beg != invalid_index) {
+						name = vssource->sub_string(beg + 1, end);
+						m_samplers[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+					}
+				}
+				else
+				{
+					beg = vssource->find_reverse(" "_r, end, idx);
+					if (beg != invalid_index) {
+						name = vssource->sub_string(beg + 1, end);
+						m_uniforms[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+					}
+				}
 			}
 			idx = vssource->find("uniform"_r, end);
 		}
@@ -264,16 +333,44 @@ core::async::iasync_op<gl_shaders_t> gl_shaders::init_async(gl_context_t context
 		name = null;
 		while (idx != invalid_index) {
 			end = fssource->find(";"_r, idx);
-			beg = fssource->find_reverse(" "_r, end, idx);
-			if (beg != invalid_index) {
-				name = fssource->sub_string(beg + 1, end);
-				m_uniforms[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+			tex = fssource->find("sampler2D"_r, idx, end);
+			if (tex != invalid_index) {
+				beg = fssource->find_reverse(" "_r, end, idx);
+				if (beg != invalid_index) {
+					name = fssource->sub_string(beg + 1, end);
+					m_samplers[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+				}
+			}
+			else
+			{
+				tex = fssource->find("samplerCube"_r, idx, end);
+				if (tex != invalid_index) {
+					beg = fssource->find_reverse(" "_r, end, idx);
+					if (beg != invalid_index) {
+						name = fssource->sub_string(beg + 1, end);
+						m_samplers[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+					}
+				}
+				else
+				{
+					beg = fssource->find_reverse(" "_r, end, idx);
+					if (beg != invalid_index) {
+						name = fssource->sub_string(beg + 1, end);
+						m_uniforms[name] = glGetUniformLocation(m_program, name->cstr().cstr<text::encoding::ascii>().cstr());
+					}
+				}
 			}
 			idx = fssource->find("uniform"_r, end);
 		}
 
 		return this;
 	});
+}
+
+int gl_shaders::sampler(cstr_t name)const
+{
+	auto it = m_samplers.find(name);
+	return it.is_valid() ? it->value : 0;
 }
 
 int gl_shaders::uniform(cstr_t name)const

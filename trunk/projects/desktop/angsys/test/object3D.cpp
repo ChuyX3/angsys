@@ -22,12 +22,13 @@ void object3D::dispose()
 	m_rotation = { 0, 0, 0 };
 }
 
-bool object3D::load(graphics::gl_context_t context, string vshader, string fshader, string model, string texture)
+bool object3D::load(graphics::gl_context_t context, string vshader, string fshader, string model, array<string> textures)
 {
 	graphics::gl_shaders_t shaders = new graphics::gl_shaders();
 	shaders->init_async(context, vshader, fshader)->then<void>(
 		[=](core::async::iasync_op<graphics::gl_shaders_t> task)
 	{
+		core::async::scope_locker<core::async::mutex> lock = m_mutex;
 		try {
 			auto result = task->result();
 			if (result.successed())
@@ -44,6 +45,7 @@ bool object3D::load(graphics::gl_context_t context, string vshader, string fshad
 	mesh->init_async(context, model)->then<void>(
 		[=](core::async::iasync_op<graphics::gl_mesh_t> task)
 	{
+		core::async::scope_locker<core::async::mutex> lock = m_mutex;
 		try {
 			auto result = task->result();
 			if (result.successed())
@@ -56,6 +58,24 @@ bool object3D::load(graphics::gl_context_t context, string vshader, string fshad
 		}
 	});
 
+	for (auto const& path : textures) {
+		graphics::gl_texture_t texture = new graphics::gl_texture();
+		texture->init_async(context, path)->then<void>([=](core::async::iasync_op<graphics::gl_texture_t> task)
+		{
+			core::async::scope_locker<core::async::mutex> lock = m_mutex;
+			try {
+				auto result = task->result();
+				if (result.successed())
+					m_textures += texture;
+				else {
+					result.error();
+				}
+			}
+			catch (...) {
+			}
+		});
+	}
+
 	return true;
 }
 
@@ -66,6 +86,7 @@ void object3D::update(core::time::step_timer const& timer)
 
 void object3D::draw(graphics::gl_context_t context, camera_t cam)
 {
+	core::async::scope_locker<core::async::mutex> lock = m_mutex;
 	if (!m_shaders.is_empty() && !m_mesh.is_empty())
 	{
 		m_shaders->use_program();
@@ -129,7 +150,24 @@ void object3D::draw(graphics::gl_context_t context, camera_t cam)
 			glUniformMatrix4fv(uni, 1, GL_FALSE, (float*)&wvpm);
 		}
 
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		uint textureUnit = 0;
+		for (auto const& tex : m_textures)
+		{
+			// make active a texture unit
+			glActiveTexture(GL_TEXTURE0 + textureUnit);
+			// bind the texture to the currently active texture unit
+			glBindTexture(GL_TEXTURE_2D, tex->tex_buffer());
+
+			switch (textureUnit)
+			{
+			case 0:
+				glUniform1i(m_shaders->sampler("difuse_tex"_r), textureUnit);
+			default:
+				break;
+			}
+			textureUnit++;	
+		}
+
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_mesh->index_buffer());
 		glDrawElements(GL_TRIANGLES, m_mesh->index_count(), GL_UNSIGNED_INT, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);

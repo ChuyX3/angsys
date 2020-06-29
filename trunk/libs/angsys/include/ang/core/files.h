@@ -367,7 +367,7 @@ namespace ang
 				bool map(function<bool(ibuffer_view_t)> func, wsize = -1, file_offset_t = 0);
 				//bool map(function<bool(text::istring_view_t)> func, wsize = -1, file_offset_t = 0);
 
-				bool read(function<bool(streams::ibinary_input_stream_t)>);
+				error read(function<error(streams::ibinary_input_stream_t)>);
 
 			private:
 				virtual~input_binary_file();

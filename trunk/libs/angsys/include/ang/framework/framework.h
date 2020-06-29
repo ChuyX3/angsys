@@ -135,7 +135,6 @@ namespace ang
 	}
 }
 
-#include <ang/framework/align.h>
 #include <ang/framework/textures.h>
 #include <ang/framework/meshes.h>
 #include <ang/framework/effects.h>

@@ -13,6 +13,7 @@ namespace ang
 			uint m_vertex_shader;
 			uint m_fragment_shader;
 			weak_ptr<gl_context> m_context;
+			collections::hash_map<string, int> m_samplers;
 			collections::hash_map<string, int> m_uniforms;
 			collections::hash_map<string, int> m_attributes;
 
@@ -24,7 +25,7 @@ namespace ang
 			core::async::iasync_op<gl_shaders_t> init_async(gl_context_t, string vsfile, string psfile);
 
 
-
+			int sampler(cstr_t)const;
 			int uniform(cstr_t)const;
 			int attribute(cstr_t)const;
 

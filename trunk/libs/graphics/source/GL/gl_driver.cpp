@@ -125,31 +125,31 @@ bool gl_driver::init_driver(platform::icore_view_t view, long64 adapter_id)
 		if (!hglrc)
 		{
 			hglrc = prevHglrc;
-			m_async_worker->run_async<void>([&](core::async::iasync<void>)
-			{
-				m_gl_async_context = wglCreateContext(hdc);
-				wglMakeCurrent(hdc, m_gl_async_context);
-			})->result(); //waint for completed
+			//m_async_worker->run_async<void>([&](core::async::iasync<void>)
+			//{
+			//	m_gl_async_context = wglCreateContext(hdc);
+			//	wglMakeCurrent(hdc, m_gl_async_context);
+			//})->result(); //waint for completed
 		}
 		else
 		{
 			wglMakeCurrent(NULL, NULL);
 			wglDeleteContext(prevHglrc);
 
-			m_async_worker->run_async<void>([&](core::async::iasync<void>)
-			{
-				m_gl_async_context = wglCreateContextAttribsARB(hdc, 0, attribs);
-				wglMakeCurrent(hdc, m_gl_async_context);
-			})->result(); //waint for completed
+			//m_async_worker->run_async<void>([&](core::async::iasync<void>)
+			//{
+			//	m_gl_async_context = wglCreateContextAttribsARB(hdc, 0, attribs);
+			//	wglMakeCurrent(hdc, m_gl_async_context);
+			//})->result(); //waint for completed
 		}
 	}
 	else
 	{
-		m_async_worker->run_async<void>([&](core::async::iasync<void>)
-		{
-			m_gl_async_context = wglCreateContext(hdc);
-			wglMakeCurrent(hdc, m_gl_async_context);
-		})->result(); //waint for completed
+		//m_async_worker->run_async<void>([&](core::async::iasync<void>)
+		//{
+		//	m_gl_async_context = wglCreateContext(hdc);
+		//	wglMakeCurrent(hdc, m_gl_async_context);
+		//})->result(); //waint for completed
 	}
 
 	//Checking GL version
@@ -162,7 +162,7 @@ bool gl_driver::init_driver(platform::icore_view_t view, long64 adapter_id)
 	m_gl_context = hglrc;
 	wglMakeCurrent(hdc, m_gl_context);
 
-	wglShareLists(m_gl_context, m_gl_async_context);
+	//wglShareLists(m_gl_context, m_gl_async_context);
 
 	return true;
 #endif
@@ -173,11 +173,11 @@ void gl_driver::close_driver()
 #if OPENGLES_SUPPORT
 
 #else
-	m_async_worker->run_async<void>([&](core::async::iasync<void>)
-	{
-		wglDeleteContext(m_gl_async_context);
-		wglMakeCurrent(NULL, NULL);
-	})->result(); //waint for completed
+	//m_async_worker->run_async<void>([&](core::async::iasync<void>)
+	//{
+	//	wglDeleteContext(m_gl_async_context);
+	//	wglMakeCurrent(NULL, NULL);
+	//})->result(); //waint for completed
 	wglMakeCurrent(NULL, NULL);
 	wglDeleteContext(m_gl_context);
 #endif
@@ -481,8 +481,8 @@ core::async::idispatcher_t gl_driver::dispatcher()const
 
 bool gl_driver::lock()const
 {
-	if (has_thread_access())
-		return true;
+	//if (has_thread_access())
+	//	return true;
 
 	if (!m_mutex.lock())
 		return false;
@@ -495,8 +495,8 @@ bool gl_driver::lock()const
 
 bool gl_driver::unlock()const
 {
-	if (has_thread_access())
-		return true;
+	//if (has_thread_access())
+	//	return true;
 
 	return m_mutex.unlock();
 #if OPENGLES_SUPPORT

@@ -20,6 +20,7 @@ namespace ang
 	{
 		success = 0,
 		none_error = success,
+		failed,
 		unknown,
 		unimplemented,
 		unsupported,

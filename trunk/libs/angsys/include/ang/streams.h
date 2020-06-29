@@ -463,6 +463,24 @@ namespace ang
 			}
 		};
 
+		template<typename S, typename T>
+		struct read_binary_helper<S, array<T>>
+		{
+			static wsize read(S stream, array<T>& val) {
+				static_assert(is_trivially_constructible<T>::value, "parameter T rof array template class is not trivially constructible");
+				return stream->read(&val[0], val.size() * size_of<T>());
+			}
+		};
+
+		template<typename S, typename T>
+		struct read_binary_helper<S, vector<T>>
+		{
+			static wsize read(S stream, vector<T>& val) {
+				static_assert(is_trivially_constructible<T>::value, "parameter T rof array template class is not trivially constructible");
+				return stream->read(&val[0], val.size() * size_of<T>());
+			}
+		};
+
 		template<typename T>
 		wsize ibinary_input_stream::read(T& val) {
 			return read_binary_helper<ibinary_input_stream_t, T>::read(this, val);

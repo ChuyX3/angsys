@@ -88,7 +88,7 @@ bool input_binary_file::map(function<bool(ibuffer_view_t)> func, wsize sz, file_
 //	return true;
 //}
 
-bool input_binary_file::read(function<bool(streams::ibinary_input_stream_t)> func)
+error input_binary_file::read(function<error(streams::ibinary_input_stream_t)> func)
 {
 	return func(this);
 }

@@ -4,6 +4,21 @@ namespace ang
 {
 	namespace graphics
 	{
+		class gl_resource final
+			: public implement<gl_resource
+			, iid("ang::graphics::gl_resource")
+			, resources::iresource>
+		{
+		protected:
+			gl_resource();
+
+		public:
+			virtual resources::resource_type_t resource_type()const = 0;
+			virtual string resource_sid()const = 0;
+			virtual void resource_sid(cstr_t) = 0;
+			virtual intfptr fast_cast(resources::resource_type_t) = 0;
+		};
+
 		class gl_context final
 			: public implement<gl_context
 			, iid("ang::graphics::gl_context")>

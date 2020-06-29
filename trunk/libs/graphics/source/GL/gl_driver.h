@@ -184,7 +184,7 @@ namespace ang
 #else
 				icore_context_t m_native_contxt;
 				HGLRC m_gl_context;
-				HGLRC m_gl_async_context;
+				//HGLRC m_gl_async_context;
 				bool m_gl_arb_support;
 #endif
 				ulong m_gl_max_version;
@@ -290,7 +290,7 @@ namespace ang
 				inline auto GLConfig()const { return m_gl_config; };
 #endif
 				inline auto GLContext()const { return m_gl_context; }
-				inline auto GLContextAsync()const { return m_gl_async_context; }
+				//inline auto GLContextAsync()const { return m_gl_async_context; }
 
 				inline gl_frame_buffer_t current_frame_buffer()const { return m_current_frame_buffer.get(); }
 				template<typename T>

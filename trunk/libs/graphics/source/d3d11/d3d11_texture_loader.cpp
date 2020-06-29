@@ -900,7 +900,7 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 	if (dataSize < (wsize)offset)
 		return null;
 
-	file->read([&](streams::ibinary_input_stream_t stream)->bool
+	file->read([&](streams::ibinary_input_stream_t stream)->error
 	{
 
 		ang_uint32_t dwMagicNumber;
@@ -911,7 +911,7 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 		if (dwMagicNumber != DDS_MAGIC
 			|| header.size != sizeof(DDS_HEADER)
 			|| header.ddspf.size != sizeof(DDS_PIXELFORMAT))
-			return false;
+			return error_code::failed;
 
 		bool bDXT10Header = false;
 		if ((header.ddspf.flags & DDS_FOURCC) && (MAKEFOURCC('D', 'X', '1', '0') == header.ddspf.fourCC))
@@ -932,13 +932,13 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 
 		dds_header.mipCount = header.mipMapCount;
 		if (dds_header.mipCount > D3D11_REQ_MIP_LEVELS)
-			return false;
+			return error_code::failed;
 		if (0 == dds_header.mipCount)
 			dds_header.mipCount = 1;
 
 		dds_header.format = GetDXGIFormat(header.ddspf);
 		if (dds_header.format == DXGI_FORMAT_UNKNOWN)
-			return false;
+			return error_code::failed;
 
 		if (header.flags & DDS_HEADER_FLAGS_VOLUME)
 		{
@@ -951,7 +951,7 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 				// We require all six faces to be defined
 				if ((header.caps2 & DDS_CUBEMAP_ALLFACES) != DDS_CUBEMAP_ALLFACES)
 				{
-					return false;
+					return error_code::failed;
 				}
 				dds_header.arraySize = 6;
 				dds_header.isCubeMap = true;
@@ -969,12 +969,12 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 				if ((dds_header.arraySize > D3D11_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION) ||
 					(dds_header.width > D3D11_REQ_TEXTURECUBE_DIMENSION) ||
 					(dds_header.height > D3D11_REQ_TEXTURECUBE_DIMENSION))
-					return false;
+					return error_code::failed;
 			}
 			else if ((dds_header.arraySize > D3D11_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION) ||
 				(dds_header.width > D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION) ||
 				(dds_header.height > D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION))
-				return false;
+				return error_code::failed;
 			break;
 
 		case D3D11_RESOURCE_DIMENSION_TEXTURE3D:
@@ -982,13 +982,13 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 				(dds_header.width > D3D11_REQ_TEXTURE3D_U_V_OR_W_DIMENSION) ||
 				(dds_header.height > D3D11_REQ_TEXTURE3D_U_V_OR_W_DIMENSION) ||
 				(dds_header.depth > D3D11_REQ_TEXTURE3D_U_V_OR_W_DIMENSION))
-				return false;
+				return error_code::failed;
 			break;
 		}
 
 		outData = new collections::array_buffer<byte>(dataSize - offset);
 		stream->read(outData->buffer_ptr(), outData->buffer_size());
-		return true;
+		return error_code::success;
 	});
 
 	return outData;
@@ -997,14 +997,14 @@ ang::ibuffer_t d3d11_texture_loader::load_dds(ang::core::files::input_binary_fil
 ang::ibuffer_t d3d11_texture_loader::load_tga(ang::core::files::input_binary_file_t file, uint& width, uint& height, uint& format)
 {
 	ang::ibuffer_t out_data = null;
-	file->read([&](ang::streams::ibinary_input_stream_t stream)->bool
+	file->read([&](ang::streams::ibinary_input_stream_t stream)->error
 	{
 		TGA_HEADER header;
 		stream >> header;
 		if (header.imagetype != IT_COMPRESSED && header.imagetype != IT_UNCOMPRESSED)
-			return false;
+			return error_code::failed;
 		if (header.bits != 24 && header.bits != 32)
-			return false;
+			return error_code::failed;
 		stream->cursor(header.identsize, ang::streams::stream_reference::current);
 		wsize bufferSize = wsize(stream->size() - sizeof(header) - header.identsize);
 		array<byte> data(bufferSize);
@@ -1026,7 +1026,7 @@ ang::ibuffer_t d3d11_texture_loader::load_tga(ang::core::files::input_binary_fil
 			break;
 		}
 		//memory::default_allocator<byte>::free(data);
-		return true;
+		return error_code::success;
 	});
 
 	return out_data;

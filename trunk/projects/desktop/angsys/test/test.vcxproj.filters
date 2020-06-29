@@ -9,6 +9,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="header files\gl">
+      <UniqueIdentifier>{a4b72833-29af-4257-88fb-f4a486e637b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -31,6 +34,9 @@
     <ClCompile Include="shaders.cpp">
       <Filter>source files</Filter>
     </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -48,6 +54,9 @@
     </ClInclude>
     <ClInclude Include="texture.h">
       <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="gl\gl_driver.h">
+      <Filter>header files\gl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

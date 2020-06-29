@@ -183,7 +183,7 @@ namespace ang
 		}
 
 		type* operator ->()const {
-			return &get();
+			return (type*)&get();
 		}
 
 		explicit operator type& ()const {
